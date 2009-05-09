@@ -1,6 +1,6 @@
 /* copystart.cpp: MiKTeX copy starter
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,6 +19,7 @@
 
 #include <miktex/Core/Core>
 #include <miktex/Core/Environment>
+#include <miktex/Core/Paths>
 
 #define UNUSED_ALWAYS(x) (x)
 
@@ -41,6 +42,17 @@ CopyStart (/*[in]*/ const char *	lpszFileName,
   // set MIKTEX_BINDIR
   Utils::SetEnvironmentString (MIKTEX_ENV_BIN_DIR,
 			       pSession->GetMyLocation().Get());
+
+  // set MIKTEX_*STARTUPFILE
+  if (pSession->IsMiKTeXPortable())
+  {
+    PathName startupConfig (pSession->GetSpecialPath(SpecialPath::InstallRoot));
+    startupConfig += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+    Utils::SetEnvironmentString (MIKTEX_ENV_COMMON_STARTUP_FILE,
+				 startupConfig.Get());
+    Utils::SetEnvironmentString (MIKTEX_ENV_USER_STARTUP_FILE,
+				 startupConfig.Get());
+  }
 
   PathName pathExe;
 
@@ -94,40 +106,75 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
 
   try
     {
-      if (lpCmdLine == 0 || *lpCmdLine == 0)
+      char szMyPath[MAX_PATH];
+
+      if (GetModuleFileNameA(0, szMyPath, MAX_PATH) == 0)
+      {
+	throw (MIKTEXTEXT("Internal error (4)."));
+      }
+
+      char szMyDrive[MAX_PATH];
+      char szMyDir[MAX_PATH];
+      char szMyName[MAX_PATH];
+      char szMySuffix[MAX_PATH];
+
+      if (_splitpath_s(szMyPath,
+		       szMyDrive, MAX_PATH,
+		       szMyDir, MAX_PATH,
+		       szMyName, MAX_PATH,
+		       szMySuffix, MAX_PATH)
+	  != 0)
+      {
+	throw (MIKTEXTEXT("Internal error (5)."));
+      }
+
+      strcat_s (szMyName, MAX_PATH, szMySuffix);
+
+      string exe;
+
+      if (strcmp(szMyName, MIKTEX_COPYSTART_EXE) == 0
+          || strcmp(szMyName, MIKTEX_COPYSTART_ADMIN_EXE) == 0)
+      {
+	if (lpCmdLine == 0 || *lpCmdLine == 0)
 	{
 	  throw (MIKTEXTEXT("Internal error (1)."));
 	}
 
-      bool quoted = (*lpCmdLine == '"');
+	bool quoted = (*lpCmdLine == '"');
 
-      char endChar = (quoted ? '"' : ' ');
+	char endChar = (quoted ? '"' : ' ');
 
-      if (quoted)
+	if (quoted)
 	{
 	  ++ lpCmdLine;
 	  if (*lpCmdLine == 0)
-	    {
-	      throw (MIKTEXTEXT("Internal error (2)."));
-	    }
+	  {
+	    throw (MIKTEXTEXT("Internal error (2)."));
+	  }
 	}
 
-      string exe;
-
-      for (; *lpCmdLine != endChar && *lpCmdLine != 0; ++ lpCmdLine)
+	for (; *lpCmdLine != endChar && *lpCmdLine != 0; ++ lpCmdLine)
 	{
 	  exe += *lpCmdLine;
 	}
 
-      if (quoted && *lpCmdLine == 0)
+	if (quoted && *lpCmdLine == 0)
 	{
 	  throw (MIKTEXTEXT("Internal error (3)."));
 	}
 
-      if (quoted)
+	if (quoted)
 	{
 	  ++ lpCmdLine;
 	}
+      }
+      else
+      {
+	exe = szMyDrive;
+	exe += szMyDir;
+	exe += "internal\\";
+	exe += szMyName;
+      }
 
       CopyStart (exe.c_str(), lpCmdLine);
 

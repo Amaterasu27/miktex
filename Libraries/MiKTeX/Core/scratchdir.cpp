@@ -55,6 +55,22 @@ SessionImpl::GetTempDirectory ()
       return (tempDirectory);
     }
 
+#if defined(MIKTEX_WINDOWS)
+  if (IsMiKTeXPortable())
+  {
+    PathName path;
+    if (Utils::GetPathNamePrefix(GetMyLocation(false), MIKTEX_PATH_BIN_DIR, path)
+      || Utils::GetPathNamePrefix(GetMyLocation(false), MIKTEX_PATH_INTERNAL_BIN_DIR, path))
+    {
+      path += MIKTEX_PATH_MIKTEX_TEMP_DIR;
+      if (IsGoodTempDirectory(path.Get()))
+      {
+	return (path);
+      }
+    }
+  }
+#endif
+
   PathName path;
 
 #if defined(MIKTEX_WINDOWS)

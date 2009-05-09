@@ -837,22 +837,22 @@ SessionImpl::SetEnvironmentVariables ()
 
   PathName path = GetTempDirectory();
 
-  if (! HaveEnvironmentString("TEMPDIR"))
+  if (! HaveEnvironmentString("TEMPDIR") || IsMiKTeXPortable())
     {
       Utils::SetEnvironmentString ("TEMPDIR", path.Get());
     }
 
-  if (! HaveEnvironmentString("TMPDIR"))
+  if (! HaveEnvironmentString("TMPDIR") || IsMiKTeXPortable())
     {
       Utils::SetEnvironmentString ("TMPDIR", path.Get());
     }
 
-  if (! HaveEnvironmentString("TEMP"))
+  if (! HaveEnvironmentString("TEMP") || IsMiKTeXPortable())
     {
       Utils::SetEnvironmentString ("TEMP", path.Get());
     }
 
-  if (! HaveEnvironmentString("TMP"))
+  if (! HaveEnvironmentString("TMP") || IsMiKTeXPortable())
     {
       Utils::SetEnvironmentString ("TMP", path.Get());
     }
@@ -891,8 +891,6 @@ SessionImpl::SessionImpl ()
 #endif
     makeFonts (true),
     pInstallPackageCallback (0),
-    haveCommonStartupConfigFile (false),
-    haveUserStartupConfigFile (false),
     isUserAnAdministrator (TriState::Undetermined),
 
     // passing an empty string to the locale constructor is ok; it
@@ -1061,6 +1059,8 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     adminMode = oldAdminMode;
     SetAdminMode ((initInfo.GetFlags() & InitFlags::AdminMode) != 0);
   }
+
+  DoStartupConfig ();
 
   InitializeRootDirectories ();
 

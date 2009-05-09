@@ -159,7 +159,9 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
   {
     PathName myloc (GetMyLocation(false));
     PathName prefix;
-    if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix))
+    if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_INTERNAL_BIN_DIR, prefix)
+      && ! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix)
+      && ! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_MIKTEX_TEMP_DIR, prefix))
     {
       UNEXPECTED_CONDITION ("SessionImpl::DefaultConfig");
     }
@@ -173,7 +175,7 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
   else
   {
     string product;
-    if config == MiKTeXConfiguration::Direct)
+    if (config == MiKTeXConfiguration::Direct)
     {
       product = "MiKTeXDirect";
       PathName myloc (GetMyLocation(false));
@@ -2071,6 +2073,11 @@ void
 SessionImpl::ScheduleFileRemoval (/*[in]*/ const char * lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
+  if (IsMiKTeXPortable())
+  {
+    // todo
+    return;
+  }
   trace_files->WriteFormattedLine
     ("core",
      T_("scheduling removal of %s"),

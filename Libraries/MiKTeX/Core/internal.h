@@ -44,6 +44,8 @@
 
 #if MIKTEX_UNIX
 #  define NO_REGISTRY 1
+#else
+#  define NO_REGISTRY 0
 #endif
 
 using namespace MiKTeX::Core;
@@ -1835,7 +1837,8 @@ private:
 
 private:
   StartupConfig
-  ReadStartupConfigFile (/*[in]*/ bool common);
+  ReadStartupConfigFile (/*[in]*/ bool common,
+                         /*[in]*/ const PathName & path);
 
 private:
   void
@@ -1867,7 +1870,7 @@ private:
   StartupConfig
   DefaultConfig ()
   {
-    return (DefaultConfig(MiKTeXConfiguration::Regular));
+    return (DefaultConfig(startupConfig.config));
   }
 
 private:
@@ -2148,16 +2151,6 @@ private:
   // index of user config root
 private:
   unsigned userConfigRootIndex;
-
-private:
-  bool haveCommonStartupConfigFile;
-
-private:
-  bool haveUserStartupConfigFile;
-
-  // fully qualified path to paths.ini; valid only if haveStartupConfigFile
-private:
-  PathName startupConfigFile;
 
 private:
   vector<DvipsPaperSizeInfo> dvipsPaperSizes;

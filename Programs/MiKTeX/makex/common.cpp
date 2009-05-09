@@ -1,6 +1,6 @@
 /* common.cpp: common stuff
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2009 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -75,7 +75,8 @@ MakeUtility::RunMETAFONT (/*[in]*/ const char *	lpszName,
 			  /*[in]*/ const char *	lpszMag)
 {
   string arguments;
-  arguments += T_("\\mode:=");
+  arguments += "--undump=mf";
+  arguments += " \\mode:=";
   arguments += (lpszMode == 0 ? "cx" : lpszMode);
   arguments += ';';
   if (lpszMag != 0)
@@ -205,7 +206,7 @@ MakeUtility::ShowVersion ()
 							 MIKTEX_COMP_J2000_VERSION,
 							 0))
 	<< T_("\n\
-Copyright (C) 1998-2008 Christian Schenk\n\
+Copyright (C) 1998-2009 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
@@ -218,7 +219,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
 void
 MakeUtility::Verbose (/*[in]*/ const char *	lpszFormat,
-		       /*[in]*/			...)
+		      /*[in]*/			...)
 {
   if (! verbose || printOnly || quiet)
     {

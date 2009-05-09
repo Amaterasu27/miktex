@@ -1837,6 +1837,7 @@ PackageInstallerImpl::RegisterComponent
    /*[in]*/ const PathName &		path,
    /*[in]*/ bool			mustSucceed)
 {
+  MIKTEX_ASSERT (! pSession->IsMiKTeXPortable());
   ReportLine ("%s %s",
 	      (doRegister
 	       ? "registering"
@@ -1950,9 +1951,10 @@ PackageInstallerImpl::RegisterComponents
 		}
 	    }
 #if defined(MIKTEX_WINDOWS)
-	  if (! IsWindowsNT()
-	      || pSession->RunningAsAdministrator()
-	      || pSession->RunningAsPowerUser())
+	  if (! pSession->IsMiKTeXPortable()
+	      && (! IsWindowsNT()
+	          || pSession->RunningAsAdministrator()
+	          || pSession->RunningAsPowerUser()))
 	    {
 	      for (size_t idx = 0;
 		   idx < sizeof(components) / sizeof(components[0]);
@@ -2011,9 +2013,10 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 	}
     }
 #if defined(MIKTEX_WINDOWS)
-  if (! IsWindowsNT()
-      || pSession->RunningAsAdministrator()
-      || pSession->RunningAsPowerUser())
+  if (! pSession->IsMiKTeXPortable()
+      && (! IsWindowsNT()
+          || pSession->RunningAsAdministrator()
+          || pSession->RunningAsPowerUser()))
     {
       for (size_t idx = 0;
 	   idx < sizeof(components) / sizeof(components[0]);

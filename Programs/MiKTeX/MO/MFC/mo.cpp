@@ -1,6 +1,6 @@
 /* mo.cpp: MiKTeX Options
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -83,7 +83,7 @@ MiKTeXOptionsApplication::InitInstance ()
     {
       SessionWrapper pSession (Session::InitInfo("mo"));
 
-      if (! Utils::CheckPath(false))
+      if (! pSession->IsMiKTeXPortable() && ! Utils::CheckPath(false))
 	{
 	  if (AfxMessageBox(T_("\
 MiKTeX is not correctly configured: the location of the MiKTeX executables \

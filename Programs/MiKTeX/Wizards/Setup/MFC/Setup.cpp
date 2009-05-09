@@ -671,73 +671,6 @@ FindCommonInstallDir ()
 
 /* _________________________________________________________________________
 
-   FindUserInstallDir
-   _________________________________________________________________________ */
-
-PathName
-FindUserInstallDir ()
-{
-  // probe the registry
-  string path;
-  if (SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_USER_INSTALL,
-			  path))
-    {
-      return (path);
-    }
-  else
-    {
-      // return the default location: %HOME%\AppData\Local\MiKTeX X.Z
-      PathName path =
-	    Utils::GetFolderPath(CSIDL_LOCAL_APPDATA,
-				 CSIDL_APPDATA,
-				 true);
-      path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
-      return (path);
-    }
-}
-
-/* _________________________________________________________________________
-
-   FindCommonRoots
-   _________________________________________________________________________ */
-
-string
-FindCommonRoots ()
-{
-  string directories;
-  if (! SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_COMMON_ROOTS,
-			  directories))
-    {
-      directories = "";
-    }
-  return (directories);
-}
-
-/* _________________________________________________________________________
-
-   FindUserRoots
-   _________________________________________________________________________ */
-
-string
-FindUserRoots ()
-{
-  string directories;
-  if (! SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_USER_ROOTS,
-			  directories))
-    {
-      directories = "";
-    }
-  return (directories);
-}
-
-/* _________________________________________________________________________
-
    CheckAddTEXMFDirs
    _________________________________________________________________________ */
 
@@ -900,7 +833,7 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
     return (false);
   }
   SmartPointer<Cfg> pcfg (Cfg::Create());      
-  pcfg->Read (path);
+  pcfg->Read (pathStartupConfig);
   string str;
   if (! pcfg->TryGetValue("Auto", "Config", str) || str != "Direct")
   {
@@ -992,18 +925,6 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   if (theApp.startupConfig.commonInstallRoot.Empty())
     {
       theApp.startupConfig.commonInstallRoot = FindCommonInstallDir();
-    }
-  if (theApp.startupConfig.userInstallRoot.Empty())
-    {
-      theApp.startupConfig.userInstallRoot = FindUserInstallDir();
-    }
-  if (theApp.startupConfig.commonRoots.empty())
-    {
-      theApp.startupConfig.commonRoots = FindCommonRoots();
-    }
-  if (theApp.startupConfig.userRoots.empty())
-    {
-      theApp.startupConfig.userRoots = FindUserRoots();
     }
   if (! theApp.startupConfig.commonRoots.empty())
     {
@@ -1318,27 +1239,33 @@ ExtractFiles (/*[in,out]*/ ScratchDirectory &	sfxDir)
 				 false));
   char magic[16];
   while (myImage.Read(magic, 16) == 16)
+  {
+    static char const MAGIC3[3] = { 'T', 'A', 'R' };
+    if (memcmp(magic, MAGIC3, 3) == 0
+      && memcmp(magic + 3, MAGIC3, 3) == 0
+      && memcmp(magic + 6, MAGIC3, 3) == 0
+      && memcmp(magic + 9, MAGIC3, 3) == 0
+      && memcmp(magic + 12, MAGIC3, 3) == 0
+      && memcmp(magic + 15, MAGIC3, 1) == 0)
     {
-      if (memcmp(magic, "TARTARTARTARTART", 16) == 0)
-	{
-	  sfxDir.Enter ();
-	  auto_ptr<MiKTeX::Extractor::Extractor>
-	    pExtractor
-	    (MiKTeX::Extractor::Extractor::CreateExtractor
-	     (MiKTeX::Extractor::ArchiveFileType::Tar));
-	  pExtractor->Extract (&myImage,
-			       Directory::GetCurrentDirectory(),
-			       true,
-			       0,
-			       0);
-	  pExtractor->Dispose ();
-	  return (true);
-	}
-      else
-	{
-	  myImage.Seek (512 - 16, SeekOrigin::Current);
-	}
+      sfxDir.Enter ();
+      auto_ptr<MiKTeX::Extractor::Extractor>
+	pExtractor
+	(MiKTeX::Extractor::Extractor::CreateExtractor
+	(MiKTeX::Extractor::ArchiveFileType::Tar));
+      pExtractor->Extract (&myImage,
+	Directory::GetCurrentDirectory(),
+	true,
+	0,
+	0);
+      pExtractor->Dispose ();
+      return (true);
     }
+    else
+    {
+      myImage.Seek (512 - 16, SeekOrigin::Current);
+    }
+  }
   return (false);
 }
 
@@ -1799,8 +1726,8 @@ RegisterUninstaller ()
     }
   PathName pathUninstallDat (theApp.GetInstallRoot(),
 			     (theApp.commonUserSetup
-			      ? MIKTEX_PATH_UNINSTALL_ADMIN_EXE
-			      : MIKTEX_PATH_UNINSTALL_EXE));
+			      ? MIKTEX_PATH_INTERNAL_UNINSTALL_ADMIN_EXE
+			      : MIKTEX_PATH_INTERNAL_UNINSTALL_EXE));
   commandLine += Q_(pathUninstallDat.Get());
 
   // make icon path

@@ -359,7 +359,7 @@ public:
 	MiKTeX::Core::Session::FatalCrtError
 	  ("fseek", 0, __FILE__, __LINE__);
       }
-    if (IsPascalFileIO());
+    if (IsPascalFileIO() && ! (origin == SEEK_END && offset == 0))
       {
 	Read ();
       }

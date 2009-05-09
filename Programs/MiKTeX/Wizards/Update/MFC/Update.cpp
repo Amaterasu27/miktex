@@ -1,6 +1,6 @@
 /* Update.cpp:
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -239,10 +239,12 @@ UpdateWizardApplication::UpdateWizardApplication ()
 BOOL
 UpdateWizardApplication::InitInstance ()
 {
+#if 0
   if (! Upgrade(g_upgrading))
     {
       return (FALSE);
     }
+#endif
 
   INITCOMMONCONTROLSEX initCtrls;
 
@@ -267,7 +269,7 @@ UpdateWizardApplication::InitInstance ()
     {
       SessionWrapper pSession (Session::InitInfo(T_("update")));
 
-      if (! Utils::CheckPath(false))
+      if (! pSession->IsMiKTeXPortable() && ! Utils::CheckPath(false))
 	{
 	  if (AfxMessageBox(T_("\
 MiKTeX is not correctly configured: the location of the MiKTeX executables \

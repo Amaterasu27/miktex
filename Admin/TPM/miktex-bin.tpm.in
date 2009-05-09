@@ -10,12 +10,12 @@
       This package contains essential MiKTeX executables.
     </TPM:Description>
     <TPM:RunFiles>
+${miktex_internal_bindir}/${miktex_prefix}update${miktex_admin_suffix}.exe
+${miktex_internal_bindir}/${miktex_prefix}update.exe
 ${miktex_internal_bindir}/copystart${miktex_admin_suffix}.exe
 ${miktex_internal_bindir}/copystart.exe
 ${miktex_internal_bindir}/uninstall${miktex_admin_suffix}.exe
 ${miktex_internal_bindir}/uninstall.exe
-${miktex_internal_bindir}/update${miktex_admin_suffix}.exe
-${miktex_internal_bindir}/update.exe
 texmf/miktex/bin/findexe.exe
 texmf/miktex/bin/mpm.exe
     </TPM:RunFiles>

@@ -2676,7 +2676,13 @@ IniTeXMFApp::CreatePortableSetup (/*[in]*/ const PathName & portableRoot)
   Directory::Create (configDir);
   PathName startupFile (portableRoot);
   startupFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-  pConfig->Write (startupFile);
+  pConfig->Write (startupFile, T_("MiKTeX startup configuration"));
+  PathName tempDir (portableRoot);
+  tempDir += MIKTEX_PATH_MIKTEX_TEMP_DIR;
+  if (! Directory::Exists(tempDir))
+  {
+    Directory::Create (tempDir);
+  }
 }
 
 /* _________________________________________________________________________

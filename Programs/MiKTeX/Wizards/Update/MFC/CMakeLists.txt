@@ -127,7 +127,7 @@ endif(NATIVE_WINDOWS)
 install(
   FILES ${update_mfc_exe}
   DESTINATION ${miktex_internal_bindir}
-  RENAME update.exe
+  RENAME ${miktex_prefix}update.exe
 )
 
 add_executable(update_mfc_admin WIN32 ${update_mfc_sources})
@@ -152,5 +152,5 @@ endif(NATIVE_WINDOWS)
 install(
   FILES ${update_mfc_admin_exe}
   DESTINATION ${miktex_internal_bindir}
-  RENAME update${miktex_admin_suffix}.exe
+  RENAME ${miktex_prefix}update${miktex_admin_suffix}.exe
 )

@@ -301,7 +301,7 @@ MakeFmt::FindInputFile (/*[in]*/  const PathName &	inputName,
 {
   if (! pSession->FindFile(inputName, FileType::TEX, inputFile))
     {
-      FatalError (T_("The input file could be found."));
+      FatalError (T_("The input file could not be found."));
     }
 
   // remove the directory specification from the path; alternatevly,

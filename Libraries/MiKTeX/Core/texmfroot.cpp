@@ -161,11 +161,6 @@ MergeStartupConfig (/*[in,out]*/ StartupConfig &	startupConfig,
 void
 SessionImpl::DoStartupConfig ()
 {
-  if (startupConfig.config != MiKTeXConfiguration::None)
-  {
-    return;
-  }
-
   // evaluate init info
   MergeStartupConfig (startupConfig, initInfo.GetStartupConfig());
 
@@ -175,14 +170,32 @@ SessionImpl::DoStartupConfig ()
   // read user environment variables
   MergeStartupConfig (startupConfig, ReadEnvironment(false));
 
+  PathName commonStartupConfigFile;
+
+  bool haveCommonStartupConfigFile =
+    FindStartupConfigFile(true, commonStartupConfigFile);
+
+  PathName userStartupConfigFile;
+
+  bool haveUserStartupConfigFile =
+    FindStartupConfigFile(false, userStartupConfigFile);
+
   // read common startup config file
-  MergeStartupConfig (startupConfig, ReadStartupConfigFile(true));
+  if (haveCommonStartupConfigFile)
+  {
+    MergeStartupConfig (startupConfig,
+      ReadStartupConfigFile(true, commonStartupConfigFile));
+  }
 
   // read user startup config file
-  MergeStartupConfig (startupConfig, ReadStartupConfigFile(false));
+  if (haveUserStartupConfigFile)
+  {
+    MergeStartupConfig (startupConfig,
+      ReadStartupConfigFile(false, userStartupConfigFile));
+  }
 
 #if ! NO_REGISTRY
-  if (startupConfig.config == MiKTeXConfiguration::Portable)
+  if (startupConfig.config != MiKTeXConfiguration::Portable)
   {
     // read the registry, if we don't have a startup config file
     if (! haveCommonStartupConfigFile)
@@ -210,13 +223,6 @@ SessionImpl::DoStartupConfig ()
 void
 SessionImpl::InitializeRootDirectories ()
 {
-  if (rootDirectories.size() > 0)
-  {
-    return;
-  }
-
-  DoStartupConfig ();
-
   InitializeRootDirectories (startupConfig);
 }
 
@@ -376,12 +382,16 @@ SessionImpl::InitializeRootDirectories
 unsigned
 SessionImpl::GetNumberOfTEXMFRoots ()
 {
-  InitializeRootDirectories ();
-      
   unsigned n = static_cast<unsigned>(rootDirectories.size());
+
+  MIKTEX_ASSERT (n > 1);
+
+  if (n <= 1)
+  {
+    UNEXPECTED_CONDITION ("SessionImpl::GetNumberOfTEXMFRoots");
+  }
       
   // the MPM root directory doesn't count
-  MIKTEX_ASSERT (n > 1);
   return (n - 1);
 }
 
@@ -459,7 +469,6 @@ SessionImpl::GetInstallRoot ()
 unsigned
 SessionImpl::GetCommonInstallRoot ()
 {
-  InitializeRootDirectories ();
   return (commonInstallRootIndex);
 }
 
@@ -473,7 +482,6 @@ SessionImpl::GetCommonInstallRoot ()
 unsigned
 SessionImpl::GetUserInstallRoot ()
 {
-  InitializeRootDirectories ();
   return (userInstallRootIndex);
 }
 
@@ -564,7 +572,10 @@ SessionImpl::SaveRootDirectories ()
 #endif
   if (IsAdminMode())
   {
-    if (haveCommonStartupConfigFile)
+    PathName commonStartupConfigFile;
+    bool haveCommonStartupConfigFile =
+      FindStartupConfigFile(true, commonStartupConfigFile);
+    if (haveCommonStartupConfigFile || NO_REGISTRY)
     {
       WriteStartupConfigFile (true, startupConfig);
     }
@@ -581,7 +592,10 @@ SessionImpl::SaveRootDirectories ()
   }
   else
   {
-    if (haveUserStartupConfigFile)
+    PathName userStartupConfigFile;
+    bool haveUserStartupConfigFile =
+      FindStartupConfigFile(false, userStartupConfigFile);
+    if (haveUserStartupConfigFile || NO_REGISTRY)
     {
       WriteStartupConfigFile (false, startupConfig);
     }
@@ -748,7 +762,6 @@ SessionImpl::GetDataRoot ()
 unsigned
 SessionImpl::GetCommonDataRoot ()
 {
-  InitializeRootDirectories ();
   return (commonDataRootIndex);
 }
 
@@ -760,7 +773,6 @@ SessionImpl::GetCommonDataRoot ()
 unsigned
 SessionImpl::GetUserDataRoot ()
 {
-  InitializeRootDirectories ();
   return (userDataRootIndex);
 }
 
@@ -790,7 +802,6 @@ SessionImpl::GetConfigRoot ()
 unsigned
 SessionImpl::GetCommonConfigRoot ()
 {
-  InitializeRootDirectories ();
   return (commonConfigRootIndex);
 }
 
@@ -802,7 +813,6 @@ SessionImpl::GetCommonConfigRoot ()
 unsigned
 SessionImpl::GetUserConfigRoot ()
 {
-  InitializeRootDirectories ();
   return (userConfigRootIndex);
 }
 
@@ -984,8 +994,6 @@ FileNameDatabase *
 SessionImpl::GetFileNameDatabase (/*[in]*/ unsigned	r,
 				  /*[in]*/ TriState	triReadOnly)
 {
-  InitializeRootDirectories ();
-  
   if (r != MPM_ROOT && r >= GetNumberOfTEXMFRoots())
     {
       INVALID_ARGUMENT ("SessionImpl::GetFileNameDatabase", NUMTOSTR(r));

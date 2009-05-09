@@ -1,6 +1,6 @@
 /* InfoListPage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -261,14 +261,18 @@ InfoListPage::CreateReport ()
     {
       if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
 	{
-	  if (theApp.commonUserSetup)
-	    {
-	      info += T_("Install MiKTeX for all users");
-	    }
+	  if (theApp.portable)
+	  {
+	    info += T_("Install MiKTeX Portable");
+	  }
+	  else if (theApp.commonUserSetup)
+	  {
+	    info += T_("Install MiKTeX for all users");
+	  }
 	  else
-	    {
-	      info += T_("Install MiKTeX only for the current user");
-	    }
+	  {
+	    info += T_("Install MiKTeX only for the current user");
+	  }
 	  info += CRLF;
 	  info += CRLF;
 	}

@@ -809,12 +809,9 @@ FileCopyPage::DoTheInstallation ()
   // register installation directory
   StartupConfig startupConfig;
   if (theApp.commonUserSetup)
-    {
-      startupConfig.commonRoots =
-	theApp.startupConfig.commonInstallRoot.Get();
-      startupConfig.commonInstallRoot =	theApp.startupConfig.commonInstallRoot;
+  {
+    startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
   }
-  startupConfig.userRoots = theApp.startupConfig.userInstallRoot.Get();
   startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
   SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
 
@@ -1022,22 +1019,14 @@ FileCopyPage::ConfigureMiKTeX ()
 	    theApp.startupConfig.commonInstallRoot);
 	}
       }
-      string commonRootDirectories;
-      commonRootDirectories += theApp.startupConfig.commonInstallRoot.Get();
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
-	{
-	  commonRootDirectories += ";";
-	  commonRootDirectories += theApp.startupConfig.commonRoots;
-	}
-      cmdLine.AppendOption ("--common-roots=", commonRootDirectories);
-      string userRootDirectories;
-      userRootDirectories += theApp.startupConfig.userInstallRoot.Get();
+      {
+	cmdLine.AppendOption ("--common-roots=", theApp.startupConfig.commonRoots);
+      }
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.userRoots.empty())
-	{
-	  userRootDirectories += ";";
-	  userRootDirectories += theApp.startupConfig.userRoots;
-	}
-      cmdLine.AppendOption ("--user-roots=", userRootDirectories);
+      {
+	cmdLine.AppendOption ("--user-roots=", theApp.startupConfig.userRoots);
+      }
       cmdLine.AppendOption ("--rmfndb");
       RunIniTeXMF (cmdLine);
       if (pSheet->GetCancelFlag())
@@ -1057,7 +1046,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	  return;
 	}
 
-      // [4] create latex.exe, context.exe, ...
+      // [4] create latex.exe, ...
       RunIniTeXMF (CommandLineBuilder("--force", "--mklinks"));
       if (pSheet->GetCancelFlag())
 	{
