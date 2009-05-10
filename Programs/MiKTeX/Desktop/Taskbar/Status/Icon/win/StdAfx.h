@@ -6,6 +6,9 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#include <miktex/Core/Core>
+#include <miktex/Core/Paths>
+
 #include <windows.h>
 #include <Windowsx.h>
 #include <commctrl.h>

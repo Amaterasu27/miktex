@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 #include "resource.h"
 
+using namespace std;
+using namespace MiKTeX::Core;
+
 #define SHOW_DIALOG 0
 
 #define TRAYICONID 1
@@ -128,74 +131,105 @@ DlgProc (/*[in]*/ HWND		hWnd,
 	 /*[in]*/ WPARAM	wParam,
 	 /*[in]*/ LPARAM	lParam)
 {
-  int wmId, wmEvent;
-  
-  switch (message) 
+  try
     {
-    case SWM_TRAYMSG:
-      switch(lParam)
+      SessionWrapper pSession (true);
+
+      int wmId, wmEvent;
+      
+      switch (message) 
 	{
+	case SWM_TRAYMSG:
+	  switch(lParam)
+	    {
 #if SHOW_DIALOG
-	case WM_LBUTTONDBLCLK:
-	  ShowWindow (hWnd, SW_RESTORE);
-	  break;
+	    case WM_LBUTTONDBLCLK:
+	      ShowWindow (hWnd, SW_RESTORE);
+	      break;
 #endif
-	case WM_RBUTTONDOWN:
-	case WM_CONTEXTMENU:
-	  ShowContextMenu (hWnd);
-	}
-      break;
-    case WM_SYSCOMMAND:
-      if((wParam & 0xFFF0) == SC_MINIMIZE)
-	{
-	  ShowWindow (hWnd, SW_HIDE);
+	    case WM_RBUTTONDOWN:
+	    case WM_CONTEXTMENU:
+	      ShowContextMenu (hWnd);
+	    }
+	  break;
+	case WM_SYSCOMMAND:
+	  if((wParam & 0xFFF0) == SC_MINIMIZE)
+	    {
+	      ShowWindow (hWnd, SW_HIDE);
+	      return (1);
+	    }
+	  else if (wParam == IDM_ABOUT)
+	    {
+	      DialogBoxW (hInst,
+			  MAKEINTRESOURCEW(IDD_ABOUT),
+			  hWnd,
+			  About);
+	    }
+	  break;
+	case WM_COMMAND:
+	  wmId    = LOWORD(wParam);
+	  wmEvent = HIWORD(wParam); 
+	  switch (wmId)
+	    {
+#if SHOW_DIALOG
+	    case SWM_SHOW:
+	      ShowWindow (hWnd, SW_RESTORE);
+	      break;
+	    case SWM_HIDE:
+	    case IDOK:
+	      ShowWindow (hWnd, SW_HIDE);
+	      break;
+#endif
+	    case SWM_SETTINGS:
+	      {
+		PathName exePath;
+		if (pSession->FindFile(MIKTEX_MO_EXE, FileType::EXE, exePath))
+		  {
+		    pSession->UnloadFilenameDatabase ();
+		    Process::Start (exePath);
+		  }
+		break;
+	      }
+	    case SWM_UPDATE:
+	      {
+		PathName exePath;
+		if (pSession->FindFile(MIKTEX_UPDATE_EXE,
+				       FileType::EXE,
+				       exePath))
+		  {
+		    pSession->UnloadFilenameDatabase ();
+		    Process::Start (exePath);
+		  }
+		break;
+	      }
+	    case SWM_EXIT:
+	      DestroyWindow (hWnd);
+	      break;
+	    case IDM_ABOUT:
+	      DialogBoxW (hInst,
+			  MAKEINTRESOURCEW(IDD_ABOUT),
+			  hWnd,
+			  About);
+	      break;
+	    }
 	  return (1);
-	}
-      else if (wParam == IDM_ABOUT)
-	{
-	  DialogBoxW (hInst,
-		      MAKEINTRESOURCEW(IDD_ABOUT),
-		      hWnd,
-		      About);
-	}
-      break;
-    case WM_COMMAND:
-      wmId    = LOWORD(wParam);
-      wmEvent = HIWORD(wParam); 
-      switch (wmId)
-	{
-#if SHOW_DIALOG
-	case SWM_SHOW:
-	  ShowWindow (hWnd, SW_RESTORE);
-	  break;
-	case SWM_HIDE:
-	case IDOK:
-	  ShowWindow (hWnd, SW_HIDE);
-	  break;
-#endif
-	case SWM_EXIT:
+	case WM_INITDIALOG:
+	  return (OnInitDialog(hWnd));
+	case WM_CLOSE:
 	  DestroyWindow (hWnd);
 	  break;
-	case IDM_ABOUT:
-	  DialogBoxW (hInst,
-		      MAKEINTRESOURCEW(IDD_ABOUT),
-		      hWnd,
-		      About);
+	case WM_DESTROY:
+	  niData.uFlags = 0;
+	  Shell_NotifyIconW (NIM_DELETE, &niData);
+	  PostQuitMessage (0);
 	  break;
 	}
-      return (1);
-    case WM_INITDIALOG:
-      return (OnInitDialog(hWnd));
-    case WM_CLOSE:
-      DestroyWindow (hWnd);
-      break;
-    case WM_DESTROY:
-      niData.uFlags = 0;
-      Shell_NotifyIconW (NIM_DELETE, &niData);
-      PostQuitMessage (0);
-      break;
+      return (0);
     }
-  return (0);
+  catch (const exception &)
+    {
+      return (0);
+    }
 }
 
 /* __________________________________________________________________________
@@ -288,7 +322,14 @@ InitInstance (/*[in]*/ HINSTANCE	hInstance,
 
   niData.uCallbackMessage = SWM_TRAYMSG;
 
-  wcscpy_s (niData.szTip, sizeof(niData.szTip), L"MiKTeX");
+  if (SessionWrapper(true)->IsMiKTeXPortable())
+    {
+      wcscpy_s (niData.szTip, sizeof(niData.szTip), L"MiKTeX Portable");
+    }
+  else
+    {
+      wcscpy_s (niData.szTip, sizeof(niData.szTip), L"MiKTeX");
+    }
 
   Shell_NotifyIconW (NIM_ADD, &niData);
 
@@ -312,26 +353,35 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
 	 /*[in]*/ char *	lpCmdLine,
 	 /*[in]*/ int		nCmdShow)
 {
-  if (! InitInstance(hInstance, nCmdShow))
+  try
     {
-      return (FALSE);
-    }
+      SessionWrapper pSession (Session::InitInfo("miktex-taskbar-icon"));
 
-  HACCEL hAccelTable =
-    LoadAcceleratorsW(hInstance,
-		      MAKEINTRESOURCEW(IDC_STATUSDIALOG));
-  
-  MSG msg;
-
-  while (GetMessage(&msg, 0, 0, 0))
-    {
-      if (! TranslateAccelerator(msg.hwnd, hAccelTable, &msg)
-	  || ! IsDialogMessage(msg.hwnd, &msg))
+      if (! InitInstance(hInstance, nCmdShow))
 	{
-	  TranslateMessage (&msg);
-	  DispatchMessage (&msg);
+	  return (0);
 	}
+      
+      HACCEL hAccelTable =
+	LoadAcceleratorsW(hInstance,
+			  MAKEINTRESOURCEW(IDC_STATUSDIALOG));
+      
+      MSG msg;
+      
+      while (GetMessage(&msg, 0, 0, 0))
+	{
+	  if (! TranslateAccelerator(msg.hwnd, hAccelTable, &msg)
+	      || ! IsDialogMessage(msg.hwnd, &msg))
+	    {
+	      TranslateMessage (&msg);
+	      DispatchMessage (&msg);
+	    }
+	}
+      
+      return (static_cast<int>(msg.wParam));
     }
-
-  return (static_cast<int>(msg.wParam));
+  catch (const exception &)
+    {
+      return (0);
+    }
 }
