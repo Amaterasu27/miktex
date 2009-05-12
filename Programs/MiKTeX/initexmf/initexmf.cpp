@@ -432,6 +432,13 @@ private:
 
 private:
   void
+  MakeLink (/*[in]*/ const PathName & source,
+            /*[in]*/ const PathName & dest,
+	    /*[in]*/ bool	      overwrite);
+
+
+private:
+  void
   ReportMiKTeXVersion ();
 
 private:
@@ -2014,6 +2021,30 @@ IniTeXMFApp::MakeFormatFilesByName
 
 /* _________________________________________________________________________
      
+   IniTeXMFApp::MakeLink
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::MakeLink (/*[in]*/ const PathName &  source,
+		       /*[in]*/ const PathName &  dest,
+		       /*[in]*/ bool		  overwrite)
+{
+  if (! File::Exists(dest) || overwrite)
+  {
+    PrintOnly ("cp %s %s", Q_(source), Q_(dest));
+    if (! printOnly)
+    {
+      File::Copy (source, dest);
+    }
+  }
+  if (logStream.IsOpen())
+  {
+    logStream.WriteLine (dest.Get());
+  }
+}
+
+/* _________________________________________________________________________
+     
    IniTeXMFApp::MakeLinks
    _________________________________________________________________________ */
 
@@ -2021,6 +2052,8 @@ void
 IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 {
   PathName pathBinDir = pSession->GetSpecialPath(SpecialPath::BinDirectory);
+  PathName internalBinDir =
+    pSession->GetSpecialPath(SpecialPath::InternalBinDirectory);
 
   if (! Directory::Exists(pathBinDir))
     {
@@ -2056,20 +2089,9 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 	  PathName exePath
 	    (pathBinDir, formatInfo.name, MIKTEX_EXE_FILE_SUFFIX);
 	  if (! (compilerPath == exePath))
-	    {
-	      if (! File::Exists(exePath) || overwrite)
-		{
-		  PrintOnly ("cp %s %s", Q_(compilerPath), Q_(exePath));
-		  if (! printOnly)
-		    {
-		      File::Copy (compilerPath, exePath);
-		    }
-		}
-	      if (logStream.IsOpen())
-		{
-		  logStream.WriteLine (exePath.Get());
-		}
-	    }
+	  {
+	    MakeLink (compilerPath, exePath, overwrite);
+	  }
 	}
     }
 
@@ -2101,18 +2123,7 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 	      PathName pathExe
 		(pathBinDir, szFileName, MIKTEX_EXE_FILE_SUFFIX);
 	      Verbose ("  %s", pathExe.Get());
-	      if (! File::Exists(pathExe) || overwrite)
-		{
-		  PrintOnly ("cp %s %s", Q_(runperl), Q_(pathExe));
-		  if (! printOnly)
-		    {
-		      File::Copy (runperl, pathExe);
-		    }
-		}
-	      if (logStream.IsOpen())
-		{
-		  logStream.WriteLine (pathExe.Get());
-		}
+	      MakeLink (runperl, pathExe, overwrite);
 	    }
 	}
       pIter->Dispose ();
@@ -2147,22 +2158,32 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 		}
 	      PathName pathExe (pathBinDir, szFileName, ".exe");
 	      Verbose ("  %s", pathExe.Get());
-	      if (! File::Exists(pathExe) || overwrite)
-		{
-		  PrintOnly ("cp %s %s", Q_(runbat), Q_(pathExe));
-		  if (! printOnly)
-		    {
-		      File::Copy (runbat, pathExe);
-		    }
-		}
-	      if (logStream.IsOpen())
-		{
-		  logStream.WriteLine (pathExe.Get());
-		}
+	      MakeLink (runbat, pathExe, overwrite);
 	    }
 	}
       pIter->Dispose ();
     }
+
+  static const char * const copystarters[] = {
+    MIKTEX_PATH_INTERNAL_TASKBAR_ICON_EXE,
+    MIKTEX_PATH_INTERNAL_UPDATE_EXE,
+  };
+
+  PathName copystart;
+
+  if (pSession->FindFile(MIKTEX_PATH_INTERNAL_COPYSTART_EXE, "%R", copystart))
+  {
+    for (size_t idx = 0;
+      idx < sizeof(copystarters) / sizeof(copystarters[0]);
+      ++ idx)
+    {
+      PathName pathExe (pathBinDir);
+      char szFileName[BufferSizes::MaxPath];
+      pathExe += PathName(copystarters[idx]).GetFileName(szFileName);
+      Verbose ("  %s", pathExe.Get());
+      MakeLink (copystart, pathExe, overwrite);
+    }
+  }
 #endif
 }
 

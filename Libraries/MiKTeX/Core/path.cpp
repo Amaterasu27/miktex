@@ -838,6 +838,10 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
     case SpecialPath::BinDirectory:
       path = GetBinDirectory();
       break;
+    case SpecialPath::InternalBinDirectory:
+      path = GetBinDirectory();
+      path += "internal";
+      break;
     case SpecialPath::CommonInstallRoot:
       path = GetRootDirectory(GetCommonInstallRoot());
       break;

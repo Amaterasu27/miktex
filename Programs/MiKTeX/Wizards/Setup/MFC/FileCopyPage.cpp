@@ -796,6 +796,15 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
 #endif
 	}
     }
+
+  if (theApp.portable)
+  {
+    PathName fileName (theApp.startupConfig.commonInstallRoot);
+    fileName += "miktex-portable.cmd";
+    StreamWriter starter (fileName);
+    starter.WriteLine ("miktex\\bin\\miktex-taskbar-icon.exe");
+    starter.Close ();
+  }
 }
 
 /* _________________________________________________________________________

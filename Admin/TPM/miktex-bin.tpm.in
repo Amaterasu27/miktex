@@ -10,6 +10,7 @@
       This package contains essential MiKTeX executables.
     </TPM:Description>
     <TPM:RunFiles>
+${miktex_internal_bindir}/${miktex_prefix}taskbar-icon.exe
 ${miktex_internal_bindir}/${miktex_prefix}update${miktex_admin_suffix}.exe
 ${miktex_internal_bindir}/${miktex_prefix}update.exe
 ${miktex_internal_bindir}/copystart${miktex_admin_suffix}.exe

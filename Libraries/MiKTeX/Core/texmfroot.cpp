@@ -497,6 +497,10 @@ SessionImpl::SaveRootDirectories ()
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
   StartupConfig startupConfig;
+  startupConfig.config =
+    (IsMiKTeXPortable()
+	? MiKTeXConfiguration::Portable
+	: MiKTeXConfiguration::Regular);
   unsigned n = GetNumberOfTEXMFRoots();
   startupConfig.commonRoots.reserve (n * 30);
   startupConfig.userRoots.reserve (n * 30);

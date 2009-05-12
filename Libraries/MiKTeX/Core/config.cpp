@@ -392,7 +392,7 @@ SessionImpl::WriteStartupConfigFile
       MIKTEX_REGVAL_COMMON_ROOTS,
       startupConfig.commonRoots.c_str(),
       T_("common TEXMF root directories"),
-      false);
+      startupConfig.commonRoots == "");
     if (! startupConfig.commonInstallRoot.Empty())
     {
       pcfg->PutValue ("Paths",
@@ -428,7 +428,7 @@ SessionImpl::WriteStartupConfigFile
       MIKTEX_REGVAL_USER_ROOTS,
       startupConfig.userRoots.c_str(),
       T_("user TEXMF root directories"),
-      false);
+      startupConfig.userRoots == "");
     if (! startupConfig.userInstallRoot.Empty())
     {
       pcfg->PutValue ("Paths",

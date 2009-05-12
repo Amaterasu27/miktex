@@ -3474,6 +3474,9 @@ public:
 
     /// The bin directory.
     BinDirectory,
+
+    /// The internal bin directory
+    InternalBinDirectory,
   };
 };
 

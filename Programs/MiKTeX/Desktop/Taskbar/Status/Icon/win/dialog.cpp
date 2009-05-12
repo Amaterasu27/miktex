@@ -17,6 +17,9 @@ using namespace MiKTeX::Core;
 
 #define SWM_SETTINGS		WM_APP + 3
 #define SWM_UPDATE		WM_APP + 4
+#define SWM_BROWSE_PACKAGES	WM_APP + 5
+#define SWM_PREVIEWER		WM_APP + 6
+#define SWM_COMMAND_PROMPT	WM_APP + 7
 #define SWM_EXIT		WM_APP + 10
 
 static HINSTANCE hInst;
@@ -35,7 +38,7 @@ ShowContextMenu (/*[in]*/ HWND hWnd)
   HMENU hMenu = CreatePopupMenu();
   if (hMenu == 0)
     {
-      return;
+      UNEXPECTED_CONDITION ("ShowContextMenu");
     }
 #if SHOW_DIALOG
   if (IsWindowVisible(hWnd))
@@ -49,6 +52,9 @@ ShowContextMenu (/*[in]*/ HWND hWnd)
 #endif
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_SETTINGS, L"Settings");
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_UPDATE, L"Update");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_BROWSE_PACKAGES, L"Browse Packages");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_PREVIEWER, L"Previewer");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_COMMAND_PROMPT, L"Command Prompt");
   InsertMenuW (hMenu, -1, MF_SEPARATOR, 0, 0);
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_EXIT, L"Exit");
   SetForegroundWindow (hWnd);
@@ -202,6 +208,50 @@ DlgProc (/*[in]*/ HWND		hWnd,
 		  }
 		break;
 	      }
+	    case SWM_BROWSE_PACKAGES:
+	      {
+		PathName exePath;
+		if (pSession->FindFile(MIKTEX_MPM_MFC_EXE, FileType::EXE, exePath))
+		  {
+		    pSession->UnloadFilenameDatabase ();
+		    Process::Start (exePath);
+		  }
+		break;
+	      }
+	    case SWM_PREVIEWER:
+	      {
+		PathName exePath;
+		if (pSession->FindFile(MIKTEX_YAP_EXE, FileType::EXE, exePath))
+		  {
+		    pSession->UnloadFilenameDatabase ();
+		    Process::Start (exePath);
+		  }
+		break;
+	      }
+	    case SWM_COMMAND_PROMPT:
+	      {
+		string oldPath;
+		bool haveOldPath = Utils::GetEnvironmentString("PATH", oldPath);
+		string newPath = pSession->GetSpecialPath(SpecialPath::BinDirectory).Get();
+		if (haveOldPath)
+		{
+		  newPath += ';';
+		  newPath += oldPath;
+		}
+		Utils::SetEnvironmentString ("PATH", newPath.c_str());
+		string cmd;
+		if (! Utils::GetEnvironmentString("COMSPEC", cmd))
+		{
+		  cmd = "cmd.exe";
+		}
+		pSession->UnloadFilenameDatabase ();
+		Process::Start (cmd);
+		if (haveOldPath)
+		{
+		  Utils::SetEnvironmentString ("PATH", oldPath.c_str());
+		}
+		break;
+	      }
 	    case SWM_EXIT:
 	      DestroyWindow (hWnd);
 	      break;
@@ -234,39 +284,26 @@ DlgProc (/*[in]*/ HWND		hWnd,
 
 /* __________________________________________________________________________
 
-   InitInstance
+   GetDllVersion
    __________________________________________________________________________*/
 
 static
 ULONGLONG
-GetDllVersion (/*[in]*/ const wchar_t * lpszDllName)
+GetDllVersion (/*[in]*/ const char * lpszDllName)
 {
   ULONGLONG ullVersion = 0;
-  HINSTANCE hinstDll;
-  hinstDll = LoadLibraryW(lpszDllName);
-  if (hinstDll != 0)
-    {
-      DLLGETVERSIONPROC pDllGetVersion;
-      pDllGetVersion =
-	reinterpret_cast<DLLGETVERSIONPROC>(GetProcAddress(hinstDll,
-							   "DllGetVersion"));
-      if (pDllGetVersion != 0)
-        {
-	  DLLVERSIONINFO dvi;
-	  HRESULT hr;
-	  ZeroMemory (&dvi, sizeof(dvi));
-	  dvi.cbSize = sizeof(dvi);
-	  hr = (*pDllGetVersion)(&dvi);
-	  if(SUCCEEDED(hr))
-	    {
-	      ullVersion = MAKEDLLVERULL(dvi.dwMajorVersion,
-					 dvi.dwMinorVersion,
-					 0,
-					 0);
-	    }
-	}
-      FreeLibrary (hinstDll);
-    }
+  DllProc1<HRESULT, DLLVERSIONINFO*> dllGetVersion (lpszDllName, "DllGetVersion");
+  DLLVERSIONINFO dvi;
+  ZeroMemory (&dvi, sizeof(dvi));
+  dvi.cbSize = sizeof(dvi);
+  HRESULT hr = dllGetVersion(&dvi);
+  if(SUCCEEDED(hr))
+  {
+    ullVersion = MAKEDLLVERULL(dvi.dwMajorVersion,
+      dvi.dwMinorVersion,
+      0,
+      0);
+  }
   return (ullVersion);
 }
 
@@ -275,7 +312,7 @@ GetDllVersion (/*[in]*/ const wchar_t * lpszDllName)
    InitInstance
    __________________________________________________________________________*/
 
-BOOL
+void
 InitInstance (/*[in]*/ HINSTANCE	hInstance,
 	      /*[in]*/ int		nCmdShow)
 {
@@ -291,12 +328,12 @@ InitInstance (/*[in]*/ HINSTANCE	hInstance,
 
   if (hWnd == 0)
     {
-      return (FALSE);
+      UNEXPECTED_CONDITION ("InitInstance");
     }
 
   ZeroMemory (&niData, sizeof(NOTIFYICONDATA));
 
-  ULONGLONG ullVersion = GetDllVersion(L"Shell32.dll");
+  ULONGLONG ullVersion = GetDllVersion("Shell32.dll");
   if(ullVersion >= MAKEDLLVERULL(5, 0, 0, 0))
     {
       niData.cbSize = sizeof(NOTIFYICONDATA);
@@ -337,8 +374,6 @@ InitInstance (/*[in]*/ HINSTANCE	hInstance,
     {
       niData.hIcon = 0;
     }
-
-  return (TRUE);
 }
 
 /* __________________________________________________________________________
@@ -357,10 +392,7 @@ WinMain (/*[in]*/ HINSTANCE	hInstance,
     {
       SessionWrapper pSession (Session::InitInfo("miktex-taskbar-icon"));
 
-      if (! InitInstance(hInstance, nCmdShow))
-	{
-	  return (0);
-	}
+      InitInstance (hInstance, nCmdShow);
       
       HACCEL hAccelTable =
 	LoadAcceleratorsW(hInstance,

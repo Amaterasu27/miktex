@@ -1719,8 +1719,8 @@ RegisterUninstaller ()
     {
       PathName pathCopyStart (theApp.GetInstallRoot(),
 			      (theApp.commonUserSetup
-			       ? MIKTEX_PATH_COPYSTART_ADMIN_EXE
-			       : MIKTEX_PATH_COPYSTART_EXE));
+			       ? MIKTEX_PATH_INTERNAL_COPYSTART_ADMIN_EXE
+			       : MIKTEX_PATH_INTERNAL_COPYSTART_EXE));
       commandLine += Q_(pathCopyStart.Get());
       commandLine += " ";
     }
