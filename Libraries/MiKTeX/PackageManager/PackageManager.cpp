@@ -253,6 +253,7 @@ PackageManagerImpl::LoadVariablePackageTable ()
   bool done = false;
   
   commonVariablePackageTable = Cfg::Create();
+
   PathName pathCommonPackagesIni
     (pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
      MIKTEX_PATH_PACKAGES_INI,
@@ -267,11 +268,11 @@ PackageManagerImpl::LoadVariablePackageTable ()
       commonVariablePackageTable->Read (pathCommonPackagesIni);
       done = true;
     }
+
   commonVariablePackageTable->SetModified (false);
 
   if (! pSession->IsAdminMode())
     {
-      userVariablePackageTable = Cfg::Create();
       PathName pathUserPackagesIni
 	(pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
 	 MIKTEX_PATH_PACKAGES_INI,
@@ -280,14 +281,15 @@ PackageManagerImpl::LoadVariablePackageTable ()
 	      != pathUserPackagesIni.Canonicalize()
 	  && File::Exists(pathUserPackagesIni))
 	{
+	  userVariablePackageTable = Cfg::Create();
 	  trace_mpm->WriteFormattedLine
 	    ("libmpm",
 	     T_("loading user variable package table (%s)"),
 	     Q_(pathUserPackagesIni));
 	  userVariablePackageTable->Read (pathUserPackagesIni);
 	  done = true;
+	  userVariablePackageTable->SetModified (false);
 	}
-      userVariablePackageTable->SetModified (false);
     }
   
   if (! done)
@@ -308,7 +310,8 @@ PackageManagerImpl::LoadVariablePackageTable ()
 void
 PackageManagerImpl::FlushVariablePackageTable ()
 {
-  if (pSession->IsAdminMode()
+  if ((pSession->IsAdminMode()
+       || userVariablePackageTable.Get() == 0)
       && commonVariablePackageTable.Get() != 0
       && commonVariablePackageTable->IsModified())
     {
@@ -352,6 +355,7 @@ PackageManagerImpl::GetTimeInstalled (/*[in]*/ const char * lpszDeploymentName)
   LoadVariablePackageTable ();
   string str;
   if ((! pSession->IsAdminMode()
+       && userVariablePackageTable.Get() != 0
        && userVariablePackageTable->TryGetValue(lpszDeploymentName,
 						"TimeInstalled",
 						str))
@@ -391,6 +395,7 @@ PackageManagerImpl::IsPackageObsolete
   LoadVariablePackageTable ();
   string str;
   if ((! pSession->IsAdminMode()
+       && userVariablePackageTable.Get() != 0
        && userVariablePackageTable->TryGetValue(lpszDeploymentName,
 						"Obsolete",
 						str))
@@ -417,7 +422,8 @@ PackageManagerImpl::DeclarePackageObsolete
    /*[in]*/ bool		obsolete)
 {
   LoadVariablePackageTable ();
-  if (pSession->IsAdminMode())
+  if (pSession->IsAdminMode()
+      || userVariablePackageTable.Get() == 0)
     {
       commonVariablePackageTable->PutValue (lpszDeploymentName,
 					    "Obsolete",
@@ -442,7 +448,8 @@ PackageManagerImpl::SetTimeInstalled
    /*[in]*/ time_t		timeInstalled)
 {
   LoadVariablePackageTable ();
-  if (pSession->IsAdminMode())
+  if (pSession->IsAdminMode()
+      || userVariablePackageTable.Get() == 0)
     {
       commonVariablePackageTable->PutValue (lpszDeploymentName,
 					    "TimeInstalled",
