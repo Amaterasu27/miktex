@@ -3475,8 +3475,14 @@ public:
     /// The bin directory.
     BinDirectory,
 
-    /// The internal bin directory
+    /// The internal bin directory.
     InternalBinDirectory,
+
+    /// The portable root directory.
+    PortableRoot,
+
+    /// The portable mount directory.
+    PortableMount,
   };
 };
 

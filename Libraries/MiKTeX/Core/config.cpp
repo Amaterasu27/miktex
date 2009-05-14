@@ -228,6 +228,48 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
 
 /* _________________________________________________________________________
 
+   Absolutize
+   _________________________________________________________________________ */
+
+void
+Absolutize (/*[in,out]*/ string &     paths,
+	    /*[in]*/ const PathName & relativeFrom)
+{
+#if MIKTEX_WINDOWS
+  string result;
+  for (CSVList path (paths.c_str(), PATH_DELIMITER);
+       path.GetCurrent() != 0;
+       ++ path)
+  {
+    if (! result.empty())
+    {
+      result += PATH_DELIMITER;
+    }
+    if (Utils::IsAbsolutePath(path.GetCurrent()))
+    {
+      result += path.GetCurrent();
+    }
+    else
+    {
+      MIKTEX_ASSERT (Utils::IsAbsolutePath(relativeFrom.Get()));
+      PathName absPath (relativeFrom);
+      absPath += path.GetCurrent();
+      PathName absPath2;
+      MIKTEX_ASSERT (absPath2.GetCapacity() >= MAX_PATH);
+      if (! PathCanonicalizeA(absPath2.GetBuffer(), absPath.Get()))
+      {
+	absPath2 = absPath;
+      }
+      result += absPath2.Get();
+    }
+  }
+  paths = result;
+#else
+  UNIMPLEMENTED ("Absolutize");
+#endif
+}
+/* _________________________________________________________________________
+
    SessionImpl::ReadStartupConfigFile
 
    Read the contents of the startup config file.
@@ -278,30 +320,38 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common,
 	str.c_str());
     }
   }
+
+  PathName relativeFrom (path);
+  relativeFrom.RemoveFileSpec ();
+  
   if (common)
   {      
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_COMMON_ROOTS,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.commonRoots = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_COMMON_INSTALL,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.commonInstallRoot = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_COMMON_DATA,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.commonDataRoot = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_COMMON_CONFIG,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.commonConfigRoot = str;
     }
   }
@@ -311,30 +361,74 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common,
       MIKTEX_REGVAL_USER_ROOTS,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.userRoots = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_USER_INSTALL,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.userInstallRoot = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_USER_DATA,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.userDataRoot = str;
     }
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_USER_CONFIG,
       str))
     {
+      Absolutize (str, relativeFrom);
       ret.userConfigRoot = str;
     }
   }      
   pcfg.Release ();
 
   return (ret);
+}
+
+/* _________________________________________________________________________
+
+   Relativize
+   _________________________________________________________________________ */
+
+void
+Relativize (/*[in,out]*/ string &     paths,
+	    /*[in]*/ const PathName & relativeFrom)
+{
+#if MIKTEX_WINDOWS
+  string result;
+  for (CSVList path (paths.c_str(), PATH_DELIMITER);
+       path.GetCurrent() != 0;
+       ++ path)
+  {
+    if (! result.empty())
+    {
+      result += PATH_DELIMITER;
+    }
+    PathName relPath;
+    MIKTEX_ASSERT (relPath.GetCapacity() >= MAX_PATH);
+    if (PathRelativePathToA(relPath.GetBuffer(),
+			    relativeFrom.Get(),
+			    FILE_ATTRIBUTE_DIRECTORY,
+			    path.GetCurrent(),
+			    FILE_ATTRIBUTE_DIRECTORY))
+    {
+      result += relPath.Get();
+    }
+    else
+    {
+      result += path.GetCurrent();
+    }
+  }
+  paths = result;
+#else
+  UNIMPLEMENTED ("Relativize");
+#endif
 }
 
 /* _________________________________________________________________________
@@ -381,41 +475,77 @@ SessionImpl::WriteStartupConfigFile
 
   SmartPointer<Cfg> pcfg (Cfg::Create());
 
+  bool showAllValues = false;
+  bool relativize = false;
+  PathName relativeFrom;
+
   if (startupConfig.config == MiKTeXConfiguration::Portable)
   {
     pcfg->PutValue("Auto", "Config", "Portable");
+    relativize = (userStartupConfigFile == commonStartupConfigFile);
+    if (relativize)
+    {
+      relativeFrom = commonStartupConfigFile;
+      relativeFrom.RemoveFileSpec ();
+    }
   }
 
   if (common || commonStartupConfigFile == userStartupConfigFile)
   {
-    pcfg->PutValue ("Paths",
-      MIKTEX_REGVAL_COMMON_ROOTS,
-      startupConfig.commonRoots.c_str(),
-      T_("common TEXMF root directories"),
-      startupConfig.commonRoots == "");
-    if (! startupConfig.commonInstallRoot.Empty())
+    if (startupConfig.commonRoots != "" || showAllValues)
     {
+      string val = startupConfig.commonRoots;
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
+      pcfg->PutValue ("Paths",
+	MIKTEX_REGVAL_COMMON_ROOTS,
+	val.c_str(),
+	T_("common TEXMF root directories"),
+	startupConfig.commonRoots == "");
+    }
+    if (! startupConfig.commonInstallRoot.Empty()
+	&& (startupConfig.commonInstallRoot != defaultConfig.commonInstallRoot || showAllValues))
+    {
+      string val = startupConfig.commonInstallRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_COMMON_INSTALL,
-	startupConfig.commonInstallRoot.Get(),
+	val.c_str(),
 	T_("common install root"),
 	(startupConfig.commonInstallRoot
 	== defaultConfig.commonInstallRoot));
     }
-    if (! startupConfig.commonDataRoot.Empty())
+    if (! startupConfig.commonDataRoot.Empty()
+        && (startupConfig.commonDataRoot != defaultConfig.commonDataRoot || showAllValues))
     {
+      string val = startupConfig.commonDataRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_COMMON_DATA,
-	startupConfig.commonDataRoot.Get(),
+	val.c_str(),
 	T_("common data root"),
 	(startupConfig.commonDataRoot
 	== defaultConfig.commonDataRoot));
     }
-    if (! startupConfig.commonConfigRoot.Empty())
+    if (! startupConfig.commonConfigRoot.Empty()
+        && (startupConfig.commonConfigRoot != defaultConfig.commonConfigRoot || showAllValues))
     {
+      string val = startupConfig.commonConfigRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_COMMON_CONFIG,
-	startupConfig.commonConfigRoot.Get(),
+	val.c_str(),
 	T_("common config root"),
 	(startupConfig.commonConfigRoot
 	== defaultConfig.commonConfigRoot));
@@ -424,34 +554,60 @@ SessionImpl::WriteStartupConfigFile
   
   if (! common || commonStartupConfigFile == userStartupConfigFile)
   {
-    pcfg->PutValue ("Paths",
-      MIKTEX_REGVAL_USER_ROOTS,
-      startupConfig.userRoots.c_str(),
-      T_("user TEXMF root directories"),
-      startupConfig.userRoots == "");
-    if (! startupConfig.userInstallRoot.Empty())
+    if (startupConfig.userRoots != "" || showAllValues)
     {
+      string val = startupConfig.userRoots;
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
+      pcfg->PutValue ("Paths",
+	MIKTEX_REGVAL_USER_ROOTS,
+	val.c_str(),
+	T_("user TEXMF root directories"),
+	startupConfig.userRoots == "");
+    }
+    if (! startupConfig.userInstallRoot.Empty()
+        && (startupConfig.userInstallRoot != defaultConfig.userInstallRoot || showAllValues))
+    {
+      string val = startupConfig.userInstallRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_USER_INSTALL,
-	startupConfig.userInstallRoot.Get(),
+	val.c_str(),
 	T_("user install root"),
 	(startupConfig.userInstallRoot
 	== defaultConfig.userInstallRoot));
     }
-    if (! startupConfig.userDataRoot.Empty())
+    if (! startupConfig.userDataRoot.Empty()
+        && (startupConfig.userDataRoot != defaultConfig.userDataRoot || showAllValues))
     {
+      string val = startupConfig.userDataRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_USER_DATA,
-	startupConfig.userDataRoot.Get(),
+	val.c_str(),
 	T_("user data root"),
 	(startupConfig.userDataRoot
 	== defaultConfig.userDataRoot));
     }
-    if (! startupConfig.userConfigRoot.Empty())
+    if (! startupConfig.userConfigRoot.Empty()
+        && (startupConfig.userConfigRoot != defaultConfig.userConfigRoot || showAllValues))
     {
+      string val = startupConfig.userConfigRoot.Get();
+      if (relativize)
+      {
+	Relativize (val, relativeFrom);
+      };
       pcfg->PutValue ("Paths",
 	MIKTEX_REGVAL_USER_CONFIG,
-	startupConfig.userConfigRoot.Get(),
+	val.c_str(),
 	T_("user config root"),
 	(startupConfig.userConfigRoot
 	== defaultConfig.userConfigRoot));

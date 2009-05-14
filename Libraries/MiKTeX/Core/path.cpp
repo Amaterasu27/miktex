@@ -869,6 +869,29 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
     case SpecialPath::ConfigRoot:
       path = GetRootDirectory(GetConfigRoot());
       break;
+    case SpecialPath::PortableRoot:
+      if (! IsMiKTeXPortable())
+      {
+	INVALID_ARGUMENT ("SessionImpl::GetSpecialPath", 0);
+      }
+      path = GetRootDirectory(GetInstallRoot());
+      break;
+    case SpecialPath::PortableMount:
+      if (! IsMiKTeXPortable())
+      {
+	INVALID_ARGUMENT ("SessionImpl::GetSpecialPath", 0);
+      }
+#if MIKTEX_WINDOWS
+      if (! GetVolumePathNameA(GetRootDirectory(GetInstallRoot()).Get(),
+	path.GetBuffer(),
+	path.GetCapacity()))
+      {
+	FATAL_WINDOWS_ERROR ("GetVolumePathNameA", GetRootDirectory(GetInstallRoot()).Get());
+      }
+#else
+      INVALID_ARGUMENT ("SessionImpl::GetSpecialPath");
+#endif
+      break;
     default:
       UNEXPECTED_CONDITION ("SessionImpl::GetSpecialPath");
       break;
