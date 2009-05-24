@@ -20,6 +20,7 @@ texmf/miktex/bin/${ovp2ovf_dll_name}.dll
 texmf/miktex/bin/mkocp.exe
 texmf/miktex/bin/odvicopy.exe
 texmf/miktex/bin/ofm2opl.exe
+texmf/miktex/bin/omega.exe
 texmf/miktex/bin/opl2ofm.exe
 texmf/miktex/bin/otp2ocp.exe
 texmf/miktex/bin/outocp.exe
