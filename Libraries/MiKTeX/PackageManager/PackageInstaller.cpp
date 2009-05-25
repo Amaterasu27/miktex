@@ -2877,8 +2877,9 @@ PackageInstallerImpl::UpdateDb ()
       tpmparser.Parse (newPackageDefinitionFile);
 
       PackageInfo currentPackageInfo;
-      if (pManager->TryGetPackageInfo(szDeploymentName, currentPackageInfo)
-	&& tpmparser.GetPackageInfo().digest == currentPackageInfo.digest)
+      if (! IsPureContainer(szDeploymentName)
+	  && pManager->TryGetPackageInfo(szDeploymentName, currentPackageInfo)
+	  && tpmparser.GetPackageInfo().digest == currentPackageInfo.digest)
       {
 	// nothing new
 	continue;
