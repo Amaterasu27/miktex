@@ -33,7 +33,11 @@ $Id$
 /* WEB2C macros and prototypes */
 #  if !defined(MPCOERCE)
 #    define EXTERN extern
+#    if defined(MIKTEX) && defined(MIKTEX_TRAPMP)
+#      include "trapmpd.h"
+#    else
 #    include "mpd.h"
+#    endif
 #  endif
 
 /* pdftexlib macros */

@@ -30,7 +30,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mf.defaults.h
   COMMAND ${cfg_exe} --print-classes ${mf_defaults} > mf.defaults.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${mf_defaults}
+  DEPENDS ${cfg_exe} ${mf_defaults}
   VERBATIM
 )
 
@@ -58,6 +58,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-trap.ch
   DEPENDS
+    ${tie_exe}
 	${CMAKE_CURRENT_SOURCE_DIR}/mf.web
 	${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-trap.ch
@@ -65,13 +66,14 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp
-  COMMAND $(CMAKE_COMMAND) -E
+  COMMAND ${CMAKE_COMMAND} -E
 	copy ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
 	     ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
 )
 
 set(${trapmf_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/mf.defaults.h
   ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp
   screen.h
 )
@@ -114,6 +116,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/mf-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${mf_web_file}
   VERBATIM
 )
@@ -130,6 +133,8 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
+    ${webn_exe}
 	${mf_web_file}
 	${mf_change_file}
   VERBATIM

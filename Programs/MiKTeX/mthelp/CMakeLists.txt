@@ -42,6 +42,9 @@ add_custom_command(
   COMMAND ${bintoc_exe} templateHtml
 	< ${CMAKE_CURRENT_SOURCE_DIR}/template.html
 	> ${CMAKE_CURRENT_BINARY_DIR}/template.html.h
+  DEPENDS
+    ${bintoc_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/template.html
   VERBATIM
 )
 

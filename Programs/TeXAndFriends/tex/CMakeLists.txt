@@ -42,6 +42,7 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/tex.web
 	${tex_changefiles}
   DEPENDS
+    ${tie_exe}
 	${CMAKE_CURRENT_SOURCE_DIR}/tex.web
 	${tex_changefiles}
   VERBATIM
@@ -65,6 +66,7 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/tex.web
 	${tex_changefiles}
   DEPENDS
+    ${tie_exe}
 	${CMAKE_CURRENT_SOURCE_DIR}/tex.web
 	${tex_changefiles}
   VERBATIM
@@ -119,6 +121,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/tex-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${tex_web_file}
   VERBATIM
 )
@@ -135,6 +138,8 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
+    ${webn_exe}
 	${tex_web_file}
 	${tex_change_file}
   VERBATIM

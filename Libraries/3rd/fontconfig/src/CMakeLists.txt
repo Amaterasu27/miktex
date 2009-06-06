@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,6 +29,9 @@ add_definitions(
 
 set(${fontconfig_dll_name}_sources
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-case/fccase.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-glyphname/fcglyphname.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-lang/fclang.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
@@ -65,6 +68,9 @@ set(${fontconfig_dll_name}_sources
 
 set_source_files_properties(
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-case/fccase.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-glyphname/fcglyphname.h
+  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-lang/fclang.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcalias.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
   ${CMAKE_CURRENT_BINARY_DIR}/fcftalias.h
@@ -97,6 +103,13 @@ target_link_libraries(${fontconfig_dll_name}
   ${expat_dll_name}
   ${freetype2_dll_name}
   ${unxemu_dll_name}
+)
+
+add_dependencies(${fontconfig_dll_name}
+	fcarch_h
+	fccase_h
+	fcglyphname_h
+	fclang_h
 )
 
 add_custom_command(

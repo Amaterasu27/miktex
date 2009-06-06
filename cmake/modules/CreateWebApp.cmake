@@ -136,6 +136,13 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   )
 
   set_source_files_properties(
+    ${${_short_name_l}_header_file}
+    PROPERTIES
+      GENERATED TRUE
+      HEADER_FILE_ONLY TRUE
+  )
+
+  set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.cc
     ${${_short_name_l}_header_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}main.cpp
@@ -180,26 +187,31 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 		> tmp
     COMMAND ${CMAKE_COMMAND} -E copy tmp ${${_short_name_l}_header_file}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
+    DEPENDS
+	${c4p_exe}
+    	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
     VERBATIM
   )
 
-  add_custom_command(
-    OUTPUT
+  if(NOT ${_short_name_l} STREQUAL "tangle")
+    add_custom_command(
+      OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
 	${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
-    COMMAND
+      COMMAND
 	${tangle_exe}
 		${TANGLE_FLAGS}
 		${${_short_name_l}_web_file}
 		${${_short_name_l}_change_file}
 		${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.p
 		${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
-    DEPENDS
+      DEPENDS
+	${tangle_exe}
 	${${_short_name_l}_web_file}
 	${${_short_name_l}_change_file}
-    VERBATIM
-  )
+      VERBATIM
+    )
+  endif(NOT ${_short_name_l} STREQUAL "tangle")
 
   if(NATIVE_WINDOWS)
     if(EXISTS ${_short_name_l}.rc)

@@ -29,7 +29,7 @@ include_directories(BEFORE
 
 add_custom_command(
   OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+	${CMAKE_CURRENT_BINARY_DIR}/.tangle_bootstrap
   COMMAND
 	${CMAKE_COMMAND} -E copy_if_different
 		${CMAKE_CURRENT_SOURCE_DIR}/inittangle.p
@@ -39,7 +39,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/inittangle.pool
 		${CMAKE_CURRENT_BINARY_DIR}/tangle.pool
   COMMAND
-	${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+	${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/.tangle_bootstrap
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
@@ -49,9 +49,9 @@ add_custom_command(
 )
 
 add_custom_target(
-  bootstrap
+  tangle_bootstrap
   ALL
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.bootstrap
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.tangle_bootstrap
 )
 
 if(BUILDING_MIKTEX)
@@ -63,9 +63,7 @@ else(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(LINK_EVERYTHING_STATICALLY)
-  add_dependencies(${tangle_lib_name} bootstrap)
-  add_dependencies(${weave_lib_name} ${miktex_prefix}tangle)
+  add_dependencies(${tangle_lib_name} tangle_bootstrap)
 else(LINK_EVERYTHING_STATICALLY)
-  add_dependencies(${tangle_dll_name} bootstrap)
-  add_dependencies(${weave_dll_name} ${miktex_prefix}tangle)
+  add_dependencies(${tangle_dll_name} tangle_bootstrap)
 endif(LINK_EVERYTHING_STATICALLY)

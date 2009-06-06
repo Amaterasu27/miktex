@@ -90,6 +90,7 @@ add_custom_command(
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mfapp.defaults
 	> mfapp.defaults.h
   DEPENDS
+  	${cfg_exe}
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mfapp.defaults
   MAIN_DEPENDENCY
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mfapp.defaults
@@ -106,6 +107,7 @@ add_custom_command(
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texapp.defaults
 	> texapp.defaults.h
   DEPENDS
+  	${cfg_exe}
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texapp.defaults
   MAIN_DEPENDENCY
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texapp.defaults
@@ -122,6 +124,7 @@ add_custom_command(
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults
 	> texmfapp.defaults.h
   DEPENDS
+  	${cfg_exe}
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults
   MAIN_DEPENDENCY
 	${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults

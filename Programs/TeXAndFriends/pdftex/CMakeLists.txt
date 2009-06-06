@@ -178,6 +178,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/pdftex-miktex.ch
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
 	${pdftex_web_file}
 	${etex_miktex_pre_ch}
 	${miktex_tex_change_files}
@@ -197,6 +198,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${inipool_exe}
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex.pool
 )
 
@@ -385,6 +387,8 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
+    ${webn_exe}
 	${pdftex_web_file}
 	${etex_miktex_pre_ch}
 	${miktex_tex_change_files}

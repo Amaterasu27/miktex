@@ -35,6 +35,7 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   MAIN_DEPENDENCY tie.w
   DEPENDS
+    ${ctangle_exe} 
 	${CMAKE_CURRENT_SOURCE_DIR}/tie.w
 	${CMAKE_CURRENT_SOURCE_DIR}/tie-miktex.ch
   VERBATIM

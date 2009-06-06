@@ -500,10 +500,6 @@ if(NATIVE_WINDOWS)
   #add_definitions(
   #  -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1
   #)
-  set(CMAKE_RC_FLAGS
-    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Graphics")
-  set(CMAKE_RC_FLAGS
-    "${CMAKE_RC_FLAGS} -I${CMAKE_SOURCE_DIR}/Resources/Videos")
 else(NATIVE_WINDOWS)
   add_definitions(-DMIKTEX_UNIX)
 endif(NATIVE_WINDOWS)
@@ -619,6 +615,11 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
     ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
   )
 endif(BUILDING_MIKTEX AND MFC_FOUND)
+
+include_directories(
+  ${CMAKE_SOURCE_DIR}/Resources/Graphics
+  ${CMAKE_SOURCE_DIR}/Resources/Videos
+)
 
 ###############################################################################
 ## add global link direcories

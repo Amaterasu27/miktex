@@ -96,6 +96,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/dvitomp-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${CMAKE_CURRENT_SOURCE_DIR}/dvitomp.web
   VERBATIM
 )

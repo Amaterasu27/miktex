@@ -32,6 +32,7 @@
 
 #if defined(_MSC_VER) && defined(__cplusplus)
 
+#undef _SECURE_SCL_THROWS
 #define _SECURE_SCL_THROWS 1
 
 namespace MiKTeX {

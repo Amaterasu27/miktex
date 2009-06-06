@@ -36,7 +36,7 @@ endif(NATIVE_WINDOWS)
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sjisconv.c
   COMMAND ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/sjisconv.w
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sjisconv.w
+  DEPENDS ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/sjisconv.w
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   VERBATIM
 )

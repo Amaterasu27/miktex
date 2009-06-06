@@ -57,7 +57,10 @@ add_custom_command(
 	${tex98_web}
 	${omfiles}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${tex98_web} ${omfiles}
+  DEPENDS
+    ${tie_exe}
+    ${tex98_web}
+    ${omfiles}
   VERBATIM
 )
 
@@ -68,6 +71,7 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/omega.web
 	${miktex_changefiles}
   DEPENDS
+    ${tie_exe}
 	${CMAKE_CURRENT_BINARY_DIR}/omega.web
 	${miktex_changefiles}
   VERBATIM
@@ -115,6 +119,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/omega-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${omega_web_file}
   VERBATIM
 )

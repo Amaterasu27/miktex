@@ -37,7 +37,7 @@ foreach(t cef5conv cefconv cefsconv)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${t}.c
     COMMAND ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${t}.w
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${t}.w
+    DEPENDS ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${t}.w
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
   )

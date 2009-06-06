@@ -48,6 +48,7 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/hbf2gf.w
 	${CMAKE_CURRENT_SOURCE_DIR}/hbf2gf-miktex.ch
   DEPENDS
+    ${ctangle_exe} 
 	${CMAKE_CURRENT_SOURCE_DIR}/hbf2gf.w
 	${CMAKE_CURRENT_SOURCE_DIR}/hbf2gf-miktex.ch
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

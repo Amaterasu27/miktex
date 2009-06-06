@@ -42,7 +42,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
   COMMAND ${cfg_exe} --print-classes ${mpost_defaults} > mpost.defaults.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${mpst_defaults}
+  DEPENDS ${cfg_exe} ${mpost_defaults}
   VERBATIM
 )
 
@@ -113,6 +113,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex-trap.ch
   DEPENDS
+    ${tie_exe}
 	${trapmp_web_file}
 	${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/mp-miktex-trap.ch
@@ -132,6 +133,8 @@ set(${trapmp_dll_name}_sources
 )
 
 create_web_app(MetaPost trapmp trapmp ${memdir})
+
+set_target_properties(${trapmp_dll_name} PROPERTIES COMPILE_FLAGS "-DMIKTEX_TRAPMP")
 
 target_link_libraries(${trapmp_dll_name}
   ${kpsemu_dll_name}
@@ -167,6 +170,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/mp-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${mp_web_file}
   VERBATIM
 )
@@ -183,6 +187,7 @@ add_custom_command(
 	> ${CMAKE_CURRENT_BINARY_DIR}/mp-miktex-n.web
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
 	${mp_web_file}
 	${mp_change_file}
   VERBATIM

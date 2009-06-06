@@ -103,6 +103,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
 	${tex_web}
 	${pre_xetex_change_files}
 )
@@ -119,6 +120,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
 	${pre_xetex1_web_file}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
 )
@@ -143,6 +145,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
 	${pre_xetex2_web_file}
 	${xetex_change_files}
 )
@@ -292,6 +295,8 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${tie_exe}
+    ${webn_exe}
 	${tex_web}
 	${etex_ch}
 	${etex_miktex_pre_ch}
@@ -309,6 +314,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${pre_xetex1_web_file}
   VERBATIM
 )
@@ -322,6 +328,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${pre_xetex2_web_file}
   VERBATIM
 )
@@ -335,6 +342,7 @@ add_custom_command(
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+    ${webn_exe}
 	${xetex_web_file}
   VERBATIM
 )

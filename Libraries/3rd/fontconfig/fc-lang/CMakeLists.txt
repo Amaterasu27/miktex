@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -231,6 +231,8 @@ set_source_files_properties(
 )
 
 add_executable(fc-lang ${fc-lang_sources})
+
+add_dependencies(fc-lang fccase_h)
 
 merge_trustinfo_manifest(fc-lang asInvoker)
 
