@@ -50,7 +50,7 @@ public:
 
 public:
   void
-  SendReceive ();
+  Connect ();
 
 public:
   void

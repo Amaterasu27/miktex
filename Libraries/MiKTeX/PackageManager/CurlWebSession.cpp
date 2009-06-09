@@ -195,6 +195,7 @@ CurlWebSession::~CurlWebSession ()
 WebFile *
 CurlWebSession::OpenUrl (/*[in]*/ const char * lpszUrl)
 {
+  runningHandles = -1;
   if (pCurl == 0)
     {
       Initialize ();
@@ -232,38 +233,33 @@ CurlWebSession::Dispose ()
 	0);
     }
   }
+  runningHandles = -1;
 }
 
 /* _________________________________________________________________________
 
-   CurlWebSession::SendReceive
+   CurlWebSession::Connect
    _________________________________________________________________________ */
 
 void
-CurlWebSession::SendReceive ()
+CurlWebSession::Connect ()
 {
   CURLMcode code;
   do
   {
-    int oldRunningHandles = runningHandles;
     code = curl_multi_perform(pCurlm, &runningHandles);
     if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
     {
-      FATAL_MPM_ERROR ("CurlWebSession::SendReceive",
+      FATAL_MPM_ERROR ("CurlWebSession::Connect",
 	GetCurlErrorString(code).c_str(),
 	0);
     }
-    if ((oldRunningHandles < 0 && runningHandles == 0)
-      || (oldRunningHandles > 0 && runningHandles < oldRunningHandles))
-    {
-      ReadInformationals ();
-    }
-    if (pIProgressNotify != 0)
-    {
-      pIProgressNotify->OnProgress ();
-    }
   }
   while (code == CURLM_CALL_MULTI_PERFORM);
+  if (runningHandles == 0)
+  {
+    ReadInformationals ();
+  }
 }
 
 /* _________________________________________________________________________
@@ -274,76 +270,96 @@ CurlWebSession::SendReceive ()
 void
 CurlWebSession::Perform ()
 {
-  SendReceive ();
+  Connect ();
 
   if (runningHandles == 0)
   {
     return;
   }
 
-  fd_set fdread;
-  fd_set fdwrite;
-  fd_set fdexcep;
+  int oldRunningHandles = runningHandles;
 
-  FD_ZERO (&fdread);
-  FD_ZERO (&fdwrite);
-  FD_ZERO (&fdexcep);
-
-  int maxfd;
-
-  CURLMcode code
-    = curl_multi_fdset(pCurlm, &fdread, &fdwrite, &fdexcep, &maxfd);
-
-  if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
+  if (runningHandles > 0)
   {
-    FATAL_MPM_ERROR ("CurlWebSession::Perform",
-      GetCurlErrorString(code).c_str(),
-      0);
-  }
+    fd_set fdread;
+    fd_set fdwrite;
+    fd_set fdexcep;
 
-  long timeout;
+    FD_ZERO (&fdread);
+    FD_ZERO (&fdwrite);
+    FD_ZERO (&fdexcep);
 
-#if LIBCURL_VERSION_NUM >= 0x70f04
-  code = curl_multi_timeout(pCurlm, &timeout);
+    int maxfd;
 
-  if (code != CURLM_OK)
-  {
-    FATAL_MPM_ERROR ("CurlWebSession::Perform",
-      GetCurlErrorString(code).c_str(),
-      0);
-  }
-#else
-  timeout = -1;
-#endif
+    CURLMcode code
+      = curl_multi_fdset(pCurlm, &fdread, &fdwrite, &fdexcep, &maxfd);
 
-  if (timeout < 0)
-  {
-    timeout = 100;
-  }
-
-  if (maxfd < 0)
-  {
-    Thread::Sleep (timeout);
-  }
-  else
-  {
-    struct timeval tv;
-    tv.tv_sec = timeout / 1000;
-    tv.tv_usec = (timeout % 1000) * 1000;
-
-    int n = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &tv);
-
-    if (n < 0)
+    if (code != CURLM_OK)
     {
       FATAL_MPM_ERROR ("CurlWebSession::Perform",
-	T_("select() failed for some reason."),
-	NUMTOSTR(n));
+	GetCurlErrorString(code).c_str(),
+	0);
     }
 
-    if (n > 0)
+    long timeout;
+
+#if LIBCURL_VERSION_NUM >= 0x70f04 && 0
+    code = curl_multi_timeout(pCurlm, &timeout);
+
+    if (code != CURLM_OK)
     {
-      SendReceive ();
+      FATAL_MPM_ERROR ("CurlWebSession::Perform",
+	GetCurlErrorString(code).c_str(),
+	0);
     }
+#else
+    timeout = 100;
+#endif
+
+    if (timeout < 0)
+    {
+      timeout = 100;
+    }
+
+    if (maxfd < 0)
+    {
+      Thread::Sleep (timeout);
+    }
+    else
+    {
+      struct timeval tv;
+      tv.tv_sec = timeout / 1000;
+      tv.tv_usec = (timeout % 1000) * 1000;
+
+      int n = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &tv);
+
+      if (n < 0)
+      {
+	FATAL_MPM_ERROR ("CurlWebSession::Perform",
+	  T_("select() failed for some reason."),
+	  NUMTOSTR(n));
+      }
+
+      if (n > 0)
+      {
+	do
+	{
+	  code = curl_multi_perform(pCurlm, &runningHandles);
+	  if (code != CURLM_OK && code != CURLM_CALL_MULTI_PERFORM)
+	  {
+	    FATAL_MPM_ERROR ("CurlWebSession::Perform",
+	      GetCurlErrorString(code).c_str(),
+	      0);
+	  }
+	}
+	while (code == CURLM_CALL_MULTI_PERFORM);
+      }
+    }
+  }
+
+  if (oldRunningHandles >= 0 && runningHandles != oldRunningHandles)
+  {
+    ReadInformationals ();
   }
 }
 

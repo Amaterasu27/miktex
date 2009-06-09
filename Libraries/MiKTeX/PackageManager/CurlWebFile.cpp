@@ -48,8 +48,7 @@ CurlWebFile::CurlWebFile (/*[in]*/ CurlWebSession *	pSession,
   try
   {
     Initialize ();
-    // connect to the server
-    pSession->SendReceive ();
+    pSession->Connect ();
   }
   catch (const exception &)
   {
@@ -148,7 +147,6 @@ size_t
 CurlWebFile::Read (/*[out]*/ void *	pBuffer,
 		   /*[in]*/ size_t	n)
 {
-  size_t oldBufferSize = buffer.size();
   clock_t now = clock();
   clock_t due = now + READ_TIMEOUT_SECONDS * CLOCKS_PER_SEC;
   do
@@ -156,7 +154,7 @@ CurlWebFile::Read (/*[out]*/ void *	pBuffer,
     pSession->Perform ();
   }
   while (buffer.size() < n && ! pSession->IsReady() && clock() < due);
-  if (buffer.size() == oldBufferSize && ! pSession->IsReady())
+  if (buffer.size() == 0 && ! pSession->IsReady())
   {
     FATAL_MPM_ERROR (
       "CurlWebFile::Read",
