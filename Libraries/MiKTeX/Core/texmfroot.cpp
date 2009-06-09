@@ -175,10 +175,28 @@ SessionImpl::DoStartupConfig ()
   bool haveCommonStartupConfigFile =
     FindStartupConfigFile(true, commonStartupConfigFile);
 
+  PathName commonPrefix;
+
+  if (haveCommonStartupConfigFile)
+  {
+    PathName dir (commonStartupConfigFile);
+    dir.RemoveFileSpec ();
+    Utils::GetPathNamePrefix (dir, MIKTEX_PATH_MIKTEX_CONFIG_DIR, commonPrefix);
+  }
+
   PathName userStartupConfigFile;
 
   bool haveUserStartupConfigFile =
     FindStartupConfigFile(false, userStartupConfigFile);
+
+  PathName userPrefix;
+
+  if (haveUserStartupConfigFile)
+  {
+    PathName dir (userStartupConfigFile);
+    dir.RemoveFileSpec ();
+    Utils::GetPathNamePrefix (dir, MIKTEX_PATH_MIKTEX_CONFIG_DIR, userPrefix);
+  }
 
   // read common startup config file
   if (haveCommonStartupConfigFile)
@@ -210,7 +228,8 @@ SessionImpl::DoStartupConfig ()
 #endif
 
   // merge in the default settings
-  MergeStartupConfig (startupConfig, DefaultConfig(startupConfig.config));
+  MergeStartupConfig (startupConfig,
+    DefaultConfig(startupConfig.config, commonPrefix, userPrefix));
 }
 
 /* _________________________________________________________________________

@@ -445,7 +445,7 @@ SessionImpl::WriteStartupConfigFile
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
-  StartupConfig defaultConfig = DefaultConfig(startupConfig.config);
+  StartupConfig defaultConfig = DefaultConfig(startupConfig.config, "", "");
 
   PathName userStartupConfigFile;
 

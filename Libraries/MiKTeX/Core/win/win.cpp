@@ -147,7 +147,9 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
    _________________________________________________________________________ */
 
 StartupConfig
-SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
+SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config,
+			    /*[in]*/ const PathName &    commonPrefixArg,
+			    /*[in]*/ const PathName &    userPrefixArg)
 {
   StartupConfig ret;
   if (config == MiKTeXConfiguration::None)
@@ -157,20 +159,50 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config)
   ret.config = config;
   if (config == MiKTeXConfiguration::Portable)
   {
-    PathName myloc (GetMyLocation(false));
-    PathName prefix;
-    if (! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_INTERNAL_BIN_DIR, prefix)
-      && ! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix)
-      && ! Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_MIKTEX_TEMP_DIR, prefix))
+    PathName commonPrefix (commonPrefixArg);
+    PathName userPrefix (userPrefixArg);
+    if (commonPrefix.Empty() && ! userPrefix.Empty())
     {
-      UNEXPECTED_CONDITION ("SessionImpl::DefaultConfig");
+      commonPrefix = userPrefix;
     }
-    ret.commonConfigRoot = prefix;
-    ret.commonDataRoot = prefix;
-    ret.commonInstallRoot = prefix;
-    ret.userConfigRoot = prefix;
-    ret.userDataRoot = prefix;
-    ret.userInstallRoot = prefix;
+    else if (userPrefix.Empty() && ! commonPrefix.Empty())
+    {
+      userPrefix = commonPrefix;
+    }
+    if (! commonPrefix.Empty())
+    {
+      ret.commonConfigRoot = commonPrefix;
+      ret.commonDataRoot = commonPrefix;
+      ret.commonInstallRoot = commonPrefix;
+    }
+    if (! userPrefix.Empty())
+    {
+      ret.commonConfigRoot = userPrefix;
+      ret.commonDataRoot = userPrefix;
+      ret.commonInstallRoot = userPrefix;
+    }
+    if (userPrefix.Empty() || commonPrefix.Empty())
+    {
+      PathName myloc (GetMyLocation(false));
+      PathName prefix;
+      if (Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_INTERNAL_BIN_DIR, prefix)
+	|| Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_BIN_DIR, prefix)
+	|| Utils::GetPathNamePrefix(myloc, MIKTEX_PATH_MIKTEX_TEMP_DIR, prefix))
+      {
+	if (commonPrefix.Empty())
+	{
+	  ret.commonConfigRoot = prefix;
+	  ret.commonDataRoot = prefix;
+	  ret.commonInstallRoot = prefix;
+	}
+	if (userPrefix.Empty())
+	{
+	  ret.userConfigRoot = prefix;
+	  ret.userDataRoot = prefix;
+	  ret.userInstallRoot = prefix;
+	}
+      }
+    }
   }
   else
   {

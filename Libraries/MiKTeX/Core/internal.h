@@ -1864,13 +1864,15 @@ private:
 
 private:
   StartupConfig
-  DefaultConfig (/*[in]*/ MiKTeXConfiguration config);
+  DefaultConfig (/*[in]*/ MiKTeXConfiguration config,
+		 /*[in]*/ const PathName &    commonPrefix,
+		 /*[in]*/ const PathName &    userPrefix);
 
 private:
   StartupConfig
   DefaultConfig ()
   {
-    return (DefaultConfig(startupConfig.config));
+    return (DefaultConfig(startupConfig.config, "", ""));
   }
 
 private:
