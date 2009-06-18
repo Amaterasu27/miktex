@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -94,6 +94,7 @@ set(rel_padout_dir	"BuildUtilities/padout")
 set(rel_pdftex_dir	"Programs/TeXAndFriends/pdftex")
 set(rel_png_dir		"Libraries/3rd/libpng")
 set(rel_pnmtopng_dir	"Programs/GraphicsUtilities/pnmtopng")
+set(rel_poppler_dir	"Libraries/3rd/poppler")
 set(rel_popt_dir	"Libraries/3rd/libpopt")
 set(rel_programs_etc_dir	"Programs/MiKTeX/etc")
 set(rel_ps2pk_dir	"Programs/FontUtilities/ps2pk")

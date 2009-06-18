@@ -770,6 +770,8 @@ add_subdirectory(${rel_png_dir}-static)
 
 add_subdirectory(${rel_xpdf_dir})
 
+add_subdirectory(${rel_poppler_dir}-static)
+
 add_subdirectory(${rel_c4p_dir})
 
 add_subdirectory(${rel_inipool_dir})

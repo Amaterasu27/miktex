@@ -151,14 +151,18 @@ typedef unsigned int UINT16;
 
 /* INT16 must hold at least the values -32768..32767. */
 
+#if ! defined(MIKTEX)
 #ifndef XMD_H			/* X11/xmd.h correctly defines INT16 */
 typedef short INT16;
+#endif
 #endif
 
 /* INT32 must hold at least signed 32-bit values. */
 
+#if ! defined(MIKTEX)
 #ifndef XMD_H			/* X11/xmd.h correctly defines INT32 */
 typedef long INT32;
+#endif
 #endif
 
 /* Datatype used for image dimensions.  The JPEG standard only supports
@@ -186,16 +190,16 @@ typedef unsigned int JDIMENSION;
 #define LOCAL(type)		static type
 /* a function referenced thru EXTERNs: */
 #if defined(MIKTEX) && defined(_MSC_VER)
-#define GLOBAL(type)		__declspec(dllexport)
+#define GLOBAL(type)		__declspec(dllexport) type
 #else
 #define GLOBAL(type)		type
 #endif
 /* a reference to a GLOBAL function: */
 #if defined(MIKTEX)
 #ifdef IN_JPEG_DLL
-#define EXTERN(type)		__declspec(dllexport)
+#define EXTERN(type)		__declspec(dllexport) type
 #else
-#define EXTERN(type)		__declspec(dllimport)
+#define EXTERN(type)		__declspec(dllimport) type
 #endif
 #else
 #define EXTERN(type)		extern type
