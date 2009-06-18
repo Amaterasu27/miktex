@@ -19,8 +19,8 @@
 
 set(POPPLER_VERSION "0.10.7")
 
-use_static_crt()
-use_static_libraries()
+##use_static_crt()
+##use_static_libraries()
 
 include_directories(BEFORE
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}

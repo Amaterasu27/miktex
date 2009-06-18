@@ -292,6 +292,7 @@ endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
 find_package(MFC)
+set(QT_USE_QTXML TRUE)
 find_package(Qt4)
 if(QT4_FOUND)
   include(${QT_USE_FILE})
@@ -771,6 +772,7 @@ add_subdirectory(${rel_png_dir}-static)
 add_subdirectory(${rel_xpdf_dir})
 
 add_subdirectory(${rel_poppler_dir}-static)
+add_subdirectory(${rel_poppler_dir}/qt4/src)
 
 add_subdirectory(${rel_hunspell_dir})
 
