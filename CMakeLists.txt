@@ -772,7 +772,10 @@ add_subdirectory(${rel_png_dir}-static)
 add_subdirectory(${rel_xpdf_dir})
 
 add_subdirectory(${rel_poppler_dir}-static)
-add_subdirectory(${rel_poppler_dir}/qt4/src)
+
+if(BUILDING_MIKTEX AND QT4_FOUND)
+  add_subdirectory(${rel_poppler_dir}/qt4/src)
+endif(BUILDING_MIKTEX AND QT4_FOUND)
 
 add_subdirectory(${rel_hunspell_dir})
 
@@ -1025,6 +1028,10 @@ endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_taskbar_icon_win_dir})
 endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+
+if(BUILDING_MIKTEX AND QT4_FOUND)
+  add_subdirectory(${rel_texworks_dir})
+endif(BUILDING_MIKTEX AND QT4_FOUND)
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
