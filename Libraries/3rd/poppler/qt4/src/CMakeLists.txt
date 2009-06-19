@@ -19,7 +19,7 @@
 
 add_definitions(-Dpoppler_qt4_EXPORTS)
 
-include_directories(
+include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
@@ -50,6 +50,8 @@ set(${poppler_qt4_dll_name}_sources
   poppler-sound.cc
   poppler-textbox.cc
   poppler-page-transition.cc
+
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ArthurOutputDev.cc
 )
 
 qt4_automoc(${${poppler_qt4_dll_name}_sources})
@@ -63,6 +65,7 @@ set_target_properties(${poppler_qt4_dll_name}
 )
 
 target_link_libraries(${poppler_qt4_dll_name}
+  ${freetype2_dll_name}
   ${poppler_lib_name}
   ${jpeg_dll_name}
   ${QT_LIBRARIES}

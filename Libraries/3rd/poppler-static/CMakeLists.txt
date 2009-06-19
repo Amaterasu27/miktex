@@ -36,9 +36,11 @@ set(OPI_SUPPORT TRUE)
 set(TEXTOUT_WORD_LIST TRUE)
 
 set(ENABLE_LIBJPEG TRUE)
+set(ENABLE_SPLASH TRUE)
 set(ENABLE_ZLIB TRUE)
 
 set(HAVE_LIBZ TRUE)
+set(HAVE_SPLASH TRUE)
 set(HAVE_FREETYPE_H TRUE)
 
 add_definitions(-DHAVE_CONFIG_H=1)
@@ -115,6 +117,27 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Sound.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XpdfPluginAPI.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.cc
+
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashBitmap.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashClip.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFont.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontEngine.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontFile.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFont.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontEngine.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFile.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFileID.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPath.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPattern.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashScreen.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashState.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1Font.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontEngine.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontFile.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPath.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPathScanner.cc
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/DCTStream.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/FlateStream.cc
