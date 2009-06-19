@@ -120,6 +120,18 @@ void TWApp::init()
 		setSettingsFormat(QSettings::IniFormat);
 		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, iniPath.absolutePath());
 	}
+#if defined(MIKTEX)
+	else
+	{
+	  MiKTeX::Core::SessionWrapper pSession (true);
+	  if (pSession->IsMiKTeXPortable())
+	  {
+	    setSettingsFormat (QSettings::IniFormat);
+	    MiKTeX::Core::PathName path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::UserConfigRoot);
+	    QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, path.Get());
+	  }
+	}
+#endif
 	envPath = getenv("TW_LIBPATH");
 	if (envPath != NULL && libPath.cd(QString(envPath))) {
 		portableLibPath = libPath.absolutePath();
@@ -449,6 +461,18 @@ void TWApp::setDefaultPaths()
 			binaryPaths->append(s);
 	if (!defaultBinPaths) {
 #ifdef Q_WS_WIN
+#if defined(MIKTEX)
+	  {
+	    MiKTeX::Core::SessionWrapper pSession (true);
+	    MiKTeX::Core::PathName dir;
+	    dir = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::CommonInstallRoot);
+	    dir += MIKTEX_PATH_BIN_DIR;
+	    if (! binaryPaths->contains(dir.Get()))
+	    {
+	      binaryPaths->prepend(dir.Get());
+	    }
+	  }
+#else
 		*binaryPaths
 			<< "c:/texlive/2009/bin"
 			<< "c:/texlive/2008/bin"
@@ -457,6 +481,7 @@ void TWApp::setDefaultPaths()
 			<< "c:/Program Files/MiKTeX 2.7/miktex/bin"
 			<< "c:/Program Files (x86)/MiKTeX 2.7/miktex/bin"
 		;
+#endif
 #else
 		foreach (const QString& s, QString(DEFAULT_BIN_PATHS).split(PATH_LIST_SEP, QString::SkipEmptyParts))
 			if (!binaryPaths->contains(s))
@@ -507,6 +532,16 @@ void TWApp::setDefaultEngineList()
 		engineList = new QList<Engine>;
 	else
 		engineList->clear();
+#if defined(MIKTEX)
+	*engineList
+		<< Engine("pdfTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "$fullname", true)
+		<< Engine("pdfLaTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "-undump=pdflatex" << "$fullname", true)
+		<< Engine("XeTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "$fullname", true)
+		<< Engine("XeLaTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "-undump=xelatex" << "$fullname", true)
+		<< Engine("BibTeX", MIKTEX_BIBTEX_EXE, QStringList("$basename"), false)
+		<< Engine("MakeIndex", MIKTEX_MAKEINDEX_EXE, QStringList("$basename"), false);
+	defaultEngineIndex = 2;
+#else
 	*engineList
 		<< Engine("pdfTeX", "pdftex" EXE, QStringList("-synctex=1") << "$fullname", true)
 		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("-synctex=1") << "$fullname", true)
@@ -517,6 +552,7 @@ void TWApp::setDefaultEngineList()
 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)
 		<< Engine("MakeIndex", "makeindex" EXE, QStringList("$basename"), false);
 	defaultEngineIndex = 1;
+#endif
 }
 
 const QList<Engine> TWApp::getEngineList()

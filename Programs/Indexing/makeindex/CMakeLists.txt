@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -54,6 +54,19 @@ set(makeindex_sources
 if(NATIVE_WINDOWS)
   set(makeindex_sources ${makeindex_sources} makeindex.rc)
 endif(NATIVE_WINDOWS)
+
+add_executable(${miktex_prefix}makeindex ${makeindex_sources})
+
+merge_trustinfo_manifest(${miktex_prefix}makeindex asInvoker)
+
+target_link_libraries(${miktex_prefix}makeindex
+  ${app_dll_name}
+  ${core_dll_name}
+  ${kpsemu_dll_name}
+  ${texmf_dll_name}
+)
+
+install(TARGETS ${miktex_prefix}makeindex DESTINATION ${bindir})
 
 add_executable(makeindex ${makeindex_sources})
 

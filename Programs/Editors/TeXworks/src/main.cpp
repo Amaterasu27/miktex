@@ -34,6 +34,10 @@ BOOL CALLBACK enumThreadWindowProc(HWND hWnd, LPARAM /*lParam*/)
 }
 #endif
 
+#if defined(MIKTEX)
+#  define main Main
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifdef Q_WS_WIN // single-instance code for Windows
@@ -102,3 +106,30 @@ int main(int argc, char *argv[])
 
 	return rval;
 }
+
+#if defined(MIKTEX)
+#undef main
+int main(int argc, char *argv[])
+{
+  using namespace MiKTeX::Core;
+  using namespace std;
+  int ret;
+  try
+  {
+    Session::InitInfo initInfo;
+    initInfo.SetProgramInvocationName (argv[0]);
+    SessionWrapper pSession;
+    pSession.CreateSession (initInfo);
+    ret = Main(argc, argv);
+  }
+  catch (const MiKTeXException & e)
+  {
+    ret = 1;
+  }
+  catch (const exception & e)
+  {
+    ret = 1;
+  }
+  return (ret);
+}
+#endif

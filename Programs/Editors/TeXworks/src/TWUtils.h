@@ -33,6 +33,11 @@
 
 #include <hunspell.h>
 
+#if defined(MIKTEX)
+#  include <miktex/Core/Core>
+#  include <miktex/Core/Paths>
+#endif
+
 #define TEXWORKS_NAME "TeXworks" /* app name, for use in menus, messages, etc */
 
 class QMainWindow;

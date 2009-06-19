@@ -10,8 +10,9 @@
       This package includes the BibTeX executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/bibtex.exe
 texmf/miktex/bin/${bibtex_dll_name}.dll
+texmf/miktex/bin/${miktex_prefix}bibtex.exe
+texmf/miktex/bin/bibtex.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

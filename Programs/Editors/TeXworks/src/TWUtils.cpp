@@ -86,7 +86,17 @@ const QString TWUtils::getLibraryPath(const QString& subdir)
 			libPath = QDir::homePath() + "/." + TEXWORKS_NAME + "/" + subdir;
 #endif
 #ifdef Q_WS_WIN
+#if defined(MIKTEX)
+		{
+		  MiKTeX::Core::PathName dir;
+		  dir = MiKTeX::Core::SessionWrapper(true)->GetSpecialPath(MiKTeX::Core::SpecialPath::UserDataRoot);
+		  dir += TEXWORKS_NAME;
+		  dir += subdir.toLocal8Bit().constData();
+		  libPath = dir.Get();
+		}
+#else
 		libPath = QDir::homePath() + "/" + TEXWORKS_NAME + "/" + subdir;
+#endif
 #endif
 	}
 	// check if libPath exists
@@ -207,6 +217,26 @@ QStringList* TWUtils::getDictionaryList()
 		if (dicFileInfo.isReadable())
 			*dictionaryList << dicFileInfo.completeBaseName();
 	}
+
+#if defined(MIKTEX)
+	MiKTeX::Core::SessionWrapper pSession (true);
+	for (unsigned r = 0; r < pSession->GetNumberOfTEXMFRoots(); ++ r)
+	{
+	  MiKTeX::Core::PathName dicPath = pSession->GetRootDirectory(r);
+	  dicPath += MIKTEX_PATH_HUNSPELL_DICT_DIR;
+	  QDir dicDir (dicPath.Get());
+	  foreach (QFileInfo affFileInfo, dicDir.entryInfoList(QStringList("*.aff"),
+	    QDir::Files | QDir::Readable, QDir::Name | QDir::IgnoreCase))
+	  {
+	    QFileInfo dicFileInfo (affFileInfo.dir(), affFileInfo.completeBaseName() + ".dic");
+	    QString lang = dicFileInfo.completeBaseName();
+	    if (dicFileInfo.isReadable() && ! dictionaryList->contains(lang))
+	    {
+	      *dictionaryList << lang;
+	    }
+	  }
+	}
+#endif
 	
 	return dictionaryList;
 }
@@ -233,6 +263,26 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 							dicFile.canonicalFilePath().toUtf8().data());
 		(*dictionaries)[language] = h;
 	}
+
+#if defined(MIKTEX)
+	MiKTeX::Core::SessionWrapper pSession (true);
+	for (unsigned r = 0; r < pSession->GetNumberOfTEXMFRoots(); ++ r)
+	{
+	  MiKTeX::Core::PathName dicPath = pSession->GetRootDirectory(r);
+	  dicPath += MIKTEX_PATH_HUNSPELL_DICT_DIR;
+	  const QString dictPath (dicPath.Get());
+	  QFileInfo affFile(dictPath + "/" + language + ".aff");
+	  QFileInfo dicFile(dictPath + "/" + language + ".dic");
+	  if (affFile.isReadable() && dicFile.isReadable())
+	  {
+	    h = Hunspell_create(affFile.canonicalFilePath().toUtf8().data(),
+	      dicFile.canonicalFilePath().toUtf8().data());
+	    (*dictionaries)[language] = h;
+	    break;
+	  }
+	}
+#endif
+
 	return h;
 }
 
