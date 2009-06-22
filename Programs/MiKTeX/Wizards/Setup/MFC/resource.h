@@ -61,6 +61,7 @@
 #define IDD_INSTALLDIR                  152
 #define IDS_MAINTENANCE_ADMIN           152
 #define IDD_ADD_TEXMFROOTS              153
+#define IDS_TEXWORKS                    153
 #define IDD_INFOLIST                    154
 #define IDD_FINISH                      155
 #define IDD_FOLDER                      156

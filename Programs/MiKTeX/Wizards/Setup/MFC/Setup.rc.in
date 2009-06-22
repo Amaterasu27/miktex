@@ -576,6 +576,7 @@ BEGIN
     IDS_SUBHEADER_LICENSE   "MiKTeX is freely redistributable under certain conditions."
     IDS_MAINTENANCE         "Maintenance (current user)"
     IDS_MAINTENANCE_ADMIN   "Maintenance (all users)"
+    IDS_TEXWORKS            "TeXworks"
 END
 
 STRINGTABLE 

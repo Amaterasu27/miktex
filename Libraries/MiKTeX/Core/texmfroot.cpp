@@ -849,8 +849,10 @@ SessionImpl::GetUserConfigRoot ()
 bool
 SessionImpl::IsTeXMFReadOnly (/*[in]*/ unsigned r)
 {
-  return (IsMiKTeXDirect() && r == GetInstallRoot()
-    || rootDirectories[r].IsCommon() && ! IsAdminMode());
+  return (
+    ! IsMiKTeXPortable()
+    && (IsMiKTeXDirect() && r == GetInstallRoot()
+        || rootDirectories[r].IsCommon() && ! IsAdminMode()));
 }
 
 /* _________________________________________________________________________

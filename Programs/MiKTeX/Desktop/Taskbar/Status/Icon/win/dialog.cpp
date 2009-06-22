@@ -20,6 +20,7 @@ using namespace MiKTeX::Core;
 #define SWM_BROWSE_PACKAGES	WM_APP + 5
 #define SWM_PREVIEWER		WM_APP + 6
 #define SWM_COMMAND_PROMPT	WM_APP + 7
+#define SWM_TEXWORKS		WM_APP + 8
 #define SWM_EXIT		WM_APP + 10
 
 static HINSTANCE hInst;
@@ -50,6 +51,7 @@ ShowContextMenu (/*[in]*/ HWND hWnd)
       InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_SHOW, L"Show");
     }
 #endif
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_TEXWORKS, L"TeXworks");
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_SETTINGS, L"Settings");
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_UPDATE, L"Update");
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_BROWSE_PACKAGES, L"Browse Packages");
@@ -186,6 +188,16 @@ DlgProc (/*[in]*/ HWND		hWnd,
 	      ShowWindow (hWnd, SW_HIDE);
 	      break;
 #endif
+	    case SWM_TEXWORKS:
+	      {
+		PathName exePath;
+		if (pSession->FindFile(MIKTEX_TEXWORKS_EXE, FileType::EXE, exePath))
+		  {
+		    pSession->UnloadFilenameDatabase ();
+		    Process::Start (exePath);
+		  }
+		break;
+	      }
 	    case SWM_SETTINGS:
 	      {
 		PathName exePath;

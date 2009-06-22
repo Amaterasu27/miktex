@@ -242,7 +242,11 @@ void TWApp::about()
 	QString aboutText = tr("<p>%1 is a simple environment for editing, typesetting, and previewing TeX documents.</p>").arg(TEXWORKS_NAME);
 	aboutText += "<small>";
 	aboutText += "<p>&#xA9; 2007-2009 Jonathan Kew";
+#if defined(MIKTEX)
+	aboutText += tr("<br>Version %1 (r.%2) (MiKTeX %3)</p>").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(MIKTEX_SERIES_STR);
+#else
 	aboutText += tr("<br>Version %1 (r.%2)").arg(TEXWORKS_VERSION).arg(SVN_REVISION);
+#endif
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2.");
 	aboutText += tr("<p><a href=\"http://trolltech.com/products/\">Qt4</a> application framework by Qt Software, a division of Nokia Corporation.");
 	aboutText += tr("<br><a href=\"http://poppler.freedesktop.org/\">Poppler</a> PDF rendering library by Kristian H&#xF8;gsberg, Albert Astals Cid and others.");
@@ -508,8 +512,16 @@ const QStringList TWApp::getBinaryPaths()
 		QSETTINGS_OBJECT(settings);
 		if (settings.contains("binaryPaths")) {
 			// avoid an empty value becoming a list with an empty element; we want an empty list instead!
+#if defined(MIKTEX)
+		  QStringList stringList = settings.value("binaryPaths").toStringList();
+		  if (! stringList.isEmpty())
+		  {
+		    *binaryPaths = stringList;
+		  }
+#else
 			if (!settings.value("binaryPaths").toString().isEmpty())
 				*binaryPaths = settings.value("binaryPaths").toStringList();
+#endif
 		}
 		else
 			setDefaultPaths();

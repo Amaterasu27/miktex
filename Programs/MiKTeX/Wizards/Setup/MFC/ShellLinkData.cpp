@@ -35,6 +35,22 @@
 
 const ShellLinkData shellLinks[] = {
 
+  // "TeXworks"
+  {
+    false,
+    0,
+    IDS_TEXWORKS,
+    EXEPATH(MIKTEX_TEXWORKS_EXE),
+    LD_USESHOWCMD,
+    0,
+    0,
+    0,
+    0,
+    0,
+    SW_SHOWNORMAL,
+    0,
+  },
+
   // "Previewer"
   {
     false,

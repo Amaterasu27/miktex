@@ -43,11 +43,11 @@ set(texworks_sources
   src/synctex_parser.c
 )
 
-##if(NATIVE_WINDOWS)
-##  set(texworks_sources ${texworks_sources}
-##    ${CMAKE_CURRENT_SOURCE_DIR}/texworks.rc
-##  )
-##endif(NATIVE_WINDOWS)
+if(NATIVE_WINDOWS)
+  set(texworks_sources ${texworks_sources}
+    ${CMAKE_CURRENT_SOURCE_DIR}/texworks.rc
+  )
+endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
   src/CompletingEdit.h

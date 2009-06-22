@@ -977,8 +977,24 @@ bool
 TeXMFApp::IsVirgin () const
 {
   string exeName = Utils::GetExeName();
-  return (Utils::Contains(GetProgramName(), exeName.c_str())
-	  || Utils::Contains(GetVirginProgramName(), exeName.c_str()));
+  if (Utils::Contains(GetProgramName(), exeName.c_str())
+      || Utils::Contains(GetVirginProgramName(), exeName.c_str()))
+  {
+    return (true);
+  }
+#if 1
+  size_t prefixLen = strlen(MIKTEX_PREFIX);
+  if (exeName.compare(0, prefixLen, MIKTEX_PREFIX) == 0)
+  {
+    exeName = exeName.substr(prefixLen);
+    if (Utils::Contains(GetProgramName(), exeName.c_str())
+        || Utils::Contains(GetVirginProgramName(), exeName.c_str()))
+    {
+      return (true);
+    }
+  }
+#endif
+  return (false);
 }
 
 /* _________________________________________________________________________
