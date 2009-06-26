@@ -775,11 +775,6 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
     CreateProgramIcons ();
   }
 
-  if (! theApp.portable)
-  {
-    RegisterMiKTeXFileTypes ();
-  }
-
   // register path
   if (! theApp.portable && theApp.registerPath && ! IsPathRegistered())
     {
@@ -900,11 +895,6 @@ FileCopyPage::DoTheInstallation ()
   if (! theApp.portable)
   {
     CreateProgramIcons ();
-  }
-
-  if (! theApp.portable)
-  {
-    RegisterMiKTeXFileTypes ();
   }
 
   if (pSheet->GetCancelFlag())
@@ -1098,6 +1088,11 @@ FileCopyPage::ConfigureMiKTeX ()
 	  return;
 	}
     }
+
+  if (! theApp.portable)
+  {
+    RunIniTeXMF ("--register-file-types");
+  }
       
   // [8] create report
   RunIniTeXMF ("--report");

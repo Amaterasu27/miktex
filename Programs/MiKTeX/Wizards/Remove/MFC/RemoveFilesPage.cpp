@@ -56,20 +56,6 @@ RemoveFilesPage::RemoveFilesPage ()
     hWorkerThread (0)
 {
   m_psp.dwFlags &= ~ PSP_HASHELP;
-
-  PathName dviViewer;
-  DWORD size = static_cast<DWORD>(dviViewer.GetCapacity());
-
-  yapIsDefaultViewer =
-    (SUCCEEDED(AssocQueryString(0,
-				ASSOCSTR_EXECUTABLE,
-				".dvi",
-				T_("open"),
-				dviViewer.GetBuffer(),
-				&size))
-     && (PathName::Compare(dviViewer.GetFileNameWithoutExtension(),
-			   T_("yap"))
-	 == 0));
 }
 
 /* _________________________________________________________________________
@@ -234,6 +220,19 @@ RemoveFilesPage::WorkerThread (/*[in]*/ void * pParam)
 void
 RemoveFilesPage::RemoveMiKTeX ()
 {
+  try
+    {
+      UnregisterFileTypes ();
+    }
+  catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+    }
+  catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+    }
+
   try
     {
       if (IsWindowsNT())
@@ -585,6 +584,27 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ string &	path)
 
 /* _________________________________________________________________________
 
+   RemoveFilesPage::UnregisterFileTypes
+   _________________________________________________________________________ */
+
+void
+RemoveFilesPage::UnregisterFileTypes ()
+{
+ if (SessionWrapper(true)->RunningAsAdministrator()
+     || SessionWrapper(true)->RunningAsPowerUser())
+ {
+   PathName initexmfExe;
+   if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmfExe))
+   {
+     FATAL_MIKTEX_ERROR ("RemoveFilesPage::UnregisterFileTypes",
+       T_("The IniTeXMF executable could not be found."), 0);
+   }
+   Process::Run (initexmfExe.Get(), "--admin --unregister-filetypes");
+ }
+}
+
+/* _________________________________________________________________________
+
    RemoveFilesPage::UnregisterComponents
    _________________________________________________________________________ */
 
@@ -804,15 +824,6 @@ RemoveFilesPage::RemoveRegistryKeys ()
   if (Exists(HKEY_CURRENT_USER, MIKTEX_GPL_GHOSTSCRIPT))
     {
       RemoveRegistryKey (HKEY_CURRENT_USER, MIKTEX_GPL_GHOSTSCRIPT);
-    }
-
-  if (shared)
-    {
-      if (yapIsDefaultViewer)
-	{
-	  RemoveRegistryKey (HKEY_CLASSES_ROOT, ".dvi");
-	}
-      RemoveRegistryKey (HKEY_CLASSES_ROOT, MIKTEX_DVI_FILE_TYPE_IDENTIFIER);
     }
 }
   

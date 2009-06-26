@@ -1,6 +1,6 @@
 /* winRegistry.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,9 +33,32 @@ class winRegistry
 public:
   static
   bool
-  TryDeleteRegistryValue (/*[in]*/ TriState	shared,
-			  /*[in]*/ const char *	lpszKeyName,
-			  /*[in]*/ const char *	lpszValueName);
+  TryGetRegistryValue (/*[in]*/ HKEY		hkeyParent,
+		       /*[in]*/ const char *	lpszPath,
+		       /*[in]*/ const char *	lpszValueName,
+		       /*[out]*/ string &	value,
+		       /*[in]*/ const char * lpszDefaultValue);
+
+public:
+  static
+  bool
+  TryDeleteRegistryValue (/*[in]*/ HKEY	   hkeyParent,
+			  /*[in]*/ const char * lpszPath,
+			  /*[in]*/ const char * lpszValueName);
+
+public:
+  static
+  bool
+  TryDeleteRegistryKey (/*[in]*/ HKEY	   hkeyParent,
+			/*[in]*/ const char * lpszPath);
+
+public:
+  static
+  void
+  SetRegistryValue (/*[in]*/ HKEY		hkeyParent,
+		    /*[in]*/ const char *	lpszPath,
+		    /*[in]*/ const char *	lpszValueName,
+		    /*[in]*/ const char *	lpszValue);
 
 public:
   static
@@ -54,6 +77,14 @@ public:
 		       /*[in]*/ const char *	lpszValueName,
 		       /*[out]*/ PathName &	path,
 		       /*[in]*/ const char *	lpszDefaultPath);
+
+
+public:
+  static
+  bool
+  TryDeleteRegistryValue (/*[in]*/ TriState	shared,
+			  /*[in]*/ const char *	lpszKeyName,
+			  /*[in]*/ const char *	lpszValueName);
 
 public:
   static

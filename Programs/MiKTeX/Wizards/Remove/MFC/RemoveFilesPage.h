@@ -1,6 +1,6 @@
 /* RemoveFilesPage.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -117,6 +117,10 @@ private:
 
 private:
   void
+  UnregisterFileTypes ();
+
+private:
+  void
   UnregisterComponents ();
 
 private:
@@ -132,9 +136,6 @@ private:
   void
   UnregisterPath95 ();
 #endif
-
-private:
-  bool yapIsDefaultViewer;
 
 private:
   CProgressCtrl	progressControl;

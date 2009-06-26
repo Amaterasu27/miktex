@@ -2005,26 +2005,6 @@ CreateProgramFolder ()
 
 /* _________________________________________________________________________
 
-   RegisterMiKTeXFileTypes
-   _________________________________________________________________________ */
-
-void
-RegisterMiKTeXFileTypes ()
-{
-  if (! theApp.dryRun
-      && (! IsWindowsNT()
-	  || SessionWrapper(true)->RunningAsAdministrator()
-	  || SessionWrapper(true)->RunningAsPowerUser()))
-    {
-      PathName yap (theApp.GetInstallRoot());
-      yap += MIKTEX_PATH_BIN_DIR;
-      yap += MIKTEX_YAP_EXE;
-      Process::Run (yap.Get(), "--register");
-    }
-}
-
-/* _________________________________________________________________________
-
    Expand
    _________________________________________________________________________ */
 

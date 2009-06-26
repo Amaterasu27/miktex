@@ -459,86 +459,50 @@ bool
 SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
 {
   if (! flags.test(Flags::CachedAcrobatFontDir))
-    {
-      flags.set (Flags::CachedAcrobatFontDir);
+  {
+    flags.set (Flags::CachedAcrobatFontDir);
 
-      AutoHKEY hkey;
-      
-      const wchar_t * ACRORD32 =
-	(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion"
-	 L"\\App Paths\\AcroRd32.exe");
-  
-      LONG res =
-	RegOpenKeyExW(HKEY_LOCAL_MACHINE,
-		      ACRORD32,
-		      0,
-		      KEY_READ,
-		      &hkey);
+    const char * const ACRORD32 =
+      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\AcroRd32.exe";
 
-      if (res != ERROR_SUCCESS)
-	{
-	  if (res != ERROR_FILE_NOT_FOUND)
-	    {
-	      TraceWindowsError ("RegOpenKeyEx",
-				 res,
-				 "Acrobat",
-				 __FILE__,
-				 __LINE__);
-	    }
-	  return (false);
-	}
+    string pathExe;
 
-      DWORD type;
-      PathName pathExe;
-      DWORD len =
-	static_cast<DWORD>(pathExe.GetCapacity() * sizeof(pathExe[0]));
-      res =
-	RegQueryValueExA
-	(hkey.Get(),
-	 "",
-	 0,
-	 &type,
-	 reinterpret_cast<unsigned char *>(pathExe.GetBuffer()),
-	 &len);
-      if (res != ERROR_SUCCESS)
-	{
-	  if (res != ERROR_FILE_NOT_FOUND)
-	    {
-	      TraceWindowsError ("RegQueryValueEx",
-				 res,
-				 0,
-				 __FILE__,
-				 __LINE__);
-	    }
-	  return (false);
-	}
-  
-      PathName dir (pathExe);
-      dir.RemoveFileSpec ();
-  
-      PathName fontDir;
-  
-      // try Acrobat Reader 3.0
-      fontDir.Set (dir.Get(), "FONTS", 0);
-      if (! Directory::Exists(fontDir))
-	{
-	  // try Acrobat Reader 4.0
-	  fontDir.Set (dir.Get(), "..\\Resource\\Font", 0);
-	  if (! Directory::Exists(fontDir))
-	    {
-	      return (false);
-	    }
-	}
-
-      RemoveDirectoryDelimiter (fontDir.GetBuffer());
-
-      acrobatFontDir = GetFullPath(fontDir.Get());
-    }
-
-  if (acrobatFontDir.GetLength() == 0)
+    if (! winRegistry::TryGetRegistryValue(
+      HKEY_LOCAL_MACHINE,
+      ACRORD32,
+      "",
+      pathExe,
+      0))
     {
       return (false);
     }
+
+    PathName dir (pathExe);
+    dir.RemoveFileSpec ();
+
+    PathName fontDir;
+
+    // try Acrobat Reader 3.0
+    fontDir.Set (dir.Get(), "FONTS", 0);
+    if (! Directory::Exists(fontDir))
+    {
+      // try Acrobat Reader 4.0
+      fontDir.Set (dir.Get(), "..\\Resource\\Font", 0);
+      if (! Directory::Exists(fontDir))
+      {
+	return (false);
+      }
+    }
+
+    RemoveDirectoryDelimiter (fontDir.GetBuffer());
+
+    acrobatFontDir = GetFullPath(fontDir.Get());
+  }
+
+  if (acrobatFontDir.GetLength() == 0)
+  {
+    return (false);
+  }
 
   path = acrobatFontDir;
 
@@ -554,70 +518,40 @@ bool
 SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 {
   if (! flags.test(Flags::CachedAtmFontDir))
-    {
-      flags.set (Flags::CachedAtmFontDir);
-      
-      AutoHKEY hkey;
-      
-      LONG res =
-	RegOpenKeyExW(HKEY_LOCAL_MACHINE,
-		      L"SOFTWARE\\Adobe\\Adobe Type Manager\\Setup",
-		      0,
-		      KEY_READ,
-		      &hkey);
+  {
+    flags.set (Flags::CachedAtmFontDir);
 
-      if (res != ERROR_SUCCESS)
-	{
-	  if (res != ERROR_FILE_NOT_FOUND)
-	    {
-	      TraceWindowsError ("RegOpenKeyEx",
-				 res,
-				 "ATM",
-				 __FILE__,
-				 __LINE__);
-	    }
-	  return (false);
-	}
+    const char * const ATMSETUP =
+      "SOFTWARE\\Adobe\\Adobe Type Manager\\Setup";
 
-      DWORD type;
-      PathName fontDir;
-      DWORD len =
-	static_cast<DWORD>(fontDir.GetCapacity() * sizeof(fontDir[0]));
-      res =
-	RegQueryValueExA
-	(hkey.Get(),
-	 "PFB_DIR",
-	 0,
-	 &type,
-	 reinterpret_cast<unsigned char *>(fontDir.GetBuffer()),
-	 &len);
-      if (res != ERROR_SUCCESS)
-	{
-	  if (res != ERROR_FILE_NOT_FOUND)
-	    {
-	      TraceWindowsError ("RegQueryValueEx",
-				 res,
-				 0,
-				 __FILE__,
-				 __LINE__);
-	    }
-	  return (false);
-	}
-  
-      if (! Directory::Exists(fontDir))
-	{
-	  return (false);
-	}
-      
-      RemoveDirectoryDelimiter (fontDir.GetBuffer());
-      
-      atmFontDir = GetFullPath(fontDir.Get());
-    }
+    string pfbDir;
 
-  if (atmFontDir.GetLength() == 0)
+    if (! winRegistry::TryGetRegistryValue(
+      HKEY_LOCAL_MACHINE,
+      ATMSETUP,
+      "PFB_DIR",
+      pfbDir,
+      0))
     {
       return (false);
     }
+
+    PathName fontDir (pfbDir);
+
+    if (! Directory::Exists(fontDir))
+    {
+      return (false);
+    }
+
+    RemoveDirectoryDelimiter (fontDir.GetBuffer());
+
+    atmFontDir = GetFullPath(fontDir.Get());
+  }
+
+  if (atmFontDir.GetLength() == 0)
+  {
+    return (false);
+  }
 
   path = atmFontDir;
 
@@ -1821,6 +1755,7 @@ Line: %d"),
    AddEventSource
    _________________________________________________________________________ */
 
+#define REPORT_EVENTS 0
 #if REPORT_EVENTS
 
 #define SOURCE "MiKTeX"
@@ -3411,96 +3346,66 @@ Utils::CheckPath (/*[in]*/ bool repair)
 
   bool shared = pSession->IsAdminMode();
 
-  HKEY hkey;
+  string path;
 
-  LONG result =
-    RegOpenKeyExA((shared
-		   ? HKEY_LOCAL_MACHINE
-		   : HKEY_CURRENT_USER),
-		  (shared
-		   ? REGSTR_KEY_ENVIRONMENT_COMMON
-		   : REGSTR_KEY_ENVIRONMENT_USER),
-		  0,
-		  (repair
-		   ? KEY_QUERY_VALUE | KEY_SET_VALUE
-		   : KEY_QUERY_VALUE),
-		  &hkey);
+  if (! winRegistry::TryGetRegistryValue((shared
+					  ? HKEY_LOCAL_MACHINE
+					  : HKEY_CURRENT_USER),
+				         (shared
+				          ? REGSTR_KEY_ENVIRONMENT_COMMON
+					  : REGSTR_KEY_ENVIRONMENT_USER),
+				         "Path",
+					 path,
+					 0))
+  {
+    return (false);
+  }
 
-  if (result != ERROR_SUCCESS)
+  string newPath;
+    
+  bool okay = ::CheckPath(path, newPath);
+
+  if (! okay && ! repair)
+  {
+    SessionImpl::GetSession()->trace_error->WriteLine
+      ("core",
+      T_("Something is wrong with the PATH:"));
+    SessionImpl::GetSession()->trace_error->WriteLine
+      ("core",
+      path.c_str());
+  }
+  else if (! okay && repair)
+  {
+    SessionImpl::GetSession()->trace_error->WriteLine
+      ("core",
+      T_("Setting new PATH:"));
+    SessionImpl::GetSession()->trace_error->WriteLine
+      ("core",
+      newPath.c_str());
+    winRegistry::SetRegistryValue ((shared
+				    ? HKEY_LOCAL_MACHINE
+				    : HKEY_CURRENT_USER),
+				   (shared
+				    ? REGSTR_KEY_ENVIRONMENT_COMMON
+				    : REGSTR_KEY_ENVIRONMENT_USER),
+				   "Path",
+				   newPath.c_str());
+    DWORD sendMessageResult;
+    if (SendMessageTimeoutA(HWND_BROADCAST,
+      WM_SETTINGCHANGE,
+      0,
+      reinterpret_cast<LPARAM>("Environment"),
+      SMTO_ABORTIFHUNG,
+      5000,
+      &sendMessageResult)
+      == 0)
     {
-      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExA", result, 0);
+      if (::GetLastError() != ERROR_SUCCESS)
+      {
+	FATAL_WINDOWS_ERROR ("SendMessageTimeoutA", 0);
+      }
     }
-
-  AutoHKEY autoHKEY (hkey);
-
-  DWORD type;
-  CharBuffer<char> value (32 * 1024);
-  DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
-
-  result =
-    RegQueryValueExA(hkey,
-		     "Path",
-		     0,
-		     &type,
-		     reinterpret_cast<LPBYTE>(value.GetBuffer()),
-		     &valueSize);
-  
-  bool havePath = (result == ERROR_SUCCESS);
-
-  bool okay = false;
-
-  if (havePath)
-    {
-      string path = value.Get();
-      string newPath;
-      okay = ::CheckPath(path, newPath);
-      if (! okay && ! repair)
-	{
-	  SessionImpl::GetSession()->trace_error->WriteLine
-	    ("core",
-	     T_("\
-Something is wrong with the PATH:"));
-	  SessionImpl::GetSession()->trace_error->WriteLine
-	    ("core",
-	     path.c_str());
-	}
-      else if (! okay && repair)
-	{
-	  SessionImpl::GetSession()->trace_error->WriteLine
-	    ("core",
-	     T_("\
-Setting new PATH:"));
-	  SessionImpl::GetSession()->trace_error->WriteLine
-	    ("core",
-	     newPath.c_str());
-	  result =
-	    RegSetValueExA(hkey,
-			   "Path",
-			   0,
-			   type,
-			   reinterpret_cast<const BYTE *>(newPath.c_str()),
-			   static_cast<DWORD>(newPath.length() + 1));	  
-	  if (result != ERROR_SUCCESS)
-	    {
-	      FATAL_WINDOWS_ERROR_2 ("RegSetValueExA", result, 0);
-	    }
-	  DWORD sendMessageResult;
-	  if (SendMessageTimeoutA(HWND_BROADCAST,
-				  WM_SETTINGCHANGE,
-				  0,
-				  reinterpret_cast<LPARAM>("Environment"),
-				  SMTO_ABORTIFHUNG,
-				  5000,
-				  &sendMessageResult)
-	      == 0)
-	    {
-	      if (::GetLastError() != ERROR_SUCCESS)
-		{
-		  FATAL_WINDOWS_ERROR ("SendMessageTimeoutA", 0);
-		}
-	    }
-	}
-    }
+  }
 
   return (okay);
 }
@@ -3527,4 +3432,232 @@ Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
       BUF_TOO_SMALL ("Utils::CanonicalizePathName");
     }
   path = resolved;
+}
+
+/* _________________________________________________________________________
+
+   Utils::RegisterShellFileAssoc
+   _________________________________________________________________________ */
+
+void
+Utils::RegisterShellFileAssoc (/*[in]*/ const char * lpszExtension,
+			       /*[in]*/ const char * lpszProgId,
+			       /*[in]*/ bool	     takeOwnership)
+{
+  MIKTEX_ASSERT_STRING (lpszExtension);
+  MIKTEX_ASSERT_STRING (lpszProgId);
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
+  PathName regPath ("Software\\Classes");
+  regPath += lpszExtension;
+  string otherProgId;
+  bool haveOtherProgId = winRegistry::TryGetRegistryValue(
+    hkeyRoot,
+    regPath.Get(),
+    "",
+    otherProgId,
+    0);
+  haveOtherProgId =
+    (haveOtherProgId && StringCompare(lpszProgId, otherProgId.c_str(), true) != 0);
+  PathName openWithProgIds (regPath);
+  openWithProgIds += "OpenWithProgIds";
+  if (haveOtherProgId)
+  {
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      openWithProgIds.Get(),
+      otherProgId.c_str(),
+      "");
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      openWithProgIds.Get(),
+      lpszProgId,
+      "");
+  }
+  if (! haveOtherProgId || takeOwnership)
+  {
+    if (haveOtherProgId)
+    {
+      winRegistry::SetRegistryValue (
+	hkeyRoot,
+	regPath.Get(),
+	"MiKTeX." MIKTEX_SERIES_STR ".backup",
+	otherProgId.c_str());
+    }
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      regPath.Get(),
+      "",
+      lpszProgId);
+  }
+}
+
+/* _________________________________________________________________________
+
+   Utils::UnregisterShellFileAssoc
+   _________________________________________________________________________ */
+
+void
+Utils::UnregisterShellFileAssoc (/*[in]*/ const char * lpszExtension,
+				 /*[in]*/ const char * lpszProgId)
+{
+  MIKTEX_ASSERT_STRING (lpszExtension);
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
+  PathName regPath ("Software\\Classes");
+  regPath += lpszExtension;
+  string progId;
+  if (! winRegistry::TryGetRegistryValue(
+    hkeyRoot,
+    regPath.Get(),
+    "",
+    progId,
+    0))
+  {
+    return;
+  }
+  string backupProgId;
+  bool haveBackupProgId = winRegistry::TryGetRegistryValue(
+    hkeyRoot,
+    regPath.Get(),
+    "MiKTeX." MIKTEX_SERIES_STR ".backup",
+    backupProgId,
+    0);
+  if (haveBackupProgId || StringCompare(progId.c_str(), lpszProgId, true) != 0)
+  {
+    if (haveBackupProgId)
+    {
+      winRegistry::SetRegistryValue (
+	hkeyRoot,
+	regPath.Get(),
+	"",
+	backupProgId.c_str());
+      winRegistry::TryDeleteRegistryValue (
+	hkeyRoot,
+	regPath.Get(), 
+	"MiKTeX." MIKTEX_SERIES_STR ".backup");
+    }
+    PathName openWithProgIds (regPath);
+    openWithProgIds += "OpenWithProgIds";
+    winRegistry::TryDeleteRegistryValue (
+      hkeyRoot,
+      openWithProgIds.Get(),
+      lpszProgId);
+  }
+  else
+  {
+    winRegistry::TryDeleteRegistryKey (hkeyRoot, regPath.Get());
+  }
+}
+
+/* _________________________________________________________________________
+
+   Utils::RegisterShellFileType
+   _________________________________________________________________________ */
+
+void
+Utils::RegisterShellFileType (/*[in]*/ const char * lpszProgId,
+			      /*[in]*/ const char * lpszUserFriendlyName,
+			      /*[in]*/ const char * lpszIconPath)
+{
+  MIKTEX_ASSERT_STRING (lpszProgId);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszUserFriendlyName);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszIconPath);
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
+  PathName regPath ("Software\\Classes");
+  regPath += lpszProgId;
+  if (lpszUserFriendlyName != 0)
+  {
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      regPath.Get(),
+      "",
+      lpszUserFriendlyName);
+  }
+  if (lpszIconPath != 0)
+  {
+    PathName defaultIcon (regPath);
+    defaultIcon += "DefaultIcon";
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      defaultIcon.Get(),
+      "",
+      lpszIconPath);
+  }
+}
+
+/* _________________________________________________________________________
+
+   Utils::UnregisterShellFileType
+   _________________________________________________________________________ */
+
+void
+Utils::UnregisterShellFileType (/*[in]*/ const char * lpszProgId)
+{
+  MIKTEX_ASSERT_STRING (lpszProgId);
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
+  PathName regPath ("Software\\Classes");
+  regPath += lpszProgId;
+  winRegistry::TryDeleteRegistryKey (hkeyRoot, regPath.Get());
+}
+
+/* _________________________________________________________________________
+
+   Utils::RegisterShellVerb
+   _________________________________________________________________________ */
+
+void
+Utils::RegisterShellVerb (/*[in]*/ const char * lpszProgId,
+			  /*[in]*/ const char * lpszVerb,
+			  /*[in]*/ const char * lpszCommand,
+			  /*[in]*/ const char * lpszDdeExec)
+{
+  MIKTEX_ASSERT_STRING (lpszProgId);
+  MIKTEX_ASSERT_STRING (lpszVerb);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszCommand);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszDdeExec);
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
+  PathName regPath ("Software\\Classes");
+  regPath += lpszProgId;
+  if (lpszCommand != 0)
+  {
+    PathName path (regPath);
+    path += "shell";
+    path += lpszVerb;
+    path += "command";
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      path.Get(),
+      "",
+      lpszCommand);
+  }
+  if (lpszDdeExec != 0)
+  {
+    PathName path (regPath);
+    path += "shell";
+    path += lpszVerb;
+    path += "ddeexec";
+    winRegistry::SetRegistryValue (
+      hkeyRoot,
+      path.Get(),
+      "",
+      lpszDdeExec);
+  }
+}
+
+/* _________________________________________________________________________
+
+   Utils::MakeProgId
+   _________________________________________________________________________ */
+
+string
+Utils::MakeProgId (/*[in]*/ const char * lpszComponent)
+{
+  string progId ("MiKTeX.");
+  progId += lpszComponent;
+  progId += "." MIKTEX_SERIES_STR;
+  return (progId);
 }

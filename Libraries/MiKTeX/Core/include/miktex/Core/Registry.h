@@ -109,11 +109,4 @@
 #define MIKTEX_REGVAL_USE_PROXY "UseProxy"
 #define MIKTEX_REGVAL_VERSION "Version"
 
-/* _________________________________________________________________________
-
-   File Type Identifiers
-   _________________________________________________________________________ */
-
-#define MIKTEX_DVI_FILE_TYPE_IDENTIFIER "MiKTeX.Yap.dvi." MIKTEX_SERIES_STR
-
 #endif

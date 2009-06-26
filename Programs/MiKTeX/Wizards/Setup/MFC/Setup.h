@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -354,9 +354,6 @@ LogHeader ();
 void LogV
 (/*[in]*/ const char *	lpsz,
  /*[in]*/ va_list		args);
-
-void
-RegisterMiKTeXFileTypes ();
 
 #if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 void

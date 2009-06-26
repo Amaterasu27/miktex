@@ -1794,6 +1794,56 @@ public:
   MIKTEXCORECEEAPI(bool)
   CheckPath (/*[in]*/ bool repair);
 #endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  RegisterShellFileAssoc (/*[in]*/ const char * lpszExtension,
+			  /*[in]*/ const char * lpszProgId,
+			  /*[in]*/ bool		takeOwnership);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  UnregisterShellFileAssoc (/*[in]*/ const char * lpszExtension,
+			    /*[in]*/ const char * lpszProgId);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  RegisterShellFileType (/*[in]*/ const char * lpszProgId,
+			 /*[in]*/ const char * lpszUserFriendlyName,
+			 /*[in]*/ const char * lpszIconPath);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  UnregisterShellFileType (/*[in]*/ const char * lpszProgId);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(void)
+  RegisterShellVerb (/*[in]*/ const char * lpszProgId,
+		     /*[in]*/ const char * lpszVerb,
+		     /*[in]*/ const char * lpszCommand,
+		     /*[in]*/ const char * lpszDdeExec);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(std::string)
+  MakeProgId (/*[in]*/ const char * lpszComponent);
+#endif
 };
 
 /* _________________________________________________________________________

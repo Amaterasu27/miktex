@@ -430,6 +430,12 @@ private:
   void
   MakeLinks (/*[in]*/ bool force);
 
+#if defined(MIKTEX_WINDOWS)
+private:
+  void
+  RegisterFileTypes (/*[in]*/ bool reg);
+#endif
+
 private:
   void
   MakeLink (/*[in]*/ const PathName & source,
@@ -631,8 +637,10 @@ enum Option
   OPT_CSV,			// <experimental/>
   OPT_LIST_DIRECTORY,		// <experimental/>
   OPT_LIST_FORMATS,		// <experimental/>
+  OPT_REGISTER_FILE_TYPES,	// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
+  OPT_UNREGISTER_FILE_TYPES,	// <experimental/>
   OPT_XML,			// <experimental/>
 
   OPT_COMMON_CONFIG,		// <internal/>
@@ -803,6 +811,16 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    "register-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REGISTER_FILE_TYPES,
+    T_("Register file types."),
+    0,
+  },
+#endif
+
   {
     "remove-file", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
@@ -826,6 +844,16 @@ Open the specified configuration file in an editor.\
     T_("Remove file name database files."),
     0
   },
+
+#if defined(MIKTEX_WINDOWS)
+  {
+    "unregister-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_UNREGISTER_FILE_TYPES,
+    T_("Unregister file types."),
+    0,
+  },
+#endif
 
   {
     "update-fndb", 'u',
@@ -1074,6 +1102,16 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    "register-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REGISTER_FILE_TYPES,
+    T_("Register file types."),
+    0,
+  },
+#endif
+
   {
     "remove-file", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
@@ -1098,7 +1136,17 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
   {
+    "unregister-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_UNREGISTER_FILE_TYPES,
+    T_("Unregister file types."),
+    0,
+  },
+#endif
+
+    {
     "update-fndb", 'u',
     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL, 0,
     OPT_UPDATE_FNDB,
@@ -1351,6 +1399,16 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    "register-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_REGISTER_FILE_TYPES,
+    T_("Register file types."),
+    0,
+  },
+#endif
+
   {
     "remove-file", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
@@ -1374,6 +1432,16 @@ Open the specified configuration file in an editor.\
     T_("Remove file name database files."),
     0
   },
+
+#if defined(MIKTEX_WINDOWS)
+  {
+    "unregister-file-types", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_UNREGISTER_FILE_TYPES,
+    T_("Unregister file types."),
+    0,
+  },
+#endif
 
   {
     "update-fndb", 'u',
@@ -2042,6 +2110,100 @@ IniTeXMFApp::MakeLink (/*[in]*/ const PathName &  source,
     logStream.WriteLine (dest.Get());
   }
 }
+
+/* _________________________________________________________________________
+     
+   IniTeXMFApp::RegisterFileTypes
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+
+struct ShellFileType {
+  const char * lpszComponent;
+  const char * lpszExtension;
+  const char * lpszUserFriendlyName;
+  const char * lpszExecutable;
+  int iconIndex;
+  bool takeOwnership;
+  const char * lpszVerb;
+  const char * lpszCommandArgs;
+  const char * lpszDdeArgs;
+} const shellFileTypes[] = {
+  "bib", ".bib", "BibTeX Database", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "cls", ".cls", "LaTeX Class", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "dtx", ".dtx", "LaTeX Macros", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "dvi", ".dvi", "DVI File", MIKTEX_YAP_EXE, 1, false, "open", "/dde", "[open(\"%1\")]",
+  "dvi", 0, 0, MIKTEX_YAP_EXE, INT_MAX, false, "print", "/dde", "[print(\"%1\")]",
+  "dvi", 0, 0, MIKTEX_YAP_EXE, INT_MAX, false, "printto", "/dde", "[printto(\"%1\",\"%2\",\"%3\",\"%4\")]",
+  "ltx", ".ltx", "LaTeX Document", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "pdf", ".pdf", "PDF File", MIKTEX_TEXWORKS_EXE, INT_MAX, false, "open", "\"%1\"", 0,
+  "sty", ".sty", "LaTeX Style", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "tex", ".tex", "TeX Document", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+};
+
+void
+IniTeXMFApp::RegisterFileTypes (/*[in]*/ bool	  reg)
+{
+  for (int idx = 0; idx < sizeof(shellFileTypes) / sizeof(shellFileTypes[0]); ++ idx)
+  {
+    ShellFileType sft = shellFileTypes[idx];
+    string progId = Utils::MakeProgId(sft.lpszComponent);
+    if (reg)
+    {
+      PathName exe;
+      if (sft.lpszExecutable != 0 && ! pSession->FindFile(sft.lpszExecutable, FileType::EXE, exe))
+      {
+	FatalError (T_("Could not find %s."), sft.lpszExecutable);
+      }
+      string command;
+      if (sft.lpszExecutable != 0 && sft.lpszCommandArgs != 0)
+      {
+	command = '\"';
+	command += exe.Get();
+	command += "\" ";
+	command += sft.lpszCommandArgs;
+      }
+      string iconPath;
+      if (sft.lpszExecutable != 0 && sft.iconIndex != INT_MAX)
+      {
+	iconPath += exe.Get();
+	iconPath += ",";
+	iconPath += NUMTOSTR(sft.iconIndex);
+      }
+      if (sft.lpszUserFriendlyName != 0 || ! iconPath.empty())
+      {
+	Utils::RegisterShellFileType (
+	  progId.c_str(),
+	  sft.lpszUserFriendlyName,
+	  (iconPath.empty() ? 0 : iconPath.c_str()));
+      }
+      if (sft.lpszVerb != 0 && (! command.empty() || sft.lpszDdeArgs != 0))
+      {
+	Utils::RegisterShellVerb (
+	  progId.c_str(),
+	  sft.lpszVerb,
+	  (command.empty() ? 0 : command.c_str()),
+	  sft.lpszDdeArgs);
+      }
+      if (sft.lpszExtension != 0)
+      {
+	Utils::RegisterShellFileAssoc (
+	  sft.lpszExtension,
+	  progId.c_str(),
+	  sft.takeOwnership);
+      }
+    }
+    else
+    {
+      Utils::UnregisterShellFileType (progId.c_str());
+      if (sft.lpszExtension != 0)
+      {
+	Utils::UnregisterShellFileAssoc (sft.lpszExtension, progId.c_str());
+      }
+    }
+  }
+}
+#endif
 
 /* _________________________________________________________________________
      
@@ -2835,7 +2997,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optListModes = false;
   bool optMakeLinks = false;
   bool optPortable = false;
+  bool optRegisterFileTypes = false;
   bool optReport = false;
+  bool optUnregisterFileTypes = false;
   bool optUpdateFilenameDatabase = false;
   bool optVersion = false;
 
@@ -2985,6 +3149,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  recursive = true;
 	  break;
 
+	case OPT_REGISTER_FILE_TYPES:
+
+	  optRegisterFileTypes = true;
+	  break;
+
 	case OPT_REMOVE_FILE:
 
 	  removeFiles.push_back (lpszOptArg);
@@ -3013,6 +3182,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	case OPT_ADMIN:
 
 	  adminMode = true;
+	  break;
+
+	case OPT_UNREGISTER_FILE_TYPES:
+
+	  optUnregisterFileTypes = true;
 	  break;
 
 	case OPT_UPDATE_FNDB:
@@ -3128,6 +3302,20 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     {
       MakeFormatFilesByName (formatsByName, engine);
     }
+
+#if defined(MIKTEX_WINDOWS)
+  if (optRegisterFileTypes)
+  {
+    RegisterFileTypes (true);
+  }
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+  if (optUnregisterFileTypes)
+  {
+    RegisterFileTypes (false);
+  }
+#endif
 
   if (optMakeLinks)
     {

@@ -441,7 +441,7 @@ YapApplication::InitInstance ()
 			       &size)
 	       == ERROR_SUCCESS)
 	      && ((StringCompare(szClass,
-				 MIKTEX_DVI_FILE_TYPE_IDENTIFIER,
+				 Utils::MakeProgId("dvi").c_str(),
 				 true)
 		   != 0))
 	      && (registering
