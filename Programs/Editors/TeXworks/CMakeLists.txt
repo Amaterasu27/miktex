@@ -47,6 +47,37 @@ if(NATIVE_WINDOWS)
   set(texworks_sources ${texworks_sources}
     ${CMAKE_CURRENT_SOURCE_DIR}/texworks.rc
   )
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+    COMMAND
+      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
+        -verbose
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
+	${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+    DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
+    VERBATIM
+  )
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+    COMMAND
+      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
+        -verbose
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
+	${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+    DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
+    VERBATIM
+  )
+  add_custom_target(
+    texworks_icons
+    ALL
+    DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+  )
 endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
@@ -128,3 +159,8 @@ target_link_libraries(${miktex_prefix}texworks ${libs})
 merge_trustinfo_manifest(${miktex_prefix}texworks asInvoker)
 
 install(TARGETS ${miktex_prefix}texworks DESTINATION ${bindir})
+
+if(NATIVE_WINDOWS)
+  add_dependencies(texworks texworks_icons)
+  add_dependencies(${miktex_prefix}texworks texworks_icons)
+endif(NATIVE_WINDOWS)
