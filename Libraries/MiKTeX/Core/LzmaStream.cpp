@@ -167,21 +167,29 @@ public:
 	 /*[in]*/ UInt32	size,
 	 /*[out]*/ UInt32 *	pProcessedSize)
   {
-    MIKTEX_LOCK(LzmaStreamHelper)
+    try
+    {
+      MIKTEX_LOCK(LzmaStreamHelper)
       {
 	size_t newOffset = offset + size;
 	if (newOffset > sizeBuffer)
-	  {
-	    sizeBuffer = newOffset + 4096;
-	    pBuffer =
-	      static_cast<unsigned char*>(MIKTEX_REALLOC(pBuffer, sizeBuffer));
-	  }
+	{
+	  sizeBuffer = ((newOffset + 4096 + 1) / 4096) * 4096;
+	  pBuffer =
+	    static_cast<unsigned char*>(MIKTEX_REALLOC(pBuffer, sizeBuffer));
+	}
+	MIKTEX_ASSERT_BUFFER (pBuffer + offset, size);
 	memcpy (pBuffer + offset, pData, size);
 	offset = newOffset;
 	*pProcessedSize = size;
 	return (S_OK);
       }
-    MIKTEX_UNLOCK();
+      MIKTEX_UNLOCK();
+    }
+    catch (const exception &)
+    {
+      return (E_FAIL);
+    }
   }
 
 public:
@@ -189,6 +197,7 @@ public:
   GetData (/*[in]*/ void *	pData,
 	   /*[in]*/ size_t	size)
   {
+    MIKTEX_ASSERT_BUFFER (pData, size);
     size_t read = 0;
     bool done = false;
     do

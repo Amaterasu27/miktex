@@ -117,7 +117,7 @@ private:
 
 private:
   void
-  UnregisterFileTypes ();
+  UnregisterShellFileTypes ();
 
 private:
   void

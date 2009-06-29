@@ -862,6 +862,7 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // install package definition files
+  theApp.pManager->UnloadDatabase ();
   pInstaller->UpdateDb ();
 
   if (pSheet->GetCancelFlag())
@@ -1091,7 +1092,7 @@ FileCopyPage::ConfigureMiKTeX ()
 
   if (! theApp.portable)
   {
-    RunIniTeXMF ("--register-file-types");
+    RunIniTeXMF ("--register-shell-file-types");
   }
       
   // [8] create report

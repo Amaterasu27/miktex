@@ -433,7 +433,7 @@ private:
 #if defined(MIKTEX_WINDOWS)
 private:
   void
-  RegisterFileTypes (/*[in]*/ bool reg);
+  RegisterShellFileTypes (/*[in]*/ bool reg);
 #endif
 
 private:
@@ -637,10 +637,10 @@ enum Option
   OPT_CSV,			// <experimental/>
   OPT_LIST_DIRECTORY,		// <experimental/>
   OPT_LIST_FORMATS,		// <experimental/>
-  OPT_REGISTER_FILE_TYPES,	// <experimental/>
+  OPT_REGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
-  OPT_UNREGISTER_FILE_TYPES,	// <experimental/>
+  OPT_UNREGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_XML,			// <experimental/>
 
   OPT_COMMON_CONFIG,		// <internal/>
@@ -813,10 +813,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "register-file-types", 0,
+    "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_REGISTER_FILE_TYPES,
-    T_("Register file types."),
+    OPT_REGISTER_SHELL_FILE_TYPES,
+    T_("register shell file types."),
     0,
   },
 #endif
@@ -847,10 +847,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "unregister-file-types", 0,
+    "unregister-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_UNREGISTER_FILE_TYPES,
-    T_("Unregister file types."),
+    OPT_UNREGISTER_SHELL_FILE_TYPES,
+    T_("Unregister shell file types."),
     0,
   },
 #endif
@@ -1104,10 +1104,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "register-file-types", 0,
+    "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_REGISTER_FILE_TYPES,
-    T_("Register file types."),
+    OPT_REGISTER_SHELL_FILE_TYPES,
+    T_("register shell file types."),
     0,
   },
 #endif
@@ -1138,10 +1138,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "unregister-file-types", 0,
+    "unregister-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_UNREGISTER_FILE_TYPES,
-    T_("Unregister file types."),
+    OPT_UNREGISTER_SHELL_FILE_TYPES,
+    T_("Unregister shell file types."),
     0,
   },
 #endif
@@ -1401,10 +1401,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "register-file-types", 0,
+    "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_REGISTER_FILE_TYPES,
-    T_("Register file types."),
+    OPT_REGISTER_SHELL_FILE_TYPES,
+    T_("register shell file types."),
     0,
   },
 #endif
@@ -1435,10 +1435,10 @@ Open the specified configuration file in an editor.\
 
 #if defined(MIKTEX_WINDOWS)
   {
-    "unregister-file-types", 0,
+    "unregister-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
-    OPT_UNREGISTER_FILE_TYPES,
-    T_("Unregister file types."),
+    OPT_UNREGISTER_SHELL_FILE_TYPES,
+    T_("Unregister shell file types."),
     0,
   },
 #endif
@@ -2113,7 +2113,7 @@ IniTeXMFApp::MakeLink (/*[in]*/ const PathName &  source,
 
 /* _________________________________________________________________________
      
-   IniTeXMFApp::RegisterFileTypes
+   IniTeXMFApp::RegisterShellFileTypes
    _________________________________________________________________________ */
 
 #if defined(MIKTEX_WINDOWS)
@@ -2142,7 +2142,7 @@ struct ShellFileType {
 };
 
 void
-IniTeXMFApp::RegisterFileTypes (/*[in]*/ bool	  reg)
+IniTeXMFApp::RegisterShellFileTypes (/*[in]*/ bool	  reg)
 {
   for (int idx = 0; idx < sizeof(shellFileTypes) / sizeof(shellFileTypes[0]); ++ idx)
   {
@@ -2997,9 +2997,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optListModes = false;
   bool optMakeLinks = false;
   bool optPortable = false;
-  bool optRegisterFileTypes = false;
+  bool optRegisterShellFileTypes = false;
   bool optReport = false;
-  bool optUnregisterFileTypes = false;
+  bool optUnRegisterShellFileTypes = false;
   bool optUpdateFilenameDatabase = false;
   bool optVersion = false;
 
@@ -3149,9 +3149,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  recursive = true;
 	  break;
 
-	case OPT_REGISTER_FILE_TYPES:
+	case OPT_REGISTER_SHELL_FILE_TYPES:
 
-	  optRegisterFileTypes = true;
+	  optRegisterShellFileTypes = true;
 	  break;
 
 	case OPT_REMOVE_FILE:
@@ -3184,9 +3184,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  adminMode = true;
 	  break;
 
-	case OPT_UNREGISTER_FILE_TYPES:
+	case OPT_UNREGISTER_SHELL_FILE_TYPES:
 
-	  optUnregisterFileTypes = true;
+	  optUnRegisterShellFileTypes = true;
 	  break;
 
 	case OPT_UPDATE_FNDB:
@@ -3304,16 +3304,16 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     }
 
 #if defined(MIKTEX_WINDOWS)
-  if (optRegisterFileTypes)
+  if (optRegisterShellFileTypes)
   {
-    RegisterFileTypes (true);
+    RegisterShellFileTypes (true);
   }
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-  if (optUnregisterFileTypes)
+  if (optUnRegisterShellFileTypes)
   {
-    RegisterFileTypes (false);
+    RegisterShellFileTypes (false);
   }
 #endif
 

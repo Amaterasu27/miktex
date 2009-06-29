@@ -81,14 +81,38 @@ winRegistry::TryGetRegistryValue (/*[in]*/ HKEY		hkeyParent,
 	}
       if (result == ERROR_SUCCESS)
 	{
-	  if (valueType == REG_SZ)
+	  switch (valueType)
+	  {
+	  case REG_SZ:
+	    value = reinterpret_cast<const char *>(pValue);
+	    return (true);
+	  case REG_EXPAND_SZ:
 	    {
-	      value = reinterpret_cast<const char *>(pValue);
+	      DWORD n = ExpandEnvironmentStringsA(reinterpret_cast<const char *>(pValue),
+		0,
+		0);
+	      if (n == 0)
+	      {
+		FATAL_WINDOWS_ERROR ("ExpandEnvironmentStringsA", lpszPath);
+	      }
+	      char * lpszBuf = reinterpret_cast<char *>(_alloca(n));
+	      DWORD n2 = ExpandEnvironmentStringsA(reinterpret_cast<const char *>(pValue),
+		lpszBuf,
+		n);
+	      if (n2 == 0)
+	      {
+		FATAL_WINDOWS_ERROR ("ExpandEnvironmentStringsA", lpszPath);
+	      }
+	      MIKTEX_ASSERT (n2 <= n);
+	      value = lpszBuf;
 	      return (true);
 	    }
-	  TraceError (T_("ignoring value %s of type %u"),
-		      Q_(lpszValueName),
-		      static_cast<unsigned>(valueType));
+	  default:
+	    TraceError (T_("ignoring value %s of type %u"),
+			Q_(lpszValueName),
+			static_cast<unsigned>(valueType));
+	    break;
+	  }
 	}
       else if (result != ERROR_FILE_NOT_FOUND)
 	{
@@ -232,8 +256,8 @@ winRegistry::SetRegistryValue (/*[in]*/ HKEY		hkeyParent,
 
   AutoHKEY autoClose (hkey);
 
-  unsigned long sizeValue = static_cast<unsigned long>(StrLen(lpszValue) + 1);
-  sizeValue *= sizeof(char);
+  unsigned long valueSize = static_cast<unsigned long>(StrLen(lpszValue) + 1);
+  valueSize *= sizeof(char);
 
   result =
     RegSetValueExA(hkey,
@@ -242,7 +266,7 @@ winRegistry::SetRegistryValue (/*[in]*/ HKEY		hkeyParent,
 		   REG_SZ,
 		   const_cast<unsigned char *>
 		   (reinterpret_cast<const unsigned char *>(lpszValue)),
-		   sizeValue);
+		   valueSize);
 
   if (result != ERROR_SUCCESS)
     {

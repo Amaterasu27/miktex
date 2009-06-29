@@ -222,7 +222,7 @@ RemoveFilesPage::RemoveMiKTeX ()
 {
   try
     {
-      UnregisterFileTypes ();
+      UnregisterShellFileTypes ();
     }
   catch (const MiKTeXException & e)
     {
@@ -584,11 +584,11 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ string &	path)
 
 /* _________________________________________________________________________
 
-   RemoveFilesPage::UnregisterFileTypes
+   RemoveFilesPage::UnregisterShellFileTypes
    _________________________________________________________________________ */
 
 void
-RemoveFilesPage::UnregisterFileTypes ()
+RemoveFilesPage::UnregisterShellFileTypes ()
 {
  if (SessionWrapper(true)->RunningAsAdministrator()
      || SessionWrapper(true)->RunningAsPowerUser())
@@ -596,10 +596,10 @@ RemoveFilesPage::UnregisterFileTypes ()
    PathName initexmfExe;
    if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmfExe))
    {
-     FATAL_MIKTEX_ERROR ("RemoveFilesPage::UnregisterFileTypes",
+     FATAL_MIKTEX_ERROR ("RemoveFilesPage::UnregisterShellFileTypes",
        T_("The IniTeXMF executable could not be found."), 0);
    }
-   Process::Run (initexmfExe.Get(), "--admin --unregister-filetypes");
+   Process::Run (initexmfExe.Get(), "--admin --unregister-shell-file-types");
  }
 }
 
