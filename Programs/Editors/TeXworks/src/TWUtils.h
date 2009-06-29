@@ -37,6 +37,9 @@
 #  include <miktex/Core/Core>
 #  include <miktex/Core/Paths>
 #  include <miktex/Core/Version>
+#  if defined(MIKTEX_WINDOWS)
+#    include <shlobj.h>
+#  endif
 #endif
 
 #define TEXWORKS_NAME "TeXworks" /* app name, for use in menus, messages, etc */

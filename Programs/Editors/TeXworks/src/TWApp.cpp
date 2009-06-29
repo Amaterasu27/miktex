@@ -276,7 +276,11 @@ void TWApp::goToHomePage()
 
 void TWApp::writeToMailingList()
 {
+#if defined(MIKTEX)
+	openUrl("mailto:texworks@tug.org?subject=message%20from%20TeXworks%20(MiKTeX)%20user");
+#else
 	openUrl("mailto:texworks@tug.org?subject=message%20from%20TeXworks%20user");
+#endif
 }
 
 void TWApp::launchAction()
@@ -343,6 +347,12 @@ void TWApp::open()
 {
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
+#if defined(MIKTEX_WINDOWS)
+	if (lastOpenDir.isEmpty())
+	{
+	  lastOpenDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
+	}
+#endif
 	QStringList files = QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
 	foreach (QString fileName, files) {
 		if (!fileName.isEmpty()) {
@@ -369,6 +379,11 @@ void TWApp::open(const QString &fileName)
 void TWApp::preferences()
 {
 	PrefsDialog::doPrefsDialog(activeWindow());
+}
+
+void TWApp::emitHighlightLineOptionChanged()
+{
+	emit highlightLineOptionChanged();
 }
 
 int TWApp::maxRecentFiles() const
@@ -552,7 +567,7 @@ void TWApp::setDefaultEngineList()
 		<< Engine("XeLaTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "-undump=xelatex" << "$fullname", true)
 		<< Engine("BibTeX", MIKTEX_BIBTEX_EXE, QStringList("$basename"), false)
 		<< Engine("MakeIndex", MIKTEX_MAKEINDEX_EXE, QStringList("$basename"), false);
-	defaultEngineIndex = 2;
+	defaultEngineIndex = 1;
 #else
 	*engineList
 		<< Engine("pdfTeX", "pdftex" EXE, QStringList("-synctex=1") << "$fullname", true)
@@ -587,7 +602,14 @@ const QList<Engine> TWApp::getEngineList()
 		else
 			setDefaultEngineList();
 		settings.endArray();
+#if defined(MIKTEX)
+		if (! settings.value("defaultEngine").toString().isEmpty())
+		{
+		  setDefaultEngine(settings.value("defaultEngine").toString());
+		}
+#else
 		setDefaultEngine(settings.value("defaultEngine").toString());
+#endif
 	}
 	return *engineList;
 }

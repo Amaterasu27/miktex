@@ -50,6 +50,8 @@ public:
 
 	static QStringList autoIndentModes();
 	static QStringList smartQuotesModes();
+	
+	static void setHighlightCurrentLine(bool highlight);
 
 public slots:
 	void setAutoIndentMode(int index);
@@ -101,6 +103,8 @@ private:
 	void handleBackspace(QKeyEvent *e);
 	void handleOtherKey(QKeyEvent *e);
 	void maybeSmartenQuote(int offset);
+
+	void setSelectionClipboard(const QTextCursor& curs);
 
 	QTextCursor wordSelectionForPos(const QPoint& pos);
 	QTextCursor blockSelectionForPos(const QPoint& pos);
@@ -165,6 +169,8 @@ private:
 	static QTextCharFormat	*currentLineFormat;
 	
 	static QCompleter	*sharedCompleter;
+	
+	static bool highlightCurrentLine;
 };
 
 class LineNumberArea : public QWidget

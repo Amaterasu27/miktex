@@ -436,6 +436,12 @@ void TeXDocument::open()
 #endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString(); 
+#if defined(MIKTEX_WINDOWS)
+	if (lastOpenDir.isEmpty())
+	{
+	  lastOpenDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
+	}
+#endif
 	QStringList files = QFileDialog::getOpenFileNames(this, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"), NULL, options);
 	foreach(QString fileName, files){
 		if (!fileName.isEmpty()) {
@@ -627,14 +633,38 @@ bool TeXDocument::save()
 bool TeXDocument::saveAs()
 {
 #ifdef Q_WS_WIN
+#  if defined(MIKTEX)
+	QFileDialog::Options	options = 0;
+#  else
 	QFileDialog::Options	options = QFileDialog::DontUseNativeDialog;
+#  endif
 #else
 	QFileDialog::Options	options = 0;
 #endif
+#if defined(MIKTEX_WINDOWS)
+	MiKTeX::Core::PathName absFileName = curFile.toLocal8Bit().data();
+	if (! MiKTeX::Core::Utils::IsAbsolutePath(absFileName.Get()))
+	{
+	  QSETTINGS_OBJECT(settings);
+	  absFileName = settings.value("openDialogDir").toString().toLocal8Bit().data();
+	  if (absFileName.GetLength() == 0)
+	  {
+	    absFileName = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
+	  }
+	  absFileName += curFile.toLocal8Bit().data();
+	}
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), absFileName.Get(), TWUtils::filterList()->join(";;"), NULL, options);
+#else
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), curFile, TWUtils::filterList()->join(";;"), NULL, options);
+#endif
 	if (fileName.isEmpty())
 		return false;
 
+	if (fileName != curFile) {
+		// The pdf connection is no longer (necessarily) valid. Detach it for
+		// now (the correct connection will be reestablished on next typeset).
+		detachPdf();
+	}
 	return saveFile(fileName);
 }
 
@@ -850,10 +880,7 @@ void TeXDocument::showPdfIfAvailable()
 		return;
 	QFileInfo fi(rootFilePath);
 	QString pdfName = fi.canonicalPath() + "/" + fi.completeBaseName() + ".pdf";
-	if (pdfDoc != NULL) {
-		disconnect(pdfDoc, SIGNAL(destroyed()), this, SLOT(pdfClosed()));
-		disconnect(this, SIGNAL(destroyed(QObject*)), pdfDoc, SLOT(texClosed(QObject*)));
-	}
+	detachPdf();
 	PDFDocument *existingPdf = PDFDocument::findDocument(pdfName);
 	if (existingPdf != NULL) {
 		if (pdfDoc != existingPdf) {
@@ -2317,4 +2344,13 @@ void TeXDocument::dropEvent(QDropEvent *event)
 	}
 	dragSavedCursor = QTextCursor();
 	event->accept();
+}
+
+void TeXDocument::detachPdf()
+{
+	if (pdfDoc != NULL) {
+		disconnect(pdfDoc, SIGNAL(destroyed()), this, SLOT(pdfClosed()));
+		disconnect(this, SIGNAL(destroyed(QObject*)), pdfDoc, SLOT(texClosed(QObject*)));
+		pdfDoc = NULL;
+	}
 }

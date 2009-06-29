@@ -130,11 +130,12 @@ else(LINK_EVERYTHING_STATICALLY)
     ${core_dll_name}
     ${hunspell_dll_name}
     ${poppler_qt4_dll_name}
+    ${QT_QTMAIN_LIBRARY}
     ${QT_LIBRARIES}
   )
 endif(LINK_EVERYTHING_STATICALLY)
 
-add_executable(texworks
+add_executable(texworks WIN32
   ${texworks_sources}
   ${texworks_mocs}
   ${texworks_ui_mocs}
@@ -147,7 +148,7 @@ merge_trustinfo_manifest(texworks asInvoker)
 
 install(TARGETS texworks DESTINATION ${bindir})
 
-add_executable(${miktex_prefix}texworks
+add_executable(${miktex_prefix}texworks WIN32
   ${texworks_sources}
   ${texworks_mocs}
   ${texworks_ui_mocs}

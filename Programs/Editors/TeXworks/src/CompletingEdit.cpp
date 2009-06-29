@@ -21,6 +21,7 @@
 
 #include "CompletingEdit.h"
 #include "TWUtils.h"
+#include "TWApp.h"
 
 #include <QCompleter>
 #include <QKeyEvent>
@@ -43,6 +44,7 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QPainter>
+#include <QClipboard>
 
 CompletingEdit::CompletingEdit(QWidget *parent)
 	: QTextEdit(parent),
@@ -52,7 +54,7 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 	  c(NULL), cmpCursor(QTextCursor()),
 	  pHunspell(NULL), spellingCodec(NULL)
 {
-	if (sharedCompleter == NULL) {
+	if (sharedCompleter == NULL) { // initialize shared (static) members
 		sharedCompleter = new QCompleter(qApp);
 		sharedCompleter->setCompletionMode(QCompleter::InlineCompletion);
 		sharedCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -65,6 +67,9 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 		currentLineFormat = new QTextCharFormat;
 		currentLineFormat->setBackground(QColor("yellow").lighter(180));
 		currentLineFormat->setProperty(QTextFormat::FullWidthSelection, true);
+
+		QSETTINGS_OBJECT(settings);
+		highlightCurrentLine = settings.value("highlightCurrentLine", true).toBool();
 	}
 	
 	loadIndentModes();
@@ -78,6 +83,8 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(const QRect&, int)), this, SLOT(updateLineNumberArea(const QRect&, int)));
 
+	connect(TWApp::instance(), SIGNAL(highlightLineOptionChanged()), this, SLOT(resetExtraSelections()));
+	
 	cursorPositionChangedSlot();
 	updateLineNumberAreaWidth(0);
 }
@@ -152,6 +159,7 @@ void CompletingEdit::mousePressEvent(QMouseEvent *e)
 
 	if (clickCount > 1) {
 		setTextCursor(curs);
+		setSelectionClipboard(curs);
 		mouseMode = dragSelecting;
 	}
 	dragStartCursor = curs;
@@ -241,6 +249,7 @@ void CompletingEdit::mouseMoveEvent(QMouseEvent *e)
 			curs.setPosition(start);
 			curs.setPosition(end, QTextCursor::KeepAnchor);
 			setTextCursor(curs);
+			setSelectionClipboard(curs);
 			if (scrollValue != -1)
 				verticalScrollBar()->setValue(scrollValue);
 			e->accept();
@@ -269,6 +278,7 @@ void CompletingEdit::mouseReleaseEvent(QMouseEvent *e)
 			return;
 		case normalSelection:
 			setTextCursor(dragStartCursor);
+			setSelectionClipboard(dragStartCursor);
 			e->accept();
 			return;
 		case extendingSelection:
@@ -369,6 +379,18 @@ void CompletingEdit::mouseDoubleClickEvent(QMouseEvent *e)
 		mousePressEvent(e); // don't like QTextEdit's selection behavior, so we try to improve it
 }
 
+void
+CompletingEdit::setSelectionClipboard(const QTextCursor& curs)
+{
+	if (!curs.hasSelection())
+		return;
+	QClipboard *c = QApplication::clipboard();
+	if (!c->supportsSelection())
+		return;
+	c->setText(curs.selectedText().replace(QChar(0x2019), QChar('\n')),
+		QClipboard::Selection);
+}
+
 void CompletingEdit::timerEvent(QTimerEvent *e)
 {
 	if (e->timerId() == clickTimer.timerId()) {
@@ -389,7 +411,7 @@ void CompletingEdit::focusInEvent(QFocusEvent *e)
 void CompletingEdit::resetExtraSelections()
 {
 	QList<ExtraSelection> selections;
-	if (!textCursor().hasSelection()) {
+	if (highlightCurrentLine && !textCursor().hasSelection()) {
 		ExtraSelection sel;
 		sel.format = *currentLineFormat;
 		sel.cursor = textCursor();
@@ -1069,9 +1091,18 @@ void CompletingEdit::scrollContentsBy(int dx, int dy)
 	QTextEdit::scrollContentsBy(dx, dy);
 }
 
+void CompletingEdit::setHighlightCurrentLine(bool highlight)
+{
+	if (highlight != highlightCurrentLine) {
+		highlightCurrentLine = highlight;
+		TWApp::instance()->emitHighlightLineOptionChanged();
+	}
+}
+
 QTextCharFormat	*CompletingEdit::currentCompletionFormat = NULL;
 QTextCharFormat	*CompletingEdit::braceMatchingFormat = NULL;
 QTextCharFormat	*CompletingEdit::currentLineFormat = NULL;
+bool CompletingEdit::highlightCurrentLine = true;
 
 QCompleter	*CompletingEdit::sharedCompleter = NULL;
 
