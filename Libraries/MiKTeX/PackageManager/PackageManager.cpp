@@ -250,8 +250,6 @@ PackageManagerImpl::LoadVariablePackageTable ()
       return;
     }
  
-  bool done = false;
-  
   commonVariablePackageTable = Cfg::Create();
 
   PathName pathCommonPackagesIni
@@ -266,38 +264,30 @@ PackageManagerImpl::LoadVariablePackageTable ()
 	 T_("loading common variable package table (%s)"),
 	 Q_(pathCommonPackagesIni));
       commonVariablePackageTable->Read (pathCommonPackagesIni);
-      done = true;
     }
 
   commonVariablePackageTable->SetModified (false);
 
-  if (! pSession->IsAdminMode())
-    {
-      PathName pathUserPackagesIni
-	(pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
-	 MIKTEX_PATH_PACKAGES_INI,
-	 0);
-      if (pathCommonPackagesIni.Canonicalize()
-	      != pathUserPackagesIni.Canonicalize()
-	  && File::Exists(pathUserPackagesIni))
-	{
-	  userVariablePackageTable = Cfg::Create();
-	  trace_mpm->WriteFormattedLine
-	    ("libmpm",
-	     T_("loading user variable package table (%s)"),
-	     Q_(pathUserPackagesIni));
-	  userVariablePackageTable->Read (pathUserPackagesIni);
-	  done = true;
-	  userVariablePackageTable->SetModified (false);
-	}
-    }
-  
-  if (! done)
-    {
+  PathName pathUserPackagesIni
+    (pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+     MIKTEX_PATH_PACKAGES_INI,
+     0);
+
+  if (! pSession->IsAdminMode()
+      && (pathCommonPackagesIni.Canonicalize()
+	  != pathUserPackagesIni.Canonicalize()))
+  {
+    userVariablePackageTable = Cfg::Create();
+    if (File::Exists(pathUserPackagesIni))
+    {	  
       trace_mpm->WriteFormattedLine
 	("libmpm",
-	 T_("variable package table does not exist"));
+	 T_("loading user variable package table (%s)"),
+	 Q_(pathUserPackagesIni));
+      userVariablePackageTable->Read (pathUserPackagesIni);
     }
+    userVariablePackageTable->SetModified (false);
+  }
 }
 
 /* _________________________________________________________________________
@@ -310,8 +300,7 @@ PackageManagerImpl::LoadVariablePackageTable ()
 void
 PackageManagerImpl::FlushVariablePackageTable ()
 {
-  if ((pSession->IsAdminMode()
-       || userVariablePackageTable.Get() == 0)
+  if (pSession->IsAdminMode()
       && commonVariablePackageTable.Get() != 0
       && commonVariablePackageTable->IsModified())
     {

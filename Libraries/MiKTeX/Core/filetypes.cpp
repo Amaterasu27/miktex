@@ -335,16 +335,57 @@ SessionImpl::RegisterFileTypes ()
   extensions = MIKTEX_EXE_FILE_SUFFIX;
 #endif
   
-  PathName binDir = GetSpecialPath(SpecialPath::BinDirectory);
-  binDir.Canonicalize ();
-  PathName myLocation = GetMyLocation(true);
+  string exePath;
 
-  string exePath = binDir.Get();
-  if (binDir != myLocation)
+  PathName userBinDir = GetSpecialPath(SpecialPath::UserInstallRoot);
+  userBinDir += MIKTEX_PATH_BIN_DIR;
+  userBinDir.Canonicalize ();
+
+  if (! IsAdminMode()
+      && ! Utils::Contains(exePath.c_str(), userBinDir.Get(), PATH_DELIMITER_STRING))
+  {
+    if (! exePath.empty())
     {
       exePath += PATH_DELIMITER;
-      exePath += myLocation.Get();
     }
+    exePath += userBinDir.Get();
+  }
+
+  PathName commonBinDir = GetSpecialPath(SpecialPath::CommonInstallRoot);
+  commonBinDir += MIKTEX_PATH_BIN_DIR;
+  commonBinDir.Canonicalize ();
+
+  if (! Utils::Contains(exePath.c_str(), commonBinDir.Get(), PATH_DELIMITER_STRING))
+  {
+    if (! exePath.empty())
+    {
+      exePath += PATH_DELIMITER;
+    }
+    exePath += commonBinDir.Get();
+  }
+
+  PathName binDir = GetSpecialPath(SpecialPath::BinDirectory);
+  binDir.Canonicalize ();
+
+  if (! Utils::Contains(exePath.c_str(), binDir.Get(), PATH_DELIMITER_STRING))
+  {
+    if (! exePath.empty())
+    {
+      exePath += PATH_DELIMITER;
+    }
+    exePath += binDir.Get();
+  }
+
+  PathName myLocation = GetMyLocation(true);
+
+  if (! Utils::Contains(exePath.c_str(), myLocation.Get(), PATH_DELIMITER_STRING))
+  {
+    if (! exePath.empty())
+    {
+      exePath += PATH_DELIMITER;
+    }
+    exePath += myLocation.Get();
+  }
 
   RegisterFileType
     (FileType::EXE,

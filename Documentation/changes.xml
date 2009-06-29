@@ -26,19 +26,66 @@
 
 <section>
 
-<title>&pdfTeX;</title>
+<title>Configurable user roots</title>
 
-<para>&pdfTeX; is now at upstream version 1.40.9.</para>
+<para>to be documented</para>
 
 </section>
 
 <section>
 
-<title>&MetaPost;</title>
+<title>Per-user package management</title>
 
-<para>&MetaPost; is now at upstream version 1.001.</para>
+<para>to be documented</para>
 
 </section>
+
+<section>
+
+<title>&MiKTeXPortable;</title>
+
+<para>The new portable edition allows you to run &MiKTeX; from a portable
+storage device:</para>
+
+<itemizedlist>
+<listitem><para>you carry &MiKTeX; on a portable storage device for
+use on any &Windows; computer</para></listitem>
+<listitem><para>configuration settings are stored on the portable
+storage device and not in the &WindowsRegistry; of the host
+computer</para></listitem>
+<listitem><para>by using &MiKTeXPortable;,
+you leave no traces on the host computer</para></listitem>
+<listitem><para>you do not need administrator privileges on the host
+computer</para></listitem>
+</itemizedlist>
+
+<para>Please visit the <ulink
+url="http://miktex.org/portable">&MiKTeXPortable; Homepage</ulink>, for more
+information.</para>
+
+</section>
+
+<section>
+
+<title>&TeXworks;</title>
+
+<para>The &MiKTeX; distribution now includes &TeXworks;, an integrated
+development environment for &TeX; and &LaTeX;.</para>
+
+<para>&TeXworks; includes a text editor, a previewer, syntax
+highlighting, spell checking, Unicode support.</para>
+
+</section>
+
+<!--
+<section>
+
+<title>&pdfTeX;</title>
+
+<para>&pdfTeX; is now at upstream version 1.40.9.</para>
+
+</section>
+-->
 
 <!--
 Local Variables:

@@ -41,6 +41,7 @@
 <!ENTITY MiKTeXNetInstaller "<application>MiKTeX Net Installer</application>">
 <!ENTITY BasicMiKTeXInstaller "<application>Basic MiKTeX Installer</application>">
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
+<!ENTITY MiKTeXPortable "<application>MiKTeX&nbsp;Portable</application>">
 <!ENTITY MiKTeX25 "<application>MiKTeX&nbsp;2.5</application>">
 <!ENTITY MiKTeX26 "<application>MiKTeX&nbsp;2.6</application>">
 <!ENTITY MiKTeXCurrentSeries "<application>MiKTeX&nbsp;&MIKTEX_SERIES_STR;</application>">
@@ -68,6 +69,7 @@
 <!ENTITY TeXMF "&TeX;MF">
 <!ENTITY eTeX "<application>eTeX</application>">
 <!ENTITY TeX "<application>TeX</application>">
+<!ENTITY TeXworks "<application>TeXworks</application>">
 <!ENTITY TeXAndFriends "<application>TeX</application>&nbsp;&amp;&nbsp;Friends">
 <!ENTITY TeXify "<application>TeXify</application>">
 <!ENTITY Texinfo "<application>Texinfo</application>">
@@ -79,6 +81,7 @@
 <!ENTITY SVN "<acronym>SVN</acronym>">
 <!ENTITY WinEdt "<application>WinEdt</application>">
 <!ENTITY Windows "<application>Windows</application>">
+<!ENTITY WindowsRegistry "<application>Windows Registry</application>">
 <!ENTITY WindowsMe "<application>Windows&nbsp;Millennium Edition</application>">
 <!ENTITY Windows95 "<application>Windows&nbsp;95</application>">
 <!ENTITY Windows9xMeNT "<application>Windows&nbsp;9x/Me/NT</application>">

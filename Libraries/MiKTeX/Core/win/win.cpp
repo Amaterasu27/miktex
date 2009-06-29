@@ -3251,13 +3251,15 @@ miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
 
 MIKTEXSTATICFUNC(bool)
 CheckPath (/*[in]*/ const string &	oldPath,
-	   /*[out]*/ string &		newPath)
+	   /*[in]*/ const PathName &	binDirArg,
+	   /*[out]*/ string &		newPath,
+	   /*[out]*/ bool &		competition)
 {
   bool modified = false;
   bool found = false;
+  competition = false;
   newPath = "";
-  PathName binDir =
-    SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
+  PathName binDir = binDirArg;
   binDir.AppendDirectoryDelimiter ();
   for (CSVList entry (oldPath.c_str(), PathName::PathNameDelimiter);
        entry.GetCurrent() != 0;
@@ -3308,6 +3310,7 @@ CheckPath (/*[in]*/ const string &	oldPath,
 		  newPath += binDir.Get();
 		  found = true;
 		  modified = true;
+		  competition = true;
 		}
 	    }
 	}
@@ -3340,65 +3343,139 @@ Utils::CheckPath (/*[in]*/ bool repair)
 {
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
    REGSTR_PATH_CURRENTCONTROLSET "\\Control\\Session Manager\\Environment"
+
 #define REGSTR_KEY_ENVIRONMENT_USER "Environment"
   
   SessionWrapper pSession (true);
 
-  bool shared = pSession->IsAdminMode();
+  string systemPath;
 
-  string path;
-
-  if (! winRegistry::TryGetRegistryValue((shared
-					  ? HKEY_LOCAL_MACHINE
-					  : HKEY_CURRENT_USER),
-				         (shared
-				          ? REGSTR_KEY_ENVIRONMENT_COMMON
-					  : REGSTR_KEY_ENVIRONMENT_USER),
+  if (! winRegistry::TryGetRegistryValue(HKEY_LOCAL_MACHINE,
+				         REGSTR_KEY_ENVIRONMENT_COMMON,
 				         "Path",
-					 path,
+					 systemPath,
 					 0))
   {
-    return (false);
+    systemPath = "";
   }
 
-  string newPath;
-    
-  bool okay = ::CheckPath(path, newPath);
+  string userPath;
 
-  if (! okay && ! repair)
+  if (! pSession->IsAdminMode())
   {
-    SessionImpl::GetSession()->trace_error->WriteLine
-      ("core",
-      T_("Something is wrong with the PATH:"));
-    SessionImpl::GetSession()->trace_error->WriteLine
-      ("core",
-      path.c_str());
+    if (! winRegistry::TryGetRegistryValue(HKEY_CURRENT_USER,
+					   REGSTR_KEY_ENVIRONMENT_USER,
+					   "Path",
+					   userPath,
+					   0))
+    {
+      userPath = "";
+    }
   }
-  else if (! okay && repair)
+
+  PathName commonBinDir = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+  commonBinDir += MIKTEX_PATH_BIN_DIR;
+
+  string repairedSystemPath;
+
+  bool systemPathCompetition;
+
+  bool systemPathOkay = (
+    ! Directory::Exists(commonBinDir)
+    || ::CheckPath(systemPath, commonBinDir, repairedSystemPath, systemPathCompetition));
+
+  bool repaired = false;
+
+  bool userPathOkay = true;
+
+  if (pSession->IsAdminMode())
   {
-    SessionImpl::GetSession()->trace_error->WriteLine
-      ("core",
-      T_("Setting new PATH:"));
-    SessionImpl::GetSession()->trace_error->WriteLine
-      ("core",
-      newPath.c_str());
-    winRegistry::SetRegistryValue ((shared
-				    ? HKEY_LOCAL_MACHINE
-				    : HKEY_CURRENT_USER),
-				   (shared
-				    ? REGSTR_KEY_ENVIRONMENT_COMMON
-				    : REGSTR_KEY_ENVIRONMENT_USER),
-				   "Path",
-				   newPath.c_str());
+    if (! systemPathOkay && ! repair)
+    {
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	T_("Something is wrong with the system PATH:"));
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	systemPath.c_str());
+    }
+    else if (! systemPathOkay && repair)
+    {
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	T_("Setting new system PATH:"));
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	repairedSystemPath.c_str());
+      winRegistry::SetRegistryValue (HKEY_LOCAL_MACHINE,
+				     REGSTR_KEY_ENVIRONMENT_COMMON,
+				     "Path",
+				     repairedSystemPath.c_str());
+      systemPath = repairedSystemPath;
+      systemPathOkay = true;
+      repaired = true;
+    }
+  }
+  else
+  {
+    if (! systemPathOkay && ! systemPathCompetition)
+    {
+      string repairedUserPath;
+      bool userPathCompetition;
+      systemPathOkay = ::CheckPath(userPath, commonBinDir, repairedUserPath, userPathCompetition);
+      if (! systemPathOkay && repair)
+      {
+	SessionImpl::GetSession()->trace_error->WriteLine
+	  ("core",
+	  T_("Setting new user PATH:"));
+	SessionImpl::GetSession()->trace_error->WriteLine
+	  ("core",
+	  repairedUserPath.c_str());
+	winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
+				       REGSTR_KEY_ENVIRONMENT_USER,
+				       "Path",
+				       repairedUserPath.c_str());
+	userPath = repairedUserPath;
+	systemPathOkay = true;
+	repaired = true;
+      }
+    }
+    PathName userBinDir = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+    userBinDir += MIKTEX_PATH_BIN_DIR;
+    string repairedUserPath;
+    bool userPathCompetition;
+    userPathOkay = (
+      ! Directory::Exists(userBinDir)
+      || ::CheckPath(userPath, userBinDir, repairedUserPath, userPathCompetition));
+    if (! userPathOkay && repair)
+    {
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	T_("Setting new user PATH:"));
+      SessionImpl::GetSession()->trace_error->WriteLine
+	("core",
+	repairedUserPath.c_str());
+      winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
+				     REGSTR_KEY_ENVIRONMENT_USER,
+				     "Path",
+				     repairedUserPath.c_str());
+      userPath = repairedUserPath;
+      userPathOkay = true;
+      repaired = true;
+    }
+  }
+
+  if (repaired)
+  {
     DWORD sendMessageResult;
     if (SendMessageTimeoutA(HWND_BROADCAST,
-      WM_SETTINGCHANGE,
-      0,
-      reinterpret_cast<LPARAM>("Environment"),
-      SMTO_ABORTIFHUNG,
-      5000,
-      &sendMessageResult)
-      == 0)
+			    WM_SETTINGCHANGE,
+			    0,
+			    reinterpret_cast<LPARAM>("Environment"),
+			    SMTO_ABORTIFHUNG,
+			    5000,
+			    &sendMessageResult)
+	== 0)
     {
       if (::GetLastError() != ERROR_SUCCESS)
       {
@@ -3407,7 +3484,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     }
   }
 
-  return (okay);
+  return (repaired || (systemPathOkay && userPathOkay));
 }
 
 /* _________________________________________________________________________
