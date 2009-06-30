@@ -51,6 +51,12 @@
 /* Define to 1 if you have the `FT_Library_Version' function. */
 #undef HAVE_FT_LIBRARY_VERSION
 
+/* Define to 1 if you have the `gdImageCreateFromJpeg' function. */
+#undef HAVE_GDIMAGECREATEFROMJPEG
+
+/* Define to 1 if you have the `gdImageCreateFromPngPtr' function. */
+#undef HAVE_GDIMAGECREATEFROMPNGPTR
+
 /* Define to 1 if you have the `gdImageCreateTrueColor' function. */
 #define HAVE_GDIMAGECREATETRUECOLOR 1
 
@@ -194,17 +200,17 @@
 #define PACKAGE_NAME "dvipng"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "dvipng 1.9"
+#define PACKAGE_STRING "dvipng 1.12"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "dvipng"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.9"
+#define PACKAGE_VERSION "1.12"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
-   automatically deduced at run-time.
+   automatically deduced at runtime.
 	STACK_DIRECTION > 0 => grows toward higher addresses
 	STACK_DIRECTION < 0 => grows toward lower addresses
 	STACK_DIRECTION = 0 => direction of growth unknown */
@@ -231,7 +237,7 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 
-/* Define to `unsigned' if <sys/types.h> does not define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
 /* Define to `unsigned long long' if <inttypes.h> does not define it. */
