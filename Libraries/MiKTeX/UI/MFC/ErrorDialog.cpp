@@ -297,10 +297,6 @@ ErrorDialogImpl::CreateReport ()
 				     : T_("no"))
 		<< endl;
 	    }
-	  s << endl
-	    << "BinDir: "
-	    << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
-	    << endl;
 	  for (unsigned idx = 0;
 	       idx < pSession->GetNumberOfTEXMFRoots();
 	       ++ idx)

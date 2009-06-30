@@ -23,6 +23,8 @@
 
 #include "internal.h"
 
+#include "miktex/Core/Environment"
+
 /* _________________________________________________________________________
 
    SearchSpecBuilder
@@ -364,16 +366,19 @@ SessionImpl::RegisterFileTypes ()
     exePath += commonBinDir.Get();
   }
 
-  PathName binDir = GetSpecialPath(SpecialPath::BinDirectory);
-  binDir.Canonicalize ();
-
-  if (! Utils::Contains(exePath.c_str(), binDir.Get(), PATH_DELIMITER_STRING))
+  string str;
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_BIN_DIR, str))
   {
-    if (! exePath.empty())
+    PathName binDir = str;
+    binDir.Canonicalize ();
+    if (! Utils::Contains(exePath.c_str(), binDir.Get(), PATH_DELIMITER_STRING))
     {
-      exePath += PATH_DELIMITER;
+      if (! exePath.empty())
+      {
+	exePath += PATH_DELIMITER;
+      }
+      exePath += binDir.Get();
     }
-    exePath += binDir.Get();
   }
 
   PathName myLocation = GetMyLocation(true);

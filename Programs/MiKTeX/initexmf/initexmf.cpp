@@ -2473,10 +2473,6 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 				   ? "true"
 				   : "false"));
 	  xmlWriter.EndElement ();
-	  xmlWriter.StartElement ("bindir");
-	  xmlWriter.Text (pSession->GetSpecialPath(SpecialPath::BinDirectory)
-			  .Get());
-	  xmlWriter.EndElement ();
 	}
       xmlWriter.EndElement ();
 #endif
@@ -2497,9 +2493,6 @@ IniTeXMFApp::ReportMiKTeXVersion ()
 	       << endl;
 	}
 #endif
-      cout << "BinDir: "
-	   << pSession->GetSpecialPath(SpecialPath::BinDirectory).Get()
-	   << endl;
     }
 }
 

@@ -242,9 +242,29 @@ DlgProc (/*[in]*/ HWND		hWnd,
 	      }
 	    case SWM_COMMAND_PROMPT:
 	      {
+		PathName userBinDir = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+		userBinDir += MIKTEX_PATH_BIN_DIR;
+		PathName commonBinDir = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+		commonBinDir += MIKTEX_PATH_BIN_DIR;
+		string newPath;
+		if (! pSession->IsAdminMode())
+		{
+		  if (! newPath.empty())
+		  {
+		    newPath += ';';
+		  }
+		  newPath += userBinDir.Get();
+		}
+		if (commonBinDir != userBinDir || pSession->IsAdminMode())
+		{
+		  if (! newPath.empty())
+		  {
+		    newPath += ';';
+		  }
+		  newPath += commonBinDir.Get();
+		}
 		string oldPath;
 		bool haveOldPath = Utils::GetEnvironmentString("PATH", oldPath);
-		string newPath = pSession->GetSpecialPath(SpecialPath::BinDirectory).Get();
 		if (haveOldPath)
 		{
 		  newPath += ';';

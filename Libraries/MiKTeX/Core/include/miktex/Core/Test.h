@@ -192,7 +192,7 @@ public:
 #endif
 
 #if defined(BINDIR)
-	initInfo.SetBinDirectory (BINDIR);
+#  error BINDIR is deprecated
 #endif
 
 	pSession.CreateSession (initInfo);

@@ -5576,21 +5576,6 @@ public:
     {
       return (startupConfig);
     }
-    /// Sets the bin directory.
-  public:
-    void
-    SetBinDirectory (/*[out]*/ const char * lpszBinDirectory)
-    {
-      binDirectory = lpszBinDirectory;
-    }
-    /// Gets the bin directory.
-  public:
-    PathName
-    GetBinDirectory ()
-      const
-    {
-      return (binDirectory);
-    }
     /// Enables trace streams.
   public:
     void
@@ -5614,8 +5599,6 @@ public:
     std::string theNameOfTheGame;
   private:
     StartupConfig startupConfig;
-  private:
-    PathName binDirectory;
   private:
     std::string traceFlags;
   };

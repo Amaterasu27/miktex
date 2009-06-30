@@ -721,29 +721,14 @@ SessionImpl::IsMiKTeXPortable ()
 
    SessionImpl::GetBinDirectory
 
-   Get the fully qualified path to the MiKTeX bin directory.  Consider
-   the MIKTEX_BINDIR environment variable.
+   Get the fully qualified path to the MiKTeX bin directory.
    _________________________________________________________________________ */
 
 PathName
 SessionImpl::GetBinDirectory ()
 {
-  string str;
-  PathName ret;
-  if (! IsMiKTeXDirect()
-      && Utils::GetEnvironmentString(MIKTEX_ENV_BIN_DIR, str))
-    {
-      ret = str;
-    }
-  else
-    {
-      ret = initInfo.GetBinDirectory();
-      if (ret.Empty())
-	{
-	  ret = GetRootDirectory(GetInstallRoot());
-	  ret += MIKTEX_PATH_BIN_DIR;
-	}
-    }
+  PathName ret = GetRootDirectory(GetInstallRoot());
+  ret += MIKTEX_PATH_BIN_DIR;
   return (ret);
 }
 

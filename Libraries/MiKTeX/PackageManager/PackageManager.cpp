@@ -300,8 +300,7 @@ PackageManagerImpl::LoadVariablePackageTable ()
 void
 PackageManagerImpl::FlushVariablePackageTable ()
 {
-  if (pSession->IsAdminMode()
-      && commonVariablePackageTable.Get() != 0
+  if (commonVariablePackageTable.Get() != 0
       && commonVariablePackageTable->IsModified())
     {
       PathName pathPackagesIni
@@ -314,8 +313,7 @@ PackageManagerImpl::FlushVariablePackageTable ()
 	 Q_(pathPackagesIni));
       commonVariablePackageTable->Write (pathPackagesIni);
     }
-  if (! pSession->IsAdminMode()
-      && userVariablePackageTable.Get() != 0
+  if (userVariablePackageTable.Get() != 0
       && userVariablePackageTable->IsModified())
     {
       PathName pathPackagesIni
