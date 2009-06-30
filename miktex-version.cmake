@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	2)
 set(MIKTEX_MINOR_VERSION	8)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	3459)
+set(MIKTEX_J2000_VERSION	3468)
 
 ## the version of the binary package
 set(MIKTEX_PACKAGE_REVISION	1)
