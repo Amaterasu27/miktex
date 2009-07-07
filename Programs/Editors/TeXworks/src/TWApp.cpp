@@ -552,6 +552,7 @@ void TWApp::setDefaultEngineList()
 	*engineList
 		<< Engine("pdfTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "$fullname", true)
 		<< Engine("pdfLaTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "-undump=pdflatex" << "$fullname", true)
+		//<< Engine("pdfLaTeX (TeXify)", MIKTEX_TEXIFY_EXE, 
 		<< Engine("XeTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "$fullname", true)
 		<< Engine("XeLaTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "-undump=xelatex" << "$fullname", true)
 		<< Engine("BibTeX", MIKTEX_BIBTEX_EXE, QStringList("$basename"), false)

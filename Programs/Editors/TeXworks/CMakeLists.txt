@@ -47,18 +47,18 @@ if(NATIVE_WINDOWS)
   set(texworks_sources ${texworks_sources}
     ${CMAKE_CURRENT_SOURCE_DIR}/texworks.rc
   )
-  add_custom_command(
-    OUTPUT
-      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-    COMMAND
-      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
-        -verbose
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
-	${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-    DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
-    VERBATIM
-  )
+#  add_custom_command(
+#    OUTPUT
+#      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+#    COMMAND
+#      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
+#        -verbose
+#        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
+#	${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+#    DEPENDS
+#      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
+#    VERBATIM
+#  )
   add_custom_command(
     OUTPUT
       ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
@@ -75,7 +75,7 @@ if(NATIVE_WINDOWS)
     texworks_icons
     ALL
     DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
+#      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
       ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
   )
 endif(NATIVE_WINDOWS)
