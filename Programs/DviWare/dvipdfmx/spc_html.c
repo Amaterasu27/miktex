@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.8 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.10 2009/03/16 22:26:40 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -574,7 +574,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
   double         alpha = 1.0; /* meaning fully opaque */
 #endif /* ENABLE_HTML_SVG_OPACITY */
 #ifdef  ENABLE_HTML_SVG_TRANSFORM
-  pdf_tmatrix    M;
+  pdf_tmatrix    M, M1;
 
   pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user, spe->y_user);
 #endif /* ENABLE_HTML_SVG_TRANSFORM */
@@ -662,25 +662,24 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
                                       res_name, pdf_ref_obj(dict));
             pdf_release_obj(dict);
           }
-          pdf_doc_add_page_content(" /", 2);
-          pdf_doc_add_page_content(res_name, strlen(res_name));
-          pdf_doc_add_page_content(" gs", 3);
+          pdf_doc_add_page_content(" /", 2);  /* op: */
+          pdf_doc_add_page_content(res_name, strlen(res_name));  /* op: */
+          pdf_doc_add_page_content(" gs", 3);  /* op: gs */
           RELEASE(res_name);
         }
       }
 #endif /* ENABLE_HTML_SVG_OPACITY */
 
-      pdf_dev_concat(&M);
-
-      pdf_ximage_scale_image(id, &M, &r, &ti);
+      pdf_ximage_scale_image(id, &M1, &r, &ti);
+      pdf_concatmatrix(&M, &M1);
       pdf_dev_concat(&M);
 
       pdf_dev_rectclip(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);
 
       res_name = pdf_ximage_get_resname(id);
-      pdf_doc_add_page_content(" /", 2);
-      pdf_doc_add_page_content(res_name, strlen(res_name));
-      pdf_doc_add_page_content(" Do", 3);
+      pdf_doc_add_page_content(" /", 2);  /* op: */
+      pdf_doc_add_page_content(res_name, strlen(res_name));  /* op: */
+      pdf_doc_add_page_content(" Do", 3);  /* op: Do */
 
       pdf_dev_grestore();
 

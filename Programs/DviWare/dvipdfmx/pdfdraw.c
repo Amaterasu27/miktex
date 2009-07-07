@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.15 2008/05/22 11:03:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.19 2009/03/16 22:26:40 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -138,6 +138,7 @@ pdf_coord__transform (pdf_coord *p, const pdf_tmatrix *M)
   return 0;
 }
 
+#if 0
 static /* __inline__ */ int
 pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -155,6 +156,7 @@ pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return 0;
 }
+#endif
 
 static /* __inline__ */ int
 pdf_coord__dtransform (pdf_coord *p, const pdf_tmatrix *M)
@@ -797,7 +799,7 @@ pdf_dev__rectshape (pdf_dev           *P,
   buf[len++] = ' ';
   buf[len++] = isclip ? 'n' : 'Q';
 
-  pdf_doc_add_page_content(buf, len); len = 0;
+  pdf_doc_add_page_content(buf, len);  /* op: q cm n re Q */
 
   return 0;
 }
@@ -840,7 +842,8 @@ pdf_dev__flushpath (pdf_dev   *P,
     b[len++] = ' ';
     b[len++] = 'r';
     b[len++] = 'e';
-    pdf_doc_add_page_content(b, len); len = 0;
+    pdf_doc_add_page_content(b, len);  /* op: re */
+    len = 0;
   } else {
     n_seg = PA_LENGTH(pa);
     for (i = 0, len = 0, pe = &pa->path[0];
@@ -854,11 +857,13 @@ pdf_dev__flushpath (pdf_dev   *P,
       b[len++] = ' ';
       b[len++] = PE_OPCHR(pe);
       if (len + 128 > b_len) {
-        pdf_doc_add_page_content(b, len); len = 0;
+        pdf_doc_add_page_content(b, len);  /* op: m l c v y h */
+	len = 0;
       }
     }
     if (len > 0) {
-      pdf_doc_add_page_content(b, len); len = 0;
+      pdf_doc_add_page_content(b, len);  /* op: m l c v y h */
+      len = 0;
     }
   }
 
@@ -867,7 +872,7 @@ pdf_dev__flushpath (pdf_dev   *P,
   if (rule == PDF_FILL_RULE_EVENODD)
     b[len++] = '*';
 
-  pdf_doc_add_page_content(b, len);
+  pdf_doc_add_page_content(b, len);  /* op: f F s S b B W f* F* s* S* b* B* W* */
 
   return 0;
 }
@@ -999,8 +1004,8 @@ init_a_gstate (pdf_gstate *gs)
 
   pdf_setmatrix(&gs->matrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
-  pdf_color_graycolor(&gs->strokecolor, 0.0);
-  pdf_color_graycolor(&gs->fillcolor, 0.0);
+  pdf_color_black(&gs->strokecolor);
+  pdf_color_black(&gs->fillcolor);
 
   gs->linedash.num_dash = 0;
   gs->linedash.offset   = 0;
@@ -1098,18 +1103,14 @@ int
 pdf_dev_gsave (void)
 {
   pdf_gstate *gs0, *gs1;
-  pdf_color  *sc, *fc;
 
   gs0 = m_stack_top(&gs_stack);
   gs1 = NEW(1, pdf_gstate);
   init_a_gstate(gs1);
   copy_a_gstate(gs1, gs0);
-  pdf_color_get_current(&sc, &fc);
-  pdf_color_copycolor(&gs1->strokecolor, sc);
-  pdf_color_copycolor(&gs1->fillcolor, fc);
   m_stack_push(&gs_stack, gs1);
 
-  pdf_doc_add_page_content(" q", 2);
+  pdf_doc_add_page_content(" q", 2);  /* op: q */
 
   return 0;
 }
@@ -1128,7 +1129,7 @@ pdf_dev_grestore (void)
   clear_a_gstate(gs);
   RELEASE(gs);
 
-  pdf_doc_add_page_content(" Q", 2);
+  pdf_doc_add_page_content(" Q", 2);  /* op: Q */
 
   pdf_dev_reset_fonts();
 
@@ -1190,7 +1191,7 @@ pdf_dev_grestore_to (int depth)
   }
 
   while (m_stack_depth(gss) > depth + 1) {
-    pdf_doc_add_page_content(" Q", 2);
+    pdf_doc_add_page_content(" Q", 2);  /* op: Q */
     gs = m_stack_pop(gss);
     clear_a_gstate(gs);
     RELEASE(gs);
@@ -1245,6 +1246,61 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 }
 #endif /* 0 */
 
+/*
+ * mask == 0 means stroking color, mask == 0x20 nonstroking color
+ *
+ * force == 1 means that operators will be generated even if
+ *   the color is the same as the current graphics state color
+ */
+void
+pdf_dev_set_color (const pdf_color *color, char mask, int force)
+{
+  int len;
+
+  pdf_gstate *gs  = m_stack_top(&gs_stack);
+  pdf_color *current = mask ? &gs->fillcolor : &gs->strokecolor;
+
+  ASSERT(pdf_color_is_valid(color));
+
+  if (!(pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE) &&
+	(force || pdf_color_compare(color, current))))
+    /* If "color" is already the current color, then do nothing
+     * unless a color operator is forced
+     */
+    return;
+
+  graphics_mode();
+  len = pdf_color_to_string(color, fmt_buf);
+  fmt_buf[len++] = ' ';
+  switch (pdf_color_type(color)) {
+  case  PDF_COLORSPACE_TYPE_RGB:
+    fmt_buf[len++] = 'R' | mask;
+    fmt_buf[len++] = 'G' | mask;
+    break;
+  case  PDF_COLORSPACE_TYPE_CMYK:
+    fmt_buf[len++] = 'K' | mask;
+    break;
+  case  PDF_COLORSPACE_TYPE_GRAY:
+    fmt_buf[len++] = 'G' | mask;
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(fmt_buf, len);  /* op: RG K G rg k g */
+
+  pdf_color_copycolor(current, color);
+}
+
+void
+pdf_dev_reset_color (int force)
+{
+  pdf_color *sc, *fc;
+
+  pdf_color_get_current(&sc, &fc);
+  pdf_dev_set_color(sc,    0, force);
+  pdf_dev_set_color(fc, 0x20, force);
+}
+
 int
 pdf_dev_concat (const pdf_tmatrix *M)
 {
@@ -1253,7 +1309,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   pdf_path    *cpa = &gs->path;
   pdf_coord   *cpt = &gs->cp;
   pdf_tmatrix *CTM = &gs->matrix;
-  pdf_tmatrix  W;
+  pdf_tmatrix  W   = {0, 0, 0, 0, 0, 0};  /* Init to avoid compiler warning */
   char        *buf = FORMAT_BUFF_PTR(NULL);
   int          len = 0;
 
@@ -1274,7 +1330,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   buf[len++] = ' ';
   buf[len++] = 'c';
   buf[len++] = 'm';
-  pdf_doc_add_page_content(buf, len);
+  pdf_doc_add_page_content(buf, len);  /* op: cm */
 
   pdf_concatmatrix(CTM, M);
 
@@ -1309,7 +1365,7 @@ pdf_dev_setmiterlimit (double mlimit)
     len += pdf_sprint_length(buf + len, mlimit);
     buf[len++] = ' ';
     buf[len++] = 'M';
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: M */
     gs->miterlimit = mlimit;
   }
 
@@ -1326,7 +1382,7 @@ pdf_dev_setlinecap (int capstyle)
 
   if (gs->linecap != capstyle) {
     len = sprintf(buf, " %d J", capstyle);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: J */
     gs->linecap = capstyle;
   }
 
@@ -1343,7 +1399,7 @@ pdf_dev_setlinejoin (int joinstyle)
 
   if (gs->linejoin != joinstyle) {
     len = sprintf(buf, " %d j", joinstyle);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: j */
     gs->linejoin = joinstyle;
   }
 
@@ -1363,7 +1419,7 @@ pdf_dev_setlinewidth (double width)
     len += pdf_sprint_length(buf + len, width);
     buf[len++] = ' ';
     buf[len++] = 'w';
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: w */
     gs->linewidth = width;
   }
 
@@ -1381,21 +1437,22 @@ pdf_dev_setdash (int count, double *pattern, double offset)
 
   gs->linedash.num_dash = count;
   gs->linedash.offset   = offset;
-  pdf_doc_add_page_content(" [", 2);
+  pdf_doc_add_page_content(" [", 2);  /* op: */
   for (i = 0; i < count; i++) {
     buf[0] = ' ';
     len = pdf_sprint_length (buf + 1, pattern[i]);
-    pdf_doc_add_page_content(buf, len + 1);
+    pdf_doc_add_page_content(buf, len + 1);  /* op: */
     gs->linedash.pattern[i] = pattern[i];
   }
-  pdf_doc_add_page_content("] ", 2);
+  pdf_doc_add_page_content("] ", 2);  /* op: */
   len = pdf_sprint_length (buf, offset);
-  pdf_doc_add_page_content(buf, len);
-  pdf_doc_add_page_content(" d", 2);
+  pdf_doc_add_page_content(buf, len);  /* op: */
+  pdf_doc_add_page_content(" d", 2);  /* op: d */
 
   return 0;
 }
 
+#if 0
 int
 pdf_dev_setflat (int flatness)
 {
@@ -1410,12 +1467,13 @@ pdf_dev_setflat (int flatness)
   if (gs->flatness != flatness) {
     gs->flatness = flatness;
     len = sprintf(buf, " %d i", flatness);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: i */
   }
 
   return 0;
 }
-    
+#endif
+
 /* ZSYUEDVEDEOF */
 int
 pdf_dev_clip (void)
@@ -1468,7 +1526,7 @@ pdf_dev_newpath (void)
     pdf_path__clearpath (p);
   }
   /* The following is required for "newpath" operator in mpost.c. */
-  pdf_doc_add_page_content(" n", 2);
+  pdf_doc_add_page_content(" n", 2);  /* op: n */
 
   return 0;
 }
@@ -1619,6 +1677,7 @@ pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
   return;
 }
 
+#if 0
 void
 pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -1632,6 +1691,7 @@ pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return;
 }
+#endif
 
 int
 pdf_dev_arc  (double c_x , double c_y, double r,
@@ -1704,6 +1764,7 @@ pdf_dev_bspline (double x0, double y0,
 }
 
 
+#if 0
 int
 pdf_dev_rectstroke (double x, double y,
                     double w, double h,
@@ -1719,6 +1780,7 @@ pdf_dev_rectstroke (double x, double y,
 
   return  pdf_dev__rectshape(NULL, &r, M, 'S');
 }
+#endif
 
 int
 pdf_dev_rectfill  (double x, double y,

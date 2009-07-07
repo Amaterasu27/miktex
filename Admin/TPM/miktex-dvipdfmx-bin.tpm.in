@@ -7,9 +7,10 @@
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
-      This packages includes the dvipdfmx executable.
+      This package includes the dvipdfmx executable.
     </TPM:Description>
     <TPM:RunFiles>
+texmf/miktex/bin/${dvipdfmx_dll_name}.dll
 texmf/miktex/bin/dvipdfmx.exe
 texmf/miktex/bin/xbb.exe
 texmf/miktex/config/dvipdfmx.ini

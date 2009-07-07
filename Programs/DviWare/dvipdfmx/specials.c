@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.10 2008/05/24 08:37:49 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.13 2009/04/26 21:23:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -283,31 +283,12 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  int  error = 0;
+  ASSERT(named_objects);
 
   if (!key || !value)
     return;
 
-  if (PDF_OBJ_INDIRECTTYPE(value)) {
-    pdf_names_add_reference(named_objects,
-                            key, strlen(key), value);
-  } else {
-    error = pdf_names_add_object(named_objects,
-                                 key, strlen(key), value);
-    if (!error) {
-      /* _FIXME_:
-       * Objects created by pdf:obj must always
-       * be written to output regardless of if
-       * they are actually used in document.
-       */
-      pdf_obj *obj_ref = pdf_names_lookup_reference(named_objects,
-                                                    key, strlen(key));
-      if (obj_ref)
-        pdf_release_obj(obj_ref);
-    }
-  }
-
-  return;
+  pdf_names_add_object(named_objects, key, strlen(key), value);
 }
 
 void
@@ -389,26 +370,26 @@ static struct {
   {"pdf:",
    spc_pdfm_at_begin_document,
    spc_pdfm_at_end_document,
-   spc_pdfm_at_begin_page,
-   spc_pdfm_at_end_page,
+   NULL,
+   NULL,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
 
   {"ps:",
-   spc_dvips_at_begin_document,
-   spc_dvips_at_end_document,
-   spc_dvips_at_begin_page,
+   NULL,
+   NULL,
+   NULL,
    spc_dvips_at_end_page,
    spc_dvips_check_special,
    spc_dvips_setup_handler
   },
 
   {"color",
-   spc_color_at_begin_document,
-   spc_color_at_end_document,
-   spc_color_at_begin_page,
-   spc_color_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_color_check_special,
    spc_color_setup_handler
   },
@@ -432,10 +413,10 @@ static struct {
   },
 
   {"unknown",
-   spc_misc_at_begin_document,
-   spc_misc_at_end_document,
-   spc_misc_at_begin_page,
-   spc_misc_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_misc_check_special,
    spc_misc_setup_handler
   },
@@ -530,7 +511,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
     if (isprint(*p))
       ebuf[i++] = *p;
     else if (i + 4 < 63)
-      i += sprintf(ebuf + i, "\\x%02x", *p);
+      i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);
     else
       break;
   }
@@ -546,7 +527,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
       if (isprint(*p))
         ebuf[i++] = *p;
       else if (i + 4 < 63)
-        i += sprintf(ebuf + i, "\\x%02x", *p);
+        i += sprintf(ebuf + i, "\\x%02x", (unsigned char)*p);
       else
         break;
     }

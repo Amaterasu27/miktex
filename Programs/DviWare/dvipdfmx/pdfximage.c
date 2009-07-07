@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.21 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.25 2009/07/07 11:48:34 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -261,8 +261,14 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(I, fp) < 0)
-      goto error;
+    {
+      int result = pdf_include_page(I, fp, ident);
+      if (result > 0)
+	/* PDF version too recent */
+	result = ps_include_page(I, fullname);
+      if (result < 0)
+	goto error;
+    }
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
@@ -443,12 +449,6 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->xdensity = info->ydensity = 1.0;
 }
 
-char *
-pdf_ximage_get_ident (pdf_ximage *I)
-{
-  return I->ident;
-}
-
 void
 pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
 {
@@ -585,6 +585,37 @@ pdf_ximage_get_resname (int id)
   return I->res_name;
 }
 
+int
+pdf_ximage_get_subtype (int id)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+
+  return I->subtype;
+}
+
+void
+pdf_ximage_set_attr (int id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+  I->attr.width = width;
+  I->attr.height = height;
+  I->attr.xdensity = xdensity;
+  I->attr.ydensity = ydensity;
+  I->attr.bbox.llx = llx;
+  I->attr.bbox.lly = lly;
+  I->attr.bbox.urx = urx;
+  I->attr.bbox.ury = ury;
+}
 
 /* depth...
  * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
@@ -837,7 +868,9 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     }
   }
 #endif
-  error = dpx_file_apply_filter(distiller_template, filename, temp);
+
+  error = dpx_file_apply_filter(distiller_template, filename, temp,
+                               (unsigned char) pdf_get_version());
   if (error) {
     WARN("Image format conversion for \"%s\" failed...", filename);
     dpx_delete_temp_file(temp);
@@ -850,7 +883,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     dpx_delete_temp_file(temp);
     return  -1;
   }
-  error = pdf_include_page(ximage, fp);
+  error = pdf_include_page(ximage, fp, temp);
   MFCLOSE(fp);
 
   if (_opts.verbose > 1) {

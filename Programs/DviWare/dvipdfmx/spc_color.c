@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.6 2007/11/22 11:45:39 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.9 2009/04/29 11:22:19 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -47,37 +47,13 @@
  * implicitely.
  */
 
-int
-spc_color_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_end_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_begin_document (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_end_document (void)
-{
-  return  0;
-}
-
 static int
 spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
 {
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error) {
     pdf_color_push(&colorspec, &colorspec);
   }
@@ -102,11 +78,10 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error) {
-    pdf_color_set_default(&colorspec);
-    pdf_color_clear_stack(); /* the default color is saved on color_stack */
-    pdf_color_push(&colorspec, &colorspec);
+    pdf_color_clear_stack();
+    pdf_color_set(&colorspec, &colorspec);
   }
 
   return  error;
@@ -122,7 +97,7 @@ spc_handler_background (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error)
     pdf_doc_set_bgcolor(&colorspec);
 

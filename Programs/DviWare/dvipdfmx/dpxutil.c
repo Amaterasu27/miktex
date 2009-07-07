@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.8 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.11 2009/04/26 21:23:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -28,6 +28,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "system.h"
 #include "mem.h"
 #include "error.h"
 
@@ -184,7 +185,7 @@ ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
 
     hent = ht->table[i];
     while (hent) {
-      if (hent->value) {
+      if (hent->value && hval_free_fn) {
 	hval_free_fn(hent->value);
       }
       hent->value  = NULL;
@@ -199,6 +200,13 @@ ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
     ht->table[i] = NULL;
   }
   ht->count = 0;
+}
+
+long ht_table_size (struct ht_table *ht)
+{
+  ASSERT(ht);
+
+  return ht->count;
 }
 
 static unsigned int
@@ -261,7 +269,9 @@ ht_remove_table (struct ht_table *ht,
       RELEASE(hent->key);
     hent->key    = NULL;
     hent->keylen = 0;
-    hval_free_fn(hent->value);
+    if (hent->value && hval_free_fn) {
+      hval_free_fn(hent->value);
+    }
     hent->value  = NULL;
     if (prev) {
       prev->next = hent->next;
@@ -298,7 +308,8 @@ ht_insert_table (struct ht_table *ht,
     hent = hent->next;
   }
   if (hent) {
-    hval_free_fn(hent->value);
+    if (hent->value && hval_free_fn)
+      hval_free_fn(hent->value);
     hent->value  = value;
   } else {
     hent = NEW(1, struct ht_entry);

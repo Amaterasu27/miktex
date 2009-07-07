@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.5 2007/11/17 18:08:58 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.7 2009/03/24 07:55:52 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -25,6 +25,7 @@
 #include <stdio.h>	
 #include <stdlib.h>
 
+#include "system.h"
 #include "mem.h"
 #include "error.h"
 
@@ -168,10 +169,15 @@ void *new (size_t size)
 
 void *renew (void *mem, size_t size)
 {
-  void *result = realloc (mem, size);
-  if (!result) {
-    ERROR("Out of memory - asked for %lu bytes\n", (unsigned long) size);
+  if (size) {
+    void *result = realloc (mem, size);
+    if (!result) {
+      ERROR("Out of memory - asked for %lu bytes\n", (unsigned long) size);
+    }
+    return result;
+  } else {
+    /* realloc may not return NULL if size == 0 */
+    free(mem);
+    return NULL;
   }
-
-  return result;
 }

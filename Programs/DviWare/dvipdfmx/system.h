@@ -27,6 +27,9 @@
 
 #ifdef MIKTEX
 #include <miktex/Core/Core>
+#if ! defined(MIKTEX)
+#include "gnu-miktex.h"
+#endif
 #include <miktex/KPSE/Emulation>
 #else
 #include <kpathsea/c-auto.h>

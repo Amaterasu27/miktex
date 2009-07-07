@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.43 2008/06/20 23:18:45 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.50 2009/07/07 11:48:34 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -54,6 +54,7 @@
 #include "spc_util.h"
 #include "spc_pdfm.h"
 
+#include "dvipdfmx.h"
 
 #define  ENABLE_TOUNICODE  1
 
@@ -201,18 +202,6 @@ spc_pdfm_at_end_document (void)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
   return  spc_handler_pdfm__clean(NULL, NULL, sd);
-}
-
-int
-spc_pdfm_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_pdfm_at_end_page (void)
-{
-  return  0;
 }
 
 
@@ -584,7 +573,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   if (ident)
     spc_push_object(ident, pdf_link_obj(annot_dict));
   /* This add reference. */
-  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict);
+  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
     spc_flush_object(ident);
@@ -655,11 +644,13 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
 {
   int       error;
   pdf_color fc, sc;
+  pdf_color *pfc, *psc;
 
-  error = spc_util_read_colorspec(spe, &fc, ap, 0);
+  pdf_color_get_current(&psc, &pfc);
+  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
   if (!error) {
     if (ap->curptr < ap->endptr) {
-      error = spc_util_read_colorspec(spe, &sc, ap, 0);
+      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     } else {
       pdf_color_copycolor(&sc, &fc);
     }
@@ -668,25 +659,28 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
   if (error)
     spc_warn(spe, "Invalid color specification?");
   else {
-    pdf_color_push(&sc, &fc); /* save currentcolor */
-    pdf_dev_set_strokingcolor(&sc);
-    pdf_dev_set_nonstrokingcolor(&fc);
+    pdf_color_push(&sc, &fc);
   }
 
   return  error;
 }
 
-/* Different than "color rgb 1 0 0" ? */
+/*
+ * This special changes the current color without clearing the color stack.
+ * It therefore differs from "color rgb 1 0 0".
+ */
 static int
 spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
 {
   int       error;
   pdf_color fc, sc;
+  pdf_color *pfc, *psc;
 
-  error = spc_util_read_colorspec(spe, &fc, ap, 0);
+  pdf_color_get_current(&psc, &pfc);
+  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
   if (!error) {
     if (ap->curptr < ap->endptr) {
-      error = spc_util_read_colorspec(spe, &sc, ap, 0);
+      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     } else {
       pdf_color_copycolor(&sc, &fc);
     }
@@ -695,9 +689,7 @@ spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
   if (error)
     spc_warn(spe, "Invalid color specification?");
   else {
-    pdf_color_set_default(&fc); /* ????? */
-    pdf_dev_set_strokingcolor(&sc);
-    pdf_dev_set_nonstrokingcolor(&fc);
+    pdf_color_set(&sc, &fc);
   }
 
   return  error;
@@ -740,13 +732,13 @@ spc_handler_pdfm_etrans (struct spc_env *spe, struct spc_arg *args)
 
   /*
    * Unfortunately, the following line is necessary in case
-   * of a font or color change inside of the save/restore pair.
+   * of a color change inside of the save/restore pair.
+   * (Font changes are automatically corrected by pdf_dev_grestore().)
    * Anything that was done there must be redone, so in effect,
    * we make no assumptions about what fonts. We act like we are
    * starting a new page.
    */
-  pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 
   return  0;
 }
@@ -1017,6 +1009,9 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
 
   if (ident) {
+    if (compat_mode &&
+        pdf_ximage_get_subtype(xobj_id) == PDF_XOBJECT_TYPE_IMAGE)
+      pdf_ximage_set_attr(xobj_id, 1, 1, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
     addresource(sd, ident, xobj_id);
     RELEASE(ident);
   }
@@ -1265,10 +1260,10 @@ spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
     work_buffer[len++] = 'm';
     work_buffer[len++] = ' ';
 
-    pdf_doc_add_page_content(work_buffer, len);
+    pdf_doc_add_page_content(work_buffer, len);  /* op: q cm */
     len = (long) (args->endptr - args->curptr);
-    pdf_doc_add_page_content(args->curptr, len);
-    pdf_doc_add_page_content(" Q", 2);
+    pdf_doc_add_page_content(args->curptr, len);  /* op: ANY */
+    pdf_doc_add_page_content(" Q", 2);  /* op: Q */
   }
   args->curptr = args->endptr;
 
@@ -1303,8 +1298,8 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
       M.e = spe->x_user; M.f = spe->y_user;
       pdf_dev_concat(&M);
     }
-    pdf_doc_add_page_content(" ", 1);
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));
+    pdf_doc_add_page_content(" ", 1);  /* op: */
+    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
     if (!direct) {
       M.e = -spe->x_user; M.f = -spe->y_user;
       pdf_dev_concat(&M);
@@ -1335,6 +1330,8 @@ spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_dev_pop_coord();
   pdf_dev_grestore();
+  pdf_dev_reset_color(0);
+
   return  0;
 }
 
@@ -1344,8 +1341,8 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
 
   if (args->curptr < args->endptr) {
-    pdf_doc_add_page_content(" ", 1);
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));
+    pdf_doc_add_page_content(" ", 1);  /* op: */
+    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
     args->curptr = args->endptr;
   }
 
@@ -1680,7 +1677,7 @@ spc_handler_pdfm_bgcolor (struct spc_env *spe, struct spc_arg *args)
   int       error;
   pdf_color colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 0);
+  error = spc_util_read_pdfcolor(spe, &colorspec, args, NULL);
   if (error)
     spc_warn(spe, "No valid color specified?");
   else {

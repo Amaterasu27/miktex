@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.h,v 1.1 2008/05/17 07:22:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.h,v 1.2 2009/05/10 17:04:54 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -26,6 +26,6 @@
 #define EBB_OUTPUT 0
 #define XBB_OUTPUT 1
 
-extern int extractbb(int argc, char *argv[], int mode);
+extern int extractbb(int argc, char *argv[]);
 
 #endif /* _XBB_H_ */

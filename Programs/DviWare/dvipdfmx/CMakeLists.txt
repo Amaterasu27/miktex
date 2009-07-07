@@ -27,8 +27,7 @@ add_definitions(-DHAVE_CONFIG_H)
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
-set(dvipdfmx_sources
-  ${wrapper_cpp}
+set(dvipdfmx_dll_sources
   agl.c
   bmpimage.c
   cff.c
@@ -100,19 +99,19 @@ set(dvipdfmx_sources
   xbb.c
 )
 
-set(xbb_sources ${dvipdfmx_sources})
-
 if(NATIVE_WINDOWS)
-  set(dvipdfmx_sources ${dvipdfmx_sources}
+  set(dvipdfmx_dll_sources ${dvipdfmx_dll_sources}
     dvipdfmx.rc
   )
 endif(NATIVE_WINDOWS)
 
-add_executable(dvipdfmx ${dvipdfmx_sources})
+add_library(
+  ${dvipdfmx_dll_name}
+  SHARED
+  ${dvipdfmx_dll_sources}
+)
 
-merge_trustinfo_manifest(dvipdfmx asInvoker)
-
-target_link_libraries(dvipdfmx
+target_link_libraries(${dvipdfmx_dll_name}
   ${app_dll_name}
   ${core_dll_name}
   ${getopt_dll_name}
@@ -122,26 +121,6 @@ target_link_libraries(dvipdfmx
   ${zlib_dll_name}
 )
 
-install(TARGETS dvipdfmx DESTINATION ${bindir})
+create_dll_wrapper(dvipdfmx ${dvipdfmx_dll_name} Main)
 
-if(NATIVE_WINDOWS)
-  set(xbb_sources ${xbb_sources}
-    xbb.rc
-  )
-endif(NATIVE_WINDOWS)
-
-add_executable(xbb ${xbb_sources})
-
-merge_trustinfo_manifest(xbb asInvoker)
-
-target_link_libraries(xbb
-  ${app_dll_name}
-  ${core_dll_name}
-  ${getopt_dll_name}
-  ${kpsemu_dll_name}
-  ${png_dll_name}
-  ${texmf_dll_name}
-  ${zlib_dll_name}
-)
-
-install(TARGETS xbb DESTINATION ${bindir})
+create_dll_wrapper(xbb ${dvipdfmx_dll_name} Main)
