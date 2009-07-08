@@ -113,6 +113,7 @@ set(texworks_ui_files
 set(texworks_rcs_files
   res/resources.qrc
   res/resfiles.qrc
+  res/miktex.qrc
 )
 
 qt4_wrap_cpp(texworks_mocs ${texworks_moc_sources})

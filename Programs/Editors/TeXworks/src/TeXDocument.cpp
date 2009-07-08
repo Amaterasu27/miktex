@@ -354,6 +354,16 @@ void TeXDocument::init()
 	docList.append(this);
 	
 	TWUtils::installCustomShortcuts(this);
+
+#if defined(MIKTEX)
+        actionAbout_MiKTeX = new QAction(this);
+        actionAbout_MiKTeX->setObjectName(QString::fromUtf8("actionAbout_MiKTeX"));
+	actionAbout_MiKTeX->setText(QApplication::translate("TeXDocument", "About MiKTeX...", 0, QApplication::UnicodeUTF8));
+        actionAbout_MiKTeX->setMenuRole(QAction::AboutRole);
+	connect (actionAbout_MiKTeX, SIGNAL(triggered()), qApp, SLOT(aboutMiKTeX()));
+	menuHelp->insertAction (actionGoToHomePage, actionAbout_MiKTeX);
+	menuHelp->insertSeparator (actionGoToHomePage);
+#endif
 }
 
 void TeXDocument::changeEvent(QEvent *event)

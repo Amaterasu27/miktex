@@ -302,6 +302,10 @@ private:
 	// stores the page idx a search was started on
 	// after wrapping the search will continue only up to this page
 	int firstSearchPage; 
+
+#if defined(MIKTEX)
+    QAction * actionAbout_MiKTeX;
+#endif
 };
 
 #endif

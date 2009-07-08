@@ -158,6 +158,9 @@ signals:
 	void highlightLineOptionChanged();
 
 private slots:
+#if defined(MIKTEX)
+	void aboutMiKTeX();
+#endif
 	void about();
 	void newFile();
 	void newFromTemplate();

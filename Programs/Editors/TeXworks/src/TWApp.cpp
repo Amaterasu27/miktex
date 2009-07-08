@@ -552,12 +552,13 @@ void TWApp::setDefaultEngineList()
 	*engineList
 		<< Engine("pdfTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "$fullname", true)
 		<< Engine("pdfLaTeX", MIKTEX_PDFTEX_EXE, QStringList("-synctex=1") << "-undump=pdflatex" << "$fullname", true)
-		//<< Engine("pdfLaTeX (TeXify)", MIKTEX_TEXIFY_EXE, 
+		<< Engine("pdfLaTeX+MakeIndex+BibTeX", MIKTEX_TEXIFY_EXE, QStringList("--pdf") << "--tex-option=-synctex=1" << "$fullname", true)
 		<< Engine("XeTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "$fullname", true)
 		<< Engine("XeLaTeX", MIKTEX_XETEX_EXE, QStringList("-synctex=1") << "-undump=xelatex" << "$fullname", true)
+		<< Engine("XeLaTeX+MakeIndex+BibTeX", MIKTEX_TEXIFY_EXE, QStringList("--pdf") << "--engine=xetex" << "--tex-option=-synctex=1" << "$fullname", true)
 		<< Engine("BibTeX", MIKTEX_BIBTEX_EXE, QStringList("$basename"), false)
 		<< Engine("MakeIndex", MIKTEX_MAKEINDEX_EXE, QStringList("$basename"), false);
-	defaultEngineIndex = 1;
+	defaultEngineIndex = 2;
 #else
 	*engineList
 		<< Engine("pdfTeX", "pdftex" EXE, QStringList("-synctex=1") << "$fullname", true)
@@ -826,3 +827,15 @@ void TWApp::bringToFront()
 }
 #endif
 
+#if defined(MIKTEX)
+void
+TWApp::aboutMiKTeX ()
+{
+  QIcon oldIcon = windowIcon();
+  setWindowIcon (QIcon(":/MiKTeX/miktex32x32.png"));
+  QString aboutText = tr("<p>MiKTeX %1 is a free TeX distribution for Windows maintained by Christian Schenk.</p>").arg(MIKTEX_SERIES_STR);
+  aboutText += tr("<p>Please visit the <a href=\"http://miktex.org/\">MiKTeX Project Page</a> to learn more about the MiKTeX project.</p>.");
+  QMessageBox::about (0, tr("About MiKTeX"), aboutText);
+  setWindowIcon (oldIcon);
+}
+#endif
