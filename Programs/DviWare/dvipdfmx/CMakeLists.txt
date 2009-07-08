@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -111,6 +111,11 @@ add_library(
   ${dvipdfmx_dll_sources}
 )
 
+install(TARGETS ${dvipdfmx_dll_name}
+  RUNTIME DESTINATION "${bindir}"
+  LIBRARY DESTINATION "${libdir}"
+  ARCHIVE DESTINATION "${libdir}")
+
 target_link_libraries(${dvipdfmx_dll_name}
   ${app_dll_name}
   ${core_dll_name}
@@ -121,6 +126,17 @@ target_link_libraries(${dvipdfmx_dll_name}
   ${zlib_dll_name}
 )
 
-create_dll_wrapper(dvipdfmx ${dvipdfmx_dll_name} Main)
+set(exes
+  dvipdfm
+  dvipdfmx
+  ebb
+  extractbb
+  xbb
+)
 
-create_dll_wrapper(xbb ${dvipdfmx_dll_name} Main)
+foreach(x ${exes})
+  add_executable (${x} ${wrapper_cpp})
+  target_link_libraries(${x} ${dvipdfmx_dll_name})
+  merge_trustinfo_manifest(${x} asInvoker)
+  install(TARGETS ${x} DESTINATION ${bindir})
+endforeach(x)
