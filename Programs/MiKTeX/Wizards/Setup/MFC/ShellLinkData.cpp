@@ -67,7 +67,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (current user)->Settings"
+  // "Maintenance->Settings"
   {
     false,
     IDS_MAINTENANCE,
@@ -83,7 +83,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (current user)->Update"
+  // "Maintenance->Update"
   {
     false,
     IDS_MAINTENANCE,
@@ -99,7 +99,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (current user)->Package Manager"
+  // "Maintenance->Package Manager"
   {
     false,
     IDS_MAINTENANCE,
@@ -115,11 +115,11 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (system-wide)->Settings"
+  // "Maintenance (all users)->Settings"
   {
     false,
     IDS_MAINTENANCE_ADMIN,
-    IDS_OPTIONS,
+    IDS_OPTIONS_ADMIN,
     EXEPATH(MIKTEX_MO_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD,
     0,
@@ -131,11 +131,11 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (system-wide)->Update"
+  // "Maintenance (all users)->Update"
   {
     false,
     IDS_MAINTENANCE_ADMIN,
-    IDS_UPDATEWIZ,
+    IDS_UPDATEWIZ_ADMIN,
     INTEXEPATH(MIKTEX_COPYSTART_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD | LD_USEARGS | LD_USEICON,
     0,
@@ -147,11 +147,11 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (system-wide)->Package Manager"
+  // "Maintenance (all users)->Package Manager"
   {
     false,
     IDS_MAINTENANCE_ADMIN,
-    IDS_MPM,
+    IDS_MPM_ADMIN,
     EXEPATH(MIKTEX_MPM_MFC_ADMIN_EXE),
     LD_IFCOMMON | LD_USESHOWCMD,
     0,

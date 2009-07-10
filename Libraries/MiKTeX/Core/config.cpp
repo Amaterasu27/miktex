@@ -1237,7 +1237,14 @@ SessionImpl::SetAdminMode (/*[in]*/ bool adminMode)
   trace_config->WriteFormattedLine ("core",
     T_("turning %s administrative mode"),
     (adminMode ? "on" : "off"));
+  fileTypes.clear ();
+  UnloadFilenameDatabase ();
   this->adminMode = adminMode;
+  if (rootDirectories.size() > 0)
+  {
+    // reinitialize
+    InitializeRootDirectories ();
+  }
 }
 
 /* _________________________________________________________________________

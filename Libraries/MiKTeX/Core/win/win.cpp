@@ -177,9 +177,9 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config,
     }
     if (! userPrefix.Empty())
     {
-      ret.commonConfigRoot = userPrefix;
-      ret.commonDataRoot = userPrefix;
-      ret.commonInstallRoot = userPrefix;
+      ret.userConfigRoot = userPrefix;
+      ret.userDataRoot = userPrefix;
+      ret.userInstallRoot = userPrefix;
     }
     if (userPrefix.Empty() || commonPrefix.Empty())
     {

@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "3344">
-<!ENTITY month "February 2009">
-<!ENTITY date "February 26, 2009">
+<!ENTITY revj2000 "3477">
+<!ENTITY month "July 2009">
+<!ENTITY date "July 09, 2009">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -436,6 +436,7 @@ you start &latex;.</para>
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> to open the &MiKTeXOptions; window (see <xref linkend="mo-general"/>).</para>
 <para>Click on the <guilabel>Formats</guilabel> tab.

@@ -667,6 +667,10 @@ public:
   GetInstalledFileInfo (/*[in]*/ const char * lpszPath);
 
 public:
+  bool
+  IsRemovable (/*[in]*/ const char * lpszDeploymentName);
+
+public:
   time_t
   GetTimeInstalled (/*[in]*/ const char *	lpszDeploymentName);
 

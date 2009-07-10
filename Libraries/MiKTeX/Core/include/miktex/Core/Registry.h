@@ -73,6 +73,7 @@
    _________________________________________________________________________ */
 
 #define MIKTEX_REGVAL_AUTO_INSTALL "AutoInstall"
+#define MIKTEX_REGVAL_AUTO_ADMIN "AutoAdmin"
 #define MIKTEX_REGVAL_COMMON_CONFIG "CommonConfig"
 #define MIKTEX_REGVAL_COMMON_DATA "CommonData"
 #define MIKTEX_REGVAL_COMMON_INSTALL "CommonInstall"

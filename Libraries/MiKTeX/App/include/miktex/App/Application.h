@@ -281,6 +281,9 @@ private:
   MiKTeX::Core::TriState enableInstaller;
 
 private:
+  MiKTeX::Core::TriState autoAdmin;
+
+private:
   MiKTeX::Packages::PackageManagerPtr pPackageManager;
 
 private:

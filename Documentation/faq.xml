@@ -6,9 +6,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.8.3295">
-<!ENTITY date "January 08, 2009">
-<!ENTITY month "January 2009">
+<!ENTITY rev "2.8.3477">
+<!ENTITY date "July 09, 2009">
+<!ENTITY month "July 2009">
 ]>
 
 <article>
@@ -103,6 +103,9 @@ url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
 systems:</para>
 <itemizedlist>
 <listitem>
+<para>&WindowsServer7;</para>
+</listitem>
+<listitem>
 <para>&WindowsServer2008;</para>
 </listitem>
 <listitem>
@@ -116,12 +119,6 @@ systems:</para>
 </listitem>
 <listitem>
 <para>&Windows2000;</para>
-</listitem>
-<listitem>
-<para>&WindowsMe; (&MiKTeX;&nbsp;2.6 only)</para>
-</listitem>
-<listitem>
-<para>&Windows98;, &Windows98SE;  (&MiKTeX;&nbsp;2.6 only)</para>
 </listitem>
 </itemizedlist>
 </answer>
@@ -340,17 +337,13 @@ page</ulink>.</para>
 you might have used before.  Typesetting with &MiKTeX; involves these
 steps:</para>
 <procedure>
-<step><para>Edit the &LaTeX; source with your favourite text
-editor.</para></step>
-<step><para>Compile the &LaTeX; source into a
-&DVI; file, i.e., say something like <userinput>latex
-MyMastersThesis</userinput>.</para></step> <step><para>Open the result
-by double-clicking the &DVI; file (e.g.,
-<filename>MyMastersThesis.dvi</filename>) in Windows
-Explorer.</para></step>
+<step><para>Start &TeXworks; and edit your &LaTeX; document.</para></step>
+<step><para>Press <keycombo>
+<keycap>Ctrl</keycap>
+<keycap>T</keycap>
+</keycombo>
+to create a typeset view of your document.</para></step>
 </procedure>
-<para>You usually use a &LaTeX; editor to carry out these
-steps (see <xref linkend="editing"/>).</para>
 </answer>
 </qandaentry>
 
@@ -359,8 +352,8 @@ steps (see <xref linkend="editing"/>).</para>
 <para>Which program should I use to edit &LaTeX; documents?</para>
 </question>
 <answer>
-<para>Links to recommendable freeware &TeX; shells (editors) can be found
-on <ulink url="http://miktex.org/links">this page</ulink>.</para>
+<para>The &MiKTeX; distribution includes &TeXworks;,
+a simple environment for editing &TeX;/&LaTeX; documents.</para>
 </answer>
 </qandaentry>
 

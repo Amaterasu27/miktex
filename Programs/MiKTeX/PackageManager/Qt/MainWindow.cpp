@@ -80,7 +80,7 @@ MainWindow::MainWindow ()
   setupUi (this);
   if (SessionWrapper(true)->IsAdminMode())
   {
-    setWindowTitle (windowTitle() + " (admin)");
+    setWindowTitle (windowTitle() + " (Admin)");
   }
   pModel = new PackageTableModel(pManager.Get(), this);
   pProxyModel = new QSortFilterProxyModel(this);
@@ -156,6 +156,7 @@ MainWindow::EnableActions ()
 	if (packageInfo.timeInstalled > 0)
 	{
 	  enableInstall = false;
+	  enableUninstall = (enableUninstall && packageInfo.isRemovable);
 	}
 	else
 	{

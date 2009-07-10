@@ -96,6 +96,7 @@ Application::CheckCancel ()
 
 Application::Application ()
   : enableInstaller (TriState::Undetermined),
+    autoAdmin (TriState::Undetermined),
     initialized (false)
 {
 }
@@ -202,6 +203,10 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
     (pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			      MIKTEX_REGVAL_AUTO_INSTALL,
 			      TriState(TriState::Undetermined)));
+  autoAdmin = pSession->GetConfigValue(
+    MIKTEX_REGKEY_PACKAGE_MANAGER,
+    MIKTEX_REGVAL_AUTO_ADMIN,
+    TriState(TriState::Undetermined));
   InstallSignalHandler (SIGINT);
   InstallSignalHandler (SIGTERM);
 }
@@ -373,6 +378,7 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
 	  ignoredPackages.insert (lpszPackageName);
 	  return (false);
 	}
+      autoAdmin = (((msgBoxRet & MiKTeX::UI::ADMIN) != 0) ? TriState::True : TriState::False);
     }
   string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
@@ -404,6 +410,12 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
 	     stdout);
     }
   bool done = false;
+  bool switchToAdminMode =
+    (autoAdmin == TriState::True && ! pSession->IsAdminMode());
+  if (switchToAdminMode)
+  {
+    pSession->SetAdminMode (true);
+  }
   try
     {
       pInstaller->InstallRemove ();
@@ -416,6 +428,10 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
       ignoredPackages.insert (lpszPackageName);
       Utils::PrintException (e);
     }
+  if (switchToAdminMode)
+  {
+    pSession->SetAdminMode (false);
+  }
   if (! GetQuietFlag())
     {
       fputs ("\

@@ -330,6 +330,38 @@ PackageManagerImpl::FlushVariablePackageTable ()
 
 /* _________________________________________________________________________
 
+   PackageManagerImpl::IsRemovable
+   _________________________________________________________________________ */
+
+bool
+PackageManagerImpl::IsRemovable (/*[in]*/ const char * lpszDeploymentName)
+{
+  bool ret;
+  LoadVariablePackageTable ();
+  string str;
+  if (pSession->IsAdminMode())
+  {
+    ret = (
+      commonVariablePackageTable.Get() != 0
+      && commonVariablePackageTable->TryGetValue(lpszDeploymentName,
+					         "TimeInstalled",
+						 str)
+      && atoi(str.c_str()) != 0);
+  }
+  else
+  {
+    ret = (
+      userVariablePackageTable.Get() != 0
+      && userVariablePackageTable->TryGetValue(lpszDeploymentName,
+					       "TimeInstalled",
+					       str)
+      && atoi(str.c_str()) != 0);
+  }
+  return (ret);
+}
+
+/* _________________________________________________________________________
+
    PackageManagerImpl::GetTimeInstalled
 
    Returns the time when the package was installed.  Returns zero, if
@@ -436,18 +468,32 @@ PackageManagerImpl::SetTimeInstalled
 {
   LoadVariablePackageTable ();
   if (pSession->IsAdminMode()
-      || userVariablePackageTable.Get() == 0)
+    || userVariablePackageTable.Get() == 0)
+  {
+    if (timeInstalled == 0)
+    {
+      commonVariablePackageTable->DeleteKey (lpszDeploymentName);
+    }
+    else
     {
       commonVariablePackageTable->PutValue (lpszDeploymentName,
-					    "TimeInstalled",
-					    NUMTOSTR(timeInstalled));
+	"TimeInstalled",
+	NUMTOSTR(timeInstalled));
     }
+  }
   else
+  {
+    if (timeInstalled == 0)
+    {
+      userVariablePackageTable->DeleteKey (lpszDeploymentName);
+    }
+    else
     {
       userVariablePackageTable->PutValue (lpszDeploymentName,
-					  "TimeInstalled",
-					  NUMTOSTR(timeInstalled));
+	"TimeInstalled",
+	NUMTOSTR(timeInstalled));
     }
+  }
 }
 
 /* _________________________________________________________________________
@@ -506,14 +552,16 @@ PackageManagerImpl::DefinePackage
     (make_pair<string, PackageInfo>(deploymentName, packageInfo));
   p.first->second.deploymentName = deploymentName;
   if (pSession->IsMiKTeXDirect())
-    {
-      // installed from the start
-      p.first->second.timeInstalled = packageInfo.timePackaged;
-    }
+  {
+    // installed from the start
+    p.first->second.isRemovable = false;
+    p.first->second.timeInstalled = packageInfo.timePackaged;
+  }
   else
-    {
-      p.first->second.timeInstalled = GetTimeInstalled(deploymentName.c_str());
-    }
+  {
+    p.first->second.isRemovable = IsRemovable(deploymentName.c_str());
+    p.first->second.timeInstalled = GetTimeInstalled(deploymentName.c_str());
+  }
   return (&(p.first->second));
 }
 
@@ -563,12 +611,13 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       // ignore redefinition
       if (packageTable.find(szDeploymentName) != packageTable.end())
 	{
+#if 0
 	  trace_mpm->WriteFormattedLine ("libmpm",
 					 T_("%s: ignoring redefinition"),
 					 szDeploymentName);
+#endif
 	  continue;
 	}
-
 
       // parse package definition file
       tpmParser.Parse (PathName(directory, name, 0));

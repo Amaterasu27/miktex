@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -92,16 +92,23 @@ set(${ui_qt_dll_name}_ui_files
   UpdateDialog.ui
 )
 
+set(${ui_qt_dll_name}_rcs_files
+  mikuiqt.qrc
+)
+
 qt4_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})
 
 qt4_wrap_ui(${ui_qt_dll_name}_ui_headers ${${ui_qt_dll_name}_ui_files})
 
 qt4_wrap_cpp(${ui_qt_dll_name}_ui_mocs ${${ui_qt_dll_name}_ui_headers})
 
+qt4_add_resources(${ui_qt_dll_name}_rcc_sources ${${ui_qt_dll_name}_rcs_files})
+
 add_library(${ui_qt_dll_name} SHARED
   ${${ui_qt_dll_name}_sources}
   ${${ui_qt_dll_name}_mocs}
   ${${ui_qt_dll_name}_ui_mocs}
+  ${${ui_qt_dll_name}_rcc_sources}
 )
 
 set_target_properties(${ui_qt_dll_name}
@@ -115,6 +122,13 @@ target_link_libraries(${ui_qt_dll_name}
   ${mpm_dll_name}
   ${QT_LIBRARIES}
 )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(${ui_qt_dll_name}
+	comctl32
+    Secur32
+  )
+endif(NATIVE_WINDOWS)
 
 rebase(${ui_qt_dll_name})
 

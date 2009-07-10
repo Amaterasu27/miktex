@@ -18,19 +18,13 @@ starting point is this entry in the UK &TeX; &FAQ;:
 any other &TeX; system you might have used before.
 Typesetting with &MiKTeX; involves these steps:</para>
 <procedure>
-<step><para>Edit the &LaTeX; source with your
-favourite text document editor.</para></step>
-<step><para>Compile the &LaTeX; source into a &DVI; file,
-i.e., say something like
-<userinput>latex MyMastersThesis</userinput>.</para></step>
-<step><para>Open the result by double-clicking the &DVI;
-file (e.g., <filename>MyMastersThesis.dvi</filename>) in
-Windows Explorer.</para></step>
+<step><para>Start &TeXworks; and edit your &LaTeX; document.</para></step>
+<step><para>Press <keycombo>
+<keycap>Ctrl</keycap>
+<keycap>T</keycap>
+</keycombo>
+to create a typeset view of your document.</para></step>
 </procedure>
-
-<para>You usually use a &LaTeX; editor to carry out these
-steps. The most prominent ones are listed here:
-<ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=editors">http://www.tex.ac.uk/cgi-bin/texfaq2html?label=editors</ulink>.</para>
 
 </section>
 
@@ -45,7 +39,7 @@ steps. The most prominent ones are listed here:
 <!--
 Local Variables:
 mode:xml
-sgml-parent-document: ("miktex.xml" "book")
+sgml-parent-document: ("../miktex.xml" "book")
 sgml-indent-step: 0
 sgml-set-face: t
 End:

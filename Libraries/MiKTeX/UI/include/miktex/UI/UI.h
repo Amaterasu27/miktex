@@ -1,6 +1,6 @@
 /* miktex/UI/UI.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -95,6 +95,7 @@ defaultFramework ()
 const unsigned int YES = 1;
 const unsigned int NO = 2;
 const unsigned int DONTASKAGAIN = 4;
+const unsigned int ADMIN = 8;
 
 inline
 void

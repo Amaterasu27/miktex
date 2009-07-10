@@ -47,7 +47,7 @@ PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
   AddPage (&packagesPage);
   if (pSession->IsAdminMode())
   {
-    SetTitle (T_("# MiKTeX Options"));
+    SetTitle (T_("MiKTeX Options (Admin)"));
   }
   else
   {

@@ -471,6 +471,13 @@ public:
   NextValue (/*[out]*/ char *	lpszValueName,
 	     /*[in]*/ size_t	valueNameSize);
 
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  DeleteValue (/*[in]*/ const char *	lpszKey,
+	       /*[in]*/ const char * lpszValueName);
+
 private:
   void
   Read (/*[in]*/ const PathName &	path,
@@ -1565,6 +1572,30 @@ CfgImpl::NextValue (/*[out]*/ char *	lpszValueName,
   Utils::CopyString (lpszValueName, valueNameSize, iter2->first.c_str());
 
   return (lpszValueName);
+}
+
+/* _________________________________________________________________________
+
+   CfgImpl::DeleteValue (experimental)
+   _________________________________________________________________________ */
+
+void
+CfgImpl::DeleteValue (/*[in]*/ const char *	lpszKey,
+		      /*[in]*/ const char *	lpszValueName)
+{
+  MIKTEX_ASSERT_STRING (lpszKey);
+  MIKTEX_ASSERT_STRING (lpszValueName);
+  KeyMap::iterator it = keyMap.find(lpszKey);
+  if (it == keyMap.end())
+  {
+    INVALID_ARGUMENT ("CfgImpl::DeleteValue", lpszKey);
+  }
+  ValueMap::iterator it2 = it->second.valueMap.find (lpszValueName);
+  if (it2 == it->second.valueMap.end())
+  {
+    INVALID_ARGUMENT ("CfgImpl::DeleteValue", lpszValueName);
+  }
+  it->second.valueMap.erase (it2);
 }
 
 /* _________________________________________________________________________

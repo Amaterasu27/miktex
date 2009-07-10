@@ -3,8 +3,6 @@
 // Used by Setup.rc
 //
 #define IDR_MANIFEST                    1
-#define IDR_MAINFRAME                   128
-#define IDR_LICENSE                     129
 #define IDS_HEADER_SETTINGS             100
 #define IDS_SUBHEADER_SETTINGS          101
 #define IDS_INITEXMF                    102
@@ -33,7 +31,9 @@
 #define IDS_HEADER_ADDTREES             125
 #define IDS_SUBHEADER_ADDTREES          126
 #define IDS_HEADER_EDITTREES            127
+#define IDR_MAINFRAME                   128
 #define IDS_SUBHEADER_EDITTREES         128
+#define IDR_LICENSE                     129
 #define IDS_HEADER_INFOLIST             129
 #define IDS_SUBHEADER_INFOLIST          130
 #define IDS_HEADER_FILECOPY             131
@@ -63,8 +63,11 @@
 #define IDD_ADD_TEXMFROOTS              153
 #define IDS_TEXWORKS                    153
 #define IDD_INFOLIST                    154
+#define IDS_MPM_ADMIN                   154
 #define IDD_FINISH                      155
+#define IDS_OPTIONS_ADMIN               155
 #define IDD_FOLDER                      156
+#define IDS_UPDATEWIZ_ADMIN             156
 #define IDD_FILECOPY                    157
 #define IDD_SHARED                      158
 #define IDD_EDIT_TEXMFROOTS             159
@@ -73,8 +76,6 @@
 #define IDB_WATERMARK                   162
 #define IDA_FILECOPY                    163
 #define IDA_DOWNLOAD                    164
-
-
 #define IDD_LOCAL_REPOSITORY            167
 #define IDD_PACKAGE_SET_INSTALL         168
 #define IDD_REMOTE_REPOSITORY           169
@@ -131,7 +132,6 @@
 #define IDC_ACCEPT_LICENSE              1043
 #define IDC_TEXMF_ROOT                  1044
 #define IDC_COMBO1                      1045
-#define IDC_COMBO2                      1046
 #define IDC_INSTALL_ON_THE_FLY          1047
 #define IDC_FILENAME                    1048
 #define IDC_BROWSE                      1049

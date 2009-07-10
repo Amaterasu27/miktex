@@ -60,9 +60,27 @@ public:
     return (checkState == Qt::Checked ? true : false);
   }
 
-private slots:
+public:
   void
-  on_btnChange_clicked ();
+  SetAdminMode (/*[in]*/ bool adminMode)
+  {
+    if (cbInstallationDirectory->count() > 0)
+    {
+      cbInstallationDirectory->setCurrentIndex (adminMode ? 1 : 0);
+    }
+  }
+
+public:
+  bool
+  GetAdminMode ()
+    const
+  {
+    return (cbInstallationDirectory->currentIndex() > 0);
+  }
+
+private slots:
+  void on_btnChange_clicked ();
+  void on_cbInstallationDirectory_currentIndexChanged (int idx);
 
 public:
   MiKTeX::Packages::PackageManagerPtr pManager;

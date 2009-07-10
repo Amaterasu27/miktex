@@ -122,6 +122,9 @@ struct PackageInfo
   /// MD5 of the package.
   MiKTeX::Core::MD5 digest;
 
+  ///
+  bool isRemovable;
+
   /// Initializes a new package info struct.
   PackageInfo ()
     : archiveFileSize (0),
@@ -129,7 +132,8 @@ struct PackageInfo
       sizeRunFiles (0),
       sizeSourceFiles (0),
       timeInstalled (static_cast<time_t>(0)),
-      timePackaged (static_cast<time_t>(0))
+      timePackaged (static_cast<time_t>(0)),
+      isRemovable (false)
   {
   }
 
@@ -155,6 +159,7 @@ struct PackageInfo
     runFiles = rhs.runFiles;
     sourceFiles = rhs.sourceFiles;
     digest = rhs.digest;
+    isRemovable = rhs.isRemovable;
     return (*this);
   }
 
@@ -177,7 +182,8 @@ struct PackageInfo
       requiredPackages (other.requiredPackages),
       runFiles (other.runFiles),
       sourceFiles (other.sourceFiles),
-      digest (other.digest)
+      digest (other.digest),
+      isRemovable (other.isRemovable)
   {
   }
 

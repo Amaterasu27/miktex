@@ -32,6 +32,7 @@ you manually install &TeX;/&LaTeX;-related files in a user-managed
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> to open the &MiKTeXOptions; window (see <xref linkend="mo-general"/>).</para>
 
@@ -68,6 +69,7 @@ file name database.</para>
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> to open the &MiKTeXOptions; window
 (see <xref linkend="mo-general"/>).
@@ -98,6 +100,7 @@ and click <guibutton>OK</guibutton>.</para>
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> to open the &MiKTeXOptions; window
 (see <xref linkend="mo-general"/>).</para>
@@ -371,6 +374,7 @@ Click
 <guimenu>Start</guimenu>
 <guisubmenu>Programs</guisubmenu>
 <guisubmenu>&progfldr;</guisubmenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice> 
 to open the &MiKTeXOptions; window

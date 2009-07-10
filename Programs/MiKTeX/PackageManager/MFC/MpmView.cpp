@@ -1,6 +1,6 @@
 /* MpmView.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -624,7 +624,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 		    {
 		      ++ nInstall;
 		    }
-		  else
+		  else if (packageInfo.isRemovable)
 		    {
 		      ++ nUninstall;
 		    }
@@ -927,38 +927,31 @@ void
 MpmView::OnUpdateUninstall (/*[in]*/ CCmdUI *	pCmdUI)
 {
   try
+  {
+    BOOL enable;
+    CListCtrl & listctrl = GetListCtrl();
+    int idx = -1;
+    enable = (listctrl.GetSelectedCount() > 0);
+    while (enable
+      && (idx = listctrl.GetNextItem(idx, LVNI_SELECTED)) >= 0)
     {
-      BOOL enable;
-      if (pSession->IsMiKTeXDirect())
-	{
-	  enable = FALSE;
-	}
-      else
-	{
-	  CListCtrl & listctrl = GetListCtrl();
-	  int idx = -1;
-	  enable = (listctrl.GetSelectedCount() > 0);
-	  while (enable
-		 && (idx = listctrl.GetNextItem(idx, LVNI_SELECTED)) >= 0)
-	    {
-	      PackageInfo packageInfo = packages[listctrl.GetItemData(idx)];
-	      if (packageInfo.timeInstalled == 0)
-		{
-		  enable = FALSE;
-		}
-	    }
-	  CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
-	}
-      pCmdUI->Enable (enable);
+      PackageInfo packageInfo = packages[listctrl.GetItemData(idx)];
+      if (packageInfo.timeInstalled == 0 || ! packageInfo.isRemovable)
+      {
+	enable = FALSE;
+      }
     }
+    CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
+    pCmdUI->Enable (enable);
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
 }
 
 /* _________________________________________________________________________

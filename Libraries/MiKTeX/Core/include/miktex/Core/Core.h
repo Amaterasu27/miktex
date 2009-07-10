@@ -3922,6 +3922,15 @@ public:
 	     /*[in]*/ size_t		valueNameSize)
     = 0;
 
+  /// Deletes a value (experimental).
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  DeleteValue (/*[in]*/ const char *	lpszKey,
+	       /*[in]*/ const char * lpszValueName)
+    = 0;
+
 };				// class Cfg
 
 /* _________________________________________________________________________

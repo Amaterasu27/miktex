@@ -113,7 +113,7 @@ UpdateWizard::OnInitDialog ()
 	}
       if (SessionWrapper(true)->IsAdminMode())
       {
-	title = CString("# ") + title;
+	title = title + T_(" (Admin)");
       }
       SetTitle (title);
       if (! g_upgrading

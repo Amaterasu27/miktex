@@ -164,7 +164,14 @@ MainFrame::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs)
 			      0);
 	}
       cs.style &= ~FWS_ADDTOTITLE;
-      SetTitle (T_("MiKTeX Package Manager"));
+      if (SessionWrapper(true)->IsAdminMode())
+      {
+	SetTitle (T_("MiKTeX Package Manager (Admin)"));
+      }
+      else
+      {
+	SetTitle (T_("MiKTeX Package Manager"));
+      }
       return (TRUE);
     }
   catch (const MiKTeXException & e)

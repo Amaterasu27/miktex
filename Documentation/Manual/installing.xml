@@ -109,6 +109,7 @@ start menu:</para>
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance</guisubmenu>
 <guimenuitem>Settings</guimenuitem>
 </menuchoice></term>
 <listitem><para>A shortcut to the &MiKTeXOptions;.</para></listitem>

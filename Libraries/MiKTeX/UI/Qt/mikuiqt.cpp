@@ -45,6 +45,13 @@ MiKTeX::UI::Qt::InitializeFramework ()
 #endif
   static int argc = 0;
   static char ** argv = 0;
+#if defined(MIKTEX_WINDOWS)
+  INITCOMMONCONTROLSEX icce;
+  icce.dwSize = sizeof(icce);
+  icce.dwICC = 0;
+  icce.dwICC |= ICC_STANDARD_CLASSES;
+  InitCommonControlsEx (&icce);
+#endif
   pApplication = new QApplication (argc, argv, useGUI);
 }
 
@@ -81,11 +88,19 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
     = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
 			       MIKTEX_REGVAL_AUTO_INSTALL,
 			       TriState(TriState::Undetermined));
+  bool autoAdmin
+    = pSession->GetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
+			       MIKTEX_REGVAL_AUTO_ADMIN,
+			       false);
   unsigned int ret;
   if (enableInstaller != TriState::Undetermined)
     {
       ret = DONTASKAGAIN;
       ret |= (enableInstaller == TriState::True ? YES : NO);
+      if (autoAdmin)
+      {
+	ret |= ADMIN;
+      }
     }
   else
     {
@@ -102,12 +117,28 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
       else
 	{
 	  ret = (dialogCode == QDialog::Accepted ? YES : NO);
-	  if (dialogCode == QDialog::Accepted && ! dlg.GetAlwaysAsk())
+	  if (dlg.GetAdminMode())
+	  {
+	    ret |= ADMIN;
+	  }
+	  if (dialogCode == QDialog::Accepted && autoAdmin != dlg.GetAdminMode())
+	  {
+	    pSession->SetUserConfigValue (
+	      MIKTEX_REGKEY_PACKAGE_MANAGER,
+	      MIKTEX_REGVAL_AUTO_ADMIN,
+	      dlg.GetAdminMode());
+	  }
+	  if (! dlg.GetAlwaysAsk())
+	  {
+	    ret != DONTASKAGAIN;
+	    if (dialogCode == QDialog::Accepted)
 	    {
-	      pSession->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-					    MIKTEX_REGVAL_AUTO_INSTALL,
-					    "1");
+	      pSession->SetUserConfigValue (
+		MIKTEX_REGKEY_PACKAGE_MANAGER,
+		MIKTEX_REGVAL_AUTO_INSTALL,
+		"1");
 	    }
+	  }
 	}
     }
   return (ret);

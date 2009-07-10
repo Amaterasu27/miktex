@@ -64,19 +64,50 @@ InstallPackageDialog::InstallPackageDialog
 	{
 	  leInstallationSource->setText (T_("<Random package repository>"));
 	}
+      QString currentUser;
 #if defined(MIKTEX_WINDOWS)
-      // show the Windows Vista shield icon
-      if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
-	{
-	  HWND hwnd = pOKButton->winId();
-	  if (hwnd == 0)
-	    {
-	      UNEXPECTED_CONDITION
-		("InstallPackageDialog::InstallPackageDialog");
-	    }
-	  Button_SetElevationRequiredState (hwnd, TRUE);
-	}
+      char szLogonName[30];
+      DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
+      if (GetUserNameA(szLogonName, &sizeLogonName))
+      {
+	currentUser = szLogonName;
+      }
+      else if (GetLastError() == ERROR_NOT_LOGGED_ON)
+      {
+	currentUser = T_("Unknown user");
+      }
+      else
+      {
+	FATAL_WINDOWS_ERROR ("GetUserNameA", 0);
+      }
+      char szDisplayName[30];
+      ULONG sizeDisplayName =
+	sizeof(szDisplayName) / sizeof(szDisplayName[0]);
+      if (GetUserNameExA(NameDisplay, szDisplayName, &sizeDisplayName))
+      {
+	currentUser += " (";
+	currentUser += szDisplayName;
+	currentUser += ")";
+      }
+#else
+      currentUser = T_("The current user");
 #endif
+      cbInstallationDirectory->addItem (currentUser);
+      PathName commonInstallRoot = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
+      PathName userInstallRoot = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserInstallRoot);
+      bool enableCommonInstall = (commonInstallRoot != userInstallRoot);
+      enableCommonInstall = (enableCommonInstall && Directory::Exists(commonInstallRoot));
+#if defined(MIKTEX_WINDOWS)
+      enableCommonInstall = (enableCommonInstall
+	&& (SessionWrapper(true)->IsUserAnAdministrator() || SessionWrapper(true)->IsUserAPowerUser()));
+#else
+      enableCommonInstall = (enableCommonInstall && SessionWrapper(true)->IsUserAnAdministrator());
+#endif
+      if (enableCommonInstall)
+      {
+	cbInstallationDirectory->addItem (T_("Anyone who uses this computer (all users)"));
+      }
+      cbInstallationDirectory->setCurrentIndex (0);
     }
   catch (const MiKTeXException & e)
     {
@@ -119,4 +150,51 @@ InstallPackageDialog::on_btnChange_clicked ()
     {
       ErrorDialog::DoModal (this, e);
     }
+}
+
+/* _________________________________________________________________________
+
+   InstallPackageDialog::on_cbInstallationDirectory_currentIndexChanged()
+   _________________________________________________________________________ */
+
+void
+InstallPackageDialog::on_cbInstallationDirectory_currentIndexChanged (int idx)
+{
+  BOOL elevationRequired = (idx > 0);
+  QPushButton * pOKButton = buttonBox->button(QDialogButtonBox::Ok);
+  if (elevationRequired)
+  {
+    bool iconSet = false;
+#if defined(MIKTEX_WINDOWS)
+    if (IsWindowsVista())
+    {
+      DllProc3<HRESULT, SHSTOCKICONID, UINT, SHSTOCKICONINFO *>
+	shGetStockIconInfo ("Shell32.dll", "SHGetStockIconInfo");
+      SHSTOCKICONINFO sii;
+      sii.cbSize = sizeof(sii);
+      if (SUCCEEDED(shGetStockIconInfo(SIID_SHIELD, SHGSI_ICON | SHGSI_SMALLICON, &sii)))
+      {
+	HICON hiconShield  = sii.hIcon;
+	ICONINFO iconInfo;
+	if (GetIconInfo(hiconShield, &iconInfo))
+	{
+	  QPixmap pixmapShield = QPixmap::fromWinHBITMAP(iconInfo.hbmColor, QPixmap::Alpha);
+	  DeleteObject (iconInfo.hbmColor);
+	  DeleteObject (iconInfo.hbmMask);
+	  pOKButton->setIcon (QIcon(pixmapShield));
+	  iconSet = true;
+	}
+	DestroyIcon (hiconShield);
+      }
+    }
+#endif
+    if (! iconSet)
+    {
+      pOKButton->setIcon (QIcon(":/Icons/elevationrequired16x16.png"));
+    }
+  }
+  else
+  {
+    pOKButton->setIcon (QIcon());
+  }
 }

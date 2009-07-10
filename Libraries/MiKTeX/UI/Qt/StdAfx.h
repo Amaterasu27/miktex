@@ -24,6 +24,9 @@
 #if defined(MIKTEX_WINDOWS)
 #  include <Windows.h>
 #  include <Commctrl.h>
+#  include <shellapi.h>
+#  define SECURITY_WIN32
+#  include <Security.h>
 #endif
 
 #include <algorithm>
@@ -34,4 +37,5 @@
 #include <miktex/Core/Debug>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
+#include <miktex/Core/win/DllProc>
 #include <miktex/PackageManager/PackageManager>
