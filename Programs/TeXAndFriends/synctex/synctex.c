@@ -1105,7 +1105,11 @@ static inline int synctex_record_input(integer tag, char *name)
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_record_input\n");
 #endif
+#if defined(MIKTEX)
+	len = SYNCTEX_fprintf(SYNCTEX_FILE,"Input:%i:%s\n",tag,MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(name).Get());
+#else
 	len = SYNCTEX_fprintf(SYNCTEX_FILE,"Input:%i:%s\n",tag,name);
+#endif
 	if(len>0) {
 		synctex_ctxt.total_length += len;
 		return SYNCTEX_NOERR;
