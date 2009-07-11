@@ -2993,6 +2993,23 @@ public:
 #endif
 
 public:
+  bool
+  IsExplicitlyRelative ()
+    const
+  {
+    if ((*this)[0] == '.')
+    {
+      return (IsDirectoryDelimiter((*this)[1])
+	      || ((*this)[1] == '.'
+	          && IsDirectoryDelimiter((*this)[2])));
+    }
+    else
+    {
+      return (false);
+    }
+  }
+
+public:
   /// Compares the prefixes of two path names.
   /// @param lpszPath1 The first path name.
   /// @param lpszPath1 The second path name.

@@ -216,7 +216,7 @@ private:
      GetFQNameOfFile
      _______________________________________________________________________ */
 
-protected:
+public:
 
   const char *
   GetFQNameOfFile ()
@@ -243,6 +243,30 @@ public:
     return (MiKTeX::Core::Utils::UTF8ToWideChar(lpsz));
 #else
     return (THEDATA(nameoffile));
+#endif
+  }
+#endif
+
+  /* _______________________________________________________________________
+     
+     SetNameOfFile
+     _______________________________________________________________________ */
+
+public:
+
+#if defined(THEDATA)
+  void
+  SetNameOfFile (/*[in]*/ const MiKTeX::Core::PathName & fileName)
+  {
+#if defined(MIKTEX_XETEX)
+    MiKTeX::Core::Utils::CopyString (
+      reinterpret_cast<char *>(THEDATA(nameoffile)),
+      MiKTeX::Core::BufferSizes::MaxPath + 1,
+      MiKTeX::Core::Utils::AnsiToUTF8(fileName.Get()).c_str());
+#else
+    MiKTeX::Core::Utils::CopyString (
+      THEDATA(nameoffile), MiKTeX::Core::BufferSizes::MaxPath + 1, fileName.Get());
+    THEDATA(namelength) = fileName.GetLength();
 #endif
   }
 #endif
