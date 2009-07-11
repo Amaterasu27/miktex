@@ -357,6 +357,7 @@ void TeXDocument::init()
 
 #if defined(MIKTEX)
         actionAbout_MiKTeX = new QAction(this);
+	actionAbout_MiKTeX->setIcon(QIcon(":/MiKTeX/miktex32x32.png"));
         actionAbout_MiKTeX->setObjectName(QString::fromUtf8("actionAbout_MiKTeX"));
 	actionAbout_MiKTeX->setText(QApplication::translate("TeXDocument", "About MiKTeX...", 0, QApplication::UnicodeUTF8));
         actionAbout_MiKTeX->setMenuRole(QAction::AboutRole);

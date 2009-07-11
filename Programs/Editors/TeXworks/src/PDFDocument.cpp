@@ -1156,7 +1156,8 @@ PDFDocument::init()
 
 #if defined(MIKTEX)
         actionAbout_MiKTeX = new QAction(this);
-        actionAbout_MiKTeX->setObjectName(QString::fromUtf8("actionAbout_MiKTeX"));
+	actionAbout_MiKTeX->setIcon(QIcon(":/MiKTeX/miktex32x32.png"));
+	actionAbout_MiKTeX->setObjectName(QString::fromUtf8("actionAbout_MiKTeX"));
 	actionAbout_MiKTeX->setText(QApplication::translate("PDFDocument", "About MiKTeX...", 0, QApplication::UnicodeUTF8));
         actionAbout_MiKTeX->setMenuRole(QAction::AboutRole);
 	connect (actionAbout_MiKTeX, SIGNAL(triggered()), qApp, SLOT(aboutMiKTeX()));
