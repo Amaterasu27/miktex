@@ -122,8 +122,11 @@ struct PackageInfo
   /// MD5 of the package.
   MiKTeX::Core::MD5 digest;
 
-  ///
+  /// 
   bool isRemovable;
+
+  /// 
+  bool isObsolete;
 
   /// Initializes a new package info struct.
   PackageInfo ()
@@ -133,7 +136,8 @@ struct PackageInfo
       sizeSourceFiles (0),
       timeInstalled (static_cast<time_t>(0)),
       timePackaged (static_cast<time_t>(0)),
-      isRemovable (false)
+      isRemovable (false),
+      isObsolete (false)
   {
   }
 
@@ -160,6 +164,7 @@ struct PackageInfo
     sourceFiles = rhs.sourceFiles;
     digest = rhs.digest;
     isRemovable = rhs.isRemovable;
+    isObsolete = rhs.isObsolete;
     return (*this);
   }
 
@@ -183,7 +188,8 @@ struct PackageInfo
       runFiles (other.runFiles),
       sourceFiles (other.sourceFiles),
       digest (other.digest),
-      isRemovable (other.isRemovable)
+      isRemovable (other.isRemovable),
+      isObsolete (other.isObsolete)
   {
   }
 
@@ -899,8 +905,10 @@ public:
       : timePackaged (static_cast<time_t>(0))
     {
     }
+
     /// Package deployment name.
     std::string deploymentName;
+
     /// Date/Time the package was created.
     time_t timePackaged;
 

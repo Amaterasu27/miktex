@@ -341,6 +341,7 @@ PackageManagerImpl::IsRemovable (/*[in]*/ const char * lpszDeploymentName)
   string str;
   if (pSession->IsAdminMode())
   {
+    // administrator can remove system-wide packages
     ret = (
       commonVariablePackageTable.Get() != 0
       && commonVariablePackageTable->TryGetValue(lpszDeploymentName,
@@ -350,6 +351,7 @@ PackageManagerImpl::IsRemovable (/*[in]*/ const char * lpszDeploymentName)
   }
   else
   {
+    // user can remove private packages
     ret = (
       userVariablePackageTable.Get() != 0
       && userVariablePackageTable->TryGetValue(lpszDeploymentName,
@@ -555,11 +557,13 @@ PackageManagerImpl::DefinePackage
   {
     // installed from the start
     p.first->second.isRemovable = false;
+    p.first->second.isObsolete = false;
     p.first->second.timeInstalled = packageInfo.timePackaged;
   }
   else
   {
     p.first->second.isRemovable = IsRemovable(deploymentName.c_str());
+    p.first->second.isObsolete = IsPackageObsolete(deploymentName.c_str());
     p.first->second.timeInstalled = GetTimeInstalled(deploymentName.c_str());
   }
   return (&(p.first->second));

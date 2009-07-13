@@ -677,10 +677,12 @@ PackageInstallerImpl::FindUpdates ()
 	{
 #if defined(MIKTEX_WINDOWS)
 	  // package not known/installed => must be installed if it is
-	  // an essential MiKTeX package in the current series
+	  // an essential MiKTeX package in the current series; but only
+	  // if we are running in admin mode
 	  if ((dbLight.GetPackageLevel(lpszPackage).Get()
 	       <= PackageLevel::Essential)
-	      && IsMiKTeXPackage(lpszPackage))
+	      && IsMiKTeXPackage(lpszPackage)
+	      && pSession->IsAdminMode())
 	    {
 	      string version = dbLight.GetPackageVersion(lpszPackage);
 	      int verCmp = CompareSerieses(version, MIKTEX_SERIES_STR);
@@ -696,6 +698,16 @@ PackageInstallerImpl::FindUpdates ()
 	}
       else
 	{
+	  // it must be possible to remove the existing package
+	  if (! pPackageInfo->isRemovable)
+	  {
+	    trace_mpm->WriteFormattedLine
+	      ("libmpm",
+	      T_("%s: no permission to update package"),
+	      lpszPackage);
+	    continue;
+	  }
+
 	  // check the integrity of installed MiKTeX packages
 	  if (IsMiKTeXPackage(lpszPackage)
 	      && ! pManager->TryVerifyInstalledPackage(lpszPackage))

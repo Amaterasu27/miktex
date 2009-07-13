@@ -79,6 +79,7 @@
 <!ENTITY URW "<acronym>URW</acronym>">
 <!ENTITY UAC "<acronym>UAC</acronym>">
 <!ENTITY SVN "<acronym>SVN</acronym>">
+<!ENTITY SevenZip "<application>7-Zip</application>">
 <!ENTITY WinEdt "<application>WinEdt</application>">
 <!ENTITY Windows "<application>Windows</application>">
 <!ENTITY WindowsRegistry "<application>Windows Registry</application>">

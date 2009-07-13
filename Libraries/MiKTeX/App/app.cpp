@@ -145,57 +145,12 @@ InstallSignalHandler (/*[in]*/ int sig)
 
 /* _________________________________________________________________________
      
-   Setup
-   _________________________________________________________________________ */
-
-static
-void
-Setup ()
-{
-  system ("initexmf --quiet --update-fndb");
-}
-
-/* _________________________________________________________________________
-     
-   Is1stRun
-   _________________________________________________________________________ */
-
-static
-bool
-Is1stRun ()
-{
-  PathName testDir;
-#if defined(MIKTEX_WINDOWS)
-  testDir = Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-  testDir += "MiKTeX";
-  testDir += MIKTEX_SERIES_STR;
-#else
-  const char * lpszHome = getenv("HOME");
-  if (lpszHome == 0)
-  {
-    return (false);
-  }
-  testDir = lpszHome;
-  testDir += ".miktex";
-#endif
-  return (! Directory::Exists(testDir));
-}
-
-/* _________________________________________________________________________
-     
    Application::Init
    _________________________________________________________________________ */
 
 void
 Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 {
-#if 1
-  // kludge
-  if (Is1stRun())
-  {
-    Setup ();
-  }
-#endif
   initialized = true;
   pSession.CreateSession (initInfo);
   beQuiet = false;
@@ -209,6 +164,24 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
     TriState(TriState::Undetermined));
   InstallSignalHandler (SIGINT);
   InstallSignalHandler (SIGTERM);
+  if (! File::Exists(pSession->GetMpmDatabasePathName()))
+  {
+    // create file name database files
+    SessionWrapper(true)->UnloadFilenameDatabase ();
+    PathName initexmf;
+    if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
+    {
+      UNEXPECTED_CONDITION ("Setup");
+    }
+    if (pSession->IsAdminMode())
+    {
+      Process::Run (initexmf, "--admin --quiet --update-fndb");
+    }
+    else
+    {
+      Process::Run (initexmf, "--quiet --update-fndb");
+    }
+  }
 }
 
 /* _________________________________________________________________________

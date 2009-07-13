@@ -553,32 +553,37 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ string &	path)
 {
   bool removed = false;
   string newPath;
-  PathName binDir =
-    SessionWrapper(true)->GetSpecialPath(SpecialPath::BinDirectory);
-  binDir.AppendDirectoryDelimiter ();
+  PathName userBinDir =
+    SessionWrapper(true)->GetSpecialPath(SpecialPath::UserInstallRoot);
+  userBinDir += MIKTEX_PATH_BIN_DIR;
+  userBinDir.AppendDirectoryDelimiter ();
+  PathName commonBinDir =
+    SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
+  commonBinDir += MIKTEX_PATH_BIN_DIR;
+  commonBinDir.AppendDirectoryDelimiter ();
   for (CSVList entry (path.c_str(), PathName::PathNameDelimiter);
-       entry.GetCurrent() != 0;
-       ++ entry)
+    entry.GetCurrent() != 0;
+    ++ entry)
+  {
+    PathName dir (entry.GetCurrent());
+    dir.AppendDirectoryDelimiter ();
+    if (userBinDir == dir || commonBinDir == dir)
     {
-      PathName dir (entry.GetCurrent());
-      dir.AppendDirectoryDelimiter ();
-      if (binDir == dir)
-	{
-	  removed = true;
-	}
-      else
-	{
-	  if (! newPath.empty())
-	    {
-	      newPath += PathName::PathNameDelimiter;
-	    }
-	  newPath += entry.GetCurrent();
-	}
+      removed = true;
     }
+    else
+    {
+      if (! newPath.empty())
+      {
+	newPath += PathName::PathNameDelimiter;
+      }
+      newPath += entry.GetCurrent();
+    }
+  }
   if (removed)
-    {
-      path = newPath;
-    }
+  {
+    path = newPath;
+  }
   return (removed);
 }
 
@@ -590,17 +595,18 @@ RemoveFilesPage::RemoveBinDirFromPath (/*[in,out]*/ string &	path)
 void
 RemoveFilesPage::UnregisterShellFileTypes ()
 {
+  PathName initexmfExe;
+  if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmfExe))
+  {
+    FATAL_MIKTEX_ERROR ("RemoveFilesPage::UnregisterShellFileTypes",
+      T_("The IniTeXMF executable could not be found."), 0);
+  }
  if (SessionWrapper(true)->RunningAsAdministrator()
      || SessionWrapper(true)->RunningAsPowerUser())
  {
-   PathName initexmfExe;
-   if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmfExe))
-   {
-     FATAL_MIKTEX_ERROR ("RemoveFilesPage::UnregisterShellFileTypes",
-       T_("The IniTeXMF executable could not be found."), 0);
-   }
    Process::Run (initexmfExe.Get(), "--admin --unregister-shell-file-types");
  }
+ Process::Run (initexmfExe.Get(), "--unregister-shell-file-types");
 }
 
 /* _________________________________________________________________________

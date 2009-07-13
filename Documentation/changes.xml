@@ -20,15 +20,45 @@
 
 <title>Breaking changes</title>
 
-<para></para>
+<section>
+
+<title>Per-user versus system-wide maintenance</title>
+
+<para>The &MiKTeX; maintenance utilities (&MiKTeXOptions;,
+&MiKTeXUpdateWizard; and &MiKTeXPackageManager;) now come in two
+variants:</para>
+
+<itemizedlist>
+<listitem><para>the <firstterm>standard variant</firstterm> is used to
+change &MiKTeX; settings for the current user</para></listitem>
+<listitem><para>the <firstterm>admin variant</firstterm> is used to
+to change &MiKTeX; settings for all users</para></listitem>
+</itemizedlist>
+
+<para>For example, if a user runs the standard variant of the package
+manager, packages will be installed in the private installation
+directory.  In contrast, if a user runs the admin variant of the
+package manager, packages will be installed in the system-wide
+installation directory.</para>
+
+<para>In order to run the admin variant, a user must have
+administrator privileges.</para>
+
+<para>The command-line versions of the maintenance utilities
+(<filename>initexmf</filename> and <filename>mpm</filename>) accept
+the <option>--admin</option> option to run in admin mode</para>
+
+</section>
 
 </section>
 
 <section>
 
-<title>Configurable user roots</title>
+<title>Per-user &TEXMF; roots</title>
 
-<para>to be documented</para>
+<para>It is now possible to set up &TEXMF; root directories on a
+per-user basis, i.e., users can register their private &TEXMF; root
+directories.</para>
 
 </section>
 
@@ -36,7 +66,8 @@
 
 <title>Per-user package management</title>
 
-<para>to be documented</para>
+<para>Packages can now be installed in a user-private installation
+directory.</para>
 
 </section>
 
@@ -44,20 +75,22 @@
 
 <title>&MiKTeXPortable;</title>
 
-<para>The new portable edition allows you to run &MiKTeX; from a portable
-storage device:</para>
+<para>The new portable edition makes it possible to run &MiKTeX; from
+a portable storage device:</para>
 
 <itemizedlist>
-<listitem><para>you carry &MiKTeX; on a portable storage device for
+<listitem><para>&MiKTeX; on a portable storage device is ready for
 use on any &Windows; computer</para></listitem>
 <listitem><para>configuration settings are stored on the portable
 storage device and not in the &WindowsRegistry; of the host
 computer</para></listitem>
-<listitem><para>by using &MiKTeXPortable;,
-you leave no traces on the host computer</para></listitem>
-<listitem><para>you do not need administrator privileges on the host
-computer</para></listitem>
+<listitem><para>no traces are left on the host computer</para></listitem>
+<listitem><para>no administrator privileges are required
+on the host computer</para></listitem>
 </itemizedlist>
+
+<para>&MiKTeXPortable; is distributed as a &SevenZip; self-extracting
+archive.</para>
 
 <para>Please visit the <ulink
 url="http://miktex.org/portable">&MiKTeXPortable; Homepage</ulink>, for more
@@ -70,18 +103,44 @@ information.</para>
 <title>&TeXworks;</title>
 
 <para>The &MiKTeX; distribution now includes &TeXworks;, an integrated
-development environment for &TeX; and &LaTeX;.</para>
+development environment for &TeX; and &LaTeX; written by Jonathan
+Kew.</para>
 
 <para>&TeXworks; includes a text editor, a previewer, syntax
 highlighting, spell checking, Unicode support.</para>
+
+<para>This version of &TeXworks; is specially for &MiKTeX;. See the
+<ulink url="http://miktex.svn.sourceforge.net/viewvc/miktex/miktex/trunk/Programs/Editors/TeXworks/miktex.html">TeXworks for MiKTeX homepage</ulink>, for
+more information.</para>
 
 </section>
 
 <section>
 
-<title>&Dvipng;</title>
+<title>File type associations</title>
 
-<para>&Dvipng; is now at upstream version 1.12.</para>
+<para>&TeX; input documents (<filename>*.tex</filename>,
+<filename>*.ltx</filename>, &hellip;) and &PDF; documents
+(<filename>*.pdf</filename>) are associated with &TeXworks;.</para>
+
+</section>
+
+<section>
+
+<title>Upgrades</title>
+
+<itemizedlist>
+<listitem><para>&Dvipdfmx; 20090522</para></listitem>
+<listitem><para>&Dvipng; 1.12</para></listitem>
+</itemizedlist>
+
+</section>
+
+<section>
+
+<title>Bugfixes</title>
+
+<para><ulink url="http://sourceforge.net/tracker/?func=detail%amp;aid=2419953%amp;group_id=10783%amp;atid=110783">2419953</ulink> (<quote>bad \input implementation in TeX breaks SyncTeX</quote>)</para>
 
 </section>
 

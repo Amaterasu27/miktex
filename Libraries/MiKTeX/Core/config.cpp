@@ -1266,11 +1266,17 @@ SessionImpl::IsAdminMode ()
 void
 SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathRel)
 {
-  PathName pathIn (GetSpecialPath(SpecialPath::InstallRoot));
-  pathIn += pathRel;
-  pathIn.AppendExtension (".in");
   PathName pathOut (GetSpecialPath(SpecialPath::ConfigRoot));
   pathOut += pathRel;
+  PathName pathIn (GetSpecialPath(SpecialPath::UserInstallRoot));
+  pathIn += pathRel;
+  pathIn.AppendExtension (".in");
+  if (! File::Exists(pathIn))
+  {
+    pathIn = GetSpecialPath(SpecialPath::CommonInstallRoot);
+    pathIn += pathRel;
+    pathIn.AppendExtension (".in");
+  }
   ConfigureFile (pathIn, pathOut);
 }
 
