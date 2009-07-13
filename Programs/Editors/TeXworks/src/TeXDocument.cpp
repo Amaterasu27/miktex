@@ -578,7 +578,7 @@ bool TeXDocument::event(QEvent *event) // based on example at doc.trolltech.com/
 					QMimeData *data = new QMimeData();
 					data->setUrls(QList<QUrl>() << QUrl::fromLocalFile(curFile));
 					drag->setMimeData(data);
-					QPixmap dragIcon(":/images/images/texdoc.png");
+					QPixmap dragIcon(":/images/images/TeXworks-doc-48.png");
 					drag->setPixmap(dragIcon);
 					drag->setHotSpot(QPoint(dragIcon.width() - 5, 5));
 					drag->start(Qt::LinkAction | Qt::CopyAction);
@@ -588,7 +588,7 @@ bool TeXDocument::event(QEvent *event) // based on example at doc.trolltech.com/
 					connect(&menu, SIGNAL(triggered(QAction*)), this, SLOT(openAt(QAction*)));
 					QFileInfo info(curFile);
 					QAction *action = menu.addAction(info.fileName());
-					action->setIcon(QIcon(":/images/images/texdoc.png"));
+					action->setIcon(QIcon(":/images/images/TeXworks-doc.png"));
 					QStringList folders = info.absolutePath().split('/');
 					QStringListIterator it(folders);
 					it.toBack();
@@ -606,7 +606,14 @@ bool TeXDocument::event(QEvent *event) // based on example at doc.trolltech.com/
 						action->setIcon(icon);
 					}
 					QPoint pos(QCursor::pos().x() - 20, frameGeometry().y());
+#ifdef Q_WS_MAC
+					extern void qt_mac_set_menubar_icons(bool);
+					qt_mac_set_menubar_icons(true);
+#endif
 					menu.exec(pos);
+#ifdef Q_WS_MAC
+					qt_mac_set_menubar_icons(false);
+#endif
 				}
 				else {
 					event->ignore();
@@ -886,36 +893,49 @@ void TeXDocument::reloadIfChangedOnDisk()
 	}
 }
 
-void TeXDocument::showPdfIfAvailable()
+// get expected name of the Preview file, and return whether it exists
+bool TeXDocument::getPreviewFileName(QString &pdfName)
 {
 	findRootFilePath();
 	if (rootFilePath == "")
-		return;
+		return false;
 	QFileInfo fi(rootFilePath);
-	QString pdfName = fi.canonicalPath() + "/" + fi.completeBaseName() + ".pdf";
+	pdfName = fi.canonicalPath() + "/" + fi.completeBaseName() + ".pdf";
+	fi.setFile(pdfName);
+	return fi.exists();
+}
+
+bool TeXDocument::showPdfIfAvailable()
+{
 	detachPdf();
+	actionSide_by_Side->setEnabled(false);
+	actionGo_to_Preview->setEnabled(false);
+
+	QString pdfName;
+	if (getPreviewFileName(pdfName)) {
 	PDFDocument *existingPdf = PDFDocument::findDocument(pdfName);
 	if (existingPdf != NULL) {
-		if (pdfDoc != existingPdf) {
 			pdfDoc = existingPdf;
 			pdfDoc->reload();
 			pdfDoc->selectWindow();
 			pdfDoc->linkToSource(this);
 		}
-	}
 	else {
-		fi.setFile(pdfName);
-		if (fi.exists()) {
 			pdfDoc = new PDFDocument(pdfName, this);
 			TWUtils::sideBySide(this, pdfDoc);
 			pdfDoc->show();
 		}
 	}
+
 	if (pdfDoc != NULL) {
 		actionSide_by_Side->setEnabled(true);
+		actionGo_to_Preview->setEnabled(true);
 		connect(pdfDoc, SIGNAL(destroyed()), this, SLOT(pdfClosed()));
 		connect(this, SIGNAL(destroyed(QObject*)), pdfDoc, SLOT(texClosed(QObject*)));
+		return true;
 	}
+	
+	return false;
 }
 
 void TeXDocument::pdfClosed()
@@ -1033,7 +1053,7 @@ void TeXDocument::setCurrentFile(const QString &fileName)
 		setWindowIcon(QIcon());
 	}
 	else
-		setWindowIcon(QIcon(":/images/images/texdoc.png"));
+		setWindowIcon(QIcon(":/images/images/TeXworks-doc.png"));
 
 	textEdit->document()->setModified(false);
 	setWindowModified(false);
@@ -2052,12 +2072,9 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
 	if (exitStatus != QProcess::CrashExit) {
 		if (pdfDoc == NULL) {
-			if (showPdfWhenFinished) {
-				showPdfIfAvailable();
-				if (pdfDoc != NULL)
+			if (showPdfWhenFinished && showPdfIfAvailable())
 					pdfDoc->selectWindow();
 			}
-		}
 		else {
 			pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
 			if (showPdfWhenFinished)
@@ -2123,6 +2140,17 @@ void TeXDocument::goToPreview()
 {
 	if (pdfDoc != NULL)
 		pdfDoc->selectWindow();
+	else {
+		if (!showPdfIfAvailable()) {
+			// This should only fail if the user has done something sneaky like closing the
+			// preview window and then renaming the PDF file, since we opened the source
+			// and checked that it exists (otherwise Go to Preview would have been disabled).
+			// We could issue a status-bar warning here but it's a pretty obscure case...
+			// for now just disable the command.
+			actionGo_to_Preview->setEnabled(false);
+			actionSide_by_Side->setEnabled(false);
+		}
+	}
 }
 
 void TeXDocument::syncClick(int lineNo)

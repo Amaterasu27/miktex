@@ -82,7 +82,7 @@ TWApp::TWApp(int &argc, char **argv)
 
 void TWApp::init()
 {
-	setWindowIcon(QIcon(":/images/images/appicon.png"));
+	setWindowIcon(QIcon(":/images/images/TeXworks.png"));
 
 	setOrganizationName("TUG");
 	setOrganizationDomain("tug.org");
@@ -137,6 +137,17 @@ void TWApp::init()
 		portableLibPath = libPath.absolutePath();
 	}
 	// </Check for portable mode>
+
+#if defined(Q_WS_MAC) /*|| defined(Q_WS_WIN)*/ // NOTE: this requires a patched version of Poppler
+#ifdef Q_WS_MAC
+	QDir popplerDataDir(applicationDirPath() + "/../poppler-data");
+#else
+	QDir popplerDataDir(applicationDirPath() + "/poppler-data");
+#endif
+	if (popplerDataDir.exists()) {
+		Poppler::Document::setPopplerDataPath(popplerDataDir.canonicalPath().toUtf8().data());
+	}
+#endif
 
 	// Required for TWUtils::getLibraryPath()
 	theAppInstance = this;

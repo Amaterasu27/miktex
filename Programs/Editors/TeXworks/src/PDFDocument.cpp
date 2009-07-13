@@ -1007,6 +1007,7 @@ PDFDocument::PDFDocument(const QString &fileName, TeXDocument *texDoc)
 	if (texDoc != NULL) {
 		stackUnder((QWidget*)texDoc);
 		actionSide_by_Side->setEnabled(true);
+		actionGo_to_Source->setEnabled(true);
 		sourceDocList.append(texDoc);
 	}
 }
@@ -1016,6 +1017,8 @@ PDFDocument::~PDFDocument()
 	if (scanner != NULL)
 		synctex_scanner_free(scanner);
 	docList.removeAll(this);
+	if (document)
+		delete document;
 }
 
 void
@@ -1030,7 +1033,7 @@ PDFDocument::init()
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	setAttribute(Qt::WA_MacNoClickThrough, true);
-	setWindowIcon(QIcon(":/images/images/pdfdoc.png"));
+	setWindowIcon(QIcon(":/images/images/TeXworks-doc.png"));
 	
 	setContextMenuPolicy(Qt::NoContextMenu);
 
@@ -1144,10 +1147,12 @@ PDFDocument::init()
 	dw = new PDFFontsDock(this);
 	dw->hide();
 	addDockWidget(Qt::BottomDockWidgetArea, dw);
-	menuShow->addAction(dw->toggleViewAction());\
+	menuShow->addAction(dw->toggleViewAction());
 	connect(this, SIGNAL(reloaded()), dw, SLOT(documentLoaded()));
 	connect(pdfWidget, SIGNAL(changedPage(int)), dw, SLOT(pageChanged(int)));
 
+	exitFullscreen = NULL;
+	
 	QSETTINGS_OBJECT(settings);
 	TWUtils::applyToolbarOptions(this, settings.value("toolBarIconSize", 2).toInt(), settings.value("toolBarShowText", false).toBool());
 
@@ -1180,8 +1185,11 @@ void PDFDocument::changeEvent(QEvent *event)
 
 void PDFDocument::linkToSource(TeXDocument *texDoc)
 {
-	if (texDoc != NULL && !sourceDocList.contains(texDoc))
+	if (texDoc != NULL) {
+		if (!sourceDocList.contains(texDoc))
 		sourceDocList.append(texDoc);
+		actionGo_to_Source->setEnabled(true);
+	}
 }
 
 void PDFDocument::texClosed(QObject *obj)
@@ -1478,6 +1486,9 @@ void PDFDocument::goToSource()
 {
 	if (sourceDocList.count() > 0)
 		sourceDocList[0]->selectWindow();
+	else
+		// should not occur, the action is supposed to be disabled
+		actionGo_to_Source->setEnabled(false);
 }
 
 void PDFDocument::enablePageActions(int pageIndex)
@@ -1514,6 +1525,7 @@ void PDFDocument::toggleFullScreen()
 		showNormal();
 		pdfWidget->restoreState();
 		actionFull_Screen->setChecked(false);
+		delete exitFullscreen;
 	}
 	else {
 		// entering full-screen mode
@@ -1523,6 +1535,7 @@ void PDFDocument::toggleFullScreen()
 		pdfWidget->saveState();
 		pdfWidget->fitWindow(true);
 		actionFull_Screen->setChecked(true);
+		exitFullscreen = new QShortcut(Qt::Key_Escape, this, SLOT(toggleFullScreen()));
 	}
 }
 

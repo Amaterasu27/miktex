@@ -240,7 +240,7 @@
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
-     <string>Typeset</string>
+     <string comment="menu title">Typeset</string>
     </property>
     <addaction name="actionTypeset"/>
     <addaction name="separator"/>
@@ -590,7 +590,7 @@
     <string>Typeset</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+T</string>
+    <string comment="action">Ctrl+T</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -825,6 +825,9 @@
    </property>
   </action>
   <action name="actionGo_to_Preview">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Go to Preview</string>
    </property>
