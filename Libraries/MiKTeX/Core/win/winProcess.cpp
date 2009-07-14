@@ -1,6 +1,6 @@
 /* winProcess.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -337,6 +337,10 @@ winProcess::Create ()
 	("core",
 	 T_("start process: %s"),
 	 commandLine.c_str());
+#if 1
+      // experimental
+      SessionImpl::GetSession()->UnloadFilenameDatabase ();
+#endif
       if (! CreateProcessA(fileName.Get(),
 			   STRDUP(commandLine.c_str()).GetBuffer(),
 			   0,	// lpProcessAttributes

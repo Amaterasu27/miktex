@@ -402,14 +402,16 @@ namespace {
 }
 
 void
-ULogOpen (/*[in]*/ bool append)
+ULogOpen ()
 {
-  MIKTEX_ASSERT (append);
+  FileMode mode (FileMode::Append);
+  if (! File::Exists(GetULogFileName()))
+  {
+    mode = FileMode::Create;
+  }
   pLogStream =
     auto_ptr<StreamWriter>(new StreamWriter(File::Open(GetULogFileName(),
-						       (append
-							? FileMode::Append
-							: FileMode::Create),
+						       mode,
 						       FileAccess::Write)));
   section = None;
 }

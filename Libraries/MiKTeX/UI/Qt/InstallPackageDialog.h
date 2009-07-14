@@ -61,21 +61,11 @@ public:
   }
 
 public:
-  void
-  SetAdminMode (/*[in]*/ bool adminMode)
-  {
-    if (cbInstallationDirectory->count() > 0)
-    {
-      cbInstallationDirectory->setCurrentIndex (adminMode ? 1 : 0);
-    }
-  }
-
-public:
   bool
   GetAdminMode ()
     const
   {
-    return (cbInstallationDirectory->currentIndex() > 0);
+    return (cbInstallationDirectory->itemData (cbInstallationDirectory->currentIndex()).toBool());
   }
 
 private slots:

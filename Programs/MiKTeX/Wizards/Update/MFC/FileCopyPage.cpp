@@ -607,7 +607,7 @@ FileCopyPage::DoTheUpdate ()
   OpenLog ();
 
   // open the uninstall script
-  ULogOpen (true);
+  ULogOpen ();
   ULogAddFile (g_logFileName);
 
   // update the package database

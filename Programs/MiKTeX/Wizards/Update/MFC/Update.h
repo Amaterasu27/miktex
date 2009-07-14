@@ -1,6 +1,6 @@
 /* Update.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -124,7 +124,7 @@ extern bool g_upgrading;
    _________________________________________________________________________ */
 
 void
-ULogOpen (/*[in]*/ bool append = false);
+ULogOpen ();
 
 void
 ULogAddFile (/*[in]*/ const PathName & path);

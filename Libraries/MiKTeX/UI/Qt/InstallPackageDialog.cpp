@@ -64,35 +64,6 @@ InstallPackageDialog::InstallPackageDialog
 	{
 	  leInstallationSource->setText (T_("<Random package repository>"));
 	}
-      QString currentUser;
-#if defined(MIKTEX_WINDOWS)
-      char szLogonName[30];
-      DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
-      if (GetUserNameA(szLogonName, &sizeLogonName))
-      {
-	currentUser = szLogonName;
-      }
-      else if (GetLastError() == ERROR_NOT_LOGGED_ON)
-      {
-	currentUser = T_("Unknown user");
-      }
-      else
-      {
-	FATAL_WINDOWS_ERROR ("GetUserNameA", 0);
-      }
-      char szDisplayName[30];
-      ULONG sizeDisplayName =
-	sizeof(szDisplayName) / sizeof(szDisplayName[0]);
-      if (GetUserNameExA(NameDisplay, szDisplayName, &sizeDisplayName))
-      {
-	currentUser += " (";
-	currentUser += szDisplayName;
-	currentUser += ")";
-      }
-#else
-      currentUser = T_("The current user");
-#endif
-      cbInstallationDirectory->addItem (currentUser);
       PathName commonInstallRoot = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
       PathName userInstallRoot = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserInstallRoot);
       bool enableCommonInstall = (commonInstallRoot != userInstallRoot);
@@ -105,7 +76,39 @@ InstallPackageDialog::InstallPackageDialog
 #endif
       if (enableCommonInstall)
       {
-	cbInstallationDirectory->addItem (T_("Anyone who uses this computer (all users)"));
+	cbInstallationDirectory->addItem (T_("Anyone who uses this computer (all users)"), true);
+      }
+      if (! enableCommonInstall || commonInstallRoot != userInstallRoot)
+      {
+	QString currentUser;
+#if defined(MIKTEX_WINDOWS)
+	char szLogonName[30];
+	DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
+	if (GetUserNameA(szLogonName, &sizeLogonName))
+	{
+	  currentUser = szLogonName;
+	}
+	else if (GetLastError() == ERROR_NOT_LOGGED_ON)
+	{
+	  currentUser = T_("Unknown user");
+	}
+	else
+	{
+	  FATAL_WINDOWS_ERROR ("GetUserNameA", 0);
+	}
+	char szDisplayName[30];
+	ULONG sizeDisplayName =
+	  sizeof(szDisplayName) / sizeof(szDisplayName[0]);
+	if (GetUserNameExA(NameDisplay, szDisplayName, &sizeDisplayName))
+	{
+	  currentUser += " (";
+	  currentUser += szDisplayName;
+	  currentUser += ")";
+	}
+#else
+	currentUser = T_("The current user");
+#endif
+	cbInstallationDirectory->addItem (currentUser, false);
       }
       cbInstallationDirectory->setCurrentIndex (0);
     }
@@ -160,7 +163,11 @@ InstallPackageDialog::on_btnChange_clicked ()
 void
 InstallPackageDialog::on_cbInstallationDirectory_currentIndexChanged (int idx)
 {
-  BOOL elevationRequired = (idx > 0);
+  if (idx < 0)
+  {
+    return;
+  }
+  bool elevationRequired = cbInstallationDirectory->itemData(idx).toBool();
   QPushButton * pOKButton = buttonBox->button(QDialogButtonBox::Ok);
   if (elevationRequired)
   {
