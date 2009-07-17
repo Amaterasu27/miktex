@@ -107,10 +107,6 @@ protected:
 		 /*[in]*/ LRESULT *	pResult);
 
 private:
-  bool
-  ContainsUpdateWizard (/*[in]*/ const string &	deploymentName);
-
-private:
   static
   UINT
   WorkerThread (/*[in]*/ void * pv);
@@ -161,10 +157,10 @@ private:
   auto_ptr<PackageInstaller> pInstaller;
   
 private:
-  bool updateUpdate;
+  bool canSelectAll;
 
 private:
-  bool repairing;
+  bool canDeselectAll;
 
 private:
   string repository;

@@ -902,7 +902,8 @@ public:
   {
     /// Initializes a new instance of the class.
     UpdateInfo ()
-      : timePackaged (static_cast<time_t>(0))
+      : timePackaged (static_cast<time_t>(0)),
+	action (None)
     {
     }
 
@@ -912,12 +913,17 @@ public:
     /// Date/Time the package was created.
     time_t timePackaged;
 
-    bool
-    IsBroken ()
-      const
-    {
-      return (timePackaged == static_cast<time_t>(-1));
-    }
+    enum Action {
+      None,
+      Keep,
+      KeepAdmin,
+      Update,
+      ForceUpdate, 
+      ForceRemove,
+      Repair
+    };
+
+    Action action;
   };
 
 public:

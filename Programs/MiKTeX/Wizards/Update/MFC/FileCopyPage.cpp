@@ -599,8 +599,6 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 void
 FileCopyPage::DoTheUpdate ()
 {
-  vector<string> toBeRemoved;
-
   pInstaller->SetCallback (this);
 
   // open the log file
@@ -618,22 +616,9 @@ FileCopyPage::DoTheUpdate ()
       return;
     }
 
-  // collect obsolete MiKTeX packages
-  if (g_upgrading)
-    {
-      auto_ptr<PackageIterator> pIter (g_pManager->CreateIterator());
-      pIter->AddFilter (PackageFilter::Obsolete);
-      PackageInfo packageInfo;
-      while (pIter->GetNext(packageInfo))
-	{
-	  if (IsMiKTeXPackage(packageInfo.deploymentName))
-	    {
-	      toBeRemoved.push_back (packageInfo.deploymentName);
-	    }
-	}
-    }
-      
-  pInstaller->SetFileLists (pSheet->GetUpdateList(), toBeRemoved);
+  pInstaller->SetFileLists (
+    pSheet->GetUpdateList(),
+    pSheet->GetRemoveList());
 
   // run installer
   pInstaller->InstallRemove ();

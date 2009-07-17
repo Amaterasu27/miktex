@@ -672,6 +672,14 @@ public:
 
 public:
   time_t
+  GetUserTimeInstalled (/*[in]*/ const char *	lpszDeploymentName);
+
+public:
+  time_t
+  GetCommonTimeInstalled (/*[in]*/ const char *	lpszDeploymentName);
+
+public:
+  time_t
   GetTimeInstalled (/*[in]*/ const char *	lpszDeploymentName);
 
 public:

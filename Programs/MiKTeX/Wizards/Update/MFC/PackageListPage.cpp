@@ -1,6 +1,6 @@
 /* PackageListPag.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -27,8 +27,6 @@
 #include "resource.h"
 
 IMPLEMENT_DYNCREATE(PackageListPage, CPropertyPage);
-
-#define MYPKG T_("miktex-bin") "-" MIKTEX_SERIES_STR
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
 
@@ -70,21 +68,21 @@ PackageListPage::PackageListPage ()
 PackageListPage::~PackageListPage ()
 {
   try
+  {
+    if (hWorkerThread != 0)
     {
-      if (hWorkerThread != 0)
-	{
-	  CloseHandle (hWorkerThread);
-	  hWorkerThread = 0;
-	}
-      if (pInstaller.get() != 0)
-	{
-	  pInstaller->Dispose ();
-	  pInstaller.reset ();
-	}
+      CloseHandle (hWorkerThread);
+      hWorkerThread = 0;
     }
+    if (pInstaller.get() != 0)
+    {
+      pInstaller->Dispose ();
+      pInstaller.reset ();
+    }
+  }
   catch (const exception &)
-    {
-    }
+  {
+  }
 }
 
 /* _________________________________________________________________________
@@ -101,23 +99,23 @@ PackageListPage::OnInitDialog ()
   BOOL ret = CPropertyPage::OnInitDialog();
 
   try
-    {
-      MIKTEX_ASSERT (pInstaller.get() == 0);
-      pInstaller = auto_ptr<PackageInstaller>(g_pManager->CreateInstaller());
-      listControl.SetExtendedStyle (listControl.GetExtendedStyle()
-				    | LVS_EX_CHECKBOXES);
-      InsertColumn (0, T_("Name"), T_("xxxx yet another package"));
-      InsertColumn (1, T_("Old"), T_("xxxx 19-December-2000"));
-      InsertColumn (2, T_("New"), T_("xxxx 19-December-2000"));
-    }
+  {
+    MIKTEX_ASSERT (pInstaller.get() == 0);
+    pInstaller = auto_ptr<PackageInstaller>(g_pManager->CreateInstaller());
+    listControl.SetExtendedStyle (listControl.GetExtendedStyle()
+      | LVS_EX_CHECKBOXES);
+    InsertColumn (0, T_("Name"), T_("xxxx yet another package"));
+    InsertColumn (1, T_("Old"), T_("xxxx 19-December-2000"));
+    InsertColumn (2, T_("New"), T_("xxxx 19-December-2000"));
+  }
   catch (const MiKTeXException & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
   catch (const exception & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
 
   return (ret);
 }
@@ -133,66 +131,66 @@ PackageListPage::OnSetActive ()
   BOOL ret = CPropertyPage::OnSetActive();
 
   if (ret)
+  {
+    try
     {
-      try
-	{
-	  pSheet->ClearErrorFlag ();
+      pSheet->ClearErrorFlag ();
 
-	  EnableSelectButtons ();
-	  
-	  string repository = pSheet->GetRepository();
-	  
-	  // start search thread, if this is the first activation or
-	  // if the package repository URL has changed; otherwise fill
-	  // the list control with the information we have
-	  if (! ready || repository != this->repository)
-	    {
-	      ready = false;
-	      this->repository = repository;
-	      
-	      // a kind of progress info
-	      SetProgressText (T_("Searching..."));
-	      
-	      // disable wizard buttons
-	      pSheet->SetWizardButtons (0);
-	      
-	      // start thread
-	      CWinThread * pThread =
-		AfxBeginThread (WorkerThread,
-				this,
-				THREAD_PRIORITY_NORMAL,
-				0,
-				CREATE_SUSPENDED);
-	      MIKTEX_ASSERT (pThread != 0);
-	      MIKTEX_ASSERT (pThread->m_hThread != 0);
-	      if (! DuplicateHandle(GetCurrentProcess(),
-				    pThread->m_hThread,
-				    GetCurrentProcess(),
-				    &hWorkerThread,
-				    0,
-				    FALSE,
-				    DUPLICATE_SAME_ACCESS))
-		{
-		  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
-		}
-	      pThread->ResumeThread ();
-	    }
-	  else
-	    {
-	      OnFillList (0, 0);
-	    }
-	}
-      catch (const MiKTeXException & e)
+      EnableSelectButtons ();
+
+      string repository = pSheet->GetRepository();
+
+      // start search thread, if this is the first activation or
+      // if the package repository URL has changed; otherwise fill
+      // the list control with the information we have
+      if (! ready || repository != this->repository)
+      {
+	ready = false;
+	this->repository = repository;
+
+	// a kind of progress info
+	SetProgressText (T_("Searching..."));
+
+	// disable wizard buttons
+	pSheet->SetWizardButtons (0);
+
+	// start thread
+	CWinThread * pThread =
+	  AfxBeginThread (WorkerThread,
+			  this,
+			  THREAD_PRIORITY_NORMAL,
+			  0,
+			  CREATE_SUSPENDED);
+	MIKTEX_ASSERT (pThread != 0);
+	MIKTEX_ASSERT (pThread->m_hThread != 0);
+	if (! DuplicateHandle(GetCurrentProcess(),
+			      pThread->m_hThread,
+			      GetCurrentProcess(),
+			      &hWorkerThread,
+			      0,
+			      FALSE,
+			      DUPLICATE_SAME_ACCESS))
 	{
-	  pSheet->ReportError (e);
-	  ret = FALSE;
+	  FATAL_WINDOWS_ERROR ("DuplicateHandle", 0);
 	}
-      catch (const exception & e)
-	{
-	  pSheet->ReportError (e);
-	  ret = FALSE;
-	}
+	pThread->ResumeThread ();
+      }
+      else
+      {
+	OnFillList (0, 0);
+      }
     }
+    catch (const MiKTeXException & e)
+    {
+      pSheet->ReportError (e);
+      ret = FALSE;
+    }
+    catch (const exception & e)
+    {
+      pSheet->ReportError (e);
+      ret = FALSE;
+    }
+  }
 
   return (ret);
 }
@@ -242,20 +240,33 @@ PackageListPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
+  {
+    vector<string> toBeUpdated;
+    toBeUpdated.reserve (updates.size());
+    vector<string> toBeRemoved;
+    toBeRemoved.reserve (updates.size());
+    int n = listControl.GetItemCount();
+    for (int i = 0; i < n; ++ i)
     {
-      vector<string> selectedPackages;
-      selectedPackages.reserve (updates.size());
-      int n = listControl.GetItemCount();
-      for (int i = 0; i < n; ++ i)
+      size_t idx = listControl.GetItemData(i);
+      if (listControl.GetCheck(i))
+      {
+	switch (updates[idx].action)
 	{
-	  if (listControl.GetCheck(i))
-	    {
-	      size_t idx = listControl.GetItemData(i);
-	      selectedPackages.push_back (updates[idx].deploymentName);
-	    }
+	case PackageInstaller::UpdateInfo::Repair:
+	case PackageInstaller::UpdateInfo::Update:
+	case PackageInstaller::UpdateInfo::ForceUpdate:
+	  toBeUpdated.push_back (updates[idx].deploymentName);
+	  break;
+	case PackageInstaller::UpdateInfo::ForceRemove:
+	  toBeRemoved.push_back (updates[idx].deploymentName);
+	  break;
 	}
-      pSheet->SetUpdateList (selectedPackages);
+      }
     }
+    pSheet->SetUpdateList (toBeUpdated);
+    pSheet->SetRemoveList (toBeRemoved);
+  }
   return (ret);
 }
 
@@ -268,22 +279,22 @@ BOOL
 PackageListPage::OnQueryCancel ()
 {
   if (ready)
-    {
-      return (TRUE);
-    }
+  {
+    return (TRUE);
+  }
   try
-    {
-      pSheet->SetCancelFlag ();
-      SetProgressText (T_("Cancelling..."));
-    }
+  {
+    pSheet->SetCancelFlag ();
+    SetProgressText (T_("Cancelling..."));
+  }
   catch (const MiKTeXException & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
   catch (const exception & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
   return (FALSE);
 }
 
@@ -302,102 +313,125 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
   UNUSED_ALWAYS (lParam);
 
   try
+  {
+    if (pSheet->GetCancelFlag() || pSheet->GetErrorFlag())
     {
-      if (pSheet->GetCancelFlag() || pSheet->GetErrorFlag())
-	{
-	  SetProgressText (pSheet->GetCancelFlag()
-			   ? T_("Cancelled")
-			   : T_("Unsuccessful"));
-	  pSheet->EnableCloseButton ();
-	  return (0);
-	}
-
-      CWaitCursor wait;
-
-      AUTO_TOGGLE (fillingTheListView);
-
-      if (! listControl.DeleteAllItems())
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
-	}
-      
-      int idx = 0;
-
-      for (vector<PackageInstaller::UpdateInfo>::const_iterator it
-	     = updates.begin();
-	   it != updates.end();
-	   ++ it, ++ idx)
-	{
-	  LV_ITEM lvitem;
-      
-	  lvitem.iItem = idx;
-	  lvitem.mask = LVIF_PARAM;
-	  lvitem.lParam = idx;
-	  lvitem.iSubItem = 0;
-
-	  if (listControl.InsertItem(&lvitem) < 0)
-	    {
-	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
-	    }
-
-	  // try to get the package info
-	  // <fixme>we need someting like IsKnownPackage()
-	  PackageInfo oldPackageInfo;
-	  bool locallyKnown;
-	  try
-	    {
-	      oldPackageInfo =
-		g_pManager->GetPackageInfo(it->deploymentName.c_str());
-	      locallyKnown = true;
-	    }
-	  catch (const MiKTeXException &)
-	    {
-	      locallyKnown = false;
-	    }
-	  // </fixme>
-
-	  // display the deployment name
-	  listControl.SetItemText (idx, 0, it->deploymentName.c_str());
-
-	  // display the 'old' package time-stamp, if the package is known
-	  if (locallyKnown && oldPackageInfo.timeInstalled > 0)
-	    {
-	      CTime timeOld (oldPackageInfo.timePackaged);
-	      CString strOld = timeOld.Format("%d-%b-%y");
-	      listControl.SetItemText (idx, 1, strOld);
-	    }
-
-	  // display the 'new' package time-stamp, if the package is
-	  // correctly installed
-	  if (! it->IsBroken())
-	    {
-	      CTime timeNew (it->timePackaged);
-	      CString strNew = timeNew.Format ("%d-%b-%y");
-	      listControl.SetItemText (idx, 2, strNew);
-	    }
-
-	  // set the check mark
-	  if (g_upgrading
-	      || ! updateUpdate
-	      || ContainsUpdateWizard(it->deploymentName))
-	    {
-	      listControl.SetCheck (idx);
-	    }
-	}
-
-      EnableSelectButtons ();
-
-      // disable Next, if no package is selected
-      pSheet->SetWizardButtons (PSWIZB_BACK | (idx == 0 ? 0 : PSWIZB_NEXT));
+      SetProgressText (pSheet->GetCancelFlag()
+	? T_("Cancelled")
+	: T_("Unsuccessful"));
+      pSheet->EnableCloseButton ();
+      return (0);
     }
+
+    CWaitCursor wait;
+
+    AUTO_TOGGLE (fillingTheListView);
+
+    if (! listControl.DeleteAllItems())
+    {
+      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
+    }
+
+    int idx = 0;
+
+    bool somethingChecked = false;
+
+    for (vector<PackageInstaller::UpdateInfo>::const_iterator it
+	  = updates.begin();
+	 it != updates.end();
+	 ++ it, ++ idx)
+    {
+      LV_ITEM lvitem;
+
+      lvitem.iItem = idx;
+      lvitem.mask = LVIF_PARAM;
+      lvitem.lParam = idx;
+      lvitem.iSubItem = 0;
+
+      if (listControl.InsertItem(&lvitem) < 0)
+      {
+	FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
+      }
+
+      // try to get the package info
+      // <fixme>we need someting like IsKnownPackage()
+      PackageInfo oldPackageInfo;
+      bool locallyKnown;
+      try
+      {
+	oldPackageInfo =
+	  g_pManager->GetPackageInfo(it->deploymentName.c_str());
+	locallyKnown = true;
+      }
+      catch (const MiKTeXException &)
+      {
+	locallyKnown = false;
+      }
+      // </fixme>
+
+      // display the deployment name
+      listControl.SetItemText (idx, 0, it->deploymentName.c_str());
+
+      // display the 'old' package time-stamp, if the package is known
+      if (locallyKnown && oldPackageInfo.timeInstalled > 0)
+      {
+	CTime timeOld (oldPackageInfo.timePackaged);
+	CString strOld = timeOld.Format("%d-%b-%y");
+	listControl.SetItemText (idx, 1, strOld);
+      }
+
+      // display the 'new' package time-stamp, if the package is
+      // correctly installed
+      if (it->action == PackageInstaller::UpdateInfo::Repair)
+      {
+	listControl.SetItemText (idx, 2, "to be repaired");
+      }
+      else if (it->action == PackageInstaller::UpdateInfo::ForceRemove)
+      {
+	listControl.SetItemText (idx, 2, "to be removed");
+      }
+      else
+      {
+	CTime timeNew (it->timePackaged);
+	CString strNew = timeNew.Format ("%d-%b-%y");
+	listControl.SetItemText (idx, 2, strNew);
+      }
+
+      bool toBeChecked = false;
+
+      if (g_upgrading)
+      {
+	toBeChecked = true;
+      }
+
+      if (it->action == PackageInstaller::UpdateInfo::ForceUpdate
+	  || it->action == PackageInstaller::UpdateInfo::ForceRemove
+	  || it->action == PackageInstaller::UpdateInfo::Update
+	  || it->action == PackageInstaller::UpdateInfo::Repair)
+      {
+	toBeChecked = true;
+      }
+
+      if (toBeChecked)
+      {
+	listControl.SetCheck (idx);
+	somethingChecked = true;
+      }
+    }
+
+    EnableSelectButtons ();
+
+    // disable Next, if no package is selected
+    pSheet->SetWizardButtons (PSWIZB_BACK | (somethingChecked ? PSWIZB_NEXT : 0));
+  }
   catch (const MiKTeXException & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
   catch (const exception & e)
-    {
-      pSheet->ReportError (e);
-    }
+  {
+    pSheet->ReportError (e);
+  }
 
   return (0);
 }
@@ -412,9 +446,9 @@ PackageListPage::OnSelectAll ()
 {
   int n = listControl.GetItemCount();
   for (int i = 0; i < n; ++ i)
-    {
-      listControl.SetCheck (i, TRUE);
-    }
+  {
+    listControl.SetCheck (i, TRUE);
+  }
 }
 
 /* _________________________________________________________________________
@@ -427,9 +461,9 @@ PackageListPage::OnDeselectAll ()
 {
   int n = listControl.GetItemCount();
   for (int i = 0; i < n; ++ i)
-    {
-      listControl.SetCheck (i, FALSE);
-    }
+  {
+    listControl.SetCheck (i, FALSE);
+  }
 }
 
 /* _________________________________________________________________________
@@ -447,40 +481,56 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
       || pnmlv == 0
       || pnmlv->iItem < 0
       || pnmlv->iItem >= static_cast<int>(updates.size()))
-    {
-      *pResult = FALSE;
-      return;
-    }
+  {
+    *pResult = FALSE;
+    return;
+  }
 
   const PackageInstaller::UpdateInfo & updateInfo = updates[pnmlv->iItem];
 
   if (g_upgrading
       && IsMiKTeXPackage(updateInfo.deploymentName))
-    {
-      AfxMessageBox (T_("The MiKTeX upgrade operation must be executed \
+  {
+    AfxMessageBox (T_("The MiKTeX upgrade operation must be executed \
 as a whole."),
-		     MB_OK | MB_ICONEXCLAMATION);
-      *pResult = TRUE;
-    }
-  else if (updateUpdate && ! ContainsUpdateWizard(updateInfo.deploymentName))
-    {
-      AfxMessageBox (T_("The package \"") MYPKG T_("\" must be updated \
-separately. Let the wizard conclude now. \
-Then run the wizard again to update the remaining packages."),
-			 MB_OK | MB_ICONEXCLAMATION);
-      *pResult = TRUE;
-    }
-  else if (! (updateUpdate && IsMiKTeXPackage(updateInfo.deploymentName))
-	   && updateInfo.IsBroken())
-    {
-      AfxMessageBox (T_("This package needs to be reinstalled."),
-		     MB_OK | MB_ICONEXCLAMATION);
-      *pResult = TRUE;
-    }
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
+  {
+    AfxMessageBox (T_("This package can only be updated by the admin variant of the wizard."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
+  {
+    AfxMessageBox (T_("This package cannot be updated rihgt now. \
+Let the wizard conclude now. Then run the wizard again."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::Repair)
+  {
+    AfxMessageBox (T_("This package needs to be repaired."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceRemove)
+  {
+    AfxMessageBox (T_("This package must be removed."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceUpdate)
+  {
+    AfxMessageBox (T_("This package has to be updated."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
   else
-    {
-      *pResult = FALSE;
-    }
+  {
+    *pResult = FALSE;
+  }
 }
 
 /* _________________________________________________________________________
@@ -495,31 +545,20 @@ PackageListPage::OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
   UNUSED_ALWAYS (pNMHDR);
   *pResult = 0;
   if (fillingTheListView || pSheet->GetCancelFlag() || pSheet->GetErrorFlag())
-    {
-      return;
-    }
-  bool enableNextButton = false;
+  {
+    return;
+  }
+  bool somethingChecked = false;
   int n = listControl.GetItemCount();
-  for (int i = 0; ! enableNextButton && i < n; ++ i)
+  for (int i = 0; ! somethingChecked && i < n; ++ i)
+  {
+    if (listControl.GetCheck(i))
     {
-      if (listControl.GetCheck(i))
-	{
-	  enableNextButton = true;
-	}
+      somethingChecked = true;
     }
+  }
   pSheet->SetWizardButtons (PSWIZB_BACK
-			    | (enableNextButton ? PSWIZB_NEXT : 0));
-}
-
-/* _________________________________________________________________________
-
-   PackageListPage::ContainsUpdateWizard
-   _________________________________________________________________________ */
-
-bool
-PackageListPage::ContainsUpdateWizard (/*[in]*/ const string & deploymentName)
-{
-  return (PathName::Compare(deploymentName.c_str(), MYPKG) == 0);
+			    | (somethingChecked ? PSWIZB_NEXT : 0));
 }
 
 /* _________________________________________________________________________
@@ -533,36 +572,36 @@ PackageListPage::WorkerThread (/*[in]*/ void * pv)
   PackageListPage * This = reinterpret_cast<PackageListPage*>(pv);
 
   try
-    {
-      This->DoFindUpdates ();
-     }
+  {
+    This->DoFindUpdates ();
+  }
   catch (const OperationCancelledException &)
-    {
-    }
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      This->pSheet->ReportError (e);
-    }
+  {
+    This->pSheet->ReportError (e);
+  }
   catch (const exception & e)
-    {
-      This->pSheet->ReportError (e);
-    }
+  {
+    This->pSheet->ReportError (e);
+  }
 
   try
+  {
+    if (! This->PostMessage(WM_FILL_LIST))
     {
-      if (! This->PostMessage(WM_FILL_LIST))
-	{
-	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
-	}
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
+  }
   catch (const MiKTeXException & e)
-    {
-      This->pSheet->ReportError (e);
-    }
+  {
+    This->pSheet->ReportError (e);
+  }
   catch (const exception & e)
-    {
-      This->pSheet->ReportError (e);
-    }
+  {
+    This->pSheet->ReportError (e);
+  }
 
   This->ready = true;
 
@@ -609,31 +648,31 @@ PackageListPage::DoFindUpdates ()
   // sort by package name
   sort (updates.begin(), updates.end(), UpdateInfoComparer());
   
-  // check to see whether
-  //   a) the update wizard needs an update
-  //   b) some packages have to be repaired
-  updateUpdate = false;
-  repairing = false;
+  canSelectAll = true;
+  canDeselectAll = true;
   for (vector<PackageInstaller::UpdateInfo>::const_iterator
 	 it = updates.begin();
        it != updates.end();
        ++ it)
+  {
+    if (it->action == PackageInstaller::UpdateInfo::Repair
+      || it->action == PackageInstaller::UpdateInfo::ForceRemove
+      || it->action == PackageInstaller::UpdateInfo::ForceUpdate)
     {
-      if (ContainsUpdateWizard(it->deploymentName))
-	{
-	  updateUpdate = true;
-	}
-      if (it->IsBroken())
-	{
-	  repairing = true;
-	}
+      canDeselectAll = false;
     }
-  
+    if (it->action == PackageInstaller::UpdateInfo::Keep
+      || it->action == PackageInstaller::UpdateInfo::KeepAdmin)
+    {
+      canSelectAll = false;
+    }
+  }
+
   if (updates.size() == 0)
-    {
-      AfxMessageBox (T_("There are currently no updates available."),
-		     MB_OK | MB_ICONINFORMATION);
-    }
+  {
+    AfxMessageBox (T_("There are currently no updates available."),
+		   MB_OK | MB_ICONINFORMATION);
+  }
 }
 
 /* _________________________________________________________________________
@@ -684,21 +723,20 @@ PackageListPage::EnableSelectButtons ()
 {
   BOOL enable =
     (ready
-     && ! updateUpdate
      && ! pSheet->GetCancelFlag()
      && ! pSheet->GetErrorFlag()
      && listControl.GetItemCount() > 0);
   CWnd * pWnd;
   if ((pWnd = GetDlgItem(IDC_SELECT_ALL)) == 0)
-    {
-      UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
-    }
-  pWnd->EnableWindow (enable);
+  {
+    UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
+  }
+  pWnd->EnableWindow (enable && canSelectAll);
   if ((pWnd = GetDlgItem(IDC_DESELECT_ALL)) == 0)
-    {
-      UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
-    }
-  pWnd->EnableWindow (enable && ! repairing);
+  {
+    UNEXPECTED_CONDITION ("PackageListPage::EnableSelectButtons");
+  }
+  pWnd->EnableWindow (enable && canDeselectAll);
 }
 
 /* _________________________________________________________________________
@@ -711,25 +749,25 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
 {
   AUTO_TOGGLE (fillingTheListView);
   if (! listControl.DeleteAllItems())
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
+  }
   LV_ITEM lvitem;
   lvitem.iItem = 0;
   lvitem.mask = 0;
   lvitem.iSubItem = 0;
   if (listControl.InsertItem(&lvitem) < 0)
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
+  }
   if (! listControl.SetItemText(0, 0, lpszText))
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
+  }
   if (! listControl.SetItemState(0, 0, LVIS_STATEIMAGEMASK))
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::SetItemState", 0);
+  }
 }
 
 /* _________________________________________________________________________
@@ -748,7 +786,7 @@ PackageListPage::InsertColumn (/*[in]*/ int			colIdx,
 			       listControl.GetStringWidth(lpszLongest),
 			       colIdx)
       < 0)
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::InsertColumn", 0);
+  }
 }

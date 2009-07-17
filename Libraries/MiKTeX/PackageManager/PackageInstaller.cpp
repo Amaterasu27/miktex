@@ -647,6 +647,8 @@ CompareSerieses (/*[in]*/ const string &	ver1,
    PackageInstallerImpl::FindUpdates
    _________________________________________________________________________ */
 
+#define MAVERICK T_("miktex-bin") "-" MIKTEX_SERIES_STR
+
 void
 PackageInstallerImpl::FindUpdates ()
 {
@@ -659,6 +661,7 @@ PackageInstallerImpl::FindUpdates ()
 
   // package iteration
   char szPackage[BufferSizes::MaxPackageName];
+  bool maverick = false;
   for (const char * lpszPackage = dbLight.FirstPackage(szPackage);
        lpszPackage != 0;
        lpszPackage = dbLight.NextPackage(szPackage))
@@ -691,6 +694,7 @@ PackageInstallerImpl::FindUpdates ()
 		  trace_mpm->WriteFormattedLine ("libmpm",
 						 T_("%s: new MiKTeX package"),
 						 lpszPackage);
+		  updateInfo.action = UpdateInfo::ForceUpdate;
 		  updates.push_back (updateInfo);
 		}
 	    }
@@ -698,33 +702,50 @@ PackageInstallerImpl::FindUpdates ()
 	}
       else
 	{
-	  // it must be possible to remove the existing package
-	  if (! pPackageInfo->isRemovable)
+	  // clean the user-installation directory
+	  if (! pSession->IsAdminMode()
+	      && (pSession->GetSpecialPath(SpecialPath::UserInstallRoot)
+	          != pSession->GetSpecialPath(SpecialPath::CommonInstallRoot))
+	      && pManager->GetUserTimeInstalled(lpszPackage) != static_cast<time_t>(0)
+	      && pManager->GetCommonTimeInstalled(lpszPackage) != static_cast<time_t>(0))
 	  {
+	    if (! pPackageInfo->isRemovable)
+	    {
+	      UNEXPECTED_CONDITION ("PackageInstallerImpl::FindUpdates");
+	    }
 	    trace_mpm->WriteFormattedLine
 	      ("libmpm",
-	      T_("%s: no permission to update package"),
-	      lpszPackage);
+	       T_("%s: double installed"),
+	       lpszPackage);
+	    updateInfo.action = UpdateInfo::ForceRemove;
+	    updates.push_back (updateInfo);
 	    continue;
 	  }
 
 	  // check the integrity of installed MiKTeX packages
 	  if (IsMiKTeXPackage(lpszPackage)
-	      && ! pManager->TryVerifyInstalledPackage(lpszPackage))
-	    {
-	      // the package has been tampered with
-	      updateInfo.timePackaged = static_cast<time_t>(-1);
-	      updates.push_back (updateInfo);
-	      continue;
-	    }
+	      && ! pManager->TryVerifyInstalledPackage(lpszPackage)
+	      && pPackageInfo->isRemovable)
+	  {
+	    // the package has been tampered with
+	    trace_mpm->WriteFormattedLine
+	      ("libmpm",
+	      T_("%s: package is broken"),
+	      lpszPackage);
+	    updateInfo.timePackaged = static_cast<time_t>(-1);
+	    updateInfo.action = UpdateInfo::Repair;
+	    updates.push_back (updateInfo);
+	    continue;
+	  }
 
 	  // compare digests, version numbers and time stamps
 	  MD5 md5 = dbLight.GetPackageDigest(lpszPackage);
 	  if (md5 == pPackageInfo->digest)
-	    {
-	      // digests do match => no update necessary
-	      continue;
-	    }
+	  {
+	    // digests do match => no update necessary
+	    continue;
+	  }
+
 	  trace_mpm->WriteFormattedLine
 	    ("libmpm",
 	     T_("%s: server has a different version"),
@@ -741,37 +762,86 @@ PackageInstallerImpl::FindUpdates ()
 	    CompareVersions(dbLight.GetPackageVersion(lpszPackage),
 			    pPackageInfo->version);
 	  if (verCmp < 0)
+	  {
+	    // server has a previous version => no update necessary
+	    continue;
+	  }
+	  else if (verCmp == 0)
+	  {
+	    // the version numbers are equal => compare time stamps
+	    time_t timePackaged = dbLight.GetTimePackaged(lpszPackage);
+	    if (timePackaged <= pPackageInfo->timePackaged)
 	    {
-	      // server has a previous version => no update necessary
+	      // server has an older package => no update
+	      // necessary
 	      continue;
 	    }
-	  else if (verCmp == 0)
-	    {
-	      // the version numbers are equal => compare time stamps
-	      time_t timePackaged = dbLight.GetTimePackaged(lpszPackage);
-	      if (timePackaged <= pPackageInfo->timePackaged)
-		{
-		  // server has an older package => no update
-		  // necessary
-		  continue;
-		}
-	      // server has a newer package
-	      trace_mpm->WriteFormattedLine
-		("libmpm",
-		 T_("%s: server has new version"),
-		 lpszPackage);
-	    }
+	    // server has a newer package
+	    trace_mpm->WriteFormattedLine
+	      ("libmpm",
+	      T_("%s: server has new version"),
+	      lpszPackage);
+	  }
 	  else
-	    {
-	      // server has a newer version
-	      trace_mpm->WriteFormattedLine
-		("libmpm",
-		 T_("%s: server has new version"),
-		 lpszPackage);
-	    }
+	  {
+	    // server has a newer version
+	    trace_mpm->WriteFormattedLine
+	      ("libmpm",
+	      T_("%s: server has new version"),
+	      lpszPackage);
+	  }
+
+	  if (! pPackageInfo->isRemovable)
+	  {
+	    trace_mpm->WriteFormattedLine
+	      ("libmpm",
+	      T_("%s: no permission to update package"),
+	      lpszPackage);
+	    updateInfo.action = UpdateInfo::KeepAdmin;
+	  }
+	  else if (PathName::Compare(lpszPackage, MAVERICK) == 0)
+	  {
+	    maverick = true;
+	    updateInfo.action = UpdateInfo::ForceUpdate;
+	  }
+	  else
+	  {
+	    updateInfo.action = UpdateInfo::Update;
+	  }
+
 	  updates.push_back (updateInfo);
 	}
     }
+
+  auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
+  pIter->AddFilter (PackageFilter::Obsolete);
+  PackageInfo packageInfo;
+  while (pIter->GetNext(packageInfo))
+  {
+    trace_mpm->WriteFormattedLine
+      ("libmpm",
+      T_("%s: package is obsolete"),
+      packageInfo.deploymentName.c_str());
+    UpdateInfo updateInfo;
+    updateInfo.deploymentName = packageInfo.deploymentName;
+    updateInfo.timePackaged = packageInfo.timePackaged;
+    updateInfo.action = UpdateInfo::ForceRemove;
+    updates.push_back (updateInfo);
+  }
+
+  if (maverick)
+  {
+    for (vector<UpdateInfo>::iterator it = updates.begin();
+	 it != updates.end();
+	 ++ it)
+    {
+      if (PathName::Compare(it->deploymentName.c_str(), MAVERICK) != 0
+	  && it->action == UpdateInfo::Update)
+      {
+	it->action = UpdateInfo::Keep;
+      }
+    }
+  }
 }
 
 /* _________________________________________________________________________

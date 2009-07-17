@@ -35,7 +35,7 @@ change &MiKTeX; settings for the current user</para></listitem>
 to change &MiKTeX; settings for all users</para></listitem>
 </itemizedlist>
 
-<para>For example, if a user runs the standard variant of the package
+<para>Therefore, if a user runs the standard variant of the package
 manager, packages will be installed in the private installation
 directory.  In contrast, if a user runs the admin variant of the
 package manager, packages will be installed in the system-wide

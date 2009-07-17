@@ -1,6 +1,6 @@
 /* Update.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2000 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -55,11 +55,26 @@ public:
   }
 
 public:
+  void
+  SetRemoveList (/*[in]*/ const vector<string> & toBeRemoved)
+  {
+    this->toBeRemoved = toBeRemoved;
+  }
+
+public:
   const vector<string> &
   GetUpdateList ()
     const
   {
     return (toBeUpdated);
+  }
+
+public:
+  const vector<string> &
+  GetRemoveList ()
+    const
+  {
+    return (toBeRemoved);
   }
 
 public:
@@ -196,6 +211,9 @@ private:
   
 private:
   vector<string> toBeUpdated;
+
+private:
+  vector<string> toBeRemoved;
 
 private:
   bool error;

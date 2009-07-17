@@ -364,6 +364,56 @@ PackageManagerImpl::IsRemovable (/*[in]*/ const char * lpszDeploymentName)
 
 /* _________________________________________________________________________
 
+   PackageManagerImpl::GetUserTimeInstalled
+   _________________________________________________________________________ */
+
+time_t
+PackageManagerImpl::GetUserTimeInstalled (/*[in]*/ const char * lpszDeploymentName)
+{
+  if (pSession->IsAdminMode())
+  {
+    UNEXPECTED_CONDITION ("PackageManagerImpl::GetUserTimeInstalled");
+  }
+  LoadVariablePackageTable ();
+  string str;
+  if (userVariablePackageTable.Get() != 0
+      && userVariablePackageTable->TryGetValue(lpszDeploymentName,
+						"TimeInstalled",
+						str))
+  {
+    return (atoi(str.c_str()));
+  }
+  else
+  {
+    return (0);
+  }
+}
+
+/* _________________________________________________________________________
+
+   PackageManagerImpl::GetCommonTimeInstalled
+   _________________________________________________________________________ */
+
+time_t
+PackageManagerImpl::GetCommonTimeInstalled (/*[in]*/ const char * lpszDeploymentName)
+{
+  LoadVariablePackageTable ();
+  string str;
+  if (commonVariablePackageTable.Get() != 0
+      && commonVariablePackageTable->TryGetValue(lpszDeploymentName,
+						 "TimeInstalled",
+						 str))
+  {
+    return (atoi(str.c_str()));
+  }
+  else
+  {
+    return (0);
+  }
+}
+
+/* _________________________________________________________________________
+
    PackageManagerImpl::GetTimeInstalled
 
    Returns the time when the package was installed.  Returns zero, if
