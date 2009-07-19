@@ -731,9 +731,10 @@ private:
 private:
   bool
   TryVerifyInstalledPackageHelper
-  (/*[in]*/ const std::string &		fileName,
-   /*[out]*/ bool &			haveDigest,
-   /*[out]*/ MiKTeX::Core::MD5 &	digest);
+  (/*[in]*/ const MiKTeX::Core::PathName &  prefix,
+   /*[in]*/ const std::string &		    fileName,
+   /*[out]*/ bool &			    haveDigest,
+   /*[out]*/ MiKTeX::Core::MD5 &	    digest);
 
 private:
   void

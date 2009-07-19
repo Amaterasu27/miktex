@@ -2381,35 +2381,31 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
 
 bool
 PackageManagerImpl::TryVerifyInstalledPackageHelper
-  (/*[in]*/ const string &	fileName,
+  (/*[in]*/ const PathName &	prefix,
+   /*[in]*/ const string &	fileName,
    /*[out]*/ bool &		haveDigest,
    /*[out]*/ MD5 &		digest)
 {
   string unprefixed;
   if (! StripTeXMFPrefix(fileName, unprefixed))
-    {
-      return (true);
-    }
-  PathName path = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+  {
+    return (true);
+  }
+  PathName path = prefix;
   path += unprefixed;
   if (! File::Exists(path))
-    {
-      path = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
-      path += unprefixed;
-      if (! File::Exists(path))
-	{
-	  trace_mpm->WriteFormattedLine
-	    ("libmpm",
-	     T_("package verification failed: file %s does not exist"),
-	     Q_(path));
-	  return (false);
-	}
-    }
+  {
+    trace_mpm->WriteFormattedLine
+      ("libmpm",
+       T_("package verification failed: file %s does not exist"),
+       Q_(path));
+    return (false);
+  }
   if (path.HasExtension(MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX))
-    {
-      haveDigest = false;
-      return (true);
-    }
+  {
+    haveDigest = false;
+    return (true);
+  }
   digest = MD5::FromFile(path.Get());
   haveDigest = true;
   return (true);
@@ -2426,6 +2422,19 @@ PackageManagerImpl::TryVerifyInstalledPackage
 {
   PackageInfo packageInfo = GetPackageInfo(deploymentName);
 
+  PathName prefix;
+
+  if (! pSession->IsAdminMode()
+      && GetUserTimeInstalled(deploymentName.c_str()) != static_cast<time_t>(0))
+  {
+    prefix = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+  }
+
+  if (prefix.Empty())
+  {
+    prefix = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+  }
+
   FileDigestTable fileDigests;
 
   for (vector<string>::const_iterator it = packageInfo.runFiles.begin();
@@ -2434,7 +2443,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
     {
       bool haveDigest;
       MD5 digest;
-      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+      if (! TryVerifyInstalledPackageHelper(prefix, *it, haveDigest, digest))
 	{
 	  return (false);
 	}
@@ -2450,7 +2459,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
     {
       bool haveDigest;
       MD5 digest;
-      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+      if (! TryVerifyInstalledPackageHelper(prefix, *it, haveDigest, digest))
 	{
 	  return (false);
 	}
@@ -2466,7 +2475,7 @@ PackageManagerImpl::TryVerifyInstalledPackage
     {
       bool haveDigest;
       MD5 digest;
-      if (! TryVerifyInstalledPackageHelper(*it, haveDigest, digest))
+      if (! TryVerifyInstalledPackageHelper(prefix, *it, haveDigest, digest))
 	{
 	  return (false);
 	}
