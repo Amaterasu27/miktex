@@ -18,6 +18,7 @@
 // Copyright (C) 2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2009 Eric Toombs <ewtoombs@uwaterloo.ca>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -76,6 +77,10 @@ public:
 
   // Get the error code (if isOk() returns false).
   int getErrorCode() { return errCode; }
+
+  // Get the error code returned by fopen() (if getErrorCode() == 
+  // errOpenFile).
+  int getFopenErrno() { return fopenErrno; }
 
   // Get file name.
   GooString *getFileName() { return fileName; }
@@ -197,13 +202,13 @@ public:
   double getPDFVersion() { return pdfVersion; }
 
   // Save this file with another name.
-  GBool saveAs(GooString *name, PDFWriteMode mode=writeStandard);
+  int saveAs(GooString *name, PDFWriteMode mode=writeStandard);
   // Save this file in the given output stream.
-  GBool saveAs(OutStream *outStr, PDFWriteMode mode=writeStandard);
+  int saveAs(OutStream *outStr, PDFWriteMode mode=writeStandard);
   // Save this file with another name without saving changes
-  GBool saveWithoutChangesAs(GooString *name);
+  int saveWithoutChangesAs(GooString *name);
   // Save this file in the given output stream without saving changes
-  GBool saveWithoutChangesAs(OutStream *outStr);
+  int saveWithoutChangesAs(OutStream *outStr);
 
   // Return a pointer to the GUI (XPDFCore or WinPDFCore object).
   void *getGUIData() { return guiData; }
@@ -235,10 +240,12 @@ private:
 #ifndef DISABLE_OUTLINE
   Outline *outline;
 #endif
-  OCGs *optContentConfig;
 
   GBool ok;
   int errCode;
+  //If there is an error opening the PDF file with fopen() in the constructor, 
+  //then the POSIX errno will be here.
+  int fopenErrno;
 };
 
 #endif

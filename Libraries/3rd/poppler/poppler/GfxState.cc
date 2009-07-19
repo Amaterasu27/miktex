@@ -16,7 +16,9 @@
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2006 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2006-2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009 Koji Otani <sho@bbr.jp>
+// Copyright (C) 2009 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -38,17 +40,12 @@
 #include "Array.h"
 #include "Page.h"
 #include "GfxState.h"
+#include "GfxState_helpers.h"
 #include "GfxFont.h"
+#include "GlobalParams.h"
+#include "PopplerCache.h"
 
 //------------------------------------------------------------------------
-
-static inline GfxColorComp clip01(GfxColorComp x) {
-  return (x < 0) ? 0 : (x > gfxColorComp1) ? gfxColorComp1 : x;
-}
-
-static inline double clip01(double x) {
-  return (x < 0) ? 0 : (x > 1) ? 1 : x;
-}
 
 GBool Matrix::invertTo(Matrix *other)
 {
@@ -125,6 +122,64 @@ static char *gfxColorSpaceModeNames[] = {
 };
 
 #define nGfxColorSpaceModes ((sizeof(gfxColorSpaceModeNames) / sizeof(char *)))
+
+#ifdef USE_CMS
+
+#include <lcms.h>
+
+#define COLOR_PROFILE_DIR "/ColorProfiles/"
+#define GLOBAL_COLOR_PROFILE_DIR POPPLER_DATADIR COLOR_PROFILE_DIR
+
+void GfxColorTransform::doTransform(void *in, void *out, unsigned int size) {
+  cmsDoTransform(transform, in, out, size);
+}
+
+// transformA should be a cmsHTRANSFORM
+GfxColorTransform::GfxColorTransform(void *transformA) {
+  transform = transformA;
+  refCount = 1;
+}
+
+GfxColorTransform::~GfxColorTransform() {
+  cmsDeleteTransform(transform);
+}
+
+void GfxColorTransform::ref() {
+  refCount++;
+}
+
+unsigned int GfxColorTransform::unref() {
+  return --refCount;
+}
+
+static cmsHPROFILE RGBProfile = NULL;
+static GooString *displayProfileName = NULL; // display profile file Name
+static cmsHPROFILE displayProfile = NULL; // display profile
+static unsigned int displayPixelType = 0;
+static GfxColorTransform *XYZ2DisplayTransform = NULL;
+
+// convert color space signature to cmsColor type 
+static unsigned int getCMSColorSpaceType(icColorSpaceSignature cs);
+static unsigned int getCMSNChannels(icColorSpaceSignature cs);
+static cmsHPROFILE loadColorProfile(const char *fileName);
+
+void GfxColorSpace::setDisplayProfile(void *displayProfileA) {
+  displayProfile = displayProfileA;
+}
+
+void GfxColorSpace::setDisplayProfileName(GooString *name) {
+  displayProfileName = name->copy();
+}
+
+cmsHPROFILE GfxColorSpace::getRGBProfile() {
+  return RGBProfile;
+}
+
+cmsHPROFILE GfxColorSpace::getDisplayProfile() {
+  return displayProfile;
+}
+
+#endif
 
 //------------------------------------------------------------------------
 // GfxColorSpace
@@ -224,6 +279,219 @@ void GfxColorSpace::getRGBLine(Guchar *in, unsigned int *out, int length) {
   }
 }
 
+#ifdef USE_CMS
+cmsHPROFILE loadColorProfile(const char *fileName)
+{
+  cmsHPROFILE hp = NULL;
+  FILE *fp;
+
+  if (fileName[0] == '/') {
+    // full path
+    // check if open the file
+    if ((fp = fopen(fileName,"r")) != NULL) {
+      fclose(fp);
+      hp = cmsOpenProfileFromFile(fileName,"r");
+    }
+    return hp;
+  }
+  // try to load from user directory
+  GooString *path = globalParams->getBaseDir();
+  path->append(COLOR_PROFILE_DIR);
+  path->append(fileName);
+  // check if open the file
+  if ((fp = fopen(path->getCString(),"r")) != NULL) {
+    fclose(fp);
+    hp = cmsOpenProfileFromFile(path->getCString(),"r");
+  }
+  delete path;
+  if (hp == NULL) {
+    // load from global directory
+    path = new GooString(GLOBAL_COLOR_PROFILE_DIR);
+    path->append(fileName);
+    // check if open the file
+    if ((fp = fopen(path->getCString(),"r")) != NULL) {
+      fclose(fp);
+      hp = cmsOpenProfileFromFile(path->getCString(),"r");
+    }
+    delete path;
+  }
+  return hp;
+}
+
+static int CMSError(int ecode, const char *msg)
+{
+    error(-1,const_cast<char *>(msg));
+    return 1;
+}
+
+int GfxColorSpace::setupColorProfiles()
+{
+  static GBool initialized = gFalse;
+  cmsHTRANSFORM transform;
+  unsigned int nChannels;
+
+  // do only once
+  if (initialized) return 0;
+  initialized = gTrue;
+
+  // set error handlor
+  cmsSetErrorHandler(CMSError);
+
+  if (displayProfile == NULL) {
+    // load display profile if it was not already loaded.
+    if (displayProfileName == NULL) {
+      displayProfile = loadColorProfile("display.icc");
+    } else if (displayProfileName->getLength() > 0) {
+      displayProfile = loadColorProfile(displayProfileName->getCString());
+    }
+  }
+  // load RGB profile
+  RGBProfile = loadColorProfile("RGB.icc");
+  if (RGBProfile == NULL) {
+    /* use built in sRGB profile */
+    RGBProfile = cmsCreate_sRGBProfile();
+  }
+  // create transforms
+  if (displayProfile != NULL) {
+    displayPixelType = getCMSColorSpaceType(cmsGetColorSpace(displayProfile));
+    nChannels = getCMSNChannels(cmsGetColorSpace(displayProfile));
+    // create transform from XYZ
+    cmsHPROFILE XYZProfile = cmsCreateXYZProfile();
+    if ((transform = cmsCreateTransform(XYZProfile, TYPE_XYZ_DBL,
+	   displayProfile, 
+	   COLORSPACE_SH(displayPixelType) |
+	     CHANNELS_SH(nChannels) | BYTES_SH(1),
+	  INTENT_RELATIVE_COLORIMETRIC,0)) == 0) {
+      error(-1, "Can't create Lab transform");
+    } else {
+      XYZ2DisplayTransform = new GfxColorTransform(transform);
+    }
+    cmsCloseProfile(XYZProfile);
+  }
+  return 0;
+}
+
+unsigned int getCMSColorSpaceType(icColorSpaceSignature cs)
+{
+    switch (cs) {
+    case icSigXYZData:
+      return PT_XYZ;
+      break;
+    case icSigLabData:
+      return PT_Lab;
+      break;
+    case icSigLuvData:
+      return PT_YUV;
+      break;
+    case icSigYCbCrData:
+      return PT_YCbCr;
+      break;
+    case icSigYxyData:
+      return PT_Yxy;
+      break;
+    case icSigRgbData:
+      return PT_RGB;
+      break;
+    case icSigGrayData:
+      return PT_GRAY;
+      break;
+    case icSigHsvData:
+      return PT_HSV;
+      break;
+    case icSigHlsData:
+      return PT_HLS;
+      break;
+    case icSigCmykData:
+      return PT_CMYK;
+      break;
+    case icSigCmyData:
+      return PT_CMY;
+      break;
+    case icSig2colorData:
+    case icSig3colorData:
+    case icSig4colorData:
+    case icSig5colorData:
+    case icSig6colorData:
+    case icSig7colorData:
+    case icSig8colorData:
+    case icSig9colorData:
+    case icSig10colorData:
+    case icSig11colorData:
+    case icSig12colorData:
+    case icSig13colorData:
+    case icSig14colorData:
+    case icSig15colorData:
+    default:
+      break;
+    }
+    return PT_RGB;
+}
+
+unsigned int getCMSNChannels(icColorSpaceSignature cs)
+{
+    switch (cs) {
+    case icSigXYZData:
+    case icSigLuvData:
+    case icSigLabData:
+    case icSigYCbCrData:
+    case icSigYxyData:
+    case icSigRgbData:
+    case icSigHsvData:
+    case icSigHlsData:
+    case icSigCmyData:
+    case icSig3colorData:
+      return 3;
+      break;
+    case icSigGrayData:
+      return 1;
+      break;
+    case icSigCmykData:
+    case icSig4colorData:
+      return 4;
+      break;
+    case icSig2colorData:
+      return 2;
+      break;
+    case icSig5colorData:
+      return 5;
+      break;
+    case icSig6colorData:
+      return 6;
+      break;
+    case icSig7colorData:
+      return 7;
+      break;
+    case icSig8colorData:
+      return 8;
+      break;
+    case icSig9colorData:
+      return 9;
+      break;
+    case icSig10colorData:
+      return 10;
+      break;
+    case icSig11colorData:
+      return 11;
+      break;
+    case icSig12colorData:
+      return 12;
+      break;
+    case icSig13colorData:
+      return 13;
+      break;
+    case icSig14colorData:
+      return 14;
+      break;
+    case icSig15colorData:
+      return 15;
+    default:
+      break;
+    }
+    return 3;
+}
+
+#endif
+
 void GfxColorSpace::getGrayLine(Guchar *in, unsigned char *out, int length) {
   int i, j, n;
   GfxColor color;
@@ -311,6 +579,14 @@ GfxColorSpace *GfxCalGrayColorSpace::copy() {
   return cs;
 }
 
+// This is the inverse of MatrixLMN in Example 4.10 from the PostScript
+// Language Reference, Third Edition.
+static const double xyzrgb[3][3] = {
+  {  3.240449, -1.537136, -0.498531 },
+  { -0.969265,  1.876011,  0.041556 },
+  {  0.055643, -0.204026,  1.057229 }
+};
+
 GfxColorSpace *GfxCalGrayColorSpace::parse(Array *arr) {
   GfxCalGrayColorSpace *cs;
   Object obj1, obj2, obj3;
@@ -353,32 +629,127 @@ GfxColorSpace *GfxCalGrayColorSpace::parse(Array *arr) {
   }
   obj2.free();
   obj1.free();
+
+  cs->kr = 1 / (xyzrgb[0][0] * cs->whiteX +
+		xyzrgb[0][1] * cs->whiteY +
+		xyzrgb[0][2] * cs->whiteZ);
+  cs->kg = 1 / (xyzrgb[1][0] * cs->whiteX +
+		xyzrgb[1][1] * cs->whiteY +
+		xyzrgb[1][2] * cs->whiteZ);
+  cs->kb = 1 / (xyzrgb[2][0] * cs->whiteX +
+		xyzrgb[2][1] * cs->whiteY +
+		xyzrgb[2][2] * cs->whiteZ);
+
   return cs;
 }
 
-void GfxCalGrayColorSpace::getGray(GfxColor *color, GfxGray *gray) {
-  *gray = clip01(color->c[0]);
+// convert CalGray to media XYZ color space
+// (not multiply by the white point)
+void GfxCalGrayColorSpace::getXYZ(GfxColor *color, 
+  double *pX, double *pY, double *pZ) {
+  double A;
+
+  A = colToDbl(color->c[0]);
+  *pX = pow(A,gamma);
+  *pY = pow(A,gamma);
+  *pZ = pow(A,gamma);
 }
 
-void GfxCalGrayColorSpace::getGrayLine(Guchar *in, Guchar *out, int length) {
-  memcpy (out, in, length);
+void GfxCalGrayColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+  GfxRGB rgb;
+
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_GRAY) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    double X, Y, Z;
+    
+    getXYZ(color,&X,&Y,&Z);
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    *gray = byteToCol(out[0]);
+    return;
+  }
+#endif
+  getRGB(color, &rgb);
+  *gray = clip01((GfxColorComp)(0.299 * rgb.r +
+				0.587 * rgb.g +
+				0.114 * rgb.b + 0.5));
 }
 
 void GfxCalGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+  double X, Y, Z;
+  double r, g, b;
+
+  getXYZ(color,&X,&Y,&Z);
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_RGB) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    rgb->r = byteToCol(out[0]);
+    rgb->g = byteToCol(out[1]);
+    rgb->b = byteToCol(out[2]);
+    return;
+  }
+#endif
+  X *= whiteX;
+  Y *= whiteY;
+  Z *= whiteZ;
+  // convert XYZ to RGB, including gamut mapping and gamma correction
+  r = xyzrgb[0][0] * X + xyzrgb[0][1] * Y + xyzrgb[0][2] * Z;
+  g = xyzrgb[1][0] * X + xyzrgb[1][1] * Y + xyzrgb[1][2] * Z;
+  b = xyzrgb[2][0] * X + xyzrgb[2][1] * Y + xyzrgb[2][2] * Z;
+  rgb->r = dblToCol(pow(clip01(r * kr), 0.5));
+  rgb->g = dblToCol(pow(clip01(g * kg), 0.5));
+  rgb->b = dblToCol(pow(clip01(b * kb), 0.5));
   rgb->r = rgb->g = rgb->b = clip01(color->c[0]);
 }
 
-void GfxCalGrayColorSpace::getRGBLine(Guchar *in, unsigned int *out,
-				      int length) {
-  int i;
-
-  for (i = 0; i < length; i++)
-    out[i] = (in[i] << 16) | (in[i] << 8) | (in[i] << 0);
-}
-
 void GfxCalGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
-  cmyk->c = cmyk->m = cmyk->y = 0;
-  cmyk->k = clip01(gfxColorComp1 - color->c[0]);
+  GfxRGB rgb;
+  GfxColorComp c, m, y, k;
+
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_CMYK) {
+    double in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    double X, Y, Z;
+    
+    getXYZ(color,&X,&Y,&Z);
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    cmyk->c = byteToCol(out[0]);
+    cmyk->m = byteToCol(out[1]);
+    cmyk->y = byteToCol(out[2]);
+    cmyk->k = byteToCol(out[3]);
+    return;
+  }
+#endif
+  getRGB(color, &rgb);
+  c = clip01(gfxColorComp1 - rgb.r);
+  m = clip01(gfxColorComp1 - rgb.g);
+  y = clip01(gfxColorComp1 - rgb.b);
+  k = c;
+  if (m < k) {
+    k = m;
+  }
+  if (y < k) {
+    k = y;
+  }
+  cmyk->c = c - k;
+  cmyk->m = m - k;
+  cmyk->y = y - k;
+  cmyk->k = k;
 }
 
 void GfxCalGrayColorSpace::getDefaultColor(GfxColor *color) {
@@ -553,47 +924,112 @@ GfxColorSpace *GfxCalRGBColorSpace::parse(Array *arr) {
   }
   obj2.free();
   obj1.free();
+
+  cs->kr = 1 / (xyzrgb[0][0] * cs->whiteX +
+		xyzrgb[0][1] * cs->whiteY +
+		xyzrgb[0][2] * cs->whiteZ);
+  cs->kg = 1 / (xyzrgb[1][0] * cs->whiteX +
+		xyzrgb[1][1] * cs->whiteY +
+		xyzrgb[1][2] * cs->whiteZ);
+  cs->kb = 1 / (xyzrgb[2][0] * cs->whiteX +
+		xyzrgb[2][1] * cs->whiteY +
+		xyzrgb[2][2] * cs->whiteZ);
+
   return cs;
 }
 
-void GfxCalRGBColorSpace::getGray(GfxColor *color, GfxGray *gray) {
-  *gray = clip01((GfxColorComp)(0.299 * color->c[0] +
-		 0.587 * color->c[1] +
-		 0.114 * color->c[2] + 0.5));
+// convert CalRGB to XYZ color space
+void GfxCalRGBColorSpace::getXYZ(GfxColor *color, 
+  double *pX, double *pY, double *pZ) {
+  double A, B, C;
+
+  A = colToDbl(color->c[0]);
+  B = colToDbl(color->c[1]);
+  C = colToDbl(color->c[2]);
+  *pX = mat[0]*pow(A,gammaR)+mat[3]*pow(B,gammaG)+mat[6]*pow(C,gammaB);
+  *pY = mat[1]*pow(A,gammaR)+mat[4]*pow(B,gammaG)+mat[7]*pow(C,gammaB);
+  *pZ = mat[2]*pow(A,gammaR)+mat[5]*pow(B,gammaG)+mat[8]*pow(C,gammaB);
 }
 
-void GfxCalRGBColorSpace::getGrayLine(Guchar *in, Guchar *out, int length) {
-  int i;
+void GfxCalRGBColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+  GfxRGB rgb;
 
-  for (i = 0; i < length; i++) {
-    out[i] = 
-      (in[i * 3 + 0] * 19595 + 
-       in[i * 3 + 1] * 38469 + 
-       in[i * 3 + 2] * 7472) / 65536;
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_GRAY) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    double X, Y, Z;
+    
+    getXYZ(color,&X,&Y,&Z);
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    *gray = byteToCol(out[0]);
+    return;
   }
+#endif
+  getRGB(color, &rgb);
+  *gray = clip01((GfxColorComp)(0.299 * rgb.r +
+				0.587 * rgb.g +
+				0.114 * rgb.b + 0.5));
 }
 
 void GfxCalRGBColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
-  rgb->r = clip01(color->c[0]);
-  rgb->g = clip01(color->c[1]);
-  rgb->b = clip01(color->c[2]);
-}
+  double X, Y, Z;
+  double r, g, b;
 
-void GfxCalRGBColorSpace::getRGBLine(Guchar *in, unsigned int *out,
-				     int length) {
-  Guchar *p;
-  int i;
-
-  for (i = 0, p = in; i < length; i++, p += 3)
-    out[i] = (p[0] << 16) | (p[1] << 8) | (p[2] << 0);
+  getXYZ(color,&X,&Y,&Z);
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_RGB) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    
+    in[0] = clip01(X/whiteX);
+    in[1] = clip01(Y/whiteY);
+    in[2] = clip01(Z/whiteZ);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    rgb->r = byteToCol(out[0]);
+    rgb->g = byteToCol(out[1]);
+    rgb->b = byteToCol(out[2]);
+    return;
+  }
+#endif
+  // convert XYZ to RGB, including gamut mapping and gamma correction
+  r = xyzrgb[0][0] * X + xyzrgb[0][1] * Y + xyzrgb[0][2] * Z;
+  g = xyzrgb[1][0] * X + xyzrgb[1][1] * Y + xyzrgb[1][2] * Z;
+  b = xyzrgb[2][0] * X + xyzrgb[2][1] * Y + xyzrgb[2][2] * Z;
+  rgb->r = dblToCol(pow(clip01(r), 0.5));
+  rgb->g = dblToCol(pow(clip01(g), 0.5));
+  rgb->b = dblToCol(pow(clip01(b), 0.5));
 }
 
 void GfxCalRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+  GfxRGB rgb;
   GfxColorComp c, m, y, k;
 
-  c = clip01(gfxColorComp1 - color->c[0]);
-  m = clip01(gfxColorComp1 - color->c[1]);
-  y = clip01(gfxColorComp1 - color->c[2]);
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_CMYK) {
+    double in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    double X, Y, Z;
+    
+    getXYZ(color,&X,&Y,&Z);
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    cmyk->c = byteToCol(out[0]);
+    cmyk->m = byteToCol(out[1]);
+    cmyk->y = byteToCol(out[2]);
+    cmyk->k = byteToCol(out[3]);
+    return;
+  }
+#endif
+  getRGB(color, &rgb);
+  c = clip01(gfxColorComp1 - rgb.r);
+  m = clip01(gfxColorComp1 - rgb.g);
+  y = clip01(gfxColorComp1 - rgb.b);
   k = c;
   if (m < k) {
     k = m;
@@ -635,7 +1071,7 @@ void GfxDeviceCMYKColorSpace::getGray(GfxColor *color, GfxGray *gray) {
 }
 
 void GfxDeviceCMYKColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
-  double c, m, y, k, c1, m1, y1, k1, r, g, b, x;
+  double c, m, y, k, c1, m1, y1, k1, r, g, b;
     
   c = colToDbl(color->c[0]);
   m = colToDbl(color->c[1]);
@@ -645,52 +1081,7 @@ void GfxDeviceCMYKColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   m1 = 1 - m;
   y1 = 1 - y;
   k1 = 1 - k;
-  // this is a matrix multiplication, unrolled for performance
-  //                        C M Y K
-  x = c1 * m1 * y1 * k1; // 0 0 0 0
-  r = g = b = x;
-  x = c1 * m1 * y1 * k;  // 0 0 0 1
-  r += 0.1373 * x;
-  g += 0.1216 * x;
-  b += 0.1255 * x;
-  x = c1 * m1 * y  * k1; // 0 0 1 0
-  r += x;
-  g += 0.9490 * x;
-  x = c1 * m1 * y  * k;  // 0 0 1 1
-  r += 0.1098 * x;
-  g += 0.1020 * x;
-  x = c1 * m  * y1 * k1; // 0 1 0 0
-  r += 0.9255 * x;
-  b += 0.5490 * x;
-  x = c1 * m  * y1 * k;  // 0 1 0 1
-  r += 0.1412 * x;
-  x = c1 * m  * y  * k1; // 0 1 1 0
-  r += 0.9294 * x;
-  g += 0.1098 * x;
-  b += 0.1412 * x;
-  x = c1 * m  * y  * k;  // 0 1 1 1
-  r += 0.1333 * x;
-  x = c  * m1 * y1 * k1; // 1 0 0 0
-  g += 0.6784 * x;
-  b += 0.9373 * x;
-  x = c  * m1 * y1 * k;  // 1 0 0 1
-  g += 0.0588 * x;
-  b += 0.1412 * x;
-  x = c  * m1 * y  * k1; // 1 0 1 0
-  g += 0.6510 * x;
-  b += 0.3137 * x;
-  x = c  * m1 * y  * k;  // 1 0 1 1
-  g += 0.0745 * x;
-  x = c  * m  * y1 * k1; // 1 1 0 0
-  r += 0.1804 * x;
-  g += 0.1922 * x;
-  b += 0.5725 * x;
-  x = c  * m  * y1 * k;  // 1 1 0 1
-  b += 0.0078 * x;
-  x = c  * m  * y  * k1; // 1 1 1 0
-  r += 0.2118 * x;
-  g += 0.2119 * x;
-  b += 0.2235 * x;
+  cmykToRGBMatrixMultiplication(c, m, y, k, c1, m1, y1, k1, r, g, b);
   rgb->r = clip01(dblToCol(r));
   rgb->g = clip01(dblToCol(g));
   rgb->b = clip01(dblToCol(b));
@@ -713,14 +1104,6 @@ void GfxDeviceCMYKColorSpace::getDefaultColor(GfxColor *color) {
 //------------------------------------------------------------------------
 // GfxLabColorSpace
 //------------------------------------------------------------------------
-
-// This is the inverse of MatrixLMN in Example 4.10 from the PostScript
-// Language Reference, Third Edition.
-static const double xyzrgb[3][3] = {
-  {  3.240449, -1.537136, -0.498531 },
-  { -0.969265,  1.876011,  0.041556 },
-  {  0.055643, -0.204026,  1.057229 }
-};
 
 GfxLabColorSpace::GfxLabColorSpace() {
   whiteX = whiteY = whiteZ = 1;
@@ -823,18 +1206,30 @@ GfxColorSpace *GfxLabColorSpace::parse(Array *arr) {
 void GfxLabColorSpace::getGray(GfxColor *color, GfxGray *gray) {
   GfxRGB rgb;
 
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_GRAY) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    
+    getXYZ(color, &in[0], &in[1], &in[2]);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    *gray = byteToCol(out[0]);
+    return;
+  }
+#endif
   getRGB(color, &rgb);
   *gray = clip01((GfxColorComp)(0.299 * rgb.r +
 				0.587 * rgb.g +
 				0.114 * rgb.b + 0.5));
 }
 
-void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+// convert L*a*b* to media XYZ color space
+// (not multiply by the white point)
+void GfxLabColorSpace::getXYZ(GfxColor *color, 
+  double *pX, double *pY, double *pZ) {
   double X, Y, Z;
   double t1, t2;
-  double r, g, b;
 
-  // convert L*a*b* to CIE 1931 XYZ color space
   t1 = (colToDbl(color->c[0]) + 16) / 116;
   t2 = t1 + colToDbl(color->c[1]) / 500;
   if (t2 >= (6.0 / 29.0)) {
@@ -842,21 +1237,45 @@ void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   } else {
     X = (108.0 / 841.0) * (t2 - (4.0 / 29.0));
   }
-  X *= whiteX;
   if (t1 >= (6.0 / 29.0)) {
     Y = t1 * t1 * t1;
   } else {
     Y = (108.0 / 841.0) * (t1 - (4.0 / 29.0));
   }
-  Y *= whiteY;
   t2 = t1 - colToDbl(color->c[2]) / 200;
   if (t2 >= (6.0 / 29.0)) {
     Z = t2 * t2 * t2;
   } else {
     Z = (108.0 / 841.0) * (t2 - (4.0 / 29.0));
   }
-  Z *= whiteZ;
+  *pX = X;
+  *pY = Y;
+  *pZ = Z;
+}
 
+void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+  double X, Y, Z;
+  double r, g, b;
+
+  getXYZ(color, &X, &Y, &Z);
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_RGB) {
+    Guchar out[gfxColorMaxComps];
+    double in[gfxColorMaxComps];
+    
+    in[0] = clip01(X);
+    in[1] = clip01(Y);
+    in[2] = clip01(Z);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    rgb->r = byteToCol(out[0]);
+    rgb->g = byteToCol(out[1]);
+    rgb->b = byteToCol(out[2]);
+    return;
+  }
+#endif
+  X *= whiteX;
+  Y *= whiteY;
+  Z *= whiteZ;
   // convert XYZ to RGB, including gamut mapping and gamma correction
   r = xyzrgb[0][0] * X + xyzrgb[0][1] * Y + xyzrgb[0][2] * Z;
   g = xyzrgb[1][0] * X + xyzrgb[1][1] * Y + xyzrgb[1][2] * Z;
@@ -870,6 +1289,20 @@ void GfxLabColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
   GfxRGB rgb;
   GfxColorComp c, m, y, k;
 
+#ifdef USE_CMS
+  if (XYZ2DisplayTransform != NULL && displayPixelType == PT_CMYK) {
+    double in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    
+    getXYZ(color, &in[0], &in[1], &in[2]);
+    XYZ2DisplayTransform->doTransform(in,out,1);
+    cmyk->c = byteToCol(out[0]);
+    cmyk->m = byteToCol(out[1]);
+    cmyk->y = byteToCol(out[2]);
+    cmyk->k = byteToCol(out[3]);
+    return;
+  }
+#endif
   getRGB(color, &rgb);
   c = clip01(gfxColorComp1 - rgb.r);
   m = clip01(gfxColorComp1 - rgb.g);
@@ -919,6 +1352,38 @@ void GfxLabColorSpace::getDefaultRanges(double *decodeLow, double *decodeRange,
 // GfxICCBasedColorSpace
 //------------------------------------------------------------------------
 
+class GfxICCBasedColorSpaceKey : public PopplerCacheKey
+{
+  public:
+    GfxICCBasedColorSpaceKey(int numA, int genA) : num(numA), gen(genA)
+    {
+    }
+    
+    bool operator==(const PopplerCacheKey &key) const
+    {
+      const GfxICCBasedColorSpaceKey *k = static_cast<const GfxICCBasedColorSpaceKey*>(&key);
+      return k->num == num && k->gen == gen;
+    }
+    
+    int num, gen;
+};
+
+class GfxICCBasedColorSpaceItem : public PopplerCacheItem
+{
+  public:
+    GfxICCBasedColorSpaceItem(GfxICCBasedColorSpace *csA)
+    {
+      cs = static_cast<GfxICCBasedColorSpace*>(csA->copy());
+    }
+    
+    ~GfxICCBasedColorSpaceItem()
+    {
+      delete cs;
+    }
+    
+    GfxICCBasedColorSpace *cs;
+};
+
 GfxICCBasedColorSpace::GfxICCBasedColorSpace(int nCompsA, GfxColorSpace *altA,
 					     Ref *iccProfileStreamA) {
   nComps = nCompsA;
@@ -926,10 +1391,22 @@ GfxICCBasedColorSpace::GfxICCBasedColorSpace(int nCompsA, GfxColorSpace *altA,
   iccProfileStream = *iccProfileStreamA;
   rangeMin[0] = rangeMin[1] = rangeMin[2] = rangeMin[3] = 0;
   rangeMax[0] = rangeMax[1] = rangeMax[2] = rangeMax[3] = 1;
+#ifdef USE_CMS
+  transform = NULL;
+  lineTransform = NULL;
+#endif
 }
 
 GfxICCBasedColorSpace::~GfxICCBasedColorSpace() {
   delete alt;
+#ifdef USE_CMS
+  if (transform != NULL) {
+    if (transform->unref() == 0) delete transform;
+  }
+  if (lineTransform != NULL) {
+    if (lineTransform->unref() == 0) delete lineTransform;
+  }
+#endif
 }
 
 GfxColorSpace *GfxICCBasedColorSpace::copy() {
@@ -941,6 +1418,12 @@ GfxColorSpace *GfxICCBasedColorSpace::copy() {
     cs->rangeMin[i] = rangeMin[i];
     cs->rangeMax[i] = rangeMax[i];
   }
+#ifdef USE_CMS
+  cs->transform = transform;
+  if (transform != NULL) transform->ref();
+  cs->lineTransform = lineTransform;
+  if (lineTransform != NULL) lineTransform->ref();
+#endif
   return cs;
 }
 
@@ -961,6 +1444,18 @@ GfxColorSpace *GfxICCBasedColorSpace::parse(Array *arr) {
     iccProfileStreamA.gen = 0;
   }
   obj1.free();
+#ifdef USE_CMS
+  // check cache
+  if (iccProfileStreamA.num > 0) {
+    GfxICCBasedColorSpaceKey k(iccProfileStreamA.num, iccProfileStreamA.gen);
+    GfxICCBasedColorSpaceItem *item = static_cast<GfxICCBasedColorSpaceItem *>(cache->lookup(k));
+    if (item != NULL)
+    {
+      cs = static_cast<GfxICCBasedColorSpace*>(item->cs->copy());
+      return cs;
+    }
+  }
+#endif
   arr->get(1, &obj1);
   if (!obj1.isStream()) {
     error(-1, "Bad ICCBased color space (stream)");
@@ -1015,24 +1510,173 @@ GfxColorSpace *GfxICCBasedColorSpace::parse(Array *arr) {
   }
   obj2.free();
   obj1.free();
+
+#ifdef USE_CMS
+  arr->get(1, &obj1);
+  dict = obj1.streamGetDict();
+  Guchar *profBuf;
+  unsigned int bufSize;
+  Stream *iccStream = obj1.getStream();
+  int c;
+  unsigned int size = 0;
+
+  bufSize = 65536;
+  profBuf = (Guchar *)gmallocn(bufSize,1);
+  iccStream->reset();
+  while ((c = iccStream->getChar()) != EOF) {
+    if (bufSize <= size) {
+      bufSize += 65536;
+      profBuf = (Guchar *)greallocn(profBuf,bufSize,1);
+    }
+    profBuf[size++] = c;
+  }
+  cmsHPROFILE hp = cmsOpenProfileFromMem(profBuf,size);
+  gfree(profBuf);
+  if (hp == 0) {
+    error(-1, "read ICCBased color space profile error");
+  } else {
+    cmsHPROFILE dhp = displayProfile;
+    if (dhp == NULL) dhp = RGBProfile;
+    unsigned int cst = getCMSColorSpaceType(cmsGetColorSpace(hp));
+    unsigned int dNChannels = getCMSNChannels(cmsGetColorSpace(dhp));
+    unsigned int dcst = getCMSColorSpaceType(cmsGetColorSpace(dhp));
+    cmsHTRANSFORM transform;
+    if ((transform = cmsCreateTransform(hp,
+	   COLORSPACE_SH(cst) |CHANNELS_SH(nCompsA) | BYTES_SH(1),
+	   dhp,
+	   COLORSPACE_SH(dcst) |
+	     CHANNELS_SH(dNChannels) | BYTES_SH(1),
+	  INTENT_RELATIVE_COLORIMETRIC,0)) == 0) {
+      error(-1, "Can't create transform");
+      cs->transform = NULL;
+    } else {
+      cs->transform = new GfxColorTransform(transform);
+    }
+    if (dcst == PT_RGB) {
+       // create line transform only when the display is RGB type color space 
+      if ((transform = cmsCreateTransform(hp,
+	    CHANNELS_SH(nCompsA) | BYTES_SH(1),dhp,
+	    TYPE_RGB_8,INTENT_RELATIVE_COLORIMETRIC,0)) == 0) {
+	error(-1, "Can't create transform");
+	cs->lineTransform = NULL;
+      } else {
+	cs->lineTransform = new GfxColorTransform(transform);
+      }
+    }
+    cmsCloseProfile(hp);
+  }
+  obj1.free();
+  // put this colorSpace into cache
+  if (iccProfileStreamA.num > 0) {
+    GfxICCBasedColorSpaceKey *k = new GfxICCBasedColorSpaceKey(iccProfileStreamA.num, iccProfileStreamA.gen);
+    GfxICCBasedColorSpaceItem *item = new GfxICCBasedColorSpaceItem(cs);
+    cache->put(k, item);
+  }
+#endif
   return cs;
 }
 
 void GfxICCBasedColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+#ifdef USE_CMS
+  if (transform != 0 && displayPixelType == PT_GRAY) {
+    Guchar in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    
+    for (int i = 0;i < nComps;i++) {
+	in[i] = colToByte(color->c[i]);
+    }
+    transform->doTransform(in,out,1);
+    *gray = byteToCol(out[0]);
+  } else {
+    GfxRGB rgb;
+    getRGB(color,&rgb);
+    *gray = clip01((GfxColorComp)(0.3 * rgb.r +
+		   0.59 * rgb.g +
+		   0.11 * rgb.b + 0.5));
+  }
+#else
   alt->getGray(color, gray);
+#endif
 }
 
 void GfxICCBasedColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+#ifdef USE_CMS
+  if (transform != 0
+       && (displayProfile == NULL || displayPixelType == PT_RGB)) {
+    Guchar in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    
+    for (int i = 0;i < nComps;i++) {
+	in[i] = colToByte(color->c[i]);
+    }
+    transform->doTransform(in,out,1);
+    rgb->r = byteToCol(out[0]);
+    rgb->g = byteToCol(out[1]);
+    rgb->b = byteToCol(out[2]);
+  } else {
+    alt->getRGB(color, rgb);
+  }
+#else
   alt->getRGB(color, rgb);
+#endif
 }
 
 void GfxICCBasedColorSpace::getRGBLine(Guchar *in, unsigned int *out,
 				       int length) {
+#ifdef USE_CMS
+  if (lineTransform != 0) {
+    for (int i = 0;i < length;i++) {
+	Guchar tmp[gfxColorMaxComps];
+
+	lineTransform->doTransform(in,tmp,1);
+	in += nComps;
+	out[i] = (tmp[0] << 16) | (tmp[1] << 8) | tmp[2];
+    }
+  } else {
+    alt->getRGBLine(in, out, length);
+  }
+#else
   alt->getRGBLine(in, out, length);
+#endif
 }
 
 void GfxICCBasedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+#ifdef USE_CMS
+  if (transform != NULL && displayPixelType == PT_CMYK) {
+    Guchar in[gfxColorMaxComps];
+    Guchar out[gfxColorMaxComps];
+    
+    for (int i = 0;i < nComps;i++) {
+	in[i] = colToByte(color->c[i]);
+    }
+    transform->doTransform(in,out,1);
+    cmyk->c = byteToCol(out[0]);
+    cmyk->m = byteToCol(out[1]);
+    cmyk->y = byteToCol(out[2]);
+    cmyk->k = byteToCol(out[3]);
+  } else {
+    GfxRGB rgb;
+    GfxColorComp c, m, y, k;
+
+    getRGB(color,&rgb);
+    c = clip01(gfxColorComp1 - rgb.r);
+    m = clip01(gfxColorComp1 - rgb.g);
+    y = clip01(gfxColorComp1 - rgb.b);
+    k = c;
+    if (m < k) {
+      k = m;
+    }
+    if (y < k) {
+      k = y;
+    }
+    cmyk->c = c - k;
+    cmyk->m = m - k;
+    cmyk->y = y - k;
+    cmyk->k = k;
+  }
+#else
   alt->getCMYK(color, cmyk);
+#endif
 }
 
 void GfxICCBasedColorSpace::getDefaultColor(GfxColor *color) {
@@ -1065,6 +1709,10 @@ void GfxICCBasedColorSpace::getDefaultRanges(double *decodeLow,
   }
 #endif
 }
+
+#ifdef USE_CMS
+PopplerCache *GfxICCBasedColorSpace::cache = new PopplerCache(5);
+#endif
 
 //------------------------------------------------------------------------
 // GfxIndexedColorSpace
@@ -1201,7 +1849,7 @@ void GfxIndexedColorSpace::getRGBLine(Guchar *in, unsigned int *out, int length)
   int i, j, n;
 
   n = base->getNComps();
-  line = (Guchar *) gmalloc (length * n);
+  line = (Guchar *) gmallocn (length, n);
   for (i = 0; i < length; i++)
     for (j = 0; j < n; j++)
       line[i * n + j] = lookup[in[i] * n + j];
@@ -2652,9 +3300,11 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(int typeA,
       break;
     }
     if (nVerticesA == vertSize) {
+      int oldVertSize = vertSize;
       vertSize = (vertSize == 0) ? 16 : 2 * vertSize;
       verticesA = (GfxGouraudVertex *)
 	              greallocn(verticesA, vertSize, sizeof(GfxGouraudVertex));
+      memset(verticesA + oldVertSize, 0, (vertSize - oldVertSize) * sizeof(GfxGouraudVertex));
     }
     verticesA[nVerticesA].x = xMin + xMul * (double)x;
     verticesA[nVerticesA].y = yMin + yMul * (double)y;
@@ -2974,9 +3624,11 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
       break;
     }
     if (nPatchesA == patchesSize) {
+      int oldPatchesSize = patchesSize;
       patchesSize = (patchesSize == 0) ? 16 : 2 * patchesSize;
       patchesA = (GfxPatch *)greallocn(patchesA,
 				       patchesSize, sizeof(GfxPatch));
+      memset(patchesA + oldPatchesSize, 0, (patchesSize - oldPatchesSize) * sizeof(GfxPatch));
     }
     p = &patchesA[nPatchesA];
     if (typeA == 6) {
@@ -3424,7 +4076,7 @@ GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
     nComps2 = colorSpace2->getNComps();
     lookup2 = indexedCS->getLookup();
     colorSpace2->getDefaultRanges(x, y, indexHigh);
-    byte_lookup = (Guchar *)gmalloc ((maxPixel + 1) * nComps2);
+    byte_lookup = (Guchar *)gmallocn ((maxPixel + 1), nComps2);
     for (k = 0; k < nComps2; ++k) {
       lookup[k] = (GfxColorComp *)gmallocn(maxPixel + 1,
 					   sizeof(GfxColorComp));
@@ -3572,7 +4224,7 @@ void GfxImageColorMap::getGrayLine(Guchar *in, Guchar *out, int length) {
   switch (colorSpace->getMode()) {
   case csIndexed:
   case csSeparation:
-    tmp_line = (Guchar *) gmalloc (length * nComps2);
+    tmp_line = (Guchar *) gmallocn (length, nComps2);
     for (i = 0; i < length; i++) {
       for (j = 0; j < nComps2; j++) {
 	tmp_line[i * nComps2 + j] = byte_lookup[in[i] * nComps2 + j];
@@ -3602,7 +4254,7 @@ void GfxImageColorMap::getRGBLine(Guchar *in, unsigned int *out, int length) {
   switch (colorSpace->getMode()) {
   case csIndexed:
   case csSeparation:
-    tmp_line = (Guchar *) gmalloc (length * nComps2);
+    tmp_line = (Guchar *) gmallocn (length, nComps2);
     for (i = 0; i < length; i++) {
       for (j = 0; j < nComps2; j++) {
 	tmp_line[i * nComps2 + j] = byte_lookup[in[i] * nComps2 + j];
@@ -3938,6 +4590,9 @@ GfxState::GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
   clipYMax = pageHeight;
 
   saved = NULL;
+#ifdef USE_CMS
+  GfxColorSpace::setupColorProfiles();
+#endif
 }
 
 GfxState::~GfxState() {

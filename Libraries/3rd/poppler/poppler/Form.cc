@@ -11,6 +11,7 @@
 // Copyright 2007 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright 2008 Pino Toscano <pino@kde.org>
 // Copyright 2008 Michael Vrable <mvrable@cs.ucsd.edu>
+// Copyright 2009 Matthias Drochner <M.Drochner@fz-juelich.de>
 //
 //========================================================================
 
@@ -116,17 +117,6 @@ FormWidget::FormWidget(XRef *xrefA, Object *aobj, unsigned num, Ref aref, FormFi
     obj2.free();  
   err2:
     obj1.free();
-}
-
-FormWidget::FormWidget(FormWidget *dest)
-{
-  x1 = dest->x1;
-  y1 = dest->y1;
-  x2 = dest->x2;
-  y2 = dest->x2;
-
-  type = dest->type;
-  field = dest->field;
 }
 
 FormWidget::~FormWidget()
@@ -546,7 +536,7 @@ void FormWidgetChoice::_updateV ()
     } else if (numSelected == 1) {
       for(int i=0; i<parent->getNumChoices(); i++) {
         if (parent->isSelected(i)) {
-          obj1.initString(new GooString(parent->getExportVal(i)));
+          obj1.initString(new GooString(parent->getChoice(i)));
           break;
         }
       }
@@ -555,7 +545,7 @@ void FormWidgetChoice::_updateV ()
       for(int i=0; i<parent->getNumChoices(); i++) {
         if (parent->isSelected(i)) {
           Object obj2;
-          obj2.initString(new GooString(parent->getExportVal(i)));
+          obj2.initString(new GooString(parent->getChoice(i)));
           obj1.arrayAdd(&obj2);
         }
       }

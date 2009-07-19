@@ -18,11 +18,12 @@
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005, 2009 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
-// Copyright (C) 2006-2008 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2006-2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Carl Worth <cworth@cworth.org>
 // Copyright (C) 2008 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008 Chris Wilson <chris@chris-wilson.co.uk>
+// Copyright (C) 2008 Hib Eris <hib@hiberis.nl>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -49,6 +50,7 @@
 #include "Link.h"
 #include "CharCodeToUnicode.h"
 #include "FontEncodingTables.h"
+#include "PDFDocEncoding.h"
 #include <fofi/FoFiTrueType.h>
 #include <splash/SplashBitmap.h>
 #include "CairoOutputDev.h"
@@ -107,6 +109,7 @@ GBool CairoOutputDev::ft_lib_initialized = gFalse;
 
 CairoOutputDev::CairoOutputDev() {
   xref = NULL;
+  catalog = NULL;
 
   if (!ft_lib_initialized) {
     FT_Init_FreeType(&ft_lib);
@@ -114,27 +117,35 @@ CairoOutputDev::CairoOutputDev() {
   }
 
   fontEngine = NULL;
+  fontEngine_owner = gFalse;
   glyphs = NULL;
   fill_pattern = NULL;
   stroke_pattern = NULL;
   stroke_opacity = 1.0;
   fill_opacity = 1.0;
   textClipPath = NULL;
+  haveCSPattern = gFalse;
   cairo = NULL;
   currentFont = NULL;
   prescaleImages = gTrue;
   printing = gTrue;
+  inType3Char = gFalse;
+  t3_glyph_has_bbox = gFalse;
 
   groupColorSpaceStack = NULL;
+  maskStack = NULL;
   group = NULL;
   mask = NULL;
   shape = NULL;
   cairo_shape = NULL;
   knockoutCount = 0;
+
+  text = NULL;
+  actualText = NULL;
 }
 
 CairoOutputDev::~CairoOutputDev() {
-  if (fontEngine) {
+  if (fontEngine_owner && fontEngine) {
     delete fontEngine;
   }
 
@@ -148,6 +159,10 @@ CairoOutputDev::~CairoOutputDev() {
     cairo_pattern_destroy (mask);
   if (shape)
     cairo_pattern_destroy (shape);
+  if (text) 
+    text->decRefCnt();
+  if (actualText)
+    delete actualText;  
 }
 
 void CairoOutputDev::setCairo(cairo_t *cairo)
@@ -171,12 +186,35 @@ void CairoOutputDev::setCairo(cairo_t *cairo)
   }
 }
 
-void CairoOutputDev::startDoc(XRef *xrefA) {
-  xref = xrefA;
-  if (fontEngine) {
-    delete fontEngine;
+void CairoOutputDev::setTextPage(TextPage *text)
+{
+  if (this->text) 
+    this->text->decRefCnt();
+  if (actualText)
+    delete actualText;
+  if (text) {
+    this->text = text;
+    this->text->incRefCnt();
+    actualText = new ActualText(text);
+  } else {
+    this->text = NULL;
+    actualText = NULL;
   }
-  fontEngine = new CairoFontEngine(ft_lib);
+}
+
+void CairoOutputDev::startDoc(XRef *xrefA, Catalog *catalogA,
+			      CairoFontEngine *parentFontEngine) {
+  xref = xrefA;
+  catalog = catalogA;
+  if (parentFontEngine) {
+    fontEngine = parentFontEngine;
+  } else {
+    if (fontEngine) {
+      delete fontEngine;
+    }
+    fontEngine = new CairoFontEngine(ft_lib);
+    fontEngine_owner = gTrue;
+  }
 }
 
 void CairoOutputDev::startPage(int pageNum, GfxState *state) {
@@ -186,6 +224,16 @@ void CairoOutputDev::startPage(int pageNum, GfxState *state) {
 
   cairo_pattern_destroy(stroke_pattern);
   stroke_pattern = cairo_pattern_create_rgb(0., 0., 0.);
+
+  if (text)
+    text->startPage(state);
+}
+
+void CairoOutputDev::endPage() {
+  if (text) {
+    text->endPage();
+    text->coalesce(gTrue, gFalse);
+  }
 }
 
 void CairoOutputDev::drawLink(Link *link, Catalog *catalog) {
@@ -196,6 +244,11 @@ void CairoOutputDev::saveState(GfxState *state) {
   cairo_save (cairo);
   if (cairo_shape)
       cairo_save (cairo_shape);
+
+  MaskStack *ms = new MaskStack;
+  ms->mask = cairo_pattern_reference(mask);
+  ms->next = maskStack;
+  maskStack = ms;
 }
 
 void CairoOutputDev::restoreState(GfxState *state) {
@@ -210,6 +263,14 @@ void CairoOutputDev::restoreState(GfxState *state) {
   updateStrokeColor(state);
   updateFillOpacity(state);
   updateStrokeOpacity(state);
+
+  MaskStack* ms = maskStack;
+  if (mask)
+    cairo_pattern_destroy(mask);
+
+  mask = ms->mask;
+  maskStack = ms->next;
+  delete ms;
 }
 
 void CairoOutputDev::updateAll(GfxState *state) {
@@ -405,16 +466,15 @@ void CairoOutputDev::updateFont(GfxState *state) {
 
   needFontUpdate = gFalse;
 
-  if (state->getFont()->getType() == fontType3)	 
-    return;
-
-  currentFont = fontEngine->getFont (state->getFont(), xref);
+  //FIXME: use cairo font engine?
+  if (text)
+    text->updateFont(state);
+  
+  currentFont = fontEngine->getFont (state->getFont(), xref, catalog, printing);
 
   if (!currentFont)
     return;
 
-  LOG(printf ("font matrix: %f %f %f %f\n", m11, m12, m21, m22));
-  
   font_face = currentFont->getFontFace();
   cairo_set_font_face (cairo, font_face);
  
@@ -431,6 +491,8 @@ void CairoOutputDev::updateFont(GfxState *state) {
   matrix.x0 = 0;
   matrix.y0 = 0;
 
+  LOG(printf ("font matrix: %f %f %f %f\n", matrix.xx, matrix.yx, matrix.xy, matrix.yy));
+
  /* Make sure the font matrix is invertible before setting it.  cairo
   * will blow up if we give it a matrix that's not invertible, so we
   * need to check before passing it to cairo_set_font_matrix. Ignoring it
@@ -444,6 +506,15 @@ void CairoOutputDev::updateFont(GfxState *state) {
   }
 
   cairo_set_font_matrix (cairo, &matrix);
+}
+
+void CairoOutputDev::updateRender(GfxState *state) {
+  int rm;
+  rm = state->getRender();
+  if (rm == 7 && haveCSPattern) {
+    haveCSPattern = gFalse;
+    restoreState(state);
+  }
 }
 
 void CairoOutputDev::doPath(cairo_t *cairo, GfxState *state, GfxPath *path) {
@@ -550,7 +621,7 @@ void CairoOutputDev::beginString(GfxState *state, GooString *s)
   if (!currentFont)
     return;
 
-  glyphs = (cairo_glyph_t *) gmalloc (len * sizeof (cairo_glyph_t));
+  glyphs = (cairo_glyph_t *) gmallocn (len, sizeof (cairo_glyph_t));
   glyphCount = 0;
 }
 
@@ -559,13 +630,16 @@ void CairoOutputDev::drawChar(GfxState *state, double x, double y,
 			      double originX, double originY,
 			      CharCode code, int nBytes, Unicode *u, int uLen)
 {
-  if (!currentFont)
+  if (currentFont) {
+    glyphs[glyphCount].index = currentFont->getGlyph (code, u, uLen);
+    glyphs[glyphCount].x = x - originX;
+    glyphs[glyphCount].y = y - originY;
+    glyphCount++;
+  }
+
+  if (!text)
     return;
-  
-  glyphs[glyphCount].index = currentFont->getGlyph (code, u, uLen);
-  glyphs[glyphCount].x = x - originX;
-  glyphs[glyphCount].y = y - originY;
-  glyphCount++;
+  actualText->addChar (state, x, y, dx, dy, code, nBytes, u, uLen);
 }
 
 void CairoOutputDev::endString(GfxState *state)
@@ -679,13 +753,55 @@ void CairoOutputDev::endType3Char(GfxState *state) {
 }
 
 void CairoOutputDev::type3D0(GfxState *state, double wx, double wy) {
+  t3_glyph_wx = wx;
+  t3_glyph_wy = wy;
 }
 
 void CairoOutputDev::type3D1(GfxState *state, double wx, double wy,
 			     double llx, double lly, double urx, double ury) {
+  t3_glyph_wx = wx;
+  t3_glyph_wy = wy;
+  t3_glyph_bbox[0] = llx;
+  t3_glyph_bbox[1] = lly;
+  t3_glyph_bbox[2] = urx;
+  t3_glyph_bbox[3] = ury;
+  t3_glyph_has_bbox = gTrue;
+}
+
+void CairoOutputDev::beginTextObject(GfxState *state) {
+  if (state->getFillColorSpace()->getMode() == csPattern) {
+    haveCSPattern = gTrue;
+    saveState(state);
+    savedRender = state->getRender();
+    state->setRender(7); // Set clip to text path
+  }
 }
 
 void CairoOutputDev::endTextObject(GfxState *state) {
+  if (haveCSPattern) {
+    state->setRender(savedRender);
+    haveCSPattern = gFalse;
+    if (state->getFillColorSpace()->getMode() != csPattern) {
+      if (textClipPath) {
+	cairo_new_path (cairo);
+	cairo_append_path (cairo, textClipPath);
+	cairo_set_fill_rule (cairo, CAIRO_FILL_RULE_WINDING);
+	cairo_set_source (cairo, fill_pattern);
+	cairo_fill (cairo);
+	if (cairo_shape) {
+	  cairo_new_path (cairo_shape);
+	  cairo_append_path (cairo_shape, textClipPath);
+	  cairo_set_fill_rule (cairo_shape, CAIRO_FILL_RULE_WINDING);
+	  cairo_fill (cairo_shape);
+	}
+	cairo_path_destroy (textClipPath);
+	textClipPath = NULL;
+      }
+      restoreState(state);
+      updateFillColor(state);
+    }
+  }
+
   if (textClipPath) {
     // clip the accumulated text path
     cairo_append_path (cairo, textClipPath);
@@ -697,7 +813,18 @@ void CairoOutputDev::endTextObject(GfxState *state) {
     cairo_path_destroy (textClipPath);
     textClipPath = NULL;
   }
+}
 
+void CairoOutputDev::beginMarkedContent(char *name, Dict *properties)
+{
+  if (text)
+    actualText->beginMC(properties);
+}
+
+void CairoOutputDev::endMarkedContent(GfxState *state)
+{
+  if (text)
+    actualText->endMC(state);
 }
 
 static inline int splashRound(SplashCoord x) {
@@ -865,8 +992,22 @@ void CairoOutputDev::setSoftMask(GfxState * state, double * bbox, GBool alpha,
      * So we paint the group to an image surface convert it to a luminocity map
      * and then use that as the mask. */
 
-    double x1, y1, x2, y2;
+    double x1, y1, x2, y2, tmp;
     cairo_clip_extents(cairo, &x1, &y1, &x2, &y2);
+    cairo_user_to_device(cairo, &x1, &y1);
+    cairo_user_to_device(cairo, &x2, &y2);
+    if (x1 > x2) {
+      tmp = x1;
+      x1 = x2;
+      x2 = tmp;
+    }
+
+    if (y1 > y2) {
+      tmp = y1;
+      y1 = y2;
+      y2 = tmp;
+    }
+
     int width = (int)(ceil(x2) - floor(x1));
     int height = (int)(ceil(y2) - floor(y1));
 
@@ -954,12 +1095,18 @@ void CairoOutputDev::popTransparencyGroup() {
 
 
 void CairoOutputDev::clearSoftMask(GfxState * /*state*/) {
-  //XXX: should we be doing anything here?
+  if (mask)
+    cairo_pattern_destroy(mask);
+  mask = NULL;
+}
+
+void CairoOutputDev::endMaskClip(GfxState *state) {
+  clearSoftMask(state);
 }
 
 void CairoOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
-				    int width, int height, GBool invert,
-				    GBool inlineImg) {
+				   int width, int height, GBool invert,
+				   GBool interpolate, GBool inlineImg) {
 
   /* FIXME: Doesn't the image mask support any colorspace? */
   cairo_set_source (cairo, fill_pattern);
@@ -986,15 +1133,15 @@ void CairoOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
   //XXX: it is possible that we should only do sub pixel positioning if 
   // we are rendering fonts */
   if (!printing && prescaleImages && matrix.xy == 0.0 && matrix.yx == 0.0) {
-    drawImageMaskPrescaled(state, ref, str, width, height, invert, inlineImg);
+    drawImageMaskPrescaled(state, ref, str, width, height, invert, interpolate, inlineImg);
   } else {
-    drawImageMaskRegular(state, ref, str, width, height, invert, inlineImg);
+    drawImageMaskRegular(state, ref, str, width, height, invert, interpolate, inlineImg);
   }
 }
 
 void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *str,
-				    int width, int height, GBool invert,
-				    GBool inlineImg) {
+					  int width, int height, GBool invert,
+					  GBool interpolate, GBool inlineImg) {
   unsigned char *buffer;
   unsigned char *dest;
   cairo_surface_t *image;
@@ -1053,7 +1200,8 @@ void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *
   /* we should actually be using CAIRO_FILTER_NEAREST here. However,
    * cairo doesn't yet do minifaction filtering causing scaled down
    * images with CAIRO_FILTER_NEAREST to look really bad */
-  cairo_pattern_set_filter (pattern, CAIRO_FILTER_BEST);
+  cairo_pattern_set_filter (pattern,
+			    interpolate ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
 
   cairo_mask (cairo, pattern);
 
@@ -1083,8 +1231,8 @@ void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *
 
 
 void CairoOutputDev::drawImageMaskPrescaled(GfxState *state, Object *ref, Stream *str,
-				    int width, int height, GBool invert,
-				    GBool inlineImg) {
+					    int width, int height, GBool invert,
+					    GBool interpolate, GBool inlineImg) {
   unsigned char *buffer;
   cairo_surface_t *image;
   cairo_pattern_t *pattern;
@@ -1311,7 +1459,8 @@ void CairoOutputDev::drawImageMaskPrescaled(GfxState *state, Object *ref, Stream
   /* we should actually be using CAIRO_FILTER_NEAREST here. However,
    * cairo doesn't yet do minifaction filtering causing scaled down
    * images with CAIRO_FILTER_NEAREST to look really bad */
-  cairo_pattern_set_filter (pattern, CAIRO_FILTER_BEST);
+  cairo_pattern_set_filter (pattern,
+			    interpolate ? CAIRO_FILTER_BEST : CAIRO_FILTER_FAST);
 
   cairo_save (cairo);
 
@@ -1356,10 +1505,12 @@ void CairoOutputDev::drawImageMaskPrescaled(GfxState *state, Object *ref, Stream
 }
 
 void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
-				Stream *str, int width, int height,
-				GfxImageColorMap *colorMap,
-				Stream *maskStr, int maskWidth,
-				int maskHeight, GBool maskInvert)
+				     Stream *str, int width, int height,
+				     GfxImageColorMap *colorMap,
+				     GBool interpolate,
+				     Stream *maskStr, int maskWidth,
+				     int maskHeight, GBool maskInvert,
+				     GBool maskInterpolate)
 {
   ImageStream *maskImgStr;
   maskImgStr = new ImageStream(maskStr, maskWidth, 1, 1);
@@ -1367,7 +1518,7 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 
   int row_stride = (maskWidth + 3) & ~3;
   unsigned char *maskBuffer;
-  maskBuffer = (unsigned char *)gmalloc (row_stride * maskHeight);
+  maskBuffer = (unsigned char *)gmallocn (row_stride, maskHeight);
   unsigned char *maskDest;
   cairo_surface_t *maskImage;
   cairo_pattern_t *maskPattern;
@@ -1402,7 +1553,7 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
   cairo_matrix_t matrix;
   int is_identity_transform;
 
-  buffer = (unsigned char *)gmalloc (width * height * 4);
+  buffer = (unsigned char *)gmallocn3 (width, height, 4);
 
   /* TODO: Do we want to cache these? */
   imgStr = new ImageStream(str, width,
@@ -1413,8 +1564,8 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
   /* ICCBased color space doesn't do any color correction
    * so check its underlying color space as well */
   is_identity_transform = colorMap->getColorSpace()->getMode() == csDeviceRGB ||
-		  colorMap->getColorSpace()->getMode() == csICCBased && 
-		  ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB;
+		  (colorMap->getColorSpace()->getMode() == csICCBased && 
+		   ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB);
 
   for (y = 0; y < height; y++) {
     dest = (unsigned int *) (buffer + y * 4 * width);
@@ -1447,7 +1598,10 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
   cairo_pattern_set_matrix (pattern, &matrix);
   cairo_pattern_set_matrix (maskPattern, &matrix);
 
-  cairo_pattern_set_filter (pattern, CAIRO_FILTER_BILINEAR);
+  cairo_pattern_set_filter (pattern,
+			    interpolate ? CAIRO_FILTER_BILINEAR : CAIRO_FILTER_FAST);
+  cairo_pattern_set_filter (maskPattern,
+			    maskInterpolate ? CAIRO_FILTER_BILINEAR : CAIRO_FILTER_FAST);
   cairo_set_source (cairo, pattern);
   cairo_mask (cairo, maskPattern);
 
@@ -1480,11 +1634,13 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 
 //XXX: is this affect by AIS(alpha is shape)?
 void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
-				int width, int height,
-				GfxImageColorMap *colorMap,
-				Stream *maskStr,
-				int maskWidth, int maskHeight,
-				GfxImageColorMap *maskColorMap)
+					 int width, int height,
+					 GfxImageColorMap *colorMap,
+					 GBool interpolate,
+					 Stream *maskStr,
+					 int maskWidth, int maskHeight,
+					 GfxImageColorMap *maskColorMap,
+					 GBool maskInterpolate)
 {
   ImageStream *maskImgStr;
   maskImgStr = new ImageStream(maskStr, maskWidth,
@@ -1494,7 +1650,7 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
 
   int row_stride = (maskWidth + 3) & ~3;
   unsigned char *maskBuffer;
-  maskBuffer = (unsigned char *)gmalloc (row_stride * maskHeight);
+  maskBuffer = (unsigned char *)gmallocn (row_stride, maskHeight);
   unsigned char *maskDest;
   cairo_surface_t *maskImage;
   cairo_pattern_t *maskPattern;
@@ -1521,7 +1677,7 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
   cairo_matrix_t maskMatrix;
   int is_identity_transform;
 
-  buffer = (unsigned char *)gmalloc (width * height * 4);
+  buffer = (unsigned char *)gmallocn3 (width, height, 4);
 
   /* TODO: Do we want to cache these? */
   imgStr = new ImageStream(str, width,
@@ -1532,8 +1688,8 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
   /* ICCBased color space doesn't do any color correction
    * so check its underlying color space as well */
   is_identity_transform = colorMap->getColorSpace()->getMode() == csDeviceRGB ||
-		  colorMap->getColorSpace()->getMode() == csICCBased && 
-		  ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB;
+		  (colorMap->getColorSpace()->getMode() == csICCBased && 
+		   ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB);
 
   for (y = 0; y < height; y++) {
     dest = (unsigned int *) (buffer + y * 4 * width);
@@ -1569,8 +1725,10 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
   cairo_pattern_set_matrix (maskPattern, &maskMatrix);
 
   //XXX: should set mask filter
-  cairo_pattern_set_filter (pattern, CAIRO_FILTER_BILINEAR);
-  cairo_pattern_set_filter (maskPattern, CAIRO_FILTER_BILINEAR);
+  cairo_pattern_set_filter (pattern,
+			    interpolate ? CAIRO_FILTER_BILINEAR : CAIRO_FILTER_FAST);
+  cairo_pattern_set_filter (maskPattern,
+			    maskInterpolate ? CAIRO_FILTER_BILINEAR : CAIRO_FILTER_FAST);
   cairo_set_source (cairo, pattern);
   cairo_mask (cairo, maskPattern);
 
@@ -1601,9 +1759,10 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
   delete imgStr;
 }
 void CairoOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
-				int width, int height,
-				GfxImageColorMap *colorMap,
-				int *maskColors, GBool inlineImg)
+			       int width, int height,
+			       GfxImageColorMap *colorMap,
+			       GBool interpolate,
+			       int *maskColors, GBool inlineImg)
 {
   unsigned char *buffer;
   unsigned int *dest;
@@ -1616,7 +1775,7 @@ void CairoOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   cairo_matrix_t matrix;
   int is_identity_transform;
   
-  buffer = (unsigned char *)gmallocn (width, height * 4);
+  buffer = (unsigned char *)gmallocn3 (width, height, 4);
 
   /* TODO: Do we want to cache these? */
   imgStr = new ImageStream(str, width,
@@ -1627,8 +1786,8 @@ void CairoOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   /* ICCBased color space doesn't do any color correction
    * so check its underlying color space as well */
   is_identity_transform = colorMap->getColorSpace()->getMode() == csDeviceRGB ||
-		  colorMap->getColorSpace()->getMode() == csICCBased && 
-		  ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB;
+		  (colorMap->getColorSpace()->getMode() == csICCBased && 
+		   ((GfxICCBasedColorSpace*)colorMap->getColorSpace())->getAlt()->getMode() == csDeviceRGB);
 
   if (maskColors) {
     for (y = 0; y < height; y++) {
@@ -1683,7 +1842,8 @@ void CairoOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 
   cairo_pattern_set_matrix (pattern, &matrix);
 
-  cairo_pattern_set_filter (pattern, CAIRO_FILTER_BILINEAR);
+  cairo_pattern_set_filter (pattern,
+			    interpolate ? CAIRO_FILTER_BILINEAR : CAIRO_FILTER_FAST);
   cairo_set_source (cairo, pattern);
   cairo_paint (cairo);
 
@@ -1744,7 +1904,7 @@ void CairoImageOutputDev::saveImage(CairoImage *image)
 
 void CairoImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
 					int width, int height, GBool invert,
-					GBool inlineImg)
+					GBool interpolate, GBool inlineImg)
 {
   cairo_t *cr;
   cairo_surface_t *surface;
@@ -1776,7 +1936,7 @@ void CairoImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *st
     cairo_translate (cr, 0, height);
     cairo_scale (cr, width, -height);
 
-    CairoOutputDev::drawImageMask(state, ref, str, width, height, invert, inlineImg);
+    CairoOutputDev::drawImageMask(state, ref, str, width, height, invert, interpolate, inlineImg);
     image->setImage (surface);
 
     setCairo (NULL);
@@ -1787,7 +1947,7 @@ void CairoImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *st
 
 void CairoImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 				    int width, int height, GfxImageColorMap *colorMap,
-				    int *maskColors, GBool inlineImg)
+				    GBool interpolate, int *maskColors, GBool inlineImg)
 {
   cairo_t *cr;
   cairo_surface_t *surface;
@@ -1819,7 +1979,7 @@ void CairoImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
     cairo_translate (cr, 0, height);
     cairo_scale (cr, width, -height);
     
-    CairoOutputDev::drawImage(state, ref, str, width, height, colorMap, maskColors, inlineImg);
+    CairoOutputDev::drawImage(state, ref, str, width, height, colorMap, interpolate, maskColors, inlineImg);
     image->setImage (surface);
     
     setCairo (NULL);
@@ -1831,9 +1991,11 @@ void CairoImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 void CairoImageOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 					      int width, int height,
 					      GfxImageColorMap *colorMap,
+					      GBool interpolate,
 					      Stream *maskStr,
 					      int maskWidth, int maskHeight,
-					      GfxImageColorMap *maskColorMap)
+					      GfxImageColorMap *maskColorMap,
+					      GBool maskInterpolate)
 {
   cairo_t *cr;
   cairo_surface_t *surface;
@@ -1865,8 +2027,8 @@ void CairoImageOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stre
     cairo_translate (cr, 0, height);
     cairo_scale (cr, width, -height);
     
-    CairoOutputDev::drawSoftMaskedImage(state, ref, str, width, height, colorMap,
-					maskStr, maskWidth, maskHeight, maskColorMap);
+    CairoOutputDev::drawSoftMaskedImage(state, ref, str, width, height, colorMap, interpolate,
+					maskStr, maskWidth, maskHeight, maskColorMap, maskInterpolate);
     image->setImage (surface);
     
     setCairo (NULL);
@@ -1878,9 +2040,10 @@ void CairoImageOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stre
 void CairoImageOutputDev::drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 					  int width, int height,
 					  GfxImageColorMap *colorMap,
+					  GBool interpolate,
 					  Stream *maskStr,
 					  int maskWidth, int maskHeight,
-					  GBool maskInvert)
+					  GBool maskInvert, GBool maskInterpolate)
 {
   cairo_t *cr;
   cairo_surface_t *surface;
@@ -1912,8 +2075,8 @@ void CairoImageOutputDev::drawMaskedImage(GfxState *state, Object *ref, Stream *
     cairo_translate (cr, 0, height);
     cairo_scale (cr, width, -height);
     
-    CairoOutputDev::drawMaskedImage(state, ref, str, width, height, colorMap,
-				    maskStr, maskWidth, maskHeight, maskInvert);
+    CairoOutputDev::drawMaskedImage(state, ref, str, width, height, colorMap, interpolate,
+				    maskStr, maskWidth, maskHeight, maskInvert, maskInterpolate);
     image->setImage (surface);
     
     setCairo (NULL);

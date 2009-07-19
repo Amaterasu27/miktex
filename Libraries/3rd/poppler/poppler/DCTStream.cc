@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2005 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright 2005-2008 Albert Astals Cid <aacid@kde.org>
+// Copyright 2005-2009 Albert Astals Cid <aacid@kde.org>
 // Copyright 2009 Ryszard Trojnacki <rysiek@menel.com>
 //
 //========================================================================
@@ -87,11 +87,12 @@ void DCTStream::init()
   src.str = str;
   src.index = 0;
   src.abort = false;
+  current = NULL;
+  limit = NULL;
   
   cinfo.err = &jerr;
   jpeg_create_decompress(&cinfo);
   cinfo.src = (jpeg_source_mgr *)&src;
-  x = 0;
   row_buffer = NULL;
 }
 
@@ -152,26 +153,24 @@ int DCTStream::getChar() {
   
   int c;
 
-  if (x == 0) {
+  if (current == limit) {
     if (cinfo.output_scanline < cinfo.output_height)
     {
       if (!jpeg_read_scanlines(&cinfo, row_buffer, 1)) return EOF;
+      current = &row_buffer[0][0];
+      limit = &row_buffer[0][(cinfo.output_width - 1) * cinfo.output_components] + cinfo.output_components;
     }
     else return EOF;
   }
-  c = row_buffer[0][x];
-  x++;
-  if (x == cinfo.output_width * cinfo.output_components)
-    x = 0;
+  c = *current;
+  ++current;
   return c;
 }
 
 int DCTStream::lookChar() {
   if (src.abort) return EOF;
   
-  int c;
-  c = row_buffer[0][x];
-  return c;
+  return *current;
 }
 
 GooString *DCTStream::getPSFilter(int psLevel, char *indent) {

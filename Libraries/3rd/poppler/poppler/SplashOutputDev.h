@@ -14,6 +14,8 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Takashi Iwai <tiwai@suse.de>
+// Copyright (C) 2009 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -79,6 +81,10 @@ public:
   // text in Type 3 fonts will be drawn with drawChar/drawString.
   virtual GBool interpretType3Chars() { return gTrue; }
 
+  // This device now supports text in pattern colorspace!
+  virtual GBool supportTextCSPattern(GfxState *state)
+  	{ return state->getFillColorSpace()->getMode() == csPattern; }
+
   //----- initialization and control
 
   // Start a page.
@@ -110,6 +116,7 @@ public:
 
   //----- update text state
   virtual void updateFont(GfxState *state);
+  virtual void updateRender(GfxState *state);
 
   //----- path painting
   virtual void stroke(GfxState *state);
@@ -130,26 +137,37 @@ public:
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
   virtual void endType3Char(GfxState *state);
+  virtual void beginTextObject(GfxState *state);
+  virtual GBool deviceHasTextClip(GfxState *state) { return textClipPath && haveCSPattern; }
   virtual void endTextObject(GfxState *state);
 
   //----- image drawing
   virtual void drawImageMask(GfxState *state, Object *ref, Stream *str,
 			     int width, int height, GBool invert,
-			     GBool inlineImg);
+			     GBool interpolate, GBool inlineImg);
   virtual void drawImage(GfxState *state, Object *ref, Stream *str,
 			 int width, int height, GfxImageColorMap *colorMap,
-			 int *maskColors, GBool inlineImg);
+			 GBool interpolate, int *maskColors, GBool inlineImg);
   virtual void drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 			       int width, int height,
 			       GfxImageColorMap *colorMap,
+			       GBool interpolate,
 			       Stream *maskStr, int maskWidth, int maskHeight,
-			       GBool maskInvert);
+			       GBool maskInvert, GBool maskInterpolate);
   virtual void drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 				   int width, int height,
 				   GfxImageColorMap *colorMap,
+				   GBool interpolate,
 				   Stream *maskStr,
 				   int maskWidth, int maskHeight,
-				   GfxImageColorMap *maskColorMap);
+				   GfxImageColorMap *maskColorMap,
+				   GBool maskInterpolate);
+  // If current colorspace ist pattern,
+  // need this device special handling for masks in pattern colorspace?
+  // Default is false
+  virtual GBool fillMaskCSPattern(GfxState * state)
+  	{ return state->getFillColorSpace()->getMode() == csPattern; }
+  virtual void endMaskClip(GfxState * /*state*/);
 
   //----- Type 3 font operators
   virtual void type3D0(GfxState *state, double wx, double wy);
@@ -224,6 +242,11 @@ private:
 			     Guchar *alphaLine);
   static GBool maskedImageSrc(void *data, SplashColorPtr line,
 			      Guchar *alphaLine);
+
+  GBool haveCSPattern;		// set if text has been drawn with a
+				//   clipping render mode because of pattern colorspace
+  int savedRender;		// use if pattern colorspace
+  GBool keepAlphaChannel;	// don't fill with paper color, keep alpha channel
 
   SplashColorMode colorMode;
   int bitmapRowPad;

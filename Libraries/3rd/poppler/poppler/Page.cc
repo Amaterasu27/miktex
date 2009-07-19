@@ -19,7 +19,7 @@
 // Copyright (C) 2006-2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2006 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
-// Copyright (C) 2006-2008 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2006-2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright (C) 2008 Brad Hards <bradh@kde.org>
@@ -252,7 +252,7 @@ GBool PageAttrs::readBox(Dict *dict, char *key, PDFRectangle *box) {
 // Page
 //------------------------------------------------------------------------
 
-Page::Page(XRef *xrefA, int numA, Dict *pageDict, PageAttrs *attrsA, Form *form) {
+Page::Page(XRef *xrefA, int numA, Dict *pageDict, Ref pageRefA, PageAttrs *attrsA, Form *form) {
   Object tmp;
 	
   ok = gTrue;
@@ -260,6 +260,9 @@ Page::Page(XRef *xrefA, int numA, Dict *pageDict, PageAttrs *attrsA, Form *form)
   num = numA;
   duration = -1;
   pageWidgets = NULL;
+
+  pageObj.initDict(pageDict);
+  pageRef = pageRefA;
 
   // get attributes
   attrs = attrsA;
@@ -334,6 +337,7 @@ Page::Page(XRef *xrefA, int numA, Dict *pageDict, PageAttrs *attrsA, Form *form)
 Page::~Page() {
   delete pageWidgets;
   delete attrs;
+  pageObj.free();
   annots.free();
   contents.free();
   trans.free();
@@ -348,6 +352,34 @@ Annots *Page::getAnnots(Catalog *catalog) {
   annots = new Annots(xref, catalog, getAnnots(&obj));
   obj.free();
   return annots;
+}
+
+void Page::addAnnot(Annot *annot) {
+  Object obj1;
+  Object tmp;
+  Ref annotRef = annot->getRef ();
+
+  if (annots.isNull()) {
+    Ref annotsRef;
+    // page doesn't have annots array,
+    // we have to create it
+
+    obj1.initArray(xref);
+    obj1.arrayAdd(tmp.initRef (annotRef.num, annotRef.gen));
+    tmp.free();
+
+    annotsRef = xref->addIndirectObject (&obj1);
+    annots.initRef(annotsRef.num, annotsRef.gen);
+    pageObj.dictSet ("Annots", &annots);
+    xref->setModifiedObject (&pageObj, pageRef);
+  } else {
+    getAnnots(&obj1);
+    if (obj1.isArray()) {
+      obj1.arrayAdd (tmp.initRef (annotRef.num, annotRef.gen));
+      xref->setModifiedObject (&obj1, annots.getRef());
+    }
+    obj1.free();
+  }
 }
 
 Links *Page::getLinks(Catalog *catalog) {

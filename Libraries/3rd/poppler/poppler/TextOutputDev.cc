@@ -18,6 +18,9 @@
 // Copyright (C) 2007, 2008 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008 Pino Toscano <pino@kde.org>
+// Copyright (C) 2008 Hib Eris <hib@hiberis.nl>
+// Copyright (C) 2009 Ross Moore <ross@maths.mq.edu.au>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1772,6 +1775,7 @@ TextWord *TextWordList::get(int idx) {
 TextPage::TextPage(GBool rawOrderA) {
   int rot;
 
+  refCnt = 1;
   rawOrder = rawOrderA;
   curWord = NULL;
   charPos = 0;
@@ -1808,6 +1812,15 @@ TextPage::~TextPage() {
   delete fonts;
   deleteGooList(underlines, TextUnderline);
   deleteGooList(links, TextLink);
+}
+
+void TextPage::incRefCnt() {
+  refCnt++;
+}
+
+void TextPage::decRefCnt() {
+  if (--refCnt == 0)
+    delete this;
 }
 
 void TextPage::startPage(GfxState *state) {
@@ -3800,8 +3813,8 @@ void TextLine::visitSelection(TextSelectionVisitor *visitor,
 	(selection->x2 < p->xMax && selection->y2 < p->yMax))
       if (begin == NULL) 
 	begin = p;
-    if ((selection->x1 > p->xMin && selection->y1 > p->yMin ||
-	 selection->x2 > p->xMin && selection->y2 > p->yMin) && (begin != NULL)) {
+    if (((selection->x1 > p->xMin && selection->y1 > p->yMin) ||
+	 (selection->x2 > p->xMin && selection->y2 > p->yMin)) && (begin != NULL)) {
       end = p->next;
       current = p;
     }
@@ -3885,8 +3898,9 @@ void TextBlock::visitSelection(TextSelectionVisitor *visitor,
       stop_y = selection->y1;
     }
 
-    if ((selection->x1 > p->xMin && selection->y1 > p->yMin ||
-	selection->x2 > p->xMin && selection->y2 > p->yMin) && (begin != NULL))
+    if (((selection->x1 > p->xMin && selection->y1 > p->yMin) ||
+	 (selection->x2 > p->xMin && selection->y2 > p->yMin))
+	&& (begin != NULL))
       end = p->next;
   }
 
@@ -3963,8 +3977,8 @@ void TextPage::visitSelection(TextSelectionVisitor *visitor,
       stop_y = selection->y1;
     }
 
-    if (selection->x1 > b->xMin && selection->y1 > b->yMin ||
-	selection->x2 > b->xMin && selection->y2 > b->yMin)
+    if ((selection->x1 > b->xMin && selection->y1 > b->yMin) ||
+	(selection->x2 > b->xMin && selection->y2 > b->yMin))
       end = i + 1;
   }
 
@@ -4484,6 +4498,119 @@ TextWordList *TextPage::makeWordList(GBool physLayout) {
 #endif
 
 //------------------------------------------------------------------------
+// ActualText
+//------------------------------------------------------------------------
+ActualText::ActualText(TextPage *out) {
+  out->incRefCnt();
+  text = out;
+  actualText = NULL;
+  actualTextBMCLevel = 0;
+}
+
+ActualText::~ActualText() {
+  if (actualText)
+    delete actualText;
+  text->decRefCnt();
+}
+
+void ActualText::addChar(GfxState *state, double x, double y,
+			 double dx, double dy,
+			 CharCode c, int nBytes, Unicode *u, int uLen) {
+  if (actualTextBMCLevel == 0) {
+    text->addChar(state, x, y, dx, dy, c, nBytes, u, uLen);
+  } else {
+    // Inside ActualText span.
+    if (newActualTextSpan) {
+      actualText_x = x;
+      actualText_y = y;
+      actualText_dx = dx;
+      actualText_dy = dy;
+      newActualTextSpan = gFalse;
+    } else {
+      if (x < actualText_x)
+	actualText_x = x;
+      if (y < actualText_y)
+	actualText_y = y;
+      if (x + dx > actualText_x + actualText_dx)
+	actualText_dx = x + dx - actualText_x;
+      if (y + dy > actualText_y + actualText_dy)
+	actualText_dy = y + dy - actualText_y;
+    }
+  }
+}
+
+void ActualText::beginMC(Dict *properties) {
+  if (actualTextBMCLevel > 0) {
+    // Already inside a ActualText span.
+    actualTextBMCLevel++;
+    return;
+  }
+
+  Object obj;
+  if (properties->lookup("ActualText", &obj)) {
+    if (obj.isString()) {
+      actualText = obj.getString();
+      actualTextBMCLevel = 1;
+      newActualTextSpan = gTrue;
+    }
+  }
+}
+
+void ActualText::endMC(GfxState *state) {
+  char *uniString = NULL;
+  Unicode *uni;
+  int length, i;
+
+  if (actualTextBMCLevel > 0) {
+    actualTextBMCLevel--;
+    if (actualTextBMCLevel == 0) {
+      // ActualText span closed. Output the span text and the
+      // extents of all the glyphs inside the span
+
+      if (newActualTextSpan) {
+	// No content inside span.
+	actualText_x = state->getCurX();
+	actualText_y = state->getCurY();
+	actualText_dx = 0;
+	actualText_dy = 0;
+      }
+
+      if (!actualText->hasUnicodeMarker()) {
+	if (actualText->getLength() > 0) {
+	  //non-unicode string -- assume pdfDocEncoding and
+	  //try to convert to UTF16BE
+	  uniString = pdfDocEncodingToUTF16(actualText, &length);
+	} else {
+	  length = 0;
+	}
+      } else {
+	uniString = actualText->getCString();
+	length = actualText->getLength();
+      }
+
+      if (length < 3)
+	length = 0;
+      else
+	length = length/2 - 1;
+      uni = new Unicode[length];
+      for (i = 0 ; i < length; i++)
+	uni[i] = ((uniString[2 + i*2] & 0xff)<<8)|(uniString[3 + i*2] & 0xff);
+
+      text->addChar(state,
+		    actualText_x, actualText_y,
+		    actualText_dx, actualText_dy,
+		    0, 1, uni, length);
+
+      delete [] uni;
+      if (!actualText->hasUnicodeMarker())
+	delete [] uniString;
+      delete actualText;
+      actualText = NULL;
+    }
+  }
+}
+
+//------------------------------------------------------------------------
 // TextOutputDev
 //------------------------------------------------------------------------
 
@@ -4522,7 +4649,7 @@ TextOutputDev::TextOutputDev(char *fileName, GBool physLayoutA,
 
   // set up text object
   text = new TextPage(rawOrderA);
-  actualTextBMCLevel = 0;
+  actualText = new ActualText(text);
 }
 
 TextOutputDev::TextOutputDev(TextOutputFunc func, void *stream,
@@ -4534,8 +4661,8 @@ TextOutputDev::TextOutputDev(TextOutputFunc func, void *stream,
   rawOrder = rawOrderA;
   doHTML = gFalse;
   text = new TextPage(rawOrderA);
+  actualText = new ActualText(text);
   ok = gTrue;
-  actualTextBMCLevel = 0;
 }
 
 TextOutputDev::~TextOutputDev() {
@@ -4546,8 +4673,9 @@ TextOutputDev::~TextOutputDev() {
     fclose((FILE *)outputStream);
   }
   if (text) {
-    delete text;
+    text->decRefCnt();
   }
+  delete actualText;
 }
 
 void TextOutputDev::startPage(int pageNum, GfxState *state) {
@@ -4576,100 +4704,17 @@ void TextOutputDev::drawChar(GfxState *state, double x, double y,
 			     double dx, double dy,
 			     double originX, double originY,
 			     CharCode c, int nBytes, Unicode *u, int uLen) {
-  if (actualTextBMCLevel == 0) {
-    text->addChar(state, x, y, dx, dy, c, nBytes, u, uLen);
-  } else {
-    // Inside ActualText span.
-    if (newActualTextSpan) {
-      actualText_x = x;
-      actualText_y = y;
-      actualText_dx = dx;
-      actualText_dy = dy;
-      newActualTextSpan = gFalse;
-    } else {
-      if (x < actualText_x)
-	actualText_x = x;
-      if (y < actualText_y)
-	actualText_y = y;
-      if (x + dx > actualText_x + actualText_dx)
-	actualText_dx = x + dx - actualText_x;
-      if (y + dy > actualText_y + actualText_dy)
-	actualText_dy = y + dy - actualText_y;
-    }
-  }
+  actualText->addChar(state, x, y, dx, dy, c, nBytes, u, uLen);
 }
 
 void TextOutputDev::beginMarkedContent(char *name, Dict *properties)
 {
-  Object obj;
-
-  if (actualTextBMCLevel > 0) {
-    // Already inside a ActualText span.
-    actualTextBMCLevel++;
-    return;
-  }
-
-  if (properties->lookup("ActualText", &obj)) {
-    if (obj.isString()) {
-      actualText = obj.getString();
-      actualTextBMCLevel = 1;
-      newActualTextSpan = gTrue;
-    }
-  }
+  actualText->beginMC(properties);
 }
 
 void TextOutputDev::endMarkedContent(GfxState *state)
 {
-  char *uniString = NULL;
-  Unicode *uni;
-  int length, i;
-
-  if (actualTextBMCLevel > 0) {
-    actualTextBMCLevel--;
-    if (actualTextBMCLevel == 0) {
-      // ActualText span closed. Output the span text and the
-      // extents of all the glyphs inside the span
-
-      if (newActualTextSpan) {
-	// No content inside span.
-	actualText_x = state->getCurX();
-	actualText_y = state->getCurY();
-	actualText_dx = 0;
-	actualText_dy = 0;
-      }
-
-      if (!actualText->hasUnicodeMarker()) {
-	if (actualText->getLength() > 0) {
-	  //non-unicode string -- assume pdfDocEncoding and
-	  //try to convert to UTF16BE
-	  uniString = pdfDocEncodingToUTF16(actualText, &length);
-	} else {
-	  length = 0;
-	}
-      } else {
-	uniString = actualText->getCString();
-	length = actualText->getLength();
-      }
-
-      if (length < 3)
-	length = 0;
-      else
-	length = length/2 - 1;
-      uni = new Unicode[length];
-      for (i = 0 ; i < length; i++)
-	uni[i] = (uniString[2 + i*2]<<8) + uniString[2 + i*2+1];
-
-      text->addChar(state,
-		    actualText_x, actualText_y,
-		    actualText_dx, actualText_dy,
-		    0, 1, uni, length);
-
-      delete [] uni;
-      if (!actualText->hasUnicodeMarker())
-	delete [] uniString;
-      delete actualText;
-    }
-  }
+  actualText->endMC(state);
 }
 
 void TextOutputDev::stroke(GfxState *state) {

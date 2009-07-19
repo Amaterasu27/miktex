@@ -13,11 +13,13 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005, 2007, 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2009 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
+// Copyright (C) 2009 Jonathan Kew <jonathan_kew@sil.org>
+// Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -57,6 +59,7 @@ class CMapCache;
 struct XpdfSecurityHandler;
 class GlobalParams;
 class GfxFont;
+class Stream;
 #ifdef WIN32
 class WinFontList;
 #endif
@@ -159,7 +162,7 @@ public:
 
   // Initialize the global parameters by attempting to read a config
   // file.
-  GlobalParams();
+  GlobalParams(const char *customPopplerDataDir = NULL);
 
   ~GlobalParams();
 
@@ -201,6 +204,7 @@ public:
   GBool getEnableFreeType();
   GBool getAntialias();
   GBool getVectorAntialias();
+  GBool getForceNoFTAutoHinting();
   GBool getStrokeAdjust();
   ScreenType getScreenType();
   int getScreenSize();
@@ -217,7 +221,7 @@ public:
   CharCodeToUnicode *getCIDToUnicode(GooString *collection);
   CharCodeToUnicode *getUnicodeToUnicode(GooString *fontName);
   UnicodeMap *getUnicodeMap(GooString *encodingName);
-  CMap *getCMap(GooString *collection, GooString *cMapName);
+  CMap *getCMap(GooString *collection, GooString *cMapName, Stream *stream = NULL);
   UnicodeMap *getTextEncoding();
 #ifdef ENABLE_PLUGINS
   GBool loadPlugin(char *type, char *name);
@@ -244,6 +248,7 @@ public:
   GBool setEnableFreeType(char *s);
   GBool setAntialias(char *s);
   GBool setVectorAntialias(char *s);
+  GBool setForceNoFTAutoHinting(char *s);
   void setStrokeAdjust(GBool strokeAdjust);
   void setScreenType(ScreenType st);
   void setScreenSize(int size);
@@ -326,6 +331,7 @@ private:
   GBool enableFreeType;		// FreeType enable flag
   GBool antialias;		// anti-aliasing enable flag
   GBool vectorAntialias;	// vector anti-aliasing enable flag
+  GBool forceNoFTAutoHinting;  // force to disable FT autohinting
   GBool strokeAdjust;		// stroke adjustment enable flag
   ScreenType screenType;	// halftone screen type
   int screenSize;		// screen matrix size
@@ -359,6 +365,8 @@ private:
   GooMutex unicodeMapCacheMutex;
   GooMutex cMapCacheMutex;
 #endif
+
+  const char *popplerDataDir;
 };
 
 #endif

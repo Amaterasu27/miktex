@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(POPPLER_VERSION "0.10.7")
+set(POPPLER_VERSION "0.11.1")
 
 ##use_static_crt()
 ##use_static_libraries()
@@ -103,6 +103,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Parser.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PDFDoc.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PDFDocEncoding.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PopplerCache.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ProfileData.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PreScanOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PSTokenizer.cc

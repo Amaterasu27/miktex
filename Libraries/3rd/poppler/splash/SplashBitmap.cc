@@ -68,7 +68,7 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
     rowSize = -rowSize;
   }
   if (alphaA) {
-    alpha = (Guchar *)gmalloc(width * height);
+    alpha = (Guchar *)gmallocn(width, height);
   } else {
     alpha = NULL;
   }

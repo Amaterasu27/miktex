@@ -18,6 +18,7 @@
 // Copyright (C) 2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2009 Eric Toombs <ewtoombs@uwaterloo.ca>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -32,6 +33,7 @@
 
 #include <locale.h>
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -71,7 +73,6 @@
 PDFDoc::PDFDoc(GooString *fileNameA, GooString *ownerPassword,
 	       GooString *userPassword, void *guiDataA) {
   Object obj;
-  GooString *fileName1, *fileName2;
 
   ok = gFalse;
   errCode = errNone;
@@ -87,33 +88,23 @@ PDFDoc::PDFDoc(GooString *fileNameA, GooString *ownerPassword,
 #endif
 
   fileName = fileNameA;
-  fileName1 = fileName;
-
 
   // try to open file
-  fileName2 = NULL;
 #ifdef VMS
-  if (!(file = fopen(fileName1->getCString(), "rb", "ctx=stm"))) {
-    error(-1, "Couldn't open file '%s'", fileName1->getCString());
+  file = fopen(fileName->getCString(), "rb", "ctx=stm");
+#else
+  file = fopen(fileName->getCString(), "rb");
+#endif
+  if (file == NULL) {
+    // fopen() has failed.
+    // Keep a copy of the errno returned by fopen so that it can be 
+    // referred to later.
+    fopenErrno = errno;
+    error(-1, "Couldn't open file '%s': %s.", fileName->getCString(),
+                                              strerror(errno));
     errCode = errOpenFile;
     return;
   }
-#else
-  if (!(file = fopen(fileName1->getCString(), "rb"))) {
-    fileName2 = fileName->copy();
-    fileName2->lowerCase();
-    if (!(file = fopen(fileName2->getCString(), "rb"))) {
-      fileName2->upperCase();
-      if (!(file = fopen(fileName2->getCString(), "rb"))) {
-	error(-1, "Couldn't open file '%s'", fileName->getCString());
-	delete fileName2;
-	errCode = errOpenFile;
-	return;
-      }
-    }
-    delete fileName2;
-  }
-#endif
 
   // create stream
   obj.initNull();
@@ -462,14 +453,14 @@ GBool PDFDoc::isLinearized() {
   return lin;
 }
 
-GBool PDFDoc::saveAs(GooString *name, PDFWriteMode mode) {
+int PDFDoc::saveAs(GooString *name, PDFWriteMode mode) {
   FILE *f;
   OutStream *outStr;
-  GBool res;
+  int res;
 
   if (!(f = fopen(name->getCString(), "wb"))) {
     error(-1, "Couldn't open file '%s'", name->getCString());
-    return gFalse;
+    return errOpenFile;
   }
   outStr = new FileOutStream(f,0);
   res = saveAs(outStr, mode);
@@ -478,7 +469,7 @@ GBool PDFDoc::saveAs(GooString *name, PDFWriteMode mode) {
   return res;
 }
 
-GBool PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
+int PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
 
   // we don't support files with Encrypt at the moment
   Object obj;
@@ -486,7 +477,7 @@ GBool PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
   if (!obj.isNull())
   {
     obj.free();
-    return gFalse;
+    return errEncrypted;
   }
   obj.free();
 
@@ -511,17 +502,17 @@ GBool PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
     }
   }
 
-  return gTrue;
+  return errNone;
 }
 
-GBool PDFDoc::saveWithoutChangesAs(GooString *name) {
+int PDFDoc::saveWithoutChangesAs(GooString *name) {
   FILE *f;
   OutStream *outStr;
-  GBool res;
+  int res;
 
   if (!(f = fopen(name->getCString(), "wb"))) {
     error(-1, "Couldn't open file '%s'", name->getCString());
-    return gFalse;
+    return errOpenFile;
   }
   
   outStr = new FileOutStream(f,0);
@@ -533,7 +524,7 @@ GBool PDFDoc::saveWithoutChangesAs(GooString *name) {
   return res;
 }
 
-GBool PDFDoc::saveWithoutChangesAs(OutStream *outStr) {
+int PDFDoc::saveWithoutChangesAs(OutStream *outStr) {
   int c;
   
   str->reset();
@@ -542,7 +533,7 @@ GBool PDFDoc::saveWithoutChangesAs(OutStream *outStr) {
   }
   str->close();
 
-  return gTrue;
+  return errNone;
 }
 
 void PDFDoc::saveIncrementalUpdate (OutStream* outStr)

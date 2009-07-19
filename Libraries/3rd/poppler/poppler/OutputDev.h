@@ -17,6 +17,8 @@
 // Copyright (C) 2006 Thorkild Stray <thorkild@ifi.uio.no>
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2007 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2009 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -93,6 +95,17 @@ public:
 
   // Does this device need non-text content?
   virtual GBool needNonText() { return gTrue; }
+
+  // If current colorspace ist pattern,
+  // does this device support text in pattern colorspace?
+  // Default is false
+  virtual GBool supportTextCSPattern(GfxState * /*state*/) { return gFalse; }
+
+  // If current colorspace ist pattern,
+  // need this device special handling for masks in pattern colorspace?
+  // Default is false
+  virtual GBool fillMaskCSPattern(GfxState * /*state*/) { return gFalse; }
+  virtual void endMaskClip(GfxState * /*state*/) {}
 
   //----- initialization and control
 
@@ -204,26 +217,30 @@ public:
 			       double /*dx*/, double /*dy*/,
 			       CharCode /*code*/, Unicode * /*u*/, int /*uLen*/);
   virtual void endType3Char(GfxState * /*state*/) {}
+  virtual void beginTextObject(GfxState * /*state*/) {}
+  virtual GBool deviceHasTextClip(GfxState * /*state*/) { return gFalse; }
   virtual void endTextObject(GfxState * /*state*/) {}
 
   //----- image drawing
   virtual void drawImageMask(GfxState *state, Object *ref, Stream *str,
-			     int width, int height, GBool invert,
+			     int width, int height, GBool invert, GBool interpolate,
 			     GBool inlineImg);
   virtual void drawImage(GfxState *state, Object *ref, Stream *str,
 			 int width, int height, GfxImageColorMap *colorMap,
-			 int *maskColors, GBool inlineImg);
+			 GBool interpolate, int *maskColors, GBool inlineImg);
   virtual void drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 			       int width, int height,
-			       GfxImageColorMap *colorMap,
+			       GfxImageColorMap *colorMap, GBool interpolate,
 			       Stream *maskStr, int maskWidth, int maskHeight,
-			       GBool maskInvert);
+			       GBool maskInvert, GBool maskInterpolate);
   virtual void drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 				   int width, int height,
 				   GfxImageColorMap *colorMap,
+				   GBool interpolate,
 				   Stream *maskStr,
 				   int maskWidth, int maskHeight,
-				   GfxImageColorMap *maskColorMap);
+				   GfxImageColorMap *maskColorMap,
+				   GBool maskInterpolate);
 
   //----- grouping operators
 

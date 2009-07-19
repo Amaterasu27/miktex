@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005-2007 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2009 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jeff Muizelaar <jrmuizel@nit.ca>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
@@ -309,7 +309,7 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start,
     kids.arrayGet(i, &kid);
     if (kid.isDict("Page")) {
       attrs2 = new PageAttrs(attrs1, kid.getDict());
-      page = new Page(xref, start+1, kid.getDict(), attrs2, form);
+      page = new Page(xref, start+1, kid.getDict(), kidRef.getRef(), attrs2, form);
       if (!page->isOk()) {
 	++start;
 	goto err3;
@@ -351,6 +351,7 @@ int Catalog::readPageTree(Dict *pagesDict, PageAttrs *attrs, int start,
   delete page;
  err2:
   kid.free();
+  kidRef.free();
  err1:
   kids.free();
   delete attrs1;
@@ -463,9 +464,9 @@ GooString *Catalog::getJS(int i)
     Stream *stream = obj2.getStream();
     js = new GooString();
     stream->reset();
-    int i;
-    while ((i = stream->getChar()) != EOF) {
-      js->append((char)i);
+    int j;
+    while ((j = stream->getChar()) != EOF) {
+      js->append((char)j);
     }
   }
   obj2.free();

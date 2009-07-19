@@ -181,18 +181,11 @@ namespace Poppler {
     QList<FontInfo> Document::fonts() const
     {
 	QList<FontInfo> ourList;
-
-	FontInfoScanner fontInfoScanner( m_doc->doc );
-	GooList *items = fontInfoScanner.scan( numPages() );
-
-	if ( NULL == items )
-	    return ourList;
-
-	for ( int i = 0; i < items->getLength(); ++i ) {
-	    ourList.append( FontInfo(FontInfoData((::FontInfo*)items->get(i))) );
+	FontIterator it( 0, m_doc );
+	while ( it.hasNext() )
+	{
+		ourList += it.next();
 	}
-	deleteGooList(items, ::FontInfo);
-
 	return ourList;
     }
 
@@ -203,16 +196,21 @@ namespace Poppler {
 
     bool Document::scanForFonts( int numPages, QList<FontInfo> *fontList ) const
     {
-	GooList *items = m_doc->m_fontInfoScanner->scan( numPages );
-
-	if ( NULL == items )
-	    return false;
-
-	for ( int i = 0; i < items->getLength(); ++i ) {
-	    fontList->append( FontInfo(FontInfoData((::FontInfo*)items->get(i))) );
+	if ( !m_doc->m_fontInfoIterator )
+		return false;
+	if ( !m_doc->m_fontInfoIterator->hasNext() )
+		return false;
+	while ( m_doc->m_fontInfoIterator->hasNext() && numPages )
+	{
+		(*fontList) += m_doc->m_fontInfoIterator->next();
+		--numPages;
 	}
-	deleteGooList(items, ::FontInfo);
 	return true;
+    }
+
+    FontIterator* Document::newFontIterator( int startPage ) const
+    {
+	return new FontIterator( startPage, m_doc );
     }
 
     QByteArray Document::fontData(const FontInfo &fi) const
@@ -414,11 +412,8 @@ namespace Poppler {
 
     LinkDestination *Document::linkDestination( const QString &name )
     {
-        if ( m_doc->getOutputDev() == NULL )
-            return NULL;
-
         GooString * namedDest = QStringToGooString( name );
-        LinkDestinationData ldd(NULL, namedDest, m_doc);
+        LinkDestinationData ldd(NULL, namedDest, m_doc, false);
         LinkDestination *ld = new LinkDestination(ldd);
         delete namedDest;
         return ld;

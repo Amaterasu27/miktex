@@ -14,9 +14,10 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2006-2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2009 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2008 Julien Rebetez <julien@fhtagn.net>
+// Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -451,8 +452,9 @@ Guchar *ImageStream::getLine() {
       imgLine[i+7] = (Guchar)(c & 1);
     }
   } else if (nBits == 8) {
+    Guchar *line = imgLine;
     for (i = 0; i < nVals; ++i) {
-      imgLine[i] = str->getChar();
+      *line++ = str->getChar();
     }
   } else if (nBits == 16) {
     // this is a hack to support 16 bits images, everywhere

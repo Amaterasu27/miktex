@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2007, 2008 Julien Rebetez <julienr@svn.gnome.org>
-// Copyright (C) 2007, 2008 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2007-2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2007, 2008 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
@@ -287,6 +287,9 @@ public:
   };
 
   AnnotColor();
+  AnnotColor(double gray);
+  AnnotColor(double r, double g, double b);
+  AnnotColor(double c, double m, double y, double k);
   AnnotColor(Array *array);
   ~AnnotColor();
 
@@ -480,7 +483,8 @@ public:
     type3D              // 3D             25
   };
 
-  Annot(XRef *xrefA, Dict *dict, Catalog* catalog);
+  Annot(XRef *xrefA, PDFRectangle *rectA, Catalog *catalog);
+  Annot(XRef *xrefA, Dict *dict, Catalog *catalog);
   Annot(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   virtual ~Annot();
   GBool isOk() { return ok; }
@@ -497,7 +501,16 @@ public:
 
   double getFontSize() { return fontSize; }
 
+  // Sets the annot contents to new_content
+  // new_content should never be NULL
+  void setContents(GooString *new_content);
+
+  // The annotation takes the ownership of
+  // new_color. 
+  void setColor(AnnotColor *new_color);
+
   // getters
+  Ref getRef() const { return ref; }
   AnnotSubtype getType() const { return type; }
   PDFRectangle *getRect() const { return rect; }
   GooString *getContents() const { return contents; }
@@ -525,6 +538,12 @@ protected:
   void drawCircle(double cx, double cy, double r, GBool fill);
   void drawCircleTopLeft(double cx, double cy, double r);
   void drawCircleBottomRight(double cx, double cy, double r);
+
+  // Updates the field key of the annotation dictionary
+  // and sets M to the current time
+  void update(const char *key, Object *value);
+
+  Object annotObj;
   
   // required data
   AnnotSubtype type;                // Annotation type
@@ -562,16 +581,21 @@ protected:
 
 class AnnotPopup: public Annot {
 public:
+  AnnotPopup(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotPopup(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotPopup();
 
-  Dict *getParent() const { return parent; }
+  Object *getParent(Object *obj) { return parent.fetch (xref, obj); }
+  Object *getParentNF(Object *obj) { return &parent; }
+  void setParent(Object *parentA);
+  void setParent(Annot *parentA);
   GBool getOpen() const { return open; }
+  void setOpen(GBool openA);
 
 protected:
   void initialize(XRef *xrefA, Dict *dict, Catalog *catalog);
 
-  Dict *parent; // Parent
+  Object parent; // Parent
   GBool open;   // Open
 };
 
@@ -586,6 +610,7 @@ public:
     replyTypeGroup  // Group
   };
 
+  AnnotMarkup(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotMarkup(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   virtual ~AnnotMarkup();
 
@@ -599,6 +624,10 @@ public:
   GooString *getSubject() const { return subject; }
   AnnotMarkupReplyType getReplyTo() const { return replyTo; }
   AnnotExternalDataType getExData() const { return exData; }
+
+  // The annotation takes the ownership of new_popup
+  void setPopup(AnnotPopup *new_popup);
+  void setLabel(GooString *new_label);
 
 protected:
   GooString *label;             // T            (Default autor)
@@ -637,6 +666,7 @@ public:
     stateNone       // None
   };
 
+  AnnotText(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotText(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotText();
 
@@ -645,8 +675,8 @@ public:
   GooString *getIcon() const { return icon; }
   AnnotTextState getState() const { return state; }
 
-  // setters
-  void setModified(GooString *date);
+  void setOpen(GBool openA);
+  void setIcon(GooString *new_icon);
 
 private:
 
@@ -686,6 +716,7 @@ class AnnotMovie: public Annot {
     int units_per_second; // 0 : defined by movie
   };
 
+  AnnotMovie(XRef *xrefA, PDFRectangle *rect, Movie *movieA, Catalog *catalog);
   AnnotMovie(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotMovie();
 
@@ -759,6 +790,7 @@ class AnnotMovie: public Annot {
 class AnnotScreen: public Annot {
  public:
 
+  AnnotScreen(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotScreen(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotScreen();
 
@@ -794,6 +826,7 @@ public:
     effectPush      // P
   };
 
+  AnnotLink(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotLink(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   virtual ~AnnotLink();
 
@@ -837,6 +870,7 @@ public:
     intentFreeTextTypeWriter  // FreeTextTypeWriter
   };
 
+  AnnotFreeText(XRef *xrefA, PDFRectangle *rect, GooString *da, Catalog *catalog);
   AnnotFreeText(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotFreeText();
 
@@ -888,6 +922,7 @@ public:
     captionPosTop     // Top
   };
 
+  AnnotLine(XRef *xrefA, PDFRectangle *rect, PDFRectangle *lRect, Catalog *catalog);
   AnnotLine(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotLine();
 
@@ -940,6 +975,8 @@ protected:
 class AnnotTextMarkup: public AnnotMarkup {
 public:
 
+  AnnotTextMarkup(XRef *xrefA, PDFRectangle *rect, AnnotSubtype subType,
+		  AnnotQuadrilaterals *quadPoints, Catalog *catalog);
   AnnotTextMarkup(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   virtual ~AnnotTextMarkup();
 
@@ -959,6 +996,7 @@ protected:
 class AnnotStamp: public AnnotMarkup {
 public:
 
+  AnnotStamp(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotStamp(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotStamp();
 
@@ -979,6 +1017,7 @@ private:
 class AnnotGeometry: public AnnotMarkup {
 public:
 
+  AnnotGeometry(XRef *xrefA, PDFRectangle *rect, AnnotSubtype subType, Catalog *catalog);
   AnnotGeometry(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotGeometry();
 
@@ -1009,6 +1048,8 @@ public:
     polygonDimension   // PolygonDimension
   };
 
+  AnnotPolygon(XRef *xrefA, PDFRectangle *rect, AnnotSubtype subType,
+	       AnnotPath *path, Catalog *catalog);
   AnnotPolygon(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotPolygon();
 
@@ -1050,6 +1091,7 @@ public:
     symbolP         // P
   };
 
+  AnnotCaret(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   AnnotCaret(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotCaret();
 
@@ -1072,6 +1114,7 @@ private:
 class AnnotInk: public AnnotMarkup {
 public:
 
+  AnnotInk(XRef *xrefA, PDFRectangle *rect, AnnotPath **paths, int n_paths, Catalog *catalog);
   AnnotInk(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotInk();
 
@@ -1099,6 +1142,7 @@ private:
 class AnnotFileAttachment: public AnnotMarkup {
 public:
 
+  AnnotFileAttachment(XRef *xrefA, PDFRectangle *rect, GooString *filename, Catalog *catalog);
   AnnotFileAttachment(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotFileAttachment();
 
@@ -1124,6 +1168,7 @@ private:
 class AnnotSound: public AnnotMarkup {
 public:
 
+  AnnotSound(XRef *xrefA, PDFRectangle *rect, Sound *soundA, Catalog *catalog);
   AnnotSound(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~AnnotSound();
 
@@ -1244,6 +1289,7 @@ class Annot3D: public Annot {
   };
 public:
 
+  Annot3D(XRef *xrefA, PDFRectangle *rect, Catalog *catalog);
   Annot3D(XRef *xrefA, Dict *dict, Catalog *catalog, Object *obj);
   ~Annot3D();
 
