@@ -280,7 +280,7 @@ int
 miktexwrite18 (/*[in]*/ const TEXMFCHAR * lpszCommand)
 {
   int exitCode;
-  return (THEAPP.Write18(lpszCommand, exitCode));
+  return (THEAPP.Write18(lpszCommand, exitCode).Get());
 }
 
 /* _________________________________________________________________________
