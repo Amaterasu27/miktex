@@ -178,6 +178,7 @@ set(etex_miktex_post_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-post.ch
 set(etex_miktex_pre_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-pre.ch")
 set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")
+set(tex_miktex_hash_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hash.ch")
 set(tex_miktex_hyph_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hyph.ch")
 set(tex_miktex_quiet_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-quiet.ch")
 set(tex_miktex_src_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-src.ch")

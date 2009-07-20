@@ -266,20 +266,6 @@ versions of the program.
   than |min_quarterword|}
 @z
 
-@x
-@d hash_size=2100 {maximum number of control sequences; it should be at most
-  about |(mem_max-mem_min)/10|}
-@y
-@d hash_size=110000 {maximum number of control sequences; it should be at most
-  about |(mem_max-mem_min)/10|}
-@z
-
-@x
-@d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
-@y
-@d hash_prime=93503 {a prime number equal to about 85\pct! of |hash_size|}
-@z
-
 % _____________________________________________________________________________
 %
 % [2.24]
@@ -2199,17 +2185,6 @@ for j:=k to k+x-1 do undump_wd(eqtb[j]);
 @y
 undump_things(eqtb[k], x);
 @z
-
-% _____________________________________________________________________________
-%
-% [50.1319]
-% _____________________________________________________________________________
-
-%@x
-for p:=hash_used+1 to undefined_control_sequence-1 do undump_hh(hash[p]);
-%@y
-c4p_mget(fmt_file, c4p_ptr(hash[hash_used+1]), (undefined_control_sequence-1)-(hash_used+1)+1);
-%@z
 
 % _____________________________________________________________________________
 %

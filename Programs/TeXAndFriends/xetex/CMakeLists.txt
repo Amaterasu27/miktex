@@ -74,6 +74,7 @@ set(miktex_tex_change_files
   ${mltex_miktex_ch}
   ${enctex_miktex_ch}
   ${tex_miktex_ch}
+  ${tex_miktex_hash_ch}
   ${tex_miktex_hyph_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
