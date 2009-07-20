@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2008 Christian Schenk
+%% Copyright (C) 2007-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -193,6 +193,17 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @y
 @d etex_int_base=miktex_int_pars {base for \eTeX's integer parameters}
+@z
+
+% _____________________________________________________________________________
+%
+% [18.270]
+% _____________________________________________________________________________
+
+@x
+@!j:0..buf_size; {index into |buffer|}
+@y
+@!j:0..sup_buf_size; {index into |buffer|}
 @z
 
 % _____________________________________________________________________________
@@ -515,7 +526,19 @@ if not eof(fmt_file) then goto bad_fmt
 
 % _____________________________________________________________________________
 %
-% [53.1369]
+% [53.1377]
+% _____________________________________________________________________________
+
+@x
+@p procedure flush_str(s: str_number); {flush a string if possible}
+@y
+@<Declare procedures needed in |do_ext...@>=
+procedure flush_str(s: str_number); {flush a string if possible}
+@z
+
+% _____________________________________________________________________________
+%
+% [53.1380]
 % _____________________________________________________________________________
 
 @x
@@ -533,11 +556,12 @@ if not eof(fmt_file) then goto bad_fmt
       if name_of_file then libc_free(name_of_file);
       name_of_file := xmalloc(cur_length * 3 + 2);
       k := 0;
-      for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
+      for d:=0 to cur_length-1 do
+        append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(conststringcast(name_of_file+1));
+      runsystem_ret := runsystem(conststringcast(name_of_file+1));
 @y
-      miktex_write18(miktex_get_string_at(str_start_macro(str_ptr)));
+      runsystem_ret := runsystem(miktex_get_string_at(str_start_macro(str_ptr)));
 @z
 
 % _____________________________________________________________________________
