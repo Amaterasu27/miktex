@@ -127,6 +127,7 @@ add_custom_command(
 
 set(xetex_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-latex3.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)

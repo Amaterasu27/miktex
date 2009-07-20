@@ -1,7 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2006 by SIL International
- written by Jonathan Kew
+ copyright (c) 1994-2008 by SIL International
+ copyright (c) 2009 by Jonathan Kew
+
+ Written by Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining  
 a copy of this software and associated documentation files (the  
@@ -17,15 +19,15 @@ included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
-NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of SIL International  
+Except as contained in this notice, the name of the copyright holders
 shall not be used in advertising or otherwise to promote the sale,  
 use or other dealings in this Software without prior written  
-authorization from SIL International.
+authorization from the copyright holders.
 \****************************************************************************/
 
 /* additional declarations we want to slip in for xetex */
@@ -38,6 +40,11 @@ authorization from SIL International.
 #endif
 #define getnativechar(p,i)		native_node_text(p)[i]
 #define setnativechar(p,i,v)	native_node_text(p)[i] = v
+
+#define getnativeusv(p,i) \
+  ((native_node_text(p)[i] >= 0xd800 && native_node_text(p)[i] < 0xdc00) ? \
+    0x10000 + (native_node_text(p)[i] - 0xd800) * 0x400 + native_node_text(p)[(i)+1] - 0xdc00 : \
+    native_node_text(p)[i])
 
 /* p is native_word node; g is XeTeX_use_glyph_metrics flag */
 #if defined(MIKTEX)

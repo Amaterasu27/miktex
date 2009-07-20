@@ -1,32 +1,34 @@
-******************************************************************************
+/****************************************************************************\
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
- written by Jonathan Kew
+ copyright (c) 2009 by Jonathan Kew
 
-Permission is hereby granted, free of charge, to any person obtaining  
-a copy of this software and associated documentation files (the  
-"Software"), to deal in the Software without restriction, including  
-without limitation the rights to use, copy, modify, merge, publish,  
-distribute, sublicense, and/or sell copies of the Software, and to  
-permit persons to whom the Software is furnished to do so, subject to  
+ Written by Jonathan Kew
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
 the following conditions:
 
-The above copyright notice and this permission notice shall be  
+The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
-NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of SIL International  
-shall not be used in advertising or otherwise to promote the sale,  
-use or other dealings in this Software without prior written  
-authorization from SIL International.
-******************************************************************************
+Except as contained in this notice, the name of the copyright holders
+shall not be used in advertising or otherwise to promote the sale,
+use or other dealings in this Software without prior written
+authorization from the copyright holders.
+\****************************************************************************/
 
 @x
 \def\section{\mathhexbox278}
@@ -64,8 +66,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".999"
-@d XeTeX_version_string=='-0.999.7' {current \XeTeX\ version}
+@d XeTeX_revision==".9995"
+@d XeTeX_version_string=='-0.9995.0' {current \XeTeX\ version}
 @z
 
 @x
@@ -81,7 +83,7 @@ authorization from SIL International.
 @y
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
-@d XeTeX_banner_k=='This is XeTeXk, Version 3.1415926',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner_k==XeTeX_banner
 @#
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k
@@ -129,12 +131,15 @@ authorization from SIL International.
 @d hyph_prime=607 {another prime for hashing \.{\\hyphenation} exceptions;
                 if you change this, you should also change |iinf_hyphen_size|.}
 
+{NB: |biggest_char| here refers to UTF16 codepoints that we store in strings, etc;
+ actual character codes can exceed this range, up to |biggest_usv|.}
 @d biggest_char=65535 {the largest allowed character number;
    must be |<=max_quarterword|}
 @d biggest_usv=@"10FFFF {the largest Unicode Scalar Value}
 @d too_big_char=65536 {|biggest_char+1|}
 @d special_char=65537 {|biggest_char+2|}
 @d number_chars=65536 {|biggest_char+1|}
+@d too_big_usv=@"110000
 @d number_usvs=@"110000
 @d biggest_reg=255 {the largest allowed register number;
    must be |<=max_quarterword|}
@@ -455,8 +460,23 @@ incr(str_ptr); str_start_macro(str_ptr):=pool_ptr;
 
 @x
 @d flush_string==begin decr(str_ptr); pool_ptr:=str_start[str_ptr];
+  end
 @y
 @d flush_string==begin decr(str_ptr); pool_ptr:=str_start_macro(str_ptr);
+  end
+
+@p procedure append_str(@!s:str_number); { append an existing string to the current string }
+var i: integer;
+    j: pool_pointer;
+begin
+  i:=length(s);
+  str_room(i);
+  j:=str_start_macro(s);
+  while (i > 0) do begin
+    append_char(str_pool[j]);
+    incr(j); decr(i);
+    end;
+end;
 @z
 
 @x
@@ -633,10 +653,14 @@ done: if a<>@$ then
 c:=true;
 end
 @y
-@ @<Read the other strings...@>=
-if init_pool(pool_size-string_vacancies) = 0 then
-  get_strings_started:=false;
-get_strings_started:=true;
+@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
+  get_strings_started:=false; return;
+  end
+@<Read the other strings...@>=
+if init_pool(pool_size-string_vacancies) = 0 then begin
+  bad_pool('! You have to increase POOLSIZE.');
+end else
+  get_strings_started := true;
 @z
 
 @x
@@ -1754,7 +1778,7 @@ primitive("XeTeXradical",radical,1);@/
 @x
 primitive("relax",relax,256); {cf.\ |scan_file_name|}
 @y
-primitive("relax",relax,too_big_char); {cf.\ |scan_file_name|}
+primitive("relax",relax,too_big_usv); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -2047,7 +2071,7 @@ declared at this point.
 @x
 primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @y
-primitive("par",par_end,too_big_char); {cf.\ |scan_file_name|}
+primitive("par",par_end,too_big_usv); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -2369,7 +2393,7 @@ if cur_cs=0 then cur_tok:=(cur_cmd*max_char_val)+cur_chr
 @x
   begin eq_define(cur_cs,relax,256); {N.B.: The |save_stack| might change}
 @y
-  begin eq_define(cur_cs,relax,too_big_char);
+  begin eq_define(cur_cs,relax,too_big_usv);
         {N.B.: The |save_stack| might change}
 @z
 
@@ -2549,8 +2573,66 @@ else if m<math_code_base then scanned_result(equiv(m+cur_val) mod @"10000)(int_v
 @#
 @d XeTeX_int=eTeX_int+8 {first of \XeTeX\ codes for integers}
 @#
-@d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
- {changed for \XeTeX\ to make room for \XeTeX\ integers}
+@d XeTeX_version_code=XeTeX_int {code for \.{\\XeTeXversion}}
+
+{ these are also in xetexmac.c and must correspond! }
+@d XeTeX_count_glyphs_code=XeTeX_int+1
+
+@d XeTeX_count_variations_code=XeTeX_int+2
+@d XeTeX_variation_code=XeTeX_int+3
+@d XeTeX_find_variation_by_name_code=XeTeX_int+4
+@d XeTeX_variation_min_code=XeTeX_int+5
+@d XeTeX_variation_max_code=XeTeX_int+6
+@d XeTeX_variation_default_code=XeTeX_int+7
+
+@d XeTeX_count_features_code=XeTeX_int+8
+@d XeTeX_feature_code_code=XeTeX_int+9
+@d XeTeX_find_feature_by_name_code=XeTeX_int+10
+@d XeTeX_is_exclusive_feature_code=XeTeX_int+11
+@d XeTeX_count_selectors_code=XeTeX_int+12
+@d XeTeX_selector_code_code=XeTeX_int+13
+@d XeTeX_find_selector_by_name_code=XeTeX_int+14
+@d XeTeX_is_default_selector_code=XeTeX_int+15
+
+@d XeTeX_OT_count_scripts_code=XeTeX_int+16
+@d XeTeX_OT_count_languages_code=XeTeX_int+17
+@d XeTeX_OT_count_features_code=XeTeX_int+18
+@d XeTeX_OT_script_code=XeTeX_int+19
+@d XeTeX_OT_language_code=XeTeX_int+20
+@d XeTeX_OT_feature_code=XeTeX_int+21
+
+@d XeTeX_map_char_to_glyph_code=XeTeX_int+22
+@d XeTeX_glyph_index_code=XeTeX_int+23
+@d XeTeX_font_type_code=XeTeX_int+24
+
+@d XeTeX_first_char_code=XeTeX_int+25
+@d XeTeX_last_char_code=XeTeX_int+26
+
+@d pdf_last_x_pos_code        = XeTeX_int+27
+@d pdf_last_y_pos_code        = XeTeX_int+28
+
+@d XeTeX_pdf_page_count_code  = XeTeX_int+29
+
+@#
+@d XeTeX_dim=XeTeX_int+30 {first of \XeTeX\ codes for dimensions}
+
+@d XeTeX_glyph_bounds_code = XeTeX_dim
+
+@#
+@d eTeX_dim=XeTeX_dim+1 {first of \eTeX\ codes for dimensions}
+ {changed for \XeTeX\ to make room for \XeTeX\ integers and dimens}
+@z
+
+@x
+@<Fetch an item in the current node...@>=
+if m>=input_line_no_code then
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=eTeX_dim then
+@y
+@<Fetch an item in the current node...@>=
+if m>=input_line_no_code then
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=XeTeX_dim then
 @z
 
 @x
@@ -2812,7 +2894,7 @@ if (cur_cmd>active_char)or(cur_chr>255) then {not a character}
   begin m:=relax; n:=256;
 @y
 if (cur_cmd>active_char)or(cur_chr>biggest_usv) then {not a character}
-  begin m:=relax; n:=too_big_char;
+  begin m:=relax; n:=too_big_usv;
 @z
 
 @x
@@ -2820,7 +2902,7 @@ if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=256;
 @y
 if (cur_cmd>active_char)or(cur_chr>biggest_usv) then
-  begin cur_cmd:=relax; cur_chr:=too_big_char;
+  begin cur_cmd:=relax; cur_chr:=too_big_usv;
 @z
 
 @x
@@ -4452,7 +4534,7 @@ if is_ot_font(g) then begin
   free_node(b, native_size(b));
   f:=g; c:=x; w:=0; n:=0;
   repeat
-    y:=get_ot_math_variant(g, x, n, address_of(u), 0);
+    y:=get_ot_math_variant(g, x, n, addressof(u), 0);
     if u>w then begin
       c:=y; w:=u;
       if u>=v then goto found;
@@ -4657,7 +4739,7 @@ if x<>null then begin
   c:=native_glyph(p);
   a:=0;
   repeat
-    g:=get_ot_math_variant(f, c, a, address_of(w2), 1);
+    g:=get_ot_math_variant(f, c, a, addressof(w2), 1);
     if (w2>0) and (w2<=wa) then begin
       native_glyph(p):=g;
       set_native_glyph_metrics(p, 1);
@@ -4788,7 +4870,7 @@ if math_type(nucleus(q))=math_char then
         c:=native_glyph(p);
         n:=0;
         repeat
-          g:=get_ot_math_variant(cur_f, c, n, address_of(h2), 0);
+          g:=get_ot_math_variant(cur_f, c, n, addressof(h2), 0);
           if h2>0 then native_glyph(p):=g;
           incr(n);
         until (h2<0) or (h2>=h1);
@@ -5032,13 +5114,15 @@ ligature_node: begin f:=font(lig_char(cur_p));
 @x
 @!hc:array[0..65] of 0..256; {word to be hyphenated}
 @y
-@!hc:array[0..65] of 0..too_big_char; {word to be hyphenated}
+@!hc:array[0..66] of 0..number_usvs; {word to be hyphenated}
+{ note that element 0 needs to be a full UnicodeScalar, even though we
+  basically work in utf16 }
 @z
 
 @x
 @!hu:array[0..63] of 0..256; {like |hc|, before conversion to lowercase}
 @y
-@!hu:array[0..63] of 0..too_big_char;
+@!hu:array[0..64] of 0..too_big_char;
      {like |hc|, before conversion to lowercase}
 @z
 
@@ -5062,7 +5146,7 @@ max_hyph_char:=too_big_lang;
 @x
 @!c:0..255; {character being considered for hyphenation}
 @y
-@!c:ASCII_code; {character being considered for hyphenation}
+@!c:UnicodeScalar; {character being considered for hyphenation}
 @z
 
 @x
@@ -5099,7 +5183,7 @@ done6:
 hn := 0;
 restart:
 for l := 0 to native_length(ha)-1 do begin
-  c := get_native_char(ha, l);
+  c := get_native_usv(ha, l);
   set_lc_code(c);
   if (hc[0] = 0) then begin
     if (hn > 0) then begin
@@ -5118,7 +5202,19 @@ for l := 0 to native_length(ha)-1 do begin
     goto done3
   else begin
     { found a letter that is part of a potentially hyphenatable sequence }
-    incr(hn); hu[hn] := c; hc[hn] := hc[0]; hyf_bchar := non_char;
+    incr(hn);
+    if c<@"10000 then begin
+      hu[hn] := c; hc[hn] := hc[0];
+      end
+    else begin
+      hu[hn] := (c - @"10000) div @"400 + @"D800;
+      hc[hn] := (hc[0] - @"10000) div @"400 + @"D800;
+      incr(hn);
+      hu[hn] := c mod @"400 + @"DC00;
+      hc[hn] := hc[0] mod @"400 + @"DC00;
+      incr(l);
+      end;
+    hyf_bchar := non_char;
   end
 end;
 
@@ -5149,12 +5245,13 @@ first letter.
       if subtype(s) = native_word_node then begin
         { we only consider the node if it contains at least one letter, otherwise we'll skip it }
         for l:=0 to native_length(s) - 1 do begin
-          c := get_native_char(s, l);
+          c := get_native_usv(s, l);
           if lc_code(c) <> 0 then begin
             hf := native_font(s);
             prev_s := s;
             goto done2;
-          end
+          end;
+          if c>=@"10000 then incr(l);
         end
       end;
       @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
@@ -5264,6 +5361,12 @@ flush_node_list(ha);
 @z
 
 @x
+@!c:ASCII_code; {character temporarily replaced by a hyphen}
+@y
+@!c:UnicodeScalar; {character temporarily replaced by a hyphen}
+@z
+
+@x
   begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=256;
 @y
   begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=max_hyph_char;
@@ -5297,6 +5400,22 @@ hc[0]:=0; hc[hn+1]:=0; hc[hn+2]:=max_hyph_char; {insert delimiters}
   else if language>255 then cur_lang:=0
 @y
   else if language>biggest_lang then cur_lang:=0
+@z
+
+@x
+  else if n<63 then
+    begin incr(n); hc[n]:=hc[0];
+    end;
+@y
+  else if n<63 then
+    begin incr(n);
+      if hc[0]<@"10000 then hc[n]:=hc[0]
+      else begin
+        hc[n] := (hc[0] - @"10000) div @"400 + @"D800;
+        incr(n);
+        hc[n] := hc[0] mod @"400 + @"DC00;
+        end;
+    end;
 @z
 
 @x
@@ -5867,7 +5986,7 @@ begin if tail<>head then
 @y
   if is_native_font(f) then
     begin a:=width(p);
-    if a=0 then get_native_char_sidebearings(f, cur_val, address_of(lsb), address_of(rsb))
+    if a=0 then get_native_char_sidebearings(f, cur_val, addressof(lsb), addressof(rsb))
     end
   else a:=char_width(f)(char_info(f)(character(p)));@/
 @z
@@ -5887,7 +6006,7 @@ w:=char_width(f)(i); h:=char_height(f)(height_depth(i));
 @y
 if is_native_font(f) then begin
   w:=width(q);
-  get_native_char_height_depth(f, cur_val, address_of(h), address_of(delta))
+  get_native_char_height_depth(f, cur_val, addressof(h), addressof(delta))
     {using delta as scratch space for the unneeded depth value}
 end else begin
   i:=char_info(f)(character(q));
@@ -6381,7 +6500,7 @@ XeTeX_math_given: begin print_esc("XeTeXmathchar"); print_hex(chr_code);
 @x
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @y
-else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_char);
+else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_usv);
 @z
 
 @x
@@ -6582,10 +6701,38 @@ def_family: begin p:=cur_chr; scan_math_fam_int; p:=p+cur_val;
 @z
 
 @x
+for f:=font_base+1 to font_ptr do
   if str_eq_str(font_name[f],cur_name)and str_eq_str(font_area[f],cur_area) then
+    begin if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+    end
 @y
+for f:=font_base+1 to font_ptr do begin
   if str_eq_str(font_name[f],cur_name) and
     (((cur_area = "") and is_native_font(f)) or str_eq_str(font_area[f],cur_area)) then
+    begin if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+    end;
+  { could be a native font whose "name" ended up partly in area or extension }
+  append_str(cur_area); append_str(cur_name); append_str(cur_ext);
+  if str_eq_str(font_name[f], make_string) then begin
+    flush_string;
+    if is_native_font(f) then
+      begin if s>0 then
+        begin if s=font_size[f] then goto common_ending;
+        end
+      else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+        goto common_ending;
+      end
+    end
+  else flush_string;
+  end
 @z
 
 @x
@@ -7496,22 +7643,23 @@ token_show(def_ref); print_ln;
 @z
 
 @x
-      begin str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
-      if (str_pool[str_start[str_ptr]+d]=null_code)
+        str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
+        if (str_pool[str_start[str_ptr]+d]=null_code)
 @y
-      begin
       if (str_pool[str_start_macro(str_ptr)+d]=null_code)
 @z
 
-@x
-      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
+@x convert from UTF-16 to UTF-8 for system(3).
+      runsystem_ret := runsystem(conststringcast(addressof(
+                                              str_pool[str_start[str_ptr]])));
 @y
       if name_of_file then libc_free(name_of_file);
       name_of_file := xmalloc(cur_length * 3 + 2);
       k := 0;
-      for d:=0 to cur_length-1 do append_to_name(str_pool[str_start_macro(str_ptr)+d]);
+      for d:=0 to cur_length-1 do
+        append_to_name(str_pool[str_start_macro(str_ptr)+d]);
       name_of_file[k+1] := 0;
-      system(conststringcast(name_of_file+1));
+      runsystem_ret := runsystem(conststringcast(name_of_file+1));
 @z
 
 @x
@@ -7610,22 +7758,22 @@ end
 
 @d update_corners==
 	for i := 0 to 3 do
-		transform_point(address_of(corners[i]), address_of(t2))
+		transform_point(addressof(corners[i]), addressof(t2))
 
 @d do_size_requests==begin
 	{ calculate current width and height }
 	calc_min_and_max;
 	if x_size_req = 0.0 then begin
-		make_scale(address_of(t2), y_size_req / (ymax - ymin), y_size_req / (ymax - ymin));
+		make_scale(addressof(t2), y_size_req / (ymax - ymin), y_size_req / (ymax - ymin));
 	end else if y_size_req = 0.0 then begin
-		make_scale(address_of(t2), x_size_req / (xmax - xmin), x_size_req / (xmax - xmin));
+		make_scale(addressof(t2), x_size_req / (xmax - xmin), x_size_req / (xmax - xmin));
 	end else begin
-		make_scale(address_of(t2), x_size_req / (xmax - xmin), y_size_req / (ymax - ymin));
+		make_scale(addressof(t2), x_size_req / (xmax - xmin), y_size_req / (ymax - ymin));
 	end;
 	update_corners;
 	x_size_req := 0.0;
 	y_size_req := 0.0;
-	transform_concat(address_of(t), address_of(t2));
+	transform_concat(addressof(t), addressof(t2));
 end
 
 @<Declare procedures needed in |do_extension|@>=
@@ -7663,7 +7811,7 @@ begin
 	end;
 
 	{ access the picture file and check its size }
-	result := find_pic_file(address_of(pic_path), address_of(bounds), pdf_box_type, page);
+	result := find_pic_file(addressof(pic_path), addressof(bounds), pdf_box_type, page);
 
 	setPoint(corners[0], xField(bounds), yField(bounds));
 	setPoint(corners[1], xField(corners[0]), yField(bounds) + htField(bounds));
@@ -7674,30 +7822,30 @@ begin
 	y_size_req := 0.0;
 
 	{ look for any scaling requests for this picture }
-	make_identity(address_of(t));
+	make_identity(addressof(t));
 
 	check_keywords := true;
 	while check_keywords do begin
 		if scan_keyword("scaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), float(cur_val) / 1000.0, float(cur_val) / 1000.0);
+				make_scale(addressof(t2), float(cur_val) / 1000.0, float(cur_val) / 1000.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("xscaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), float(cur_val) / 1000.0, 1.0);
+				make_scale(addressof(t2), float(cur_val) / 1000.0, 1.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("yscaled") then begin
 			scan_int;
 			if (x_size_req = 0.0) and (y_size_req = 0.0) then begin
-				make_scale(address_of(t2), 1.0, float(cur_val) / 1000.0);
+				make_scale(addressof(t2), 1.0, float(cur_val) / 1000.0);
 				update_corners;
-				transform_concat(address_of(t), address_of(t2));
+				transform_concat(addressof(t), addressof(t2));
 			end
 		end else if scan_keyword("width") then begin
 			scan_normal_dimen;
@@ -7726,14 +7874,14 @@ begin
 		end else if scan_keyword("rotated") then begin
 			scan_decimal;
 			if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
-			make_rotation(address_of(t2), Fix2X(cur_val) * 3.141592653589793 / 180.0);
+			make_rotation(addressof(t2), Fix2X(cur_val) * 3.141592653589793 / 180.0);
 			update_corners;
 			calc_min_and_max;
 			setPoint(corners[0], xmin, ymin);
 			setPoint(corners[1], xmin, ymax);
 			setPoint(corners[2], xmax, ymax);
 			setPoint(corners[3], xmax, ymin);
-			transform_concat(address_of(t), address_of(t2));
+			transform_concat(addressof(t), addressof(t2));
 		end else
 			check_keywords := false;
 	end;
@@ -7741,8 +7889,8 @@ begin
 	if (x_size_req <> 0.0) or (y_size_req <> 0.0) then do_size_requests;
 
 	calc_min_and_max;
-	make_translation(address_of(t2), -xmin * 72 / 72.27, -ymin * 72 / 72.27);
-	transform_concat(address_of(t), address_of(t2));
+	make_translation(addressof(t2), -xmin * 72 / 72.27, -ymin * 72 / 72.27);
+	transform_concat(addressof(t), addressof(t2));
 
 	if result = 0 then begin
 
@@ -7765,7 +7913,7 @@ begin
 		pic_transform5(tail) := X2Fix(txField(t));
 		pic_transform6(tail) := X2Fix(tyField(t));
 
-		memcpy(address_of(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
+		memcpy(addressof(mem[tail + pic_node_size]), pic_path, strlen(pic_path));
 		libc_free(pic_path);
 
 	end else begin
@@ -7792,7 +7940,7 @@ begin
 	scan_and_pack_name;
 
 	{ convert it to "mode" and "encoding" values, and apply to the current input file }
-	i := get_encoding_mode_and_info(address_of(j));
+	i := get_encoding_mode_and_info(addressof(j));
 	if i = XeTeX_input_mode_auto then begin
 	  print_err("Encoding mode `auto' is not valid for \XeTeXinputencoding.");
       help2("You can't use `auto' encoding here, only for \XeTeXdefaultencoding. ")
@@ -7807,7 +7955,7 @@ begin
 	scan_and_pack_name;
 
 	{ convert it to "mode" and "encoding" values, and store them as defaults for new input files }
-	XeTeX_default_input_mode := get_encoding_mode_and_info(address_of(j));
+	XeTeX_default_input_mode := get_encoding_mode_and_info(addressof(j));
 	XeTeX_default_input_encoding := j;
 end
 
@@ -7834,48 +7982,6 @@ end
 @d eTeX_version_code=eTeX_int {code for \.{\\eTeXversion}}
 @y
 @d eTeX_version_code=eTeX_int {code for \.{\\eTeXversion}}
-
-@d XeTeX_version_code=XeTeX_int {code for \.{\\XeTeXversion}}
-
-{ these are also in xetexmac.c and must correspond! }
-@d XeTeX_count_glyphs_code=XeTeX_int+1
-
-@d XeTeX_count_variations_code=XeTeX_int+2
-@d XeTeX_variation_code=XeTeX_int+3
-@d XeTeX_find_variation_by_name_code=XeTeX_int+4
-@d XeTeX_variation_min_code=XeTeX_int+5
-@d XeTeX_variation_max_code=XeTeX_int+6
-@d XeTeX_variation_default_code=XeTeX_int+7
-
-@d XeTeX_count_features_code=XeTeX_int+8
-@d XeTeX_feature_code_code=XeTeX_int+9
-@d XeTeX_find_feature_by_name_code=XeTeX_int+10
-@d XeTeX_is_exclusive_feature_code=XeTeX_int+11
-@d XeTeX_count_selectors_code=XeTeX_int+12
-@d XeTeX_selector_code_code=XeTeX_int+13
-@d XeTeX_find_selector_by_name_code=XeTeX_int+14
-@d XeTeX_is_default_selector_code=XeTeX_int+15
-
-@d XeTeX_OT_count_scripts_code=XeTeX_int+16
-@d XeTeX_OT_count_languages_code=XeTeX_int+17
-@d XeTeX_OT_count_features_code=XeTeX_int+18
-@d XeTeX_OT_script_code=XeTeX_int+19
-@d XeTeX_OT_language_code=XeTeX_int+20
-@d XeTeX_OT_feature_code=XeTeX_int+21
-
-@d XeTeX_map_char_to_glyph_code=XeTeX_int+22
-@d XeTeX_glyph_index_code=XeTeX_int+23
-@d XeTeX_font_type_code=XeTeX_int+24
-
-@d XeTeX_first_char_code=XeTeX_int+25
-@d XeTeX_last_char_code=XeTeX_int+26
-
-@d pdf_last_x_pos_code        = XeTeX_int+27
-@d pdf_last_y_pos_code        = XeTeX_int+28
-
-@d XeTeX_pdf_page_count_code  = XeTeX_int+29
-
-{ NB: must update |eTeX_dim| when items are added here! }
 @z
 
 @x
@@ -7919,6 +8025,7 @@ primitive("XeTeXOTfeaturetag",last_item,XeTeX_OT_feature_code);
 
 primitive("XeTeXcharglyph", last_item, XeTeX_map_char_to_glyph_code);
 primitive("XeTeXglyphindex", last_item, XeTeX_glyph_index_code);
+primitive("XeTeXglyphbounds", last_item, XeTeX_glyph_bounds_code);
 
 primitive("XeTeXglyphname",convert,XeTeX_glyph_name_code);
 
@@ -7966,6 +8073,7 @@ XeTeX_OT_feature_code: print_esc("XeTeXOTfeaturetag");
 
 XeTeX_map_char_to_glyph_code: print_esc("XeTeXcharglyph");
 XeTeX_glyph_index_code: print_esc("XeTeXglyphindex");
+XeTeX_glyph_bounds_code: print_esc("XeTeXglyphbounds");
 
 XeTeX_font_type_code: print_esc("XeTeXfonttype");
 
@@ -8235,6 +8343,25 @@ begin
   print("; not a native platform font");
   error;
 end;
+
+@ @<Cases for fetching a dimension value@>=
+XeTeX_glyph_bounds_code:
+  begin
+    if is_native_font(cur_font) then begin
+      scan_int; n:=cur_val; { which edge: 1=left, 2=top, 3=right, 4=bottom }
+      if (n < 1) or (n > 4) then begin
+        print_err("\\XeTeXglyphbounds requires an edge index from 1 to 4;");
+        print_nl("I don't know anything about edge "); print_int(n);
+        error;
+        cur_val:=0;
+      end else begin
+        scan_int; { glyph number }
+        cur_val:=get_glyph_bounds(cur_font, n, cur_val);
+      end
+    end else begin
+      not_native_font_error(last_item, m, cur_font); cur_val:=0
+    end
+  end;
 
 @ @<Cases of |convert| for |print_cmd_chr|@>=
 eTeX_revision_code: print_esc("eTeXrevision");
@@ -8648,7 +8775,7 @@ begin
 			str_room(1);
 			append_char(c);
 		end;
-		len := apply_mapping(font_mapping[f], address_of(str_pool[str_start_macro(str_ptr)]), cur_length);
+		len := apply_mapping(font_mapping[f], addressof(str_pool[str_start_macro(str_ptr)]), cur_length);
 		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
 
 		i := 0;
@@ -8838,11 +8965,11 @@ begin
 	font_size[font_ptr] := actual_size;
 
 	if (native_font_type_flag = aat_font_flag) then begin
-		atsu_get_font_metrics(font_engine, address_of(ascent), address_of(descent),
-								address_of(x_ht), address_of(cap_ht), address_of(font_slant))
+		atsu_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant))
 	end else begin
-		ot_get_font_metrics(font_engine, address_of(ascent), address_of(descent),
-								address_of(x_ht), address_of(cap_ht), address_of(font_slant));
+		ot_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant));
 	end;
 
 	height_base[font_ptr] := ascent;

@@ -600,11 +600,11 @@ tini@/
 % [53.1370]
 % _____________________________________________________________________________
 
-@x
+ @x
       miktex_write18(miktex_get_string_at(str_start[str_ptr]));
-@y
+ @y
       system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
-@z
+ @z
 
 % _____________________________________________________________________________
 %
