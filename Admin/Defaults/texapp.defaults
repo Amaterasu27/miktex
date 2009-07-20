@@ -17,5 +17,9 @@ font_max=5000
 ;; Words of font info for TeX (total size of all TFM files, approximately).
 font_mem_size=3000000
 
-;; prime number of hyphenation exceptions.
+;; Prime number of hyphenation exceptions.
 hyph_size=8191
+
+;; Extra space for the hash table of control sequences (which allows 10K
+;; names as distributed).
+hash_extra=50000

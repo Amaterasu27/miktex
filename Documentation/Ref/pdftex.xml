@@ -78,6 +78,7 @@ and &PNG; graphics formats.</para>
 &optionfontmemsize;
 &optionhalferrorline;
 &optionhaltonerror;
+&optionhashextra;
 &optionhelp;
 &optionincludedirectory;
 &optioninitialize;

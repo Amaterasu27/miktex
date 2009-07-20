@@ -132,6 +132,7 @@ character (usually <keycombo>
 &optionfontmemsize;
 &optionhalferrorline;
 &optionhaltonerror;
+&optionhashextra;
 &optionhelp;
 &optionincludedirectory;
 &optioninitialize;

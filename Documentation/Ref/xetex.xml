@@ -70,6 +70,7 @@ font weights.</para>
 &optionfontmemsize;
 &optionhalferrorline;
 &optionhaltonerror;
+&optionhashextra;
 &optionhelp;
 &optionincludedirectory;
 &optioninitialize;

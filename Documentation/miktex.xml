@@ -6,7 +6,7 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "3477">
+<!ENTITY revj2000 "3487">
 <!ENTITY month "July 2009">
 <!ENTITY date "July 09, 2009">
 
@@ -84,6 +84,7 @@
 <!ENTITY optionjobname SYSTEM "Options/jobname.xml">
 <!ENTITY optionjobtime SYSTEM "Options/jobtime.xml">
 <!ENTITY optionligtablesize SYSTEM "Options/ligtablesize.xml">
+<!ENTITY optionhashextra SYSTEM "Options/hashextra.xml">
 <!ENTITY optionmaxinopen SYSTEM "Options/maxinopen.xml">
 <!ENTITY optionmainmemory SYSTEM "Options/mainmemory.xml">
 <!ENTITY optionextramembot SYSTEM "Options/extramembot.xml">

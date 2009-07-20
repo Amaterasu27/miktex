@@ -59,6 +59,7 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
   param_save_size = -1;
   param_trie_op_size = -1;
   param_trie_size = -1;
+  param_hash_extra = -1;
 # define SYNCTEX_NO_OPTION INT_MAX
   synchronizationOptions = SYNCTEX_NO_OPTION;
 }
@@ -103,6 +104,7 @@ enum {
   OPT_ENABLE_WRITE18,
   OPT_FONT_MAX,
   OPT_FONT_MEM_SIZE,
+  OPT_HASH_EXTRA,
   OPT_MAX_IN_OPEN,
   OPT_MEM_BOT,
   OPT_NEST_SIZE,
@@ -135,6 +137,12 @@ Enable MLTeX extensions such as \\charsubdef."),
   AddOption (T_("enable-write18\0\
 Enable the \\write18{COMMAND} construct."),
 	     FIRST_OPTION_VAL + optBase + OPT_ENABLE_WRITE18);
+
+  AddOption (T_("hash-extra\0\
+Set hash_extra to N."),
+	     FIRST_OPTION_VAL + optBase + OPT_HASH_EXTRA,
+	     required_argument,
+	     "N");
 
   AddOption (T_("max-in-open\0\
 Set max_in_open to N."),
@@ -262,6 +270,9 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
     case OPT_FONT_MEM_SIZE:
       param_font_mem_size = atoi(lpszArg);
       break;
+    case OPT_HASH_EXTRA:
+      param_hash_extra = atoi(lpszArg);
+      break;
     case OPT_MAX_IN_OPEN:
       param_max_in_open = atoi(lpszArg);
       break;
@@ -383,7 +394,7 @@ TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
    TeXApp::Write18
    _________________________________________________________________________ */
 
-bool
+TeXApp::Write18Result
 TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
 		 /*[out]*/ int &		exitCode)
   const
@@ -391,9 +402,9 @@ TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
   MIKTEX_ASSERT_STRING (lpszCommand);
   if (! enableWrite18)
     {
-      return (false);
+      return (Write18Result::DisabledRestricted);
     }
   CharBuffer<char> buf (lpszCommand);
   Process::ExecuteSystemCommand (buf.Get(), &exitCode);
-  return (true);
+  return (Write18Result::Executed);
 }

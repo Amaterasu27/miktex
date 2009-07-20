@@ -340,6 +340,13 @@ miktexgetsynchronizationoptions ()
 
 inline
 bool
+restrictedshell ()
+{
+  return (false);
+}
+
+inline
+bool
 shellenabledp ()
 {
   return (miktexwrite18p());

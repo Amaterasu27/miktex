@@ -119,6 +119,7 @@ selector:=old_setting;
 
 function miktex_write18_p : boolean; forward;@t\2@>@/
 function shellenabledp : boolean; forward;@t\2@>@/
+function restrictedshell : boolean; forward;@t\2@>@/
 
 @ To be able to determine whether \.{\\write18} is enabled from within
 \TeX\ we also implement \.{\\eof18}.  We sort of cheat by having an

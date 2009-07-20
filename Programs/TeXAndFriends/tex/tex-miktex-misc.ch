@@ -104,6 +104,20 @@ versions of the program.
 % _____________________________________________________________________________
 
 @x
+@<Constants...@>=
+@y
+@d max_font_max=9000 {maximum number of internal fonts; this can be
+                      increased, but |hash_size+max_font_max|
+                      should not exceed 29000.}
+@d font_base=0 {smallest internal font number; must be
+                |>= min_quarterword|; do not change this without
+                modifying the dynamic definition of the font arrays.}
+
+@<Constants...@>=
+{placeholder}
+@z
+
+@x
 @!mem_max=30000; {greatest index in \TeX's internal |mem| array;
   must be strictly less than |max_halfword|;
   must be equal to |mem_top| in \.{INITEX}, otherwise |>=mem_top|}
@@ -259,11 +273,6 @@ versions of the program.
 @d font_base=0 {smallest internal font number; must not be less
   than |min_quarterword|}
 @y
-@d max_font_max=5000 {maximum number of internal fonts; this can be
-                      increased, but |hash_size+max_font_max|
-                      should not exceed 29000.}
-@d font_base=0 {smallest internal font number; must not be less
-  than |min_quarterword|}
 @z
 
 % _____________________________________________________________________________
@@ -2146,44 +2155,6 @@ undump_things(mem[p], lo_mem_max+1-p);
 for k:=hi_mem_min to mem_end do undump_wd(mem[k]);
 @y
 undump_things (mem[hi_mem_min], mem_end+1-hi_mem_min);
-@z
-
-% _____________________________________________________________________________
-%
-% [50.1315]
-% _____________________________________________________________________________
-
-@x
-while k<l do
-  begin dump_wd(eqtb[k]); incr(k);
-  end;
-@y
-dump_things(eqtb[k], l-k);
-@z
-
-% _____________________________________________________________________________
-%
-% [50.1316]
-% _____________________________________________________________________________
-
-@x [50.1316]
-while k<l do
-  begin dump_wd(eqtb[k]); incr(k);
-  end;
-@y
-dump_things(eqtb[k], l-k);
-@z
-
-
-% _____________________________________________________________________________
-%
-% [50.1317]
-% _____________________________________________________________________________
-
-@x
-for j:=k to k+x-1 do undump_wd(eqtb[j]);
-@y
-undump_things(eqtb[k], x);
 @z
 
 % _____________________________________________________________________________

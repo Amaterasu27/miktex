@@ -336,7 +336,14 @@ public:
 	      triesize,
 	      trie_size,
 	      texapp::texapp::trie_size());
-   
+
+#if ! defined(MIKTEX_OMEGA)
+    GETPARAM(param_hash_extra,
+	     hashextra,
+	     hash_extra,
+	     texapp::texapp::hash_extra());
+#endif
+
     Allocate ("sourcefilenamestack",
 	      THEDATA(sourcefilenamestack),
 	      THEDATA(maxinopen));
@@ -472,6 +479,13 @@ public:
     Allocate ("widthbase",
 	      THEDATA(widthbase),
 	      THEDATA(fontmax) - constfontbase);
+
+    if (IsInitProgram())
+    {
+      // memory allocated in tex-miktex-hash.ch
+      THEDATA(yhash) = 0;
+      THEDATA(zeqtb) = 0;
+    }
 
     if (IsInitProgram() || ! AmITeXCompiler() || AmI("omega"))
       {
@@ -766,7 +780,7 @@ public:
 
 public:
 
-  MIKTEXMFTHISAPI(bool)
+  MIKTEXMFTHISAPI(Write18Result)
   Write18 (/*[in]*/ const wchar_t *	lpszCommand,
 	   /*[out]*/ int &		exitCode)
     const;
@@ -823,6 +837,9 @@ private:
   
 private:
   int param_trie_size;
+
+private:
+  int param_hash_extra;
 
 private:
   int optBase;
