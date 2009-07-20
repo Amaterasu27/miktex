@@ -364,7 +364,7 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
    TeXApp::Write18
    _________________________________________________________________________ */
 
-bool
+TeXApp::Write18Result
 TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
 		 /*[out]*/ int &	exitCode)
   const
@@ -372,10 +372,10 @@ TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
   MIKTEX_ASSERT_STRING (lpszCommand);
   if (! enableWrite18)
     {
-      return (false);
+      return (Write18Result::DisabledRestricted);
     }
   Process::ExecuteSystemCommand (lpszCommand, &exitCode);
-  return (true);
+  return (Write18Result::Executed);
 }
 
 /* _________________________________________________________________________

@@ -741,7 +741,20 @@ public:
 
 public:
 
-  MIKTEXMFTHISAPI(bool)
+  class Write18ResultEnum
+  {
+  public:
+    enum EnumType {
+      QuotationError = -1,
+      DisabledRestricted = 0,
+      Executed = 1,
+      ExecutedAllowed = 2
+    };
+  };
+
+  typedef MiKTeX::Core::EnumWrapper<Write18ResultEnum> Write18Result;
+
+  MIKTEXMFTHISAPI(Write18Result)
   Write18 (/*[in]*/ const char *	lpszCommand,
 	   /*[out]*/ int &		exitCode)
     const;

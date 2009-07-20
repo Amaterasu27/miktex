@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/TeXApp.inl:				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -276,12 +276,11 @@ miktexremembersourceinfo (/*[in]*/ int fileName,
    _________________________________________________________________________ */
 
 inline
-bool
+int
 miktexwrite18 (/*[in]*/ const TEXMFCHAR * lpszCommand)
 {
   int exitCode;
-  bool done = THEAPP.Write18(lpszCommand, exitCode);
-  return (done);
+  return (THEAPP.Write18(lpszCommand, exitCode));
 }
 
 /* _________________________________________________________________________
@@ -331,6 +330,43 @@ miktexgetsynchronizationoptions ()
 {
   return (THEAPP.GetSynchronizationOptions());
 }
+
+/* _________________________________________________________________________
+
+   Web2C compatibility names
+   _________________________________________________________________________ */
+
+#if 1
+
+inline
+bool
+shellenabledp ()
+{
+  return (miktexwrite18p());
+}
+
+template<class CharType>
+int
+runsystem (/*[in]*/ const CharType * lpszCommand)
+{
+  return (miktexwrite18(reinterpret_cast<const TEXMFCHAR *>(lpszCommand)) ? 1 : 0);
+}
+
+template<class T>
+T *
+addressof (/*[in]*/ T & x)
+{
+  return (&x);
+}
+
+template<class CharType>
+const CharType *
+conststringcast (/*[in]*/ CharType * lpsz)
+{
+  return (const_cast<const CharType *>(lpsz));
+}
+
+#endif
 
 MIKTEXMF_END_NAMESPACE;
 
