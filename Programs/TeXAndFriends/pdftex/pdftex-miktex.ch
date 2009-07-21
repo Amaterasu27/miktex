@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2008 Christian Schenk
+%% Copyright (C) 1998-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -161,19 +161,6 @@ end
 @y
 @d frozen_null_font=frozen_control_sequence+12
   {permanent `\.{\\nullfont}'}
-@z
-
-% _____________________________________________________________________________
-%
-% [27.449]
-% _____________________________________________________________________________
-
-@x
-    if shell_enabled_p then cur_val := 1
-    else cur_val := 0;
-@y
-    if miktex_write18_p then cur_val := 1
-    else cur_val := 0;
 @z
 
 % _____________________________________________________________________________
@@ -439,8 +426,7 @@ if pdf_pk_mode <> null then begin
     flush_string;
 end else
     kpse_init_prog('PDFTEX', fixed_pk_resolution, nil, nil);
-if not kpse_var_value('MKTEXPK') then
-    kpse_set_program_enabled (kpse_pk_format, 1, kpse_src_cmdline);
+kpse_set_program_enabled (kpse_pk_format, 1, kpse_src_compile);
 @y
 @z
 

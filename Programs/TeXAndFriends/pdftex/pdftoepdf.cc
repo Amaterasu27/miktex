@@ -24,15 +24,24 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+
+#ifdef POPPLER_VERSION
+#include <dirent.h>
+#include <poppler-config.h>
+#include <goo/GooString.h>
+#include <goo/gmem.h>
+#include <goo/gfile.h>
+#define GString GooString
+#else
 #include <aconf.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#include <config.h>
 #if defined(MIKTEX)
 #define assert MIKTEX_ASSERT
 #else
 #include <assert.h>
+#endif
 #endif
 #include "Object.h"
 #include "Stream.h"
@@ -48,9 +57,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "Error.h"
 
 #include "epdf.h"
-
-static const char _svn_version[] =
-    "$Id: pdftoepdf.cc 497 2008-08-12 16:24:37Z thanh $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/pdftoepdf.cc $";
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.

@@ -19,12 +19,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "ptexlib.h"
-#include <kpathsea/c-vararg.h>
-#include <kpathsea/c-proto.h>
 #include <string.h>
-
-static const char _svn_version[] =
-    "$Id: epdf.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/epdf.c $";
 
 extern void epdf_check_mem(void);
 extern void register_fd_entry(fd_entry *);

@@ -21,9 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id: subfont.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/subfont.c $";
-
 static struct avl_table *sfd_tree = NULL;
 
 #define SFD_BUF_SIZE    SMALL_BUF_SIZE
@@ -127,7 +124,7 @@ static sfd_entry *read_sfd(char *sfd_name)
         return NULL;
     }
     tex_printf("{");
-    tex_printf(cur_file_name);
+    tex_printf("%s", cur_file_name);
     sfd = new_sfd_entry();
     sfd->name = xstrdup(sfd_name);
     while (!sfd_eof()) {

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: ptexlib.h 340 2008-01-14 16:46:44Z oneiros $
 */
 
 #ifndef PDFTEXLIB
@@ -209,7 +208,7 @@ extern boolean handle_subfont_fm(fm_entry *, int);
 /* tounicode.c */
 extern void glyph_unicode_free(void);
 extern void deftounicode(strnumber, strnumber);
-extern integer write_tounicode(char **, char *);
+extern integer write_tounicode(char **, const char *, const char *);
 
 /* utils.c */
 extern boolean str_eq_cstr(strnumber, char *);
@@ -289,10 +288,6 @@ extern eightbits packetbyte(void);
 extern void poppacketstate(void);
 extern void pushpacketstate(void);
 extern void vf_free(void);
-#  define SIGNED_QUAD scaled
-#  define fixword integer
-extern SIGNED_QUAD sqxfw(SIGNED_QUAD sq, fixword fw);
-
 
 /* writeenc.c */
 extern fe_entry *get_fe_entry(char *);

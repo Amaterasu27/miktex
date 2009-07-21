@@ -23,9 +23,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/magstep.h>
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id: writet3.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writet3.c $";
-
 #define T3_BUF_SIZE   1024
 
 typedef char t3_line_entry;

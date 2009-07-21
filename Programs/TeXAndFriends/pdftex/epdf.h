@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: epdf.h 443 2008-05-03 14:48:27Z oneiros $
 */
 
 #if ! defined(MIKTEX)
@@ -31,8 +30,6 @@ extern "C" {
 #endif
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
-
-#include <kpathsea/c-proto.h>   /* define P?H macros */
 
     typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
 

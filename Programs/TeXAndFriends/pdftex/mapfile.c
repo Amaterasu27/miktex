@@ -24,9 +24,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-memstr.h>
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id: mapfile.c 433 2008-04-28 14:45:04Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/mapfile.c $";
-
 #define FM_BUF_SIZE     1024
 
 static FILE *fm_file;
@@ -536,6 +533,8 @@ static void fm_scan_line()
         set_std_t1font(fm);
     if (is_fontfile(fm) && strlen(fm_fontfile(fm)) > 3) {
         if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttf") == 0)
+            set_truetype(fm);
+        else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttc") == 0)
             set_truetype(fm);
         else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".otf") == 0)
             set_opentype(fm);

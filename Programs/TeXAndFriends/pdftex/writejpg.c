@@ -21,9 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include "image.h"
 
-static const char _svn_version[] =
-    "$Id: writejpg.c 404 2008-03-31 10:08:52Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writejpg.c $";
-
 #define JPG_GRAY  1             /* Gray color space, use /DeviceGray  */
 #define JPG_RGB   3             /* RGB color space, use /DeviceRGB    */
 #define JPG_CMYK  4             /* CMYK color space, use /DeviceCMYK  */
@@ -136,6 +133,13 @@ void read_jpg_info(integer img)
                 img_xres(img) = img_yres(img) = 0;
                 break;
             }
+        }
+        /* if either xres or yres is 0 but the other isn't, set it to the value of the other */
+        if ((img_xres(img) == 0) && (img_yres(img) != 0)) {
+            img_xres(img) = img_yres(img);
+        }
+        if ((img_yres(img) == 0) && (img_xres(img) != 0)) {
+            img_yres(img) = img_xres(img);
         }
     }
     xfseek(jpg_ptr(img)->file, 0, SEEK_SET, cur_file_name);

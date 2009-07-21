@@ -23,10 +23,9 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/c-limits.h>
 #include <kpathsea/c-memstr.h>
-#include <kpathsea/c-proto.h>
 #include <kpathsea/c-std.h>
 #include <kpathsea/c-unistd.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/getopt.h>
 */
 #include <kpathsea/kpathsea.h>
@@ -43,9 +42,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <pdftexdir/writettf.h>
 #endif
 #include <string.h>
-
-static const char _svn_version[] =
-    "$Id: ttf2afm.c 481 2008-06-27 15:41:50Z thanh $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/ttf2afm.c $";
 
 /* constants used for print_glyph */
 #define AS_NAME         0
@@ -104,7 +100,6 @@ TTF_LONG FontBBox3 = 0;
 TTF_LONG FontBBox4 = 0;
 TTF_LONG UnderlinePosition = 0;
 TTF_LONG UnderlineThickness = 0;
-
 TTF_LONG CapHeight = 0;
 TTF_LONG XHeight = 0;
 TTF_LONG Ascender = 0;
@@ -741,7 +736,7 @@ void print_glyph_name(FILE * f, long glyph_index, int convention)
                             u->code);
                 }
                 ttf_warn
-                    ("glyph %li have multiple encodings (the first one being used): %s",
+                    ("glyph %li has multiple encodings (the first one being used): %s",
                      glyph_index, buf);
             }
         }

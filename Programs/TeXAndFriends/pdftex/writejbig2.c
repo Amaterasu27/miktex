@@ -82,9 +82,6 @@ object exists, reference it. Else create fresh one.
 
 /**********************************************************************/
 
-static const char _svn_version[] =
-    "$Id: writejbig2.c 405 2008-03-31 10:11:44Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writejbig2.c $";
-
 /**********************************************************************/
 
 struct avl_table *file_tree = NULL;

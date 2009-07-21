@@ -20,9 +20,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #include "ptexlib.h"
 
-static const char _svn_version[] =
-    "$Id: writefont.c 496 2008-08-12 16:19:42Z thanh $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writefont.c $";
-
 /**********************************************************************/
 
 struct avl_table *fo_tree = NULL;       /* tree of font dictionaries */
@@ -534,11 +531,11 @@ void write_fontdictionary(fo_entry * fo)
     if (fixedgentounicode > 0 && fo->fd != NULL) {
         if (fo->fe != NULL) {
             fo->tounicode_objnum =
-                write_tounicode(fo->fe->glyph_names, fo->fe->name);
+                write_tounicode(fo->fe->glyph_names, fo->fm->tfm_name, fo->fe->name);
         } else if (is_type1(fo->fm)) {
             assert(fo->fd->builtin_glyph_names != NULL);
             fo->tounicode_objnum =
-                write_tounicode(fo->fd->builtin_glyph_names, fo->fm->tfm_name);
+                write_tounicode(fo->fd->builtin_glyph_names, fo->fm->tfm_name, NULL);
         }
     }
 

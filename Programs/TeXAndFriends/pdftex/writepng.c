@@ -21,9 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include "image.h"
 
-static const char _svn_version[] =
-    "$Id: writepng.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writepng.c $";
-
 static int transparent_page_group = -1;
 
 void read_png_info(integer img)

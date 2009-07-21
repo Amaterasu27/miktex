@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: ptexmac.h 492 2008-07-13 11:56:42Z oneiros $
 */
 
 #ifndef PDFTEXMAC

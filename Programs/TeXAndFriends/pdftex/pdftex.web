@@ -288,8 +288,8 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="9" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.9' {current \pdfTeX\ version}
+@d pdftex_revision=="10" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.10' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
@@ -8890,7 +8890,38 @@ if cur_cs<>undefined_primitive then begin
     p:=get_avail; info(p):=cs_token_flag+frozen_primitive;
     link(p):=loc; loc:=p; start:=p;
     end;
+  end
+else begin
+  print_err("Missing primitive name");
+  help2("The control sequence marked <to be read again> does not")@/
+    ("represent any known primitive.");
+  back_error;
   end;
+end
+
+@ This block deals with unexpandable \.{\\primitive} appearing at a spot where
+an integer or an internal values should have been found. It fetches the
+next token then resets |cur_cmd|, |cur_cs|, and |cur_tok|, based on the 
+primitive value of that token. No expansion takes place, because the
+next token may be all sorts of things. This could trigger further
+expansion creating new errors.
+
+@<Reset |cur_tok| for unexpandable primitives, goto restart @>=
+begin 
+get_token;
+cur_cs := prim_lookup(text(cur_cs));
+if cur_cs<>undefined_primitive then begin
+  cur_cmd := prim_eq_type(cur_cs);
+  cur_chr := prim_equiv(cur_cs);
+  cur_tok := (cur_cmd*@'400)+cur_chr;
+  end
+else begin
+  cur_cmd := relax;
+  cur_chr := 0;
+  cur_tok := cs_token_flag+frozen_relax;
+  cur_cs  := frozen_relax;
+  end;
+goto restart;
 end
 
 @ @<Complain about an undefined macro@>=
@@ -9427,7 +9458,9 @@ label exit;
 var p:pointer; {tail of the backup list}
 @!q:pointer; {new node being added to the token list via |store_new_token|}
 @!k:pool_pointer; {index into |str_pool|}
+@!save_cur_cs:pointer; {to save |cur_cs|}
 begin p:=backup_head; link(p):=null; k:=str_start[s];
+save_cur_cs:=cur_cs;
 while k<str_start[s+1] do
   begin get_x_token; {recursion is possible here}
 @^recursion@>
@@ -9438,6 +9471,7 @@ while k<str_start[s+1] do
   else if (cur_cmd<>spacer)or(p<>backup_head) then
     begin back_input;
     if p<>backup_head then back_list(link(backup_head));
+    cur_cs:=save_cur_cs;
     scan_keyword:=false; return;
     end;
   end;
@@ -9538,13 +9572,13 @@ the internal quantity to be scanned; an error will be signalled if
 
 @p procedure scan_something_internal(@!level:small_number;@!negative:boolean);
   {fetch an internal parameter}
-label exit;
+label exit, restart;
 var m:halfword; {|chr_code| part of the operand token}
     n, k: integer; {accumulators}
 @!q:halfword; {general purpose index}
 @!i:four_quarters; {character info}
 @!p:0..nest_size; {index into |nest|}
-begin m:=cur_chr;
+begin restart: m:=cur_chr;
 case cur_cmd of
 def_code: @<Fetch a character code from some table@>;
 toks_register,assign_toks,def_family,set_font,def_font,letterspace_font,pdf_copy_font: @<Fetch a token list or
@@ -9564,6 +9598,8 @@ assign_font_dimen: @<Fetch a font dimension@>;
 assign_font_int: @<Fetch a font integer@>;
 register: @<Fetch a register@>;
 last_item: @<Fetch an item in the current node, if appropriate@>;
+ignore_spaces: {trap unexpandable primitives}
+  if cur_chr=1 then @<Reset |cur_tok| for unexpandable primitives, goto restart@>;
 othercases @<Complain that \.{\\the} can't do this; give zero result@>
 endcases;@/
 while cur_val_level>level do @<Convert \(c)|cur_val| to a lower level@>;
@@ -9818,7 +9854,10 @@ if m>=input_line_no_code then
   random_seed_code:  cur_val := random_seed;
   pdf_shell_escape_code:
     begin
-    if shell_enabled_p then cur_val := 1
+    if shellenabledp then begin
+      if restrictedshell then cur_val :=2
+      else cur_val := 1;
+    end
     else cur_val := 0;
     end;
   pdf_last_link_code:   cur_val := pdf_last_link;
@@ -10049,7 +10088,7 @@ after the integer part of such a fraction has been scanned by |scan_int|,
 and that the decimal point has been backed up to be scanned again.
 
 @p procedure scan_int; {sets |cur_val| to an integer}
-label done;
+label done, restart;
 var negative:boolean; {should the answer be negated?}
 @!m:integer; {|@t$2^{31}$@> div radix|, the threshold of danger}
 @!d:small_number; {the digit just scanned}
@@ -10057,7 +10096,10 @@ var negative:boolean; {should the answer be negated?}
 @!OK_so_far:boolean; {has an error message been issued?}
 begin radix:=0; OK_so_far:=true;@/
 @<Get the next non-blank non-sign token; set |negative| appropriately@>;
+restart:
 if cur_tok=alpha_token then @<Scan an alphabetic character code into |cur_val|@>
+else if cur_tok=cs_token_flag+frozen_primitive then
+  @<Reset |cur_tok| for unexpandable primitives, goto restart@>
 else if (cur_cmd>=min_internal)and(cur_cmd<=max_internal) then
   scan_something_internal(int_val,false)
 else @<Scan a numeric constant@>;
@@ -13072,7 +13114,34 @@ of \TeX\ between computers.
   if a=0 then #:=sw@+else if a=255 then #:=sw-alpha@+else abort;
   end
 
-@<Read box dimensions@>=
+@p function store_scaled_f(sq, z: scaled): scaled;
+var a,b,c,d:eight_bits; sw:scaled;
+alpha:integer;
+beta:1..16;
+begin
+  alpha:=16;
+  while z>=@'40000000 do
+    begin z:=z div 2; alpha:=alpha+alpha;
+  end;
+  beta:=256 div alpha; alpha:=alpha*z;
+  if sq >= 0 then begin
+    d:=sq mod 256; sq:=sq div 256; {any "mod 256" not really needed, would typecast alone be safe?}
+    c:=sq mod 256; sq:=sq div 256;
+    b:=sq mod 256; sq:=sq div 256;
+    a:=sq mod 256;
+  end else begin
+    sq:=(sq+1073741824)+1073741824; {braces for optimizing compiler}
+    d:=sq mod 256; sq:=sq div 256;
+    c:=sq mod 256; sq:=sq div 256;
+    b:=sq mod 256; sq:=sq div 256;
+    a:=(sq+128) mod 256;
+  end;
+  sw:=(((((d*z)div@'400)+(c*z))div@'400)+(b*z))div beta;
+  if a=0 then store_scaled_f:=sw@+else if a=255 then store_scaled_f:=sw-alpha@+else pdf_error("store_scaled_f", "vf scaling");
+end;
+
+
+@ @<Read box dimensions@>=
 begin @<Replace |z| by $|z|^\prime$ and compute $\alpha,\beta$@>;
 for k:=width_base[f] to lig_kern_base[f]-1 do
   store_scaled(font_info[k].sc);
@@ -15956,19 +16025,19 @@ begin
     pdf_end_text;
     pdf_print_ln("q");
     if h <= one_bp then begin
-        pdf_set_origin_temp(cur_h, cur_v - (h + 1)/2);
+        pdf_set_origin_temp(x, y - (h + 1)/2);
         pdf_print("[]0 d 0 J ");
         pdf_print_bp(h); pdf_print(" w 0 0 m ");
         pdf_print_bp(w); pdf_print_ln(" 0 l S");
     end
     else if w <= one_bp then begin
-        pdf_set_origin_temp(cur_h + (w + 1)/2, cur_v);
+        pdf_set_origin_temp(x + (w + 1)/2, y);
         pdf_print("[]0 d 0 J ");
         pdf_print_bp(w); pdf_print(" w 0 0 m 0 ");
         pdf_print_bp(h); pdf_print_ln(" l S");
     end
     else begin
-        pdf_set_origin_temp(cur_h, cur_v);
+        pdf_set_origin_temp(x, y);
         pdf_print("0 0 ");
         pdf_print_bp(w); pdf_out(" ");
         pdf_print_bp(h); pdf_print_ln(" re f");
@@ -17571,19 +17640,36 @@ begin
     vf_byte := i;
 end;
 
-function vf_read(k: integer): integer; {read |k| bytes as an integer from \.{VF} file}
+function vf_read_signed(k: integer): integer;
+{read |k| bytes as an signed integer from \.{VF} file}
 var i: integer;
 begin
     pdfassert((k > 0) and (k <= 4));
     i := vf_byte;
-    if (k = 4) and (i > 127) then
+    if i >= 128 then
         i := i - 256;
     decr(k);
     while k > 0 do begin
         i := i*256 + vf_byte;
         decr(k);
     end;
-    vf_read := i;
+    vf_read_signed := i;
+end;
+
+function vf_read_unsigned(k: integer): integer; 
+{read |k| bytes as an unsigned integer from \.{VF} file}
+var i: integer;
+begin
+    pdfassert((k > 0) and (k <= 4));
+    i := vf_byte;
+    if (k = 4) and (i >= 128) then
+        bad_vf("number too big");
+    decr(k);
+    while k > 0 do begin
+        i := i*256 + vf_byte;
+        decr(k);
+    end;
+    vf_read_unsigned := i;
 end;
 
 procedure vf_local_font_warning(f, k: internal_font_number; s: str_number);
@@ -17606,8 +17692,8 @@ var k: internal_font_number;
     cs: four_quarters;
 begin
     cs.b0 := vf_byte; cs.b1 := vf_byte; cs.b2 := vf_byte; cs.b3 := vf_byte;
-    fs := sqxfw(vf_read(4), font_size[f]);
-    ds := vf_read(4) div @'20;
+    fs := store_scaled_f(vf_read_signed(4), font_size[f]);
+    ds := vf_read_signed(4) div @'20;
     tmp_b0 := vf_byte;
     tmp_b1 := vf_byte;
     while tmp_b0 > 0 do begin
@@ -17689,7 +17775,7 @@ if ((tmp_b0 <> 0) or (tmp_b1 <> 0) or (tmp_b2 <> 0) or (tmp_b3 <> 0)) and
     print(font_name[f]);
     print(".vf ignored");
 end;
-if vf_read(4) div @'20 <> font_dsize[f] then begin
+if vf_read_signed(4) div @'20 <> font_dsize[f] then begin
     print_nl("design size mismatch in font ");
     print(font_name[f]);
     print(".vf ignored");
@@ -17701,7 +17787,7 @@ cmd := vf_byte;
 save_vf_nf := vf_nf;
 while (cmd >= fnt_def1) and (cmd <= fnt_def1 + 3) do begin
     allocvffnts;
-    vf_e_fnts[vf_nf] := vf_read(cmd - fnt_def1 + 1);
+    vf_e_fnts[vf_nf] := vf_read_unsigned(cmd - fnt_def1 + 1);
     vf_i_fnts[vf_nf] := vf_def_font(f);
     incr(vf_nf);
     cmd := vf_byte;
@@ -17714,24 +17800,24 @@ vf_local_font_num[f] := vf_nf - save_vf_nf;
 
 @ @<Build a character packet@>=
 if cmd = long_char then begin
-    packet_length := vf_read(4);
-    cc := vf_read(4);
+    packet_length := vf_read_unsigned(4);
+    cc := vf_read_unsigned(4);
     if not is_valid_char(cc) then
         bad_vf("invalid character code");
-    tfm_width := sqxfw(vf_read(4), font_size[f]);
+    tfm_width := store_scaled_f(vf_read_signed(4), font_size[f]);
 end
 else begin
     packet_length := cmd;
     cc := vf_byte;
     if not is_valid_char(cc) then
         bad_vf("invalid character code");
-    tfm_width := sqxfw(vf_read(3), font_size[f]);
+    tfm_width := store_scaled_f(vf_read_unsigned(3), font_size[f]);
 end;
 if packet_length < 0 then
     bad_vf("negative packet length");
 if packet_length > vf_max_packet_length then
     bad_vf("packet length too long");
-if abs(tfm_width - char_width(f)(char_info(f)(cc))) > 1 then begin
+if tfm_width <> char_width(f)(char_info(f)(cc)) then begin
     print_nl("character width mismatch in font ");
     print(font_name[f]);
     print(".vf ignored");
@@ -17767,7 +17853,7 @@ if (cmd >= set_char_0) and (cmd <= set_char_0 + 127) then
 else if ((fnt_num_0 <= cmd) and (cmd <= fnt_num_0 + 63)) or
         ((fnt1 <= cmd) and (cmd <= fnt1 + 3)) then begin
     if cmd >= fnt1 then begin
-        k := vf_read(cmd - fnt1 + 1);
+        k := vf_read_unsigned(cmd - fnt1 + 1);
         packet_length := packet_length - (cmd - fnt1 + 1);
     end
     else
@@ -17800,7 +17886,7 @@ four_cases(down1):  cmd_length := cmd - down1 + 1;
 four_cases(y1):     cmd_length := cmd - y1 + 1;
 four_cases(z1):     cmd_length := cmd - z1 + 1;
 four_cases(xxx1):  begin
-    cmd_length := vf_read(cmd - xxx1 + 1);
+    cmd_length := vf_read_unsigned(cmd - xxx1 + 1);
     packet_length := packet_length - (cmd - xxx1 + 1);
     if cmd_length > vf_max_packet_length then
         bad_vf("packet length too long");
@@ -17900,36 +17986,42 @@ vf_stack_ptr := 0;
 
 @ Some functions for processing character packets.
 
-@p function packet_read(k: integer): integer; {read |k| bytes as an integer from
-character packet}
+@p function packet_read_signed(k: integer): integer; 
+{read |k| bytes as a signed integer from character packet}
 var i: integer;
 begin
     pdfassert((k > 0) and (k <= 4));
     i := packet_byte;
-    if (k = 4) and (i > 127) then
+    if i >= 128 then
         i := i - 256;
     decr(k);
     while k > 0 do begin
         i := i*256 + packet_byte;
         decr(k);
     end;
-    packet_read := i;
+    packet_read_signed := i;
 end;
 
-function packet_scaled(k: integer; fs: scaled): scaled; {get |k| bytes from packet as a
-scaled}
-var fw: integer;
+function packet_read_unsigned(k: integer): integer;
+{read |k| bytes as an unsigned integer from character packet}
+var i: integer;
 begin
-    fw := packet_read(k);
-    case k of
-    1:  if fw > 127 then
-            fw := fw - 256;
-    2:  if fw > @"8000 then
-            fw := fw - @"10000;
-    3:  if fw > @"800000 then
-            fw := fw - @"1000000;
-    endcases;
-    packet_scaled := sqxfw(fw, fs);
+    pdfassert((k > 0) and (k <= 4));
+    i := packet_byte;
+    if (k = 4) and (i >= 128) then
+        bad_vf("number too big");
+    decr(k);
+    while k > 0 do begin
+        i := i*256 + packet_byte;
+        decr(k);
+    end;
+    packet_read_unsigned := i;
+end;
+
+function packet_scaled(k: integer; fs: scaled): scaled; 
+{get |k| bytes from packet as scaled}
+begin
+    packet_scaled := store_scaled_f(packet_read_signed(k), fs);
 end;
 
 procedure do_vf_packet(vf_f: internal_font_number; c: eight_bits); {typeset the
@@ -18021,11 +18113,11 @@ pop: begin
 end;
 four_cases(set1), four_cases(put1): begin
     if (set1 <= cmd) and (cmd <= set1 + 3) then begin
-        tmp_int := packet_read(cmd - set1 + 1);
+        tmp_int := packet_read_unsigned(cmd - set1 + 1);
         char_move := true;
     end
     else begin
-        tmp_int := packet_read(cmd - put1 + 1);
+        tmp_int := packet_read_unsigned(cmd - put1 + 1);
         char_move := false;
     end;
     if not is_valid_char(tmp_int) then begin
@@ -18069,7 +18161,7 @@ z0, four_cases(z1): begin
     cur_v := cur_v + z;
 end;
 four_cases(xxx1):  begin
-    tmp_int := packet_read(cmd - xxx1 + 1);
+    tmp_int := packet_read_unsigned(cmd - xxx1 + 1);
     str_room(tmp_int);
     while tmp_int > 0 do begin
         decr(tmp_int);
@@ -18929,8 +19021,12 @@ begin
             pdf_error("ext5", "cannot open file for embedding");
         print("<<");
         print(s);
-        while not eof(f) do
-            pdf_out(getc(f));
+        if not eof(f) then begin {at least one byte available}
+            while not eof(f) do
+                pdf_out(getc(f));
+            if (not obj_obj_is_stream(n)) and (pdf_ptr > 0) and (pdf_buf[pdf_ptr - 1] <> 10) then
+                pdf_out(10);
+        end;
         print(">>");
         b_close(f);
     end
@@ -19280,34 +19376,81 @@ if pdf_pk_mode <> null then begin
     flush_string;
 end else
     kpse_init_prog('PDFTEX', fixed_pk_resolution, nil, nil);
-if not kpse_var_value('MKTEXPK') then
-    kpse_set_program_enabled (kpse_pk_format, 1, kpse_src_cmdline);
+kpse_set_program_enabled (kpse_pk_format, 1, kpse_src_compile);
 set_job_id(year, month, day, time);
 if (pdf_unique_resname > 0) and (pdf_resname_prefix = 0) then
     pdf_resname_prefix := get_resname_prefix
 
 @ Finishing the PDF output file.
 
-The following procedures sort the table of destination names
-@p function str_less_str(s1, s2: str_number): boolean; {compare two strings}
-var j1, j2: pool_pointer;
-    l, i: integer;
+The following procedures sort the table of destination names.
+@d get_next_char(#)==
+    c@&# := str_pool[j@&#];
+    incr(j@&#);
+    if (c@&# = 92) and (j@&# < e@&#) then begin
+        c@&# := str_pool[j@&#];
+        incr(j@&#);
+        if (c@&# >= 48) and (c@&# <= 55) then begin
+            c@&# := c@&# - 48;
+            if (j@&# < e@&#) and (str_pool[j@&#] >= 48)
+                         and (str_pool[j@&#] <= 55) then begin
+                c@&# := 8 * c@&# + str_pool[j@&#] - 48;
+                incr(j@&#);
+                if (j@&# < e@&#) and (str_pool[j@&#] >= 48)
+                             and (str_pool[j@&#] <= 55)
+                             and (c@&# < 32) then begin
+                    c@&# := 8 * c@&# + str_pool[j@&#] - 48;
+                    incr(j@&#);
+                end;
+            end;
+        end else begin
+            case c@&# of
+                 98: c@&# :=  8; {`\.b': backspace} 
+                102: c@&# := 12; {`\.f': form feed}
+                110: c@&# := 10; {`\.n': line feed}
+                114: c@&# := 13; {`\.r': carriage return} 
+                116: c@&# :=  9; {`\.t': horizontal tab}
+                {nothing to do for `\.{\\}', `\.(', `\.)'}
+            othercases do_nothing
+            endcases;
+        end;
+    end
+
+@p function str_less_str(s1, s2: str_number): boolean; {compare two pdf strings}
+var j1, j2, e1, e2: pool_pointer;
+    c1, c2: packed_ASCII_code;
 begin
+    {Minimal requirement: output of \.{\\pdfescapestring} must be supported.}
+    {This implementation also supports all escape sequences}
+    {listed in the table `Escape sequences in literal strings'}
+    {of the pdf specification.}
+    {End-of-line markers are not detected:}
+    {The marker is not replaced by `\.{\\n}' or removed if it is escaped.}
     j1 := str_start[s1];
     j2 := str_start[s2];
-    if length(s1) < length(s2) then
-        l := length(s1)
-    else
-        l := length(s2);
-    i := 0;
-    while (i < l) and (str_pool[j1 + i] = str_pool[j2 + i]) do
-        incr(i);
-    if ((i < l) and (str_pool[j1 + i] < str_pool[j2 + i])) or
-        ((i = l) and (length(s1) < length(s2))) then
+    e1 := j1 + length(s1);
+    e2 := j2 + length(s2);
+    while (j1 < e1) and (j2 < e2) do begin
+        {get next character of first string}
+        get_next_char(1);
+        {get next character of second string}
+        get_next_char(2);
+        {compare characters}
+        if c1 < c2 then begin
+            str_less_str := true;
+            return;
+        end
+        else if c1 > c2 then begin
+            str_less_str := false;
+            return;
+        end;
+    end;
+    {compare string lengths}
+    if (j1 >= e1) and (j2 < e2) then
         str_less_str := true
     else
         str_less_str := false;
-end;
+exit: end;
 
 procedure sort_dest_names(l, r: integer); {sorts |dest_names| by names}
 var i, j: integer;
@@ -34765,7 +34908,7 @@ pdf_annot_node: begin
     print_mark(pdf_annot_data(p));
 end;
 pdf_start_link_node: begin
-    print_esc("pdflink");
+    print_esc("pdfstartlink");
     @<Display <rule spec> for whatsit node created by \pdfTeX@>;
     if pdf_link_attr(p) <> null then begin
         print(" attr");
@@ -35524,7 +35667,7 @@ nesting level.
 
 @ @<Types...@>=
 @!pdf_link_stack_record = record
-    nesting_level: small_number;
+    nesting_level: integer;
     link_node: pointer; {holds a copy of the corresponding |pdf_start_link_node|}
     ref_link_node: pointer; {points to original |pdf_start_link_node|, or a
                              copy of |link_node| created by |append_link| in

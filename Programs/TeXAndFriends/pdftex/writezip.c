@@ -26,9 +26,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <assert.h>
 #endif
 
-static const char _svn_version[] =
-    "$Id: writezip.c 403 2008-03-31 10:07:16Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writezip.c $";
-
 #define ZIP_BUF_SIZE  32768
 
 #define check_err(f, fn) \
