@@ -31,6 +31,7 @@
    _________________________________________________________________________ */
 
 TeXApp::TeXApp ()
+  : write18Mode (Write18Mode::Disabled)
 {
 }
 
@@ -48,7 +49,7 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
 
   enableEncTeX = false;
   enableMLTeX = false;
-  enableWrite18 = false;
+  write18Mode = Write18Mode::Disabled;
   lastLineNum = -1;
   param_font_max = -1;
   param_font_mem_size = -1;
@@ -73,10 +74,27 @@ void
 TeXApp::OnTeXMFStartJob ()
 {
   TeXMFApp::OnTeXMFStartJob ();
-  enableWrite18 =
-    pSession->GetConfigValue(0,
-			     MIKTEX_REGVAL_ENABLE_WRITE18,
-			     false);
+  switch (pSession->GetConfigValue(0,
+				   MIKTEX_REGVAL_ENABLE_WRITE18,
+				   'p'))
+  {
+  case 't':
+    write18Mode = Write18Mode::Enabled;
+    break;
+  case 'f':
+    write18Mode = Write18Mode::Disabled;
+    break;
+  case 'p':
+    write18Mode = Write18Mode::PartiallyEnabled;
+    break;
+  case 'q':
+    write18Mode = Write18Mode::Query;
+    break;
+  default:
+    FATAL_MIKTEX_ERROR ("",
+      T_("Invalid MiKTeX configuration."),
+      0);
+  }
 }
 
 /* _________________________________________________________________________
@@ -108,6 +126,7 @@ enum {
   OPT_MAX_IN_OPEN,
   OPT_MEM_BOT,
   OPT_NEST_SIZE,
+  OPT_RESTRICT_WRITE18,
   OPT_SAVE_SIZE,
   OPT_SRC_SPECIALS,
   OPT_SYNCTEX,
@@ -161,6 +180,10 @@ Set nest_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_NEST_SIZE,
 	     required_argument,
 	     "N");
+
+  AddOption (T_("restrict-write18\0\
+Partially enable the \\write18{COMMAND} construct."),
+	     FIRST_OPTION_VAL + optBase + OPT_RESTRICT_WRITE18);
 
   AddOption (T_("save-size\0\
 Set save_size to N."),
@@ -235,6 +258,7 @@ Insert source specials in certain places of the DVI file.")),
   AddOption ("mltex", "enable-mltex");
   AddOption ("fmt", "undump");
   AddOption ("no-shell-escape", "disable-write18");
+  AddOption ("shell-restricted", "restrict-write18");
   AddOption ("shell-escape", "enable-write18");
 
   // unsupported Web2C options
@@ -259,10 +283,13 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
   switch (optchar - FIRST_OPTION_VAL - optBase)
     {
     case OPT_DISABLE_WRITE18:
-      enableWrite18 = false;
+      write18Mode = Write18Mode::Disabled;
       break;
     case OPT_ENABLE_WRITE18:
-      enableWrite18 = true;
+      write18Mode = Write18Mode::Enabled;
+      break;
+    case OPT_RESTRICT_WRITE18:
+      write18Mode = Write18Mode::PartiallyEnabled;
       break;
     case OPT_FONT_MAX:
       param_font_max = atoi(lpszArg);
@@ -372,8 +399,153 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
 
 /* _________________________________________________________________________
 
+   ParseCommand
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+NeedsEscape (/*[in]*/ char ch)
+{
+  return (
+    ch == '&'
+    || ch == '|'
+    || ch == '%'
+    || ch == '<'
+    || ch == '>'
+    || ch == ';'
+    || ch == ','
+    || ch == '('
+    || ch == ')');
+}
+#endif
+
+bool
+ParseCommand (/*[in]*/ const string & command,
+	      /*[out]*/ string &      quotedCommand,
+	      /*[out]*/ string &      executable)
+{
+#if defined(MIKTEX_WINDOWS)
+  const char QUOTE = '"';
+#else
+  const char QUOTE = '\'';
+#endif
+  string::const_iterator it = command.begin();
+  for (; it != command.end() && (*it == ' ' || *it == '\t'); ++ it);
+  quotedCommand = "";
+  executable = "";
+  for (; it != command.end() && *it != ' ' && *it != '\t'; ++ it)
+  {
+    quotedCommand += *it;
+    executable += *it;
+  }
+  for (; it != command.end() && (*it == ' ' || *it == '\t'); ++ it)
+  {
+    quotedCommand += *it;
+  }
+  bool startOfArg = true;
+  while (it != command.end())
+  {
+    if (*it == '\'')
+    {
+      // only " quatation is allowd
+      return (false);
+    }
+    if (*it == '"')
+    {
+      if (! startOfArg)
+      {
+	quotedCommand += QUOTE;
+      }
+      startOfArg = false;
+      quotedCommand += QUOTE;
+      ++ it;
+      while (it != command.end() && *it != '"')
+      {
+#if defined(MIKTEX_WINDOWS)
+	if (NeedsEscape(*it))
+	{
+	  quotedCommand += '^';
+	}
+#endif
+	quotedCommand += *it++;
+      }
+      if (it == command.end())
+      {
+	return (false);
+      }
+      ++ it;
+      if (it != command.end() && ! (*it == ' ' || *it == '\t'))
+      {
+	return (false);
+      }
+    }
+    else if (startOfArg && ! (*it == ' ' || *it == '\t'))
+    {
+      startOfArg = false;
+      quotedCommand += QUOTE;
+#if defined(MIKTEX_WINDOWS)
+      if (NeedsEscape(*it))
+      {
+	quotedCommand += '^';
+      }
+#endif
+      quotedCommand += *it++;
+    }
+    else if (! startOfArg && (*it == ' ' || *it == '\t'))
+    {
+      startOfArg = true;
+      quotedCommand += QUOTE;
+      quotedCommand += *it++;
+    }
+    else
+    {
+      if (NeedsEscape(*it))
+      {
+	quotedCommand += '^';
+      }
+      quotedCommand += *it++;
+    }
+  }
+  if (! startOfArg)
+  {
+    quotedCommand += QUOTE;
+  }
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    TeXApp::Write18
    _________________________________________________________________________ */
+
+const char * const ALLOWED_COMMANDS = "\
+;bibtex\
+;convert\
+;dvips\
+;epstopdf\
+;epspdf\
+;etex\
+;fc-match\
+;gnuplot\
+;kpsewhich\
+;latex\
+;luatex\
+;lualatex\
+;makeindex\
+;mpost\
+;pdfcrop\
+;pdflatex\
+;pdfluatex\
+;ps2pdf\
+;ps4pdf\
+;pstopdf\
+;pygmentize\
+;tex\
+;texexec\
+;texmfstart\
+;ulqda\
+";
 
 TeXApp::Write18Result
 TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
@@ -381,12 +553,52 @@ TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
   const
 {
   MIKTEX_ASSERT_STRING (lpszCommand);
-  if (! enableWrite18)
+  Write18Result result = Write18Result::Executed;
+  string command = lpszCommand;
+  switch (write18Mode.Get())
+  {
+  case Write18Mode::Disabled:
+    UNEXPECTED_CONDITION ("TeXApp::Write18");
+  case Write18Mode::Query:
+  case Write18Mode::PartiallyEnabled:
     {
-      return (Write18Result::DisabledRestricted);
+      string quotedCommand;
+      string executable;
+      if (! ParseCommand(command, quotedCommand, executable))
+      {
+	return (Write18Result::QuotationError);
+      }
+      command = quotedCommand;
+      if (write18Mode == Write18Mode::Query)
+      {
+	// todo
+	return (Write18Result::Disallowed);
+      }
+      else
+      {
+	bool allowed = Utils::Contains(
+	  pSession->GetConfigValue(0, MIKTEX_REGVAL_ALLOWED_SHELL_COMMANDS, ALLOWED_COMMANDS).c_str(),
+	  executable.c_str(),
+	  ",;:",
+#if defined(MIKTEX_WINDOWS)
+	  true
+#else
+	  false
+#endif
+	  );
+	if (! allowed)
+	{
+	  return (Write18Result::Disallowed);
+	}
+      }
+      result = Write18Result::ExecutedAllowed;
+      break;
     }
-  Process::ExecuteSystemCommand (lpszCommand, &exitCode);
-  return (Write18Result::Executed);
+  default:
+    UNEXPECTED_CONDITION ("TeXApp::Write18");
+  }
+  Process::ExecuteSystemCommand (command.c_str(), &exitCode);
+  return (result);
 }
 
 /* _________________________________________________________________________
@@ -400,11 +612,6 @@ TeXApp::Write18 (/*[in]*/ const wchar_t *	lpszCommand,
   const
 {
   MIKTEX_ASSERT_STRING (lpszCommand);
-  if (! enableWrite18)
-    {
-      return (Write18Result::DisabledRestricted);
-    }
   CharBuffer<char> buf (lpszCommand);
-  Process::ExecuteSystemCommand (buf.Get(), &exitCode);
-  return (Write18Result::Executed);
+  return (Write18(buf.Get(), exitCode));
 }

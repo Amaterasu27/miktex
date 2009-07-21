@@ -342,7 +342,8 @@ inline
 bool
 restrictedshell ()
 {
-  return (false);
+  return (THEAPP.GetWrite18Mode() == TeXApp::Write18Mode::PartiallyEnabled
+    || THEAPP.GetWrite18Mode() == TeXApp::Write18Mode::Query);
 }
 
 inline
@@ -356,7 +357,7 @@ template<class CharType>
 int
 runsystem (/*[in]*/ const CharType * lpszCommand)
 {
-  return (miktexwrite18(reinterpret_cast<const TEXMFCHAR *>(lpszCommand)) ? 1 : 0);
+  return (miktexwrite18(reinterpret_cast<const TEXMFCHAR *>(lpszCommand)));
 }
 
 template<class T>

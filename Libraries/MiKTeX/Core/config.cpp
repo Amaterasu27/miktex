@@ -1001,6 +1001,44 @@ SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
    Get a configuration parameter.
    _________________________________________________________________________ */
 
+char
+SessionImpl::GetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char * lpszValueName,
+			     /*[in]*/ char	   defaultValue)
+{
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszSectionName);
+  MIKTEX_ASSERT_STRING (lpszValueName);
+
+  string value;
+
+  string defaultValueString;
+  defaultValueString = defaultValue;
+
+  if (! GetSessionValue(lpszSectionName,
+			lpszValueName,
+			value,
+			defaultValueString.c_str()))			
+    {
+      INVALID_ARGUMENT ("SessionImpl::GetConfigValue", 0);
+    }
+
+  if (value.length() != 1)
+  {
+    FATAL_MIKTEX_ERROR ("SessionImpl::GetConfigValue",
+      T_("Invalid configuration value."),
+      value.c_str());
+  }
+
+  return (value[0]);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::GetConfigValue
+
+   Get a configuration parameter.
+   _________________________________________________________________________ */
+
 int
 SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 			     /*[in]*/ const char *	lpszValueName,

@@ -98,6 +98,7 @@
 #define MIKTEX_REGVAL_REMOTE_REPOSITORY "RemoteRepository"
 #define MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE "RenewFormatsOnUpdate"
 #define MIKTEX_REGVAL_REPOSITORY_TYPE "RepositoryType"
+#define MIKTEX_REGVAL_ALLOWED_SHELL_COMMANDS "AllowedShellCommands"
 #define MIKTEX_REGVAL_SHARED_SETUP "SharedSetup"
 #define MIKTEX_REGVAL_STARTUP_FILE "StartupFile"
 #define MIKTEX_REGVAL_TEMPDIR "TempDir"

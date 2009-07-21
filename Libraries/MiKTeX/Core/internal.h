@@ -986,6 +986,14 @@ public:
 
 public:
   virtual
+  char
+  MIKTEXTHISCALL
+  GetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ char		defaultValue);
+
+public:
+  virtual
   void
   MIKTEXTHISCALL
   SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,

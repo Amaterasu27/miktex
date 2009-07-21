@@ -105,6 +105,7 @@ and &PNG; graphics formats.</para>
 &optionquiet;
 &optionrecordpackageusages;
 &optionrecorder;
+&optionrestrictwriteeighteen;
 &optionsavesize;
 &optionsrcspecials;
 &optionstacksize;

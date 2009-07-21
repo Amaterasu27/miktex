@@ -582,6 +582,7 @@ protected:
   ValueType
   GetParameter (/*[in]*/ const char *		lpszParameterName,
 		/*[in]*/ const ValueType &	defaultValue)
+    const
   {
     ValueType value = pSession->GetConfigValue(0, lpszParameterName, -1);
     if (value < 0)
@@ -590,6 +591,24 @@ protected:
 	  pSession->GetConfigValue(GetProgramName(),
 				   lpszParameterName,
 				   defaultValue);
+      }
+    return (value);
+  }
+
+protected:
+  template<>
+  std::string
+  GetParameter (/*[in]*/ const char *		lpszParameterName,
+		/*[in]*/ const std::string &	defaultValue)
+    const
+  {
+    std::string value = pSession->GetConfigValue(0, lpszParameterName, "");
+    if (value.length() == 0)
+      {
+	value =
+	  pSession->GetConfigValue(GetProgramName(),
+				   lpszParameterName,
+				   defaultValue.c_str());
       }
     return (value);
   }

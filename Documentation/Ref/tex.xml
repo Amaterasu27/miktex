@@ -152,6 +152,7 @@ character (usually <keycombo>
 &optionquiet;
 &optionrecorder;
 &optionrecordpackageusages;
+&optionrestrictwriteeighteen;
 &optionsavesize;
 &optionsrcspecials;
 &optionstacksize;

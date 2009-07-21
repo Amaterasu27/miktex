@@ -113,6 +113,7 @@ font weights.</para>
 &optionquiet;
 &optionrecordpackageusages;
 &optionrecorder;
+&optionrestrictwriteeighteen;
 &optionsavesize;
 &optionsrcspecials;
 &optionstacksize;

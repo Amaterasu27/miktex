@@ -635,6 +635,34 @@ public:
 
   /* _______________________________________________________________________
      
+     GetWrite18Mode
+     _______________________________________________________________________ */
+
+public:
+    class Write18ModeEnum
+    {
+    public:
+      enum EnumType {
+	Enabled = 't',
+	Disabled = 'f',
+	PartiallyEnabled = 'p',
+	Query = 'q',
+      };
+    };
+
+  typedef MiKTeX::Core::EnumWrapper<Write18ModeEnum> Write18Mode;
+
+public:
+
+  Write18Mode
+  GetWrite18Mode ()
+    const
+  {
+    return (write18Mode);
+  }
+
+  /* _______________________________________________________________________
+     
      Write18P
      _______________________________________________________________________ */
 
@@ -644,7 +672,9 @@ public:
   Write18P ()
     const
   {
-    return (enableWrite18);
+    return (write18Mode == Write18Mode::Enabled
+      || write18Mode == Write18Mode::PartiallyEnabled
+      || write18Mode == Write18Mode::Query);
   }
 
   /* _______________________________________________________________________
@@ -760,7 +790,7 @@ public:
   public:
     enum EnumType {
       QuotationError = -1,
-      DisabledRestricted = 0,
+      Disallowed = 0,
       Executed = 1,
       ExecutedAllowed = 2
     };
@@ -791,7 +821,7 @@ public:
      _______________________________________________________________________ */
 
 private:
-  bool enableWrite18;
+  Write18Mode write18Mode;
 
 private:
   bool enableMLTeX;
