@@ -18,13 +18,13 @@ extra_mem_top=0
 half_error_line=50
 
 ;; Words of inimemory available.
-main_memory=1500000
+main_memory=3000000
 
 ;; Width of longest text lines output; should be at least 60.
 max_print_line=79
 
 ;; Maximum number of strings.
-max_strings=100000
+max_strings=500000
 
 ;; Maximum number of simultaneous macro parameters.
 param_size=10000
