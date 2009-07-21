@@ -50,6 +50,17 @@ the <option>--admin</option> option to run in admin mode</para>
 
 </section>
 
+<section>
+
+<title>\write18 partially enabled </title>
+
+<para>The
+<markup
+role="tex">\write18</markup> feature is now partially enabled by default:
+only known commands are allowed.</para>
+
+</section>
+
 </section>
 
 <section>
@@ -132,6 +143,7 @@ more information.</para>
 <itemizedlist>
 <listitem><para>&Dvipdfmx; 20090522</para></listitem>
 <listitem><para>&Dvipng; 1.12</para></listitem>
+<listitem><para>&XeTeX; 0.9995.0</para></listitem>
 </itemizedlist>
 
 </section>

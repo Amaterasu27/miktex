@@ -6,7 +6,7 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "3487">
+<!ENTITY revj2000 "3489">
 <!ENTITY month "July 2009">
 <!ENTITY date "July 09, 2009">
 
@@ -71,6 +71,7 @@
 <!ENTITY optionenablemltex SYSTEM "Options/enablemltex.xml">
 <!ENTITY optionenablepipes SYSTEM "Options/enablepipes.xml">
 <!ENTITY optionenablewriteeighteen SYSTEM "Options/enablewriteeighteen.xml">
+<!ENTITY optionrestrictwriteeighteen SYSTEM "Options/restrictwriteeighteen.xml">
 <!ENTITY optionerrorline SYSTEM "Options/errorline.xml">
 <!ENTITY optionfontmax SYSTEM "Options/fontmax.xml">
 <!ENTITY optionfontmemsize SYSTEM "Options/fontmemsize.xml">
