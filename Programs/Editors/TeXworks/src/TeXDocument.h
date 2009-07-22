@@ -175,6 +175,9 @@ private slots:
 	void reloadIfChangedOnDisk();
 	void removeAuxFiles();
 	void setupFileWatcher();
+#if defined(MIKTEX)
+	void print ();
+#endif
 
 private:
 	void init();
@@ -246,6 +249,7 @@ private:
 
 #if defined(MIKTEX)
     QAction * actionAbout_MiKTeX;
+    QAction * actionPrintSource;
 #endif
 };
 

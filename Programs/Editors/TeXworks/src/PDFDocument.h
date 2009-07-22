@@ -262,6 +262,9 @@ private slots:
 	void doFindDialog();
 	void doFindAgain(bool newSearch = false);
 	void reloadWhenIdle();
+#if defined(MIKTEX)
+	void print ();
+#endif
 
 signals:
 	void reloaded();
@@ -306,6 +309,7 @@ private:
 
 #if defined(MIKTEX)
     QAction * actionAbout_MiKTeX;
+    QAction * actionPrintPDF;
 #endif
 };
 

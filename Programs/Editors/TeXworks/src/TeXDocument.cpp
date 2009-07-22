@@ -56,6 +56,11 @@
 #include <QPushButton>
 #include <QFileSystemWatcher>
 #include <QDebug>
+#if defined(MIKTEX)
+// see http://code.google.com/p/texworks/issues/detail?id=78#c1
+#include <QPrinter>
+#include <QPrintDialog>
+#endif
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -364,6 +369,16 @@ void TeXDocument::init()
 	connect (actionAbout_MiKTeX, SIGNAL(triggered()), qApp, SLOT(aboutMiKTeX()));
 	menuHelp->insertAction (actionGoToHomePage, actionAbout_MiKTeX);
 	menuHelp->insertSeparator (actionGoToHomePage);
+
+	// see http://code.google.com/p/texworks/issues/detail?id=78#c1
+	actionPrintSource = new QAction(this);
+	actionPrintSource->setIcon(QIcon(":/images/tango/document-print.png"));
+	actionPrintSource->setObjectName(QString::fromUtf8("actionPrintPDF"));
+	actionPrintSource->setText(QApplication::translate("PDFDocument", "Print...", 0, QApplication::UnicodeUTF8));
+	actionPrintSource->setShortcut (QKeySequence::Print);
+	connect (actionPrintSource, SIGNAL(triggered()), this, SLOT(print()));
+	menuFile->insertAction (actionClose, actionPrintSource);
+	menuFile->insertSeparator (actionClose);
 #endif
 }
 
@@ -2395,3 +2410,29 @@ void TeXDocument::detachPdf()
 		pdfDoc = NULL;
 	}
 }
+
+#if defined(MIKTEX)
+// see http://code.google.com/p/texworks/issues/detail?id=78#c1
+void TeXDocument::print()
+{
+	QPrinter printer(QPrinter::HighResolution);
+	QPrintDialog printDlg(&printer, this);
+
+	// Set up some basic information about the document
+	printer.setCreator(TEXWORKS_NAME);
+	printer.setDocName(QFileInfo(curFile).baseName());
+
+	// do some setup for the print dialog
+	// Note: no page range since we don't know how many pages this will be.
+	printDlg.setOption(QAbstractPrintDialog::PrintToFile, true);
+	printDlg.setOption(QAbstractPrintDialog::PrintSelection, true);
+	printDlg.setOption(QAbstractPrintDialog::PrintPageRange, false);
+	printDlg.setOption(QAbstractPrintDialog::PrintCollateCopies, true);
+	printDlg.setWindowTitle(tr("Print %1").arg(QFileInfo(curFile).fileName()));
+
+	// show the print dialog to the user
+	if(printDlg.exec() != QDialog::Accepted) return;
+	
+	textEdit->print(&printer);
+}
+#endif
