@@ -2121,6 +2121,19 @@ PackageInstallerImpl::RegisterComponents (/*[in]*/ bool doRegister)
 
 /* _________________________________________________________________________
 
+   PackageInstallerImpl::OnProcessOutput
+   _________________________________________________________________________ */
+
+bool
+MIKTEXTHISCALL
+PackageInstallerImpl::OnProcessOutput (/*[in]*/ const void *	pOutput,
+				       /*[in]*/ size_t		n)
+{
+  return (true);
+}
+
+/* _________________________________________________________________________
+
    PackageInstallerImpl::RunIniTeXMF
    _________________________________________________________________________ */
 
@@ -2142,8 +2155,13 @@ The MiKTeX configuration utility could not be found.")),
     }
 
   // run initexmf.exe
-  string arguments = lpszArguments;
-  Process::Run (exe, arguments.c_str());
+  string arguments;
+  if (pSession->IsAdminMode())
+  {
+    arguments = "--admin ";
+  }
+  arguments += lpszArguments;
+  Process::Run (exe, arguments.c_str(), this);
 #else
   UNUSED_ALWAYS (lpszArguments);
 #  warning Unimplemented: PackageInstallerImpl::RunIniTeXMF
