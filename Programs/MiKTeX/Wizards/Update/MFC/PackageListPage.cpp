@@ -498,14 +498,14 @@ as a whole."),
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
   {
-    AfxMessageBox (T_("This package can only be updated by the admin variant of the wizard."),
+    AfxMessageBox (T_("This package is currently installed for all users. Only the admin variant of the wizard can update this package."),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
   {
     AfxMessageBox (T_("This package cannot be updated rihgt now. \
-Let the wizard conclude now. Then run the wizard again."),
+Let the wizard conclude. Then run the wizard again."),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }

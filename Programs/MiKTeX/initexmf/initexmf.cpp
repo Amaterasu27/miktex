@@ -420,7 +420,7 @@ private:
   
 private:
   void
-  MakeMaps ();
+  MakeMaps (/*[in]*/ bool force);
 
 private:
   void
@@ -2355,7 +2355,7 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::MakeMaps ()
+IniTeXMFApp::MakeMaps (/*[in]*/ bool force)
 {
   // locate the mkfntmap executable
   PathName pathMkfontmap;
@@ -2371,6 +2371,10 @@ IniTeXMFApp::MakeMaps ()
   if (adminMode)
   {
     arguments.AppendOption ("--admin");
+  }
+  if (force)
+  {
+    arguments.AppendOption ("--force");
   }
   if (printOnly)
     {
@@ -3317,7 +3321,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 
   if (optMakeMaps)
     {
-      MakeMaps ();
+      MakeMaps (optForce);
     }
 
   for (vector<string>::const_iterator it = addFiles.begin();

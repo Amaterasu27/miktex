@@ -655,11 +655,20 @@ FileCopyPage::ConfigureMiKTeX ()
 
   CommandLineBuilder cmdLine;
 
+  cmdLine.Clear ();
   cmdLine.AppendOption ("--update-fndb");
+  RunIniTeXMF (cmdLine);
+
+  cmdLine.Clear ();
   cmdLine.AppendOption ("--force");
   cmdLine.AppendOption ("--mklinks");
-  cmdLine.AppendOption ("--mkmaps");
+  RunIniTeXMF (cmdLine);
 
+  cmdLine.Clear ();
+#if 0 // experimental
+  cmdLine.AppendOption ("--force");
+#endif
+  cmdLine.AppendOption ("--mkmaps");
   RunIniTeXMF (cmdLine);
 }
 

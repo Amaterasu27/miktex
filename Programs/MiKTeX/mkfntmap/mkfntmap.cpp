@@ -65,6 +65,7 @@ enum Option
 {
   OPT_AAA = 1,
   OPT_ADMIN,
+  OPT_FORCE,
   OPT_OUTPUT_DIRECTORY,
   OPT_VERBOSE,
   OPT_VERSION,
@@ -76,6 +77,14 @@ const struct poptOption aoption[] = {
     POPT_ARG_NONE, 0,
     OPT_ADMIN,
     T_("Run in administrative mode."),
+    0,
+  },
+
+  {
+    "force", 0,
+    POPT_ARG_NONE, 0,
+    OPT_FORCE,
+    T_("Force re-generation of apparently up-to-date fontconfig cache files, overriding the timestamp checking."),
     0,
   },
 
@@ -137,6 +146,7 @@ public:
       pdftexDownloadBase14 (true),
       verbose (false),
       adminMode (false),
+      force (false),
       namingConvention (URWkb)
   {
   }
@@ -373,6 +383,9 @@ private:
   bool adminMode;
 
 private:
+  bool force;
+
+private:
   SessionWrapper pSession;
 
 private:
@@ -431,6 +444,9 @@ MakeFontMapApp::ProcessOptions (/*[in]*/ int		argc,
 	{
 	case OPT_ADMIN:
 	  adminMode = true;
+	  break;
+	case OPT_FORCE:
+	  force = true;
 	  break;
 	case OPT_OUTPUT_DIRECTORY:
 	  outputDirectory = popt.GetOptArg();
@@ -1478,7 +1494,10 @@ MakeFontMapApp::BuildFontconfigCache ()
   {
     arguments.AppendOption ("--miktex-admin");
   }
-  arguments.AppendOption ("--force");
+  if (force)
+  {
+    arguments.AppendOption ("--force");
+  }
   if (verbose)
     {
       arguments.AppendOption ("--verbose");
