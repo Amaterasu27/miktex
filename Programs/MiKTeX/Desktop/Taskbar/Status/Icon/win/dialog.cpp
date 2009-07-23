@@ -349,7 +349,23 @@ InitInstance (/*[in]*/ HINSTANCE	hInstance,
 	      /*[in]*/ int		nCmdShow)
 {
   InitCommonControls ();
-  
+
+  SessionWrapper pSession (true);
+  if (pSession->IsMiKTeXPortable())
+  {
+    PathName initexmf;
+    if (pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
+    {
+      ProcessStartInfo startInfo;
+      startInfo.FileName = initexmf.Get();
+      startInfo.Arguments = "--mkmaps";
+      AutoFILE nul (fopen("nul", "w"));
+      startInfo.StandardOutput = nul.Get();
+      startInfo.StandardError = nul.Get();
+      Process::Start (startInfo);
+    }
+  }
+
   hInst = hInstance;
   
   HWND hWnd =

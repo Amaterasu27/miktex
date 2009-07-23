@@ -925,6 +925,7 @@ FileCopyPage::DoTheInstallation ()
     PathName fileName (theApp.startupConfig.commonInstallRoot);
     fileName += "miktex-portable.cmd";
     StreamWriter starter (fileName);
+    starter.WriteLine ("@echo off");
     starter.WriteLine ("miktex\\bin\\miktex-taskbar-icon.exe");
     starter.Close ();
   }
