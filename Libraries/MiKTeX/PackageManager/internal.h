@@ -1042,7 +1042,8 @@ class PackageInstallerImpl
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
     public MiKTeXPackageManagerLib::IPackageInstallerCallback,
 #endif
-    public MiKTeX::Extractor::IExtractCallback
+    public MiKTeX::Extractor::IExtractCallback,
+    public MiKTeX::Core::IRunProcessCallback
 {
 private:
   enum ErrorCode {
@@ -1231,6 +1232,13 @@ public:
   bool
   MIKTEXTHISCALL
   OnError (/*[in]*/ const char *	lpszMessage);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  OnProcessOutput (/*[in]*/ const void *	pOutput,
+		   /*[in]*/ size_t		n);
 
 private:
   void
