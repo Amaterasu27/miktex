@@ -1,6 +1,6 @@
 /* PropPageGeneral.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -172,9 +172,9 @@ PropPageGeneral::OnApply ()
 	      break;
 	    }
 	  SessionWrapper(true)
-	    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-				  MIKTEX_REGVAL_AUTO_INSTALL,
-				  tri.Get());
+	    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+			      MIKTEX_REGVAL_AUTO_INSTALL,
+			      tri.Get());
 	  previousInstallOnTheFly = installOnTheFly;
 	}
       if (paperSizeIndex != previousPaperSizeIndex)

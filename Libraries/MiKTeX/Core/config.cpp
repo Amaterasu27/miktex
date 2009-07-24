@@ -1174,19 +1174,19 @@ SessionImpl::GetConfigValue (/*[in]*/ const char *	lpszSectionName,
 
 /* _________________________________________________________________________
 
-   SessionImpl::SetUserConfigValue
+   SessionImpl::SetConfigValue
 
    Set a per-user configuration parameter.
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
-				 /*[in]*/ const char * lpszValueName,
-				 /*[in]*/ const char * lpszValue)
+SessionImpl::SetConfigValue (/*[in]*/ const char * lpszSectionName,
+			     /*[in]*/ const char * lpszValueName,
+			     /*[in]*/ const char * lpszValue)
 {
   MIKTEX_ASSERT_STRING (lpszSectionName);
 
-  PathName pathConfigFile = GetSpecialPath(SpecialPath::UserConfigRoot);
+  PathName pathConfigFile = GetSpecialPath(SpecialPath::ConfigRoot);
   pathConfigFile += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
   pathConfigFile += MIKTEX_INI_FILE;
 
@@ -1202,7 +1202,7 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
 #if ! NO_REGISTRY
   if (! haveConfigFile && ! IsMiKTeXPortable())
     {
-      winRegistry::SetRegistryValue (TriState::False,
+      winRegistry::SetRegistryValue (IsAdminMode() ? TriState::True : TriState::False,
 				     lpszSectionName,
 				     lpszValueName,
 				     lpszValue);
@@ -1212,7 +1212,7 @@ SessionImpl::SetUserConfigValue (/*[in]*/ const char * lpszSectionName,
 	  if (newValue != lpszValue)
 	    {
 	      FATAL_MIKTEX_ERROR
-		("SessionImpl::SetUserConfigValue",
+		("SessionImpl::SetConfigValue",
 		 T_("\
 The configuration value could not be changed. Possible reason: an \
 environment variable definition is in the way."),
@@ -1230,34 +1230,34 @@ environment variable definition is in the way."),
 
 /* _________________________________________________________________________
 
-   SessionImpl::SetUserConfigValue
+   SessionImpl::SetConfigValue
 
    Set a configuration parameter.
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
-				 /*[in]*/ const char *	lpszValueName,
-				 /*[in]*/ bool		value)
+SessionImpl::SetConfigValue (/*[in]*/ const char *	lpszSectionName,
+			     /*[in]*/ const char *	lpszValueName,
+			     /*[in]*/ bool		value)
 {
-  SetUserConfigValue (lpszSectionName,
-		      lpszValueName,
-		      value ? "t" : "f");
+  SetConfigValue (lpszSectionName,
+		  lpszValueName,
+		  value ? "t" : "f");
 }
 
 /* _________________________________________________________________________
 
-   SessionImpl::SetUserConfigValue
+   SessionImpl::SetConfigValue
 
    Set a configuration parameter.
    _________________________________________________________________________ */
 
 void
-SessionImpl::SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
-				 /*[in]*/ const char *	lpszValueName,
-				 /*[in]*/ int		value)
+SessionImpl::SetConfigValue (/*[in]*/ const char *	lpszSectionName,
+			     /*[in]*/ const char *	lpszValueName,
+			     /*[in]*/ int		value)
 {
-  SetUserConfigValue (lpszSectionName, lpszValueName, NUMTOSTR(value));
+  SetConfigValue (lpszSectionName, lpszValueName, NUMTOSTR(value));
 }
 
 /* _________________________________________________________________________

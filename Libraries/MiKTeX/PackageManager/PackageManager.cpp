@@ -1139,9 +1139,9 @@ void
 PackageManager::SetRemotePackageRepository (/*[in]*/ const string & url)
 {
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_REMOTE_REPOSITORY,
-			  url.c_str());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_REMOTE_REPOSITORY,
+		      url.c_str());
 }
 
 /* _________________________________________________________________________
@@ -1201,9 +1201,9 @@ void
 PackageManager::SetLocalPackageRepository (/*[in]*/ const PathName & path)
 {
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			  path.Get());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_LOCAL_REPOSITORY,
+		      path.Get());
 }
 
 /* _________________________________________________________________________
@@ -1263,9 +1263,9 @@ void
 PackageManager::SetMiKTeXDirectRoot (/*[in]*/ const PathName & path)
 {
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
-			  path.Get());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_MIKTEXDIRECT_ROOT,
+		      path.Get());
 }
 
 /* _________________________________________________________________________
@@ -1369,9 +1369,9 @@ PackageManager::SetDefaultPackageRepository
       UNEXPECTED_CONDITION ("PackageManager::SetDefaultPackageRepository");
     }
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_REPOSITORY_TYPE,
-			  repositoryTypeStr.c_str());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_REPOSITORY_TYPE,
+		      repositoryTypeStr.c_str());
 }
 
 /* _________________________________________________________________________
@@ -2117,21 +2117,21 @@ PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
 {
 #if defined(MIKTEX_WINDOWS)
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_USE_PROXY,
-			  proxySettings.useProxy);
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_USE_PROXY,
+		      proxySettings.useProxy);
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_PROXY_HOST,
-			  proxySettings.proxy.c_str());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_PROXY_HOST,
+		      proxySettings.proxy.c_str());
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_PROXY_PORT,
-			  proxySettings.port);
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_PROXY_PORT,
+		      proxySettings.port);
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_PROXY_AUTH_REQ,
-			  proxySettings.authenticationRequired);
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_PROXY_AUTH_REQ,
+		      proxySettings.authenticationRequired);
 #endif
   PackageManagerImpl::proxyUser = proxySettings.user;
   PackageManagerImpl::proxyPassword = proxySettings.password;

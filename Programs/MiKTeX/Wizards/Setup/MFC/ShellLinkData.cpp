@@ -115,7 +115,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (all users)->Settings"
+  // "Maintenance (Admin)->Settings (Admin)"
   {
     false,
     IDS_MAINTENANCE_ADMIN,
@@ -131,7 +131,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (all users)->Update"
+  // "Maintenance (Admin)->Update (Admin)"
   {
     false,
     IDS_MAINTENANCE_ADMIN,
@@ -147,7 +147,7 @@ const ShellLinkData shellLinks[] = {
     0,
   },
 
-  // "Maintenance (all users)->Package Manager"
+  // "Maintenance (Admin)->Package Manager (Admin)"
   {
     false,
     IDS_MAINTENANCE_ADMIN,

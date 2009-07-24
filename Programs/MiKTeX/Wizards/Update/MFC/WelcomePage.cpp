@@ -1,6 +1,6 @@
 /* WelcomePage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -130,11 +130,11 @@ WelcomePage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   try
     {
-      SessionWrapper(true)->SetUserConfigValue (T_("Update"),
-						T_("alwaysWelcome"),
-						(alwaysShow == 0
-						 ? false
-						 : true));
+      SessionWrapper(true)->SetConfigValue ("Update",
+					    "alwaysWelcome",
+					    (alwaysShow == 0
+					     ? false
+					     : true));
     }
   catch (const MiKTeXException & e)
     {

@@ -5887,27 +5887,27 @@ public:
   virtual
   void
   MIKTEXTHISCALL
-  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
-		      /*[in]*/ const char *	lpszValueName,
-		      /*[in]*/ const char *	lpszValue)
+  SetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ const char *	lpszValue)
     = 0;
 
 public:
   virtual
   void
   MIKTEXTHISCALL
-  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
-		      /*[in]*/ const char *	lpszValueName,
-		      /*[in]*/ bool			value)
+  SetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ bool		value)
     = 0;
 
 public:
   virtual
   void
   MIKTEXTHISCALL
-  SetUserConfigValue (/*[in]*/ const char *	lpszSectionName,
-		      /*[in]*/ const char *	lpszValueName,
-		      /*[in]*/ int			value)
+  SetConfigValue (/*[in]*/ const char *	lpszSectionName,
+		  /*[in]*/ const char *	lpszValueName,
+		  /*[in]*/ int		value)
     = 0;
 
 public:

@@ -159,9 +159,9 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 			      MIKTEX_REGVAL_AUTO_INSTALL,
 			      TriState(TriState::Undetermined)));
   autoAdmin = pSession->GetConfigValue(
-    MIKTEX_REGKEY_PACKAGE_MANAGER,
-    MIKTEX_REGVAL_AUTO_ADMIN,
-    TriState(TriState::Undetermined));
+				       MIKTEX_REGKEY_PACKAGE_MANAGER,
+				       MIKTEX_REGVAL_AUTO_ADMIN,
+				       TriState(TriState::Undetermined));
   InstallSignalHandler (SIGINT);
   InstallSignalHandler (SIGTERM);
   if (! File::Exists(pSession->GetMpmDatabasePathName()))

@@ -1,6 +1,6 @@
 /* TypePage.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2009 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -330,15 +330,15 @@ TypePage::OnKillActive ()
     {
       try
 	{
-	  SessionWrapper(true)->SetUserConfigValue ("Update",
-						    "lastSource",
-						    sourceChoice);
-	  SessionWrapper(true)->SetUserConfigValue ("Update",
-						    "lastRemote",
-						    remoteChoice);
-	  SessionWrapper(true)->SetUserConfigValue ("Update",
-						    "lastLocal",
-						    localChoice);
+	  SessionWrapper(true)->SetConfigValue ("Update",
+						"lastSource",
+						sourceChoice);
+	  SessionWrapper(true)->SetConfigValue ("Update",
+						"lastRemote",
+						remoteChoice);
+	  SessionWrapper(true)->SetConfigValue ("Update",
+						"lastLocal",
+						localChoice);
 	  pSheet->SetRandomRepositoryFlag (remoteChoice == 0);
 	  pSheet->SetRepositoryType (sourceChoice == 0
 				     ? RepositoryType::Remote

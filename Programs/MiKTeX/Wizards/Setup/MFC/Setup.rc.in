@@ -575,7 +575,7 @@ BEGIN
     IDS_HEADER_LICENSE      "Copying Conditions"
     IDS_SUBHEADER_LICENSE   "MiKTeX is freely redistributable under certain conditions."
     IDS_MAINTENANCE         "Maintenance"
-    IDS_MAINTENANCE_ADMIN   "Maintenance (all users)"
+    IDS_MAINTENANCE_ADMIN   "Maintenance (Admin)"
     IDS_TEXWORKS            "TeXworks"
     IDS_MPM_ADMIN           "Package Manager (Admin)"
     IDS_OPTIONS_ADMIN       "Settings (Admin)"

@@ -1,6 +1,6 @@
 /* mikui.cpp:
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -121,9 +121,9 @@ MiKTeX::UI::MFC::InstallPackageMessageBox
 	  ret = (dlgRet == IDOK ? YES : NO);
 	  if (dlgRet == IDOK && ! dlg.alwaysAsk)
 	    {
-	      pSession->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-					    MIKTEX_REGVAL_AUTO_INSTALL,
-					    "1");
+	      pSession->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+					MIKTEX_REGVAL_AUTO_INSTALL,
+					"1");
 	    }
 	}
     }

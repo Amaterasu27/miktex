@@ -705,9 +705,9 @@ FileCopyPage::DoTheDownload ()
 
   // remember local repository folder
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			  theApp.localPackageRepository.Get());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_LOCAL_REPOSITORY,
+		      theApp.localPackageRepository.Get());
 
   // start downloader in the background
   pInstaller->DownloadAsync();
@@ -875,9 +875,9 @@ FileCopyPage::DoTheInstallation ()
 
   // configure autoInstall
   SessionWrapper(true)
-    ->SetUserConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_AUTO_INSTALL,
-			  theApp.installOnTheFly.Get());
+    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
+		      MIKTEX_REGVAL_AUTO_INSTALL,
+		      theApp.installOnTheFly.Get());
 
   if (pSheet->GetCancelFlag())
     {

@@ -306,6 +306,7 @@ Options:\r\n\r\n\
   --paper-size=Letter\r\n")
 #endif
 		 T_("\
+  --portable\r\n\
   --private\r\n\
   --program-folder=NAME\r\n\
   --remote-package-repository=URL\r\n\

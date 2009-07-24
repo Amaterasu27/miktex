@@ -1,6 +1,6 @@
 /* mikuiqt.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2009 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -123,7 +123,7 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
 	  }
 	  if (dialogCode == QDialog::Accepted && autoAdmin != dlg.GetAdminMode())
 	  {
-	    pSession->SetUserConfigValue (
+	    pSession->SetConfigValue (
 	      MIKTEX_REGKEY_PACKAGE_MANAGER,
 	      MIKTEX_REGVAL_AUTO_ADMIN,
 	      dlg.GetAdminMode());
@@ -133,7 +133,7 @@ MiKTeX::UI::Qt::InstallPackageMessageBox
 	    ret != DONTASKAGAIN;
 	    if (dialogCode == QDialog::Accepted)
 	    {
-	      pSession->SetUserConfigValue (
+	      pSession->SetConfigValue (
 		MIKTEX_REGKEY_PACKAGE_MANAGER,
 		MIKTEX_REGVAL_AUTO_INSTALL,
 		"1");
