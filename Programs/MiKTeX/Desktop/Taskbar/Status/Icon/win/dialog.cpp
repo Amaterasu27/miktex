@@ -52,11 +52,12 @@ ShowContextMenu (/*[in]*/ HWND hWnd)
     }
 #endif
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_TEXWORKS, L"TeXworks");
-  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_SETTINGS, L"Settings");
-  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_UPDATE, L"Update");
-  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_BROWSE_PACKAGES, L"Browse Packages");
-  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_PREVIEWER, L"Previewer");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_PREVIEWER, L"Yap");
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_COMMAND_PROMPT, L"Command Prompt");
+  InsertMenuW (hMenu, -1, MF_SEPARATOR, 0, 0);
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_UPDATE, L"Update MiKTeX");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_BROWSE_PACKAGES, L"MiKTeX Package Manager");
+  InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_SETTINGS, L"MiKTeX Options");
   InsertMenuW (hMenu, -1, MF_SEPARATOR, 0, 0);
   InsertMenuW (hMenu, -1, MF_BYPOSITION, SWM_EXIT, L"Exit");
   SetForegroundWindow (hWnd);
