@@ -30,23 +30,23 @@ variants:</para>
 
 <itemizedlist>
 <listitem><para>the <firstterm>standard variant</firstterm> is used to
-change &MiKTeX; settings for the current user</para></listitem>
+change &MiKTeX; settings for the current (logged-in) user</para></listitem>
 <listitem><para>the <firstterm>admin variant</firstterm> is used to
 to change &MiKTeX; settings for all users</para></listitem>
 </itemizedlist>
 
-<para>Therefore, if a user runs the standard variant of the package
-manager, packages will be installed in the private installation
-directory.  In contrast, if a user runs the admin variant of the
-package manager, packages will be installed in the system-wide
-installation directory.</para>
+<para>For example, packages will be installed in a private
+installation directory, if the current user runs the standard variant
+of the package manager. In contrast, packages will be installed in the
+system-wide installation directory, if the current user runs the admin
+variant of the package manager.</para>
 
-<para>In order to run the admin variant, a user must have
+<para>In order to run an admin variant, the current user must have
 administrator privileges.</para>
 
 <para>The command-line versions of the maintenance utilities
 (<filename>initexmf</filename> and <filename>mpm</filename>) accept
-the <option>--admin</option> option to run in admin mode</para>
+the <option>--admin</option> option to run the admin variant.</para>
 
 </section>
 
@@ -54,10 +54,10 @@ the <option>--admin</option> option to run in admin mode</para>
 
 <title>\write18 partially enabled </title>
 
-<para>The
-<markup
-role="tex">\write18</markup> feature is now partially enabled by default:
-only known commands are allowed.</para>
+<para>The <markup role="tex">\write18</markup> primitive is now
+partially enabled: if the first token is a well known command (e.g.,
+&epstopdf;), it will be executed. Unknown commands are still
+blocked.</para>
 
 </section>
 
@@ -68,8 +68,9 @@ only known commands are allowed.</para>
 <title>Per-user &TEXMF; roots</title>
 
 <para>It is now possible to set up &TEXMF; root directories on a
-per-user basis, i.e., users can register their private &TEXMF; root
-directories.</para>
+per-user basis: users can register their private &TEXMF; root
+directories without affecting the system-wide &MiKTeX;
+installation.</para>
 
 </section>
 
@@ -120,8 +121,8 @@ Kew.</para>
 <para>&TeXworks; includes a text editor, a previewer, syntax
 highlighting, spell checking, Unicode support.</para>
 
-<para>This version of &TeXworks; is specially for &MiKTeX;. See the
-<ulink url="http://miktex.svn.sourceforge.net/viewvc/miktex/miktex/trunk/Programs/Editors/TeXworks/miktex.html">TeXworks for MiKTeX homepage</ulink>, for
+<para>This version of &TeXworks; is adapted to the &MiKTeX; distribution. See the
+<ulink url="http://miktex.svn.sourceforge.net/viewvc/miktex/miktex/trunk/Programs/Editors/TeXworks/miktex.html">&TeXworks; for &MiKTeX; homepage</ulink>, for
 more information.</para>
 
 </section>
@@ -143,6 +144,7 @@ more information.</para>
 <itemizedlist>
 <listitem><para>&Dvipdfmx; 20090522</para></listitem>
 <listitem><para>&Dvipng; 1.12</para></listitem>
+<listitem><para>&pdfTeX; 1.40.10</para></listitem>
 <listitem><para>&XeTeX; 0.9995.0</para></listitem>
 </itemizedlist>
 

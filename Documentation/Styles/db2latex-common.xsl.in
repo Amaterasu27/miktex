@@ -31,6 +31,8 @@
       <xsl:when test="$app='pdf-e-TeX'"><xsl:text>pdf-{$\varepsilon$}-\TeX{}</xsl:text></xsl:when>
       <xsl:when test="$app='pdfTeX'"><xsl:text>pdf\TeX{}</xsl:text></xsl:when>
       <xsl:when test="$app='pdfLaTeX'"><xsl:text>pdf\LaTeX{}</xsl:text></xsl:when>
+      <xsl:when test="$app='TeXworks'"><xsl:text>\TeX{}works</xsl:text></xsl:when>
+      <xsl:when test="$app='XeTeX'"><xsl:text>X\kern-.1em\lower.5ex\hbox{\reflectbox{E}}\kern-.15em\TeX{}</xsl:text></xsl:when>
       <xsl:otherwise>
         <xsl:call-template name="inline.charseq"/>
       </xsl:otherwise>

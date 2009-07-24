@@ -381,15 +381,16 @@ For example:
 lists the files and sub-directories of the current directory.</para>
 
 <note>
-<para>&TeX; ignores <markup
-role="tex">\write18</markup> by default to avoid security problems.
+<para>The <markup
+role="tex">\write18</markup> feature is only partially enabled by default to avoid security problems:
+only well known commands are allowed.
 <indexterm>
 <primary>security</primary>
 </indexterm>
 <indexterm significance="preferred">
 <primary>--enable-write18</primary>
 </indexterm>
-You enable the feature by specifying
+You fully enable the feature by specifying
 <option>--enable-write18</option> on the &TeX; command-line.</para>
 </note>
 

@@ -163,6 +163,13 @@ This must be one of
 </varlistentry>
 
 <varlistentry>
+<term><option>--portable</option></term>
+<listitem>
+<para>Setup &MiKTeXPortable;.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term><option>--private</option></term>
 <listitem><para>Install &MiKTeX; for the
 <indexterm>

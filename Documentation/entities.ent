@@ -41,10 +41,10 @@
 <!ENTITY MiKTeXNetInstaller "<application>MiKTeX Net Installer</application>">
 <!ENTITY BasicMiKTeXInstaller "<application>Basic MiKTeX Installer</application>">
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
-<!ENTITY MiKTeXPortable "<application>MiKTeX&nbsp;Portable</application>">
-<!ENTITY MiKTeX25 "<application>MiKTeX&nbsp;2.5</application>">
-<!ENTITY MiKTeX26 "<application>MiKTeX&nbsp;2.6</application>">
-<!ENTITY MiKTeXCurrentSeries "<application>MiKTeX&nbsp;&MIKTEX_SERIES_STR;</application>">
+<!ENTITY MiKTeXPortable "<application>&MiKTeX;&nbsp;Portable</application>">
+<!ENTITY MiKTeX25 "&MiKTeX;&nbsp;2.5">
+<!ENTITY MiKTeX26 "&MiKTeX;&nbsp;2.6">
+<!ENTITY MiKTeXCurrentSeries "&MiKTeX;&nbsp;&MIKTEX_SERIES_STR;">
 <!ENTITY MiKTeXSoftwareDevelopmentKit "&MiKTeX;&nbsp;Software Development Kit">
 <!ENTITY SDK "<acronym>SDK</acronym>">
 <!ENTITY MiKTeXSDK "&MiKTeX;&nbsp;&SDK;">

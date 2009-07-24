@@ -24,6 +24,23 @@ start menu:</para>
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
+<guimenuitem>Previewer</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the &MiKTeX; previewer &Yap;.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guimenuitem>TeXworks</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to &TeXworks;, an integrated development environment
+for &TeX; and &LaTeX;.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
 <guisubmenu>Help</guisubmenu>
 <guimenuitem>FAQ</guimenuitem>
 </menuchoice>
@@ -37,21 +54,63 @@ start menu:</para>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
 <guisubmenu>Help</guisubmenu>
-<guimenuitem>LaTeX2e Reference</guimenuitem>
+<guimenuitem>Manual</guimenuitem>
 </menuchoice></term>
-<listitem><para>A <application>LaTeX2e</application> reference manual.
-<indexterm>
-<primary>LaTeX2e reference</primary>
-</indexterm></para></listitem>
+<listitem><para>The &MiKTeX; manual.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><menuchoice moreinfo="none">
 <guimenu>&progfldr;</guimenu>
-<guisubmenu>Help</guisubmenu>
-<guimenuitem>Manual</guimenuitem>
+<guisubmenu>Maintenance</guisubmenu>
+<guimenuitem>Package Manager</guimenuitem>
 </menuchoice></term>
-<listitem><para>The &MiKTeX; manual.</para></listitem>
+<listitem><para>A shortcut to the &MiKTeX; package manager.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance</guisubmenu>
+<guimenuitem>Settings</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to &MiKTeXOptions;.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance</guisubmenu>
+<guimenuitem>Update</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the &MiKTeX; update wizard.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance (Admin)</guisubmenu>
+<guimenuitem>Package Manager (Admin)</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the admin variant of the &MiKTeX; package manager.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance (Admin)</guisubmenu>
+<guimenuitem>Settings (Admin)</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the admin variant of &MiKTeXOptions;.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><menuchoice moreinfo="none">
+<guimenu>&progfldr;</guimenu>
+<guisubmenu>Maintenance (Admin)</guisubmenu>
+<guimenuitem>Update (Admin)</guimenuitem>
+</menuchoice></term>
+<listitem><para>A shortcut to the admin variant of the &MiKTeX; update wizard.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -88,39 +147,6 @@ start menu:</para>
 <guimenuitem>Support</guimenuitem>
 </menuchoice></term>
 <listitem><para>An Internet shortcut to the &MiKTeX; support page.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guimenuitem>Browse packages</guimenuitem>
-</menuchoice></term>
-<listitem><para>A shortcut to the &MiKTeX; package manager.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guimenuitem>Previewer</guimenuitem>
-</menuchoice></term>
-<listitem><para>A shortcut to the &MiKTeX; previewer &Yap;.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guisubmenu>Maintenance</guisubmenu>
-<guimenuitem>Settings</guimenuitem>
-</menuchoice></term>
-<listitem><para>A shortcut to the &MiKTeXOptions;.</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><menuchoice moreinfo="none">
-<guimenu>&progfldr;</guimenu>
-<guimenuitem>Update</guimenuitem>
-</menuchoice></term>
-<listitem><para>A shortcut to the &MiKTeX; update wizard.</para></listitem>
 </varlistentry>
 
 </variablelist>
