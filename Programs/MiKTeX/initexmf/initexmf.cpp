@@ -2129,16 +2129,16 @@ struct ShellFileType {
   const char * lpszCommandArgs;
   const char * lpszDdeArgs;
 } const shellFileTypes[] = {
-  "bib", ".bib", "BibTeX Database", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
-  "cls", ".cls", "LaTeX Class", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
-  "dtx", ".dtx", "LaTeX Macros", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "bib", ".bib", "BibTeX Database", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
+  "cls", ".cls", "LaTeX Class", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
+  "dtx", ".dtx", "LaTeX Macros", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
   "dvi", ".dvi", "DVI File", MIKTEX_YAP_EXE, 1, false, "open", "/dde", "[open(\"%1\")]",
   "dvi", 0, 0, MIKTEX_YAP_EXE, INT_MAX, false, "print", "/dde", "[print(\"%1\")]",
   "dvi", 0, 0, MIKTEX_YAP_EXE, INT_MAX, false, "printto", "/dde", "[printto(\"%1\",\"%2\",\"%3\",\"%4\")]",
-  "ltx", ".ltx", "LaTeX Document", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "ltx", ".ltx", "LaTeX Document", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
   "pdf", ".pdf", "PDF File", MIKTEX_TEXWORKS_EXE, INT_MAX, false, "open", "\"%1\"", 0,
-  "sty", ".sty", "LaTeX Style", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
-  "tex", ".tex", "TeX Document", MIKTEX_TEXWORKS_EXE, 2, false, "open", "\"%1\"", 0,
+  "sty", ".sty", "LaTeX Style", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
+  "tex", ".tex", "TeX Document", MIKTEX_TEXWORKS_EXE, -2, false, "open", "\"%1\"", 0,
 };
 
 void
@@ -3230,8 +3230,8 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
       cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					      MIKTEX_COMPONENT_VERSION_STR)
 	   << T_("\n\
-Copyright (C) 1996-2009 Christian Schenk\n				\
-This is free software; see the source for copying conditions.  There is NO\n \
+Copyright (C) 1996-2009 Christian Schenk\n\
+This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	   << endl;
       return;
