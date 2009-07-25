@@ -167,19 +167,18 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
   if (! File::Exists(pSession->GetMpmDatabasePathName()))
   {
     // create file name database files
-    SessionWrapper(true)->UnloadFilenameDatabase ();
     PathName initexmf;
-    if (! SessionWrapper(true)->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
+    if (pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
     {
-      UNEXPECTED_CONDITION ("Setup");
-    }
-    if (pSession->IsAdminMode())
-    {
-      Process::Run (initexmf, "--admin --quiet --update-fndb");
-    }
-    else
-    {
-      Process::Run (initexmf, "--quiet --update-fndb");
+      SessionWrapper(true)->UnloadFilenameDatabase ();
+      if (pSession->IsAdminMode())
+	{
+	  Process::Run (initexmf, "--admin --quiet --update-fndb");
+	}
+      else
+	{
+	  Process::Run (initexmf, "--quiet --update-fndb");
+	}
     }
   }
 }
