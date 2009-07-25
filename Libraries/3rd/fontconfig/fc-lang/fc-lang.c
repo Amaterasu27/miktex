@@ -22,10 +22,6 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#if defined(MIKTEX)
-#  define main __cdecl Main
-#endif /* MIKTEX */
-
 #include "fccharset.c"
 #include "fcstr.c"
 #include "fcserialize.c"

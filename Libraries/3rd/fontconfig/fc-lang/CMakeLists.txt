@@ -221,7 +221,6 @@ include_directories(BEFORE
 
 set(fc-lang_sources
   ${CMAKE_CURRENT_BINARY_DIR}/fcaliastail.h
-  ${wrapper_cpp}
   fc-lang.c
 )
 
