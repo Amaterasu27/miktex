@@ -231,6 +231,7 @@ void PDFWidget::windowResized()
 			fitWindow(true);
 			break;
 	}
+	update();
 }
 
 void PDFWidget::paintEvent(QPaintEvent *event)
@@ -1082,6 +1083,7 @@ PDFDocument::init()
 	connect(actionNew, SIGNAL(triggered()), qApp, SLOT(newFile()));
 	connect(actionNew_from_Template, SIGNAL(triggered()), qApp, SLOT(newFromTemplate()));
 	connect(actionOpen, SIGNAL(triggered()), qApp, SLOT(open()));
+
 	connect(actionQuit_TeXworks, SIGNAL(triggered()), TWApp::instance(), SLOT(maybeQuit()));
 
 	connect(actionFind, SIGNAL(triggered()), this, SLOT(doFindDialog()));

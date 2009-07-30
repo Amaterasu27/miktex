@@ -358,6 +358,7 @@ void TeXDocument::init()
 	
 	docList.append(this);
 	
+	TWApp::instance()->updateWindowMenus();
 	TWUtils::installCustomShortcuts(this);
 
 #if defined(MIKTEX)
@@ -1095,6 +1096,7 @@ void TeXDocument::updateWindowMenu()
 
 void TeXDocument::updateEngineList()
 {
+	engine->disconnect(this);
 	while (menuRun->actions().count() > 2)
 		menuRun->removeAction(menuRun->actions().last());
 	while (engineActions->actions().count() > 0)
@@ -1105,11 +1107,13 @@ void TeXDocument::updateEngineList()
 		newAction->setCheckable(true);
 		menuRun->addAction(newAction);
 		engine->addItem(e.name());
-		if (e.name() == engineName) {
-			engine->setCurrentIndex(engine->count() - 1);
-			newAction->setChecked(true);
-		}
 	}
+	connect(engine, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(selectedEngine(const QString&)));
+	int index = engine->findText(engineName, Qt::MatchFixedString);
+	if (index < 0)
+		index = engine->findText(TWApp::instance()->getDefaultEngine().name(), Qt::MatchFixedString);
+	if (index >= 0)
+		engine->setCurrentIndex(index);
 }
 
 void TeXDocument::selectedEngine(QAction* engineAction) // sent by actions in menubar menu; update toolbar combo box
@@ -2023,6 +2027,7 @@ void TeXDocument::typeset()
 		}
 		inputLine->setFocus(Qt::OtherFocusReason);
 		showPdfWhenFinished = e.showPdf();
+		userInterrupt = false;
 		process->start(fileInfo.absoluteFilePath(), args);
 	}
 	else {
@@ -2041,6 +2046,7 @@ void TeXDocument::typeset()
 void TeXDocument::interrupt()
 {
 	if (process != NULL) {
+		userInterrupt = true;
 		process->kill();
 	}
 }
@@ -2075,6 +2081,9 @@ void TeXDocument::processStandardOutput()
 
 void TeXDocument::processError(QProcess::ProcessError /*error*/)
 {
+	if (userInterrupt)
+		textEdit_console->append(tr("Process interrupted by user"));
+	else
 	textEdit_console->append(process->errorString());
 	process->kill();
 	process->deleteLater();
@@ -2098,7 +2107,7 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 	}
 
 	QSETTINGS_OBJECT(settings);
-	if (consoleWasHidden && exitCode == 0 && settings.value("autoHideConsole", true).toBool())
+	if (consoleWasHidden && exitCode == 0 && exitStatus != QProcess::CrashExit && settings.value("autoHideConsole", true).toBool())
 		hideConsole();
 	else
 		inputLine->hide();

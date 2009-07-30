@@ -51,7 +51,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 
-#if defined(Q_WS_MAC) || defined(Q_WS_WIN)
+#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN))
 #include "poppler-config.h"
 #include "GlobalParams.h"
 #endif
@@ -143,7 +143,7 @@ void TWApp::init()
 	}
 	// </Check for portable mode>
 
-#if defined(Q_WS_MAC) || defined(Q_WS_WIN)
+#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN))
 	// for Mac and Windows, support "local" poppler-data directory
 	// (requires patched poppler-qt4 lib to be effective,
 	// otherwise the GlobalParams gets overwritten when a
@@ -878,7 +878,7 @@ TWApp::aboutMiKTeX ()
   QIcon oldIcon = windowIcon();
   setWindowIcon (QIcon(":/MiKTeX/miktex32x32.png"));
   QString aboutText = tr("<p>MiKTeX %1 is a free TeX distribution for Windows maintained by Christian Schenk.</p>").arg(MIKTEX_SERIES_STR);
-  aboutText += tr("<p>Please visit the <a href=\"http://miktex.org/\">MiKTeX Project Page</a> to learn more about the MiKTeX project.</p>.");
+  aboutText += tr("<p>Please visit the <a href=\"http://miktex.org/\">MiKTeX Project Page</a> to learn more about the MiKTeX project.</p>");
   QMessageBox::about (0, tr("About MiKTeX"), aboutText);
   setWindowIcon (oldIcon);
 }

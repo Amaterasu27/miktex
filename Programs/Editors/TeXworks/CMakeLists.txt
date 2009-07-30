@@ -27,6 +27,10 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_hunspell_dir}/src/hunspell
 )
 
+add_definitions(
+  -DHAVE_POPPLER_XPDF_HEADERS
+)
+
 set(texworks_sources
   src/CompletingEdit.cpp
   src/ConfirmDelete.cpp
