@@ -133,7 +133,8 @@ more information.</para>
 
 <para>&TeX; input documents (<filename>*.tex</filename>,
 <filename>*.ltx</filename>, &hellip;) and &PDF; documents
-(<filename>*.pdf</filename>) are associated with &TeXworks;.</para>
+(<filename>*.pdf</filename>) are associated with &TeXworks;
+(existing associations are left intact).</para>
 
 </section>
 
