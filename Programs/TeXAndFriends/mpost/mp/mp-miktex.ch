@@ -1,6 +1,6 @@
 %% mp-miktex.ch: MiKTeX change file for METAPOST
 %% 
-%% Copyright (C) 1998-2007 Christian Schenk
+%% Copyright (C) 1998-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -161,7 +161,7 @@ versions of the program.
 @!max_strings=2500; {maximum number of strings; must not exceed |max_halfword|}
 @y
 @!inf_max_strings=2500;
-@!sup_max_strings=300000;
+@!sup_max_strings=2097151;
 @z
 
 @x

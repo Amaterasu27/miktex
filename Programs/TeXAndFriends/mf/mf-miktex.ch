@@ -1,6 +1,6 @@
 %% mf-miktex.ch: WEB change file for METAFONT
 %% 
-%% Copyright (C) 1991-2008 Christian Schenk
+%% Copyright (C) 1991-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -167,7 +167,7 @@ versions of the program.
 @!max_strings=2000; {maximum number of strings; must not exceed |max_halfword|}
 @y
 @!inf_max_strings=2000;
-@!sup_max_strings=300000;
+@!sup_max_strings=2097151;
 @z
 
 @x

@@ -1,6 +1,6 @@
 %% omega-miktex.ch:
 %% 
-%% Copyright (C) 1998-2008 Christian Schenk
+%% Copyright (C) 1998-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -187,7 +187,7 @@ versions of the program.
 @!max_strings=3000; {maximum number of strings; must not exceed |max_halfword|}
 @y
 @!inf_max_strings=3000;
-@!sup_max_strings=262143;
+@!sup_max_strings=2097151;
 @!inf_strings_free=100;
 @!sup_strings_free=262143;
 @z
