@@ -390,6 +390,7 @@ void TeXDocument::changeEvent(QEvent *event)
 		retranslateUi(this);
 		menuRecent->setTitle(tr("Open Recent"));
 		setWindowTitle(title);
+		showCursorPosition();
 	}
 	else
 		QMainWindow::changeEvent(event);

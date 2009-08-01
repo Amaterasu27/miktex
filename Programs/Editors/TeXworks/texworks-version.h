@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 3499
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.1 (r.346)"
+#define MIKTEX_COMP_J2000_VERSION 3500
+#define MIKTEX_COMP_ORIG_VERSION_STR "0.1 (r.349)"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2007-2009 Jonathan Kew"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2007-2009 Jonathan Kew"
