@@ -386,9 +386,10 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       {
 	listControl.SetItemText (idx, 2, "to be repaired");
       }
-      else if (it->action == PackageInstaller::UpdateInfo::ForceRemove)
+      else if (it->action == PackageInstaller::UpdateInfo::ForceRemove
+	       || it->action == PackageInstaller::UpdateInfo::KeepObsolete)
       {
-	listControl.SetItemText (idx, 2, "to be removed");
+	listControl.SetItemText (idx, 2, "obsolete (to be removed)");
       }
       else
       {
@@ -499,6 +500,12 @@ as a whole."),
   else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
   {
     AfxMessageBox (T_("This package is currently installed for all users. Only the admin variant of the wizard can update this package."),
+		   MB_OK | MB_ICONEXCLAMATION);
+    *pResult = TRUE;
+  }
+  else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepObsolete)
+  {
+    AfxMessageBox (T_("This package is currently installed for all users. Only the admin variant of the wizard can remove this package."),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }

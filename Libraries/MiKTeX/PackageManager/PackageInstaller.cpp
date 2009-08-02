@@ -825,7 +825,14 @@ PackageInstallerImpl::FindUpdates ()
     UpdateInfo updateInfo;
     updateInfo.deploymentName = packageInfo.deploymentName;
     updateInfo.timePackaged = packageInfo.timePackaged;
-    updateInfo.action = UpdateInfo::ForceRemove;
+    if (packageInfo.isRemovable)
+    {
+      updateInfo.action = UpdateInfo::ForceRemove;
+    }
+    else
+    {
+      updateInfo.action = UpdateInfo::KeepObsolete;
+    }
     updates.push_back (updateInfo);
   }
 

@@ -917,6 +917,7 @@ public:
       None,
       Keep,
       KeepAdmin,
+      KeepObsolete,
       Update,
       ForceUpdate, 
       ForceRemove,
