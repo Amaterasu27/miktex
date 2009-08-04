@@ -40,6 +40,7 @@ public:
     : optAllowUnattendedReboot (false),
       optDryRun (false),
       optNoAddTEXMFDirs (false),
+      optNoRegistry (false),
       optPrivate (false),
       optPortable (false),
       optShared (false),
@@ -75,6 +76,9 @@ public:
 
 public:
   bool optNoAddTEXMFDirs;
+
+public:
+  bool optNoRegistry;
 
 public:
   bool optShared;
@@ -217,6 +221,7 @@ enum {
   OPT_INSTALL_FROM_LOCAL_REPOSITORY,
   OPT_LOCAL_PACKAGE_REPOSITORY,
   OPT_NO_ADDITIONAL_ROOTS,
+  OPT_NO_REGISTRY,
   OPT_PACKAGE_SET,
 #if FEATURE_1874934
   OPT_PAPER_SIZE,
@@ -252,6 +257,7 @@ const struct option long_options[] =
   { "local-package-repository", required_argument, 0,
     OPT_LOCAL_PACKAGE_REPOSITORY },
   { "no-additional-roots", no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
+  { "no-registry", no_argument, 0, OPT_NO_REGISTRY },
   { "package-set", required_argument, 0, OPT_PACKAGE_SET },
 #if FEATURE_1874934
   { "paper-size", required_argument, 0, OPT_PAPER_SIZE },
@@ -299,6 +305,7 @@ Options:\r\n\r\n\
   --install-from-local-repository\r\n\
   --local-package-repository=DIR\r\n\
   --no-additional-roots\r\n\
+  --no-registry\r\n\
   --package-set=SET\r\n")
 #if FEATURE_1874934
 		 T_("\
@@ -452,6 +459,10 @@ common root directories."),
 
 	case OPT_NO_ADDITIONAL_ROOTS:
 	  cmdinfo.optNoAddTEXMFDirs = true;
+	  break;
+
+	case OPT_NO_REGISTRY:
+	  cmdinfo.optNoRegistry = true;
 	  break;
 
 #if FEATURE_1874934
@@ -937,6 +948,8 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     }
 
   theApp.noAddTEXMFDirs = cmdinfo.optNoAddTEXMFDirs;
+
+  theApp.noRegistry = cmdinfo.optNoRegistry;
 
   // shared setup
   theApp.commonUserSetup =

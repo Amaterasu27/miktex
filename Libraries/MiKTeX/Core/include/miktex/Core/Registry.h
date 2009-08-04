@@ -72,8 +72,9 @@
    Registry Values
    _________________________________________________________________________ */
 
-#define MIKTEX_REGVAL_AUTO_INSTALL "AutoInstall"
+#define MIKTEX_REGVAL_ALLOWED_SHELL_COMMANDS "AllowedShellCommands"
 #define MIKTEX_REGVAL_AUTO_ADMIN "AutoAdmin"
+#define MIKTEX_REGVAL_AUTO_INSTALL "AutoInstall"
 #define MIKTEX_REGVAL_COMMON_CONFIG "CommonConfig"
 #define MIKTEX_REGVAL_COMMON_DATA "CommonData"
 #define MIKTEX_REGVAL_COMMON_INSTALL "CommonInstall"
@@ -90,6 +91,7 @@
 #define MIKTEX_REGVAL_INSIST_ON_REPAIR "InsistOnRepair"
 #define MIKTEX_REGVAL_LOCAL_REPOSITORY "LocalRepository"
 #define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT "MiKTeXDirectRoot"
+#define MIKTEX_REGVAL_NO_REGISTRY "NoRegistry"
 #define MIKTEX_REGVAL_PARSE_FIRST_LINE "ParseFirstLine"
 #define MIKTEX_REGVAL_PK_FN_TEMPLATE "PKFnTemplate"
 #define MIKTEX_REGVAL_PROXY_AUTH_REQ "ProxyAuthReq"
@@ -98,7 +100,6 @@
 #define MIKTEX_REGVAL_REMOTE_REPOSITORY "RemoteRepository"
 #define MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE "RenewFormatsOnUpdate"
 #define MIKTEX_REGVAL_REPOSITORY_TYPE "RepositoryType"
-#define MIKTEX_REGVAL_ALLOWED_SHELL_COMMANDS "AllowedShellCommands"
 #define MIKTEX_REGVAL_SHARED_SETUP "SharedSetup"
 #define MIKTEX_REGVAL_STARTUP_FILE "StartupFile"
 #define MIKTEX_REGVAL_TEMPDIR "TempDir"

@@ -262,6 +262,9 @@ public:
   bool noAddTEXMFDirs;
 
 public:
+  bool noRegistry;
+
+public:
   bool allowUnattendedReboot;
 
 public:

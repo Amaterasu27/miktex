@@ -397,8 +397,13 @@ private:
   RemoveFndb ();
   
 private:
+#if defined(MIKTEX_WINDOWS)
+  void
+  SetTeXMFRootDirectories (/*[in]*/ bool noRegistry);
+#else
   void
   SetTeXMFRootDirectories ();
+#endif
   
 private:
   void
@@ -424,7 +429,12 @@ private:
 
 private:
   void
-  EditConfigFile (/*[in]*/ const char * lpszRelPath);
+  CreateConfigFile (/*[in]*/ const char * lpszRelPath,
+		    /*[in]*/ bool	  edit);
+
+private:
+  void
+  SetConfigValue (/*[in]*/ const char * lpszValueSpec);
 
 private:
   void
@@ -634,12 +644,14 @@ enum Option
   OPT_VERSION,
 
   OPT_ADD_FILE,			// <experimental/>
+  OPT_CREATE_CONFIG_FILE,	// <experimental/>
   OPT_CSV,			// <experimental/>
   OPT_LIST_DIRECTORY,		// <experimental/>
   OPT_LIST_FORMATS,		// <experimental/>
   OPT_REGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
+  OPT_SET_CONFIG_VALUE,		// <experimental/>
   OPT_UNREGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_XML,			// <experimental/>
 
@@ -649,6 +661,9 @@ enum Option
   OPT_COMMON_ROOTS,		// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_DEFAULT_PAPER_SIZE,	// <internal/>
+#if defined(MIKTEX_WINDOWS)
+  OPT_NO_REGISTRY,		// <internal/>
+#endif
   OPT_PORTABLE,	    		// <internal/>
   OPT_RMFNDB,			// <internal/>
   OPT_USER_CONFIG,		// <internal/>
@@ -688,6 +703,15 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     0,
   },
 #endif
+
+  {
+    "create-config-file", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CREATE_CONFIG_FILE,
+    T_("\
+Create the specified configuration file."),
+    T_("CONFIGFILE")
+  },
 
   {
     "csv", 0,
@@ -779,6 +803,16 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    "no-registry", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_NO_REGISTRY,
+    T_("Do not use the Windows Registry to store configuration settings."),
+    0
+  },
+#endif
+
   {
     "portable", 0,
     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
@@ -843,6 +877,15 @@ Open the specified configuration file in an editor.\
     OPT_RMFNDB,
     T_("Remove file name database files."),
     0
+  },
+
+  {
+    "set-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SET_CONFIG_VALUE,
+    T_("\
+Set the specified configuration value."),
+    T_("KEY:VALUENAME:VALUE")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -965,6 +1008,15 @@ const struct poptOption IniTeXMFApp::aoption_setup[] = {
   },
 
   {
+    "create-config-file", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CREATE_CONFIG_FILE,
+    T_("\
+Create the specified configuration file."),
+    T_("CONFIGFILE")
+  },
+
+  {
     "csv", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_CSV,
@@ -1070,6 +1122,16 @@ Open the specified configuration file in an editor.\
     0
   },
 
+#if defined(MIKTEX_WINDOWS)
+  {
+    "no-registry", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_NO_REGISTRY,
+    T_("Do not use the Windows Registry to store configuration settings."),
+    0
+  },
+#endif
+
   {
     "portable", 0,
     POPT_ARG_STRING, 0,
@@ -1134,6 +1196,15 @@ Open the specified configuration file in an editor.\
     OPT_RMFNDB,
     T_("Remove file name database files."),
     0
+  },
+
+  {
+    "set-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SET_CONFIG_VALUE,
+    T_("\
+Set the specified configuration value."),
+    T_("KEY:VALUENAME:VALUE")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1270,6 +1341,15 @@ const struct poptOption IniTeXMFApp::aoption_update[] = {
   },
 
   {
+    "create-config-file", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_CREATE_CONFIG_FILE,
+    T_("\
+Create the specified configuration file."),
+    T_("CONFIGFILE")
+  },
+
+  {
     "csv", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_CSV,
@@ -1431,6 +1511,15 @@ Open the specified configuration file in an editor.\
     OPT_RMFNDB,
     T_("Remove file name database files."),
     0
+  },
+
+  {
+    "set-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SET_CONFIG_VALUE,
+    T_("\
+Set the specified configuration value."),
+    T_("KEY:VALUENAME:VALUE")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1881,7 +1970,11 @@ IniTeXMFApp::RemoveFndb ()
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::SetTeXMFRootDirectories ()
+IniTeXMFApp::SetTeXMFRootDirectories (
+#if defined(MIKTEX_WINDOWS)
+				      /*[in]*/ bool noRegistry
+#endif
+				      )
 {
   Verbose (T_("Registering root directories..."));
   PrintOnly ("regroots ur=%s ud=%s uc=%s ui=%s cr=%s cd=%s cc=%s ci=%s",
@@ -1895,7 +1988,14 @@ IniTeXMFApp::SetTeXMFRootDirectories ()
     Q_(startupConfig.commonInstallRoot));
   if (! printOnly)
   {
-    pSession->RegisterRootDirectories (startupConfig, false);
+    RegisterRootDirectoriesFlags flags (RegisterRootDirectoriesFlags::None);
+#if defined(MIKTEX_WINDOWS)
+    if (noRegistry)
+    {
+      flags |= RegisterRootDirectoriesFlags::NoRegistry;
+    }
+#endif
+    pSession->RegisterRootDirectories (startupConfig, flags.Get());
   }
 }
 
@@ -2388,11 +2488,12 @@ IniTeXMFApp::MakeMaps (/*[in]*/ bool force)
 
 /* _________________________________________________________________________
 
-   IniTeXMFApp::EditConfigFile
+   IniTeXMFApp::CreateConfigFile
    _________________________________________________________________________ */
 
 void
-IniTeXMFApp::EditConfigFile (/*[in]*/ const char * lpszName)
+IniTeXMFApp::CreateConfigFile (/*[in]*/ const char *  lpszName,
+			       /*[in]*/ bool	      edit)
 {
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
   bool haveConfigFile = false;
@@ -2429,23 +2530,54 @@ IniTeXMFApp::EditConfigFile (/*[in]*/ const char * lpszName)
 	  Fndb::Add (configFile);
 	}
     }
-  CommandLineBuilder commandLine;
-  commandLine.AppendArgument (configFile);
-  string editor;
-  const char * lpszEditor = getenv("EDITOR");
-  if (lpszEditor != 0)
+  if (edit)
   {
-    editor = lpszEditor;
+    CommandLineBuilder commandLine;
+    commandLine.AppendArgument (configFile);
+    string editor;
+    const char * lpszEditor = getenv("EDITOR");
+    if (lpszEditor != 0)
+    {
+      editor = lpszEditor;
+    }
+    else
+    {
+#if defined(MIKTEX_WINDOWS)
+      editor = "notepad.exe";
+#else
+      FatalError (T_("Environment variable EDITOR is not defined."));
+#endif
+    }
+    Process::Start (editor.c_str(), commandLine.Get());
+  }
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::SetConfigValue
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::SetConfigValue (/*[in]*/ const char *  lpszValueSpec)
+{
+  vector<string> tokens;
+  for (CSVList tok (lpszValueSpec, ':'); tok.GetCurrent() != 0; ++ tok)
+  {
+    tokens.push_back (tok.GetCurrent());
+  }
+  if (tokens.size() == 3)
+  {
+    pSession->SetConfigValue (tokens[0].c_str(), tokens[1].c_str(), tokens[2].c_str());
+  }
+  else if (tokens.size() == 2)
+  {
+    pSession->SetConfigValue (0, tokens[0].c_str(), tokens[1].c_str());
   }
   else
   {
-#if defined(MIKTEX_WINDOWS)
-    editor = "notepad.exe";
-#else
-    FatalError (T_("Environment variable EDITOR is not defined."));
-#endif
+    FatalError (T_("Invalid configuration specification: %s."),
+      Q_(lpszValueSpec));
   }
-  Process::Start (editor.c_str(), commandLine.Get());
 }
 
 /* _________________________________________________________________________
@@ -2971,6 +3103,8 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 		  /*[in]*/ const char **	argv)
 {
   vector<string> addFiles;
+  vector<string> setConfigValues;
+  vector<string> createConfigFiles;
   vector<string> editConfigFiles;
   vector<string> formats;
   vector<string> formatsByName;
@@ -2993,6 +3127,9 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optListFormats = false;
   bool optListModes = false;
   bool optMakeLinks = false;
+#if defined(MIKTEX_WINDOWS)
+  bool optNoRegistry = false;
+#endif
   bool optPortable = false;
   bool optRegisterShellFileTypes = false;
   bool optReport = false;
@@ -3026,6 +3163,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optConfigure = true;
 	  break;
 #endif
+
+	case OPT_CREATE_CONFIG_FILE:
+
+	  createConfigFiles.push_back (lpszOptArg);
+	  break;
 
 	case OPT_CSV:
 	  csv = true;
@@ -3125,6 +3267,13 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optMakeMaps = true;
 	  break;
 
+#if defined(MIKTEX_WINDOWS)
+	case OPT_NO_REGISTRY:
+
+	  optNoRegistry = true;
+	  break;
+#endif
+
 	case OPT_PORTABLE:
 
 	  portableRoot = lpszOptArg;
@@ -3164,6 +3313,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	case OPT_RMFNDB:
 
 	  removeFndb = true;
+	  break;
+
+	case OPT_SET_CONFIG_VALUE:
+
+	  setConfigValues.push_back (lpszOptArg);
 	  break;
 
 	case OPT_COMMON_ROOTS:
@@ -3281,7 +3435,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 #if ! MIKTEX_STANDALONE
     optConfigure = true;
 #else
+#if defined(MIKTEX_WINDOWS)
+    SetTeXMFRootDirectories (optNoRegistry);
+#else
     SetTeXMFRootDirectories ();
+#endif
 #endif
   }
 
@@ -3412,11 +3570,25 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
       Fndb::Enumerate (*it, this);
     }
 
+  for (vector<string>::const_iterator it = createConfigFiles.begin();
+    it != createConfigFiles.end();
+    ++ it)
+  {
+    CreateConfigFile (it->c_str(), false);
+  }
+
+  for (vector<string>::const_iterator it = setConfigValues.begin();
+    it != setConfigValues.end();
+    ++ it)
+  {
+    SetConfigValue (it->c_str());
+  }
+
   for (vector<string>::const_iterator it = editConfigFiles.begin();
        it != editConfigFiles.end();
        ++ it)
     {
-      EditConfigFile (it->c_str());
+      CreateConfigFile (it->c_str(), true);
     }
 
   if (optListFormats)

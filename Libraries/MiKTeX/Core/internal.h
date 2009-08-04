@@ -916,7 +916,7 @@ public:
   void
   MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const StartupConfig &	startupConfig,
-			   /*[in]*/ bool			sessionOnly);
+			   /*[in]*/ unsigned			flags);
 
 public:
   virtual
@@ -1896,8 +1896,13 @@ private:
   InitializeRootDirectories ();
 
 private:
+#if defined(MIKTEX_WINDOWS)
+  void
+  SaveRootDirectories (/*[in]*/ bool noRegistry);
+#else
   void
   SaveRootDirectories ();
+#endif
 
 private:
   bool

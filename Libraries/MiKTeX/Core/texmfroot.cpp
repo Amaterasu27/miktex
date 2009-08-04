@@ -512,8 +512,15 @@ SessionImpl::GetUserInstallRoot ()
    _________________________________________________________________________ */
 
 void
-SessionImpl::SaveRootDirectories ()
+SessionImpl::SaveRootDirectories (
+#if defined(MIKTEX_WINDOWS)
+				  /*[in]*/ bool noRegistry
+#endif
+				  )
 {
+#if ! defined(MIKTEX_WINDOWS)
+  bool noRegistry = true;
+#endif
   MIKTEX_ASSERT (! IsMiKTeXDirect());
   StartupConfig startupConfig;
   startupConfig.config =
@@ -582,29 +589,18 @@ SessionImpl::SaveRootDirectories ()
     {
       startupConfig.userConfigRoot = GetRootDirectory(userConfigRootIndex);
     }
-#if NO_REGISTRY
-  // force creation of the startup configuration file
-  if (IsAdminMode())
-  {
-    haveCommonStartupConfigFile = true;
-  }
-  else
-  {
-    haveUserStartupConfigFile = true;
-  }
-#endif
   if (IsAdminMode())
   {
     PathName commonStartupConfigFile;
     bool haveCommonStartupConfigFile =
       FindStartupConfigFile(true, commonStartupConfigFile);
-    if (haveCommonStartupConfigFile || NO_REGISTRY)
+    if (haveCommonStartupConfigFile || noRegistry)
     {
       WriteStartupConfigFile (true, startupConfig);
     }
     else
     {
-#if ! NO_REGISTRY
+#if defined(MIKTEX_WINDOWS)
       WriteRegistry (true, startupConfig);
 #else
       FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
@@ -618,13 +614,13 @@ SessionImpl::SaveRootDirectories ()
     PathName userStartupConfigFile;
     bool haveUserStartupConfigFile =
       FindStartupConfigFile(false, userStartupConfigFile);
-    if (haveUserStartupConfigFile || NO_REGISTRY)
+    if (haveUserStartupConfigFile || noRegistry)
     {
       WriteStartupConfigFile (false, startupConfig);
     }
     else
     {
-#if ! NO_REGISTRY
+#if defined(MIKTEX_WINDOWS)
       WriteRegistry (false, startupConfig);
 #else
       FATAL_MIKTEX_ERROR ("SessionImpl::SaveRootDirectories",
@@ -684,7 +680,12 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
   {
     startupConfig.userRoots = roots;
   }
-  RegisterRootDirectories (startupConfig, false);
+  unsigned flags = 0;
+  if (GetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_NO_REGISTRY, NO_REGISTRY ? true : false))
+  {
+    flags |= RegisterRootDirectoriesFlags::NoRegistry;
+  }
+  RegisterRootDirectories (startupConfig, flags);
 }
 
 /* _______________________________________________________________________
@@ -697,7 +698,7 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
 void
 SessionImpl::RegisterRootDirectories
 (/*[in]*/ const StartupConfig &	startupConfig,
- /*[in]*/ bool			sessionOnly)
+ /*[in]*/ unsigned		flags)
 {
   if (IsMiKTeXDirect())
   {
@@ -752,10 +753,14 @@ SessionImpl::RegisterRootDirectories
 
   InitializeRootDirectories (startupConfig_);
 
-  if (! sessionOnly)
+  if ((flags & RegisterRootDirectoriesFlags::Temporary) == 0)
   {
     // save the information
+#if defined(MIKTEX_WINDOWS)
+    SaveRootDirectories ((flags & RegisterRootDirectoriesFlags::NoRegistry) != 0);
+#else
     SaveRootDirectories ();
+#endif
   }
 }
 

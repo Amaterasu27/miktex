@@ -151,6 +151,19 @@ the &MiKTeX; setup.</para></listitem>
 </varlistentry>
 
 <varlistentry>
+<term><option>--no-registry</option></term>
+<listitem><para>Do not store path information in the &WindowsRegistry; but
+<indexterm>
+<primary>--no-registry</primary>
+</indexterm>
+<indexterm>
+<primary>startup configuration file</primary>
+</indexterm>
+write the startup configuration file (<filename>miktexstartup.ini</filename>).
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
 <term><option>--package-set=<replaceable>set</replaceable></option></term>
 <listitem><para>Download/Install the specified package set.
 <indexterm>

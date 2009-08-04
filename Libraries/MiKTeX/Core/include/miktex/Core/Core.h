@@ -3407,10 +3407,10 @@ class RegisterRootDirectoriesFlagsEnum
 {
 public:
   enum EnumType {
+    None = 0,
 #if defined(MIKTEX_WINDOWS)
-    Registry = 0,
+    NoRegistry = 1,
 #endif
-    ConfigFile = 1,
     Temporary = 2
   };
 };
@@ -5796,7 +5796,7 @@ public:
   void
   MIKTEXTHISCALL
   RegisterRootDirectories (/*[in]*/ const StartupConfig &	startupConfig,
-			   /*[in]*/ bool			sessionOnly)
+			   /*[in]*/ unsigned		        flags)
     = 0;
 
 public:

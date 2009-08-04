@@ -808,7 +808,9 @@ FileCopyPage::DoTheInstallation ()
     startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
   }
   startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
-  SessionWrapper(true)->RegisterRootDirectories (startupConfig, true);
+  SessionWrapper(true)->RegisterRootDirectories (
+    startupConfig,
+    RegisterRootDirectoriesFlags::Temporary | RegisterRootDirectoriesFlags::NoRegistry);
 
   // parse package definition files
   PathName pathDB;
@@ -872,12 +874,6 @@ FileCopyPage::DoTheInstallation ()
 
   // run IniTeXMF
   ConfigureMiKTeX ();
-
-  // configure autoInstall
-  SessionWrapper(true)
-    ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
-		      MIKTEX_REGVAL_AUTO_INSTALL,
-		      theApp.installOnTheFly.Get());
 
   if (pSheet->GetCancelFlag())
     {
@@ -1019,6 +1015,14 @@ FileCopyPage::ConfigureMiKTeX ()
 	  cmdLine.AppendOption ("--common-install=",
 	    theApp.startupConfig.commonInstallRoot);
 	}
+	if (theApp.noRegistry)
+	{
+	  cmdLine.AppendOption ("--no-registry");
+	  cmdLine.AppendOption ("--create-config-file=", MIKTEX_PATH_MIKTEX_INI);
+	  cmdLine.AppendOption (
+	    "--set-config-value=",
+	    MIKTEX_REGKEY_CORE ":" MIKTEX_REGVAL_NO_REGISTRY ":1");
+	}
       }
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
       {
@@ -1072,15 +1076,23 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
       else
 	{
-	  cmdLine.AppendOption ("--default-paper-size=", "letterSize");
 	}
-      RunIniTeXMF (cmdLine);
     }
   else
     {
       completedIniTeXMFRuns += 1;
     }
-      
+
+  // [ ] set auto-install
+  string valueSpec = MIKTEX_REGKEY_PACKAGE_MANAGER;
+  valueSpec += ":";
+  valueSpec += MIKTEX_REGVAL_AUTO_INSTALL;
+  valueSpec += ":";
+  valueSpec += NUMTOSTR(theApp.installOnTheFly.Get());
+  cmdLine.Clear ();
+  cmdLine.AppendOption ("--set-config-value=", valueSpec.c_str());
+  RunIniTeXMF (cmdLine);
+
   if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
     {
       // [7] refresh file name database again

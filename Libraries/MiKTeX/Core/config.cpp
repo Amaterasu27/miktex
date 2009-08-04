@@ -445,33 +445,71 @@ SessionImpl::WriteStartupConfigFile
 {
   MIKTEX_ASSERT (! IsMiKTeXDirect());
 
+  string str;
+
   StartupConfig defaultConfig = DefaultConfig(startupConfig.config, "", "");
 
   PathName userStartupConfigFile;
 
-  if (! startupConfig.userConfigRoot.Empty())
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_USER_STARTUP_FILE, str))
   {
-    userStartupConfigFile = startupConfig.userConfigRoot;
+    userStartupConfigFile = str;
   }
+#if ! NO_REGISTRY
+  else if (winRegistry::TryGetRegistryValue(TriState::False,
+					    MIKTEX_REGKEY_CORE,
+					    MIKTEX_REGVAL_STARTUP_FILE,
+					    str,
+					    0))
+  {
+    userStartupConfigFile = str;
+  }
+#endif
   else
   {
-    userStartupConfigFile = defaultConfig.userConfigRoot;
+    userStartupConfigFile= defaultConfig.userConfigRoot;
+    userStartupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
   }
-
-  userStartupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
   PathName commonStartupConfigFile;
 
-  if (! startupConfig.commonConfigRoot.Empty())
+  if (Utils::GetEnvironmentString(MIKTEX_ENV_COMMON_STARTUP_FILE, str))
   {
-    commonStartupConfigFile = startupConfig.commonConfigRoot;
+    commonStartupConfigFile = str;
   }
+#if ! NO_REGISTRY
+  else if (winRegistry::TryGetRegistryValue(TriState::True,
+					    MIKTEX_REGKEY_CORE,
+					    MIKTEX_REGVAL_STARTUP_FILE,
+					    str,
+					    0))
+  {
+    commonStartupConfigFile = str;
+  }
+#endif
   else
   {
-    commonStartupConfigFile = defaultConfig.commonConfigRoot;
+    PathName myloc = GetMyLocation(true);
+    RemoveDirectoryDelimiter (myloc.GetBuffer());
+    PathName internalBindir (MIKTEX_PATH_INTERNAL_BIN_DIR);
+    RemoveDirectoryDelimiter (internalBindir.GetBuffer());
+    PathName bindir (MIKTEX_PATH_BIN_DIR);
+    RemoveDirectoryDelimiter (bindir.GetBuffer());
+    PathName prefix;
+    if (Utils::GetPathNamePrefix(myloc, internalBindir, prefix))
+    {
+      commonStartupConfigFile = prefix;
+    }
+    else if (Utils::GetPathNamePrefix(myloc, bindir, prefix))
+    {
+      commonStartupConfigFile = prefix;
+    }
+    else
+    {
+      UNEXPECTED_CONDITION ("SessionImpl::WriteStartupConfigFile");
+    }
+    commonStartupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
   }
-
-  commonStartupConfigFile += MIKTEX_PATH_STARTUP_CONFIG_FILE;
 
   SmartPointer<Cfg> pcfg (Cfg::Create());
 
@@ -1199,8 +1237,12 @@ SessionImpl::SetConfigValue (/*[in]*/ const char * lpszSectionName,
       pCfg->Read (pathConfigFile);
     }
 
-#if ! NO_REGISTRY
-  if (! haveConfigFile && ! IsMiKTeXPortable())
+#if defined(MIKTEX_WINDOWS)
+  if (! haveConfigFile
+      && ! IsMiKTeXPortable()
+      && ! GetConfigValue(MIKTEX_REGKEY_CORE,
+			  MIKTEX_REGVAL_NO_REGISTRY,
+			  NO_REGISTRY ? true : false))
     {
       winRegistry::SetRegistryValue (IsAdminMode() ? TriState::True : TriState::False,
 				     lpszSectionName,
