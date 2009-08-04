@@ -52,12 +52,30 @@ the <option>--admin</option> option to run the admin variant.</para>
 
 <section>
 
-<title>\write18 partially enabled </title>
+<title><markup role="tex">\write18</markup> partially enabled </title>
 
 <para>The <markup role="tex">\write18</markup> primitive is now
 partially enabled: if the first token is a well known command (e.g.,
 &epstopdf;), it will be executed. Unknown commands are still
 blocked.</para>
+
+</section>
+
+<section>
+
+<title>&MiKTeXSetupWizard;</title>
+
+<para>The command-line option
+<option>--install-root=<replaceable>dir</replaceable></option> has
+been replaced by
+<option>--common-install=<replaceable>dir</replaceable></option> and
+<option>--user-install=<replaceable>dir</replaceable></option>.</para>
+
+<para>The command-line option
+<option>--roots=<replaceable>dirs</replaceable></option> has been
+replaced by
+<option>--common-roots=<replaceable>dirs</replaceable></option> and
+<option>--user-roots=<replaceable>dirs</replaceable></option>.</para>
 
 </section>
 
@@ -80,6 +98,15 @@ installation.</para>
 
 <para>Packages can now be installed in a user-private installation
 directory.</para>
+
+</section>
+
+<section>
+
+<title>Optionally avoiding the &WindowsRegistry;</title>
+
+<para>The new setup option <option>--no-registry</option> causes
+&MiKTeX; to store configuration settings in a configuration file.</para>
 
 </section>
 

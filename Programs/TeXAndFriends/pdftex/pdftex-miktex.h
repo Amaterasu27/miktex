@@ -427,7 +427,7 @@ getbyte (/*[in]*/ bytefile & f)
 #if defined(vfbopenin)
 #  undef vfbopenin
 #  define vfbopenin(f) \
-    miktexopenvffile(f, nameoffile)
+  miktexopenvffile(f, GetNameOfFileForMiKTeX())
 #endif
 
 #if ! defined(__GNUC__)
@@ -439,12 +439,19 @@ getbyte (/*[in]*/ bytefile & f)
    Gloabel Variables
    _________________________________________________________________________ */
 
+inline
+char *
+GetNameOfFileForMiKTeX ()
+{
+  return (&((THEDATA(nameoffile))[0]));
+}
+
 // special case: Web2C likes to add 1 to the nameoffile base address
 inline
 char *
 GetNameOfFileForWeb2C ()
 {
-  return (&((THEDATA(nameoffile))[-1]));
+  return (GetNameOfFileForMiKTeX() - 1);
 }
 
 #define nameoffile (GetNameOfFileForWeb2C())
