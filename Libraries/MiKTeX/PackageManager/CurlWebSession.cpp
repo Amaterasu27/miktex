@@ -409,7 +409,18 @@ CurlWebSession::ReadInformationals ()
       trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("response code: %ld"),
 				     responseCode);
-      if (responseCode >= 400)
+      if (responseCode >= 300 && responseCode <= 399)
+      {
+	string msg = T_("The server returned status code ");
+	msg += NUMTOSTR(responseCode);
+	msg += T_(", but redirection is not supported. You must choose ");
+	msg += T_("another package repository.");
+	FATAL_MPM_ERROR
+	  ("CurlWebFile::ReadInformationals",
+	  msg.c_str(),
+	  0);
+      }
+      else if (responseCode >= 400)
 	{
 	  string msg = T_("Error response from server: ");
 	  msg += NUMTOSTR(responseCode);
