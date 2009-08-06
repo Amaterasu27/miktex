@@ -939,7 +939,7 @@ END
 STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "Yap"
-    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.Yap.dvi.@MIKTEX_SERIES_STR@\nDVI File"
+    IDR_DVITYPE             "\nDVI\n\nDVI Files (*.dvi)\n.dvi\nMiKTeX.dvi.@MIKTEX_SERIES_STR@\nDVI File"
 END
 
 STRINGTABLE 
