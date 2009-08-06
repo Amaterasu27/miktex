@@ -1430,6 +1430,12 @@ public:
   PathName
   GetMyProgramFile (/*[in]*/ bool canonicalized);
 
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+public:
+  PathName
+  GetDllPathName (/*[in]*/ bool canonicalized);
+#endif
+
 public:
   bool
   GetPsFontDirs (/*[out]*/ string &	psFontDirs);
@@ -2181,6 +2187,10 @@ private:
 private:
   PathName myProgramFile;
   PathName myProgramFileCanon;
+
+private:
+    PathName dllPathName;
+    PathName dllPathNameCanon;
 
 private:
   int refCount;

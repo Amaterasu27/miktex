@@ -136,6 +136,40 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
 
 /* _________________________________________________________________________
 
+   SessionImpl::GetDllPathName
+   _________________________________________________________________________ */
+
+#if ! defined(MIKTEX_STATIC)
+PathName
+SessionImpl::GetDllPathName (/*[in]*/ bool canonicalized)
+{
+  // we do this once
+  if (dllPathName.GetLength() == 0)
+    {
+      if (GetModuleFileNameA(hinstDLL,
+			     dllPathName.GetBuffer(),
+			     BufferSizes::MaxPath)
+	  == 0)
+	{
+	  FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
+	}
+      dllPathNameCanon = dllPathName;
+      dllPathNameCanon.Canonicalize ();
+    }
+  if (canonicalized)
+    {
+      return (dllPathNameCanon);
+    }
+  else
+    {
+      return (dllPathName);
+    }
+}
+
+#endif
+
+/* _________________________________________________________________________
+
    SessionImpl::DefaultConfig
 
    UserInstall:	  %USERPROFILE%\AppData\Roaming\MiKTeX\X.Y\

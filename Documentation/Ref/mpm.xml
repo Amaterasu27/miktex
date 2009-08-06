@@ -245,7 +245,7 @@ file.</para></listitem>
 <title>Installation Destination</title>
 
 <para>All files are installed in the &TEXMF; installation directory
-(usually &installdir;).  It may be necessary to specify the location
+(usually &commoninstalldir;).  It may be necessary to specify the location
 of the installation directory, if you are running &MPM; as a
 standalone program, i.e., if &MiKTeX; is not the &TeX; system.</para>
 

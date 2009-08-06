@@ -91,7 +91,11 @@ Utils::GetExeName ()
 PathName
 SessionImpl::GetMyLocation (/*[in]*/ bool canonicalized)
 {
+#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+  return (GetDllPathName(canonicalized).RemoveFileSpec());
+#else
   return (GetMyProgramFile(canonicalized).RemoveFileSpec());
+#endif
 }
 
 /* _________________________________________________________________________

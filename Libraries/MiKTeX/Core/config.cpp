@@ -388,6 +388,11 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common,
   }      
   pcfg.Release ();
 
+  // inherit to child processes
+  Utils::SetEnvironmentString (
+    common ? MIKTEX_ENV_COMMON_STARTUP_FILE : MIKTEX_ENV_USER_STARTUP_FILE,
+    path.Get());
+
   return (ret);
 }
 

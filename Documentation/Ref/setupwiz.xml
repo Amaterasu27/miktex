@@ -43,21 +43,22 @@
 <varlistentry>
 <term>&BasicMiKTeXInstaller; (&basicmiktexexe;)</term>
 <listitem>
-<para>The <quote>Basic &MiKTeX;</quote> installer can be used to set up
-a basic &MiKTeX; system. The packages are embedded in the installer, i.e., the installer
-is quite large.</para>
+<para><firstterm>&BasicMiKTeXInstaller;</firstterm> is used to set up
+a basic &MiKTeX; system. All required resources are embedded in the installer, i.e.,
+nothing else needs to be downloaded from the Internet.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
 <term>&MiKTeXNetInstaller; (&setupexe;)</term>
 <listitem>
-<para>The net installer can be used to set up a
-complete &MiKTeX; system. Packages will be installed from a local package repository.</para>
+<para><firstterm>&MiKTeXNetInstaller;</firstterm> is used to set up a
+complete &MiKTeX; system. In a first step, all required resources will be downloaded from the Internet.
+In a second step, a complete &MiKTeX; system is installed.</para>
 </listitem>
 </varlistentry>
 </variablelist>
 
-<para>Both installers read options from the file
+<para>Both installers read command-line options from the file
 <indexterm>
 <primary>setupwiz.opt</primary>
 </indexterm>
@@ -66,22 +67,6 @@ complete &MiKTeX; system. Packages will be installed from a local package reposi
 <secondary>setupwiz.opt</secondary>
 </indexterm>
 <filename>setupwiz.opt</filename>, if it exists.</para>
-
-<para>It is also possible to specify options on the command-line.
-For example, this command starts the Basic &MiKTeX; installer
-<indexterm>
-<primary>unattended setup</primary>
-</indexterm>
-<indexterm>
-<primary>setup wizard</primary>
-<secondary>unattended mode</secondary>
-</indexterm>
-in unattended mode:</para>
-      
-<informalexample>
-<screen><prompt>&prompt;</prompt><userinput>&basicmiktexexe; --unattended</userinput>
-<prompt>&prompt;</prompt></screen>
-</informalexample>
 
 </refsect1>
 
@@ -110,12 +95,13 @@ This option requires administrator privileges.</para></listitem>
 	
 <varlistentry>
 <term><option>--common-install=<replaceable>dir</replaceable></option></term>
-<listitem><para>Set the common installation root directory directory.</para></listitem>
+<listitem><para>Set the common installation directory.
+This option requires administrator privileges.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--common-roots=<replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional root directories for all users.
+<listitem><para>Register additional directories for all users.
 <replaceable>dirs</replaceable> must be a semicolon-separated list of
 fully qualified path names. This option requires administrator
 privileges.</para></listitem>
@@ -232,12 +218,12 @@ the current user.</para></listitem>
 
 <varlistentry>
 <term><option>--user-install=<replaceable>dir</replaceable></option></term>
-<listitem><para>Set the user installation root directory directory.</para></listitem>
+<listitem><para>Set the user installation directory.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--user-roots=<replaceable>dirs</replaceable></option></term>
-<listitem><para>Register additional root directories for the current user.
+<listitem><para>Register additional directories for the current user.
 <replaceable>dirs</replaceable> must be a semicolon-separated list of fully
 qualified path names.</para></listitem>
 </varlistentry>

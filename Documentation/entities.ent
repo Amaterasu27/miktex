@@ -124,7 +124,7 @@
 <!ENTITY iniomega "<command>iniomega</command>">
 <!ENTITY initex "<command>initex</command>">
 <!ENTITY initexmf "<command>initexmf</command>">
-<!ENTITY installdir "C:\Program Files\MiKTeX &MIKTEX_SERIES_STR;">
+<!ENTITY commoninstalldir "C:\Program Files\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY userconfigdir "C:\Documents and Settings\User\Application Data\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY userdatadir "C:\Documents and Settings\User\Local SettingsApplication Data\MiKTeX &MIKTEX_SERIES_STR;">
 <!ENTITY commondatadir "C:\Documents and Settings\All Users\Application Data\MiKTeX &MIKTEX_SERIES_STR;">
