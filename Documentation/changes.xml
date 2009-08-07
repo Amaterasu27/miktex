@@ -1,5 +1,26 @@
 <section>
 
+<title>Highlights</title>
+
+<itemizedlist>
+<listitem>
+<para>easier network installation</para>
+</listitem>
+<listitem>
+<para>better experience for restricted users</para>
+</listitem>
+<listitem>
+<para>portable edition</para>
+</listitem>
+<listitem>
+<para>XCOPY deployment</para>
+</listitem>
+</itemizedlist>
+
+</section>
+
+<section>
+
 <title>System requirements</title>
 
 <para>&MiKTeXCurrentSeries; requires one of the following
@@ -106,7 +127,9 @@ directory.</para>
 <title>Optionally avoiding the &WindowsRegistry;</title>
 
 <para>The new setup option <option>--no-registry</option> causes
-&MiKTeX; to store configuration settings in a configuration file.</para>
+&MiKTeX; to store configuration settings in a configuration file.  By
+avoiding the &WindowsRegistry;, it is easier to create network
+installation of &MiKTeX;.</para>
 
 </section>
 
@@ -127,6 +150,9 @@ computer</para></listitem>
 <listitem><para>no administrator privileges are required
 on the host computer</para></listitem>
 </itemizedlist>
+
+<para>Since &MiKTeXPortable; is installed by copying files (<ulink url="http://en.wikipedia.org/wiki/XCOPY_deployment">XCOPY deployment</ulink>), it is now easier to integrate &MiKTeX; into 3rd
+party products.</para>
 
 <para>&MiKTeXPortable; is distributed as a &SevenZip; self-extracting
 archive.</para>
