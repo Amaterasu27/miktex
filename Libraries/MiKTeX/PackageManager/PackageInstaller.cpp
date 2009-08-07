@@ -1649,7 +1649,7 @@ PackageInstallerImpl::DownloadPackage (/*[in]*/ const string & deploymentName)
 
   // check to see whether the archive file is ok
   CheckArchiveFile (deploymentName.c_str(),
-		    PathName(pSession->GetSpecialPath(SpecialPath::InstallRoot), pathArchiveFile),
+		    PathName(downloadDirectory, pathArchiveFile),
 		    true);
 
   // notify client: end of package download
