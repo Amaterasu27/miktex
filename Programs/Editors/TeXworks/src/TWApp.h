@@ -85,7 +85,7 @@ public:
 	QTextCodec *getDefaultCodec();
 	void setDefaultCodec(QTextCodec *codec);
 
-	void openUrl(const QString& urlString);
+	void openUrl(const QUrl& url);
 
 	QSettings::Format getSettingsFormat() const { return settingsFormat; }
 	void setSettingsFormat(QSettings::Format fmt) { settingsFormat = fmt; }
@@ -135,6 +135,7 @@ public slots:
 
 	void goToHomePage();
 	void writeToMailingList();
+	void openHelpFile(const QString& helpDirName);
 
 	void applyTranslation(const QString& locale);
 	

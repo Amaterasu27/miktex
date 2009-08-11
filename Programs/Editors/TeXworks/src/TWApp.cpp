@@ -234,20 +234,25 @@ void TWApp::init()
 
 	menuHelp = menuBar->addMenu(tr("Help"));
 
-	aboutAction = new QAction(tr("About " TEXWORKS_NAME "..."), this);
-	menuHelp->addAction(aboutAction);
-	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 	homePageAction = new QAction(tr("Go to TeXworks home page"), this);
 	menuHelp->addAction(homePageAction);
 	connect(homePageAction, SIGNAL(triggered()), this, SLOT(goToHomePage()));
 	mailingListAction = new QAction(tr("Email to the mailing list"), this);
 	menuHelp->addAction(mailingListAction);
 	connect(mailingListAction, SIGNAL(triggered()), this, SLOT(writeToMailingList()));
+	QAction* sep = new QAction(this);
+	sep->setSeparator(true);
+	menuHelp->addAction(sep);
+	aboutAction = new QAction(tr("About " TEXWORKS_NAME "..."), this);
+	aboutAction->setMenuRole(QAction::AboutRole);
+	menuHelp->addAction(aboutAction);
+	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+	
+	TWUtils::insertHelpMenuItems(menuHelp);
 	
 	connect(this, SIGNAL(updatedTranslators()), this, SLOT(changeLanguage()));
 	changeLanguage();
 #endif
-
 }
 
 void TWApp::maybeQuit()
@@ -287,7 +292,7 @@ void TWApp::about()
 	aboutText += "<small>";
 	aboutText += "<p>&#xA9; 2007-2009 Jonathan Kew";
 #if defined(MIKTEX)
-	aboutText += tr("<br>Version %1 (r.%2) (MiKTeX %3)</p>").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(MIKTEX_SERIES_STR);
+	aboutText += tr("<br>Version %1 (r.%2) (<a href=\"http://miktex.org/%3/\">MiKTeX %3</a>)</p>").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(MIKTEX_SERIES_STR);
 #else
 	aboutText += tr("<br>Version %1 (r.%2)").arg(TEXWORKS_VERSION).arg(SVN_REVISION);
 #endif
@@ -305,25 +310,25 @@ void TWApp::about()
 	QMessageBox::about(NULL, tr("About %1").arg(TEXWORKS_NAME), aboutText);
 }
 
-void TWApp::openUrl(const QString& urlString)
+void TWApp::openUrl(const QUrl& url)
 {
-	if (!QDesktopServices::openUrl(QUrl(urlString)))
-		QMessageBox::warning(NULL, tr(TEXWORKS_NAME),
+	if (!QDesktopServices::openUrl(url))
+		QMessageBox::warning(NULL, TEXWORKS_NAME,
 					 tr("Unable to access \"%1\"; perhaps your browser or mail application is not properly configured?")
-						.arg(urlString));
+							 .arg(url.toString()));
 }
 
 void TWApp::goToHomePage()
 {
-	openUrl("http://texworks.org/");
+	openUrl(QUrl("http://texworks.org/"));
 }
 
 void TWApp::writeToMailingList()
 {
 #if defined(MIKTEX)
-	openUrl("mailto:texworks@tug.org?subject=message%20from%20TeXworks%20(MiKTeX)%20user");
+	openUrl(QUrl("mailto:texworks@tug.org?subject=message from TeXworks user(MiKTeX)"));
 #else
-	openUrl("mailto:texworks@tug.org?subject=message%20from%20TeXworks%20user");
+	openUrl(QUrl("mailto:texworks@tug.org?subject=message from TeXworks user"));
 #endif
 }
 
@@ -825,6 +830,15 @@ void TWApp::addToRecentFiles(const QString& fileName)
 		files.removeLast();
 	settings.setValue("recentFileList", files);
 	updateRecentFileActions();
+}
+
+void TWApp::openHelpFile(const QString& helpDirName)
+{
+	QDir helpDir(helpDirName);
+	if (helpDir.exists("index.html"))
+		openUrl(QUrl::fromLocalFile(helpDir.absoluteFilePath("index.html")));
+	else
+		QMessageBox::warning(NULL, TEXWORKS_NAME, tr("Unable to find help file."));
 }
 
 #ifdef Q_WS_WIN	// support for the Windows single-instance code

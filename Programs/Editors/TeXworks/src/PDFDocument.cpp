@@ -49,6 +49,7 @@
 #include <QShortcut>
 #include <QFileSystemWatcher>
 #include <QDebug>
+#include <QToolTip>
 #if defined(MIKTEX)
 // see http://code.google.com/p/texworks/issues/detail?id=78#c1
 #include <QPrinter>
@@ -438,7 +439,7 @@ void PDFWidget::doLink(const Poppler::Link *link)
 			{
 				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
 				Q_ASSERT(browse != NULL);
-				TWApp::instance()->openUrl(browse->url());
+				TWApp::instance()->openUrl(QUrl(browse->url()));
 			}
 			break;
 		case Poppler::Link::Action:
@@ -643,6 +644,19 @@ void PDFWidget::updateCursor(const QPoint& pos)
 							pos.y() / scaleFactor / dpi * 72.0 / page->pageSizeF().height());
 		if (link->linkArea().contains(scaledPos)) {
 			setCursor(Qt::PointingHandCursor);
+			if (link->linkType() == Poppler::Link::Browse) {
+				QPoint globalPos = mapToGlobal(pos);
+				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
+				Q_ASSERT(browse != NULL);
+				QRectF r = link->linkArea();
+				r.setWidth(r.width() * scaleFactor * dpi / 72.0 * page->pageSizeF().width());
+				r.setHeight(r.height() * scaleFactor * dpi / 72.0 * page->pageSizeF().height());
+				r.moveLeft(r.left() * scaleFactor * dpi / 72.0 * page->pageSizeF().width());
+				r.moveTop(r.top() * scaleFactor * dpi / 72.0 * page->pageSizeF().height());
+				QRect rr = r.toRect().normalized();
+				rr.setTopLeft(mapToGlobal(rr.topLeft()));
+				QToolTip::showText(globalPos, browse->url(), this, rr);
+			}
 			return;
 		}
 	}
@@ -1165,6 +1179,8 @@ PDFDocument::init()
 	QSETTINGS_OBJECT(settings);
 	TWUtils::applyToolbarOptions(this, settings.value("toolBarIconSize", 2).toInt(), settings.value("toolBarShowText", false).toBool());
 
+	TWUtils::insertHelpMenuItems(menuHelp);
+	
 	TWUtils::zoomToHalfScreen(this, true);
 	TWUtils::installCustomShortcuts(this);
 
@@ -1175,8 +1191,9 @@ PDFDocument::init()
 	actionAbout_MiKTeX->setText(QApplication::translate("PDFDocument", "About MiKTeX...", 0, QApplication::UnicodeUTF8));
         actionAbout_MiKTeX->setMenuRole(QAction::AboutRole);
 	connect (actionAbout_MiKTeX, SIGNAL(triggered()), qApp, SLOT(aboutMiKTeX()));
-	menuHelp->insertAction (actionGoToHomePage, actionAbout_MiKTeX);
-	menuHelp->insertSeparator (actionGoToHomePage);
+#if 0
+	menuHelp->addAction (actionAbout_MiKTeX);
+#endif
 
 	// see http://code.google.com/p/texworks/issues/detail?id=78#c1
 	actionPrintPDF = new QAction(this);

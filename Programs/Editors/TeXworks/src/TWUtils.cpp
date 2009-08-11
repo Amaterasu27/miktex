@@ -36,6 +36,7 @@
 #include <QTextCodec>
 #include <QFile>
 #include <QDirIterator>
+#include <QSignalMapper>
 
 #pragma mark === TWUtils ===
 
@@ -137,6 +138,120 @@ void TWUtils::copyResources(const QDir& resDir, const QString& libPath)
 			srcFile.copy(iter.fileName());
 			QDir::setCurrent(libPath);
 		}
+	}
+}
+
+static int
+insertItemIfPresent(QFileInfo& fi, QMenu* helpMenu, QAction* before, QSignalMapper* mapper, QString title)
+{
+	QFileInfo indexFile(fi.absoluteFilePath(), "index.html");
+	if (indexFile.exists()) {
+		QFileInfo titlefileInfo(fi.absoluteFilePath(), "tw-help-title.txt");
+		if (titlefileInfo.exists() && titlefileInfo.isReadable()) {
+			QFile titleFile(titlefileInfo.absoluteFilePath());
+			titleFile.open(QIODevice::ReadOnly | QIODevice::Text);
+			QTextStream titleStream(&titleFile);
+			titleStream.setCodec("UTF-8");
+			title = titleStream.readLine();
+		}
+		QAction* action = new QAction(title, helpMenu);
+		mapper->setMapping(action, fi.canonicalFilePath());
+		action->connect(action, SIGNAL(triggered()), mapper, SLOT(map()));
+		helpMenu->insertAction(before, action);
+		return 1;
+	}
+	return 0;
+}
+
+void TWUtils::insertHelpMenuItems(QMenu* helpMenu)
+{
+	QSignalMapper* mapper = new QSignalMapper(helpMenu);
+	mapper->connect(mapper, SIGNAL(mapped(const QString&)), TWApp::instance(), SLOT(openHelpFile(const QString&)));
+
+	QAction* before = NULL;
+	foreach (QAction* a, helpMenu->actions()) {
+		if (a->menuRole() == QAction::AboutRole) {
+			before = a;
+			break;
+		}
+	}
+
+#ifdef Q_WS_MAC
+	QDir helpDir(QCoreApplication::applicationDirPath() + "/../texworks-help");
+#else
+#if defined(MIKTEX)
+	QDir helpDir;
+	MiKTeX::Core::SessionWrapper pSession (true);
+	MiKTeX::Core::PathName path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::UserInstallRoot);
+	path += "doc/texworks/help";
+	if (MiKTeX::Core::Directory::Exists(path))
+	{
+	  helpDir = path.Get();
+	}
+	else
+	{
+	  path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::CommonInstallRoot);
+	  path += "doc/texworks/help";
+	  if (MiKTeX::Core::Directory::Exists(path))
+	  {
+	    helpDir = path.Get();
+	  }
+	  else
+	  {
+	    helpDir = QCoreApplication::applicationDirPath() + "/texworks-help";
+	  }
+	}
+#else
+	QDir helpDir(QCoreApplication::applicationDirPath() + "/texworks-help");
+#endif
+#ifdef Q_WS_X11
+	if (!helpDir.exists())
+		helpDir.cd("/usr/local/share/texworks-help"); // TODO: set this from the makefile
+#endif
+#endif
+	const char* helpPath = getenv("TW_HELPPATH");
+	if (helpPath != NULL)
+		helpDir.cd(QString(helpPath));
+
+	QSETTINGS_OBJECT(settings);
+	QString loc = settings.value("locale").toString();
+	if (loc.isEmpty())
+		loc = QLocale::system().name();
+	
+	QDirIterator iter(helpDir);
+	int inserted = 0;
+	while (iter.hasNext()) {
+		(void)iter.next();
+		if (!iter.fileInfo().isDir())
+			continue;
+		QString name(iter.fileInfo().fileName());
+		if (name == "." || name == "..")
+			continue;
+		QDir subDir(iter.filePath());
+		// try for localized content first
+		QFileInfo fi(subDir, loc);
+		if (fi.exists() && fi.isDir() && fi.isReadable()) {
+			inserted += insertItemIfPresent(fi, helpMenu, before, mapper, name);
+			continue;
+		}
+		fi.setFile(subDir.absolutePath() + "/" + loc.left(2));
+		if (fi.exists() && fi.isDir() && fi.isReadable()) {
+			inserted += insertItemIfPresent(fi, helpMenu, before, mapper, name);
+			continue;
+		}
+		fi.setFile(subDir.absolutePath() + "/en");
+		if (fi.exists() && fi.isDir() && fi.isReadable()) {
+			inserted += insertItemIfPresent(fi, helpMenu, before, mapper, name);
+			continue;
+		}
+		fi.setFile(subDir.absolutePath());
+		inserted += insertItemIfPresent(fi, helpMenu, before, mapper, name);
+	}
+
+	if (inserted > 0) {
+		QAction* sep = new QAction(helpMenu);
+		sep->setSeparator(true);
+		helpMenu->insertAction(before, sep);
 	}
 }
 
@@ -879,10 +994,11 @@ bool CmdKeyFilter::eventFilter(QObject *obj, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 		if ((keyEvent->modifiers() & Qt::ControlModifier) != 0) {
 			if (keyEvent->key() <= 0x0ff
-			 && keyEvent->key() != Qt::Key_Z
-			 && keyEvent->key() != Qt::Key_X
-			 && keyEvent->key() != Qt::Key_C
-			 && keyEvent->key() != Qt::Key_V)
+				&& keyEvent->key() != Qt::Key_Z
+				&& keyEvent->key() != Qt::Key_X
+				&& keyEvent->key() != Qt::Key_C
+				&& keyEvent->key() != Qt::Key_V
+				&& keyEvent->key() != Qt::Key_A)
 				return true;
 		}
 	}

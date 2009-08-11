@@ -358,6 +358,8 @@ void TeXDocument::init()
 	
 	docList.append(this);
 	
+	TWUtils::insertHelpMenuItems(menuHelp);
+	
 	TWApp::instance()->updateWindowMenus();
 	TWUtils::installCustomShortcuts(this);
 
@@ -368,8 +370,9 @@ void TeXDocument::init()
 	actionAbout_MiKTeX->setText(QApplication::translate("TeXDocument", "About MiKTeX...", 0, QApplication::UnicodeUTF8));
         actionAbout_MiKTeX->setMenuRole(QAction::AboutRole);
 	connect (actionAbout_MiKTeX, SIGNAL(triggered()), qApp, SLOT(aboutMiKTeX()));
-	menuHelp->insertAction (actionGoToHomePage, actionAbout_MiKTeX);
-	menuHelp->insertSeparator (actionGoToHomePage);
+#if 0
+	menuHelp->addAction (actionAbout_MiKTeX);
+#endif
 
 	// see http://code.google.com/p/texworks/issues/detail?id=78#c1
 	actionPrintSource = new QAction(this);
