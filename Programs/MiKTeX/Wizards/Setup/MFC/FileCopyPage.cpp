@@ -1021,7 +1021,7 @@ FileCopyPage::ConfigureMiKTeX ()
 	  cmdLine.AppendOption ("--create-config-file=", MIKTEX_PATH_MIKTEX_INI);
 	  cmdLine.AppendOption (
 	    "--set-config-value=",
-	    MIKTEX_REGKEY_CORE ":" MIKTEX_REGVAL_NO_REGISTRY ":1");
+	    "[" MIKTEX_REGKEY_CORE "]" MIKTEX_REGVAL_NO_REGISTRY "=1");
 	}
       }
       if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
@@ -1084,10 +1084,9 @@ FileCopyPage::ConfigureMiKTeX ()
     }
 
   // [ ] set auto-install
-  string valueSpec = MIKTEX_REGKEY_PACKAGE_MANAGER;
-  valueSpec += ":";
+  string valueSpec = "[" MIKTEX_REGKEY_PACKAGE_MANAGER "]";
   valueSpec += MIKTEX_REGVAL_AUTO_INSTALL;
-  valueSpec += ":";
+  valueSpec += "=";
   valueSpec += NUMTOSTR(theApp.installOnTheFly.Get());
   cmdLine.Clear ();
   cmdLine.AppendOption ("--set-config-value=", valueSpec.c_str());

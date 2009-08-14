@@ -438,6 +438,10 @@ private:
 
 private:
   void
+  ShowConfigValue (/*[in]*/ const char * lpszValueSpec);
+
+private:
+  void
   MakeLinks (/*[in]*/ bool force);
 
 #if defined(MIKTEX_WINDOWS)
@@ -652,6 +656,7 @@ enum Option
   OPT_RECURSIVE,		// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
   OPT_SET_CONFIG_VALUE,		// <experimental/>
+  OPT_SHOW_CONFIG_VALUE,		// <experimental/>
   OPT_UNREGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_XML,			// <experimental/>
 
@@ -885,7 +890,16 @@ Open the specified configuration file in an editor.\
     OPT_SET_CONFIG_VALUE,
     T_("\
 Set the specified configuration value."),
-    T_("KEY:VALUENAME:VALUE")
+    T_("[SECTION]VALUENAME=VALUE")
+  },
+
+  {
+    "show-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SHOW_CONFIG_VALUE,
+    T_("\
+Show the specified configuration value."),
+    T_("[SECTION]VALUENAME")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1204,7 +1218,16 @@ Open the specified configuration file in an editor.\
     OPT_SET_CONFIG_VALUE,
     T_("\
 Set the specified configuration value."),
-    T_("KEY:VALUENAME:VALUE")
+    T_("[SECTION]VALUENAME=VALUE")
+  },
+
+  {
+    "show-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SHOW_CONFIG_VALUE,
+    T_("\
+Show the specified configuration value."),
+    T_("[SECTION]VALUENAME")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1519,7 +1542,16 @@ Open the specified configuration file in an editor.\
     OPT_SET_CONFIG_VALUE,
     T_("\
 Set the specified configuration value."),
-    T_("KEY:VALUENAME:VALUE")
+    T_("[SECTION]VALUENAME=VALUE")
+  },
+
+  {
+    "show-config-value", 0,
+    POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_SHOW_CONFIG_VALUE,
+    T_("\
+Show the specified configuration value."),
+    T_("[SECTION]VALUENAME")
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -2555,29 +2587,90 @@ IniTeXMFApp::CreateConfigFile (/*[in]*/ const char *  lpszName,
 /* _________________________________________________________________________
 
    IniTeXMFApp::SetConfigValue
+
+   ValueSpec:
+     [SECTION]NAME=VALUE
    _________________________________________________________________________ */
 
 void
 IniTeXMFApp::SetConfigValue (/*[in]*/ const char *  lpszValueSpec)
 {
-  vector<string> tokens;
-  for (CSVList tok (lpszValueSpec, ':'); tok.GetCurrent() != 0; ++ tok)
-  {
-    tokens.push_back (tok.GetCurrent());
-  }
-  if (tokens.size() == 3)
-  {
-    pSession->SetConfigValue (tokens[0].c_str(), tokens[1].c_str(), tokens[2].c_str());
-  }
-  else if (tokens.size() == 2)
-  {
-    pSession->SetConfigValue (0, tokens[0].c_str(), tokens[1].c_str());
-  }
+  const char * lpsz = lpszValueSpec;
+  string section;
+  bool haveSection = (*lpsz == '[');
+  if (haveSection)
+    {
+      ++ lpsz;
+      for (; *lpsz != 0 && *lpsz != ']'; ++ lpsz)
+	{
+	  section += *lpsz;
+	}
+      if (*lpsz == 0)
+	{
+	  FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
+	}
+      ++ lpsz;
+    }
   else
-  {
-    FatalError (T_("Invalid configuration specification: %s."),
-      Q_(lpszValueSpec));
-  }
+    {
+      FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
+    }
+  string valueName;
+  for (; *lpsz != 0 && *lpsz != '='; ++ lpsz)
+    {
+      valueName += *lpsz;
+    }
+  if (*lpsz == 0)
+    {
+      FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
+    }
+  ++ lpsz;
+  string value = lpsz;
+  pSession->SetConfigValue (
+			    haveSection ? section.c_str() : 0,
+			    valueName.c_str(),
+			    value.c_str());
+}
+
+/* _________________________________________________________________________
+
+   IniTeXMFApp::ShowConfigValue
+
+   ValueSpec:
+     [SECTION]NAME
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ShowConfigValue (/*[in]*/ const char *  lpszValueSpec)
+{
+  const char * lpsz = lpszValueSpec;
+  string section;
+  bool haveSection = (*lpsz == '[');
+  if (haveSection)
+    {
+      ++ lpsz;
+      for (; *lpsz != 0 && *lpsz != ']'; ++ lpsz)
+	{
+	  section += *lpsz;
+	}
+      if (*lpsz == 0)
+	{
+	  FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
+	}
+      ++ lpsz;
+    }
+  else
+    {
+      FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
+    }
+  string valueName = lpsz;
+  string value;
+  if (pSession->TryGetConfigValue(haveSection ? section.c_str() : 0,
+				  valueName.c_str(),
+				  value))
+    {
+      cout << value << endl;
+    }
 }
 
 /* _________________________________________________________________________
@@ -3103,6 +3196,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 		  /*[in]*/ const char **	argv)
 {
   vector<string> addFiles;
+  vector<string> showConfigValue;
   vector<string> setConfigValues;
   vector<string> createConfigFiles;
   vector<string> editConfigFiles;
@@ -3318,6 +3412,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	case OPT_SET_CONFIG_VALUE:
 
 	  setConfigValues.push_back (lpszOptArg);
+	  break;
+
+	case OPT_SHOW_CONFIG_VALUE:
+
+	  showConfigValue.push_back (lpszOptArg);
 	  break;
 
 	case OPT_COMMON_ROOTS:
@@ -3582,6 +3681,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     ++ it)
   {
     SetConfigValue (it->c_str());
+  }
+
+  for (vector<string>::const_iterator it = showConfigValue.begin();
+    it != showConfigValue.end();
+    ++ it)
+  {
+    ShowConfigValue (it->c_str());
   }
 
   for (vector<string>::const_iterator it = editConfigFiles.begin();
