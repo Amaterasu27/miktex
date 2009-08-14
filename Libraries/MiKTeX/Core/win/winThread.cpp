@@ -218,3 +218,83 @@ CriticalSectionMonitor::Leave ()
   InterlockedDecrement (const_cast<long*>(&nLocks));
   LeaveCriticalSection (&critsec);
 }
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::AutoResetEvent
+   _________________________________________________________________________ */
+
+AutoResetEvent::AutoResetEvent ()
+{
+  handle = CreateEventA(0, TRUE, FALSE, 0);
+  if (handle == 0)
+  {
+    FATAL_WINDOWS_ERROR ("CreateEventA", 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::~AutoResetEvent
+   _________________________________________________________________________ */
+
+AutoResetEvent::~AutoResetEvent ()
+{
+  try
+  {
+    if (! CloseHandle(handle))
+    {
+      FATAL_WINDOWS_ERROR ("CloseHandle", 0);
+    }
+  }
+  catch (const exception &)
+  {
+  }
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::Reset
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::Reset ()
+{
+  if (! ResetEvent(handle))
+  {
+    FATAL_WINDOWS_ERROR ("ResetEvent", 0);
+  }
+  return (true);
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::Set
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::Set ()
+{
+  if (! SetEvent(handle))
+  {
+    FATAL_WINDOWS_ERROR ("SetEvent", 0);
+  }
+  return (true);
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::WaitOne
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::WaitOne ()
+{
+  DWORD result = WaitForSingleObject(handle, INFINITE);
+  if (result == WAIT_FAILED)
+  {
+    FATAL_WINDOWS_ERROR ("WaitForSingleObject", 0);
+  }
+  return (true);
+};
+

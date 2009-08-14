@@ -49,6 +49,7 @@ public:
     : pBuffer (0),
       offset (0),
       sizeBuffer (0),
+      requestedSize (0),
       refCount (0),
       ready (false),
       successful (false),
@@ -169,12 +170,21 @@ public:
   {
     try
     {
+      while (IsBufferFull())
+      {
+	readEvent.WaitOne ();
+      }
+      bool haveRequestedData;
       MIKTEX_LOCK(LzmaStreamHelper)
       {
 	size_t newOffset = offset + size;
 	if (newOffset > sizeBuffer)
 	{
 	  sizeBuffer = ((newOffset + 4096 + 1) / 4096) * 4096;
+	  if (requestedSize > sizeBuffer)
+	  {
+	    sizeBuffer = requestedSize;
+	  }
 	  pBuffer =
 	    static_cast<unsigned char*>(MIKTEX_REALLOC(pBuffer, sizeBuffer));
 	}
@@ -182,9 +192,14 @@ public:
 	memcpy (pBuffer + offset, pData, size);
 	offset = newOffset;
 	*pProcessedSize = size;
-	return (S_OK);
+	haveRequestedData = (requestedSize > 0 && offset >= requestedSize);
       }
       MIKTEX_UNLOCK();
+      if (haveRequestedData)
+      {
+	haveRequestedDataEvent.Set ();
+      }
+      return (S_OK);
     }
     catch (const exception &)
     {
@@ -201,36 +216,41 @@ public:
     size_t read = 0;
     bool done = false;
     do
+    {
+      MIKTEX_LOCK(LzmaStreamHelper)
       {
-	MIKTEX_LOCK(LzmaStreamHelper)
+	if (ready)
+	{
+	  if (! successful)
 	  {
-	    if (ready)
-	      {
-		if (! successful)
-		  {
-		    throw threadMiKTeXException;
-		  }
-		if (size > offset)
-		  {
-		    size = offset;
-		  }
-	      }
-	    if (size <= offset)
-	      {
-		memcpy (pData, pBuffer, size);
-		memmove (pBuffer, pBuffer + size, offset - size);
-		offset -= size;
-		read = size;
-		done = true;
-	      }
+	    throw threadMiKTeXException;
 	  }
-	MIKTEX_UNLOCK();
-	if (! done)
+	  if (size > offset)
 	  {
-	    Thread::Sleep (10);
+	    size = offset;
 	  }
+	}
+	if (size <= offset)
+	{
+	  memcpy (pData, pBuffer, size);
+	  memmove (pBuffer, pBuffer + size, offset - size);
+	  offset -= size;
+	  read = size;
+	  done = true;
+	}
+	else
+	{
+	  requestedSize = size;
+	}
       }
+      MIKTEX_UNLOCK();
+      if (! done)
+      {
+	haveRequestedDataEvent.WaitOne ();
+      }
+    }
     while (! done);
+    readEvent.Set ();
     return (read);
   }
 
@@ -330,17 +350,24 @@ private:
   {
     LzmaStreamHelper * This = static_cast<LzmaStreamHelper*>(pv);
     try
-      {
-	This->DoUncompress ();
-	This->ready = true;
-	This->successful = true;
-      }
+    {
+      This->DoUncompress ();
+      This->ready = true;
+      This->successful = true;
+    }
     catch (const MiKTeXException & e)
-      {
-	This->ready = true;
-	This->successful = false;
-	This->threadMiKTeXException = e;
-      }
+    {
+      This->ready = true;
+      This->successful = false;
+      This->threadMiKTeXException = e;
+    }
+    try
+    {
+      This->haveRequestedDataEvent.Set ();
+    }
+    catch (const exception &)
+    {
+    }
   }
 
 public:
@@ -369,6 +396,22 @@ public:
     return (successful);
   }
 
+public:
+  bool
+  IsBufferFull ()
+  {
+    MIKTEX_LOCK(LzmaStreamHelper)
+    {
+      size_t maxBufSize = 1024 * 16;
+      if (maxBufSize < requestedSize)
+      {
+	maxBufSize = requestedSize;
+      }
+      return (offset >= maxBufSize);
+    }
+    MIKTEX_UNLOCK(LzmaStreamHelper);
+  }
+
 private:
   MIKTEX_DEFINE_LOCK(LzmaStreamHelper);
 
@@ -388,6 +431,9 @@ private:
   volatile bool successful;
 
 private:
+  volatile size_t requestedSize;
+
+private:
   volatile bool ready;
 
 private:
@@ -395,6 +441,12 @@ private:
 
 private:
   auto_ptr<Thread> pThread;
+
+private:
+  AutoResetEvent haveRequestedDataEvent;
+
+private:
+  AutoResetEvent readEvent;
 
 private:
   MiKTeXException threadMiKTeXException;

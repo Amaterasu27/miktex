@@ -1,6 +1,6 @@
 /* TarExtractor.cpp:
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -367,6 +367,9 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn_,
   
       bool checkHeader = true;
   
+      CharBuffer<char> buffer;
+      buffer.Reserve (1024 * 1024);
+
       while ((len = Read(&header, sizeof(header))) > 0)
 	{
 	  // read next header
@@ -464,22 +467,20 @@ TarExtractor::Extract (/*[in]*/ Stream *		pStreamIn_,
 					   FileMode::Create,
 					   FileAccess::Write,
 					   false));
-	  const size_t BUFSIZE = 4096;
-	  char buffer[BUFSIZE];
 	  size_t bytesRead = 0;
 	  while (bytesRead < size)
+	  {
+	    size_t remaining = size - bytesRead;
+	    size_t n = (remaining > buffer.GetCapacity() ? buffer.GetCapacity() : remaining);
+	    if (Read(buffer.GetBuffer(), n) != n)
 	    {
-	      size_t remaining = size - bytesRead;
-	      size_t n = (remaining > BUFSIZE ? BUFSIZE : remaining);
-	      if (Read(buffer, n) != n)
-		{
-		  FATAL_EXTRACTOR_ERROR ("TarExtractor::Extract",
-					 T_("Invalid package archive file."),
-					 0);
-		}
-	      streamOut.Write (buffer, n);
-	      bytesRead += n;
+	      FATAL_EXTRACTOR_ERROR ("TarExtractor::Extract",
+		T_("Invalid package archive file."),
+		0);
 	    }
+	    streamOut.Write (buffer.Get(), n);
+	    bytesRead += n;
+	  }
 	  streamOut.Close ();
 
 	  // skip extra bytes

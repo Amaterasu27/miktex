@@ -6789,6 +6789,41 @@ private:
 
 /* _________________________________________________________________________
 
+   AutoResetEvent
+   _________________________________________________________________________ */
+
+class AutoResetEvent
+{
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  AutoResetEvent ();
+
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  ~AutoResetEvent ();
+
+public:
+  MIKTEXCORETHISAPI(bool)
+  Reset ();
+
+public:
+  MIKTEXCORETHISAPI(bool)
+  Set ();
+
+public:
+  MIKTEXCORETHISAPI(bool)
+  WaitOne ();
+
+#if defined(MIKTEX_WINDOWS)
+private:
+  HANDLE handle;
+#endif
+};
+
+/* _________________________________________________________________________
+
    Tokenizer
    _________________________________________________________________________ */
 
