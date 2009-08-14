@@ -35,7 +35,7 @@ pool_free=47500
 ;; Max number of characters in all strings, including all
 ;; error messages, help texts, font names, control sequences.
 ;; These values apply to TeX and MP.
-pool_size=1250000
+pool_size=3250000
 
 ;; Maximum number of simultaneous input sources.
 stack_size=5000

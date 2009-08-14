@@ -19,7 +19,7 @@ font_mem_size=3000000
 
 ;; Extra space for the hash table of control sequences (which allows 10K
 ;; names as distributed).
-hash_extra=50000
+hash_extra=200000
 
 ;; Prime number of hyphenation exceptions.
 hyph_size=8191
