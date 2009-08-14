@@ -392,6 +392,7 @@ void TeXDocument::changeEvent(QEvent *event)
 		QString title = windowTitle();
 		retranslateUi(this);
 		menuRecent->setTitle(tr("Open Recent"));
+		TWUtils::insertHelpMenuItems(menuHelp);
 		setWindowTitle(title);
 		showCursorPosition();
 	}
@@ -476,7 +477,7 @@ void TeXDocument::open()
 	}
 #endif
 	QStringList files = QFileDialog::getOpenFileNames(this, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"), NULL, options);
-	foreach(QString fileName, files){
+	foreach (QString fileName, files) {
 		if (!fileName.isEmpty()) {
 			QFileInfo info(fileName);
 			settings.setValue("openDialogDir", info.canonicalPath());
@@ -933,14 +934,14 @@ bool TeXDocument::showPdfIfAvailable()
 
 	QString pdfName;
 	if (getPreviewFileName(pdfName)) {
-	PDFDocument *existingPdf = PDFDocument::findDocument(pdfName);
-	if (existingPdf != NULL) {
+		PDFDocument *existingPdf = PDFDocument::findDocument(pdfName);
+		if (existingPdf != NULL) {
 			pdfDoc = existingPdf;
 			pdfDoc->reload();
 			pdfDoc->selectWindow();
 			pdfDoc->linkToSource(this);
 		}
-	else {
+		else {
 			pdfDoc = new PDFDocument(pdfName, this);
 			TWUtils::sideBySide(this, pdfDoc);
 			pdfDoc->show();
@@ -1940,12 +1941,6 @@ void TeXDocument::zoomToLeft(QWidget *otherWindow)
 	setGeometry(screenRect);
 }
 
-#ifdef Q_WS_WIN
-#define PATH_SEPARATOR ";"
-#else
-#define PATH_SEPARATOR ":"
-#endif
-
 void TeXDocument::typeset()
 {
 	if (process)
@@ -1989,37 +1984,55 @@ void TeXDocument::typeset()
 	while (envIter.hasNext()) {
 		QString& envVar = envIter.next();
 		if (envVar.startsWith("PATH=", PATH_CASE_SENSITIVE)) {
-			foreach (const QString& s, envVar.mid(5).split(PATH_SEPARATOR, QString::SkipEmptyParts))
+			foreach (const QString& s, envVar.mid(5).split(QChar(PATH_LIST_SEP), QString::SkipEmptyParts))
 			if (!binPaths.contains(s))
 				binPaths.append(s);
-			envVar = envVar.left(5) + binPaths.join(PATH_SEPARATOR);
+			envVar = envVar.left(5) + binPaths.join(QChar(PATH_LIST_SEP));
 			break;
 		}
 	}
 	
-	process->setEnvironment(env);
-	process->setProcessChannelMode(QProcess::MergedChannels);
-	
-	connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(processStandardOutput()));
-	connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-	connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
-
-	QStringList args = e.arguments();
-	args.replaceInStrings("$fullname", fileInfo.fileName());
-	args.replaceInStrings("$basename", fileInfo.completeBaseName());
-	args.replaceInStrings("$suffix", fileInfo.suffix());
-	args.replaceInStrings("$directory", fileInfo.absoluteDir().absolutePath());
-
 	bool foundCommand = false;
+	QFileInfo exeFileInfo;
 	QStringListIterator pathIter(binPaths);
 	while (pathIter.hasNext() && !foundCommand) {
 		QString path = pathIter.next();
-		fileInfo = QFileInfo(path, e.program());
-		if (fileInfo.exists())
+		exeFileInfo = QFileInfo(path, e.program());
+		if (exeFileInfo.exists())
 			foundCommand = true;
 	}
 	
 	if (foundCommand) {
+		QStringList args = e.arguments();
+		
+		// for old MikTeX versions: delete $synctexoption if it causes an error
+		static bool checkedForSynctex = false;
+		static bool synctexSupported = true;
+		if (!checkedForSynctex) {
+			QStringListIterator pi(binPaths);
+			QFileInfo chkFileInfo;
+			bool found = false;
+			while (pi.hasNext() && !found) {
+				QString path = pi.next();
+				chkFileInfo = QFileInfo(path, "pdftex" EXE);
+				if (chkFileInfo.exists())
+					found = true;
+			}
+			if (found) {
+				int result = QProcess::execute(chkFileInfo.absoluteFilePath(), QStringList() << "-synctex=1" << "-version");
+				synctexSupported = (result == 0);
+			}
+			checkedForSynctex = true;
+		}
+		if (!synctexSupported)
+			args.removeAll("$synctexoption");
+		
+		args.replaceInStrings("$synctexoption", "-synctex=1");
+		args.replaceInStrings("$fullname", fileInfo.fileName());
+		args.replaceInStrings("$basename", fileInfo.completeBaseName());
+		args.replaceInStrings("$suffix", fileInfo.suffix());
+		args.replaceInStrings("$directory", fileInfo.absoluteDir().absolutePath());
+		
 		textEdit_console->clear();
 		if (textEdit_console->isHidden()) {
 			consoleWasHidden = true;
@@ -2032,7 +2045,15 @@ void TeXDocument::typeset()
 		inputLine->setFocus(Qt::OtherFocusReason);
 		showPdfWhenFinished = e.showPdf();
 		userInterrupt = false;
-		process->start(fileInfo.absoluteFilePath(), args);
+
+		process->setEnvironment(env);
+		process->setProcessChannelMode(QProcess::MergedChannels);
+		
+		connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(processStandardOutput()));
+		connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
+		connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+		
+		process->start(exeFileInfo.absoluteFilePath(), args);
 	}
 	else {
 		process->deleteLater();
@@ -2088,7 +2109,7 @@ void TeXDocument::processError(QProcess::ProcessError /*error*/)
 	if (userInterrupt)
 		textEdit_console->append(tr("Process interrupted by user"));
 	else
-	textEdit_console->append(process->errorString());
+		textEdit_console->append(process->errorString());
 	process->kill();
 	process->deleteLater();
 	process = NULL;
@@ -2101,8 +2122,8 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 	if (exitStatus != QProcess::CrashExit) {
 		if (pdfDoc == NULL) {
 			if (showPdfWhenFinished && showPdfIfAvailable())
-					pdfDoc->selectWindow();
-			}
+				pdfDoc->selectWindow();
+		}
 		else {
 			pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
 			if (showPdfWhenFinished)

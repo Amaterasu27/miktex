@@ -75,8 +75,8 @@ void *_synctex_malloc(size_t size);
 /*  This custom malloc functions initializes to 0 the newly allocated memory. */
 void *_synctex_malloc(size_t size) {
 	void * ptr = malloc(size);
-	if(ptr) {
-		memset(ptr,0, size);
+	if (ptr) {
+		memset(ptr, 0, size);
 	}
 	return (void *)ptr;
 }

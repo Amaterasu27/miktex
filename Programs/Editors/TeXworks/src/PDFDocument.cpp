@@ -433,20 +433,25 @@ void PDFWidget::doLink(const Poppler::Link *link)
 				goToDestination(go->destination());
 			}
 			break;
-		case Poppler::Link::Execute:
-			break;
 		case Poppler::Link::Browse:
 			{
 				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
 				Q_ASSERT(browse != NULL);
-				TWApp::instance()->openUrl(QUrl(browse->url()));
+				TWApp::instance()->openUrl(QUrl::fromEncoded(browse->url().toAscii()));
 			}
 			break;
-		case Poppler::Link::Action:
-			break;
-		case Poppler::Link::Sound:
-			break;
-		case Poppler::Link::Movie:
+// unsupported link types:
+//		case Poppler::Link::Execute:
+//			break;
+//		case Poppler::Link::JavaScript:
+//			break;
+//		case Poppler::Link::Action:
+//			break;
+//		case Poppler::Link::Sound:
+//			break;
+//		case Poppler::Link::Movie:
+//			break;
+		default:
 			break;
 	}
 }
@@ -1213,6 +1218,7 @@ void PDFDocument::changeEvent(QEvent *event)
 		QString title = windowTitle();
 		retranslateUi(this);
 		menuRecent->setTitle(tr("Open Recent"));
+		TWUtils::insertHelpMenuItems(menuHelp);
 		setWindowTitle(title);
 		if (pdfWidget)
 			pdfWidget->updateStatusBar();
@@ -1225,7 +1231,7 @@ void PDFDocument::linkToSource(TeXDocument *texDoc)
 {
 	if (texDoc != NULL) {
 		if (!sourceDocList.contains(texDoc))
-		sourceDocList.append(texDoc);
+			sourceDocList.append(texDoc);
 		actionGo_to_Source->setEnabled(true);
 	}
 }

@@ -19,7 +19,7 @@
 
 #ifdef RC_INVOKED
 IDI_ICON1 ICON DISCARDABLE "res/images/TeXworks.ico"
-2 ICON DISCARDABLE "texdoc.ico"
+2 ICON DISCARDABLE "res/images/TeXworks-doc.ico"
 #endif
 
 #include "texworks-version.h"

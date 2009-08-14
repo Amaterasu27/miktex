@@ -33,20 +33,36 @@ add_definitions(
 
 set(texworks_sources
   src/CompletingEdit.cpp
+  src/CompletingEdit.h
   src/ConfirmDelete.cpp
+  src/ConfirmDelete.h
   src/FindDialog.cpp
+  src/FindDialog.h
   src/HardWrapDialog.cpp
+  src/HardWrapDialog.h
   src/PDFDocks.cpp
+  src/PDFDocks.h
   src/PDFDocument.cpp
+  src/PDFDocument.h
   src/PrefsDialog.cpp
+  src/PrefsDialog.h
+  src/SvnRev.h
   src/TWApp.cpp
+  src/TWApp.h
   src/TWUtils.cpp
+  src/TWUtils.h
+  src/TWVersion.h
   src/TeXDocks.cpp
+  src/TeXDocks.h
   src/TeXDocument.cpp
+  src/TeXDocument.h
   src/TeXHighlighter.cpp
+  src/TeXHighlighter.h
   src/TemplateDialog.cpp
+  src/TemplateDialog.h
   src/main.cpp
   src/synctex_parser.c
+  src/synctex_parser.h
 )
 
 if(NATIVE_WINDOWS)
@@ -65,25 +81,25 @@ if(NATIVE_WINDOWS)
 #      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
 #    VERBATIM
 #  )
-  add_custom_command(
-    OUTPUT
-      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-    COMMAND
-      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
-        -verbose
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
-	${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-    DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
-    VERBATIM
-  )
-  add_custom_target(
-    texworks_icons
-    ALL
-    DEPENDS
+#  add_custom_command(
+#    OUTPUT
+#      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+#    COMMAND
+#      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
+#        -verbose
+#        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
+#	${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+#    DEPENDS
+#      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
+#    VERBATIM
+#  )
+#  add_custom_target(
+#    texworks_icons
+#    ALL
+#    DEPENDS
 #      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-  )
+#      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
+#  )
 endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
@@ -168,7 +184,7 @@ merge_trustinfo_manifest(${miktex_prefix}texworks asInvoker)
 
 install(TARGETS ${miktex_prefix}texworks DESTINATION ${bindir})
 
-if(NATIVE_WINDOWS)
-  add_dependencies(texworks texworks_icons)
-  add_dependencies(${miktex_prefix}texworks texworks_icons)
-endif(NATIVE_WINDOWS)
+#if(NATIVE_WINDOWS)
+#  add_dependencies(texworks texworks_icons)
+#  add_dependencies(${miktex_prefix}texworks texworks_icons)
+#endif(NATIVE_WINDOWS)

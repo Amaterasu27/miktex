@@ -58,14 +58,6 @@
 
 #define SETUP_FILE_NAME "texworks-setup.ini"
 
-#ifdef Q_WS_WIN
-#define PATH_LIST_SEP   ';'
-#define EXE             ".exe"
-#else
-#define PATH_LIST_SEP   ':'
-#define EXE
-#endif
-
 const int kDefaultMaxRecentFiles = 10;
 
 TWApp *TWApp::theAppInstance = NULL;
@@ -249,7 +241,7 @@ void TWApp::init()
 	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 	
 	TWUtils::insertHelpMenuItems(menuHelp);
-	
+
 	connect(this, SIGNAL(updatedTranslators()), this, SLOT(changeLanguage()));
 	changeLanguage();
 #endif
@@ -283,6 +275,7 @@ void TWApp::changeLanguage()
 	aboutAction->setText(tr("About " TEXWORKS_NAME "..."));
 	homePageAction->setText(tr("Go to TeXworks home page"));
 	mailingListAction->setText(tr("Email to the mailing list"));
+	TWUtils::insertHelpMenuItems(menuHelp);
 #endif
 }
 
@@ -314,7 +307,7 @@ void TWApp::openUrl(const QUrl& url)
 {
 	if (!QDesktopServices::openUrl(url))
 		QMessageBox::warning(NULL, TEXWORKS_NAME,
-					 tr("Unable to access \"%1\"; perhaps your browser or mail application is not properly configured?")
+							 tr("Unable to access \"%1\"; perhaps your browser or mail application is not properly configured?")
 							 .arg(url.toString()));
 }
 
@@ -612,10 +605,10 @@ void TWApp::setDefaultEngineList()
 	defaultEngineIndex = 2;
 #else
 	*engineList
-		<< Engine("pdfTeX", "pdftex" EXE, QStringList("-synctex=1") << "$fullname", true)
-		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("-synctex=1") << "$fullname", true)
-		<< Engine("XeTeX", "xetex" EXE, QStringList("-synctex=1") << "$fullname", true)
-		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("-synctex=1") << "$fullname", true)
+		<< Engine("pdfTeX", "pdftex" EXE, QStringList("$synctexoption") << "$fullname", true)
+		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
+		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
+		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("ConTeXt", "texmfstart" EXE, QStringList("texexec") << "$fullname", true)
 		<< Engine("XeConTeXt", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "$fullname", true)
 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)
