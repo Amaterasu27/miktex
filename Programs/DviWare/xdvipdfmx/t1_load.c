@@ -573,17 +573,17 @@ parse_subrs (cff_font *font,
 
   if (mode != 1) {
     if (font->subrs[0] == NULL) {
-    subrs = font->subrs[0] = cff_new_index(count);
-    subrs->data = NEW(offset, card8);
-    offset = 0;
-    for (i = 0; i < count; i++) {
-      subrs->offset[i] = offset + 1;
-      if (lengths[i] > 0) {
-	memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
-	offset += lengths[i];
+      subrs = font->subrs[0] = cff_new_index(count);
+      subrs->data = NEW(offset, card8);
+      offset = 0;
+      for (i = 0; i < count; i++) {
+        subrs->offset[i] = offset + 1;
+        if (lengths[i] > 0) {
+	  memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
+	  offset += lengths[i];
+        }
       }
-    }
-    subrs->offset[count] = offset + 1;
+      subrs->offset[count] = offset + 1;
     } else {
       /* Adobe's OPO_____.PFB and OPBO____.PFB have two /Subrs dicts,
        * and also have /CharStrings not followed by dicts.

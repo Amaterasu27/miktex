@@ -344,7 +344,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
 
   if (pdf_array_length(tmp_array) > 0) {
     pdf_add_dict(fontdict,
-		 pdf_new_name("Widths"),    pdf_ref_obj(tmp_array));
+		 pdf_new_name("Widths"),  pdf_ref_obj(tmp_array));
   }
   pdf_release_obj(tmp_array);
 
