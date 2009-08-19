@@ -20,6 +20,8 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_BINARY_DIR}/src
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
@@ -63,6 +65,8 @@ set(texworks_sources
   src/main.cpp
   src/synctex_parser.c
   src/synctex_parser.h
+  src/synctex_parser_utils.c
+  src/synctex_parser_utils.h
 )
 
 if(NATIVE_WINDOWS)
