@@ -98,9 +98,9 @@ public:
     THEDATA(maxbibfiles) = 20;
     THEDATA(maxentints) = 3000;
     THEDATA(maxentstrs) = 3000;
-    THEDATA(maxfields) = 16000;
+    THEDATA(maxfields) = 5000;
     THEDATA(poolsize) = 65000;
-    THEDATA(wizfnspace) = 6000;
+    THEDATA(wizfnspace) = 3000;
     Allocate (THEDATA(bibfile), THEDATA(maxbibfiles));
     Allocate (THEDATA(biblist), THEDATA(maxbibfiles));
     Allocate (THEDATA(entryints), THEDATA(maxentints));
@@ -255,6 +255,14 @@ bool
 miktexopenbstfile (/*[in]*/ T & f)
 {
   return (THEAPP.OpenBstFile(f));
+}
+
+inline
+bool
+miktexhasextension (/*[in]*/ const char * lpszFileName,
+		    /*[in]*/ const char * lpszExtension)
+{
+  return (PathName(lpszFileName).HasExtension(lpszExtension));
 }
 
 #include <miktex/TeXAndFriends/WebAppInputLine.inl>

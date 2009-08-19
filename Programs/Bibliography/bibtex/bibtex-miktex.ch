@@ -1,6 +1,6 @@
 %% bibtex-miktex.ch: WEB change file for BibTeX
 %% 
-%% Copyright (C) 1996-2006 Christian Schenk
+%% Copyright (C) 1996-2009 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -123,7 +123,7 @@ c4p_end_try_block(exit_program);
 @x
 @!buf_size=1000; {maximum number of characters in an input line (or string)}
 @y
-@!buf_size=5000; {maximum number of characters in an input line (or string)}
+@!buf_size=20000; {maximum number of characters in an input line (or string)}
 @z
 
 @x
@@ -478,6 +478,27 @@ do_nothing;             {the ``default system'' doesn't use the command line}
 @y
 c4p_strcpy(name_of_file,file_name_size,c4p_argv[1]);
 aux_name_length:=c4p_strlen(name_of_file);
+@z
+
+% _____________________________________________________________________________
+%
+% [8.106]
+% _____________________________________________________________________________
+
+@x
+add_extension (s_aux_extension);        {this also sets |name_length|}
+aux_ptr := 0;                           {initialize the \.{.aux} file stack}
+if (not a_open_in(cur_aux_file)) then
+    sam_you_made_the_file_name_wrong;
+@y
+if (not miktex_has_extension(name_of_file, '.aux'))
+then
+  add_extension (s_aux_extension)        {this also sets |name_length|}
+else
+  aux_name_length := aux_name_length - 4; {set to length without \.{.aux}}
+aux_ptr := 0;                           {initialize the \.{.aux} file stack}
+if (not c4p_try_fopen(cur_aux_file,name_of_file,c4p_rb_mode)) then
+    sam_you_made_the_file_name_wrong;
 @z
 
 % _____________________________________________________________________________
