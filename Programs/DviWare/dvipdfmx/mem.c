@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include "system.h"
+#include "system.h"
 #include "mem.h"
 #include "error.h"
 
