@@ -38,6 +38,18 @@ void
 MIKTEXCEECALL
 MiKTeX::UI::Qt::InitializeFramework ()
 {
+#if defined(MIKTEX_WINDOWS)
+  STARTUPINFO startupInfo;
+  GetStartupInfo (&startupInfo);
+  if ((startupInfo.dwFlags & STARTF_USESHOWWINDOW)
+    && startupInfo.wShowWindow == SW_HIDE)
+  {
+    FATAL_MIKTEX_ERROR (
+      "MiKTeX::UI::Qt::InitializeFramework",
+      "GUI framework cannot be initialized.",
+      0);
+  }
+#endif
 #ifdef Q_WS_X11
   bool useGUI = (getenv("DISPLAY") != 0);
 #else
