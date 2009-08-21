@@ -268,53 +268,57 @@ static char *helparr[] = {
 "or",
 "           dvips fname[.ftype[.fmode]] [options]",
 #endif
-"a*  Conserve memory, not time      A   Print only odd (TeX) pages      ",
-"b # Page copies, for posters e.g.  B   Print only even (TeX) pages     ",
-"c # Uncollated copies              C # Collated copies                 ",
-"d # Debugging                      D # Resolution                      ",
-"e # Maxdrift value                 E*  Try to create EPSF              ",
-"f*  Run as filter                  F*  Send control-D at end           ",
+"Convert DVI input files to PostScript.",
+"See http://tug.org/dvips/ for the full manual and other information.",
+"",
+"Options:",
+"-a*  Conserve memory, not time       -A   Print only odd (TeX) pages",
+"-b # Page copies, for posters e.g.   -B   Print only even (TeX) pages",
+"-c # Uncollated copies               -C # Collated copies",
+"-d # Debugging                       -D # Resolution",
+"-e # Maxdrift value                  -E*  Try to create EPSF",
+"-f*  Run as filter                   -F*  Send control-D at end",
 #ifdef SHIFTLOWCHARS
-"                                   G*  Shift low chars to higher pos.  ",
+"                                     -G*  Shift low chars to higher pos.",
 #endif
-"h f Add header file                                                    ",
+"-h f Add header file",
 #if defined(MIKTEX)
-"i*  Separate file per section      I s image options (see below)       ",
+"-i*  Separate file per section       -I s image options (see below)",
 #else
-"i*  Separate file per section                                          ",
+"-i*  Separate file per section",
 #endif
-"j*  Download fonts partially                                           ",
-"k*  Print crop marks               K*  Pull comments from inclusions   ",
-"l # Last page                                                          ",
-"m*  Manual feed                    M*  Don't make fonts                ",
-"mode s Metafont device name                                            ",
-"n # Maximum number of pages        N*  No structured comments          ",
-"noomega  Disable Omega extensions                                      ",
-"o f Output file                    O c Set/change paper offset         ",
+"-j*  Download fonts partially",
+"-k*  Print crop marks                -K*  Pull comments from inclusions",
+"-l # Last page",
+"-m*  Manual feed                     -M*  Don't make fonts",
+"-mode s Metafont device name",
+"-n # Maximum number of pages         -N*  No structured comments",
+"-noomega  Disable Omega extensions",
+"-o f Output file                     -O c Set/change paper offset",
 #if defined(MSDOS) || defined(OS2)
-"p # First page                     P s Load $s.cfg                     ",
+"-p # First page                      -P s Load $s.cfg",
 #else
-"p # First page                     P s Load config.$s                  ",
+"-p # First page                      -P s Load config.$s",
 #endif
-"pp l Print only pages listed                                           ",
-"q*  Run quietly                                                        ",
-"r*  Reverse order of pages         R*  Run securely                    ",
-"s*  Enclose output in save/restore S # Max section size in pages       ",
-"t s Paper format                   T c Specify desired page size       ",  
-"u s PS mapfile                     U*  Disable string param trick      ",
-"v   Print version number and quit  V*  Send downloadable PS fonts as PK",
-"x # Override dvi magnification     X # Horizontal resolution           ",
-"y # Multiply by dvi magnification  Y # Vertical resolution             ",  
+"-pp l Print only pages listed",
+"-q*  Run quietly",
+"-r*  Reverse order of pages          -R*  Run securely",
+"-s*  Enclose output in save/restore  -S # Max section size in pages",
+"-t s Paper format                    -T c Specify desired page size",  
+"-u s PS mapfile                      -U*  Disable string param trick",
+"-v   Print version number and quit   -V*  Send downloadable PS fonts as PK",
+"-x # Override dvi magnification      -X # Horizontal resolution",
+"-y # Multiply by dvi magnification   -Y # Vertical resolution",  
 #ifdef HPS
-"z*  Hyper PS                       Z*  Compress bitmap fonts           ",
+"-z*  Hyper PS                        -Z*  Compress bitmap fonts",
 #else
-"                                   Z*  Compress bitmap fonts           ",
+"                                     -Z*  Compress bitmap fonts",
 #endif
-/* "-   Interactive query of options", */
-"    # = number   f = file   s = string  * = suffix, `0' to turn off    ",
-"    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)           ",
+/*"-   Interactive query of options", */
+"    # = number   f = file   s = string  * = suffix, `0' to turn off",
+"    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)",
 #if defined(MIKTEX)
-"    l = comma-separated list of page ranges (e.g., 1-4,7-9)            ",
+"    l = comma-separated list of page ranges (e.g., 1-4,7-9)",
 "",
 "    Image options:",
 "    PS level                                1, 2, or 3",
@@ -322,11 +326,11 @@ static char *helparr[] = {
 "    Encoding (ASCII85, run-length, flate)   8, r or f   (or combined)",
 "    Draft                                   d", 0};
 #else
-"    l = comma-separated list of page ranges (e.g., 1-4,7-9)            ", 0} ;
+"    l = comma-separated list of page ranges (e.g., 1-4,7-9)", 0} ;
 #endif
 
 void
-help P1C(int, status)
+help(int status)
 {
    char **p;
    FILE *f = status == 0 ? stdout : stderr;
@@ -342,7 +346,7 @@ help P1C(int, status)
 #endif
 }
 
-void
+static void
 freememforpsnames(void)
 {
    int i;
@@ -359,7 +363,7 @@ freememforpsnames(void)
 static char *progname ;
 
 void
-error_with_perror P2C(char *, s, char *, fname)
+error_with_perror(char *s, char *fname)
 {
    if (prettycolumn > 0)
         fprintf(stderr,"\n");
@@ -389,13 +393,14 @@ error_with_perror P2C(char *, s, char *, fname)
  *   character is !, it aborts the job.
  */
 void
-error P1C(char *, s)
+error(char *s)
 {
    error_with_perror (s, NULL);
 }
 
 #ifndef KPATHSEA
-char *concat P2C(char *, s1, char *, s2)
+char *
+concat(char *s1, char *s2)
 { 
   char *s = malloc(strlen(s1)+strlen(s2)+1);
   if (s == NULL) {
@@ -412,7 +417,7 @@ char *concat P2C(char *, s1, char *, s2)
    the user hasn't turned it off.  */
 
 void
-check_checksum P3C(unsigned, c1, unsigned, c2, const char *, name)
+check_checksum(unsigned c1, unsigned c2, const char *name)
 {
   if (c1 && c2 && c1 != c2 
 #ifdef KPATHSEA
@@ -434,7 +439,8 @@ check_checksum P3C(unsigned, c1, unsigned, c2, const char *, name)
 #ifdef DEBUG
 static integer totalalloc = 0 ;
 #endif
-char *mymalloc P1C(integer, n)
+char *
+mymalloc(integer n)
 {
    char *p ;
 
@@ -460,14 +466,14 @@ char *mymalloc P1C(integer, n)
    return p ;
 }
 void
-morestrings P1H(void) {
+morestrings(void) {
    strings = mymalloc((integer)STRINGSIZE) ;
    nextstring = strings ;
    maxstring = strings + STRINGSIZE - 200 ;
    *nextstring++ = 0 ;
 }
 void
-checkstrings P1H(void) {
+checkstrings(void) {
    if (nextstring - strings > STRINGSIZE / 2)
       morestrings() ;
 }
@@ -475,7 +481,7 @@ checkstrings P1H(void) {
  *   Initialize sets up all the globals and data structures.
  */
 void
-initialize P1H(void)
+initialize(void)
 {
    int i;
    char *s;
@@ -512,7 +518,7 @@ initialize P1H(void)
  *   This routine copies a string into the string `pool', safely.
  */
 char *
-newstring P1C(char *, s)
+newstring(char *s)
 {
    int l ;
 
@@ -528,7 +534,8 @@ newstring P1C(char *, s)
    nextstring += l + 1 ;
    return(s) ;
 }
-void newoutname P1H(void) {
+void
+newoutname(void) {
    static int seq = 0 ;
    static char *seqptr = 0 ;
    char *p ;
@@ -559,7 +566,8 @@ void newoutname P1H(void) {
  *   This routine reverses a list, where a list is defined to be any
  *   structure whose first element is a pointer to another such structure.
  */
-VOID *revlist P1C(VOID *, p)
+VOID *
+revlist(VOID *p)
 {
    struct list {
       struct list *next ;
@@ -575,7 +583,7 @@ VOID *revlist P1C(VOID *, p)
 }
 /* this asks for a new set of arguments from the command line */
 void
-queryargs P1H(void)
+queryargs(void)
 {
    fputs("Options: ",stdout);
    fgets(queryline,256,stdin);
@@ -597,10 +605,10 @@ queryargs P1H(void)
 #endif
 extern void handlepapersize() ;
 #ifdef VMS
-main P1H(void)
+main(void)
 #else
 int
-main P2C(int, argc, char **, argv)
+main(int argc, char **argv)
 #endif
 {
    int i, lastext = -1 ;
@@ -662,9 +670,9 @@ main P2C(int, argc, char **, argv)
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
         extern KPSEDLL char *kpathsea_version_string;
-        puts ("dvips(k) 5.96dev");
+        puts (BANNER);
         puts (kpathsea_version_string);
-        puts ("Copyright (C) 2007 Radical Eye Software.\n\
+        puts ("Copyright 2009 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -735,7 +743,7 @@ Primary author of Dvips: T. Rokicki.");
  *   than one file name is given, and uses stdin if none is given.
  */
 #ifdef VMS
-   vmscli P1H(void);
+   vmscli(void);
    papsizes = (struct papsiz *)revlist((void *)papsizes) ; /* Added by PWD 21-Mar-1997 */
 #else
    queryoptions = 0;
@@ -1267,7 +1275,8 @@ default:
    }
    if (oname[0] == '-' && oname[1] == 0)
       oname[0] = 0 ;
-   else if (*oname == 0 && ! filter) {
+   else if (*oname == 0 && ! filter && *iname) {
+      /* determine output name from input name */
       oname = nextstring ;
 #ifndef VMCMS  /* get stuff before LAST "." */
       lastext = strlen(iname) - 1 ;
@@ -1373,23 +1382,21 @@ default:
 	 SET_BINARY(fileno(stdin)) ;
    } else {
 #ifdef KPATHSEA
-      fprintf (stderr, "Missing DVI file argument (or -f).\n");
-      fprintf (stderr, "Try --help for more information.\n");
+      fprintf (stderr, "dvips: Missing DVI file argument (or -f).\n");
+      fprintf (stderr, "dvips: Try --help for more information.\n");
 #else
       help(1) ;
 #endif
       exit(1) ;
    }
-   initcolor() ;
    if (dvifile==NULL) {
-#if ! defined(MIKTEX)
-      extern char errbuf[];
-#endif
-      (void)sprintf(errbuf,"! DVI file <%s> can't be opened.", iname) ;
-      error("! DVI file can't be opened.") ;
+      error_with_perror("DVI file can't be opened:", iname);
+      exit(1);
    }
    if (fseek(dvifile, 0L, 0) < 0)
       error("! DVI file must not be a pipe.") ;
+
+   initcolor() ;
 #ifdef FONTLIB
    fliload();    /* read the font libaries */
 #endif

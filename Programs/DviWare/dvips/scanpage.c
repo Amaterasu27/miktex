@@ -43,7 +43,7 @@ extern Boolean noomega ;
  *   use a single string instead of an array with integers in the PostScript.)
  */
 Boolean
-prescanchar P1C(chardesctype *, cd)
+prescanchar(chardesctype *cd)
 {
    register quarterword *cras ;
    register integer thischar ;
@@ -99,7 +99,7 @@ prescanchar P1C(chardesctype *, cd)
  * in order to keep this font from overflowing VM.
  */
 Boolean
-preselectfont P1C(fontdesctype *, f)
+preselectfont(fontdesctype *f)
 {
    curfnt = f ;
    if (curfnt->loaded == 0 || curfnt->loaded == 3) {
@@ -108,7 +108,7 @@ preselectfont P1C(fontdesctype *, f)
             loadfont(curfnt) ;
    }
    if (curfnt->psname == 0) {
-      if (curfnt->loaded < 2) /* virtual font costs nothing (yet) */
+      if (curfnt->loaded < 2) { /* virtual font costs nothing (yet) */
          if (curfnt->resfont)
             fontmem -= PSFONTCOST ;
          else {
@@ -116,6 +116,7 @@ preselectfont P1C(fontdesctype *, f)
             if (curfnt->loadeddpi != curfnt->dpi)
                fontmem -= 48 ; /* for the new font matrix */
          }
+      }
       curfnt->psname = 1 ;
       if (fontmem <= pagecost) {
          if (pagecount > 0)
@@ -128,7 +129,7 @@ preselectfont P1C(fontdesctype *, f)
  *   Now our scanpage routine.
  */
 short
-scanpage P1H(void)
+scanpage(void)
 {
    register shalfword cmd ;
    register chardesctype *cd ;
