@@ -1,6 +1,6 @@
 /* comPackageInstaller.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -257,6 +257,8 @@ comPackageInstaller::InstallRemove ()
       pInstaller->SetCallback (this);
       pInstaller->SetFileLists (packagesToBeInstalled, packagesToBeRemoved);
       pInstaller->InstallRemove ();
+      packagesToBeInstalled.clear ();
+      packagesToBeRemoved.clear ();
     }
   catch (const MiKTeXException & e)
     {
