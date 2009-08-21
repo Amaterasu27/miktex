@@ -33,76 +33,80 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 			   /*[in]*/ const PathName &	path)
 {
   // expand root directories
-  if (path[0] == '%' && (path[1] == 'R' || path[1] == 'r'))
+  if (path[0] == '%'
+      && (path[1] == 'R' || path[1] == 'r')
+      && IsDirectoryDelimiter(path[2]))
+  {
+    for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
     {
-      for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
-	{
-	  PathName path2 = GetRootDirectory(idx);
-	  path2.Append (path.Get() + 2, false);
-	  // <recursivecall>
-	  PushBackPath (vec, path2);
-	  // </recursivecall>
-	}
-      if (path[1] == 'R')
-	{
-	  PathName path2 = MPM_ROOT_PATH;
-	  path2.Append (path.Get() + 2, false);
-	  // <recursivecall>
-	  PushBackPath (vec, path2);
-	  // </recursivecall>
-	}
-      return;
+      PathName path2 = GetRootDirectory(idx);
+      path2.AppendAltDirectoryDelimiter ();
+      path2.Append (path.Get() + 3, false);
+      // <recursivecall>
+      PushBackPath (vec, path2);
+      // </recursivecall>
     }
+    if (path[1] == 'R')
+    {
+      PathName path2 = MPM_ROOT_PATH;
+      path2.AppendAltDirectoryDelimiter ();
+      path2.Append (path.Get() + 3, false);
+      // <recursivecall>
+      PushBackPath (vec, path2);
+      // </recursivecall>
+    }
+    return;
+  }
 
   // expand '~'
   if (path[0] == '~' && (path[1] == 0 || IsDirectoryDelimiter(path[1])))
+  {
+    PathName pathFQ = GetHomeDirectory();
+    if (! Utils::IsAbsolutePath(pathFQ.Get()))
     {
-      PathName pathFQ = GetHomeDirectory();
-      if (! Utils::IsAbsolutePath(pathFQ.Get()))
-	{
-	  TraceError (T_("cannot expand ~: %s is not fully qualified"),
-		      Q_(pathFQ));
-	  return;
-	}
-      if (path[1] != 0 && IsDirectoryDelimiter(path[1]) && path[2] != 0)
-	{
-	  pathFQ += &path[2];
-	}
-      if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
-	{
-	  vec.push_back (pathFQ);
-	}
+      TraceError (T_("cannot expand ~: %s is not fully qualified"),
+	Q_(pathFQ));
       return;
     }
-  
+    if (path[1] != 0 && IsDirectoryDelimiter(path[1]) && path[2] != 0)
+    {
+      pathFQ += &path[2];
+    }
+    if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
+    {
+      vec.push_back (pathFQ);
+    }
+    return;
+  }
+
   // fully qualified path?
   if (Utils::IsAbsolutePath(path.Get()))
+  {
+    if (find(vec.begin(), vec.end(), path) == vec.end())
     {
-      if (find(vec.begin(), vec.end(), path) == vec.end())
-	{
-	  vec.push_back (path);
-	}
-      return;
+      vec.push_back (path);
     }
+    return;
+  }
 
   // it is a relative path
   PathName pathFQ;
   for (unsigned idx = 0; GetWorkingDirectory(idx, pathFQ); ++ idx)
+  {
+    if (! Utils::IsAbsolutePath(pathFQ.Get()))
     {
-      if (! Utils::IsAbsolutePath(pathFQ.Get()))
-	{
-	  TraceError (T_("%s is not fully qualified"), Q_(pathFQ));
-	  continue;
-	}
-      if (PathName::Compare(path, CURRENT_DIRECTORY) != 0)
-	{
-	  pathFQ += path.Get();
-	}
-      if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
-	{
-	  vec.push_back (pathFQ);
-	}
+      TraceError (T_("%s is not fully qualified"), Q_(pathFQ));
+      continue;
     }
+    if (PathName::Compare(path, CURRENT_DIRECTORY) != 0)
+    {
+      pathFQ += path.Get();
+    }
+    if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
+    {
+      vec.push_back (pathFQ);
+    }
+  }
 }
 
 /* _________________________________________________________________________

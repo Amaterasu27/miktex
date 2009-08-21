@@ -35,6 +35,7 @@
    C:\ab\cd\ef.gh		C:\ab			cd\ef.gh
    C:\abcd\ef.gh		C:\ab\			<NULL>
    C:\abcd\ef.gh		C:\ab			<NULL>
+   C:\ef.gh			C:\			ef.gh
    _________________________________________________________________________ */
 
 const char *
@@ -57,22 +58,27 @@ Utils::GetRelativizedPath (/*[in]*/ const char * lpszPath,
 
   MIKTEX_ASSERT (rootLen > 0);
 
-  if (StrNCmpI(pathNorm.Get(), pathRootNorm.Get(), rootLen) != 0)
-    {
-      return (0);
-    }
+#if defined(MIKTEX_WINDOWS)
+  int cmp = StrNCmpI(pathNorm.Get(), pathRootNorm.Get(), rootLen);
+#else
+  int cmp = strncmp(pathNorm.Get(), pathRootNorm.Get(), rootLen);
+#endif
+  if (cmp != 0)
+  {
+    return (0);
+  }
 
   int ch = lpszRoot[rootLen - 1];
 
   if (IsDirectoryDelimiter(ch))
-    {
-      return (lpszPath + rootLen);
-    }
+  {
+    return (lpszPath + rootLen);
+  }
 
   if (! IsDirectoryDelimiter(lpszPath[rootLen]))
-    {
-      return (0);
-    }
+  {
+    return (0);
+  }
 
   return (lpszPath + rootLen + 1);
 }
