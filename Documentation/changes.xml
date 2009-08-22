@@ -100,6 +100,17 @@ replaced by
 
 </section>
 
+<section>
+
+<title>&TeXnicCenter; compatibility</title>
+
+<para>&latex; terminates with <quote>GUI framework cannot be initialized</quote> if started from &TeXnicCenter;
+(1.0 Stable Release Candidate 1). Please visit
+the <ulink url="http://miktex.org/2.8/issues">MiKTeX 2.8 Issues page</ulink>
+for a solution.</para>
+
+</section>
+
 </section>
 
 <section>
@@ -196,8 +207,9 @@ more information.</para>
 <title>Upgrades</title>
 
 <itemizedlist>
-<listitem><para>&Dvipdfmx; 20090522</para></listitem>
+<listitem><para>&Dvipdfmx; 20090708</para></listitem>
 <listitem><para>&Dvipng; 1.12</para></listitem>
+<listitem><para>&Dvips; 5.98</para></listitem>
 <listitem><para>&pdfTeX; 1.40.10</para></listitem>
 <listitem><para>&XeTeX; 0.9995.0</para></listitem>
 </itemizedlist>
