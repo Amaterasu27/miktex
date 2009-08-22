@@ -99,14 +99,15 @@ if(BUILDING_MIKTEX)
   install(TARGETS pdftosrc DESTINATION ${bindir})
 endif(BUILDING_MIKTEX)
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/ttf2afm.c
-)
-
 set(ttf2afm_sources
   ${wrapper_cpp}
   ttf2afm-version.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ttf2afm.cpp
+  ttf2afm.c
+)
+
+set_source_files_properties(
+  ttf2afm.c
+  PROPERTIES LANGUAGE CXX
 )
 
 set_source_files_properties(
@@ -259,26 +260,27 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.h
 )
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/avlstuff.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/epdf.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/mapfile.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/pkin.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/subfont.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/tounicode.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/vfpacket.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writeenc.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writefont.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writeimg.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writejbig2.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writejpg.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writepng.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writet1.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writet3.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writettf.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writezip.c
+set_source_files_properties(
+  avl.c
+  avlstuff.c
+  epdf.c
+  mapfile.c
+  pkin.c
+  subfont.c
+  tounicode.c
+  utils.c
+  vfpacket.c
+  writeenc.c
+  writefont.c
+  writeimg.c
+  writejbig2.c
+  writejpg.c
+  writepng.c
+  writet1.c
+  writet3.c
+  writettf.c
+  writezip.c
+  PROPERTIES LANGUAGE CXX
 )
 
 if(LINK_EVERYTHING_STATICALLY)
@@ -288,28 +290,28 @@ else(LINK_EVERYTHING_STATICALLY)
 endif(LINK_EVERYTHING_STATICALLY)
 
 set(${pdftex_target_name}_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/avl.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/epdf.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/pkin.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/subfont.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/tounicode.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/vfpacket.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writeimg.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writejbig2.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writejpg.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writepng.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writet3.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writettf.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writezip.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdftoepdf.cc
+  avl.c
+  avlstuff.c
+  epdf.c
+  mapfile.c
+  pdftex.defaults.h
+  pdftoepdf.cc
+  pkin.c
+  subfont.c
+  tounicode.c
+  utils.c
+  vfpacket.c
+  writeenc.c
+  writefont.c
+  writeimg.c
+  writejbig2.c
+  writejpg.c
+  writepng.c
+  writet1.c
+  writet3.c
+  writettf.c
+  writezip.c
 )
 
 if(WITH_SYNCTEX)

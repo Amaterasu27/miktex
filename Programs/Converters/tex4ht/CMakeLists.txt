@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,17 +35,18 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/htcmd.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/t4ht.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/tex4ht.c
+set_source_files_properties(
+  htcmd.c
+  t4ht.c
+  tex4ht.c
+  PROPERTIES LANGUAGE CXX
 )
 
 set(htcmd_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/htcmd.cpp
   ${wrapper_cpp}
   config.h
   htcmd-version.h
+  htcmd.c
 )
 
 if(NATIVE_WINDOWS)
@@ -68,10 +69,10 @@ target_link_libraries(htcmd
 install(TARGETS htcmd DESTINATION ${bindir})
 
 set(t4ht_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/t4ht.cpp
   ${wrapper_cpp}
   config.h
   t4ht-version.h
+  t4ht.c
 )
 
 if(NATIVE_WINDOWS)
@@ -94,10 +95,10 @@ target_link_libraries(t4ht
 install(TARGETS t4ht DESTINATION ${bindir})
 
 set(tex4ht_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/tex4ht.cpp
   ${wrapper_cpp}
   config.h
   tex4ht-version.h
+  tex4ht.c
 )
 
 if(NATIVE_WINDOWS)

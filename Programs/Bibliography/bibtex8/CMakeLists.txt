@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,29 +29,30 @@ add_definitions(
   -DSUPPORT_8BIT
 )
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-1.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-2.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-3.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex-4.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/bibtex.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
+set_source_files_properties(
+  bibtex-1.c
+  bibtex-2.c
+  bibtex-3.c
+  bibtex-4.c
+  bibtex.c
+  utils.c
+  PROPERTIES LANGUAGE CXX
 )
 
 set(bibtex8_sources
   ${wrapper_cpp}
-  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-1.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-2.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-3.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/bibtex-4.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/bibtex.cpp
+  bibtex-1.c
+  bibtex-2.c
+  bibtex-3.c
+  bibtex-4.c
+  bibtex.c
   bibtex.h
   bibtex8-version.h
   datatype.h
   gblprocs.h
   gblvars.h
   sysdep.h
-  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
+  utils.c
   utils.h
   version.h
 )

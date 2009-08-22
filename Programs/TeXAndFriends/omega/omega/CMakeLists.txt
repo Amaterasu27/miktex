@@ -81,11 +81,14 @@ set(omega_change_file ${CMAKE_CURRENT_BINARY_DIR}/omega-miktex-all.ch)
 
 set(${omega_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/omega.defaults.h
-  ${CMAKE_CURRENT_BINARY_DIR}/omegabis.cpp
+  omegabis.c
   omega-miktex.cc
 )
 
-create_cpp_from_c(${CMAKE_CURRENT_SOURCE_DIR}/omegabis.c)
+set_source_files_properties(
+  omegabis.c
+  PROPERTIES LANGUAGE CXX
+)
 
 set_source_files_properties(
   ${${omega_dll_name}_sources}

@@ -28,16 +28,6 @@ add_definitions(
   -DMIKTEX_METAPOST
 )
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/avlstuff.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/mapfile.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/turningnumber.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writeenc.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writefont.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/writet1.c
-)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
   COMMAND ${cfg_exe} --print-classes ${mpost_defaults} > mpost.defaults.h
@@ -73,21 +63,32 @@ add_custom_command(
 )
 
 set(${mp_dll_name}_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
-  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
-  ${CMAKE_CURRENT_BINARY_DIR}/turningnumber.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+  avl.c
+  avlstuff.c
+  mapfile.c
+  mpost.defaults.h
+  turningnumber.c
+  utils.c
+  writeenc.c
+  writefont.c
+  writet1.c
 )
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
   PROPERTIES GENERATED TRUE
+)
+
+set_source_files_properties(
+  avlstuff.c
+  mapfile.c
+  turningnumber.c
+  utils.c
+  writeenc.c
+  writefont.c
+  writet1.c
+  PROPERTIES LANGUAGE CXX
 )
 
 set(mp_web_file ${CMAKE_CURRENT_SOURCE_DIR}/mp.web)
@@ -120,16 +121,16 @@ add_custom_command(
 )
 
 set(${trapmp_dll_name}_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/avl.c
-  ${CMAKE_CURRENT_BINARY_DIR}/avlstuff.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mapfile.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mpost.defaults.h
-  ${CMAKE_CURRENT_BINARY_DIR}/turningnumber.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/utils.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writeenc.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writefont.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/writet1.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/loadpool.cpp
+  avl.c
+  avlstuff.c
+  mapfile.c
+  mpost.defaults.h
+  turningnumber.c
+  utils.c
+  writeenc.c
+  writefont.c
+  writet1.c
 )
 
 create_web_app(MetaPost trapmp trapmp ${memdir})

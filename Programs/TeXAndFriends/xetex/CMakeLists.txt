@@ -200,39 +200,40 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/synctex-xetex.h
 )
 
-create_cpp_from_c(
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeX_ext.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeX_pic.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/bmpimage.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/jpegimage.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/mfileio.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/numbers.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/pngimage.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/trans.c
+set_source_files_properties(
+  XeTeX_ext.c
+  XeTeX_pic.c
+  bmpimage.c
+  jpegimage.c
+  mfileio.c
+  numbers.c
+  pngimage.c
+  trans.c
+  PROPERTIES LANGUAGE CXX
 )
 
 set(${xetex_dll_name}_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/XeTeX_ext.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/XeTeX_pic.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/bmpimage.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/jpegimage.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/mfileio.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/numbers.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/pngimage.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/trans.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/FontTableCache.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontInst.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontInst_FT2.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontMgr.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXFontMgr_FC.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXGrLayout.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXLayoutInterface.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTLayoutEngine.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/XeTeXOTMath.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmaps.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdfimage.cpp
+  FontTableCache.cpp
+  XeTeXFontInst.cpp
+  XeTeXFontInst_FT2.cpp
+  XeTeXFontMgr.cpp
+  XeTeXFontMgr_FC.cpp
+  XeTeXGrLayout.cpp
+  XeTeXLayoutInterface.cpp
+  XeTeXOTLayoutEngine.cpp
+  XeTeXOTMath.cpp
+  XeTeX_ext.c
+  XeTeX_pic.c
+  bmpimage.c
+  cmaps.cpp
+  jpegimage.c
+  mfileio.c
+  numbers.c
+  pdfimage.cpp
+  pngimage.c
+  trans.c
 )
 
 set_source_files_properties(
