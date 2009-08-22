@@ -2251,7 +2251,17 @@ PackageInstallerImpl::InstallRemove ()
 	    }
 	}
       localServer.pInstaller->SetCallback(this);
-      localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
+      if (repositoryType != RepositoryType::Unknown)
+      {
+	hr = localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
+	if (FAILED(hr))
+	{
+	  localServer.pInstaller->SetCallback(0);
+	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
+			   T_("mpmsvc failed for some reason."),
+			   NUMTOHEXSTR(hr));
+	}
+      }
       hr = localServer.pInstaller->InstallRemove();
       localServer.pInstaller->SetCallback(0);
       if (FAILED(hr))

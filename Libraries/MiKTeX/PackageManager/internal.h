@@ -1075,9 +1075,9 @@ public:
   MIKTEXTHISCALL
   SetRepository (/*[in]*/ const std::string & repository)
   {
-    this->repository = repository;
     repositoryType =
       PackageManagerImpl::DetermineRepositoryType(repository);
+    this->repository = repository;
   }
 
 public:
