@@ -2992,12 +2992,21 @@ pdf_files_close (void)
 static int
 check_for_pdf_version (FILE *file) 
 {
+#if defined(MIKTEX)
+  unsigned minor;
+
+  rewind(file);
+
+  return (ungetc(fgetc(file), file) == '%' &&
+	  fscanf(file, "%%PDF-1.%u", &minor) == 1) ? minor : -1;
+#else
   unsigned char minor;
 
   rewind(file);
 
   return (ungetc(fgetc(file), file) == '%' &&
 	  fscanf(file, "%%PDF-1.%hhu", &minor) == 1) ? minor : -1;
+#endif
 }
 
 int
