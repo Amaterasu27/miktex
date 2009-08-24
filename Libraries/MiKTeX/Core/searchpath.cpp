@@ -33,15 +33,18 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 			   /*[in]*/ const PathName &	path)
 {
   // expand root directories
-  if (path[0] == '%'
-      && (path[1] == 'R' || path[1] == 'r')
-      && IsDirectoryDelimiter(path[2]))
+  if (path[0] == '%' && (path[1] == 'R' || path[1] == 'r'))
   {
+    const char * lpszSuffix = path.Get() + 2;
+    if (IsDirectoryDelimiter(*lpszSuffix))
+    {
+      ++ lpszSuffix;
+    }
     for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
     {
       PathName path2 = GetRootDirectory(idx);
       path2.AppendAltDirectoryDelimiter ();
-      path2.Append (path.Get() + 3, false);
+      path2.Append (lpszSuffix, false);
       // <recursivecall>
       PushBackPath (vec, path2);
       // </recursivecall>
@@ -50,7 +53,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     {
       PathName path2 = MPM_ROOT_PATH;
       path2.AppendAltDirectoryDelimiter ();
-      path2.Append (path.Get() + 3, false);
+      path2.Append (lpszSuffix, false);
       // <recursivecall>
       PushBackPath (vec, path2);
       // </recursivecall>
