@@ -770,7 +770,9 @@ add_subdirectory(${rel_png_dir}-static)
 
 add_subdirectory(${rel_xpdf_dir})
 
-add_subdirectory(${rel_poppler_dir}-static)
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_poppler_dir}-static)
+endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX AND QT4_FOUND)
   add_subdirectory(${rel_poppler_dir}/qt4/src)

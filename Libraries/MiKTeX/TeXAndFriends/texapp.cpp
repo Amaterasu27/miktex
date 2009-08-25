@@ -500,10 +500,12 @@ ParseCommand (/*[in]*/ const string & command,
     }
     else
     {
+#if defined(MIKTEX_WINDOWS)
       if (NeedsEscape(*it))
       {
 	quotedCommand += '^';
       }
+#endif
       quotedCommand += *it++;
     }
   }

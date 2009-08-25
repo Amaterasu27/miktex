@@ -235,7 +235,6 @@ void
 Absolutize (/*[in,out]*/ string &     paths,
 	    /*[in]*/ const PathName & relativeFrom)
 {
-#if MIKTEX_WINDOWS
   string result;
   for (CSVList path (paths.c_str(), PATH_DELIMITER);
        path.GetCurrent() != 0;
@@ -251,6 +250,7 @@ Absolutize (/*[in,out]*/ string &     paths,
     }
     else
     {
+#if MIKTEX_WINDOWS
       MIKTEX_ASSERT (Utils::IsAbsolutePath(relativeFrom.Get()));
       PathName absPath (relativeFrom);
       absPath += path.GetCurrent();
@@ -261,12 +261,12 @@ Absolutize (/*[in,out]*/ string &     paths,
 	absPath2 = absPath;
       }
       result += absPath2.Get();
+#else
+      UNIMPLEMENTED ("Absolutize");
+#endif
     }
   }
   paths = result;
-#else
-  UNIMPLEMENTED ("Absolutize");
-#endif
 }
 /* _________________________________________________________________________
 

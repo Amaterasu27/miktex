@@ -595,24 +595,6 @@ protected:
     return (value);
   }
 
-protected:
-  template<>
-  std::string
-  GetParameter (/*[in]*/ const char *		lpszParameterName,
-		/*[in]*/ const std::string &	defaultValue)
-    const
-  {
-    std::string value = pSession->GetConfigValue(0, lpszParameterName, "");
-    if (value.length() == 0)
-      {
-	value =
-	  pSession->GetConfigValue(GetProgramName(),
-				   lpszParameterName,
-				   defaultValue.c_str());
-      }
-    return (value);
-  }
-
   /* _______________________________________________________________________
      
      Reallocate
@@ -1556,6 +1538,24 @@ private:
 private:
   int optBase;
 };
+
+template<>
+inline
+std::string
+TeXMFApp::GetParameter (/*[in]*/ const char *		lpszParameterName,
+			/*[in]*/ const std::string &	defaultValue)
+  const
+{
+  std::string value = pSession->GetConfigValue(0, lpszParameterName, "");
+  if (value.length() == 0)
+    {
+      value =
+	pSession->GetConfigValue(GetProgramName(),
+				 lpszParameterName,
+				 defaultValue.c_str());
+    }
+  return (value);
+}
 
 MIKTEXMF_END_NAMESPACE;
 

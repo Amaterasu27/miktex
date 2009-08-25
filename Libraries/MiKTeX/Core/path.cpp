@@ -895,7 +895,7 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
 	FATAL_WINDOWS_ERROR ("GetVolumePathNameA", GetRootDirectory(GetInstallRoot()).Get());
       }
 #else
-      INVALID_ARGUMENT ("SessionImpl::GetSpecialPath");
+      INVALID_ARGUMENT ("SessionImpl::GetSpecialPath", 0);
 #endif
       break;
     default:

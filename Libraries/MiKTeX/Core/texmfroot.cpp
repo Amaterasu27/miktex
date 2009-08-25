@@ -681,10 +681,12 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
     startupConfig.userRoots = roots;
   }
   unsigned flags = 0;
+#if defined(MIKTEX_WINDOWS)
   if (GetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_NO_REGISTRY, NO_REGISTRY ? true : false))
   {
     flags |= RegisterRootDirectoriesFlags::NoRegistry;
   }
+#endif
   RegisterRootDirectories (startupConfig, flags);
 }
 

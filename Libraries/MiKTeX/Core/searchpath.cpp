@@ -43,7 +43,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     for (unsigned idx = 0; idx < GetNumberOfTEXMFRoots(); ++ idx)
     {
       PathName path2 = GetRootDirectory(idx);
-      path2.AppendAltDirectoryDelimiter ();
+      path2.AppendDirectoryDelimiter ();
       path2.Append (lpszSuffix, false);
       // <recursivecall>
       PushBackPath (vec, path2);
@@ -52,7 +52,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
     if (path[1] == 'R')
     {
       PathName path2 = MPM_ROOT_PATH;
-      path2.AppendAltDirectoryDelimiter ();
+      path2.AppendDirectoryDelimiter ();
       path2.Append (lpszSuffix, false);
       // <recursivecall>
       PushBackPath (vec, path2);

@@ -409,7 +409,7 @@ public:
       }
       return (offset >= maxBufSize);
     }
-    MIKTEX_UNLOCK(LzmaStreamHelper);
+    MIKTEX_UNLOCK();
   }
 
 private:

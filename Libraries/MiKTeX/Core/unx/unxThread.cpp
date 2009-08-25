@@ -1,6 +1,6 @@
 /* unxThread.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -228,3 +228,63 @@ CriticalSectionMonitor::Leave ()
       FATAL_CRT_ERROR_2 ("pthread_mutex_unlock", err, 0);
     }
 }
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::AutoResetEvent
+   _________________________________________________________________________ */
+
+AutoResetEvent::AutoResetEvent ()
+{
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::~AutoResetEvent
+   _________________________________________________________________________ */
+
+AutoResetEvent::~AutoResetEvent ()
+{
+  try
+  {
+  }
+  catch (const exception &)
+  {
+  }
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::Reset
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::Reset ()
+{
+  UNIMPLEMENTED ("AutoResetEvent::Reset");
+  return (true);
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::Set
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::Set ()
+{
+  UNIMPLEMENTED ("AutoResetEvent::Set");
+  return (true);
+};
+
+/* _________________________________________________________________________
+
+   AutoResetEvent::WaitOne
+   _________________________________________________________________________ */
+
+bool
+AutoResetEvent::WaitOne ()
+{
+  UNIMPLEMENTED ("AutoResetEvent::WaitOne");
+  return (true);
+};
