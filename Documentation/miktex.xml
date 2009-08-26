@@ -34,6 +34,7 @@
 <!ENTITY features SYSTEM "Manual/features.xml">
 <!ENTITY installing SYSTEM "Manual/installing.xml">
 <!ENTITY installins SYSTEM "Manual/installation-instructions.xml">
+<!ENTITY prereq SYSTEM "Manual/prerequisites.xml">
 <!ENTITY intro SYSTEM "Manual/intro.xml">
 <!ENTITY localguide SYSTEM "Manual/localguide.xml">
 <!ENTITY manbibtex SYSTEM "Ref/bibtex.xml">

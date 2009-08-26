@@ -5,6 +5,7 @@
 <section id="instinstr">
 
 <title>Installation Instructions</title>
+&prereq;
 &installins;
 </section>
 

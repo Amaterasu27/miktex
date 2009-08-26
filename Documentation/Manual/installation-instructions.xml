@@ -1,27 +1,5 @@
 <section>
 
-<title>Prerequisites</title>
-
-<para>&MiKTeX; &MIKTEX_VERSION_STR; requires one of the following
-&Windows; operating systems:</para>
-
-<itemizedlist>
-<listitem><para>&Windows7;</para></listitem>
-<listitem><para>&WindowsServer2008;</para></listitem>
-<listitem><para>&WindowsVista;</para></listitem>
-<listitem><para>&WindowsServer2003;</para></listitem>
-<listitem><para>&WindowsXP;</para></listitem>
-<listitem><para>&Windows2000;</para></listitem>
-</itemizedlist>
-
-<para>Please note that
-&MiKTeX; &MIKTEX_VERSION_STR; does not work on legacy &Windows; platforms
-(&Windows9xMeNT;).</para>
-
-</section>
-
-<section>
-
 <title>Choosing an installation size</title>
 
 <para>You can choose between two

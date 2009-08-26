@@ -100,6 +100,7 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/envvars.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/features.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/installing.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/intro.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/localguide.xml
@@ -391,6 +392,7 @@ if(BUILDING_MIKTEX)
 		install.xml
     DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${entities_ent}
 	${html_xsl}
@@ -409,6 +411,7 @@ if(BUILDING_MIKTEX)
     DEPENDS
 	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-install.xsl
 	${entities_ent}
