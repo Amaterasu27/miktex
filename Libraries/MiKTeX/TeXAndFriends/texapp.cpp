@@ -523,31 +523,17 @@ ParseCommand (/*[in]*/ const string & command,
 
 const char * const ALLOWED_COMMANDS = "\
 ;bibtex\
-;convert\
-;dvips\
+;bibtex8\
 ;epstopdf\
 ;epspdf\
-;etex\
 ;fc-match\
-;gnuplot\
+;findtexmf\
 ;kpsewhich\
-;latex\
-;luatex\
-;lualatex\
 ;makeindex\
-;mpost\
-;pdfcrop\
-;pdflatex\
-;pdfluatex\
 ;ps2pdf\
-;ps4pdf\
 ;pstopdf\
 ;pygmentize\
-;tex\
-;texexec\
-;texmfstart\
-;ulqda\
-";
+;rpdfcrop";
 
 TeXApp::Write18Result
 TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
