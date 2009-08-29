@@ -3,7 +3,7 @@
                          "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 <!ENTITY % entities.ent SYSTEM "entities.ent">
 <!ENTITY % version.ent SYSTEM "version.ent">
-<!ENTITY instins SYSTEM "Manual/installation-instructions.xml">
+<!ENTITY basicsetup SYSTEM "Manual/basicsetup.xml">
 <!ENTITY prereq SYSTEM "Manual/prerequisites.xml">
 %version.ent;
 %entities.ent;
@@ -15,7 +15,7 @@
 
 <title>&MiKTeX; &MIKTEX_VERSION_STR; Installation Instructions</title>
 
-<date>August 26, 2009</date>
+<date>August 28, 2009</date>
 
 <author>
 <firstname>Christian</firstname>
@@ -57,7 +57,7 @@ deploy &MiKTeX; in a network environment, or if you want to install
 </section>
 
 &prereq;
-&instins;
+&basicsetup;
 
 </article>
 

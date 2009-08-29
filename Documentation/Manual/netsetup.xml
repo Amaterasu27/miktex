@@ -1,0 +1,52 @@
+<section id="netinstall">
+
+<title>Installing a complete &MiKTeX; system</title>
+
+<para>In order to install a complete &MiKTeX; system, you need the
+&MiKTeXNetInstaller;.  You can get it from the <ulink
+url="http://miktex.org/2.8/setup">download page</ulink>.</para>
+
+<section>
+
+<title>Task #1: Download the complete &MiKTeX; distribution</title>
+
+<para>Before you can actually install &MiKTeX; you have have to
+download the &MiKTeX; distribution.</para>
+
+<para>You can use &MiKTeXNetInstaller; to download &MiKTeX;.</para>
+
+<para>Alternatively, you can use a third-party download utility (e.g.
+<command>wget</command>) to download the contents of the &CTAN; directory
+<filename>systems/win32/miktex/tm/packages/</filename>.</para>
+
+<para>Depending on your Internet connection, the download can take
+several hours to complete. If something goes wrong, you can resume the
+download operation by starting again.</para>
+
+</section>
+
+<section>
+
+<title>Task #2: Install &MiKTeX;</title>
+
+<para>Once the download operation is complete, you are ready to
+install &MiKTeX;: start &MiKTeXNetInstaller; and choose
+<guibutton>Install &MiKTeX;</guibutton> as the primary setup
+task.</para> <para>When asked for the package set, choose
+<guibutton>Complete MiKTeX</guibutton>.</para> <para>When asked for
+the directory from where &MiKTeX; shall be installed, click the
+<guibutton>Browse</guibutton> button and specify the location of the &MiKTeX;
+package repository (see previous section).</para>
+
+</section>
+
+</section>
+
+<!--
+Local Variables:
+mode:xml
+sgml-parent-document: ("../install.xml" "article")
+sgml-indent-step: 0
+sgml-set-face: t
+End:
+-->

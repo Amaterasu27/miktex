@@ -29,6 +29,13 @@ endif(BUILDING_MIKTEX)
 
 set(screenshots_png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/autoinstall.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-license.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-shared.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-installdir.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-settings.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-info.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-progress.png
+  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-finish.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/browselocaltexmf.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/localtexmf.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/mo-general.png
@@ -96,14 +103,15 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/MPINPUTS.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/TEXINPUTS.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/TFMFONTS.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/netsetup.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/configuring.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/envvars.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/features.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/installing.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/intro.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/localguide.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/printing.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/tcxtables.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/texfeatures.xml
@@ -391,7 +399,7 @@ if(BUILDING_MIKTEX)
 		html.xsl
 		install.xml
     DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${entities_ent}
@@ -410,7 +418,7 @@ if(BUILDING_MIKTEX)
 		install.xml
     DEPENDS
 	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/installation-instructions.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
 	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-install.xsl
