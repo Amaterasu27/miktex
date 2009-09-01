@@ -310,13 +310,14 @@ winProcess::Create ()
 	 ? hChildStderr
 	 : GetStdHandle(STD_ERROR_HANDLE));
 
+      DWORD creationFlags = 0;
+
       // don't open a window if both stdout & stderr are redirected
       if (hChildStdout != INVALID_HANDLE_VALUE
-	  && hChildStderr != INVALID_HANDLE_VALUE)
-	{
-	  siStartInfo.dwFlags |= STARTF_USESHOWWINDOW;
-	  siStartInfo.wShowWindow = 0;
-	}
+	&& hChildStderr != INVALID_HANDLE_VALUE)
+      {
+	creationFlags |= CREATE_NO_WINDOW;
+      }
 
       // build command-line
       string commandLine;
@@ -346,7 +347,7 @@ winProcess::Create ()
 			   0,	// lpProcessAttributes
 			   0,	// lpThreadAttributes
 			   TRUE,	// bInheritHandles
-			   0,	// dwCreationFlags
+			   creationFlags, // dwCreationFlags
 			   0,	// lpEnvironment
 			   (startinfo.WorkingDirectory == ""
 			    ? 0
