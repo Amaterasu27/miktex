@@ -174,6 +174,22 @@ MakeUtility::RunProcess (/*[in]*/ const char *	lpszExeName,
 
 /* _________________________________________________________________________
 
+   MakeUtility::Init
+   _________________________________________________________________________ */
+
+void
+MakeUtility::Init (/*[in]*/ const Session::InitInfo & initInfoArg)
+{
+  Session::InitInfo initInfo = initInfoArg;
+  if (adminMode)
+  {
+    initInfo.SetFlags (initInfo.GetFlags() | Session::InitFlags::AdminMode);
+  }
+  Application::Init (initInfo);
+}
+
+/* _________________________________________________________________________
+
    MakeUtility::FatalError
    _________________________________________________________________________ */
 
@@ -346,41 +362,44 @@ MakeUtility::GetOptions (/*[in]*/ int				argc,
 			  pLongOptions,
 			  &idx))
 	 != EOF)
+  {
+    switch (c)
     {
-      switch (c)
+    case 'A':
+      pSession->SetAdminMode (true);
+      break;
+    case 'h':
+      Usage ();
+      throw (0);
+      break;
+    case 'n':
+      printOnly = true;
+      break;
+    case 'd':
+      debug = true;
+      break;
+    case 'v':
+      verbose = true;
+      break;
+    case 'q':
+      quiet = true;
+      break;
+    case 'V':
+      ShowVersion ();
+      throw (0);
+      break;
+    default:
+      {
+	bool handled = true;
+	HandleOption (c, optarg, handled);
+	if (! handled)
 	{
-	case 'h':
-	  Usage ();
-	  throw (0);
-	  break;
-	case 'n':
-	  printOnly = true;
-	  break;
-	case 'd':
-	  debug = true;
-	  break;
-	case 'v':
-	  verbose = true;
-	  break;
-	case 'q':
-	  quiet = true;
-	  break;
-	case 'V':
-	  ShowVersion ();
-	  throw (0);
-	  break;
-	default:
-	  {
-	    bool handled = true;
-	    HandleOption (c, optarg, handled);
-	    if (! handled)
-	      {
-		FatalError (T_("Unknown command-line option."));
-	      }
-	    break;
-	  }
+	  FatalError (T_("Unknown command-line option."));
 	}
+	break;
+      }
     }
+  }
 
   optionIndex = optind;
 }

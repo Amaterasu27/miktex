@@ -202,7 +202,8 @@ public:
       verbose (false),
       debug (false),
       printOnly (false),
-      stdoutStderr (true)
+      stdoutStderr (true),
+      adminMode (false)
   {
   }
 
@@ -211,6 +212,11 @@ public:
   ~MakeUtility ()
   {
   }
+
+public:
+  virtual
+  MIKTEXAPPTHISAPI(void)
+  Init (/*[in]*/ const MiKTeX::Core::Session::InitInfo & initInfo);
 
 public:
   virtual
@@ -313,6 +319,9 @@ protected:
 
 protected:
   string name;
+
+protected:
+  bool adminMode;
 };
 
 /* _________________________________________________________________________
@@ -321,6 +330,7 @@ protected:
    _________________________________________________________________________ */
 
 #define COMMON_OPTIONS							\
+    T_("admin"),	no_argument,		0,	'A',	\
     T_("debug"),	no_argument,		0,	'd',	\
     T_("help"),		no_argument,		0,	'h',	\
     T_("print-only"),	no_argument,		0,	'n',	\
