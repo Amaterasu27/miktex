@@ -1,6 +1,6 @@
 /* error.cpp: error handling
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -105,6 +105,23 @@ Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
       if (last != '\n')
 	{
 	  cerr << endl;
+	  last = '\n';
+	}
+      for (const char * lpsz = e.GetInfo().c_str();
+	   *lpsz != 0;
+	   ++ lpsz)
+	{
+	  if (haveName && last == '\n')
+	    {
+	      cerr << szName << ": Data: ";
+	    }
+	  cerr << *lpsz;
+	  last = *lpsz;
+	}
+      if (last != '\n')
+	{
+	  cerr << endl;
+	  last = '\n';
 	}
     }
   catch (const exception &)
