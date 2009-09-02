@@ -185,7 +185,7 @@ bool
 HasPrefix (/*[in]*/ const char * lpsz1,
 	   /*[in]*/ const char * lpsz2)
 {
-  return (PathName::Compare(lpsz1, lpsz2) == 0);
+  return (PathName::Compare(lpsz1, lpsz2, strlen(lpsz2)) == 0);
 }
 
 /* _________________________________________________________________________
