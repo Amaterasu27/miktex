@@ -545,6 +545,8 @@ TeXApp::Write18 (/*[in]*/ const char *	lpszCommand,
   string command = lpszCommand;
   switch (write18Mode.Get())
   {
+  case Write18Mode::Enabled:
+    break;
   case Write18Mode::Disabled:
     UNEXPECTED_CONDITION ("TeXApp::Write18");
   case Write18Mode::Query:
