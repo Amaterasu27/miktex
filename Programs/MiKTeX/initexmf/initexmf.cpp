@@ -2478,6 +2478,28 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
       MakeLink (copystart, pathExe, overwrite);
     }
   }
+
+  static const char * const copystarters_admin[] = {
+    MIKTEX_PATH_INTERNAL_UPDATE_ADMIN_EXE,
+  };
+
+  PathName copystart_admin;
+
+  if (pSession->FindFile(MIKTEX_PATH_INTERNAL_COPYSTART_ADMIN_EXE,
+			 "%R",
+			 copystart_admin))
+    {
+      for (size_t idx = 0;
+	   idx < sizeof(copystarters_admin) / sizeof(copystarters_admin[0]);
+	   ++ idx)
+	{
+	  PathName pathExe (pathBinDir);
+	  char szFileName[BufferSizes::MaxPath];
+	  pathExe += PathName(copystarters_admin[idx]).GetFileName(szFileName);
+	  Verbose ("  %s", pathExe.Get());
+	  MakeLink (copystart_admin, pathExe, overwrite);
+	}
+    }
 #endif
 }
 
