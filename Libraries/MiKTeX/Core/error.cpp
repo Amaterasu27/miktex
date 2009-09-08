@@ -107,7 +107,8 @@ Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
 	  cerr << endl;
 	  last = '\n';
 	}
-      for (const char * lpsz = e.GetInfo().c_str();
+      string info = e.GetInfo();
+      for (const char * lpsz = info.c_str();
 	   *lpsz != 0;
 	   ++ lpsz)
 	{
