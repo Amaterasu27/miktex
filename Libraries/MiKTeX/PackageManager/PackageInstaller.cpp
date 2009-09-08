@@ -32,6 +32,54 @@ using namespace std;
 
 #define LF "\n"
 
+class HResult
+{
+public:
+  HResult (/*[in]*/ HRESULT hr)
+    : hr (hr)
+  {
+  }
+public:
+  long
+  GetCode ()
+    const
+  {
+    return (HRESULT_CODE(hr));
+  }
+public:
+  long
+  GetFacility ()
+    const
+  {
+    return (HRESULT_FACILITY(hr));
+  }
+public:
+  long
+  GetSeverity ()
+    const
+  {
+    return (HRESULT_SEVERITY(hr));
+  }
+public:
+  string
+  ToString ()
+    const
+  {
+    string ret;
+    ret += NUMTOSTR(GetSeverity());
+    ret += ':';
+    ret += NUMTOSTR(GetFacility());
+    ret += ':';
+    ret += NUMTOSTR(GetCode());
+    return (ret);
+  }
+private:
+  HRESULT hr;
+};
+
+#define HRTOSTR(hr) HResult(hr).ToString().c_str()
+
+
 /* _________________________________________________________________________
 
    PackageInstallerImpl::MakeUrl
@@ -882,7 +930,7 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::FindUpdatesThread",
 			   T_("Cannot start updater thread."),
-			   NUMTOHEXSTR(hr));
+			   HRTOSTR(hr));
 	}
 #endif
       This->FindUpdates ();
@@ -1870,7 +1918,7 @@ PackageInstallerImpl::ConnectToServer ()
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
-				   NUMTOHEXSTR(hr));
+				   HRTOSTR(hr));
 		}
 	    }
 	  else
@@ -1895,7 +1943,7 @@ PackageInstallerImpl::ConnectToServer ()
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
-				   NUMTOHEXSTR(hr));
+				   HRTOSTR(hr));
 		}
 	    }
 	}
@@ -1906,7 +1954,7 @@ PackageInstallerImpl::ConnectToServer ()
 	  localServer.pManager.Release ();
 	  FATAL_MPM_ERROR ("ConnectToServer",
 			   MSG_CANNOT_START_SERVER,
-			   NUMTOHEXSTR(hr));
+			   HRTOSTR(hr));
 	}
     }
 }
@@ -2234,7 +2282,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
-			       NUMTOHEXSTR(hr));
+			       HRTOSTR(hr));
 	    }
 	}
       for (vector<string>::const_iterator it = toBeRemoved.begin();
@@ -2247,7 +2295,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
-			       NUMTOHEXSTR(hr));
+			       HRTOSTR(hr));
 	    }
 	}
       localServer.pInstaller->SetCallback(this);
@@ -2259,7 +2307,7 @@ PackageInstallerImpl::InstallRemove ()
 	  localServer.pInstaller->SetCallback(0);
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			   T_("mpmsvc failed for some reason."),
-			   NUMTOHEXSTR(hr));
+			   HRTOSTR(hr));
 	}
       }
       hr = localServer.pInstaller->InstallRemove();
@@ -2272,7 +2320,7 @@ PackageInstallerImpl::InstallRemove ()
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("mpmsvc failed for some reason."),
-			       NUMTOHEXSTR(hr));
+			       HRTOSTR(hr));
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
@@ -2482,7 +2530,7 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemoveThread",
 			   T_("Cannot start installer thread."),
-			   NUMTOHEXSTR(hr));
+			   HRTOSTR(hr));
 	}
 #endif
       This->InstallRemove ();
@@ -2665,7 +2713,7 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::DownloadThread",
 			   T_("Cannot start downloader thread."),
-			   NUMTOHEXSTR(hr));
+			   HRTOSTR(hr));
 	}
 #endif
       This->Download ();
@@ -2893,7 +2941,7 @@ PackageInstallerImpl::UpdateDb ()
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::UpdateDb",
 			       T_("The service failed for some reason."),
-			       NUMTOHEXSTR(hr));
+			       HRTOSTR(hr));
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
