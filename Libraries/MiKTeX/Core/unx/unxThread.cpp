@@ -236,6 +236,18 @@ CriticalSectionMonitor::Leave ()
 
 AutoResetEvent::AutoResetEvent ()
 {
+  int err = pthread_mutex_init(&mutex, 0);
+  if (err != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_init", err, 0);
+    }
+  err = pthread_cond_init(&cond, 0);
+  if (err != 0)
+    {
+      pthread_mutex_destroy (&mutex);
+      FATAL_CRT_ERROR_2 ("pthread_cond_init", err, 0);
+    }
+  signalled = false;
 };
 
 /* _________________________________________________________________________
@@ -247,6 +259,16 @@ AutoResetEvent::~AutoResetEvent ()
 {
   try
   {
+    int err1 = pthread_cond_destroy(&cond);
+    int err2 = pthread_mutex_destroy(&mutex);
+    if (err1 != 0)
+      {
+	FATAL_CRT_ERROR_2 ("pthread_cond_destroy", err1, 0);
+      }
+    if (err2 != 0)
+      {
+	FATAL_CRT_ERROR_2 ("pthread_mutex_destroy", err2, 0);
+      }
   }
   catch (const exception &)
   {
@@ -261,7 +283,17 @@ AutoResetEvent::~AutoResetEvent ()
 bool
 AutoResetEvent::Reset ()
 {
-  UNIMPLEMENTED ("AutoResetEvent::Reset");
+  int err = pthread_mutex_lock(&mutex);
+  if (err != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_lock", err, 0);
+    }
+  signalled = false;
+  err = pthread_mutex_unlock(&mutex);
+  if (err != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_unlock", err, 0);
+    }
   return (true);
 };
 
@@ -273,7 +305,26 @@ AutoResetEvent::Reset ()
 bool
 AutoResetEvent::Set ()
 {
-  UNIMPLEMENTED ("AutoResetEvent::Set");
+  int err1 = pthread_mutex_lock(&mutex);
+  if (err1 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_lock", err1, 0);
+    }
+  int err2 = 0;
+  if (! signalled)
+    {
+      signalled = true;
+      err2 = pthread_cond_signal(&cond);
+    }
+  err1 = pthread_mutex_unlock(&mutex);
+  if (err2 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_cond_signal", err2, 0);
+    }
+  if (err1 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_unlock", err1, 0);
+    }
   return (true);
 };
 
@@ -285,6 +336,25 @@ AutoResetEvent::Set ()
 bool
 AutoResetEvent::WaitOne ()
 {
-  UNIMPLEMENTED ("AutoResetEvent::WaitOne");
+  int err1 = pthread_mutex_lock(&mutex);
+  if (err1 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_lock", err1, 0);
+    }
+  int err2 = 0;
+  while (! signalled && err2 == 0)
+    {
+      err2 = pthread_cond_wait(&cond, &mutex);
+    }
+  signalled = false;
+  err1 = pthread_mutex_unlock(&mutex);
+  if (err2 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_cond_wait", err2, 0);
+    }
+  if (err1 != 0)
+    {
+      FATAL_CRT_ERROR_2 ("pthread_mutex_unlock", err1, 0);
+    }
   return (true);
 };

@@ -6820,6 +6820,13 @@ public:
 private:
   HANDLE handle;
 #endif
+
+#if defined(HAVE_PTHREAD)
+private:
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+  bool volatile signalled;
+#endif
 };
 
 /* _________________________________________________________________________
