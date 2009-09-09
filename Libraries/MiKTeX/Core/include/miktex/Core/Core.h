@@ -7133,6 +7133,85 @@ private:
 
 /* _________________________________________________________________________
 
+   HResult
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+class HResult
+{
+public:
+  HResult ()
+    : hr (S_FALSE),
+      lpszMessage (0)
+  {
+  }
+public:
+  HResult (/*[in]*/ HRESULT hr)
+    : hr (hr),
+      lpszMessage (0)
+  {
+  }
+public:
+  MIKTEXCOREEXPORT
+  MIKTEXTHISCALL
+  ~HResult ();
+public:
+  long
+  GetCode ()
+    const
+  {
+    return (HRESULT_CODE(hr));
+  }
+public:
+  long
+  GetFacility ()
+    const
+  {
+    return (HRESULT_FACILITY(hr));
+  }
+public:
+  long
+  GetSeverity ()
+    const
+  {
+    return (HRESULT_SEVERITY(hr));
+  }
+public:
+  MIKTEXCORETHISAPI(std::string)
+  ToString ()
+    const;
+public:
+  bool
+  Failed ()
+    const
+  {
+    return (FAILED(hr));
+  }
+public:
+  bool
+  Succeeded ()
+    const
+  {
+    return (SUCCEEDED(hr));
+  }
+public:
+  bool
+  operator== (/*[in]*/ HRESULT other)
+  {
+    return (hr == other);
+  }
+public:
+  MIKTEXCORETHISAPI(const char *)
+  GetText ();
+private:
+  char * lpszMessage;
+private:
+  HRESULT hr;
+};
+#endif
+
+/* _________________________________________________________________________
+
    AutoResource
    _________________________________________________________________________ */
 

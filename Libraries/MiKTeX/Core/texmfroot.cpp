@@ -645,17 +645,17 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
   if (UseLocalServer())
     {
       ConnectToServer ();
-      HRESULT hr =
+      HResult hr =
 	localServer.pSession->RegisterRootDirectories(_bstr_t(roots.c_str()));
-      if (FAILED(hr))
+      if (hr.Failed())
 	{
 	  MiKTeXSessionLib::ErrorInfo errorInfo;
-	  HRESULT hr2 = localServer.pSession->GetErrorInfo(&errorInfo);
-	  if (FAILED(hr2))
+	  HResult hr2 = localServer.pSession->GetErrorInfo(&errorInfo);
+	  if (hr2.Failed())
 	    {
 	      FATAL_MIKTEX_ERROR ("SessionImpl::RegisterRootDirectories",
 				  T_("sessionsvc failed for some reason."),
-				  NUMTOSTR(hr));
+				  hr.GetText());
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);

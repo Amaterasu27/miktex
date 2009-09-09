@@ -914,12 +914,12 @@ SessionImpl::SessionImpl ()
 void
 SessionImpl::MyCoInitialize ()
 {
-  HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-  if (FAILED(hr))
+  HResult hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+  if (hr.Failed())
     {
       FATAL_MIKTEX_ERROR ("SessionImpl::MyCoInitialize",
 			  T_("The COM library could not be initialized."),
-			  NUMTOSTR(hr));
+			  hr.GetText());
     }
   ++ numCoInitialize;
 }
@@ -1221,7 +1221,7 @@ SessionImpl::ConnectToServer ()
 	  bo.cbStruct = sizeof(bo);
 	  bo.hwnd = GetForegroundWindow();
 	  bo.dwClassContext = CLSCTX_LOCAL_SERVER;
-	  HRESULT hr =
+	  HResult hr =
 	    CoGetObject(monikerName.c_str(),
 			&bo,
 			__uuidof(MiKTeXSessionLib::ISession),
@@ -1235,16 +1235,16 @@ SessionImpl::ConnectToServer ()
 			    __uuidof(MiKTeXSessionLib::ISession),
 			    reinterpret_cast<void**>(&localServer.pSession));
 	    }
-	  if (FAILED(hr))
+	  if (hr.Failed())
 	    {
 	      FATAL_MIKTEX_ERROR ("ConnectToServer",
 				  MSG_CANNOT_START_SERVER,
-				  NUMTOSTR(hr));
+				  hr.GetText());
 	    }
 	}
       else
 	{
-	  HRESULT hr =
+	  HResult hr =
 	    localServer.pSession.CoCreateInstance
 	    (__uuidof(MiKTeXSessionLib::MAKE_CURVER_ID(MiKTeXSession)),
 	     0,
@@ -1258,11 +1258,11 @@ SessionImpl::ConnectToServer ()
 		 0,
 		 CLSCTX_LOCAL_SERVER);
 	    }
-	  if (FAILED(hr))
+	  if (hr.Failed())
 	    {
 	      FATAL_MIKTEX_ERROR ("ConnectToServer",
 				  MSG_CANNOT_START_SERVER,
-				  NUMTOSTR(hr));
+				  hr.GetText());
 	    }
 	}
     }

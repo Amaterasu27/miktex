@@ -3772,3 +3772,74 @@ Utils::MakeProgId (/*[in]*/ const char * lpszComponent)
   progId += "." MIKTEX_SERIES_STR;
   return (progId);
 }
+
+/* _________________________________________________________________________
+
+   HResult::~HResult
+   _________________________________________________________________________ */
+
+HResult::~HResult ()
+{
+  try
+  {
+    if (lpszMessage != 0)
+    {
+      LocalFree (reinterpret_cast<HLOCAL>(lpszMessage));
+    }
+  }
+  catch (const exception &)
+  {
+  }
+}
+
+/* _________________________________________________________________________
+
+   HResult::ToString
+   _________________________________________________________________________ */
+
+string
+HResult::ToString ()
+  const
+{
+  string ret;
+  ret += NUMTOSTR(GetSeverity());
+  ret += ':';
+  ret += NUMTOSTR(GetFacility());
+  ret += ':';
+  ret += NUMTOSTR(GetCode());
+  return (ret);
+}
+
+/* _________________________________________________________________________
+
+   HResult::GetText
+   _________________________________________________________________________ */
+
+const char *
+HResult::GetText ()
+{
+  if (lpszMessage == 0)
+  {
+    FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER|
+      FORMAT_MESSAGE_FROM_SYSTEM|
+      FORMAT_MESSAGE_IGNORE_INSERTS,
+      0,
+      hr,
+      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+      reinterpret_cast<char*>(&lpszMessage),
+      0,
+      0);
+    if (lpszMessage == 0)
+    {
+      string str = ToString();
+      size_t size = str.length() + 1;
+      lpszMessage = reinterpret_cast<char*>
+	(LocalAlloc(0,(size * sizeof(char))));
+      if (lpszMessage != 0)
+      {
+	Utils::CopyString (lpszMessage, size, str.c_str());
+      }
+    }
+  }
+  return (lpszMessage);
+}
