@@ -68,6 +68,18 @@ set(miktex_admin_suffix "_admin")
 enable_testing()
 
 option(
+  USE_SYSTEM_CURL
+  "Use the system curl library."
+  ${UNIX_ALIKE}
+)
+
+option(
+  USE_SYSTEM_EXPAT
+  "Use the system expat library."
+  ${UNIX_ALIKE}
+)
+
+option(
   INSTALL_PACKAGE_DATABASE
   "Install the package database."
   FALSE
@@ -298,11 +310,13 @@ if(QT4_FOUND)
 endif(QT4_FOUND)
 find_package(Threads REQUIRED)
 
-if(NATIVE_WINDOWS)
-  find_package(CURL QUIET)
-else(NATIVE_WINDOWS)
+if(USE_SYSTEM_CURL)
   find_package(CURL REQUIRED)
-endif(NATIVE_WINDOWS)
+endif(USE_SYSTEM_CURL)
+
+if(USE_SYSTEM_EXPAT)
+  find_package(EXPAT REQUIRED)
+endif(USE_SYSTEM_EXPAT)
 
 if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
@@ -507,6 +521,10 @@ endif(NATIVE_WINDOWS)
 ###############################################################################
 ## 
 
+if(NOT USE_SYSTEM_EXPAT)
+  set(${EXPAT_LIBRARIES} ${expat_lib_name})
+endif(NOT USE_SYSTEM_EXPAT)
+
 set(MIKTEX_STATIC_LINK_LIBRARIES
   ${texmf_lib_name}
   ${app_lib_name}
@@ -516,7 +534,7 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${core_lib_name}
   ${mspack_lib_name}
   ${lzma_lib_name}
-  ${expat_lib_name}
+  ${EXPAT_LIBRARIES}
   ${uriparser_lib_name}
   ${md5_lib_name}
   ${CURL_LIBRARIES}
@@ -549,7 +567,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_expat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/fontconfig
   ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}
@@ -579,6 +596,12 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
 
+if(USE_SYSTEM_EXPAT)
+  include_directories(${EXPAT_INCLUDE_DIRS})
+else(USE_SYSTEM_EXPAT)
+  include_directories(${CMAKE_SOURCE_DIR}/${rel_expat_dir})
+endif(USE_SYSTEM_EXPAT)
+
 if(MSVC)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_msinttypes_dir}/include
@@ -597,9 +620,18 @@ if(NOT HAVE_REGEX_H)
   )
 endif(NOT HAVE_REGEX_H)
 
-if(NATIVE_WINDOWS)
+if(USE_SYSTEM_CURL)
+  include_directories(
+    ${CURL_INCLUDE_DIRS}
+  )
+else(USE_SYSTEM_CURL)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+  )
+endif(USE_SYSTEM_CURL)
+
+if(NATIVE_WINDOWS)
+  include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   )
 endif(NATIVE_WINDOWS)
@@ -701,15 +733,19 @@ if(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_bzip2_dir}-static)
 
-if(NATIVE_WINDOWS)
+if(NOT USE_SYSTEM_CURL)
   add_subdirectory(${rel_curl_dir})
-  add_subdirectory(${rel_curl_dir}-static)
-endif(NATIVE_WINDOWS)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_curl_dir}-static)
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_CURL)
 
-if(NOT LINK_EVERYTHING_STATICALLY)
-  add_subdirectory(${rel_expat_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
-add_subdirectory(${rel_expat_dir}-static)
+if(NOT USE_SYSTEM_EXPAT)
+  add_subdirectory(${rel_expat_dir}-static)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_expat_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_EXPAT)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype2_dir})
@@ -1152,7 +1188,7 @@ set(
   "${MIKTEX_VERSION_TAG_STR}-${MIKTEX_PACKAGE_REVISION}")
 set(
   CPACK_DEBIAN_PACKAGE_DEPENDS
-  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0)"
+  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0), libexpat1 (>= 2.0.1)"
   )
 set(CPACK_DEBIAN_PACKAGE_SECTION "TeX Authoring")
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA

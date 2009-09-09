@@ -49,6 +49,9 @@ PREREQUISITES
 [ ] libCURL libraries and header files are required.  A common name
     for this package is libcurl-devel.
 
+[ ] Expat libraries and header files are required.  A common name
+    for this package is libexpat-devel.
+
 
 QUICK START
 -----------

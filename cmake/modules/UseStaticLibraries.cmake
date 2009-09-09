@@ -23,10 +23,18 @@
 
 macro(use_static_libraries)
   add_definitions(
-    -DCURL_STATICLIB
-    -DXML_STATIC
     -DMIKTEX_STATIC
   )
+  if(NOT USE_SYSTEM_CURL)
+    add_definitions(
+      -DCURL_STATICLIB
+    )
+  endif(NOT USE_SYSTEM_CURL)
+  if(NOT USE_SYSTEM_EXPAT)
+    add_definitions(
+      -DXML_STATIC
+    )
+  endif(NOT USE_SYSTEM_EXPAT)
   remove_definitions(
     -DZLIB_DLL
   )
