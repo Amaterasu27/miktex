@@ -82,6 +82,7 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 	
 	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(const QRect&, int)), this, SLOT(updateLineNumberArea(const QRect&, int)));
+	connect(this, SIGNAL(textChanged()), lineNumberArea, SLOT(update()));
 
 	connect(TWApp::instance(), SIGNAL(highlightLineOptionChanged()), this, SLOT(resetExtraSelections()));
 	
@@ -192,10 +193,10 @@ void CompletingEdit::mouseMoveEvent(QMouseEvent *e)
 					QTextCursor source = textCursor();
 					QDrag *drag = new QDrag(this);
 					drag->setMimeData(createMimeDataFromSelection());
+					QTextCursor dropCursor = textCursor();
 					textCursor().beginEditBlock();
 					Qt::DropAction action = drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::MoveAction);
 					if (action != Qt::IgnoreAction) {
-						QTextCursor dropCursor = textCursor();
 						dropCursor.setPosition(droppedOffset);
 						dropCursor.setPosition(droppedOffset + droppedLength, QTextCursor::KeepAnchor);
 						if (action == Qt::MoveAction && (this == drag->target() || this->isAncestorOf(drag->target()))) {
@@ -210,9 +211,9 @@ void CompletingEdit::mouseMoveEvent(QMouseEvent *e)
 							else
 								source.removeSelectedText();
 						}
-						setTextCursor(dropCursor);
 					}
 					textCursor().endEditBlock();
+					setTextCursor(dropCursor);
 					mouseMode = ignoring;
 				}
 				e->accept();
@@ -976,7 +977,12 @@ void CompletingEdit::dropEvent(QDropEvent *event)
 	}
 	else
 		droppedOffset = -1;
+
+	int scrollX = horizontalScrollBar()->value();
+	int scrollY = verticalScrollBar()->value();
 	QTextEdit::dropEvent(event);
+	verticalScrollBar()->setValue(scrollY);
+	horizontalScrollBar()->setValue(scrollX);
 }
 
 void CompletingEdit::insertFromMimeData(const QMimeData *source)

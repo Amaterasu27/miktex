@@ -351,6 +351,7 @@ void TeXDocument::init()
 	dw->hide();
 	addDockWidget(Qt::LeftDockWidgetArea, dw);
 	menuShow->addAction(dw->toggleViewAction());
+	deferTagListChanges = false;
 
 	watcher = new QFileSystemWatcher(this);
 	connect(watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reloadIfChangedOnDisk()));
@@ -880,10 +881,11 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 	}
 	else {
 		setCurrentFile(fileName);
-		showPdfIfAvailable();
-		if (!inBackground)
+		if (!inBackground) {
+			showPdfIfAvailable();
 			selectWindow();
-		
+		}
+
 		statusBar()->showMessage(tr("File \"%1\" loaded (%2)")
 									.arg(TWUtils::strippedName(curFile))
 									.arg(QString::fromAscii(codec->name())),
@@ -1996,11 +1998,23 @@ void TeXDocument::typeset()
 	bool foundCommand = false;
 	QFileInfo exeFileInfo;
 	QStringListIterator pathIter(binPaths);
+#ifdef Q_WS_WIN
+	QStringList executableTypes = QStringList() << "exe" << "com" << "cmd" << "bat";
+#endif
 	while (pathIter.hasNext() && !foundCommand) {
 		QString path = pathIter.next();
 		exeFileInfo = QFileInfo(path, e.program());
-		if (exeFileInfo.exists())
-			foundCommand = true;
+		foundCommand = exeFileInfo.exists() && exeFileInfo.isExecutable();
+#ifdef Q_WS_WIN
+		// try adding common executable extensions, if one was not already present
+		if (!foundCommand && !executableTypes.contains(exeFileInfo.suffix())) {
+			QStringListIterator extensions(executableTypes);
+			while (extensions.hasNext() && !foundCommand) {
+				exeFileInfo = QFileInfo(path, e.program() + "." + extensions.next());
+				foundCommand = exeFileInfo.exists() && exeFileInfo.isExecutable();
+			}
+		}
+#endif
 	}
 	
 	if (foundCommand) {
