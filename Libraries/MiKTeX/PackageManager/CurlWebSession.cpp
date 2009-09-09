@@ -135,6 +135,16 @@ CurlWebSession::Initialize ()
 	     DEFAULT_FTP_RESPONSE_TIMEOUT_SECONDS);
 #endif
 
+  // SF 2855025
+#if 1
+  int maxRedirects =
+    SessionWrapper(true)->GetConfigValue(0,
+					 MIKTEX_REGVAL_MAX_REDIRECTS,
+					 0);
+  SetOption (CURLOPT_FOLLOWLOCATION, static_cast<long>(true));
+  SetOption (CURLOPT_MAXREDIRS, static_cast<long>(maxRedirects));
+#endif
+
   SetOption (CURLOPT_NOSIGNAL, static_cast<long>(true));
 
   ProxySettings proxySettings;
