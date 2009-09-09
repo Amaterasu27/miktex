@@ -35,10 +35,32 @@ using namespace std;
 class HResult
 {
 public:
-  HResult (/*[in]*/ HRESULT hr)
-    : hr (hr)
+  HResult ()
+    : hr (S_FALSE),
+      lpszMessage (0)
   {
   }
+public:
+  HResult (/*[in]*/ HRESULT hr)
+    : hr (hr),
+      lpszMessage (0)
+  {
+  }
+public:
+  ~HResult ()
+  {
+    try
+      {
+	if (lpszMessage != 0)
+	  {
+	    LocalFree (reinterpret_cast<HLOCAL>(lpszMessage));
+	  }
+      }
+    catch (const exception &)
+      {
+      }
+  }
+
 public:
   long
   GetCode ()
@@ -73,12 +95,61 @@ public:
     ret += NUMTOSTR(GetCode());
     return (ret);
   }
+public:
+  bool
+  Failed ()
+    const
+  {
+    return (FAILED(hr));
+  }
+public:
+  bool
+  Succeeded ()
+    const
+  {
+    return (SUCCEEDED(hr));
+  }
+public:
+  bool
+  operator== (/*[in]*/ HRESULT other)
+  {
+    return (hr == other);
+  }
+public:
+  const char *
+  GetText ()
+  {
+    if (lpszMessage == 0)
+      {
+	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER|
+		       FORMAT_MESSAGE_FROM_SYSTEM|
+		       FORMAT_MESSAGE_IGNORE_INSERTS,
+		       0,
+		       hr,
+		       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		       reinterpret_cast<char*>(&lpszMessage),
+		       0,
+		       0);
+	if (lpszMessage == 0)
+	  {
+	    string str = ToString();
+            lpszMessage =
+	      reinterpret_cast<char*>(LocalAlloc(0,
+						 ((str.length() + 1)
+						  * sizeof(char))));
+            if (lpszMessage != 0)
+	      {
+		strcpy (lpszMessage, str.c_str());
+	      }
+	  }
+      }
+    return (lpszMessage);
+  }
+private:
+  char * lpszMessage;
 private:
   HRESULT hr;
 };
-
-#define HRTOSTR(hr) HResult(hr).ToString().c_str()
-
 
 /* _________________________________________________________________________
 
@@ -215,12 +286,12 @@ PackageInstallerImpl::PackageInstallerImpl
 void
 PackageInstallerImpl::MyCoInitialize ()
 {
-  HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-  if (FAILED(hr))
+  HResult hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+  if (hr.Failed())
     {
       FATAL_MIKTEX_ERROR ("PackageInstallerImpl::MyCoInitialize",
 			  T_("The COM library could not be initialized."),
-			  NUMTOSTR(hr));
+			  hr.GetText());
     }
   ++ numCoInitialize;
 }
@@ -920,17 +991,17 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  HRESULT hr = E_FAIL;
+  HResult hr = E_FAIL;
 #endif
   try
     {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-      hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-      if (FAILED(hr))
+      HResult hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+      if (hr.Failed())
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::FindUpdatesThread",
 			   T_("Cannot start updater thread."),
-			   HRTOSTR(hr));
+			   hr.GetText());
 	}
 #endif
       This->FindUpdates ();
@@ -950,7 +1021,7 @@ PackageInstallerImpl::FindUpdatesThread (/*[in]*/ void * pv)
       This->threadMiKTeXException = e;
     }
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  if (SUCCEEDED(hr))
+  if (hr.Succeeded())
     {
       CoUninitialize ();
     }
@@ -1898,7 +1969,7 @@ PackageInstallerImpl::ConnectToServer ()
 	      bo.cbStruct = sizeof(bo);
 	      bo.hwnd = GetForegroundWindow();
 	      bo.dwClassContext	= CLSCTX_LOCAL_SERVER;
-	      HRESULT hr =
+	      HResult hr =
 		CoGetObject(monikerName.c_str(),
 			    &bo,
 			    __uuidof(MiKTeXPackageManagerLib
@@ -1914,16 +1985,16 @@ PackageInstallerImpl::ConnectToServer ()
 					 ::IPackageManager),
 			    reinterpret_cast<void**>(&localServer.pManager));
 		}
-	      if (FAILED(hr))
+	      if (hr.Failed())
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
-				   HRTOSTR(hr));
+				   hr.GetText());
 		}
 	    }
 	  else
 	    {
-	      HRESULT hr =
+	      HResult hr =
 		localServer.pManager.CoCreateInstance
 		(__uuidof(MiKTeXPackageManagerLib::
 			  MAKE_CURVER_ID(PackageManager)),
@@ -1939,22 +2010,22 @@ PackageInstallerImpl::ConnectToServer ()
 		     0,
 		     CLSCTX_LOCAL_SERVER);
 		}
-	      if (FAILED(hr))
+	      if (hr.Failed())
 		{
 		  FATAL_MPM_ERROR ("ConnectToServer",
 				   MSG_CANNOT_START_SERVER,
-				   HRTOSTR(hr));
+				   hr.GetText());
 		}
 	    }
 	}
-      HRESULT hr =
+      HResult hr =
 	localServer.pManager->CreateInstaller(&localServer.pInstaller);
-      if (FAILED(hr))
+      if (hr.Failed())
 	{
 	  localServer.pManager.Release ();
 	  FATAL_MPM_ERROR ("ConnectToServer",
 			   MSG_CANNOT_START_SERVER,
-			   HRTOSTR(hr));
+			   hr.GetText());
 	}
     }
 }
@@ -2270,7 +2341,7 @@ PackageInstallerImpl::InstallRemove ()
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
     {
-      HRESULT hr;
+      HResult hr;
       ConnectToServer ();
       for (vector<string>::const_iterator it = toBeInstalled.begin();
 	   it != toBeInstalled.end();
@@ -2278,49 +2349,49 @@ PackageInstallerImpl::InstallRemove ()
 	{
 	  hr =
 	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_TRUE);
-	  if (FAILED(hr))
+	  if (hr.Failed())
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
-			       HRTOSTR(hr));
+			       hr.GetText());
 	    }
 	}
       for (vector<string>::const_iterator it = toBeRemoved.begin();
 	   it != toBeRemoved.end();
 	   ++ it)
 	{
-	  HRESULT hr =
+	  HResult hr =
 	    localServer.pInstaller->Add(_bstr_t(it->c_str()), VARIANT_FALSE);
-	  if (FAILED(hr))
+	  if (hr.Failed())
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("Cannot communicate with mpmsvc."),
-			       HRTOSTR(hr));
+			       hr.GetText());
 	    }
 	}
       localServer.pInstaller->SetCallback(this);
       if (repositoryType != RepositoryType::Unknown)
       {
 	hr = localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
-	if (FAILED(hr))
+	if (hr.Failed())
 	{
 	  localServer.pInstaller->SetCallback(0);
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			   T_("mpmsvc failed for some reason."),
-			   HRTOSTR(hr));
+			   hr.GetText());
 	}
       }
       hr = localServer.pInstaller->InstallRemove();
       localServer.pInstaller->SetCallback(0);
-      if (FAILED(hr))
+      if (hr.Failed())
 	{
 	  MiKTeXPackageManagerLib::ErrorInfo errorInfo;
-	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
-	  if (FAILED(hr2))
+	  HResult hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
+	  if (hr2.Failed())
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemove",
 			       T_("mpmsvc failed for some reason."),
-			       HRTOSTR(hr));
+			       hr.GetText());
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
@@ -2520,17 +2591,17 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  HRESULT hr = E_FAIL;
+  HResult hr = E_FAIL;
 #endif
   try
     {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-      if (FAILED(hr))
+      if (hr.Failed())
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::InstallRemoveThread",
 			   T_("Cannot start installer thread."),
-			   HRTOSTR(hr));
+			   hr.GetText());
 	}
 #endif
       This->InstallRemove ();
@@ -2550,7 +2621,7 @@ PackageInstallerImpl::InstallRemoveThread (/*[in]*/ void * pv)
       This->threadMiKTeXException = e;
     }
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  if (SUCCEEDED(hr))
+  if (hr.Succeeded())
     {
       CoUninitialize ();
     }
@@ -2703,17 +2774,17 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
 {
   PackageInstallerImpl * This = static_cast<PackageInstallerImpl*>(pv);
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  HRESULT hr = E_FAIL;
+  HResult hr = E_FAIL;
 #endif
   try
     {
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
       hr = CoInitializeEx(0, COINIT_MULTITHREADED);
-      if (FAILED(hr))
+      if (hr.Failed())
 	{
 	  FATAL_MPM_ERROR ("PackageInstallerImpl::DownloadThread",
 			   T_("Cannot start downloader thread."),
-			   HRTOSTR(hr));
+			   hr.GetText());
 	}
 #endif
       This->Download ();
@@ -2733,7 +2804,7 @@ PackageInstallerImpl::DownloadThread (/*[in]*/ void * pv)
       This->threadMiKTeXException = e;
     }
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
-  if (SUCCEEDED(hr))
+  if (hr.Succeeded())
     {
       CoUninitialize ();
     }
@@ -2932,16 +3003,16 @@ PackageInstallerImpl::UpdateDb ()
     {
       ConnectToServer ();
       localServer.pInstaller->SetRepository(_bstr_t(repository.c_str()));
-      HRESULT hr = localServer.pInstaller->UpdateDb();
-      if (FAILED(hr))
+      HResult hr = localServer.pInstaller->UpdateDb();
+      if (hr.Failed())
 	{
 	  MiKTeXPackageManagerLib::ErrorInfo errorInfo;
-	  HRESULT hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
-	  if (FAILED(hr2))
+	  HResult hr2 = localServer.pInstaller->GetErrorInfo(&errorInfo);
+	  if (hr2.Failed())
 	    {
 	      FATAL_MPM_ERROR ("PackageInstallerImpl::UpdateDb",
 			       T_("The service failed for some reason."),
-			       HRTOSTR(hr));
+			       hr.GetText());
 	    }
 	  AutoSysString a (errorInfo.message);
 	  AutoSysString b (errorInfo.info);
