@@ -35,6 +35,9 @@ using namespace std;
 const long DEFAULT_CONNECTION_TIMEOUT_SECONDS = 30;
 const long DEFAULT_FTP_RESPONSE_TIMEOUT_SECONDS = 30;
 
+#define ALLOW_REDIRECTS 1
+#define DEFAULT_MAX_REDIRECTS 20
+
 /* _________________________________________________________________________
 
    CurlWebSession::CurlWebSession
@@ -136,11 +139,11 @@ CurlWebSession::Initialize ()
 #endif
 
   // SF 2855025
-#if 1
+#if ALLOW_REDIRECTS
   int maxRedirects =
     SessionWrapper(true)->GetConfigValue(0,
 					 MIKTEX_REGVAL_MAX_REDIRECTS,
-					 0);
+					 DEFAULT_MAX_REDIRECTS);
   SetOption (CURLOPT_FOLLOWLOCATION, static_cast<long>(true));
   SetOption (CURLOPT_MAXREDIRS, static_cast<long>(maxRedirects));
 #endif
@@ -419,8 +422,29 @@ CurlWebSession::ReadInformationals ()
       trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("response code: %ld"),
 				     responseCode);
+      char * lpszEffectiveUrl = 0;
+      r = curl_easy_getinfo(pCurlMsg->easy_handle,
+			    CURLINFO_EFFECTIVE_URL,
+			    &lpszEffectiveUrl);
+      if (r != CURLE_OK)
+      {
+	FATAL_MPM_ERROR
+	  ("CurlWebFile::ReadInformationals",
+	  GetCurlErrorString(r).c_str(),
+	  0);
+      }
+      if (lpszEffectiveUrl != 0)
+      {
+	trace_mpm->WriteFormattedLine (
+	  "libmpm",
+	  T_("effective URL: %s"),
+	  lpszEffectiveUrl);
+      }
       if (responseCode >= 300 && responseCode <= 399)
       {
+#if ALLOW_REDIRECTS
+	UNEXPECTED_CONDITION ("CurlWebSession::ReadInformationals");
+#else
 	string msg = T_("The server returned status code ");
 	msg += NUMTOSTR(responseCode);
 	msg += T_(", but redirection is not supported. You must choose ");
@@ -429,6 +453,7 @@ CurlWebSession::ReadInformationals ()
 	  ("CurlWebFile::ReadInformationals",
 	  msg.c_str(),
 	  0);
+#endif
       }
       else if (responseCode >= 400)
 	{
