@@ -68,6 +68,12 @@ set(miktex_admin_suffix "_admin")
 enable_testing()
 
 option(
+  USE_SYSTEM_BZIP2
+  "Use the system bzip2 library."
+  ${UNIX_ALIKE}
+)
+
+option(
   USE_SYSTEM_CURL
   "Use the system curl library."
   ${UNIX_ALIKE}
@@ -76,6 +82,24 @@ option(
 option(
   USE_SYSTEM_EXPAT
   "Use the system expat library."
+  ${UNIX_ALIKE}
+)
+
+option(
+  USE_SYSTEM_PNG
+  "Use the system png library."
+  ${UNIX_ALIKE}
+)
+
+option(
+  USE_SYSTEM_URIPARSER
+  "Use the system uriparser library."
+  ${UNIX_ALIKE}
+)
+
+option(
+  USE_SYSTEM_ZLIB
+  "Use the system zlib library."
   ${UNIX_ALIKE}
 )
 
@@ -314,9 +338,25 @@ if(USE_SYSTEM_CURL)
   find_package(CURL REQUIRED)
 endif(USE_SYSTEM_CURL)
 
+if(USE_SYSTEM_BZIP2)
+  find_package(BZip2 REQUIRED)
+endif(USE_SYSTEM_BZIP2)
+
 if(USE_SYSTEM_EXPAT)
   find_package(EXPAT REQUIRED)
 endif(USE_SYSTEM_EXPAT)
+
+if(USE_SYSTEM_PNG)
+  find_package(PNG REQUIRED)
+endif(USE_SYSTEM_PNG)
+
+if(USE_SYSTEM_URIPARSER)
+  find_package(URIPARSER REQUIRED)
+endif(USE_SYSTEM_URIPARSER)
+
+if(USE_SYSTEM_ZLIB)
+  find_package(ZLIB REQUIRED)
+endif(USE_SYSTEM_ZLIB)
 
 if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
@@ -521,9 +561,25 @@ endif(NATIVE_WINDOWS)
 ###############################################################################
 ## 
 
-if(NOT USE_SYSTEM_EXPAT)
-  set(${EXPAT_LIBRARIES} ${expat_lib_name})
-endif(NOT USE_SYSTEM_EXPAT)
+if(USE_SYSTEM_BZIP2)
+  set(bzip2_lib_name ${BZIP2_LIBRARIES})
+endif(USE_SYSTEM_BZIP2)
+
+if(USE_SYSTEM_EXPAT)
+  set(expat_lib_name ${EXPAT_LIBRARIES})
+endif(USE_SYSTEM_EXPAT)
+
+if(USE_SYSTEM_PNG)
+  set(png_lib_name ${PNG_LIBRARIES})
+endif(USE_SYSTEM_PNG)
+
+if(USE_SYSTEM_URIPARSER)
+  set(uriparser_lib_name ${URIPARSER_LIBRARIES})
+endif(USE_SYSTEM_URIPARSER)
+
+if(USE_SYSTEM_ZLIB)
+  set(zlib_lib_name ${ZLIB_LIBRARIES})
+endif(USE_SYSTEM_ZLIB)
 
 set(MIKTEX_STATIC_LINK_LIBRARIES
   ${texmf_lib_name}
@@ -534,7 +590,7 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${core_lib_name}
   ${mspack_lib_name}
   ${lzma_lib_name}
-  ${EXPAT_LIBRARIES}
+  ${expat_lib_name}
   ${uriparser_lib_name}
   ${md5_lib_name}
   ${CURL_LIBRARIES}
@@ -563,7 +619,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
@@ -585,22 +640,43 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
-  ${CMAKE_SOURCE_DIR}/${rel_png_dir}
   ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
   ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
 )
+
+if(USE_SYSTEM_BZIP2)
+  include_directories(${BZIP2_INCLUDE_DIR})
+else(USE_SYSTEM_BZIP2)
+  include_directories(${CMAKE_SOURCE_DIR}/${rel_bzip2_dir})
+endif(USE_SYSTEM_BZIP2)
 
 if(USE_SYSTEM_EXPAT)
   include_directories(${EXPAT_INCLUDE_DIRS})
 else(USE_SYSTEM_EXPAT)
   include_directories(${CMAKE_SOURCE_DIR}/${rel_expat_dir})
 endif(USE_SYSTEM_EXPAT)
+
+if(USE_SYSTEM_PNG)
+  include_directories(${PNG_INCLUDE_DIRS})
+else(USE_SYSTEM_PNG)
+  include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
+endif(USE_SYSTEM_PNG)
+
+if(USE_SYSTEM_URIPARSER)
+  include_directories(${URIPARSER_INCLUDE_DIR})
+else(USE_SYSTEM_EXPAT)
+  include_directories(${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include)
+endif(USE_SYSTEM_URIPARSER)
+
+if(USE_SYSTEM_ZLIB)
+  include_directories(${ZLIB_INCLUDE_DIR})
+else(USE_SYSTEM_ZLIB)
+  include_directories(${CMAKE_SOURCE_DIR}/${rel_zlib_dir})
+endif(USE_SYSTEM_ZLIB)
 
 if(MSVC)
   include_directories(
@@ -714,10 +790,12 @@ endforeach(tpm)
 
 add_subdirectory(${rel_build_tools_etc_dir})
 
-if(NOT LINK_EVERYTHING_STATICALLY)
-  add_subdirectory(${rel_uriparser_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
-add_subdirectory(${rel_uriparser_dir}-static)
+if(NOT USE_SYSTEM_URIPARSER)
+  add_subdirectory(${rel_uriparser_dir}-static)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_uriparser_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_URIPARSER)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})
@@ -728,10 +806,12 @@ if(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_lzmalib_dir}-static)
 
-if(NOT LINK_EVERYTHING_STATICALLY)
-  add_subdirectory(${rel_bzip2_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
-add_subdirectory(${rel_bzip2_dir}-static)
+if(NOT USE_SYSTEM_BZIP2)
+  add_subdirectory(${rel_bzip2_dir}-static)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_bzip2_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_BZIP2)
 
 if(NOT USE_SYSTEM_CURL)
   add_subdirectory(${rel_curl_dir})
@@ -790,19 +870,23 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_netpbm_dir})
 endif(BUILDING_MIKTEX)
 
-if(NOT LINK_EVERYTHING_STATICALLY)
-  add_subdirectory(${rel_zlib_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
-add_subdirectory(${rel_zlib_dir}-static)
+if(NOT USE_SYSTEM_ZLIB)
+  add_subdirectory(${rel_zlib_dir}-static)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_zlib_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_ZLIB)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
-if(NOT LINK_EVERYTHING_STATICALLY)
-  add_subdirectory(${rel_png_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
-add_subdirectory(${rel_png_dir}-static)
+if(NOT USE_SYSTEM_PNG)
+  add_subdirectory(${rel_png_dir}-static)
+  if(NOT LINK_EVERYTHING_STATICALLY)
+    add_subdirectory(${rel_png_dir})
+  endif(NOT LINK_EVERYTHING_STATICALLY)
+endif(NOT USE_SYSTEM_PNG)
 
 add_subdirectory(${rel_xpdf_dir})
 
@@ -814,7 +898,9 @@ if(BUILDING_MIKTEX AND QT4_FOUND)
   add_subdirectory(${rel_poppler_dir}/qt4/src)
 endif(BUILDING_MIKTEX AND QT4_FOUND)
 
-add_subdirectory(${rel_hunspell_dir})
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_hunspell_dir})
+endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_c4p_dir})
 
@@ -1188,7 +1274,7 @@ set(
   "${MIKTEX_VERSION_TAG_STR}-${MIKTEX_PACKAGE_REVISION}")
 set(
   CPACK_DEBIAN_PACKAGE_DEPENDS
-  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0), libexpat1 (>= 2.0.1)"
+  "libqt4-core (>=4.2.0) | libqtcore4 (>= 4.2.0), libqt4-gui (>= 4.2.0) | libqtgui4 (>= 4.2.0), libcurl3 (>= 7.15.0), libexpat1, libbz2-1.0, liburiparser1, zlib1g, libpng12-0"
   )
 set(CPACK_DEBIAN_PACKAGE_SECTION "TeX Authoring")
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA

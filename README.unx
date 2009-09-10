@@ -52,6 +52,14 @@ PREREQUISITES
 [ ] Expat libraries and header files are required.  A common name
     for this package is libexpat-devel.
 
+[ ] BZip2 libraries and header files are required.  A common name
+    for this package is libbz2-devel.
+
+[ ] UriParser libraries and header files are required.  A common name
+    for this package is liburiparser-devel.
+
+[ ] zlib libraries and header files are required.  A common name
+    for this package is zlib-devel.
 
 QUICK START
 -----------
