@@ -552,6 +552,16 @@ PackageInstallerImpl::InstallDbLight ()
       size_t size;
       MyCopyFile (pathMpmIniSrc, pathMpmIniDst, size);
     }
+  else if (repositoryType == RepositoryType::MiKTeXInstallation)
+    {
+      PathName pathMpmIniSrc (repository);
+      pathMpmIniSrc += MIKTEX_PATH_MPM_INI;
+      PathName pathMpmIniDst =
+	pSession->GetSpecialPath(SpecialPath::InstallRoot);
+      pathMpmIniDst += MIKTEX_PATH_MPM_INI;
+      size_t size;
+      MyCopyFile (pathMpmIniSrc, pathMpmIniDst, size);
+    }
   else
     {
       UNEXPECTED_CONDITION ("PackageInstallerImpl::InstallDbLight");
