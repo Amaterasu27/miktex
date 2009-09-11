@@ -478,7 +478,9 @@ PackageInstallerImpl::InstallDbLight ()
 	       ? T_("remote package repository")
 	       : (repositoryType == RepositoryType::Local
 		  ? T_("local package repository")
-		  : "MiKTeXDirect")));
+		  : (repositoryType == RepositoryType::MiKTeXInstallation
+		     ? "other MiKTeX installation"
+		     : "MiKTeXDirect"))));
   
   // path to config dir
   PathName pathConfigDir (
