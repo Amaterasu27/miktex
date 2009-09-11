@@ -2364,7 +2364,8 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
     {
       FATAL_MPM_ERROR
 	("PackageManagerImpl::VerifyPackageRepository",
-	 T_("Not a valid remote package repository."),
+	 T_("The remote package repository is not available. It may be \
+offline, corrupted or outdated. You have to choose another repository."),
 	 url.c_str());
     }
   repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
