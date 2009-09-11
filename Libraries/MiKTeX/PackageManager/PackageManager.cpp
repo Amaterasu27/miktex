@@ -1468,7 +1468,7 @@ PackageManagerImpl::DownloadRepositoryList ()
   arg.clientInfo = &clientInfo;
   arg.onlyOnline = true;
   arg.noCorrupted = true;
-  arg.maxDelay = INT_MAX;
+  arg.maxDelay = -1;
   _mtrep3__GetRepositories2Response resp;
   if (repositorySoapProxy.GetRepositories2(&arg, &resp) != SOAP_OK)
     {
