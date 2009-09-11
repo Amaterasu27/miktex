@@ -2362,11 +2362,42 @@ PackageManagerImpl::VerifyPackageRepository (/*[in]*/ const string & url)
     }
   if (! resp.VerifyRepositoryResult)
     {
-      FATAL_MPM_ERROR
-	("PackageManagerImpl::VerifyPackageRepository",
-	 T_("The remote package repository is not available. It may be \
-offline, corrupted or outdated. You have to choose another repository."),
-	 url.c_str());
+      if (resp.repositoryInfo == 0)
+	{
+	  FATAL_MPM_ERROR
+	    ("PackageManagerImpl::VerifyPackageRepository",
+	     T_("\
+The remote package repository is not registered. \
+You have to choose another repository."),
+	     url.c_str());
+	}
+      else if (resp.repositoryInfo->Status != RepositoryStatus::Online)
+	{
+	  FATAL_MPM_ERROR
+	    ("PackageManagerImpl::VerifyPackageRepository",
+	     T_("\
+The remote package repository is not online. \
+You have to choose another repository."),
+	     url.c_str());
+	}
+      else if (resp.repositoryInfo->Integrity == RepositoryIntegrity::Corrupted)
+	{
+	  FATAL_MPM_ERROR
+	    ("PackageManagerImpl::VerifyPackageRepository",
+	     T_("\
+The remote package repository is corrupted. \
+You have to choose another repository."),
+	     url.c_str());
+	}
+      else
+	{
+	  FATAL_MPM_ERROR
+	    ("PackageManagerImpl::VerifyPackageRepository",
+	     T_("\
+The remote package repository is outdated. \
+You have to choose another repository."),
+	     url.c_str());
+	}
     }
   repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
   repositories.push_back (repositoryInfo);
