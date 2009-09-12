@@ -10,5 +10,5 @@ The following utilities are included:
 
   - mthelp: MiKTeX Help Utility (a texdoc alternative)
 
-For more information about the MiKTeX project, visit the project page
-at www.miktex.org.
+For more information about the MiKTeX project, visit the MiKTeX Tools
+project: http://miktex.org/unx/
