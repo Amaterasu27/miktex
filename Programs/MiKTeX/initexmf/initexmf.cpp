@@ -3085,6 +3085,7 @@ IniTeXMFApp::Configure ()
 	    }
 	}
     }
+  pManager->CreateMpmFndb ();
 }
 #endif
 
