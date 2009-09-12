@@ -46,7 +46,7 @@ PREREQUISITES
 [ ] "MiKTeX Tools" depends on the availability of pthreads libraries
     and header files.
 
-[ ] libCURL libraries and header files are required.  A common name
+[ ] CURL libraries and header files are required.  A common name
     for this package is libcurl-devel.
 
 [ ] Expat libraries and header files are required.  A common name
@@ -60,6 +60,9 @@ PREREQUISITES
 
 [ ] zlib libraries and header files are required.  A common name
     for this package is zlib-devel.
+
+[ ] PNG libraries and header files are required.  A common name
+    for this package is libpng-devel.
 
 QUICK START
 -----------
@@ -142,6 +145,9 @@ The following reference pages are available:
 BUGS & ISSUES
 -------------
 
-Please visit the MiKTeX project page (www.miktex.org), if you find it
-difficult to install/use the MiKTeX.  You will find references to
-online forums, mailing lists and issue trackers.
+Please visit the MiKTeX Tools project page at
+
+  http://miktex.org/unx/
+
+if you find it difficult to install/use the MiKTeX.  You will find
+references to online forums, mailing lists and issue trackers.
