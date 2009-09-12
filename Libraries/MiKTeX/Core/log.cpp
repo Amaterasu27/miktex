@@ -486,6 +486,7 @@ TraceStream::TraceLastWin32Error
  /*[in]*/ const char *	lpszSourceFile,
  /*[in]*/ int		lpszSourceLine)
 {
+  lpszSourceFile = GetShortSourceFile(lpszSourceFile);
   TraceWindowsError (lpszWindowsFunction,
 		     ::GetLastError(),
 		     lpszInfo,
@@ -493,7 +494,6 @@ TraceStream::TraceLastWin32Error
 		     lpszSourceLine);
 }
 #endif
-
 
 /* _________________________________________________________________________
 
@@ -506,6 +506,7 @@ TraceStream::TraceLastCRTError (/*[in]*/ const char *	lpszCrtFunction,
 				/*[in]*/ const char *	lpszSourceFile,
 				/*[in]*/ int		sourceLine)
 {
+  lpszSourceFile = GetShortSourceFile(lpszSourceFile);
   int lastError = errno;
   string errorMessage;
   if (! GetCrtErrorMessage(lastError, errorMessage))
@@ -515,17 +516,16 @@ TraceStream::TraceLastCRTError (/*[in]*/ const char *	lpszCrtFunction,
   SessionImpl::GetSession()->trace_error->WriteFormattedLine
     ("core",
      T_("\
-CRT function %s failed for the following reason:\n\
 %s\n\
+Function: %s\n\
 Result: %u\n\
-Info: %s\n\
-Source: %s\n\
-Line: %d"),
-     lpszCrtFunction,
+Data: %s\n\
+Source: %s:%d"),
      errorMessage.c_str(),
+     lpszCrtFunction,
      lastError,
      (lpszInfo == 0
-      ? ""
+      ? "<no data>"
       : lpszInfo),
      lpszSourceFile,
      sourceLine);
@@ -549,15 +549,12 @@ TraceMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
       SessionImpl::GetSession()->trace_error->WriteFormattedLine
 	("core",
 	 T_("\
-The MiKTeX function %s fails for the following reason:\n\
 %s\n\
-Info: %s\n\
-Source: %s\n\
-Line: %d"),
-	 (lpszMiktexFunction ? lpszMiktexFunction : "Unknown"),
+Data: %s\n\
+Source: %s:%d"),
 	 lpszMessage,
 	 (lpszInfo == 0
-	  ? ""
+	  ? "<no data>"
 	  : lpszInfo),
 	 lpszSourceFile,
 	 lpszSourceLine);

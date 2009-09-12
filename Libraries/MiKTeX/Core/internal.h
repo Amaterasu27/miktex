@@ -437,6 +437,9 @@ TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ int			lpszSourceLine);
 #endif
 
+const char *
+GetShortSourceFile (/*[in]*/ const char * lpszSourceFile);
+
 /* _________________________________________________________________________
 
    MakeLong

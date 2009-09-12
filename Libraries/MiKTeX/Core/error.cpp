@@ -114,7 +114,11 @@ Utils::PrintException (/*[in]*/ const MiKTeXException &	e)
 	{
 	  if (haveName && last == '\n')
 	    {
-	      cerr << szName << ": Data: ";
+	      cerr << szName << ": ";
+	    }
+	  if (last == '\n')
+	    {
+	      cerr << "Data: ";
 	    }
 	  cerr << *lpsz;
 	  last = *lpsz;
@@ -142,6 +146,7 @@ Session::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 			   /*[in]*/ const char *	lpszSourceFile,
 			   /*[in]*/ int			sourceLine)
 {
+  lpszSourceFile = GetShortSourceFile(lpszSourceFile);
   string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
@@ -240,6 +245,7 @@ Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
 			/*[in]*/ const char *	lpszSourceFile,
 			/*[in]*/ int		sourceLine)
 {
+  lpszSourceFile = GetShortSourceFile(lpszSourceFile);
   string errorMessage;
   if (! GetCrtErrorMessage(errorCode, errorMessage))
     { 
@@ -257,17 +263,16 @@ Session::FatalCrtError (/*[in]*/ const char *	lpszCrtFunction,
       SessionImpl::GetSession()->trace_error->WriteFormattedLine
 	("core",
 	 T_("\
-CRT function %s failed for the following reason:\n\
 %s\n\
+Function: %s\n\
 Result: %u\n\
-Info: %s\n\
-Source: %s\n\
-Line: %d"),
-	 lpszCrtFunction,
+Data: %s\n\
+Source: %s:%d"),
 	 errorMessage.c_str(),
+	 lpszCrtFunction,
 	 errorCode,
 	 (lpszInfo == 0
-	  ? ""
+	  ? "<no data>"
 	  : lpszInfo),
 	 lpszSourceFile,
 	 sourceLine);

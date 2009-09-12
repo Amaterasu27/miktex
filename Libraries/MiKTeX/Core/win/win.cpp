@@ -789,6 +789,7 @@ Session::FatalWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 			    /*[in]*/ const char *	lpszSourceFile,
 			    /*[in]*/ int		sourceLine)
 {
+  lpszSourceFile = GetShortSourceFile(lpszSourceFile);
   string programInvocationName;
   if (SessionImpl::TryGetSession() != 0)
     {
@@ -1770,16 +1771,15 @@ TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
   SessionImpl::GetSession()->trace_error->WriteFormattedLine
     ("core",
      T_("\
-Windows function %s failed for the following reason:\n	\
 %s\n\
+Function: %s\n\
 Result: %u\n\
-Info: %s\n\
-Source: %s\n\
-Line: %d"),
-     lpszWindowsFunction,
+Data: %s\n\
+Source: %s:%d"),
      errorMessage.c_str(),
+     lpszWindowsFunction,
      static_cast<unsigned>(functionResult),
-     (lpszInfo == 0 ? "" : lpszInfo),
+     (lpszInfo == 0 ? "<no data>" : lpszInfo),
      lpszSourceFile,
      sourceLine);
 }

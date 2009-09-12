@@ -1084,3 +1084,29 @@ miktex_core_free (/*[in]*/ void * 	ptr,
   C_FUNC_END();
 }
 
+/* _________________________________________________________________________
+
+   GetShortSourceFile
+   _________________________________________________________________________ */
+
+MIKTEXINTERNALFUNC(const char *)
+GetShortSourceFile (/*[in]*/ const char * lpszSourceFile)
+{
+  const char * lpszShortSourceFile = 0;
+  if (Utils::IsAbsolutePath(lpszSourceFile))
+    {
+      lpszShortSourceFile = 
+	Utils::GetRelativizedPath(lpszSourceFile, MIKTEX_SOURCE_DIR);
+      if (lpszShortSourceFile == 0)
+	{
+	  lpszShortSourceFile =
+	    Utils::GetRelativizedPath (lpszSourceFile, MIKTEX_BINARY_DIR);	    
+	}
+    }
+  if (lpszShortSourceFile == 0)
+    {
+      lpszShortSourceFile = lpszSourceFile;
+    }
+  return (lpszShortSourceFile);
+}
+
