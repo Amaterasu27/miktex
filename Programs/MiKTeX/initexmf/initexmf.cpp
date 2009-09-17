@@ -1916,7 +1916,16 @@ IniTeXMFApp::UpdateFilenameDatabase (/*[in]*/ const PathName & root)
 
   // create the FNDB file
   PathName fndbPath = pSession->GetFilenameDatabasePathName(rootIdx);
-  Verbose (T_("Creating fndb (%s)..."), Q_(root));
+  if (pSession->IsCommonRootDirectory(rootIdx))
+    {
+      Verbose (T_("Creating fndb for common root directory (%s)..."),
+	       Q_(root));
+    }
+  else
+    {
+      Verbose (T_("Creating fndb for user root directory (%s)..."),
+	       Q_(root));
+    }
   PrintOnly ("fndbcreate %s %s", Q_(fndbPath), Q_(root));
   if (! printOnly)
     {
@@ -3076,12 +3085,22 @@ IniTeXMFApp::Configure ()
 	    {
 	      UpdateFilenameDatabase (r);
 	    }
+	  else
+	    {
+	      Verbose (T_("Skipping user root directory (%s)..."),
+		       Q_(pSession->GetRootDirectory(r)));
+	    }
 	}
       else
 	{
 	  if (! pSession->IsCommonRootDirectory(r))
 	    {
 	      UpdateFilenameDatabase (r);
+	    }
+	  else
+	    {
+	      Verbose (T_("Skipping common root directory (%s)..."),
+		       Q_(pSession->GetRootDirectory(r)));		       
 	    }
 	}
     }
@@ -3662,12 +3681,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 		    {
 		      UpdateFilenameDatabase (r);
 		    }
+		  else
+		    {
+		      Verbose (T_("Skipping user root directory (%s)..."),
+			       Q_(pSession->GetRootDirectory(r)));
+		    }
 		}
 	      else
 		{
 		  if (! pSession->IsCommonRootDirectory(r))
 		    {
 		      UpdateFilenameDatabase (r);
+		    }
+		  else
+		    {
+		      Verbose (T_("Skipping common root directory (%s)..."),
+			       Q_(pSession->GetRootDirectory(r)));
 		    }
 		}
 	    }
