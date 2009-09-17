@@ -684,6 +684,7 @@ bool TeXDocument::saveAs()
 #else
 	QFileDialog::Options	options = 0;
 #endif
+	QString selectedFilter;
 #if defined(MIKTEX_WINDOWS)
 	MiKTeX::Core::PathName absFileName = curFile.toLocal8Bit().data();
 	if (! MiKTeX::Core::Utils::IsAbsolutePath(absFileName.Get()))
@@ -696,13 +697,25 @@ bool TeXDocument::saveAs()
 	  }
 	  absFileName += curFile.toLocal8Bit().data();
 	}
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), absFileName.Get(), TWUtils::filterList()->join(";;"), NULL, options);
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), absFileName.Get(),
+													TWUtils::filterList()->join(";;"),
+													&selectedFilter, options);
 #else
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), curFile, TWUtils::filterList()->join(";;"), NULL, options);
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), curFile,
+													TWUtils::filterList()->join(";;"),
+													&selectedFilter, options);
 #endif
 	if (fileName.isEmpty())
 		return false;
 
+	// add extension from the selected filter, if unique and not already present
+	QRegExp re("\\(\\*(\\.[^ ]+)\\)");
+	if (re.indexIn(selectedFilter) >= 0) {
+		QString ext = re.cap(1);
+		if (!fileName.endsWith(ext, Qt::CaseInsensitive) && !fileName.endsWith("."))
+			fileName.append(ext);
+	}
+	
 	if (fileName != curFile) {
 		// The pdf connection is no longer (necessarily) valid. Detach it for
 		// now (the correct connection will be reestablished on next typeset).
@@ -2068,6 +2081,12 @@ void TeXDocument::typeset()
 		connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
 		connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
 		
+		QString pdfName;
+		if (getPreviewFileName(pdfName))
+			oldPdfTime = QFileInfo(pdfName).lastModified();
+		else
+			oldPdfTime = QDateTime();
+		
 		process->start(exeFileInfo.absoluteFilePath(), args);
 	}
 	else {
@@ -2135,14 +2154,18 @@ void TeXDocument::processError(QProcess::ProcessError /*error*/)
 void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
 	if (exitStatus != QProcess::CrashExit) {
-		if (pdfDoc == NULL) {
-			if (showPdfWhenFinished && showPdfIfAvailable())
-				pdfDoc->selectWindow();
-		}
-		else {
-			pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
-			if (showPdfWhenFinished)
-				pdfDoc->selectWindow();
+		QString pdfName;
+		if (getPreviewFileName(pdfName) && QFileInfo(pdfName).lastModified() != oldPdfTime) {
+			// only open/refresh the PDF if it was changed by the typeset process
+			if (pdfDoc == NULL) {
+				if (showPdfWhenFinished && showPdfIfAvailable())
+					pdfDoc->selectWindow();
+			}
+			else {
+				pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
+				if (showPdfWhenFinished)
+					pdfDoc->selectWindow();
+			}
 		}
 	}
 

@@ -230,6 +230,7 @@ private:
 	bool consoleWasHidden;
 	bool showPdfWhenFinished;
 	bool userInterrupt;
+	QDateTime oldPdfTime;
 
 	QList<QAction*> recentFileActions;
 	QMenu *menuRecent;
