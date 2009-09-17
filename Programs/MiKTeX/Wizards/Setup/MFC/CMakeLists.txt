@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2009 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,9 @@
 use_static_crt()
 use_static_libraries()
 
+set(ENABLE_ADDTEXMF FALSE)
+set(SHOW_FOLDER_PAGE FALSE)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/res/Setup.manifest.in
   ${CMAKE_CURRENT_BINARY_DIR}/res/Setup.manifest
@@ -28,6 +31,11 @@ configure_file(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Setup.rc.in
   ${CMAKE_CURRENT_BINARY_DIR}/Setup.rc
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
 include_directories(BEFORE
@@ -42,8 +50,6 @@ set(setup_mfc_sources
   ${CMAKE_CURRENT_BINARY_DIR}/ConnectionSettingsDialog.h
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.h
-  AddTEXMFPage.cpp
-  EditTEXMFPage.cpp
   FileCopyPage.cpp
   FinishPage.cpp
   InfoListPage.cpp
@@ -64,6 +70,13 @@ set(setup_mfc_sources
   TaskPage.cpp
   WelcomePage.cpp
 )
+
+if(ENABLE_ADDTEXMF)
+  set(setup_mfc_sources ${setup_mfc_sources}
+    AddTEXMFPage.cpp
+    EditTEXMFPage.cpp
+  )
+endif(ENABLE_ADDTEXMF)
 
 foreach(f
     ConnectionSettingsDialog.cpp

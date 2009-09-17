@@ -39,7 +39,9 @@ public:
   SetupCommandLineInfo ()
     : optAllowUnattendedReboot (false),
       optDryRun (false),
+#if ENABLE_ADDTEXMF
       optNoAddTEXMFDirs (false),
+#endif
       optNoRegistry (false),
       optPrivate (false),
       optPortable (false),
@@ -74,8 +76,10 @@ public:
 public:
   bool optDryRun;
 
+#if ENABLE_ADDTEXMF
 public:
   bool optNoAddTEXMFDirs;
+#endif
 
 public:
   bool optNoRegistry;
@@ -458,7 +462,9 @@ common root directories."),
 	  break;
 
 	case OPT_NO_ADDITIONAL_ROOTS:
+#if ENABLE_ADDTEXMF
 	  cmdinfo.optNoAddTEXMFDirs = true;
+#endif
 	  break;
 
 	case OPT_NO_REGISTRY:
@@ -686,6 +692,8 @@ FindCommonInstallDir ()
    CheckAddTEXMFDirs
    _________________________________________________________________________ */
 
+
+#if ENABLE_ADDTEXMF
 void
 CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 		   /*[out]*/ vector<PathName> &	vec)
@@ -713,6 +721,7 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 	}
     }
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -938,16 +947,6 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       theApp.startupConfig.commonInstallRoot = FindCommonInstallDir();
     }
-  if (! theApp.startupConfig.commonRoots.empty())
-    {
-      CheckAddTEXMFDirs (theApp.startupConfig.commonRoots, theApp.addTEXMFDirs);
-    }
-  if (! theApp.startupConfig.userRoots.empty())
-    {
-      CheckAddTEXMFDirs (theApp.startupConfig.userRoots, theApp.addTEXMFDirs);
-    }
-
-  theApp.noAddTEXMFDirs = cmdinfo.optNoAddTEXMFDirs;
 
   theApp.noRegistry = cmdinfo.optNoRegistry;
 
@@ -2419,7 +2418,7 @@ LogHeader ()
   if (theApp.setupTask != SetupTask::Download)
     {
       Log ("UserRoots: %s\n",
-	  (theApp.noAddTEXMFDirs || theApp.startupConfig.userRoots.empty()
+	  (theApp.startupConfig.userRoots.empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userRoots.c_str()));
       Log ("UserData: %s\n",
@@ -2431,7 +2430,7 @@ LogHeader ()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.userConfigRoot.Get()));
       Log ("CommonRoots: %s\n",
-	  (theApp.noAddTEXMFDirs || theApp.startupConfig.commonRoots.empty()
+	  (theApp.startupConfig.commonRoots.empty()
 	    ? T_("<none specified>")
 	    : theApp.startupConfig.commonRoots.c_str()));
       Log ("CommonData: %s\n",
