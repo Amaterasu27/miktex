@@ -53,7 +53,11 @@ FILE   *ind_fp;
 FILE   *ilg_fp;
 
 char   *pgm_fn;
+#if defined(MIKTEX)
+char    sty_fn[STRING_MAX];
+#else
 char    sty_fn[LINE_MAX];
+#endif
 char   *idx_fn;
 char    ind[STRING_MAX];
 char   *ind_fn;
