@@ -335,6 +335,159 @@ See the MiKTeX Manual for more information."));
 
 /* _________________________________________________________________________
 
+   CheckStartupConfig
+   _________________________________________________________________________ */
+
+void
+CheckStartupConfig (/*[in,out]*/ StartupConfig & startupConfig)
+{
+#if 1
+  string commonRoots;
+  for (CSVList tok (startupConfig.commonRoots.c_str(), ';');
+    tok.GetCurrent() != 0;
+    ++ tok)
+  {
+    PathName path (tok.GetCurrent());
+    if (path.Empty())
+    {
+      continue;
+    }
+    path.MakeAbsolute ();
+    if (startupConfig.commonConfigRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --common-config value."),
+	path.Get());
+    }
+    if (startupConfig.commonDataRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --common-data value."),
+	path.Get());
+    }
+    if (startupConfig.commonInstallRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --common-install value."),
+	path.Get());
+    }
+    if (startupConfig.userConfigRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --user-config value."),
+	path.Get());
+    }
+    if (startupConfig.userDataRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --user-data value."),
+	path.Get());
+    }
+    if (startupConfig.userInstallRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--common-roots value collides with --user-install value."),
+	path.Get());
+    }
+    if (! commonRoots.empty())
+    {
+      commonRoots += ';';
+    }
+    commonRoots += path.Get();
+  }
+  startupConfig.commonRoots = commonRoots;
+
+  string userRoots;
+  for (CSVList tok (startupConfig.userRoots.c_str(), ';');
+    tok.GetCurrent() != 0;
+    ++ tok)
+  {
+    PathName path (tok.GetCurrent());
+    if (path.Empty())
+    {
+      continue;
+    }
+    path.MakeAbsolute ();
+    if (Utils::Contains(startupConfig.commonRoots.c_str(), path.Get(), ";", true))
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --common-roots value."),
+	path.Get());
+    }
+    if (startupConfig.commonConfigRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --common-config value."),
+	path.Get());
+    }
+    if (startupConfig.commonDataRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --common-data value."),
+	path.Get());
+    }
+    if (startupConfig.commonInstallRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --common-install value."),
+	path.Get());
+    }
+    if (startupConfig.userConfigRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --user-config value."),
+	path.Get());
+    }
+    if (startupConfig.userDataRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --user-data value."),
+	path.Get());
+    }
+    if (startupConfig.userInstallRoot == path)
+    {
+      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
+	T_("\
+Improper options: \
+--user-roots value collides with --user-install value."),
+	path.Get());
+    }
+    if (! userRoots.empty())
+    {
+      userRoots += ';';
+    }
+    userRoots += path.Get();
+  }
+  startupConfig.userRoots = userRoots;
+#endif
+}
+
+/* _________________________________________________________________________
+
    ParseSetupCommandLine
    _________________________________________________________________________ */
 
@@ -396,6 +549,7 @@ a common configuration directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonConfigRoot = optarg;
+	  cmdinfo.startupConfig.commonConfigRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_DATA:
@@ -410,6 +564,7 @@ a common data directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonDataRoot = optarg;
+	  cmdinfo.startupConfig.commonDataRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_INSTALL:
@@ -424,6 +579,7 @@ a common installation directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonInstallRoot = optarg;
+	  cmdinfo.startupConfig.commonInstallRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_ROOTS:
@@ -553,14 +709,17 @@ a shared MiKTeX system."),
 
 	case OPT_USER_CONFIG:
 	  cmdinfo.startupConfig.userConfigRoot = optarg;
+	  cmdinfo.startupConfig.userConfigRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_DATA:
 	  cmdinfo.startupConfig.userDataRoot = optarg;
+	  cmdinfo.startupConfig.userDataRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_INSTALL:
 	  cmdinfo.startupConfig.userInstallRoot = optarg;
+	  cmdinfo.startupConfig.userInstallRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_ROOTS:
@@ -1354,6 +1513,7 @@ SetupWizardApplication::InitInstance ()
       ReadSetupWizIni (cmdinfo);
       ParseSetupCommandLine (argc, argv, cmdinfo);
       FreeArguments (argc, argv);
+      CheckStartupConfig (cmdinfo.startupConfig);
       if (cmdinfo.optPrivate && cmdinfo.optShared)
 	{
 	  FATAL_MIKTEX_ERROR

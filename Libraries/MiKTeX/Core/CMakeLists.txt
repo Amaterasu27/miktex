@@ -17,6 +17,8 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+set(ADMIN_CONTROLS_USER_CONFIG TRUE)
+
 configure_file(
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core/Version.h.in
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core/Version.h
