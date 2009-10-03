@@ -175,8 +175,7 @@ void TeXDocument::init()
 	connect(actionBalance_Delimiters, SIGNAL(triggered()), this, SLOT(balanceDelimiters()));
 
 	connect(textEdit->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
-	connect(textEdit->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
-	connect(textEdit->document(), SIGNAL(modificationChanged(bool)), this, SLOT(maybeEnableRevert(bool)));
+	connect(textEdit->document(), SIGNAL(modificationChanged(bool)), this, SLOT(maybeEnableSaveAndRevert(bool)));
 	connect(textEdit->document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(contentsChanged(int,int,int)));
 	connect(textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(showCursorPosition()));
 	connect(textEdit, SIGNAL(selectionChanged()), this, SLOT(showCursorPosition()));
@@ -772,8 +771,9 @@ void TeXDocument::revert()
 	}
 }
 
-void TeXDocument::maybeEnableRevert(bool modified)
+void TeXDocument::maybeEnableSaveAndRevert(bool modified)
 {
+	actionSave->setEnabled(modified || isUntitled);
 	actionRevert_to_Saved->setEnabled(modified && !isUntitled);
 }
 
@@ -906,6 +906,7 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 		setupFileWatcher();
 	}
 	textEdit->updateLineNumberAreaWidth(0);
+	maybeEnableSaveAndRevert(false);
 }
 
 void TeXDocument::reloadIfChangedOnDisk()
@@ -1636,7 +1637,7 @@ void TeXDocument::doFindAgain(bool fromDialog)
 			statusBar()->showMessage(tr("Not found"), kStatusMessageDuration);
 		}
 		else {
-			SearchResults::presentResults(results, this, singleFile);
+			SearchResults::presentResults(searchText, results, this, singleFile);
 			statusBar()->showMessage(tr("Found %n occurrence(s)", "", results.count()), kStatusMessageDuration);
 		}
 	}
@@ -1986,8 +1987,16 @@ void TeXDocument::typeset()
 
 	process = new QProcess(this);
 	updateTypesettingAction();
-	
-	process->setWorkingDirectory(fileInfo.canonicalPath());	// Note that fileInfo refers to the root file
+
+	QString workingDir = fileInfo.canonicalPath();	// Note that fileInfo refers to the root file
+#ifdef Q_WS_WIN
+	// files in the root directory of the current drive have to be handled specially
+	// because QFileInfo::canonicalPath() returns a path without trailing slash
+	// (i.e., a bare drive letter)
+	if (workingDir.length() == 2 && workingDir.endsWith(':'))
+		workingDir.append('/');
+#endif
+	process->setWorkingDirectory(workingDir);
 
 #ifdef Q_WS_WIN
 #define PATH_CASE_SENSITIVE	Qt::CaseInsensitive
@@ -2242,8 +2251,11 @@ void TeXDocument::goToPreview()
 
 void TeXDocument::syncClick(int lineNo)
 {
-	if (!isUntitled)
+	if (!isUntitled) {
+		// ensure that there is a pdf to receive our signal
+		goToPreview();
 		emit syncFromSource(curFile, lineNo);
+	}
 }
 
 void TeXDocument::contentsChanged(int position, int /*charsRemoved*/, int /*charsAdded*/)
