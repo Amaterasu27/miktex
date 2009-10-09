@@ -191,6 +191,8 @@ void TWApp::init()
 
 	TWUtils::readConfig();
 
+	scriptManager.addScriptsInDirectory(TWUtils::getLibraryPath("scripts"));
+
 #ifdef Q_WS_MAC
 	setQuitOnLastWindowClosed(false);
 
@@ -345,15 +347,16 @@ void TWApp::launchAction()
 	}
 #ifndef Q_WS_MAC	// on Mac OS, it's OK to end up with no document (we still have the app menu bar)
 					// but on W32 and X11 we need a window otherwise the user can't interact at all
-	if (TeXDocument::documentList().size() == 0 && PDFDocument::documentList().size() == 0)
+	if (TeXDocument::documentList().size() == 0 && PDFDocument::documentList().size() == 0) {
 		newFile();
-	if (TeXDocument::documentList().size() == 0) {
-		// something went wrong, give up!
-		(void)QMessageBox::critical(NULL, tr("Unable to create window"),
-				tr("Something is badly wrong; %1 was unable to create a document window. "
-				   "The application will now quit.").arg(TEXWORKS_NAME),
-				QMessageBox::Close, QMessageBox::Close);
-		quit();
+		if (TeXDocument::documentList().size() == 0) {
+			// something went wrong, give up!
+			(void)QMessageBox::critical(NULL, tr("Unable to create window"),
+					tr("Something is badly wrong; %1 was unable to create a document window. "
+					   "The application will now quit.").arg(TEXWORKS_NAME),
+					QMessageBox::Close, QMessageBox::Close);
+			quit();
+		}
 	}
 #endif
 }
@@ -832,6 +835,22 @@ void TWApp::openHelpFile(const QString& helpDirName)
 		openUrl(QUrl::fromLocalFile(helpDir.absoluteFilePath("index.html")));
 	else
 		QMessageBox::warning(NULL, TEXWORKS_NAME, tr("Unable to find help file."));
+}
+
+void TWApp::updateScriptsList()
+{
+	scriptManager.clear();
+	scriptManager.addScriptsInDirectory(TWUtils::getLibraryPath("scripts"));
+	foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+		TWScriptable *scriptable = qobject_cast<TWScriptable*>(widget);
+		if (scriptable)
+			scriptable->updateScriptsMenu();
+	}
+}
+
+void TWApp::showScriptsFolder()
+{
+	QDesktopServices::openUrl(QUrl::fromLocalFile(TWUtils::getLibraryPath("scripts")));
 }
 
 #ifdef Q_WS_WIN	// support for the Windows single-instance code
