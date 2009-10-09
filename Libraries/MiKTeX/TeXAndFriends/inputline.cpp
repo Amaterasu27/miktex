@@ -1,6 +1,6 @@
 /* inputline.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -218,6 +218,25 @@ WebAppInputLine::UnmangleNameOfFile (/*[in]*/ const wchar_t * lpszFrom)
 
 /* _________________________________________________________________________
 
+   IsOutputFile   
+   _________________________________________________________________________ */
+
+static
+bool
+IsOutputFile (/*[in]*/ const PathName & path)
+{
+  PathName path_ (path);
+  if (path_.HasExtension(".gz"))
+  {
+    path_.SetExtension (0);
+  }
+  return (path_.HasExtension(".dvi")
+	  || path_.HasExtension(".pdf")
+	  || path_.HasExtension(".synctex"));
+}
+
+/* _________________________________________________________________________
+
    WebAppInputLine::OpenOutputFile
    _________________________________________________________________________ */
 
@@ -240,9 +259,7 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
   else
     {
       PathName unmangled = UnmangleNameOfFile(lpszPath);
-      bool isAuxFile =
-	! (unmangled.HasExtension(".dvi") // <fixme/>
-	   || unmangled.HasExtension(".pdf"));
+      bool isAuxFile = ! IsOutputFile(unmangled);
       PathName path;
       if (isAuxFile && ! auxDirectory.Empty())
 	{

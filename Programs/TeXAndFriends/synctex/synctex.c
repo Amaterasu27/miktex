@@ -391,6 +391,13 @@ static void *synctex_dot_open(void)
 		char *tmp = gettexstring(jobname);
 		/*  jobname was set by the \jobname command on the *TeX side  */
 #if defined(MIKTEX)
+		MiKTeX::Core::PathName path = THEAPP.GetOutputDirectory();
+		if (! path.Empty())
+		  {
+		    path += tmp;
+		    tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
+		    strcpy (tmp, path.Get());
+		  }
 		/* C++: typecast needed */
 		char * the_busy_name = (char*)xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + strlen(synctex_suffix_busy) + 1);
 #else
@@ -564,6 +571,13 @@ void synctexterminate(boolean log_opened)
 #endif
 	tmp = gettexstring(jobname);
 #if defined(MIKTEX)
+	MiKTeX::Core::PathName path = THEAPP.GetOutputDirectory();
+	if (! path.Empty())
+	  {
+	    path += tmp;
+	    tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
+	    strcpy (tmp, path.Get());
+	  }
 	/* C++: typecast needed */
 	the_real_syncname = (char*)xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
 #else
