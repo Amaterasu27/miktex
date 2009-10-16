@@ -51,6 +51,7 @@
 #include <QSignalMapper>
 #include <QDockWidget>
 #include <QTableView>
+#include <QHeaderView>
 #include <QStandardItemModel>
 #include <QAbstractButton>
 #include <QPushButton>
@@ -187,7 +188,7 @@ void TeXDocument::init()
 
 	connect(actionTypeset, SIGNAL(triggered()), this, SLOT(typeset()));
 
-	menuRecent = new QMenu(tr("Open Recent"));
+	menuRecent = new QMenu(tr("Open Recent"), this);
 	updateRecentFileActions();
 	menuFile->insertMenu(actionOpen_Recent, menuRecent);
 	menuFile->removeAction(actionOpen_Recent);
@@ -1448,7 +1449,7 @@ void TeXDocument::balanceDelimiters()
 	const QString text = textEdit->toPlainText();
 	QTextCursor cursor = textEdit->textCursor();
 	int openPos = TWUtils::findOpeningDelim(text, cursor.selectionStart());
-	if (openPos >= 0) {
+	if (openPos >= 0 && openPos < text.length() - 1) {
 		do {
 			int closePos = TWUtils::balanceDelim(text, openPos + 1, TWUtils::closerMatching(text[openPos]), 1);
 			if (closePos < 0)
