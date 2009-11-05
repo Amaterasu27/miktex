@@ -582,9 +582,15 @@ cleanup (void)
 }
 
 static void
+#if defined(MIKTEX)
+read_config_file (FILE * fp)
+#else
 read_config_file (const char *config)
+#endif
 {
   char *start, *end, *option;
+#if defined(MIKTEX)
+#else
   FILE *fp;
 
   fp = DPXFOPEN(config, DPX_RES_TYPE_TEXT);
@@ -592,6 +598,7 @@ read_config_file (const char *config)
     WARN("Could not open config file \"%s\".", config);
     return;
   }
+#endif
   while ((start = mfgets (work_buffer, WORK_BUFFER_SIZE, fp)) != NULL) {
     char *argv[2];
     int   argc;
@@ -624,9 +631,56 @@ read_config_file (const char *config)
       RELEASE (argv[--argc]);
     }
   }
+#if defined(MIKTEX)
+#else
   if (fp)
     MFCLOSE(fp);
+#endif
 }
+
+#if defined(MIKTEX)
+static
+void
+ReadAllConfigFiles (/*[in]*/ const char * lpszConfigFileName)
+{
+  /* read all configuration files in reverse order */
+  unsigned root;
+  int read = 0;
+  for (root = miktex_get_number_of_texmf_roots(); root > 0; -- root)
+  {
+    char szRoot[_MAX_PATH];
+    char szSearchPath[_MAX_PATH + 100];
+    char szConfigFile[_MAX_PATH];
+    size_t n;
+    miktex_get_root_directory (root - 1, szRoot);
+    n = strlen(szRoot);
+    if (n > 0 && szRoot[n - 1] == '/' || szRoot[n - 1] == '\\')
+    {
+      szRoot[n - 1] = 0;
+    }
+    n = _MAX_PATH + 100;
+    miktex_replace_string (szSearchPath,
+      &n,
+      "%R\\dvipdfm//",
+      "%R",
+      szRoot);
+    if (miktex_find_file(lpszConfigFileName, szSearchPath, szConfigFile) != 0)
+    {
+      FILE * pFile = MFOPEN(szConfigFile, FOPEN_RBIN_MODE);
+      if (pFile != 0)
+      {
+	read_config_file (pFile);
+	read += 1;
+	MFCLOSE (pFile);
+      }
+    }
+  }
+  if (read == 0)
+  {
+    WARN ("Could not open config file \"%s\".", lpszConfigFileName);
+  }
+}
+#endif
 
 static void
 system_default (void)
@@ -845,7 +899,11 @@ main (int argc, char *argv[])
 
   pdf_init_fontmaps(); /* This must come before parsing options... */
 
+#if defined(MIKTEX)
+  ReadAllConfigFiles (DPX_CONFIG_FILE);
+#else
   read_config_file(DPX_CONFIG_FILE);
+#endif
 
   do_args (argc, argv);
 
