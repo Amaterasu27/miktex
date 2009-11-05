@@ -1963,7 +1963,10 @@ ULogClose (/*[in]*/ bool finalize)
       if (finalize)
 	{
 	  ULogAddFile (GetLogFileName());
-	  RegisterUninstaller ();
+	  if (! theApp.portable)
+	  {
+	    RegisterUninstaller ();
+	  }
 	}
     }
   catch (const exception &)

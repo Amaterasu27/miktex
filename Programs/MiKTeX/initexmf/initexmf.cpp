@@ -3689,7 +3689,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 		}
 	      else
 		{
-		  if (! pSession->IsCommonRootDirectory(r))
+		  if (! pSession->IsCommonRootDirectory(r) || pSession->IsMiKTeXPortable())
 		    {
 		      UpdateFilenameDatabase (r);
 		    }
