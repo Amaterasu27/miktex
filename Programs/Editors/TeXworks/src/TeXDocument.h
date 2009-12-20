@@ -103,6 +103,7 @@ public:
 	Q_PROPERTY(int selectionStart READ selectionStart STORED false);
 	Q_PROPERTY(int selectionLength READ selectionLength STORED false);
 	Q_PROPERTY(QString consoleOutput READ consoleText STORED false);
+	Q_PROPERTY(QString text READ text STORED false);
 	
 signals:
 	void syncFromSource(const QString&, int);
@@ -159,11 +160,12 @@ public slots:
 	void placeOnLeft();
 	void placeOnRight();
 	void removeAuxFiles();
-	void setLanguage(const QString& lang);
+	void setSpellcheckLanguage(const QString& lang);
 	void selectRange(int start, int length = 0);
 	void insertText(const QString& text);
 	
 private slots:
+	void setLangInternal(const QString& lang);
 	void maybeEnableSaveAndRevert(bool modified);
 	void clipboardChanged();
 	void doReplace(ReplaceDialog::DialogCode mode);
@@ -226,6 +228,7 @@ private:
 	int selectionStart() { return textCursor().selectionStart(); }
 	int selectionLength() { return textCursor().selectionEnd() - textCursor().selectionStart(); }
 	QString consoleText() { return textEdit_console->toPlainText(); }
+	QString text() { return textEdit->toPlainText(); }
 	
 	TeXHighlighter *highlighter;
 	PDFDocument *pdfDoc;
