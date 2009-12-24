@@ -167,6 +167,9 @@ public slots:
 	
 	// for script access to arbitrary commands
 	QVariant system(const QString& cmdline, bool waitForResult = true);
+
+	// launch file from the desktop with default app
+	QVariant launchFile(const QString& fileName, bool waitForResult = true);
 	
 #if defined(MIKTEX)
 	void aboutMiKTeX();

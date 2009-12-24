@@ -492,12 +492,12 @@ void TeXDocument::open()
 		options = QFileDialog::DontUseSheet;
 #endif
 	QSETTINGS_OBJECT(settings);
-	QString lastOpenDir = settings.value("openDialogDir").toString(); 
-#if defined(MIKTEX_WINDOWS)
+	QString lastOpenDir = settings.value("openDialogDir").toString();
 	if (lastOpenDir.isEmpty())
-	{
-	  lastOpenDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
-	}
+#if defined(MIKTEX_WINDOWS)
+	    lastOpenDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
+#else
+		lastOpenDir = QDir::homePath();
 #endif
 	QStringList files = QFileDialog::getOpenFileNames(this, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"), NULL, options);
 	foreach (QString fileName, files) {
@@ -707,31 +707,25 @@ bool TeXDocument::saveAs()
 	QFileDialog::Options	options = 0;
 #endif
 	QString selectedFilter;
+
+	// for untitled docs, default to the last dir used, or $HOME if no saved value
+	QSETTINGS_OBJECT(settings);
+	QString lastSaveDir = settings.value("saveDialogDir").toString();
+	if (lastSaveDir.isEmpty())
 #if defined(MIKTEX_WINDOWS)
-	MiKTeX::Core::PathName absFileName = curFile.toLocal8Bit().data();
-	if (! MiKTeX::Core::Utils::IsAbsolutePath(absFileName.Get()))
-	{
-	  QSETTINGS_OBJECT(settings);
-	  absFileName = settings.value("openDialogDir").toString().toLocal8Bit().data();
-	  if (absFileName.GetLength() == 0)
-	  {
-	    absFileName = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
-	  }
-	  absFileName += curFile.toLocal8Bit().data();
-	}
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), absFileName.Get(),
-													TWUtils::filterList()->join(";;"),
-													&selectedFilter, options);
+	    lastSaveDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
 #else
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), curFile,
+		lastSaveDir = QDir::homePath();
+#endif
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+													isUntitled ? lastSaveDir + "/" + curFile : curFile,
 													TWUtils::filterList()->join(";;"),
 													&selectedFilter, options);
-#endif
 	if (fileName.isEmpty())
 		return false;
 
 	// add extension from the selected filter, if unique and not already present
-	QRegExp re("\\(\\*(\\.[^ ]+)\\)");
+	QRegExp re("\\(\\*(\\.[^ *]+)\\)");
 	if (re.indexIn(selectedFilter) >= 0) {
 		QString ext = re.cap(1);
 		if (!fileName.endsWith(ext, Qt::CaseInsensitive) && !fileName.endsWith("."))
@@ -743,6 +737,10 @@ bool TeXDocument::saveAs()
 		// now (the correct connection will be reestablished on next typeset).
 		detachPdf();
 	}
+
+	QFileInfo info(fileName);
+	settings.setValue("saveDialogDir", info.canonicalPath());
+	
 	return saveFile(fileName);
 }
 
@@ -863,9 +861,11 @@ QString TeXDocument::readFile(const QString &fileName, QTextCodec **codecUsed)
 	// returns a null (not just empty) QString on failure
 {
 	QFile file(fileName);
-	if (!file.open(QFile::ReadOnly | QFile::Text)) {
+	// Not using QFile::Text because this prevents us reading "classic" Mac files
+	// with CR-only line endings. See issue #242.
+	if (!file.open(QFile::ReadOnly)) {
 		QMessageBox::warning(this, tr(TEXWORKS_NAME),
-							 tr("Cannot read file \"%1\":\n%2.")
+							 tr("Cannot read file \"%1\":\n%2")
 							 .arg(fileName)
 							 .arg(file.errorString()));
 		return QString();
@@ -939,22 +939,86 @@ void TeXDocument::reloadIfChangedOnDisk()
 {
 	if (isUntitled || !lastModified.isValid())
 		return;
+
 	QDateTime fileModified = QFileInfo(curFile).lastModified();
-	if (fileModified.isValid() && fileModified != lastModified) {
-		clearFileWatcher(); // stop watching until next save or reload
-		if (textEdit->document()->isModified()) {
-			if (QMessageBox::warning(this, tr("File changed on disk"),
-									 tr("%1 has been modified by another program.\n\n"
-										"Do you want to discard your current changes, and reload the file from disk?")
-									 .arg(curFile),
-									 QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel) {
-				lastModified = QDateTime();	// invalidate the timestamp
-				return;
-			}
+	if (!fileModified.isValid() || fileModified == lastModified)
+		return;
+
+	clearFileWatcher(); // stop watching until next save or reload
+	if (textEdit->document()->isModified()) {
+		if (QMessageBox::warning(this, tr("File changed on disk"),
+								 tr("%1 has been modified by another program.\n\n"
+									"Do you want to discard your current changes, and reload the file from disk?")
+								 .arg(curFile),
+								 QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel) {
+			lastModified = QDateTime();	// invalidate the timestamp
+			return;
 		}
-		// user chose to discard, or there were no local changes
-		loadFile(curFile, false, true);
 	}
+	// user chose to discard, or there were no local changes
+	// save the current cursor position
+	QTextCursor cur;
+	int oldSelStart, oldSelEnd, oldBlockStart, oldBlockEnd;
+	int xPos = 0, yPos = 0;
+	QString oldSel;
+
+	// Store the selection (note that oldSelStart == oldSelEnd if there is
+	// no selection)
+	cur = textEdit->textCursor();
+	oldSelStart = cur.selectionStart();
+	oldSelEnd = cur.selectionEnd();
+	oldSel = cur.selectedText();
+
+	// Get the block number and the offset in the block of the start of the
+	// selection
+	cur.setPosition(oldSelStart);
+	oldBlockStart = cur.blockNumber();
+	oldSelStart -= cur.block().position();
+
+	// Get the block number and the offset in the block of the end of the
+	// selection
+	cur.setPosition(oldSelEnd);
+	oldBlockEnd = cur.blockNumber();
+	oldSelEnd -= cur.block().position();
+
+	// Get the values of the scroll bars so we can later restore the view
+	if (textEdit->horizontalScrollBar())
+		xPos = textEdit->horizontalScrollBar()->value();
+	if (textEdit->verticalScrollBar())
+		yPos = textEdit->verticalScrollBar()->value();
+
+	// Reload the file from the disk
+	loadFile(curFile, false, true);
+
+	// restore the cursor position
+	cur = textEdit->textCursor();
+
+	// move the cursor to the beginning (this should actually be the case,
+	// but one never knows)
+	cur.setPosition(0);
+
+	// move the cursor to the starting block
+	cur.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor, oldBlockStart);
+	cur.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+	cur.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, oldSelStart);
+	
+	// move the cursor to the end block
+	cur.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor, oldBlockEnd - oldBlockStart);
+	cur.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+	cur.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, oldSelEnd);
+	
+	// if the current selection doesn't match the stored selection, collapse
+	// to the beginning position
+	if (cur.selectedText() != oldSel)
+		cur.setPosition(cur.selectionStart());
+
+	textEdit->setTextCursor(cur);
+
+	// restore the view
+	if (textEdit->horizontalScrollBar())
+		textEdit->horizontalScrollBar()->setValue(xPos);
+	if (textEdit->verticalScrollBar())
+		textEdit->verticalScrollBar()->setValue(yPos);
 }
 
 // get expected name of the Preview file, and return whether it exists
@@ -1060,7 +1124,7 @@ bool TeXDocument::saveFile(const QString &fileName)
 	QFile file(fileName);
 	if (!file.open(QFile::WriteOnly | QFile::Text)) {
 		QMessageBox::warning(this, tr(TEXWORKS_NAME),
-							 tr("Cannot write file \"%1\":\n%2.")
+							 tr("Cannot write file \"%1\":\n%2")
 							 .arg(fileName)
 							 .arg(file.errorString()));
 		setupFileWatcher();
@@ -2170,6 +2234,7 @@ void TeXDocument::updateTypesettingAction()
 	if (process == NULL) {
 		disconnect(actionTypeset, SIGNAL(triggered()), this, SLOT(interrupt()));
 		actionTypeset->setIcon(QIcon(":/images/images/runtool.png"));
+		actionTypeset->setText(tr("Typeset"));
 		connect(actionTypeset, SIGNAL(triggered()), this, SLOT(typeset()));
 		if (pdfDoc != NULL)
 			pdfDoc->updateTypesettingAction(false);
@@ -2177,6 +2242,7 @@ void TeXDocument::updateTypesettingAction()
 	else {
 		disconnect(actionTypeset, SIGNAL(triggered()), this, SLOT(typeset()));
 		actionTypeset->setIcon(QIcon(":/images/tango/process-stop.png"));
+		actionTypeset->setText(tr("Abort typesetting"));
 		connect(actionTypeset, SIGNAL(triggered()), this, SLOT(interrupt()));
 		if (pdfDoc != NULL)
 			pdfDoc->updateTypesettingAction(true);
