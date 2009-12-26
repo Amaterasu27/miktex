@@ -68,12 +68,15 @@ foreach(f ${screenshots_png})
 endforeach(f)
 
 if(BUILDING_MIKTEX)
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/faq")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/manual")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/packaging")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/relnotes")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/roadmap")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/faq")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/packaging")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/relnotes")
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/roadmap")
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
@@ -335,6 +338,43 @@ if(BUILDING_MIKTEX)
 
   add_custom_command(
     OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/html/manual/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/manual
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/manual/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/html/manual/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/html/manual
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir html/manual/
+		--stringparam chunk.fast 1
+		htmlchunk.xsl
+		miktex.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${entities_ent}
+	${htmlchunk_xsl}
+	${manual_listings}
+	${manual_xml_files}
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  ) 
+
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
     COMMAND
   	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/manual
@@ -355,12 +395,12 @@ if(BUILDING_MIKTEX)
 		--path \"${xslt_path}\"
 		--stringparam base.dir www/manual/
 		--stringparam chunk.fast 1
-		htmlchunk.xsl
+		wwwchunk.xsl
 		miktex.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${entities_ent}
-	${htmlchunk_xsl}
+	${wwwchunk_xsl}
 	${manual_listings}
 	${manual_xml_files}
 	${miktexhelp_css}
@@ -371,17 +411,23 @@ if(BUILDING_MIKTEX)
   ) 
 
   install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/manual/
+    DESTINATION	${docdir}/manual
+    PATTERN	".svn" EXCLUDE
+  )
+
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/manual/
+    DESTINATION	${docdir}/www/manual
+    PATTERN	".svn" EXCLUDE
+  )
+
+  install(
     FILES
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
     DESTINATION
 	${docdir}
-  )
-
-  install(
-    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/manual/
-    DESTINATION	${docdir}/manual
-    PATTERN	".svn" EXCLUDE
   )
 endif(BUILDING_MIKTEX)
 
@@ -519,26 +565,26 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/packaging/index.html
     COMMAND
-  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/packaging
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/packaging
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
-		${CMAKE_CURRENT_BINARY_DIR}/www/packaging/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/packaging/images
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/Images
-		${CMAKE_CURRENT_BINARY_DIR}/www/packaging/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/packaging/images
     COMMAND
 	${CMAKE_COMMAND} -E copy
 		${miktexman_css}
-		${CMAKE_CURRENT_BINARY_DIR}/www/packaging
+		${CMAKE_CURRENT_BINARY_DIR}/html/packaging
     COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
-		--stringparam base.dir www/packaging/
-		--output ${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
+		--stringparam base.dir html/packaging/
+		--output ${CMAKE_CURRENT_BINARY_DIR}/html/packaging/index.html
 		html.xsl
 		packaging.xml
     DEPENDS
@@ -555,7 +601,7 @@ if(BUILDING_MIKTEX)
   )
 
   install(
-    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/packaging/
     DESTINATION	${docdir}/packaging/
     PATTERN	".svn" EXCLUDE
   )
@@ -565,6 +611,43 @@ endif(BUILDING_MIKTEX)
 ## release notes
 
 if(BUILDING_MIKTEX)
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/relnotes
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/html/relnotes
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir html/relnotes/
+		--output ${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/index.html
+		html.xsl
+		relnotes.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
+	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
+	${entities_ent}
+	${html_xsl}
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  )
+
   add_custom_command(
     OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
@@ -587,19 +670,25 @@ if(BUILDING_MIKTEX)
 		--path \"${xslt_path}\"
 		--stringparam base.dir www/relnotes/
 		--output ${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
-		html.xsl
+		www.xsl
 		relnotes.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
-	${html_xsl}
+	${www_xsl}
 	${miktexhelp_css}
 	${screenshots_png}
     WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
+  )
+
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/
+    DESTINATION	${docdir}/relnotes/
+    PATTERN	".svn" EXCLUDE
   )
 
   install(
@@ -695,6 +784,42 @@ if(BUILDING_MIKTEX)
 
   add_custom_command(
     OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/html/faq/index.html
+    COMMAND
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/faq
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/faq/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/Images
+		${CMAKE_CURRENT_BINARY_DIR}/html/faq/images
+    COMMAND
+	${CMAKE_COMMAND} -E copy
+		${miktexman_css}
+		${CMAKE_CURRENT_BINARY_DIR}/html/faq
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--path \"${xslt_path}\"
+		--stringparam base.dir html/faq/
+		--stringparam chunk.fast 1
+		htmlchunk.xsl
+		faq.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${entities_ent}
+	${htmlchunk_xsl}
+	faq.xml
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  ) 
+
+  add_custom_command(
+    OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
     COMMAND
   	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/faq
@@ -715,12 +840,35 @@ if(BUILDING_MIKTEX)
 		--path \"${xslt_path}\"
 		--stringparam base.dir www/faq/
 		--stringparam chunk.fast 1
-		htmlchunk.xsl
+		wwwchunk.xsl
 		faq.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${entities_ent}
-	${htmlchunk_xsl}
+	${wwwchunk_xsl}
+	faq.xml
+	${miktexhelp_css}
+	${screenshots_png}
+    WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+  ) 
+
+  add_custom_command(
+    OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/html/faq/faq.html
+    COMMAND
+	${PERL_EXE} ${runxsltproc_perl}
+		--output ${CMAKE_CURRENT_BINARY_DIR}/html/faq/faq.html
+		--path \"${xslt_path}\"
+		--stringparam base.dir html/faq/
+		html.xsl
+		faq.xml
+    DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/html/faq/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/version.ent
+	${entities_ent}
+	${html_xsl}
 	faq.xml
 	${miktexhelp_css}
 	${screenshots_png}
@@ -737,13 +885,13 @@ if(BUILDING_MIKTEX)
 		--output ${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
 		--path \"${xslt_path}\"
 		--stringparam base.dir www/faq/
-		html.xsl
+		www.xsl
 		faq.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
 	${entities_ent}
-	${htmlchunk_xsl}
+	${www_xsl}
 	faq.xml
 	${miktexhelp_css}
 	${screenshots_png}
@@ -753,8 +901,14 @@ if(BUILDING_MIKTEX)
   ) 
 
   install(
-    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/faq/
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/faq/
     DESTINATION	${docdir}/faq/
+    PATTERN	".svn" EXCLUDE
+  )
+
+  install(
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/faq/
+    DESTINATION	${docdir}/www/faq/
     PATTERN	".svn" EXCLUDE
   )
 endif(BUILDING_MIKTEX)
@@ -765,25 +919,25 @@ endif(BUILDING_MIKTEX)
 if(BUILDING_MIKTEX)
   add_custom_command(
     OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
     COMMAND
-  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/www/roadmap
+  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/roadmap
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
-		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/images
     COMMAND
 	${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_CURRENT_SOURCE_DIR}/Images
-		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/images
+		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/images
     COMMAND
 	${CMAKE_COMMAND} -E copy
 		${miktexman_css}
-		${CMAKE_CURRENT_BINARY_DIR}/www/roadmap
+		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap
     COMMAND
 	${PERL_EXE} ${runxsltproc_perl}
 		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
+		--output ${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
 		html.xsl
 		roadmap.xml
     DEPENDS
@@ -796,7 +950,7 @@ if(BUILDING_MIKTEX)
   ) 
 
   install(
-    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/
+    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/
     DESTINATION	${docdir}/roadmap
     PATTERN	".svn" EXCLUDE
   )
@@ -862,12 +1016,16 @@ if(BUILDING_MIKTEX)
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
-	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/faq/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/faq/faq.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/manual/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/packaging/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/index.html
+	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
+	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html
-	${CMAKE_CURRENT_BINARY_DIR}/www/packaging/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/relnotes/index.html
-	${CMAKE_CURRENT_BINARY_DIR}/www/roadmap/index.html
   )
 endif(BUILDING_MIKTEX)
 
