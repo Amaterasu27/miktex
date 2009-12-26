@@ -13,6 +13,11 @@ set(guid_MiKTeX_Package_Manager_TLB_208 "FF61470A-DC24-4526-9E7C-8B69AE558C7E")
 set(guid_MiKTeX_Session_208 "5C27CDF6-3956-4A44-A3BE-B37A5730549D")
 set(guid_MiKTeX_Session_TLB_208 "4376D3DF-049D-4471-9DF4-8D44819D3481")
 
+set(guid_MiKTeX_Package_Manager_209 "25E664C9-989C-4EDA-A9A4-C9E45FB447D3")
+set(guid_MiKTeX_Package_Manager_TLB_209 "676719BB-7737-43AA-9B7C-49C83644AE87")
+set(guid_MiKTeX_Session_209 "A2662D75-3286-4A8D-8050-C0FD76393A31")
+set(guid_MiKTeX_Session_TLB_209 "392BFC08-8CD2-487F-87EE-B2DA213BBD20")
+
 set(guid_MiKTeX_Package_Manager_CURVER ${guid_MiKTeX_Package_Manager_${MIKTEX_SERIES_INT}} )
 set(guid_MiKTeX_Package_Manager_TLB_CURVER ${guid_MiKTeX_Package_Manager_TLB_${MIKTEX_SERIES_INT}} )
 set(guid_MiKTeX_Session_CURVER ${guid_MiKTeX_Session_${MIKTEX_SERIES_INT}})
