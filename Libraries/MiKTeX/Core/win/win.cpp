@@ -326,9 +326,13 @@ SessionImpl::ReadRegistry (/*[in]*/ bool common)
       ret.commonConfigRoot = str;
     }
   }
-  else
+  if (! common || AdminControlsUserConfig())
   {
-    if (winRegistry::TryGetRegistryValue(TriState::False,
+    TriState shared =
+      (AdminControlsUserConfig()
+       ? TriState::Undetermined 
+       : TriState::False);
+    if (winRegistry::TryGetRegistryValue(shared,
       MIKTEX_REGKEY_CORE,
       MIKTEX_REGVAL_USER_ROOTS,
       str,
@@ -336,7 +340,7 @@ SessionImpl::ReadRegistry (/*[in]*/ bool common)
     {
       ret.userRoots = str;
     }
-    if (winRegistry::TryGetRegistryValue(TriState::False,
+    if (winRegistry::TryGetRegistryValue(shared,
       MIKTEX_REGKEY_CORE,
       MIKTEX_REGVAL_USER_INSTALL,
       str,
@@ -344,7 +348,7 @@ SessionImpl::ReadRegistry (/*[in]*/ bool common)
     {
       ret.userInstallRoot = str;
     }
-    if (winRegistry::TryGetRegistryValue(TriState::False,
+    if (winRegistry::TryGetRegistryValue(shared,
       MIKTEX_REGKEY_CORE,
       MIKTEX_REGVAL_USER_DATA,
       str,
@@ -352,7 +356,7 @@ SessionImpl::ReadRegistry (/*[in]*/ bool common)
     {
       ret.userDataRoot = str;
     }
-    if (winRegistry::TryGetRegistryValue(TriState::False,
+    if (winRegistry::TryGetRegistryValue(shared,
       MIKTEX_REGKEY_CORE,
       MIKTEX_REGVAL_USER_CONFIG,
       str,
@@ -395,6 +399,23 @@ SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
     winRegistry::TryDeleteRegistryValue (TriState::True,
       MIKTEX_REGKEY_CORE,
       MIKTEX_REGVAL_COMMON_CONFIG);
+#if ADMIN_CONTROLS_USER_CONFIG
+    if (AdminControlsUserConfig())
+      {
+	winRegistry::TryDeleteRegistryValue (TriState::True,
+					     MIKTEX_REGKEY_CORE,
+					     MIKTEX_REGVAL_USER_ROOTS);
+	winRegistry::TryDeleteRegistryValue (TriState::True,
+					     MIKTEX_REGKEY_CORE,
+					     MIKTEX_REGVAL_USER_INSTALL);
+	winRegistry::TryDeleteRegistryValue (TriState::True,
+					     MIKTEX_REGKEY_CORE,
+					     MIKTEX_REGVAL_USER_DATA);
+	winRegistry::TryDeleteRegistryValue (TriState::True,
+					     MIKTEX_REGKEY_CORE,
+					     MIKTEX_REGVAL_USER_CONFIG);
+      }
+#endif
   }
   else
   {
@@ -447,12 +468,16 @@ SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
 	startupConfig.commonConfigRoot.Get());
     }
   }
-  else
+  if (! common || AdminControlsUserConfig())
   {
+    TriState shared =
+      (AdminControlsUserConfig()
+       ? TriState::Undetermined 
+       : TriState::False);
     if (! startupConfig.userRoots.empty()
       && startupConfig.userRoots != startupConfig.userInstallRoot)
     {
-      winRegistry::SetRegistryValue (TriState::False,
+      winRegistry::SetRegistryValue (shared,
 	MIKTEX_REGKEY_CORE,
 	MIKTEX_REGVAL_USER_ROOTS,
 	startupConfig.userRoots.c_str());
@@ -460,7 +485,7 @@ SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
     if (! startupConfig.userInstallRoot.Empty()
       && startupConfig.userInstallRoot != defaultConfig.userInstallRoot)
     {
-      winRegistry::SetRegistryValue (TriState::False,
+      winRegistry::SetRegistryValue (shared,
 	MIKTEX_REGKEY_CORE,
 	MIKTEX_REGVAL_USER_INSTALL,
 	startupConfig.userInstallRoot.Get());
@@ -468,7 +493,7 @@ SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
     if (! startupConfig.userDataRoot.Empty()
       && startupConfig.userDataRoot != defaultConfig.userDataRoot)
     {
-      winRegistry::SetRegistryValue (TriState::False,
+      winRegistry::SetRegistryValue (shared,
 	MIKTEX_REGKEY_CORE,
 	MIKTEX_REGVAL_USER_DATA,
 	startupConfig.userDataRoot.Get());
@@ -476,7 +501,7 @@ SessionImpl::WriteRegistry (/*[in]*/ bool		    common,
     if (! startupConfig.userConfigRoot.Empty()
       && startupConfig.userConfigRoot != defaultConfig.userConfigRoot)
     {
-      winRegistry::SetRegistryValue (TriState::False,
+      winRegistry::SetRegistryValue (shared,
 	MIKTEX_REGKEY_CORE,
 	MIKTEX_REGVAL_USER_CONFIG,
 	startupConfig.userConfigRoot.Get());

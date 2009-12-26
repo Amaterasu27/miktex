@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include "SetupWizard.h"
-
 #if ENABLE_ADDTEXMF
 #include "AddTEXMFPage.h"
 #include "EditTEXMFPage.h"

@@ -1024,11 +1024,11 @@ FileCopyPage::ConfigureMiKTeX ()
 	    "[" MIKTEX_REGKEY_CORE "]" MIKTEX_REGVAL_NO_REGISTRY "=1");
 	}
       }
-      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.commonRoots.empty())
+      if (! theApp.startupConfig.commonRoots.empty())
       {
 	cmdLine.AppendOption ("--common-roots=", theApp.startupConfig.commonRoots);
       }
-      if (! theApp.noAddTEXMFDirs && ! theApp.startupConfig.userRoots.empty())
+      if (! theApp.startupConfig.userRoots.empty())
       {
 	cmdLine.AppendOption ("--user-roots=", theApp.startupConfig.userRoots);
       }

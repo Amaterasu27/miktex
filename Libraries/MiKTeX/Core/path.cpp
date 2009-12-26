@@ -157,6 +157,17 @@ PathName::Compare (/*[in]*/ const char *	lpszPath1,
       ++ lpszPath2;
     }
 
+  if (cmp != 0)
+  {
+    MIKTEX_ASSERT (! (*lpszPath1 == 0 && *lpszPath2 == 0));
+    if (
+      *lpszPath1 == 0 && IsDirectoryDelimiter(*lpszPath2) && *(lpszPath2 + 1) == 0
+      || *lpszPath2 == 0 && IsDirectoryDelimiter(*lpszPath1) && *(lpszPath1 + 1) == 0)
+    {
+      return (0);
+    }
+  }
+
   if (cmp < 0)
     {
       ret = -1;

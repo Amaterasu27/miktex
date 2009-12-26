@@ -30,6 +30,7 @@
 #include <QTextBlock>
 #include <QFileInfo>
 #include <QKeyEvent>
+#include <QShortcut>
 #if QT_VERSION >= 0x040400
 #include <QTextBoundaryFinder>
 #endif
@@ -422,12 +423,49 @@ SearchResults::SearchResults(QWidget* parent)
 {
 	setupUi(this);
 	connect(table, SIGNAL(itemSelectionChanged()), this, SLOT(showSelectedEntry()));
+	QShortcut *sc;
+	sc = new QShortcut(Qt::Key_Escape, table);
+	sc->setContext(Qt::WidgetShortcut);
+	connect(sc, SIGNAL(activated()), this, SLOT(goToSourceAndClose()));
+	sc = new QShortcut(Qt::Key_Return, table);
+	sc->setContext(Qt::WidgetShortcut);
+	connect(sc, SIGNAL(activated()), this, SLOT(goToSource()));
+}
+
+void SearchResults::goToSource()
+{
+	QList<QTableWidgetSelectionRange> ranges = table->selectedRanges();
+	if (ranges.count() == 0)
+		return;
+	int row = ranges.first().topRow();
+	QString fileName;
+	QTableWidgetItem* item = table->item(row, 0);
+	if (!item)
+		return;
+	fileName = item->toolTip();
+	
+	if (!fileName.isEmpty()) {
+		QWidget *theDoc = TeXDocument::openDocument(fileName);
+		if (theDoc) {
+			QTextEdit *editor = theDoc->findChild<QTextEdit*>("textEdit");
+			if (editor)
+				editor->setFocus();
+		}
+	}
+}
+
+void SearchResults::goToSourceAndClose()
+{
+	goToSource();
+	deleteLater();
 }
 
 #define MAXIMUM_CHARACTERS_BEFORE_SEARCH_RESULT 40
 #define MAXIMUM_CHARACTERS_AFTER_SEARCH_RESULT 80
 
-void SearchResults::presentResults(const QList<SearchResult>& results, QMainWindow* parent, bool singleFile)
+void SearchResults::presentResults(const QString& searchText,
+								   const QList<SearchResult>& results,
+								   QMainWindow* parent, bool singleFile)
 {
 	if (singleFile) {
 		// remove any existing results dock from this parent window
@@ -439,6 +477,7 @@ void SearchResults::presentResults(const QList<SearchResult>& results, QMainWind
 	}
 
 	SearchResults* resultsWindow = new SearchResults(parent);
+	resultsWindow->setWindowTitle(tr("Search Results - %1 (%2 found)").arg(searchText).arg(results.count()));
 
 	resultsWindow->table->setRowCount(results.count());
 	int i = 0;

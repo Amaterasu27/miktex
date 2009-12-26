@@ -151,12 +151,15 @@ class SearchResults	: public QDockWidget, private Ui::SearchResults
 	Q_OBJECT
 	
 public:
-	static void presentResults(const QList<SearchResult>& results, QMainWindow* parent, bool singleFile);
+	static void presentResults(const QString& searchText, const QList<SearchResult>& results,
+							   QMainWindow* parent, bool singleFile);
 	
 	SearchResults(QWidget* parent);
 	
 private slots:
 	void showSelectedEntry();
+	void goToSource();
+	void goToSourceAndClose();
 };
 
 #endif

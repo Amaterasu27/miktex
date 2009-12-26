@@ -214,6 +214,12 @@ PDFWidget::PDFWidget()
 	shortcutRight = new QShortcut(QKeySequence("Right"), this, SLOT(rightOrNext()));
 }
 
+PDFWidget::~PDFWidget()
+{
+	if (page)
+		delete page;
+}
+
 void PDFWidget::setDocument(Poppler::Document *doc)
 {
 	document = doc;
@@ -1138,7 +1144,7 @@ PDFDocument::init()
 	
 	connect(actionFind_Again, SIGNAL(triggered()), this, SLOT(doFindAgain()));
 
-	menuRecent = new QMenu(tr("Open Recent"));
+	menuRecent = new QMenu(tr("Open Recent"), this);
 	updateRecentFileActions();
 	menuFile->insertMenu(actionOpen_Recent, menuRecent);
 	menuFile->removeAction(actionOpen_Recent);
@@ -1184,9 +1190,11 @@ PDFDocument::init()
 	QSETTINGS_OBJECT(settings);
 	TWUtils::applyToolbarOptions(this, settings.value("toolBarIconSize", 2).toInt(), settings.value("toolBarShowText", false).toBool());
 
-	TWUtils::insertHelpMenuItems(menuHelp);
+	TWApp::instance()->updateWindowMenus();
 	
-	TWUtils::zoomToHalfScreen(this, true);
+	initScriptable(menuScripts, actionManage_Scripts, actionUpdate_Scripts, actionShow_Scripts_Folder);
+	
+	TWUtils::insertHelpMenuItems(menuHelp);
 	TWUtils::installCustomShortcuts(this);
 
 #if defined(MIKTEX)
@@ -1210,6 +1218,8 @@ PDFDocument::init()
 	menuFile->insertAction (actionClose, actionPrintPDF);
 	menuFile->insertSeparator (actionClose);
 #endif
+
+	TWUtils::zoomToHalfScreen(this, true);
 }
 
 void PDFDocument::changeEvent(QEvent *event)
@@ -1608,12 +1618,14 @@ void PDFDocument::updateTypesettingAction(bool processRunning)
 	if (processRunning) {
 		disconnect(actionTypeset, SIGNAL(triggered()), this, SLOT(retypeset()));
 		actionTypeset->setIcon(QIcon(":/images/tango/process-stop.png"));
+		actionTypeset->setText(tr("Abort typesetting"));
 		connect(actionTypeset, SIGNAL(triggered()), this, SLOT(interrupt()));
 		enableTypesetAction(true);
 	}
 	else {
 		disconnect(actionTypeset, SIGNAL(triggered()), this, SLOT(interrupt()));
 		actionTypeset->setIcon(QIcon(":/images/images/runtool.png"));
+		actionTypeset->setText(tr("Typeset"));
 		connect(actionTypeset, SIGNAL(triggered()), this, SLOT(retypeset()));
 	}
 }
@@ -1646,7 +1658,7 @@ void PDFDocument::dropEvent(QDropEvent *event)
 		const QList<QUrl> urls = event->mimeData()->urls();
 		foreach (const QUrl& url, urls)
 			if (url.scheme() == "file")
-				TWApp::instance()->open(url.toLocalFile());
+				TWApp::instance()->openFile(url.toLocalFile());
 		event->acceptProposedAction();
 	}
 }

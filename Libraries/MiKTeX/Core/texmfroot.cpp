@@ -92,6 +92,13 @@ SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root,
       if (root == rootDirectories[idx].get_Path())
 	{
 	  // already registered
+	  if (common && ! rootDirectories[idx].IsCommon())
+	  {
+	    trace_config->WriteFormattedLine ("core",
+	      T_("now a common TEXMF root: %s"),
+				    root.Get());
+	    rootDirectories[idx].set_Common (common);
+	  }
 	  return (idx);
 	}
     }

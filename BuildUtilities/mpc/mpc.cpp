@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2009 Christian Schenk
 
    This file is part of MPC.
 
@@ -196,7 +196,7 @@ public:
 	      /*[in]*/ const MpcPackageInfo & pi2)
     const
   {
-    return (pi1.timePackaged > pi2.timePackaged);
+    return (pi1.timePackaged >= pi2.timePackaged);
   }
 };
 

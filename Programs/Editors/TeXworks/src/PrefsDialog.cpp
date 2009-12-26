@@ -32,7 +32,8 @@
 #include <QMainWindow>
 #include <QToolBar>
 #include <QDesktopWidget>
-#include <QtAlgorithms>
+//#include <QtAlgorithms>
+#include <QMessageBox>
 
 PrefsDialog::PrefsDialog(QWidget *parent)
 	: QDialog(parent)
@@ -53,6 +54,7 @@ void PrefsDialog::init()
 	connect(pathRemove, SIGNAL(clicked()), this, SLOT(removePath()));
 
 	connect(toolList, SIGNAL(itemSelectionChanged()), this, SLOT(updateToolButtons()));
+	connect(toolList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(editTool(QListWidgetItem*)));
 	connect(toolUp, SIGNAL(clicked()), this, SLOT(moveToolUp()));
 	connect(toolDown, SIGNAL(clicked()), this, SLOT(moveToolDown()));
 	connect(toolAdd, SIGNAL(clicked()), this, SLOT(addTool()));
@@ -84,6 +86,10 @@ void PrefsDialog::changedTabPanel(int index)
 			break;
 		case 3: // Typesetting
 			binPathList->setFocus();
+			break;
+		case 4: // Script
+			if (page->focusWidget() != NULL)
+				page->focusWidget()->clearFocus();
 			break;
 	}
 }
@@ -220,17 +226,21 @@ void PrefsDialog::removeTool()
 		}
 }
 
-void PrefsDialog::editTool()
+void PrefsDialog::editTool(QListWidgetItem* item)
 {
-	if (toolList->currentRow() > -1)
-		if (toolList->currentItem()->isSelected()) {
-			Engine e = engineList[toolList->currentRow()];
-			if (ToolConfig::doToolConfig(this, e) == QDialog::Accepted) {
-				engineList[toolList->currentRow()] = e;
-				toolList->currentItem()->setText(e.name());
-				toolsChanged = true;
-			}
+	int row = -1;
+	if (item)
+		row = toolList->row(item);
+	else if (toolList->currentRow() > -1 && toolList->currentItem()->isSelected())
+		row = toolList->currentRow();
+	if (row > -1) {
+		Engine e = engineList[toolList->currentRow()];
+		if (ToolConfig::doToolConfig(this, e) == QDialog::Accepted) {
+			engineList[toolList->currentRow()] = e;
+			toolList->currentItem()->setText(e.name());
+			toolsChanged = true;
 		}
+	}
 }
 
 void PrefsDialog::refreshDefaultTool()
@@ -257,6 +267,7 @@ const int kDefault_ToolBarIcons = 2;
 const bool kDefault_ToolBarText = false;
 const int kDefault_SyntaxColoring = 0;
 const int kDefault_IndentMode = -1;
+const int kDefault_QuotesMode = -1;
 const bool kDefault_LineNumbers = false;
 const bool kDefault_WrapLines = true;
 const int kDefault_TabWidth = 32;
@@ -306,6 +317,7 @@ void PrefsDialog::restoreDefaults()
 			wrapLines->setChecked(kDefault_WrapLines);
 			syntaxColoring->setCurrentIndex(kDefault_SyntaxColoring);
 			autoIndent->setCurrentIndex(kDefault_IndentMode);
+			smartQuotes->setCurrentIndex(kDefault_QuotesMode);
 			encoding->setCurrentIndex(encoding->findText("UTF-8"));
 			highlightCurrentLine->setChecked(kDefault_HighlightCurrentLine);
 			break;
@@ -352,6 +364,12 @@ void PrefsDialog::restoreDefaults()
 			pathsChanged = true;
 			toolsChanged = true;
 			break;
+
+		case 4:
+			// Scripts
+			allowSystemCommands->setChecked(false);
+			scriptDebugger->setChecked(false);
+			break;
 	}
 }
 
@@ -394,6 +412,9 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	QStringList indentModes = CompletingEdit::autoIndentModes();
 	dlg.autoIndent->addItems(indentModes);
 	
+	QStringList quotesModes = CompletingEdit::smartQuotesModes();
+	dlg.smartQuotes->addItems(quotesModes);
+
 	dlg.language->addItems(*TWUtils::getDictionaryList());
 	
 	QSETTINGS_OBJECT(settings);
@@ -461,6 +482,9 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	dlg.autoIndent->setCurrentIndex(settings.contains("autoIndent")
 							? 1 + indentModes.indexOf(settings.value("autoIndent").toString())
 							: 1 + kDefault_IndentMode);
+	dlg.smartQuotes->setCurrentIndex(settings.contains("smartQuotes")
+							? 1 + quotesModes.indexOf(settings.value("smartQuotes").toString())
+							: 1 + kDefault_QuotesMode);
 	dlg.lineNumbers->setChecked(settings.value("lineNumbers", kDefault_LineNumbers).toBool());
 	dlg.wrapLines->setChecked(settings.value("wrapLines", kDefault_WrapLines).toBool());
 	dlg.tabWidth->setValue(settings.value("tabWidth", kDefault_TabWidth).toInt());
@@ -519,6 +543,13 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	dlg.initPathAndToolLists();
 	dlg.autoHideOutput->setChecked(settings.value("autoHideConsole", kDefault_HideConsole).toBool());
 
+	// Scripts
+	dlg.allowSystemCommands->setChecked(settings.value("allowSystemCommands", false).toBool());
+	dlg.scriptDebugger->setChecked(settings.value("scriptDebugger", false).toBool());
+#if QT_VERSION < 0x040500
+	dlg.scriptDebugger->setEnabled(false);
+#endif
+	
 	// Decide which tab to select initially
 	if (sCurrentTab == -1) {
 		if (parent && parent->inherits("TeXDocument"))
@@ -588,6 +619,7 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 		// Editor
 		settings.setValue("syntaxColoring", dlg.syntaxColoring->currentText());
 		settings.setValue("autoIndent", dlg.autoIndent->currentText());
+		settings.setValue("smartQuotes", dlg.smartQuotes->currentText());
 		settings.setValue("lineNumbers", dlg.lineNumbers->isChecked());
 		settings.setValue("wrapLines", dlg.wrapLines->isChecked());
 		settings.setValue("tabWidth", dlg.tabWidth->value());
@@ -649,6 +681,10 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 			TWApp::instance()->setEngineList(dlg.engineList);
 		TWApp::instance()->setDefaultEngine(dlg.defaultTool->currentText());
 		settings.setValue("autoHideConsole", dlg.autoHideOutput->isChecked());
+
+		// Scripts
+		settings.setValue("allowSystemCommands", dlg.allowSystemCommands->isChecked());
+		settings.setValue("scriptDebugger", dlg.scriptDebugger->isChecked());
 	}
 
 	return result;
@@ -661,7 +697,7 @@ ToolConfig::ToolConfig(QWidget *parent)
 {
 	init();
 }
-	
+
 void ToolConfig::init()
 {
 	setupUi(this);
@@ -671,6 +707,23 @@ void ToolConfig::init()
 	connect(argDown, SIGNAL(clicked()), this, SLOT(moveArgDown()));
 	connect(argAdd, SIGNAL(clicked()), this, SLOT(addArg()));
 	connect(argRemove, SIGNAL(clicked()), this, SLOT(removeArg()));
+	connect(btnBrowseForProgram, SIGNAL(clicked()), this, SLOT(browseForProgram()));
+}
+
+void ToolConfig::browseForProgram()
+{
+	QFileInfo info(program->text());
+	QString str = QFileDialog::getOpenFileName(this, tr("Select program file"),
+											   info.exists() ? info.canonicalFilePath() : QString());
+	if (!str.isNull()) {
+		info.setFile(str);
+		if (!info.isExecutable()) {
+			QMessageBox::warning(this, tr("Invalid program"),
+								 tr("The file '%1' is not executable!").arg(info.fileName()));
+			return;
+		}
+		program->setText(info.canonicalFilePath());
+	}
 }
 
 void ToolConfig::updateArgButtons()
@@ -713,6 +766,7 @@ void ToolConfig::addArg()
 	QListWidgetItem* item = arguments->item(arguments->count() - 1);
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	arguments->setCurrentItem(item);
+	arguments->editItem(item);
 }
 
 void ToolConfig::removeArg()

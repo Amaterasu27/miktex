@@ -55,10 +55,14 @@ int main(int argc, char *argv[])
 				(void)EnumThreadWindows(thread, &enumThreadWindowProc, 0);
 				// send each cmd-line arg as a WM_COPYDATA message to load a file
 				for (int i = 1; i < argc; ++i) {
+					QFileInfo fi(QString::fromLocal8Bit(argv[i]));
+					if (!fi.exists())
+						continue;
+					QByteArray ba = fi.absoluteFilePath().toLocal8Bit();
 					COPYDATASTRUCT cds;
 					cds.dwData = TW_OPEN_FILE_MSG;
-					cds.cbData = strlen(argv[i]);
-					cds.lpData = argv[i];
+					cds.cbData = ba.length();
+					cds.lpData = ba.data();
 					SendMessageA(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
 				}
 				break;
@@ -79,8 +83,12 @@ int main(int argc, char *argv[])
 		QDBusInterface	interface(TW_SERVICE_NAME, TW_APP_PATH, TW_INTERFACE_NAME);
 		if (interface.isValid()) {
 			interface.call("bringToFront");
-			for (int i = 1; i < argc; ++i)
-				interface.call("openFile", QString(argv[i]));
+			for (int i = 1; i < argc; ++i) {
+				QFileInfo fi(QString::fromLocal8Bit(argv[i]));
+				if (!fi.exists())
+					continue;
+				interface.call("openFile", fi.absoluteFilePath());
+			}
 		}
 		return 0;
 	}
@@ -95,7 +103,7 @@ int main(int argc, char *argv[])
 
 	// first argument is the executable name, so we skip that
 	for (int i = 1; i < argc; ++i)
-		app.open(QTextCodec::codecForLocale()->toUnicode(argv[i]));
+		app.openFile(QTextCodec::codecForLocale()->toUnicode(argv[i]));
 
 	QTimer::singleShot(1, &app, SLOT(launchAction()));
 

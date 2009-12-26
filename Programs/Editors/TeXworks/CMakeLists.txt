@@ -51,6 +51,8 @@ set(texworks_sources
   src/SvnRev.h
   src/TWApp.cpp
   src/TWApp.h
+  src/TWScriptable.cpp
+  src/TWScriptable.h
   src/TWUtils.cpp
   src/TWUtils.h
   src/TWVersion.h
@@ -115,6 +117,7 @@ set(texworks_moc_sources
   src/PDFDocument.h
   src/PrefsDialog.h
   src/TWApp.h
+  src/TWScriptable.h
   src/TWUtils.h
   src/TeXDocks.h
   src/TeXDocument.h

@@ -32,9 +32,7 @@
 #define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
 #define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
 
-#define ENABLE_ADDTEXMF 0
-#define SHOW_FOLDER_PAGE 0
-#define FEATURE_1874934 1
+#include "config.h"
 
 /* _________________________________________________________________________
 
@@ -198,8 +196,10 @@ public:
 public:
   PathName intermediateLogFile;
 
+#if ENABLE_ADDTEXMF
 public:
   vector<PathName> addTEXMFDirs;
+#endif
 
 public:
   PackageLevel packageLevel;
@@ -258,8 +258,10 @@ public:
 public:
   SetupTask setupTask;
 
+#if ENABLE_ADDTEXMF
 public:
   bool noAddTEXMFDirs;
+#endif
 
 public:
   bool noRegistry;
@@ -308,9 +310,11 @@ extern SetupWizardApplication theApp;
    Protos
    _________________________________________________________________________ */
 
+#if ENABLE_ADDTEXMF
 void
 CheckAddTEXMFDirs (/*[out,out]*/ string &	directories,
 		   /*[out]*/ vector<PathName> &	vec);
+#endif
 
 int
 ComparePaths (/*[in]*/ const PathName & path1,

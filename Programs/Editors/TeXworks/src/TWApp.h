@@ -28,6 +28,7 @@
 #include <QSettings>
 
 #include "TWUtils.h"
+#include "TWScriptable.h"
 
 #ifdef Q_WS_WIN
 #define PATH_LIST_SEP   ';'
@@ -77,8 +78,6 @@ public:
 	void setBinaryPaths(const QStringList& paths);
 	void setEngineList(const QList<Engine>& engines);
 
-	void open(const QString &fileName);
-
 	const QStringList getBinaryPaths();
 	const QList<Engine> getEngineList();
 	void saveEngineList();
@@ -101,6 +100,8 @@ public:
 	static TWApp *instance();
 	
 	QString getPortableLibPath() const { return portableLibPath; }
+
+	TWScriptManager& getScriptManager() { return scriptManager; }
 
 #ifdef Q_WS_WIN
 	void createMessageTarget(QWidget* aWindow);
@@ -149,6 +150,31 @@ public slots:
 	
 	void maybeQuit();
 
+	void updateScriptsList();
+	void showScriptsFolder();
+
+	void about();
+	void newFile();
+	void open();
+	void stackWindows();
+	void tileWindows();
+
+	QObject* openFile(const QString& fileName);
+
+	QString getOpenFileName();
+	QStringList getOpenFileNames();
+	QString getSaveFileName(const QString& defaultName);
+	
+	// for script access to arbitrary commands
+	QVariant system(const QString& cmdline, bool waitForResult = true);
+
+	// launch file from the desktop with default app
+	QVariant launchFile(const QString& fileName, bool waitForResult = true);
+	
+#if defined(MIKTEX)
+	void aboutMiKTeX();
+#endif
+
 signals:
 	// emitted in response to updateRecentFileActions(); documents can listen to this if they have a recent files menu
 	void recentFileActionsChanged();
@@ -167,20 +193,11 @@ signals:
 
 	void highlightLineOptionChanged();
 
-private slots:
-#if defined(MIKTEX)
-	void aboutMiKTeX();
-#endif
-	void about();
-	void newFile();
+private slots:	
 	void newFromTemplate();
-	void open();
 	void openRecentFile();
 	void preferences();
 
-	void stackWindows();
-	void tileWindows();
-	
 	void syncFromSource(const QString& sourceFile, int lineNo);
 
 	void changeLanguage();
@@ -210,6 +227,8 @@ private:
 #ifdef Q_WS_WIN
 	HWND messageTargetWindow;
 #endif
+
+	TWScriptManager scriptManager;
 
 	static TWApp *theAppInstance;
 };
@@ -241,7 +260,7 @@ public:
 	
 public slots:
 	Q_NOREPLY void openFile(const QString& fileName)
-		{ app->open(fileName); }
+		{ app->openFile(fileName); }
 	Q_NOREPLY void bringToFront()
 		{ app->bringToFront(); }
 };

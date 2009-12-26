@@ -355,7 +355,7 @@ SessionImpl::ReadStartupConfigFile (/*[in]*/ bool common,
       ret.commonConfigRoot = str;
     }
   }
-  else
+  if (! common || AdminControlsUserConfig())
   {
     if (pcfg->TryGetValue("Paths",
       MIKTEX_REGVAL_USER_ROOTS,
@@ -518,13 +518,14 @@ SessionImpl::WriteStartupConfigFile
 
   SmartPointer<Cfg> pcfg (Cfg::Create());
 
-  bool showAllValues = false;
+  const bool showAllValues = false;
+
   bool relativize = false;
   PathName relativeFrom;
 
   if (startupConfig.config == MiKTeXConfiguration::Portable)
   {
-    pcfg->PutValue("Auto", "Config", "Portable");
+    pcfg->PutValue ("Auto", "Config", "Portable");
     relativize = (userStartupConfigFile == commonStartupConfigFile);
     if (relativize)
     {
@@ -595,7 +596,9 @@ SessionImpl::WriteStartupConfigFile
     }
   }
   
-  if (! common || commonStartupConfigFile == userStartupConfigFile)
+  if (! common
+      || commonStartupConfigFile == userStartupConfigFile
+      || AdminControlsUserConfig())
   {
     if (startupConfig.userRoots != "" || showAllValues)
     {

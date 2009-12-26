@@ -129,6 +129,7 @@ void PDFOutlineDock::fillInfo()
 	if (toc) {
 		fillToc(*toc, tree, 0);
 		connect(tree, SIGNAL(itemSelectionChanged()), this, SLOT(followTocSelection()));
+		delete toc;
 	} else {
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		item->setText(0, tr("No TOC"));
@@ -234,9 +235,11 @@ PDFFontsDock::PDFFontsDock(PDFDocument *doc)
 	, scannedFonts(false)
 {
 	table = new QTableWidget(this);
+#ifdef Q_WS_MAC /* don't do this on windows, as the font ends up too small */
 	QFont f(table->font());
-	f.setPointSize(f.pointSize() * 4 / 5);
+	f.setPointSize(f.pointSize() - 2);
 	table->setFont(f);
+#endif
 	table->setColumnCount(4);
 	setHorizontalHeaderLabels();
 	table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);

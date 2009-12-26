@@ -191,6 +191,8 @@ void TWApp::init()
 
 	TWUtils::readConfig();
 
+	scriptManager.addScriptsInDirectory(TWUtils::getLibraryPath("scripts"));
+
 #ifdef Q_WS_MAC
 	setQuitOnLastWindowClosed(false);
 
@@ -345,15 +347,16 @@ void TWApp::launchAction()
 	}
 #ifndef Q_WS_MAC	// on Mac OS, it's OK to end up with no document (we still have the app menu bar)
 					// but on W32 and X11 we need a window otherwise the user can't interact at all
-	if (TeXDocument::documentList().size() == 0 && PDFDocument::documentList().size() == 0)
+	if (TeXDocument::documentList().size() == 0 && PDFDocument::documentList().size() == 0) {
 		newFile();
-	if (TeXDocument::documentList().size() == 0) {
-		// something went wrong, give up!
-		(void)QMessageBox::critical(NULL, tr("Unable to create window"),
-				tr("Something is badly wrong; %1 was unable to create a document window. "
-				   "The application will now quit.").arg(TEXWORKS_NAME),
-				QMessageBox::Close, QMessageBox::Close);
-		quit();
+		if (TeXDocument::documentList().size() == 0) {
+			// something went wrong, give up!
+			(void)QMessageBox::critical(NULL, tr("Unable to create window"),
+					tr("Something is badly wrong; %1 was unable to create a document window. "
+					   "The application will now quit.").arg(TEXWORKS_NAME),
+					QMessageBox::Close, QMessageBox::Close);
+			quit();
+		}
 	}
 #endif
 }
@@ -382,10 +385,17 @@ void TWApp::openRecentFile()
 {
 	QAction *action = qobject_cast<QAction *>(sender());
 	if (action)
-		open(action->data().toString());
+		openFile(action->data().toString());
 }
 
-void TWApp::open()
+QStringList TWApp::getOpenFileNames()
+{
+	QSETTINGS_OBJECT(settings);
+	QString lastOpenDir = settings.value("openDialogDir").toString();
+	return QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
+}
+
+QString TWApp::getOpenFileName()
 {
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
@@ -395,27 +405,61 @@ void TWApp::open()
 	  lastOpenDir = MiKTeX::Core::Utils::GetFolderPath(CSIDL_MYDOCUMENTS, CSIDL_MYDOCUMENTS, true).Get();
 	}
 #endif
-	QStringList files = QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
+	return QFileDialog::getOpenFileName(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
+}
+
+QString TWApp::getSaveFileName(const QString& defaultName)
+{
+#ifdef Q_WS_WIN
+	QFileDialog::Options	options = QFileDialog::DontUseNativeDialog;
+#else
+	QFileDialog::Options	options = 0;
+#endif
+	QString selectedFilter;
+	if (!TWUtils::filterList()->isEmpty())
+		selectedFilter = TWUtils::filterList()->last();
+	QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"), defaultName,
+													TWUtils::filterList()->join(";;"),
+													&selectedFilter, options);
+	if (!fileName.isEmpty()) {
+		// add extension from the selected filter, if unique and not already present
+		QRegExp re("\\(\\*(\\.[^ ]+)\\)");
+		if (re.indexIn(selectedFilter) >= 0) {
+			QString ext = re.cap(1);
+			if (!fileName.endsWith(ext, Qt::CaseInsensitive) && !fileName.endsWith("."))
+				fileName.append(ext);
+		}
+	}
+	return fileName;
+}
+
+void TWApp::open()
+{
+	QSETTINGS_OBJECT(settings);
+	QStringList files = getOpenFileNames();
 	foreach (QString fileName, files) {
 		if (!fileName.isEmpty()) {
 			QFileInfo info(fileName);
 			settings.setValue("openDialogDir", info.canonicalPath());
-			open(fileName);
+			openFile(fileName);
 		}
 	}
 }
 
-void TWApp::open(const QString &fileName)
+QObject* TWApp::openFile(const QString &fileName)
 {
 	if (TWUtils::isPDFfile(fileName)) {
 		PDFDocument *doc = PDFDocument::findDocument(fileName);
 		if (doc == NULL)
 			doc = new PDFDocument(fileName);
-		if (doc != NULL)
+		if (doc != NULL) {
 			doc->selectWindow();
+			return doc;
+		}
+		return NULL;
 	}
 	else
-		TeXDocument::openDocument(fileName);
+		return TeXDocument::openDocument(fileName);
 }
 
 void TWApp::preferences()
@@ -493,7 +537,7 @@ bool TWApp::event(QEvent *event)
 {
 	switch (event->type()) {
 		case QEvent::FileOpen:
-			open(static_cast<QFileOpenEvent *>(event)->file());        
+			openFile(static_cast<QFileOpenEvent *>(event)->file());        
 			return true;
 		default:
 			return QApplication::event(event);
@@ -834,6 +878,70 @@ void TWApp::openHelpFile(const QString& helpDirName)
 		QMessageBox::warning(NULL, TEXWORKS_NAME, tr("Unable to find help file."));
 }
 
+void TWApp::updateScriptsList()
+{
+	scriptManager.clear();
+	scriptManager.addScriptsInDirectory(TWUtils::getLibraryPath("scripts"));
+	foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+		TWScriptable *scriptable = qobject_cast<TWScriptable*>(widget);
+		if (scriptable)
+			scriptable->updateScriptsMenu();
+	}
+}
+
+void TWApp::showScriptsFolder()
+{
+	QDesktopServices::openUrl(QUrl::fromLocalFile(TWUtils::getLibraryPath("scripts")));
+}
+
+QVariant TWApp::launchFile(const QString& fileName, bool waitForResult)
+{
+	// first check if command execution is permitted
+	QSETTINGS_OBJECT(settings);
+	if (settings.value("allowSystemCommands", false).toBool())
+		return waitForResult ? QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)) : QVariant();
+	else
+		return waitForResult ? QVariant(tr("System command execution is disabled (see Preferences)")) : QVariant();
+}
+
+QVariant TWApp::system(const QString& cmdline, bool waitForResult)
+{
+	// first check if command execution is permitted
+	QSETTINGS_OBJECT(settings);
+	if (settings.value("allowSystemCommands", false).toBool()) {
+		TWSystemCmd *process = new TWSystemCmd(this, waitForResult);
+		connect(process, SIGNAL(readyReadStandardOutput()), process, SLOT(processOutput()));
+		connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), process, SLOT(processFinished(int, QProcess::ExitStatus)));
+		connect(process, SIGNAL(error(QProcess::ProcessError)), process, SLOT(processError(QProcess::ProcessError)));
+		if (waitForResult) {
+			process->setProcessChannelMode(QProcess::MergedChannels);
+			process->start(cmdline);
+			if (!process->waitForStarted()) {
+				process->deleteLater();
+				return QVariant(tr("Failed to execute system command: %1").arg(cmdline));
+			}
+			if (!process->waitForFinished()) {
+				process->deleteLater();
+				return QVariant(tr("Error executing system command: %1").arg(cmdline));
+			}
+			return QVariant(process->getResult());
+		}
+		else {
+			process->closeReadChannel(QProcess::StandardOutput);
+			process->closeReadChannel(QProcess::StandardError);
+			process->start(cmdline);
+			return QVariant();
+		}
+	}
+	else {
+		if (waitForResult) {
+			return QVariant(tr("System command execution is disabled (see Preferences)"));
+		}
+		// else result is null
+		return QVariant();
+	}
+}
+
 #ifdef Q_WS_WIN	// support for the Windows single-instance code
 #include <windows.h>
 
@@ -847,7 +955,7 @@ LRESULT CALLBACK TW_HiddenWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 				if (pcds->dwData == TW_OPEN_FILE_MSG) {
 					if (TWApp::instance() != NULL) {
 						QString fileName = QString::fromLocal8Bit((const char*)pcds->lpData, pcds->cbData);
-						TWApp::instance()->open(fileName);
+						TWApp::instance()->openFile(fileName);
 					}
 				}
 			}
