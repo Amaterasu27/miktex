@@ -441,7 +441,7 @@ RemoveFilesPage::OnQueryCancel ()
    _________________________________________________________________________ */
 
 void
-RemoveFilesPage::OnTimer (/*[in]*/ UINT nIDEvent) 
+RemoveFilesPage::OnTimer (/*[in]*/ UINT_PTR nIDEvent) 
 {
   try
     {
@@ -715,7 +715,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 	      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
 	    }
 	  
-	  DWORD sendMessageResult;
+	  DWORD_PTR sendMessageResult;
 	  
 	  if (SendMessageTimeout(HWND_BROADCAST,
 				 WM_SETTINGCHANGE,

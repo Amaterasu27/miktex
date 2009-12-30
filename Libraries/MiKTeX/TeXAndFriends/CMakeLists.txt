@@ -67,7 +67,7 @@ set(${texmf_dll_name}_sources
   webapp.cpp
 )
 
-if(NATIVE_WINDOWS)
+if(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
   set(${texmf_dll_name}_sources ${${texmf_dll_name}_sources}
     mfmpi386asm.cpp
   )

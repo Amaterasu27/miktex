@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/MetafontApp.inl:			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -73,64 +73,72 @@ miktexfreememory ()
    makefraction
    _________________________________________________________________________ */
 
-#if 1
 inline
 C4P_integer
 makefraction (/*[in]*/ C4P_integer p,
 	      /*[in]*/ C4P_integer q)
 {
+#if defined(MIKTEXMFAPI_USE_ASM)
   return (MakeFraction(p, q, THEDATA(aritherror)));
-}
+#else
+  return (makefractionorig(p, q));
 #endif
+}
 
 /* _________________________________________________________________________
 
    makescaled
    _________________________________________________________________________ */
 
-#if 0
 inline
 C4P_integer
 makescaled (/*[in]*/ C4P_integer p,
 	    /*[in]*/ C4P_integer q)
 {
+#if 0 && defined(MIKTEXMFAPI_USE_ASM)
   return (MakeScaled(p, q, THEDATA(aritherror)));
-}
+#else
+  return (makescaledorig(p, q));
 #endif
+}
 
 /* _________________________________________________________________________
 
    takefraction
    _________________________________________________________________________ */
 
-#if 1
 inline
 C4P_integer
 takefraction (/*[in]*/ C4P_integer p,
 	      /*[in]*/ C4P_integer q)
 {
+#if defined(MIKTEXMFAPI_USE_ASM)
   return (TakeFraction(p, q, THEDATA(aritherror)));
-}
+#else
+  return (takefractionorig(p, q));
 #endif
+}
 
 /* _________________________________________________________________________
 
    takescaled
    _________________________________________________________________________ */
 
-#if 1
 inline
 C4P_integer
 takescaled (/*[in]*/ C4P_integer p,
 	    /*[in]*/ C4P_integer q)
 {
+#if defined(MIKTEXMFAPI_USE_ASM)
   return (TakeScaled(p, q, THEDATA(aritherror)));
-}
+#else
+  return (takescaled(p, q));
 #endif
+}
 
 MIKTEXMF_END_NAMESPACE;
 
 #undef MIKTEXMF_BEGIN_NAMESPACE
 #undef MIKTEXMF_END_NAMESPACE
 
-#endif	// mfapp.inl
+#endif

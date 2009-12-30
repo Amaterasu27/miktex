@@ -735,8 +735,8 @@ YapClientDDECallback (/*[in]*/ UINT,
 		      /*[in]*/ HSZ,
 		      /*[in]*/ HSZ,
 		      /*[in]*/ HDDEDATA,
-		      /*[in]*/ unsigned long,
-		      /*[in]*/ unsigned long)
+		      /*[in]*/ ULONG_PTR,
+		      /*[in]*/ ULONG_PTR)
 {
   return (0);
 }

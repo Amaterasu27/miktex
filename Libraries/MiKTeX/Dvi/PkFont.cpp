@@ -1,6 +1,6 @@
 /* pkfont.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -437,7 +437,7 @@ PkFont::Make (/*[in]*/ const string &	name,
 		      dviInfo.name.c_str());
   char buf[4096];
   int exitCode;
-  UINT n = 4096;
+  size_t n = 4096;
   bool b =
     (Process::Run(pathMakePk.Get(),
 		  szCmdLine,

@@ -165,6 +165,11 @@ if(NATIVE_WINDOWS)
       COM/session.cpp
       COM/session.def
     )
+    if(CMAKE_CL_64)
+      set(env "amd64")
+    else(CMAKE_CL_64)
+      set(env "win32")
+    endif(CMAKE_CL_64)
     add_custom_command(
       OUTPUT
 		${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
@@ -172,7 +177,7 @@ if(NATIVE_WINDOWS)
 	/nologo
 	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 	/char signed
-	/env win32
+	/env ${env}
 	/Oicf
 	/h ${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
 	/no_robust
@@ -192,7 +197,7 @@ if(NATIVE_WINDOWS)
 	/nologo
 	/I ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 	/char signed
-	/env win32
+	/env ${env}
 	/Oicf
 	/tlb ${CMAKE_CURRENT_BINARY_DIR}/${session_tlb_name}.tlb
 	/h ${CMAKE_CURRENT_BINARY_DIR}/include/${sessionidl_h}

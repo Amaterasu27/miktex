@@ -1,6 +1,6 @@
 /* arctrl.cpp: control Acrobat Reader
 
-   Copyright (C) 2006-2008 Christian Schenk
+   Copyright (C) 2006-2009 Christian Schenk
 */
 
 /* This program (arctrl) is based on public domain work by Fabrice
@@ -153,8 +153,8 @@ private:
 	       /*[in]*/ HSZ		hsz1,
 	       /*[in]*/ HSZ		hsz2,
 	       /*[in]*/ HDDEDATA	hdata,
-	       /*[in]*/ DWORD		dwData1,
-	       /*[in]*/ DWORD		dwData2);
+	       /*[in]*/ ULONG_PTR	dwData1,
+	       /*[in]*/ ULONG_PTR	dwData2);
 
 private:
   HCONV hConv;
@@ -429,7 +429,7 @@ ArCtrl::StartAR ()
   Session::FatalMiKTeXError (miktexFunction,				\
 			     traceMessage,				\
 			     lpszInfo,					\
-			     __FILE__,				\
+			     __FILE__,					\
 			     __LINE__)
 
 HDDEDATA
@@ -440,8 +440,8 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
 		     /*[in]*/ HSZ	hsz1,
 		     /*[in]*/ HSZ	hsz2,
 		     /*[in]*/ HDDEDATA	hdata,
-		     /*[in]*/ DWORD	dwData1,
-		     /*[in]*/ DWORD	dwData2)
+		     /*[in]*/ ULONG_PTR	dwData1,
+		     /*[in]*/ ULONG_PTR	dwData2)
 {
   UNUSED_ALWAYS (dwData1);
   UNUSED_ALWAYS (dwData2);

@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 3499
+#define MIKTEX_COMP_J2000_VERSION 3651
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.005"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1990 - 1995 by AT&T Bell Laboratories"

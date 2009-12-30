@@ -2117,7 +2117,7 @@ RegisterPathNT ()
       FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
     }
 
-  DWORD sendMessageResult;
+  DWORD_PTR sendMessageResult;
 
   if (SendMessageTimeout(HWND_BROADCAST,
 			 WM_SETTINGCHANGE,

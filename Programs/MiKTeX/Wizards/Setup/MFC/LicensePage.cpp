@@ -1,6 +1,6 @@
 /* LicensePage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2009 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -60,7 +60,7 @@ static long sizeLicense;
 static
 DWORD
 CALLBACK 
-StreamInCallback (/*[in]*/ DWORD		cookie,
+StreamInCallback (/*[in]*/ DWORD_PTR		cookie,
 		  /*[out]*/ unsigned char *	pBuf,
 		  /*[in]*/ long			sizeBuf,
 		  /*[out]*/ long *		pRead)

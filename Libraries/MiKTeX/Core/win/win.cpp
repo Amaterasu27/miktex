@@ -3526,7 +3526,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 
   if (repaired)
   {
-    DWORD sendMessageResult;
+    DWORD_PTR sendMessageResult;
     if (SendMessageTimeoutA(HWND_BROADCAST,
 			    WM_SETTINGCHANGE,
 			    0,

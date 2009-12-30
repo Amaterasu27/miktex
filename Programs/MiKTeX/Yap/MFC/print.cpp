@@ -1,6 +1,6 @@
 /* print.cpp: DVI printing
 
-   Copyright (C) 1996-2003 Christian Schenk
+   Copyright (C) 1996-2009 Christian Schenk
 
    This file is part of Yap.
 
@@ -285,7 +285,7 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
   pProgDlg->SetLine (1, T_("Being printed:"));
   pProgDlg->SetLine (2, dviFileName);
   char szBuf[4096];
-  UINT n = 4096;
+  size_t n = 4096;
   int exitCode;
   bool done =
     Process::Run(mtprint.Get(),

@@ -67,7 +67,7 @@ protected:
 protected:
   afx_msg
   void
-  OnTimer (/*[in]*/ UINT nIDEvent);
+  OnTimer (/*[in]*/ UINT_PTR nIDEvent);
   
 public:
   void

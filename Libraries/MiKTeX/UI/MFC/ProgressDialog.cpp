@@ -1,6 +1,6 @@
 /* ProgressDialog.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2009 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -370,7 +370,7 @@ ProgressDialogImpl::HasUserCancelled ()
       return (false);
     }
 
-  DWORD res;
+  DWORD_PTR res;
 
   if (! SendMessageTimeout(hWindow,
 			   HASUSERCANCELLED,
@@ -534,7 +534,7 @@ ProgressDialogImpl::StopProgressDialog ()
 
   // destroy the dialog window
   haveProgressDialog = false;
-  DWORD res;
+  DWORD_PTR res;
   if (! SendMessageTimeout(hwnd,
 			   DESTROY,
 			   0,

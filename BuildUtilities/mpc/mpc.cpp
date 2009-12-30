@@ -1694,7 +1694,7 @@ PackageCreator::CreateRepositoryInformationFile
     {
       string line = dirEntry.name;
       line += ';';
-      line += NUMTOSTR(dirEntry.size);
+      line += NUMTOSTR(static_cast<int>(dirEntry.size));
       line += '\n';
       lst.push_back (line);
     }
@@ -2399,7 +2399,7 @@ PackageCreator::UpdateRepository
 			NUMTOSTR(it->second.timePackaged));
       dbLight.PutValue (it->second.deploymentName.c_str(),
 			"CabSize",
-			NUMTOSTR(it->second.archiveFileSize));
+			NUMTOSTR(static_cast<int>(it->second.archiveFileSize)));
       dbLight.PutValue (it->second.deploymentName.c_str(),
 			"CabMD5",
 			it->second.archiveFileDigest.ToString().c_str());

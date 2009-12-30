@@ -712,29 +712,8 @@ not been commented out.
 
 @x
 @p function make_fraction(@!p,@!q:integer):fraction;
-var @!f:integer; {the fraction bits, with a leading 1 bit}
-@!n:integer; {the integer part of $\vert p/q\vert$}
-@!negative:boolean; {should the result be negated?}
-@!be_careful:integer; {disables certain compiler optimizations}
-begin if p>=0 then negative:=false
-else  begin negate(p); negative:=true;
-  end;
-if q<=0 then
-  begin debug if q=0 then confusion("/");@;@+gubed@;@/
-@:this can't happen /}{\quad \./@>
-  negate(q); negative:=not negative;
-  end;
-n:=p div q; p:=p mod q;
-if n>=8 then
-  begin arith_error:=true;
-  if negative then make_fraction:=-el_gordo@+else make_fraction:=el_gordo;
-  end
-else  begin n:=(n-1)*fraction_one;
-  @<Compute $f=\lfloor 2^{28}(1+p/q)+{1\over2}\rfloor$@>;
-  if negative then make_fraction:=-(f+n)@+else make_fraction:=f+n;
-  end;
-end;
 @y
+@p function make_fraction_orig(@!p,@!q:integer):fraction;
 @z
 
 % _____________________________________________________________________________
@@ -744,27 +723,8 @@ end;
 
 @x
 @p function take_fraction(@!q:integer;@!f:fraction):integer;
-var @!p:integer; {the fraction so far}
-@!negative:boolean; {should the result be negated?}
-@!n:integer; {additional multiple of $q$}
-@!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>=0|@>;
-if f<fraction_one then n:=0
-else  begin n:=f div fraction_one; f:=f mod fraction_one;
-  if q<=el_gordo div n then n:=n*q
-  else  begin arith_error:=true; n:=el_gordo;
-    end;
-  end;
-f:=f+fraction_one;
-@<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>;
-be_careful:=n-el_gordo;
-if be_careful+p>0 then
-  begin arith_error:=true; n:=el_gordo-p;
-  end;
-if negative then take_fraction:=-(n+p)
-else take_fraction:=n+p;
-end;
 @y
+@p function take_fraction_orig(@!q:integer;@!f:fraction):integer;
 @z
 
 % _____________________________________________________________________________
@@ -774,27 +734,8 @@ end;
 
 @x
 @p function take_scaled(@!q:integer;@!f:scaled):integer;
-var @!p:integer; {the fraction so far}
-@!negative:boolean; {should the result be negated?}
-@!n:integer; {additional multiple of $q$}
-@!be_careful:integer; {disables certain compiler optimizations}
-begin @<Reduce to the case that |f>=0| and |q>=0|@>;
-if f<unity then n:=0
-else  begin n:=f div unity; f:=f mod unity;
-  if q<=el_gordo div n then n:=n*q
-  else  begin arith_error:=true; n:=el_gordo;
-    end;
-  end;
-f:=f+unity;
-@<Compute $p=\lfloor qf/2^{16}+{1\over2}\rfloor-q$@>;
-be_careful:=n-el_gordo;
-if be_careful+p>0 then
-  begin arith_error:=true; n:=el_gordo-p;
-  end;
-if negative then take_scaled:=-(n+p)
-else take_scaled:=n+p;
-end;
 @y
+@p function take_scaled_orig(@!q:integer;@!f:scaled):integer;
 @z
 
 % _____________________________________________________________________________
@@ -802,32 +743,11 @@ end;
 % [7.128]
 % _____________________________________________________________________________
 
- @x
+@x
 @p function make_scaled(@!p,@!q:integer):scaled;
-var @!f:integer; {the fraction bits, with a leading 1 bit}
-@!n:integer; {the integer part of $\vert p/q\vert$}
-@!negative:boolean; {should the result be negated?}
-@!be_careful:integer; {disables certain compiler optimizations}
-begin if p>=0 then negative:=false
-else  begin negate(p); negative:=true;
-  end;
-if q<=0 then
-  begin debug if q=0 then confusion("/");@+gubed@;@/
-@:this can't happen /}{\quad \./@>
-  negate(q); negative:=not negative;
-  end;
-n:=p div q; p:=p mod q;
-if n>=@'100000 then
-  begin arith_error:=true;
-  if negative then make_scaled:=-el_gordo@+else make_scaled:=el_gordo;
-  end
-else  begin n:=(n-1)*unity;
-  @<Compute $f=\lfloor 2^{16}(1+p/q)+{1\over2}\rfloor$@>;
-  if negative then make_scaled:=-(f+n)@+else make_scaled:=f+n;
-  end;
-end;
- @y
- @z
+@y
+@p function make_scaled_orig(@!p,@!q:integer):scaled;
+@z
 
 % _____________________________________________________________________________
 %
@@ -2176,7 +2096,7 @@ function miktex_is_init_program : boolean; forward;
 function miktex_make_full_name_string : str_number; forward;
 function take_fraction(@!p,@!q:integer):fraction; forward;
 function take_scaled(@!p,@!q:integer):scaled; forward;
-{function make_scaled(@!p,@!q:integer):scaled; forward;}
+function make_scaled(@!p,@!q:integer):scaled; forward;
 
 @ @<Error handling procedures@>=
 
