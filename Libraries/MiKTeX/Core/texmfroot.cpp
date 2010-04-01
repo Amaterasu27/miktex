@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -997,7 +997,7 @@ SessionImpl::GetMpmRootPath ()
 PathName
 SessionImpl::GetRelativeFilenameDatabasePathName (/*[in]*/  unsigned	r)
 {
-  string fndbFileName = MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+  string fndbFileName = MIKTEX_PATH_FNDB_DIR;
   fndbFileName += PathName::DirectoryDelimiter;
   PathName root (rootDirectories[r].get_Path());
   root.Normalize ();

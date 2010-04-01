@@ -71,7 +71,7 @@ if(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
   set(${texmf_dll_name}_sources ${${texmf_dll_name}_sources}
     mfmpi386asm.cpp
   )
-endif(NATIVE_WINDOWS)
+endif(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/mfapp.defaults.h

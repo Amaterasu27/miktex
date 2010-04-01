@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -43,7 +43,7 @@ get_target_property(fc-arch_exe fc-arch LOCATION)
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
-  COMMAND ${fc-arch_exe} x86
+  COMMAND ${fc-arch_exe} ${system_cpu}
 	< ${CMAKE_CURRENT_SOURCE_DIR}/fcarch.tmpl.h
 	> ${CMAKE_CURRENT_BINARY_DIR}/fcarch.h
   MAIN_DEPENDENCY fcarch.tmpl.h

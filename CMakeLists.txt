@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -62,13 +62,14 @@ if(NATIVE_WINDOWS)
   endif(CMAKE_CL_64)
 else(NATIVE_WINDOWS)
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
-    set(system_cpu "i386")
+    set(system_cpu "x86")
   else(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
     string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_cpu)
   endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
 endif(NATIVE_WINDOWS)
 
-set(target_system_tag "${system_cpu}-${system_name}")
+#set(target_system_tag "${system_cpu}-${system_name}")
+set(target_system_tag "${system_name}-${system_cpu}")
 
 set(miktex_prefix "miktex-")
 set(miktex_admin_suffix "_admin")
@@ -276,6 +277,7 @@ include(MergeCommonControlsManifest)
 include(MergeManifests)
 include(MergeTrustInfoManifest)
 include(Rebase)
+include(TestBigEndian)
 include(SourcePaths)
 include(UseStaticCRT)
 include(UseStaticLibraries)
@@ -380,6 +382,9 @@ endif(NOT MSVC)
 if(MSVC)
   set(HAVE_PRAGMA_ONCE TRUE)
 endif(MSVC)
+
+test_big_endian(MIKTEX_WORDS_BIGENDIAN)
+
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)
@@ -776,6 +781,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/produce.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/produce.cmd)
+
+configure_file(${CMAKE_SOURCE_DIR}/Resources/Manifests/Common-Controls.manifest.in
+	       ${CMAKE_BINARY_DIR}/Resources/Manifests/Common-Controls.manifest)
 
 configure_file(${CMAKE_SOURCE_DIR}/SDK/doc/mainpage.doxygen.in
 	       ${CMAKE_BINARY_DIR}/SDK/doc/mainpage.doxygen)

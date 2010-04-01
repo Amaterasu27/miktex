@@ -5,7 +5,7 @@
       <assemblyIdentity
 	language="*"
 	name="Microsoft.Windows.Common-Controls"
-	processorArchitecture="x86"
+	processorArchitecture="@system_cpu@"
 	publicKeyToken="6595b64144ccf1df"
 	type="win32"
 	version="6.0.0.0"

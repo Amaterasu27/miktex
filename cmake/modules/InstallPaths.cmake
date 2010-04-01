@@ -1,6 +1,6 @@
 ## InstallPaths.cmake
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,10 +24,18 @@ else(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 if(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
-  set(miktex_bindir "${texmfdir}/miktex/bin")
+  set(rel_miktex_bin_dir "miktex/bin")
+elseif(NATIVE_WINDOWS AND CMAKE_CL_64)
+  set(rel_miktex_bin_dir "miktex/bin/${system_cpu}")
 else(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
-  set(miktex_bindir "${texmfdir}/miktex/${target_system_tag}/bin")
+  set(rel_miktex_bin_dir "miktex/bin/${target_system_tag}")
 endif(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
+
+set(miktex_bindir "${texmfdir}/${rel_miktex_bin_dir}")
+
+set(rel_miktex_internal_bin_dir "${rel_miktex_bin_dir}/internal")
+
+set(miktex_internal_bindir "${texmfdir}/${rel_miktex_internal_bin_dir}")
 
 if(NATIVE_WINDOWS)
   set(bindir ${miktex_bindir})
@@ -35,14 +43,25 @@ else(NATIVE_WINDOWS)
   set(bindir "bin")
 endif(NATIVE_WINDOWS)
 
-set(miktex_internal_bindir "${texmfdir}/miktex/bin/internal")
-
 set(incdir "include")
 set(libdir "lib")
 set(mandir "share/man")
 
-set(basedir "${texmfdir}/miktex/base")
+if(MIKTEX_WORDS_BIGENDIAN)
+  set(rel_miktex_base_dir "miktex/data/be")
+  set(rel_miktex_fmt_dir "miktex/data/be")
+  set(rel_miktex_fndb_dir "miktex/data/be")
+  set(rel_miktex_mem_dir "miktex/data/be")
+else(MIKTEX_WORDS_BIGENDIAN)
+  set(rel_miktex_base_dir "miktex/data/le")
+  set(rel_miktex_fmt_dir "miktex/data/le")
+  set(rel_miktex_fndb_dir "miktex/data/le")
+  set(rel_miktex_mem_dir "miktex/data/le")
+endif(MIKTEX_WORDS_BIGENDIAN)
+
+set(basedir "${texmfdir}/${rel_miktex_base_dir}")
+set(formatdir "${texmfdir}/${rel_miktex_fmt_dir}")
+set(memdir "${texmfdir}/${rel_miktex_mem_dir}")
+
 set(configdir "${texmfdir}/miktex/config")
 set(docdir "${texmfdir}/doc/miktex")
-set(formatdir "${texmfdir}/miktex/fmt")
-set(memdir "${texmfdir}/miktex/mem")
