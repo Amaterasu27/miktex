@@ -22,6 +22,8 @@
 #ifndef TWScriptable_H
 #define TWScriptable_H
 
+#include "TWScript.h"
+
 #include <QMainWindow>
 #include <QList>
 #include <QString>
@@ -33,54 +35,35 @@ class QMenu;
 class QAction;
 class QSignalMapper;
 
-// must be derived from QObject to enable interaction with e.g. menus
-class TWScript : public QObject
+class TWScriptList : public QObject
 {
 	Q_OBJECT
-	
-public:
-	enum ScriptType { ScriptUnknown, ScriptHook, ScriptStandalone };
-	enum ScriptLanguage { LanguageQtScript, LanguageLua };
-	
-	virtual ~TWScript() { }
-	
-	ScriptType getType() const { return m_Type; }
-	QString getFilename() const { return m_Filename; }
-	QString getTitle() const { return m_Title; }
-	QString getDescription() const { return m_Description; }
-	QString getAuthor() const { return m_Author; }
-	QString getVersion() const { return m_Version; }
-	QString getHook() const { return m_Hook; }
-	QKeySequence getKeySequence() const { return m_KeySequence; }
-	
-	bool setFile(QString filename);
 
-	virtual ScriptLanguage getLanguage() const = 0;
-	virtual bool parseHeader() = 0;
-	virtual bool run(QObject *context, QVariant& result) const = 0;
+public:
+	TWScriptList()
+	{ }
 	
-	bool operator==(const TWScript& s) const { return QFileInfo(m_Filename) == QFileInfo(s.m_Filename); }
+	TWScriptList(const TWScriptList& orig)
+	: QObject(orig.parent())
+	, name(orig.name)
+	{ }
 	
-protected:
-	TWScript(const QString& filename) : m_Filename(filename) { }
-	void clearHeaderData();
+	TWScriptList(QObject* parent, const QString& str = QString())
+	: QObject(parent), name(str)
+	{ }
 	
-	QString m_Filename;
-	
-	ScriptType m_Type;
-	
-	QString m_Title;
-	QString m_Description;
-	QString m_Author;
-	QString m_Version;
-	QString m_Hook;
-	QKeySequence m_KeySequence;
+	const QString& getName() const { return name; }
+
+private:
+	QString name; // name of the folder/submenu
+	// scripts and subfolders are stored as children of the QObject
 };
 
 class JSScript : public TWScript
 {
 	Q_OBJECT
-		
+	Q_INTERFACES(TWScript)
+	
 public:
 	JSScript(const QString& filename) : TWScript(filename) { }
 	
@@ -94,18 +77,23 @@ class TWScriptManager
 {
 public:
 	TWScriptManager() { }
-	virtual ~TWScriptManager() { clear(); }
+	virtual ~TWScriptManager() { }
 	
-	bool addScript(TWScript* script);
-	int addScriptsInDirectory(const QDir& dir);
+	bool addScript(QObject* scriptList, TWScript* script);
+	int addScriptsInDirectory(const QDir& dir) {
+		return addScriptsInDirectory(&m_Scripts, dir);
+	}
 	void clear();
 	
-	QList<TWScript*> getScripts() const { return m_Scripts; }
+	TWScriptList* getScripts() { return &m_Scripts; }
 	QList<TWScript*> getHookScripts(const QString& hook) const;
+
+protected:
+	int addScriptsInDirectory(TWScriptList *scriptList, const QDir& dir);
 	
 private:
-	QList<TWScript*> m_Scripts;
-	QList<TWScript*> m_Hooks;
+	TWScriptList m_Scripts; // hierarchical list of standalone scripts
+	TWScriptList m_Hooks; // flat list of hook scripts (not shown in menus)
 };
 
 
@@ -133,6 +121,8 @@ protected:
 						QAction* manageScriptsAction,
 						QAction* updateScriptsAction,
 						QAction* showScriptsFolderAction);
+
+	int addScriptsToMenu(QMenu *menu, TWScriptList *scripts);
 
 private:
 	QMenu* scriptsMenu;

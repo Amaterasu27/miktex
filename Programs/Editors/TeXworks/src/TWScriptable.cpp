@@ -35,24 +35,6 @@
 #include <QtScriptTools>
 #endif
 
-bool TWScript::setFile(QString filename)
-{
-	if (!QFile::exists(filename))
-		return false;
-	m_Filename = filename;
-	return parseHeader();
-}
-
-void TWScript::clearHeaderData()
-{
-	m_Type = ScriptUnknown;
-	m_Title = "";
-	m_Description = "";
-	m_Author = "";
-	m_Version = "";
-	m_Hook = "";
-}
-
 bool JSScript::parseHeader()
 {
 	QString line, key, value;
@@ -100,6 +82,7 @@ bool JSScript::parseHeader()
 			else m_Type = ScriptUnknown;
 		}
 		else if (key == "Hook") m_Hook = value;
+		else if (key == "Context") m_Context = value;
 		else if (key == "Shortcut") m_KeySequence = QKeySequence(value);
 	}
 	
@@ -170,53 +153,63 @@ bool JSScript::run(QObject *context, QVariant& result) const
 
 void TWScriptManager::clear()
 {
-	foreach (TWScript *s, m_Scripts) {
+	foreach (QObject *s, m_Scripts.children())
 		delete s;
-	}
-	foreach (TWScript *s, m_Hooks) {
+
+	foreach (QObject *s, m_Hooks.children())
 		delete s;
-	}
-	m_Scripts.clear();
-	m_Hooks.clear();
 }
 
-bool TWScriptManager::addScript(TWScript* script)
+bool TWScriptManager::addScript(QObject* scriptList, TWScript* script)
 {
-	QList<TWScript*>& scriptList = script->getType() == TWScript::ScriptHook ? m_Hooks : m_Scripts;
-	
-	if (scriptList.contains(script))
-		return false;
-	
-	foreach(TWScript *s, scriptList) {
+	foreach (QObject* obj, scriptList->children()) {
+		printf("obj class = %s\n", obj->metaObject()->className());
+		printf("is a script? %d\n", obj->inherits("TWScript"));
+		TWScript *s = qobject_cast<TWScript*>(obj);
+		if (!s)
+			continue;
 		if (*s == *script)
 			return false;
 	}
 	
-	scriptList.append(script);
+	script->setParent(scriptList);
 	return true;
 }
 
-int TWScriptManager::addScriptsInDirectory(const QDir& dir)
+int TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList, const QDir& dir)
 {
 	int num = 0;
 	
-	QStringList filters;
-	filters << "*.lua" << "*.js";
-	
-	foreach (QString filename, dir.entryList(filters)) {
-		if (filename.endsWith(".lua")) {
-			//			if (addScript(new LuaScript(dir.absoluteFilePath(filename))))
-			//				++num;
+	foreach (const QFileInfo& info,
+			 dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Readable, QDir::DirsFirst)) {
+		if (info.isDir()) {
+			TWScriptList *sublist = new TWScriptList(scriptList, info.fileName());
+			if (addScriptsInDirectory(sublist, info.absoluteFilePath()) == 0)
+				delete sublist;
+			else
+				++num;
+			continue;
 		}
-		else if (filename.endsWith(".js")) {
-			TWScript *s = new JSScript(dir.absoluteFilePath(filename));
-			if (s) {
-				if (s->parseHeader() && addScript(s))
-					++num;
-				else
-					delete s;
+		QString suffix = info.suffix();
+		if (suffix == "js") {
+			TWScript *script = new JSScript(info.absoluteFilePath());
+			if (script && script->parseHeader()) {
+				if (script->getType() == TWScript::ScriptHook) {
+					if (!addScript(&m_Hooks, script))
+						delete script;
+				}
+				else {
+					if (addScript(scriptList, script))
+						++num;
+					else
+						delete script;
+				}
 			}
+			else
+				delete script;
+			continue;
 		}
+		// add other types of script here
 	}
 	
 	return num;
@@ -226,10 +219,12 @@ QList<TWScript*> TWScriptManager::getHookScripts(const QString& hook) const
 {
 	QList<TWScript*> result;
 	
-	foreach (TWScript *script, m_Hooks) {
-		if (script->getHook().compare(hook, Qt::CaseInsensitive) == 0) {
+	foreach (QObject *obj, m_Hooks.children()) {
+		TWScript *script = qobject_cast<TWScript*>(obj);
+		if (!script)
+			continue;
+		if (script->getHook().compare(hook, Qt::CaseInsensitive) == 0)
 			result.append(script);
-		}
 	}
 	return result;
 }
@@ -267,17 +262,38 @@ TWScriptable::updateScriptsMenu()
 		delete actions[i];
 	}
 	
-	foreach (TWScript *s, TWApp::instance()->getScriptManager().getScripts()) {
-		QAction *a = scriptsMenu->addAction(s->getTitle());
-		if (!s->getKeySequence().isEmpty())
-		    a->setShortcut(s->getKeySequence());
-		// give the action an object name so it could possibly included in the
-		// customization process of keyboard shortcuts in the future
-		a->setObjectName(QString("Script: %1").arg(s->getTitle()));
-		a->setStatusTip(s->getDescription());
-		scriptMapper->setMapping(a, s);
-		connect(a, SIGNAL(triggered()), scriptMapper, SLOT(map()));
+	addScriptsToMenu(scriptsMenu, TWApp::instance()->getScriptManager().getScripts());
+}
+
+int
+TWScriptable::addScriptsToMenu(QMenu *menu, TWScriptList *scripts)
+{
+	int count = 0;
+	foreach (QObject *obj, scripts->children()) {
+		TWScript *script = qobject_cast<TWScript*>(obj);
+		if (script) {
+			if (script->getContext().isEmpty() || script->getContext() == metaObject()->className()) {
+				QAction *a = menu->addAction(script->getTitle());
+				if (!script->getKeySequence().isEmpty())
+					a->setShortcut(script->getKeySequence());
+				// give the action an object name so it could possibly included in the
+				// customization process of keyboard shortcuts in the future
+				a->setObjectName(QString("Script: %1").arg(script->getTitle()));
+				a->setStatusTip(script->getDescription());
+				scriptMapper->setMapping(a, script);
+				connect(a, SIGNAL(triggered()), scriptMapper, SLOT(map()));
+				++count;
+			}
+			continue;
+		}
+		TWScriptList *list = qobject_cast<TWScriptList*>(obj);
+		if (list) {
+			QMenu *m = menu->addMenu(list->getName());
+			if (addScriptsToMenu(m, list) == 0)
+				menu->removeAction(m->menuAction());
+		}
 	}
+	return count;
 }
 
 void
@@ -294,7 +310,7 @@ TWScriptable::runScript(QObject* script, TWScript::ScriptType scriptType)
 			if (scriptType == TWScript::ScriptHook)
 				statusBar()->showMessage(tr("Script \"%1\": %2").arg(s->getTitle()).arg(result.toString()), kStatusMessageDuration);
 			else
-				QMessageBox::information(this, "Script result", result.toString(), QMessageBox::Ok, QMessageBox::Ok);
+				QMessageBox::information(this, tr("Script result"), result.toString(), QMessageBox::Ok, QMessageBox::Ok);
 		}
 	}
 	else {

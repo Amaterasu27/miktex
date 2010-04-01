@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -51,6 +51,8 @@ set(texworks_sources
   src/SvnRev.h
   src/TWApp.cpp
   src/TWApp.h
+  src/TWScript.cpp
+  src/TWScript.h
   src/TWScriptable.cpp
   src/TWScriptable.h
   src/TWUtils.cpp
@@ -117,6 +119,7 @@ set(texworks_moc_sources
   src/PDFDocument.h
   src/PrefsDialog.h
   src/TWApp.h
+  src/TWScript.h
   src/TWScriptable.h
   src/TWUtils.h
   src/TeXDocks.h
