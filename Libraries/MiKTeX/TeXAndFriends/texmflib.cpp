@@ -1,6 +1,6 @@
 /* texmflib.cpp: TeX'n'Friends helpers
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 

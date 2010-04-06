@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -534,19 +534,6 @@ SessionImpl::RegisterFileTypes ()
 		 "MFINPUTS"
 		 ));
 
-  RegisterFileType
-    (FileType::MFPOOL,
-     "mfpool",
-     "METAFONT",
-     ListBuilder(
-		 ".pool"
-		 ),
-     ListBuilder(
-		 CURRENT_DIRECTORY,
-		 SearchSpecBuilder(MIKTEX_PATH_BASE_DIR)
-		 ),
-     ListBuilder());
-  
   // <todo>FileType::MFT</todo>
   // <todo>FileType::MISCFONT</todo>
 
@@ -564,19 +551,6 @@ SessionImpl::RegisterFileTypes ()
      ListBuilder(
 		 "MPINPUTS"
 		 ));
-
-  RegisterFileType
-    (FileType::MPPOOL,
-     "mppool",
-     "MetaPost",
-     ListBuilder(
-		 ".pool"
-		 ),
-     ListBuilder(
-		 CURRENT_DIRECTORY,
-		 SearchSpecBuilder(MIKTEX_PATH_MEM_DIR)
-		 ),
-     ListBuilder());
 
   RegisterFileType
     (FileType::OCP,
@@ -780,19 +754,6 @@ SessionImpl::RegisterFileTypes ()
 		 "TEXINPUTS"
 		 ));
 
-  RegisterFileType
-    (FileType::TEXPOOL,
-     "texpool",
-     "TeX",
-     ListBuilder(
-		 ".pool"
-		 ),
-     ListBuilder(
-		 CURRENT_DIRECTORY,
-		 SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
-		 ),
-     ListBuilder());
-	    
   RegisterFileType
     (FileType::TEXSYSDOC,
      "TeX system documentation",

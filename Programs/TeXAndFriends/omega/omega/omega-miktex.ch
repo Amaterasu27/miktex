@@ -1,6 +1,6 @@
 %% omega-miktex.ch:
 %% 
-%% Copyright (C) 1998-2009 Christian Schenk
+%% Copyright (C) 1998-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -537,19 +537,6 @@ loop@+begin
 @p @t\4@>@<Declare additional routines for string recycling@>@/
 
 @!init function get_strings_started:boolean; {initializes the string pool,
-@z
-
-% _____________________________________________________________________________
-%
-% [4.51]
-% _____________________________________________________________________________
-
-@x
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-@y
-miktex_get_pool_file_name(name_of_file);
-if miktex_open_pool_file(pool_file) then
 @z
 
 % _____________________________________________________________________________

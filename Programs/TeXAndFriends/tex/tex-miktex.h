@@ -1,6 +1,6 @@
 /* tex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2009 Christian Schenk
+   Copyright (C) 1991-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -27,6 +27,16 @@
 #  include "triptexdefs.h"
 #else
 #  include "texdefs.h"
+#endif
+
+#if ! defined(C4PEXTERN)
+#  define C4PEXTERN extern
+#endif
+
+#if defined(MIKTEX_TRIPTEX)
+#  include "triptex.h"
+#else
+#  include "tex.h"
 #endif
 
 #if ! defined(THEDATA)
@@ -72,16 +82,6 @@ public:
     const
   {
     return ("tex.fmt");
-  }
-
-public:
-  virtual
-  const char *
-  MIKTEXTHISCALL
-  GetPoolFileName ()
-    const
-  {
-    return ("tex.pool");
   }
 
 public:
@@ -134,3 +134,7 @@ extern TEXCLASS TEXAPP;
 #endif
 
 #include <miktex/TeXAndFriends/TeXApp.inl>
+
+int miktexloadpoolstrings (int size);
+
+inline int loadpoolstrings (int size) { return (miktexloadpoolstrings(size)); }

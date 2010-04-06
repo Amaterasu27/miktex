@@ -27,7 +27,6 @@ texmf/miktex/bin/outocp.exe
 texmf/miktex/bin/ovf2ovp.exe
 texmf/miktex/bin/ovp2ovf.exe
 texmf/miktex/config/omega.ini
-texmf/miktex/fmt/omega.pool
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

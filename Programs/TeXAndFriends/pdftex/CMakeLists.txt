@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -156,6 +156,7 @@ set(miktex_tex_change_files
   ${tex_miktex_ch}
   ${tex_miktex_hash_ch}
   ${tex_miktex_hyph_ch}
+  ${tex_miktex_pool_ch}
   ${tex_miktex_quiet_ch}
   ${tex_miktex_src_ch}
   ${miktex_synctex_changefiles}
@@ -326,7 +327,7 @@ set_source_files_properties(
   PROPERTIES COMPILE_FLAGS "-DC4PEXTERN=extern"
 )
 
-create_web_app(pdfTeX pdfTeX pdftex FALSE)
+create_web_app(pdfTeX pdfTeX pdftex)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex.cc

@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,16 +42,10 @@ macro(create_web_app _name)
   endif(${ARGC} GREATER 2)
 
   if(${ARGC} GREATER 3)
-    set(_pool_dir ${ARGV3})
+    set(_do_install ${ARGV3})
   else(${ARGC} GREATER 3)
-    set(_pool_dir ${formatdir})
-  endif(${ARGC} GREATER 3)
-
-  if(${ARGC} GREATER 4)
-    set(_do_install ${ARGV4})
-  else(${ARGC} GREATER 4)
     set(_do_install TRUE)
-  endif(${ARGC} GREATER 4)
+  endif(${ARGC} GREATER 3)
 
   set(${_short_name_l}_app g_${_name_u}App)
   set(${_short_name_l}_class ${_name_u})
@@ -332,11 +326,4 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
     )
   endif(BUILDING_MIKTEX)
 
-  if(_do_install AND _pool_dir)
-    install(FILES
-      ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}.pool
-      DESTINATION ${_pool_dir}
-    )
-  endif(_do_install AND _pool_dir)
-    
 endmacro(create_web_app _name)

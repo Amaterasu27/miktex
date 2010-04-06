@@ -1,6 +1,6 @@
 /* mf-miktex.h:							-*- C++ -*-
 
-   Copyright (C) 1991-2009 Christian Schenk
+   Copyright (C) 1991-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -27,6 +27,16 @@
 #  include "trapmfdefs.h"
 #else
 #  include "mfdefs.h"
+#endif
+
+#if ! defined(C4PEXTERN)
+#  define C4PEXTERN extern
+#endif
+
+#if defined(MIKTEX_TRAPMF)
+#  include "trapmf.h"
+#else
+#  include "mf.h"
 #endif
 
 #if ! defined(THEDATA)
@@ -196,16 +206,6 @@ public:
   virtual
   const char *
   MIKTEXTHISCALL
-  GetPoolFileName ()
-    const
-  {
-    return ("mf.pool");
-  }
-
-public:
-  virtual
-  const char *
-  MIKTEXTHISCALL
   GetInitProgramName ()
     const
   {
@@ -277,3 +277,7 @@ miktexopenbasefile (/*[in]*/ wordfile &		f,
 }
 
 #include <miktex/TeXAndFriends/MetafontApp.inl>
+
+int miktexloadpoolstrings (int size);
+
+inline int loadpoolstrings (int size) { return (miktexloadpoolstrings(size)); }

@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/TeXMFApp.inl:				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -90,24 +90,6 @@ int
 miktexgetjobname ()
 {
   return (THEAPP.GetJobName());
-}
-
-/* _________________________________________________________________________
-     
-   miktexgetpoolfilename
-   _________________________________________________________________________ */
-
-inline
-void
-miktexgetpoolfilename (/*[out]*/ char * lpszPath)
-{
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  strcpy_s (lpszPath,
-	    MiKTeX::Core::BufferSizes::MaxPath,
-	    THEAPP.GetPoolFileName());
-#else
-  strcpy (lpszPath, THEAPP.GetPoolFileName());
-#endif
 }
 
 /* _________________________________________________________________________
@@ -243,19 +225,6 @@ void
 miktexontexmfstartjob ()
 {
   THEAPP.OnTeXMFStartJob ();
-}
-
-/* _________________________________________________________________________
-     
-   miktexopenpoolfile
-   _________________________________________________________________________ */
-
-template<class FileType>
-inline
-bool
-miktexopenpoolfile (/*[in]*/ FileType & f)
-{
-  return (THEAPP.OpenPoolFile(f));
 }
 
 /* _________________________________________________________________________

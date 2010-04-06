@@ -1,6 +1,6 @@
 /* makebase.cpp:
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -139,7 +139,7 @@ MakeBase::CreateDestinationDirectory ()
 {
   CreateDirectory (pSession->GetConfigValue(MIKTEX_REGKEY_MAKEBASE,
 					    MIKTEX_REGVAL_DESTDIR,
-					    T_("%R/miktex/base")),
+					    "%R/" MIKTEX_PATH_BASE_DIR),
 		   destinationDirectory);
 }
 

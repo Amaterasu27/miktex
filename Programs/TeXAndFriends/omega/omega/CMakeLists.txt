@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,9 +31,10 @@ add_custom_command(
 )
 
 set(miktex_changefiles
-  ${CMAKE_CURRENT_SOURCE_DIR}/omega-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/omega-miktex-fmt.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/omega-miktex-misc.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/omega-miktex-pool.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/omega-miktex.ch
 )
 
 set(omfiles
@@ -83,6 +84,26 @@ set(${omega_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/omega.defaults.h
   omegabis.c
   omega-miktex.cc
+)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/omega_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/omega.pool
+		omega-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/omega_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+    ${inipool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/omega.pool
+)
+
+set(${omega_dll_name}_sources
+  ${${omega_dll_name}_sources}
+  ${CMAKE_CURRENT_BINARY_DIR}/omega_pool.cpp
 )
 
 set_source_files_properties(

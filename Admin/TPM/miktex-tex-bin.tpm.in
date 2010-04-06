@@ -16,7 +16,6 @@ texmf/miktex/bin/initex.exe
 texmf/miktex/bin/tex.exe
 texmf/miktex/bin/virtex.exe
 texmf/miktex/config/tex.ini
-texmf/miktex/fmt/tex.pool
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

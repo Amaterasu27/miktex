@@ -10,7 +10,6 @@
       This package includes the METAFONT executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/base/mf.pool
 texmf/miktex/bin/${mf_dll_name}.dll
 texmf/miktex/bin/${miktex_prefix}mf.exe
 texmf/miktex/bin/inimf.exe

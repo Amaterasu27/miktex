@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2009 Christian Schenk
+%% Copyright (C) 1998-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -42,100 +42,6 @@
 program TEX; {all file names are defined dynamically}
 @y
 program PDFTEX; {all file names are defined dynamically}
-@z
-
-% _____________________________________________________________________________
-%
-% [4.51]
-% _____________________________________________________________________________
-
-@x
-@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
-  a_close(pool_file); get_strings_started:=false; return;
-  end
-@<Read the other strings...@>=
-miktex_get_pool_file_name(name_of_file);
-if miktex_open_pool_file(pool_file) then
-  begin c:=false;
-  repeat @<Read one string, but return |false| if the
-    string memory space is getting too tight for comfort@>;
-  until c;
-  a_close(pool_file); get_strings_started:=true;
-  end
-else begin
-  wake_up_terminal;
-  write_ln(term_out, '! I can''t read TEX.POOL.');
-@.I can't read TEX.POOL@>
-  get_strings_started:=false;
-  return;
-end
-@y
-@ @<Read the other strings...@>=
-  g := miktex_load_pool_strings((pool_size-string_vacancies));
-  if g=0 then begin
-     wake_up_terminal; write_ln(term_out,'! You have to increase POOLSIZE.');
-     get_strings_started:=false;
-     return;
-  end;
-  get_strings_started:=true;
-@z
-
-% _____________________________________________________________________________
-%
-% [4.52]
-% _____________________________________________________________________________
-
-@x
-@ @<Read one string...@>=
-begin if eof(pool_file) then bad_pool('! TEX.POOL has no check sum.');
-@.TEX.POOL has no check sum@>
-read(pool_file,m,n); {read two digits of string length}
-if m='*' then @<Check the pool check sum@>
-else  begin if (xord[m]<"0")or(xord[m]>"9")or@|
-      (xord[n]<"0")or(xord[n]>"9") then
-    bad_pool('! TEX.POOL line doesn''t begin with two digits.');
-@.TEX.POOL line doesn't...@>
-  l:=xord[m]*10+xord[n]-"0"*11; {compute the length}
-  if pool_ptr+l+string_vacancies>pool_size then
-    bad_pool('! You have to increase POOLSIZE.');
-@.You have to increase POOLSIZE@>
-  for k:=1 to l do
-    begin if eoln(pool_file) then m:=' '@+else read(pool_file,m);
-    append_char(xord[m]);
-    end;
-  read_ln(pool_file); g:=make_string;
-  end;
-end
-@y
-@ Empty module
-@z
-
-% _____________________________________________________________________________
-%
-% [4.53]
-% _____________________________________________________________________________
-
-@x
-@ The \.{WEB} operation \.{@@\$} denotes the value that should be at the
-end of this \.{TEX.POOL} file; any other value means that the wrong pool
-file has been loaded.
-@^check sum@>
-
-@<Check the pool check sum@>=
-begin a:=0; k:=1;
-loop@+  begin if (xord[n]<"0")or(xord[n]>"9") then
-  bad_pool('! TEX.POOL check sum doesn''t have nine digits.');
-@.TEX.POOL check sum...@>
-  a:=10*a+xord[n]-"0";
-  if k=9 then goto done;
-  incr(k); read(pool_file,n);
-  end;
-done: if a<>@$ then bad_pool('! TEX.POOL doesn''t match; TANGLE me again.');
-@.TEX.POOL doesn't match@>
-c:=true;
-end
-@y
-@ Empty module
 @z
 
 % _____________________________________________________________________________
@@ -550,7 +456,6 @@ begin
     get_nullstr := "";
 end;
 
-function miktex_load_pool_strings : integer; forward;@t\2@>@/
 function colorstackused: integer; forward;@t\2@>@/
 function miktex_etex_p: boolean; forward;@t\2@>@/
 function get_resname_prefix : str_number; forward;@t\2@>@/

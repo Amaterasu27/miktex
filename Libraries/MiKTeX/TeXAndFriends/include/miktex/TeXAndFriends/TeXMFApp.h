@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/TeXMFApp:				-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -447,40 +447,6 @@ protected:
   virtual
   MIKTEXMFTHISAPI(const char *)
   GetInitProgramName ()
-    const
-  {
-    // must be implemented in sub-classes
-    MIKTEX_ASSERT (false);
-    return (0);
-  }
-
-  /* _______________________________________________________________________
-     
-     GetPoolFileType
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
-  GetPoolFileType ()
-    const
-  {
-    // must be implemented in sub-classes
-    MIKTEX_ASSERT (false);
-    return (MiKTeX::Core::FileType::None);
-  }
-
-  /* _______________________________________________________________________
-     
-     GetPoolFileName
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MIKTEXMFTHISAPI(const char *)
-  GetPoolFileName ()
     const
   {
     // must be implemented in sub-classes
@@ -1346,33 +1312,6 @@ public:
 	       __LINE__);
 	  }
       }
-  }
-#endif // THEDATA
-
-  /* _______________________________________________________________________
-     
-     OpenPoolFile
-     _______________________________________________________________________ */
-
-public:
-
-  MIKTEXMFTHISAPI(bool)
-  OpenPoolFile (/*[in]*/ void *				p,
-		/*[in]*/ const MiKTeX::Core::PathName &	fileName)
-    const;
-
-  /* _______________________________________________________________________
-     
-     OpenPoolFile
-     _______________________________________________________________________ */
-
-#if defined(THEDATA)
-  template<class T>
-  bool
-  OpenPoolFile (/*[in]*/ T & f)
-    const
-  {
-    return (OpenPoolFile(&f, GetNameOfFile()));
   }
 #endif // THEDATA
 

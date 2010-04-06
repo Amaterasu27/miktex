@@ -1,6 +1,6 @@
 /* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -3688,11 +3688,9 @@ public:
     /// MetaPost memory files (*.mem).
     MEM,
     MF,
-    MFPOOL,
     MFT,
     MISCFONT,
     MP,
-    MPPOOL,
     OCP,
     OFM,
     OPL,
@@ -3707,8 +3705,6 @@ public:
     TCX,
     /// TeX input files (*.tex).
     TEX,
-    /// TeX pool files (*.pool).
-    TEXPOOL,
     /// TeX documentation files (*.dvi;*.pdf).
     TEXSYSDOC,
     /// TeX font metric files (*.tfm).

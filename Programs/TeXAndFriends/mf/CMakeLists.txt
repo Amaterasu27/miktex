@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,12 @@
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
+if(LINK_EVERYTHING_STATICALLY)
+  set(mf_target_name ${mf_lib_name})
+else(LINK_EVERYTHING_STATICALLY)
+  set(mf_target_name ${mf_dll_name})
+endif(LINK_EVERYTHING_STATICALLY)
+
 set(${mf_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mf.defaults.h
   screen.cpp
@@ -34,7 +40,47 @@ add_custom_command(
   VERBATIM
 )
 
-create_web_app(METAFONT mf mf ${basedir})
+set(mf_changefiles
+  ${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-pool.ch
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex_2.ch
+  COMMAND ${tie_exe}
+	-c ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex_2.ch
+	${CMAKE_CURRENT_SOURCE_DIR}/mf.web
+	${mf_changefiles}	
+  DEPENDS
+    ${tie_exe}
+	${CMAKE_CURRENT_SOURCE_DIR}/mf.web
+	${mf_changefiles}
+  VERBATIM
+)
+
+set(mf_change_file ${CMAKE_CURRENT_BINARY_DIR}/mf-miktex_2.ch)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/mf_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/mf.pool
+		mf-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/mf_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+    ${inipool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/mf.pool
+)
+
+set(${mf_target_name}_sources
+  ${${mf_dll_name}_sources}
+  ${CMAKE_CURRENT_BINARY_DIR}/mf_pool.cpp
+)
+
+create_web_app(METAFONT mf)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
@@ -56,11 +102,13 @@ add_custom_command(
 	${tie_exe} -c ${CMAKE_CURRENT_BINARY_DIR}/trapmf-miktex.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/mf.web
 		${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex.ch
+		${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-pool.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-trap.ch
   DEPENDS
     ${tie_exe}
 	${CMAKE_CURRENT_SOURCE_DIR}/mf.web
 	${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex.ch
+	${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-pool.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/mf-miktex-trap.ch
 )
 
@@ -72,13 +120,29 @@ add_custom_command(
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/screen.cpp
 )
 
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/trapmf_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/trapmf.pool
+		mf-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/trapmf_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+    ${inipool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/trapmf.pool
+)
+
 set(${trapmf_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mf.defaults.h
+  ${CMAKE_CURRENT_BINARY_DIR}/trapmf_pool.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp
   screen.h
 )
 
-create_web_app(METAFONT trapmf trapmf ${basedir})
+create_web_app(METAFONT trapmf)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/trapmf-screen.cpp

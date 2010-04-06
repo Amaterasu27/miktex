@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -94,7 +94,7 @@ set_source_files_properties(
 set(mp_web_file ${CMAKE_CURRENT_SOURCE_DIR}/mp.web)
 set(mp_header_file ${CMAKE_CURRENT_BINARY_DIR}/mpd.h)
 
-create_web_app(MetaPost mp mpost ${memdir})
+create_web_app(MetaPost mp mpost)
 
 target_link_libraries(${mp_dll_name}
   ${kpsemu_dll_name}

@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -1287,32 +1287,4 @@ TeXMFApp::TouchJobOutputFile (/*[in]*/ FILE * pfile) const
       time_t time = GetStartUpTime();
       File::SetTimes (pfile, time, time, time);
     }
-}
-
-/* _________________________________________________________________________
-
-   TeXMFApp::OpenPoolFile
-   _________________________________________________________________________ */
-
-bool
-TeXMFApp::OpenPoolFile (/*[in]*/ void *			p,
-			/*[in]*/ const PathName &	fileName_)
-  const
-{
-  MIKTEX_ASSERT_BUFFER (p, sizeof(C4P_text));
-  PathName fileName (fileName_);
-  if (fileName.GetExtension() == 0)
-    {
-      fileName.SetExtension (".pool");
-    }
-  PathName path;
-  if (! pSession->FindFile(fileName, GetPoolFileType(), path))
-    {
-      return (false);
-    }
-  FILE * pfile =
-    pSession->OpenFile(path.Get(), FileMode::Open, FileAccess::Read, true);
-  reinterpret_cast<C4P_text*>(p)->Attach (pfile, true);
-  get (*reinterpret_cast<C4P_text*>(p));
-  return (true);
 }

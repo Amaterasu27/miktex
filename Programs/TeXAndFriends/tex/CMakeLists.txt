@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -27,9 +27,11 @@ set(C4P_FLAGS --chars-are-unsigned)
 set(tex_changefiles
   ${CMAKE_CURRENT_SOURCE_DIR}/mltex-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/enctex-miktex.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-pool.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-misc.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hash.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hyph.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-pool.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-quiet.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-src.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-stat.ch
@@ -50,6 +52,31 @@ add_custom_command(
 )
 
 set(tex_change_file ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.ch)
+
+if(LINK_EVERYTHING_STATICALLY)
+  set(tex_target_name ${tex_lib_name})
+else(LINK_EVERYTHING_STATICALLY)
+  set(tex_target_name ${tex_dll_name})
+endif(LINK_EVERYTHING_STATICALLY)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/tex_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/tex.pool
+		tex-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/tex_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+    ${inipool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/tex.pool
+)
+
+set(${tex_target_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/tex_pool.cpp
+)
 
 create_web_app(TeX)
 
@@ -75,6 +102,31 @@ add_custom_command(
 
 set(triptex_web_file ${CMAKE_CURRENT_SOURCE_DIR}/tex.web)
 set(triptex_change_file ${CMAKE_CURRENT_BINARY_DIR}/tex-miktex.ch)
+
+if(LINK_EVERYTHING_STATICALLY)
+  set(triptex_target_name ${triptex_lib_name})
+else(LINK_EVERYTHING_STATICALLY)
+  set(triptex_target_name ${triptex_dll_name})
+endif(LINK_EVERYTHING_STATICALLY)
+
+add_custom_command(
+  OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/triptex_pool.cpp
+  COMMAND
+	${inipool_exe} 
+		${CMAKE_CURRENT_BINARY_DIR}/triptex.pool
+		tex-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/triptex_pool.cpp
+  WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS
+    ${inipool_exe}
+    ${CMAKE_CURRENT_BINARY_DIR}/triptex.pool
+)
+
+set(${triptex_target_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/triptex_pool.cpp
+)
 
 create_web_app(TripTeX)
 

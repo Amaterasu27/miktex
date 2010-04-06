@@ -1,6 +1,6 @@
 /* makemem.cpp:
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -139,7 +139,7 @@ MakeMem::CreateDestinationDirectory ()
 {
   CreateDirectory (pSession->GetConfigValue(MIKTEX_REGKEY_MAKEMEM,
 					    MIKTEX_REGVAL_DESTDIR,
-					    T_("%R/miktex/mem")),
+					    "%R/" MIKTEX_PATH_MEM_DIR),
 		   destinationDirectory);
 }
 

@@ -1,6 +1,6 @@
 %% tex-miktex-misc.ch:
 %% 
-%% Copyright (C) 1991-2008 Christian Schenk
+%% Copyright (C) 1991-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -545,32 +545,6 @@ loop@+begin
 @p @t\4@>@<Declare additional routines for string recycling@>@/
 
 @!init function get_strings_started:boolean; {initializes the string pool,
-@z
-
-% _____________________________________________________________________________
-%
-% [4.51]
-% _____________________________________________________________________________
-
-@x
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-@y
-miktex_get_pool_file_name(name_of_file);
-if miktex_open_pool_file(pool_file) then
-@z
-
-@x
-else  bad_pool('! I can''t read TEX.POOL.')
-@.I can't read TEX.POOL@>
-@y
-else begin
-  wake_up_terminal;
-  write_ln(term_out, '! I can''t read TEX.POOL.');
-@.I can't read TEX.POOL@>
-  get_strings_started:=false;
-  return;
-end
 @z
 
 % _____________________________________________________________________________

@@ -280,16 +280,6 @@ public:
   virtual
   const char *
   MIKTEXTHISCALL
-  GetPoolFileName ()
-    const
-  {
-    return ("pdftex.pool");
-  }
-
-public:
-  virtual
-  const char *
-  MIKTEXTHISCALL
   GetInitProgramName ()
     const
   {
@@ -561,6 +551,8 @@ C4PEXTERN C4P_integer k;
 #define zmem THEDATA(zmem)
 
 int miktexloadpoolstrings (int size);
+
+inline int loadpoolstrings (int size) { return (miktexloadpoolstrings(size)); }
 
 /* _________________________________________________________________________
 

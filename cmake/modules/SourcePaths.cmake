@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -182,6 +182,7 @@ set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")
 set(tex_miktex_hash_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hash.ch")
 set(tex_miktex_hyph_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hyph.ch")
+set(tex_miktex_pool_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-pool.ch")
 set(tex_miktex_quiet_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-quiet.ch")
 set(tex_miktex_src_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-src.ch")
 set(tex_miktex_stat_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-stat.ch")

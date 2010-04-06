@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/MetafontApp.h:				-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -141,21 +141,6 @@ public:
     const
   {
     return (MiKTeX::Core::FileType::BASE);
-  }
-
-  /* _______________________________________________________________________
-     
-     GetPoolFileType
-     _______________________________________________________________________ */
-
-public:
-
-  virtual
-  MIKTEXMFTHISAPI(MiKTeX::Core::FileType)
-  GetPoolFileType ()
-    const
-  {
-    return (MiKTeX::Core::FileType::MFPOOL);
   }
 
   /* _______________________________________________________________________

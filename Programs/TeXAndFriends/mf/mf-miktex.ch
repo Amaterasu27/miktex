@@ -1,6 +1,6 @@
 %% mf-miktex.ch: WEB change file for METAFONT
 %% 
-%% Copyright (C) 1991-2009 Christian Schenk
+%% Copyright (C) 1991-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -549,32 +549,6 @@ loop@+begin
 @y
 @!pool_pointer = 0..sup_pool_size; {for variables that point into |str_pool|}
 @!str_number = 0..sup_max_strings; {for variables that point into |str_start|}
-@z
-
-% _____________________________________________________________________________
-%
-% [4.51]
-% _____________________________________________________________________________
-
-@x
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-@y
-miktex_get_pool_file_name(name_of_file);
-if miktex_open_pool_file(pool_file) then
-@z
-
-@x
-else  bad_pool('! I can''t read MF.POOL.')
-@.I can't read MF.POOL@>
-@y
-else begin
-  wake_up_terminal;
-  write_ln(term_out, '! I can''t read MF.POOL.');
-@.I can't read MF.POOL@>
-  get_strings_started:=false;
-  return;
-end
 @z
 
 % _____________________________________________________________________________
