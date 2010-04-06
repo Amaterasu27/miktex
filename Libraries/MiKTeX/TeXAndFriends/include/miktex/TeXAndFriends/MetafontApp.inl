@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/MetafontApp.inl:			-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -132,7 +132,7 @@ takescaled (/*[in]*/ C4P_integer p,
 #if defined(MIKTEXMFAPI_USE_ASM)
   return (TakeScaled(p, q, THEDATA(aritherror)));
 #else
-  return (takescaled(p, q));
+  return (takescaledorig(p, q));
 #endif
 }
 
