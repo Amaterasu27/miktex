@@ -5,6 +5,7 @@
     <TPM:Name>FreeType bin</TPM:Name>
     <TPM:Title>FreeType binaries</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x86</TPM:TargetSystem>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
       This package includes TTF conversion utilities: ttf2pfb, ttf2pk,

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/metapost/">
+    <TPM:Name>MetaPost bin</TPM:Name>
+    <TPM:Title>MetaPost binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the MetaPost executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/${dvitomp_dll_name}.dll
+texmf/miktex/bin/x64/${mp_dll_name}.dll
+texmf/miktex/bin/x64/dvitomp.exe
+texmf/miktex/bin/x64/makempx.exe
+texmf/miktex/bin/x64/mp.exe
+texmf/miktex/bin/x64/${miktex_prefix}mpost.exe
+texmf/miktex/bin/x64/mpost.exe
+texmf/miktex/bin/x64/mpto.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>MFware bin</TPM:Name>
+    <TPM:Title>MFware binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the MFware executables: GFtoDVI,
+      GFtoPK, GFtype, MFT.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/gftodvi.exe
+texmf/miktex/bin/x64/gftopk.exe
+texmf/miktex/bin/x64/gftype.exe
+texmf/miktex/bin/x64/mft.exe
+texmf/miktex/bin/x64/${gftodvi_dll_name}.dll
+texmf/miktex/bin/x64/${gftopk_dll_name}.dll
+texmf/miktex/bin/x64/${gftype_dll_name}.dll
+texmf/miktex/bin/x64/${mft_dll_name}.dll
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

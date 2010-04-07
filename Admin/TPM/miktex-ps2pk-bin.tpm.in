@@ -5,6 +5,7 @@
     <TPM:Name>PS2PK bin</TPM:Name>
     <TPM:Title>PS2PK binaries</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x86</TPM:TargetSystem>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
       This package includes the PS2PK executable.

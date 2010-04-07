@@ -27,7 +27,6 @@ set(C4P_FLAGS --chars-are-unsigned)
 set(tex_changefiles
   ${CMAKE_CURRENT_SOURCE_DIR}/mltex-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/enctex-miktex.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-pool.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-misc.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hash.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hyph.ch
@@ -129,6 +128,12 @@ set(${triptex_target_name}_sources
 )
 
 create_web_app(TripTeX)
+
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/triptex_pool.cpp
+  PROPERTIES COMPILE_FLAGS
+	"-DMIKTEX_TRIPTEX"
+)
 
 set(triptex_options)
 set(triptex_options "${triptex_options} -buf-size=500")

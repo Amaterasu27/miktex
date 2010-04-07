@@ -1,6 +1,6 @@
 /* TpmParser.cpp:
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -264,6 +264,10 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
 	{
 	  This->packageInfo.version = This->charBuffer.Get();
 	}
+      else if (StrCmp(lpszName, X_("TPM:TargetSystem")) == 0)
+      {
+	This->packageInfo.targetSystem = This->charBuffer.Get();
+      }
       else if (StrCmp(lpszName, X_("TPM:MD5")) == 0)
 	{
 	  This->packageInfo.digest = MD5::Parse(This->charBuffer.Get());

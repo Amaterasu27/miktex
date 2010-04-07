@@ -1,6 +1,6 @@
 /* xetex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 2007-2009 Christian Schenk
+   Copyright (C) 2007-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -169,16 +169,6 @@ public:
     const
   {
     return ("xetex.fmt");
-  }
-
-public:
-  virtual
-  const char *
-  MIKTEXTHISCALL
-  GetPoolFileName ()
-    const
-  {
-    return ("xetex.pool");
   }
 
 public:
@@ -362,21 +352,6 @@ eightbitp ()
    _________________________________________________________________________ */
 
 #define insertsrcspecialauto miktexinsertsrcspecialauto
-
-/* _________________________________________________________________________
-
-   miktexgetpoolfilename
-   _________________________________________________________________________ */
-
-inline
-void
-miktexgetpoolfilename (/*[out]*/ utf8code * lpszPath)
-{
-  // FIXME: we assume that the pool file name contains characters in
-  // the range 32..127
-  MiKTeX::TeXAndFriends::miktexgetpoolfilename
-    (reinterpret_cast<char*>(lpszPath));
-}
 
 /* _________________________________________________________________________
 

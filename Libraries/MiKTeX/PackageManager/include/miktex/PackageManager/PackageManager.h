@@ -1,6 +1,6 @@
 /* miktex/PackageManager/PackageManager.h: package manager API	-*- C++ -*-
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -77,6 +77,9 @@ struct PackageInfo
 
   /// Informal version information.
   std::string version;
+
+  /// Target system.
+  std::string targetSystem;
 
   /// Multi-line package description.
   std::string description;

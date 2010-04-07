@@ -1,6 +1,6 @@
 /* miktex/Core/config.h: core library configuration		-*- C++ -*-
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -36,5 +36,7 @@
 #    define HAVE_PTHREAD 1
 #  endif
 #endif
+
+#define MIKTEX_SYSTEM_TAG "${target_system_tag}"
 
 #endif

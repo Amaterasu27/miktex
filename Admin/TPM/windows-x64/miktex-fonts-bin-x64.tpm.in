@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>Fontutil bin</TPM:Name>
+    <TPM:Title>Fontutil binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes various font conversion tools: afm2tfm,
+      getafm, t1asm, ttf2afm, vftovp, vptovf.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/afm2tfm.exe
+texmf/miktex/bin/x64/getafm.exe
+texmf/miktex/bin/x64/${vftovp_dll_name}.dll
+texmf/miktex/bin/x64/${vptovf_dll_name}.dll
+texmf/miktex/bin/x64/t1asm.exe
+texmf/miktex/bin/x64/ttf2afm.exe
+texmf/miktex/bin/x64/vftovp.exe
+texmf/miktex/bin/x64/vptovf.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

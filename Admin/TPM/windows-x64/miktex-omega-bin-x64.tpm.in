@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/omega/">
+    <TPM:Name>Omega bin</TPM:Name>
+    <TPM:Title>Omega binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the Omega executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/${miktex_prefix}omega.exe
+texmf/miktex/bin/x64/${odvicopy_dll_name}.dll
+texmf/miktex/bin/x64/${ofm2opl_dll_name}.dll
+texmf/miktex/bin/x64/${omega_dll_name}.dll
+texmf/miktex/bin/x64/${opl2ofm_dll_name}.dll
+texmf/miktex/bin/x64/${ovf2ovp_dll_name}.dll
+texmf/miktex/bin/x64/${ovp2ovf_dll_name}.dll
+texmf/miktex/bin/x64/mkocp.exe
+texmf/miktex/bin/x64/odvicopy.exe
+texmf/miktex/bin/x64/ofm2opl.exe
+texmf/miktex/bin/x64/omega.exe
+texmf/miktex/bin/x64/opl2ofm.exe
+texmf/miktex/bin/x64/otp2ocp.exe
+texmf/miktex/bin/x64/outocp.exe
+texmf/miktex/bin/x64/ovf2ovp.exe
+texmf/miktex/bin/x64/ovp2ovf.exe
+texmf/miktex/config/omega.ini
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

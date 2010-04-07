@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>PSutils bin</TPM:Name>
+    <TPM:Title>PSutils binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes PostScript utilities.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/epsffit.exe
+texmf/miktex/bin/x64/psbook.exe
+texmf/miktex/bin/x64/psnup.exe
+texmf/miktex/bin/x64/psresize.exe
+texmf/miktex/bin/x64/psselect.exe
+texmf/miktex/bin/x64/pstops.exe
+texmf/psutils/scripts/extractres.pl
+texmf/psutils/scripts/fixdlsrps.pl
+texmf/psutils/scripts/fixfmps.pl
+texmf/psutils/scripts/fixmacps.pl
+texmf/psutils/scripts/fixpsditps.pl
+texmf/psutils/scripts/fixpspps.pl
+texmf/psutils/scripts/fixscribeps.pl
+texmf/psutils/scripts/fixtpps.pl
+texmf/psutils/scripts/fixwfwps.pl
+texmf/psutils/scripts/fixwwps.pl
+texmf/psutils/scripts/includeres.pl
+texmf/psutils/scripts/psmerge.pl
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

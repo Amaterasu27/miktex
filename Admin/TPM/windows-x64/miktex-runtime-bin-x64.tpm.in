@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>MiKTeX lib</TPM:Name>
+    <TPM:Title>MiKTeX run-time library</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the MiKTeX run-time library files.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/x64/${app_dll_name}.dll
+texmf/miktex/bin/x64/${bzip2_dll_name}.dll
+texmf/miktex/bin/x64/${core_dll_name}.dll
+texmf/miktex/bin/x64/${core_ps_dll_name}.dll
+texmf/miktex/bin/x64/${curl_dll_name}.dll
+texmf/miktex/bin/x64/${dib_dll_name}.dll
+texmf/miktex/bin/x64/${expat_dll_name}.dll
+texmf/miktex/bin/x64/${extractor_dll_name}.dll
+texmf/miktex/bin/x64/${getopt_dll_name}.dll
+texmf/miktex/bin/x64/${kpsemu_dll_name}.dll
+texmf/miktex/bin/x64/${lzma_dll_name}.dll
+texmf/miktex/bin/x64/${md5_dll_name}.dll
+texmf/miktex/bin/x64/${mpm_dll_name}.dll
+texmf/miktex/bin/x64/${mpm_ps_dll_name}.dll
+texmf/miktex/bin/x64/${mspack_dll_name}.dll
+texmf/miktex/bin/x64/${popt_dll_name}.dll
+texmf/miktex/bin/x64/${texmf_dll_name}.dll
+texmf/miktex/bin/x64/${ui_mfc_dll_name}.dll
+texmf/miktex/bin/x64/${ui_qt_dll_name}.dll
+texmf/miktex/bin/x64/${unxemu_dll_name}.dll
+texmf/miktex/bin/x64/${uriparser_dll_name}.dll
+texmf/miktex/bin/x64/${zlib_dll_name}.dll
+texmf/miktex/bin/x64/runbat.exe
+texmf/miktex/bin/x64/runperl.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

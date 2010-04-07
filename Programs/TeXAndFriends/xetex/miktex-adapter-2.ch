@@ -132,21 +132,16 @@ is considered an output file the file variable is |term_out|.
 % _____________________________________________________________________________
 
 @x
-miktex_get_pool_file_name(name_of_file);
-if miktex_open_pool_file(pool_file) then
+name_of_file:=pool_name; {we needn't set |name_length|}
+if a_open_in(pool_file) then
   begin c:=false;
   repeat @<Read one string, but return |false| if the
     string memory space is getting too tight for comfort@>;
   until c;
   a_close(pool_file); get_strings_started:=true;
   end
-else begin
-  wake_up_terminal;
-  write_ln(term_out, '! I can''t read TEX.POOL.');
+else  bad_pool('! I can''t read TEX.POOL.')
 @.I can't read TEX.POOL@>
-  get_strings_started:=false;
-  return;
-end
 @y
 name_length := strlen (pool_name);
 name_of_file := xmalloc_array (ASCII_code, name_length + 1);

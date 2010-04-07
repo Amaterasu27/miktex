@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MPC.
 
@@ -1036,6 +1036,7 @@ PackageCreator::InitializeStagingDirectory
   fprintf (stream.Get(), "creator=%s\n", packageInfo.creator.c_str());
   fprintf (stream.Get(), "title=%s\n", packageInfo.title.c_str());
   fprintf (stream.Get(), "version=%s\n", packageInfo.version.c_str());
+  fprintf (stream.Get(), "targetsystem=%s\n", packageInfo.targetSystem.c_str());
   fprintf (stream.Get(), "md5=%s\n", digest.ToString().c_str());
   for (size_t i = 0; i < packageInfo.requiredPackages.size(); ++ i)
     {
@@ -1174,6 +1175,9 @@ PackageCreator::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
 
   // get version (optional value)
   pCfg->TryGetValue (0, "version", packageInfo.version);
+
+  // get target system (optional value)
+  pCfg->TryGetValue (0, "targetsystem", packageInfo.targetSystem);
 
   // get required packages (optional value)
   string strReqList;
@@ -1495,6 +1499,12 @@ PackageCreator::BuildTDS
 			    "Version",
 			    it->second.version.c_str());
 	}
+      if (! it->second.targetSystem.empty())
+      {
+	dbLight.PutValue (it->second.deploymentName.c_str(),
+	  "targetsystem",
+	  it->second.targetSystem.c_str());
+      }
     }
 }
 
@@ -2419,6 +2429,12 @@ PackageCreator::UpdateRepository
 			    "Version",
 			    it->second.version.c_str());
 	}
+      if (! it->second.targetSystem.empty())
+      {
+	dbLight.PutValue (it->second.deploymentName.c_str(),
+	  "targetsystem",
+	  it->second.targetSystem.c_str());
+      }
     }
 }
 

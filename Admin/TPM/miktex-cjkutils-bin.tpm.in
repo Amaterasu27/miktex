@@ -5,6 +5,7 @@
     <TPM:Name>CJK font utilities</TPM:Name>
     <TPM:Title>CJK font utilities</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x86</TPM:TargetSystem>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
       This package includes various CJK related font conversion tools:

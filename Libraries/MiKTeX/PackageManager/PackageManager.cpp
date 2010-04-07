@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -36,6 +36,8 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
+
+#define IGNORE_OTHER_SYSTEMS 1
 
 string PackageManagerImpl::proxyUser;
 string PackageManagerImpl::proxyPassword;
@@ -674,6 +676,18 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       // parse package definition file
       tpmParser.Parse (PathName(directory, name, 0));
 
+#if IGNORE_OTHER_SYSTEMS
+      string targetSystem =
+	tpmParser.GetPackageInfo().targetSystem;
+      if (targetSystem != "" && targetSystem != MIKTEX_SYSTEM_TAG)
+      {
+	trace_mpm->WriteFormattedLine ("libmpm",
+	  T_("%s: ignoring %s package"),
+	  szDeploymentName, targetSystem.c_str());
+	continue;
+      }
+#endif
+
 #if POLLUTE_THE_DEBUG_STREAM
       trace_mpm->WriteFormattedLine ("libmpm",
 				     T_("  adding %s"),
@@ -954,6 +968,14 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
     }
   TpmParser tpmParser;
   tpmParser.Parse (pathPackageDefinitionFile);
+#if IGNORE_OTHER_SYSTEMS
+  string targetSystem =
+    tpmParser.GetPackageInfo().targetSystem;
+  if (targetSystem != "" && targetSystem != MIKTEX_SYSTEM_TAG)
+  {
+    return (0);
+  }
+#endif
   return (DefinePackage(deploymentName, tpmParser.GetPackageInfo()));
 }
 
@@ -1987,6 +2009,11 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:Version" node
   xml.StartElement ("TPM:Version");
   xml.Text (packageInfo.version);
+  xml.EndElement ();
+
+  // create "TPM:TargetSystem" node
+  xml.StartElement ("TPM:TargetSystem");
+  xml.Text (packageInfo.targetSystem);
   xml.EndElement ();
 
   // create "TPM:Description" node
