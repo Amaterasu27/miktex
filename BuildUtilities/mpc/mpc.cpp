@@ -1502,7 +1502,7 @@ PackageCreator::BuildTDS
       if (! it->second.targetSystem.empty())
       {
 	dbLight.PutValue (it->second.deploymentName.c_str(),
-	  "targetsystem",
+	  "TargetSystem",
 	  it->second.targetSystem.c_str());
       }
     }
@@ -1655,7 +1655,6 @@ PackageCreator::CreateRepositoryInformationFile
        ++ it)
     {
       MpcPackageInfo pi = it->second;
-      time_t timePackaged;
       string str;
       if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
 			      "TimePackaged",
@@ -2432,7 +2431,7 @@ PackageCreator::UpdateRepository
       if (! it->second.targetSystem.empty())
       {
 	dbLight.PutValue (it->second.deploymentName.c_str(),
-	  "targetsystem",
+	  "TargetSystem",
 	  it->second.targetSystem.c_str());
       }
     }
