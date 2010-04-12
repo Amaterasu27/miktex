@@ -805,6 +805,15 @@ foreach(tpm ${tpms})
   )
 endforeach(tpm)
 
+file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/${target_system_tag}/*.tpm.in")
+foreach(tpm ${tpms})
+  get_filename_component(fn ${tpm} NAME_WE)
+  configure_file(
+    ${tpm}
+    "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/${fn}-${MIKTEX_SERIES_STR}.tpm"
+  )
+endforeach(tpm)
+
 ###############################################################################
 ## add sub-directories
 

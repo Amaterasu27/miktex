@@ -677,13 +677,14 @@ PackageManagerImpl::ParseAllPackageDefinitionFilesInDirectory
       tpmParser.Parse (PathName(directory, name, 0));
 
 #if IGNORE_OTHER_SYSTEMS
-      string targetSystem =
+      string targetSystems =
 	tpmParser.GetPackageInfo().targetSystem;
-      if (targetSystem != "" && targetSystem != MIKTEX_SYSTEM_TAG)
+      if (targetSystems != ""
+	&& ! Utils::Contains(targetSystems.c_str(), MIKTEX_SYSTEM_TAG))
       {
 	trace_mpm->WriteFormattedLine ("libmpm",
 	  T_("%s: ignoring %s package"),
-	  szDeploymentName, targetSystem.c_str());
+	  szDeploymentName, targetSystems.c_str());
 	continue;
       }
 #endif
@@ -969,9 +970,10 @@ PackageManagerImpl::TryGetPackageInfo (/*[in]*/ const string & deploymentName)
   TpmParser tpmParser;
   tpmParser.Parse (pathPackageDefinitionFile);
 #if IGNORE_OTHER_SYSTEMS
-  string targetSystem =
+  string targetSystems =
     tpmParser.GetPackageInfo().targetSystem;
-  if (targetSystem != "" && targetSystem != MIKTEX_SYSTEM_TAG)
+  if (targetSystems != ""
+    && ! Utils::Contains(targetSystems.c_str(), MIKTEX_SYSTEM_TAG))
   {
     return (0);
   }
