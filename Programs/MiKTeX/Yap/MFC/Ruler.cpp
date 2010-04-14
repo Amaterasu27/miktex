@@ -1,6 +1,6 @@
 /* Ruler.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of Yap.
 
@@ -266,7 +266,7 @@ Ruler::OnPaint ()
 		}
 	    }
 	}
-      if (unit.Get() == Units.Centimeters || unit.Get() == Units.Inches)
+      if (unit.Get() == Units::Centimeters || unit.Get() == Units::Inches)
 	{
 	  if (pixelsPerUnit / 2 > MIN_SPACE)
 	    {

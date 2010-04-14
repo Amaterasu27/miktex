@@ -23,7 +23,9 @@ extern "C" BOOL WINAPI DllMain(HMODULE hmod, DWORD dwReason, PVOID pvReserved)
 	case DLL_PROCESS_ATTACH:
 		// REVIEW DarrellZ: This is temporary until MSFT fixes the realloc bug.
 		// See the comment at the beginning of ModuleEntry::WinMain.
+#if ! defined(MIKTEX)
 		_set_sbh_threshold(0);
+#endif
 
 		s_hmod = hmod;
 		break;

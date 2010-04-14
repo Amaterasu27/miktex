@@ -80,6 +80,10 @@ set(${mf_target_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mf_pool.cpp
 )
 
+set(C4P_FLAGS
+  --rename conditional
+)
+
 create_web_app(METAFONT mf)
 
 set_source_files_properties(

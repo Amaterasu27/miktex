@@ -1,6 +1,6 @@
 /* symtab.c: symbol table					-*- C++ -*-
 
-   Copyright (C) 1991-2008 Christian Schenk
+   Copyright (C) 1991-2010 Christian Schenk
 
    This file is part of C4P.
 
@@ -86,11 +86,11 @@ get_string (STRING_PTR s)
 
 /* _________________________________________________________________________
 
-   hash
+   hash_func
    _________________________________________________________________________ */
 
 SYMBOL_PTR
-hash (const char * id)
+hash_func (const char * id)
 {
   const char * p = id;
   unsigned long h = 0;
@@ -118,7 +118,7 @@ hash (const char * id)
 symbol_t *
 new_symbol_instance (const char * id)
 {
-  SYMBOL_PTR h = hash(id);
+  SYMBOL_PTR h = hash_func(id);
   SYMBOL_PTR front = hash_table[h];
 
   if (symbol_ptr == MAX_SYMBOLS)
@@ -179,7 +179,7 @@ insert (const char *	id,
 symbol_t *
 lookup (const char * id)
 {
-  SYMBOL_PTR h = hash(id);
+  SYMBOL_PTR h = hash_func(id);
   SYMBOL_PTR s = hash_table[h];
   symbol_t * possible_result = 0;
 
