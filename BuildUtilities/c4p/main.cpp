@@ -67,8 +67,8 @@ unsigned extra_indent;
 unsigned max_lines_per_c_file;
 
 int yyparse ();
-extern long yylineno;
-extern _TCHAR * yytext;
+extern int yylineno;
+extern char * yytext;
 
 /* _________________________________________________________________________
 

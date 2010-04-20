@@ -1,6 +1,6 @@
  /* scan.l: C4P Lexical Scanner Specification		-*- C++ -*-
 
-    Copyright (C) 1991-2006 Christian Schenk
+    Copyright (C) 1991-2008 Christian Schenk
 
     This file is part of C4P.
 
@@ -29,7 +29,6 @@
 #include "gram.h"
 
 extern YYSTYPE yylval;
-long yylineno = 1;
 
 namespace {
   int last_tok;
@@ -77,7 +76,7 @@ E		[Ee][+-]?{D}+
 
 "{"		{ comment (); }
 
-[ \t]+		{
+[\r \t]+	{
 		}
 
 \n		{
