@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebAppInputLine.h:			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -444,6 +444,17 @@ public:
 		  /*[in]*/ const char *			lpszPath,
 		  /*[in]*/ MiKTeX::Core::FileShare	share,
 		  /*[in]*/ bool				text);
+
+  /* _______________________________________________________________________
+     
+     AllowFileName
+     _______________________________________________________________________ */
+
+public:
+
+  MIKTEXMFTHISAPI(bool)
+  AllowFileName (/*[in]*/ const char *			lpszPath,
+		 /*[in]*/ bool				forInput);
 
   /* _______________________________________________________________________
      

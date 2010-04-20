@@ -1,6 +1,6 @@
 /* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1582,6 +1582,12 @@ public:
   static
   MIKTEXCORECEEAPI(bool)
   IsAbsolutePath (/*[in]*/ const char *	lpszPath);
+
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  IsSafeFileName (/*[in]*/ const char *	lpszPath,
+		  /*[in]*/ bool forInput);
 
 public:
   static

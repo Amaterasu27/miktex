@@ -1,6 +1,6 @@
 /* omega-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMPONENT_VERSION 2987
+#define MIKTEX_COMPONENT_VERSION 3759
 #define MIKTEX_COMPONENT_ORIGINAL_VERSION_STR "1.15"
 
 #include <miktex/Core/Version>
