@@ -1,7 +1,7 @@
 
 /* Setup-version.h: version information				-*- C++ -*-
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -18,6 +18,6 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#define MIKTEX_COMP_J2000_VERSION 3583
+#define MIKTEX_COMP_J2000_VERSION 3761
 
 #include <miktex/Core/Version>

@@ -1,6 +1,6 @@
 %% omega-miktex.ch:
 %% 
-%% Copyright (C) 1998-2009 Christian Schenk
+%% Copyright (C) 1998-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -2316,6 +2316,20 @@ primitive("special",extension,special_node);@/
 @y
 primitive("special",extension,special_node);@/
 special_loc:=cur_val; special_token:=cs_token_flag+special_loc;@/
+@z
+
+% _____________________________________________________________________________
+%
+% [53.1420]
+% _____________________________________________________________________________
+
+@x
+      while not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
+@y
+      while not miktex_allow_name_of_file(false)
+            or not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
 @z
 
 % _____________________________________________________________________________

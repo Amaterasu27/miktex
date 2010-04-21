@@ -1,6 +1,6 @@
 %% tex-miktex-misc.ch:
 %% 
-%% Copyright (C) 1991-2008 Christian Schenk
+%% Copyright (C) 1991-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -2478,6 +2478,20 @@ end;
 if miktex_get_interaction >= 0 then
   interaction:=miktex_get_interaction;
 @<Initialize the print |selector|...@>;
+@z
+
+% _____________________________________________________________________________
+%
+% [54.1374]
+% _____________________________________________________________________________
+
+@x
+      while not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
+@y
+      while not miktex_allow_name_of_file(false)
+            or not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
 @z
 
 % _____________________________________________________________________________
