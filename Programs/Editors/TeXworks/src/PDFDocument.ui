@@ -148,6 +148,9 @@
      <height>24</height>
     </size>
    </property>
+   <property name="styleSheet">
+    <string notr="true">padding:2px</string>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -696,6 +699,9 @@
    </property>
   </action>
   <action name="actionManage_Scripts">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Manage Scripts</string>
    </property>

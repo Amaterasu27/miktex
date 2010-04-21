@@ -1599,6 +1599,12 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(bool)
+  IsSafeFileName (/*[in]*/ const char *	lpszPath,
+		  /*[in]*/ bool forInput);
+
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
   IsParentDirectoryOf (/*[in]*/ const char * lpszParentDir,
 		       /*[in]*/ const char * lpszFileName);
 

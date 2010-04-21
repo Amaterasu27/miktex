@@ -2307,6 +2307,20 @@ special_loc:=cur_val; special_token:=cs_token_flag+special_loc;@/
 
 % _____________________________________________________________________________
 %
+% [53.1420]
+% _____________________________________________________________________________
+
+@x
+      while not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
+@y
+      while not miktex_allow_name_of_file(false)
+            or not a_open_out(write_file[j]) do
+        prompt_file_name("output file name",".tex");
+@z
+
+% _____________________________________________________________________________
+%
 % [54.1454]
 % _____________________________________________________________________________
 

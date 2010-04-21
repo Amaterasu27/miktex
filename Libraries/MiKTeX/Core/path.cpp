@@ -1,6 +1,6 @@
 /* path.cpp: path name utilities
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -110,6 +110,94 @@ Utils::IsAbsolutePath (/*[in]*/ const char * lpszPath)
     {
       return (false);
     }
+}
+
+/* _________________________________________________________________________
+
+   Utils::IsSafeFileName
+   _________________________________________________________________________ */
+
+static const char * const forbiddenFileNames[] = {
+#if defined(MIKTEX_WINDOWS)
+  "desktop.ini",
+  "folder.htt",
+#endif
+  0,
+};
+
+static const char * const forbiddenExtensions[] = {
+#if defined(MIKTEX_WINDOWS)
+  ".bat",
+  ".cmd",
+  ".com",
+  ".exe",
+  ".js",
+  ".jse",
+  ".lnk",
+  ".msc",
+  ".pif",
+  ".reg",
+  ".scr",
+  ".pl"
+  ".py",
+  ".pyw",
+  ".tcl",
+  ".url",
+  ".vbe",
+  ".vbs",
+  ".ws",
+  ".wsf",
+  ".wsh",
+#endif
+  0
+};
+
+bool
+Utils::IsSafeFileName (/*[in]*/ const char *	lpszPath,
+		       /*[in]*/ bool		forInput)
+{
+  if (IsAbsolutePath(lpszPath))
+    {
+      return (false);
+    }
+  const char * lpszFileName = 0;
+  for (PathNameParser parser (lpszPath);
+       parser.GetCurrent() != 0;
+       ++ parser)
+    {
+      if (PathName::Compare(parser.GetCurrent(), PARENT_DIRECTORY) == 0)
+	{
+	  return (false);
+	}
+      lpszFileName = parser.GetCurrent();
+    }
+  MIKTEX_ASSERT (lpszFileName != 0);
+  for (int idx = 0;
+       forbiddenFileNames[idx] != 0;
+       ++ idx)
+    {
+      if (PathName::Compare(forbiddenFileNames[idx], lpszFileName) == 0)
+	{
+	  return (false);
+	}
+    }  
+#if defined(MIKTEX_WINDOWS)
+  const char * lpszExtension = GetFileNameExtension(lpszFileName);
+  const char * lpszForbiddenExtensions = ::GetEnvironmentString("PATHEXT");
+  if (lpszForbiddenExtensions != 0 && lpszExtension != 0)
+    {
+      for (CSVList ext (lpszForbiddenExtensions, PATH_DELIMITER);
+	   ext.GetCurrent() != 0;
+	   ++ ext)
+	{
+	  if (PathName::Compare(ext.GetCurrent(), lpszExtension) == 0)
+	    {
+	      return (false);
+	    }
+	}
+    }
+#endif
+  return (true);
 }
 
 /* _________________________________________________________________________

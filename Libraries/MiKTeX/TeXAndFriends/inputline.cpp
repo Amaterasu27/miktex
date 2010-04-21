@@ -1,6 +1,6 @@
 /* inputline.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -233,6 +233,55 @@ IsOutputFile (/*[in]*/ const PathName & path)
   return (path_.HasExtension(".dvi")
 	  || path_.HasExtension(".pdf")
 	  || path_.HasExtension(".synctex"));
+}
+
+/* _________________________________________________________________________
+
+   WebAppInputLine::AllowFileName
+   _________________________________________________________________________ */
+
+bool
+WebAppInputLine::AllowFileName (/*[in]*/ const char *		lpszPath,
+				/*[in]*/ bool			forInput)
+{
+  bool allow;
+  if (forInput)
+    {
+      static Core::TriState allowInput = TriState::Undetermined;
+      if (allowInput == TriState::Undetermined)
+	{
+	  allow =
+	    pSession->GetConfigValue(0,
+				     "AllowUnsafeInputFiles",
+				     true);
+	  allowInput = (allow ? TriState::True : TriState::False);
+	}
+      else
+	{
+	  allow = (allowInput == TriState::True ? true : false);
+	}
+    }
+  else
+    {
+      static Core::TriState allowOutput = TriState::Undetermined;
+      if (allowOutput == TriState::Undetermined)
+	{
+	  allow =
+	    pSession->GetConfigValue(0,
+				     "AllowUnsafeOutputFiles",
+				     false);
+	  allowOutput = (allow ? TriState::True : TriState::False);
+	}
+      else
+	{
+	  allow = (allowOutput == TriState::True ? true : false);
+	}
+    }
+  if (allow)
+    {
+      return (true);
+    }
+  return (Core::Utils::IsSafeFileName(lpszPath, forInput));
 }
 
 /* _________________________________________________________________________
