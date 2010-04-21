@@ -158,6 +158,7 @@ struct PackageInfo
     displayName = rhs.displayName;
     title = rhs.title;
     version = rhs.version;
+    targetSystem = rhs.targetSystem;
     timeInstalled = rhs.timeInstalled;
     timePackaged = rhs.timePackaged;
     docFiles = rhs.docFiles;
@@ -183,6 +184,7 @@ struct PackageInfo
       displayName (other.displayName),
       title (other.title),
       version (other.version),
+      targetSystem (other.targetSystem),
       timeInstalled (other.timeInstalled),
       timePackaged (other.timePackaged),
       docFiles (other.docFiles),
