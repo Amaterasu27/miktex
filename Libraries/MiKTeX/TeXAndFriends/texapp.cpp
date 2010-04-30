@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -245,6 +245,7 @@ bool
 TeXApp::ProcessOption (/*[in]*/ int		optchar,
 		       /*[in]*/ const char *	lpszArg)
 {
+  extern bool inParseFirstLine;
   bool done = true;
   switch (optchar - FIRST_OPTION_VAL - optBase)
     {
@@ -252,7 +253,10 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
       enableWrite18 = false;
       break;
     case OPT_ENABLE_WRITE18:
-      enableWrite18 = true;
+      if (! inParseFirstLine)
+	{
+	  enableWrite18 = true;
+	}
       break;
     case OPT_FONT_MAX:
       param_font_max = atoi(lpszArg);

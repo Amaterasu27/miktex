@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -232,3 +232,31 @@ GetC (/*[in]*/ FILE *		stream)
     }
   return (ch);
 }
+
+/* _________________________________________________________________________
+
+   AutoRestore
+   _________________________________________________________________________ */
+
+template<class VALTYPE>
+class AutoRestore
+{
+public:
+  AutoRestore (/*[in]*/ VALTYPE & val)
+    : oldVal (val),
+      pVal (&val)
+  {
+  }
+
+public:
+  ~AutoRestore ()
+  {
+    *pVal = oldVal;
+  }
+
+private:
+  VALTYPE oldVal;
+
+private:
+  VALTYPE * pVal;
+};
