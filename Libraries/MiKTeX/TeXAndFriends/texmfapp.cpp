@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -746,9 +746,14 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &		path,
    TeXMFApp::ParseFirstLine
    _________________________________________________________________________ */
 
+bool inParseFirstLine = false;
+
 void
 TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 {
+  AutoRestore<bool> autoRestoreInParseFirstLine (inParseFirstLine);
+  inParseFirstLine = true;
+
   PathName path;
 
   if (! pSession->FindFile(fileName, GetInputFileType(), path))

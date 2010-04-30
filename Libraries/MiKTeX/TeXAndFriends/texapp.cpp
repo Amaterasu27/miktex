@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -279,6 +279,7 @@ bool
 TeXApp::ProcessOption (/*[in]*/ int		optchar,
 		       /*[in]*/ const char *	lpszArg)
 {
+  extern bool inParseFirstLine;
   bool done = true;
   switch (optchar - FIRST_OPTION_VAL - optBase)
     {
@@ -286,7 +287,10 @@ TeXApp::ProcessOption (/*[in]*/ int		optchar,
       write18Mode = Write18Mode::Disabled;
       break;
     case OPT_ENABLE_WRITE18:
-      write18Mode = Write18Mode::Enabled;
+      if (! inParseFirstLine)
+	{
+          write18Mode = Write18Mode::Enabled;
+	}
       break;
     case OPT_RESTRICT_WRITE18:
       write18Mode = Write18Mode::PartiallyEnabled;
