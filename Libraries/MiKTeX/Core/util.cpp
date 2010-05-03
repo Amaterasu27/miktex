@@ -1,6 +1,6 @@
 /* util.cpp: generic utilities
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -644,6 +644,15 @@ PathNameParser::operator++ ()
 	  lpsz = &buffer[1];
 	}
     }
+#if defined(MIKTEX_WINDOWS)
+  else if (lpszCurrent == buffer
+	   && IsDriveLetter(buffer[0])
+	   && buffer[1] == ':'
+	   && IsDirectoryDelimiter(buffer[2]))
+    {
+      lpsz = &buffer[3];
+    }
+#endif
   else
     {
       // skip extra directory delimiters
