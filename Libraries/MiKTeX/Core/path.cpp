@@ -891,6 +891,16 @@ GetFullPath (/*[in]*/ const char * lpszPath)
 
   if (! Utils::IsAbsolutePath(lpszPath))
     {
+#if defined(MIKTEX_WINDOWS)
+      if (IsDriveLetter(lpszPath[0])
+	  && lpszPath[1] == ':'
+	  && lpszPath[2] == 0)
+	{
+	  path = lpszPath;
+	  path += PathName::DirectoryDelimiter;
+	  return (path);
+	}
+#endif
       path.SetToCurrentDirectory ();
     }
 
