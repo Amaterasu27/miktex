@@ -1,6 +1,6 @@
 /* AddChangeEditorDialog.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of Yap.
 
@@ -87,11 +87,19 @@ AddChangeEditorDialog::OnInitDialog ()
   
   try
     {
-      if (FAILED(SHAutoComplete(programEdit.m_hWnd, SHACF_FILESYSTEM)))
-	{
-	  UNEXPECTED_CONDITION ("AddChangeEditorDialog::OnInitDialog");
-	}
+      HResult hr = SHAutoComplete(programEdit.m_hWnd, SHACF_FILESYSTEM);
       EnableButtons ();
+      if (hr.Failed())
+	{
+#if 1
+	  TraceError (_T("Auto completion error: %s"), hr.GetText());
+#else
+	  FATAL_MIKTEX_ERROR ("AddChangeEditorDialog::OnInitDialog",
+			      _T("Auto completion error."),
+			      hr.GetText());
+#endif
+	  
+	}
     }
   catch (const MiKTeXException & e)
     {
