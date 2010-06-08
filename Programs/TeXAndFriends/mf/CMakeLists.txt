@@ -154,6 +154,12 @@ set_source_files_properties(
 	"-DMIKTEX_METAFONT -DMIKTEX_TRAPMF -DTRAPMFCLASS=${trapmf_class} -DTRAPMFAPP=${trapmf_app} -DTRAPMFDATA=${trapmf_data}"
 )
 
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/trapmf_pool.cpp
+  PROPERTIES COMPILE_FLAGS
+	"-DMIKTEX_TRAPMF"
+)
+
 set(trapmf_options)
 set(trapmf_options "${trapmf_options} -error-line=64")
 set(trapmf_options "${trapmf_options} -half-error-line=32")
