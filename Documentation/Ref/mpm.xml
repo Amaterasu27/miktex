@@ -56,7 +56,7 @@ bar buttons and command menus).</para></listitem>
 </variablelist>
 
 <para>&MPM; starts in windowed mode, if you do not specify any
-command-line options (see <xref linkend="mpmgui"/>).</para>
+command-line options.</para>
 
 </refsect1>
 

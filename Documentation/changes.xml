@@ -4,16 +4,7 @@
 
 <itemizedlist>
 <listitem>
-<para>easier network installation</para>
-</listitem>
-<listitem>
-<para>better experience for restricted users</para>
-</listitem>
-<listitem>
-<para>portable edition</para>
-</listitem>
-<listitem>
-<para>XCOPY deployment</para>
+<para>...</para>
 </listitem>
 </itemizedlist>
 
@@ -28,11 +19,12 @@
 
 <itemizedlist>
 <listitem><para>&Windows7;</para></listitem>
-<listitem><para>&WindowsServer2008;</para></listitem>
-<listitem><para>&WindowsVista;</para></listitem>
-<listitem><para>&WindowsServer2003;</para></listitem>
-<listitem><para>&WindowsXP;</para></listitem>
-<listitem><para>&Windows2000;</para></listitem>
+<listitem><para>&WindowsVistaServicePack2; (all editions except Starter Edition)</para></listitem>
+<listitem><para>&WindowsXPServicePack3; (all editions except Starter Edition)</para></listitem>
+<listitem><para>&WindowsServer2008R2;</para></listitem>
+<listitem><para>&WindowsServer2008ServicePack2;</para></listitem>
+<listitem><para>&WindowsServer2003R2;</para></listitem>
+<listitem><para>&WindowsServer2003ServicePack2;</para></listitem>
 </itemizedlist>
 
 </section>
@@ -43,71 +35,21 @@
 
 <section>
 
-<title>Per-user versus system-wide maintenance</title>
+<title>&Windows; Platforms</title>
 
-<para>The &MiKTeX; maintenance utilities (&MiKTeXOptions;,
-&MiKTeXUpdateWizard; and &MiKTeXPackageManager;) now come in two
-variants:</para>
+<para>&Windows2000; is no longer supported.</para>
 
-<itemizedlist>
-<listitem><para>the <firstterm>standard variant</firstterm> is used to
-change &MiKTeX; settings for the current (logged-in) user</para></listitem>
-<listitem><para>the <firstterm>admin variant</firstterm> is used to
-to change &MiKTeX; settings for all users</para></listitem>
-</itemizedlist>
+<para>&WindowsXP; platforms must have at least service pack&nbsp;3
+installed.</para>
 
-<para>For example, packages will be installed in a private
-installation directory, if the current user runs the standard variant
-of the package manager. In contrast, packages will be installed in the
-system-wide installation directory, if the current user runs the admin
-variant of the package manager.</para>
+<para>&WindowsVista; platforms must have at least service pack&nbsp;2
+installed.</para>
 
-<para>In order to run an admin variant, the current user must have
-administrator privileges.</para>
+<para>&WindowsServer2003; platforms must have at least service
+pack&nbsp;2 installed.</para>
 
-<para>The command-line versions of the maintenance utilities
-(<filename>initexmf</filename> and <filename>mpm</filename>) accept
-the <option>--admin</option> option to run the admin variant.</para>
-
-</section>
-
-<section>
-
-<title><markup role="tex">\write18</markup> partially enabled </title>
-
-<para>The <markup role="tex">\write18</markup> primitive is now
-partially enabled: if the first token is a well known command (e.g.,
-&epstopdf;), it will be executed. Unknown commands are still
-blocked.</para>
-
-</section>
-
-<section>
-
-<title>&MiKTeXSetupWizard;</title>
-
-<para>The command-line option
-<option>--install-root=<replaceable>dir</replaceable></option> has
-been replaced by
-<option>--common-install=<replaceable>dir</replaceable></option> and
-<option>--user-install=<replaceable>dir</replaceable></option>.</para>
-
-<para>The command-line option
-<option>--roots=<replaceable>dirs</replaceable></option> has been
-replaced by
-<option>--common-roots=<replaceable>dirs</replaceable></option> and
-<option>--user-roots=<replaceable>dirs</replaceable></option>.</para>
-
-</section>
-
-<section>
-
-<title>&TeXnicCenter; compatibility</title>
-
-<para>&latex; terminates with <quote>GUI framework cannot be initialized</quote> if started from &TeXnicCenter;
-(1.0 Stable Release Candidate 1). Please visit
-the <ulink url="http://miktex.org/2.8/issues">MiKTeX 2.8 Issues page</ulink>
-for a solution.</para>
+<para>&WindowsServer2008; platforms must have at least service
+pack&nbsp;2 installed.</para>
 
 </section>
 
@@ -115,90 +57,9 @@ for a solution.</para>
 
 <section>
 
-<title>Per-user &TEXMF; roots</title>
+<title>...</title>
 
-<para>It is now possible to set up &TEXMF; root directories on a
-per-user basis: users can register their private &TEXMF; root
-directories without affecting the system-wide &MiKTeX;
-installation.</para>
-
-</section>
-
-<section>
-
-<title>Per-user package management</title>
-
-<para>Packages can now be installed in a user-private installation
-directory.</para>
-
-</section>
-
-<section>
-
-<title>Optionally avoiding the &WindowsRegistry;</title>
-
-<para>The new setup option <option>--no-registry</option> causes
-&MiKTeX; to store configuration settings in a configuration file.  By
-avoiding the &WindowsRegistry;, it is easier to create network
-installation of &MiKTeX;.</para>
-
-</section>
-
-<section>
-
-<title>&MiKTeXPortable;</title>
-
-<para>The new portable edition makes it possible to run &MiKTeX; from
-a portable storage device:</para>
-
-<itemizedlist>
-<listitem><para>&MiKTeX; on a portable storage device is ready for
-use on any &Windows; computer</para></listitem>
-<listitem><para>configuration settings are stored on the portable
-storage device and not in the &WindowsRegistry; of the host
-computer</para></listitem>
-<listitem><para>no traces are left on the host computer</para></listitem>
-<listitem><para>no administrator privileges are required
-on the host computer</para></listitem>
-</itemizedlist>
-
-<para>Since &MiKTeXPortable; is installed by copying files (<ulink url="http://en.wikipedia.org/wiki/XCOPY_deployment">XCOPY deployment</ulink>), it is now easier to integrate &MiKTeX; into 3rd
-party products.</para>
-
-<para>&MiKTeXPortable; is distributed as a &SevenZip; self-extracting
-archive.</para>
-
-<para>Please visit the <ulink
-url="http://miktex.org/portable">&MiKTeXPortable; Homepage</ulink>, for more
-information.</para>
-
-</section>
-
-<section>
-
-<title>&TeXworks;</title>
-
-<para>The &MiKTeX; distribution now includes &TeXworks;, an integrated
-development environment for &TeX; and &LaTeX; written by Jonathan
-Kew.</para>
-
-<para>&TeXworks; includes a text editor, a previewer, syntax
-highlighting, spell checking, Unicode support.</para>
-
-<para>This version of &TeXworks; is adapted to the &MiKTeX; distribution. See the
-<ulink url="http://miktex.svn.sourceforge.net/viewvc/miktex/miktex/trunk/Programs/Editors/TeXworks/miktex.html">&TeXworks; for &MiKTeX; homepage</ulink>, for
-more information.</para>
-
-</section>
-
-<section>
-
-<title>File type associations</title>
-
-<para>&TeX; input documents (<filename>*.tex</filename>,
-<filename>*.ltx</filename>, &hellip;) and &PDF; documents
-(<filename>*.pdf</filename>) are associated with &TeXworks;
-(existing associations are left intact).</para>
+<para>...</para>
 
 </section>
 
@@ -207,11 +68,7 @@ more information.</para>
 <title>Upgrades</title>
 
 <itemizedlist>
-<listitem><para>&Dvipdfmx; 20090708</para></listitem>
-<listitem><para>&Dvipng; 1.12</para></listitem>
-<listitem><para>&Dvips; 5.98</para></listitem>
-<listitem><para>&pdfTeX; 1.40.10</para></listitem>
-<listitem><para>&XeTeX; 0.9995.0</para></listitem>
+<listitem><para>...</para></listitem>
 </itemizedlist>
 
 </section>
@@ -220,19 +77,9 @@ more information.</para>
 
 <title>Bugfixes</title>
 
-<para><ulink url="http://sourceforge.net/tracker/?func=detail%amp;aid=2419953%amp;group_id=10783%amp;atid=110783">2419953</ulink> (<quote>bad \input implementation in TeX breaks SyncTeX</quote>)</para>
+<para></para>
 
 </section>
-
-<!--
-<section>
-
-<title>&pdfTeX;</title>
-
-<para>&pdfTeX; is now at upstream version 1.40.9.</para>
-
-</section>
--->
 
 <!--
 Local Variables:

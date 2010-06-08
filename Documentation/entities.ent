@@ -92,9 +92,15 @@
 <!ENTITY WindowsNT40 "<application>Windows&nbsp;NT&nbsp;4.0</application>">
 <!ENTITY Windows2000 "<application>Windows&nbsp;2000</application>">
 <!ENTITY WindowsServer2003 "<application>Windows Server&nbsp;2003</application>">
+<!ENTITY WindowsServer2003R2 "<application>Windows Server&nbsp;2003&nbsp;R2</application>">
+<!ENTITY WindowsServer2003ServicePack2 "<application>Windows Server&nbsp;2003 with Service Pack&nbsp;2</application>">
 <!ENTITY WindowsServer2008 "<application>Windows Server&nbsp;2008</application>">
+<!ENTITY WindowsServer2008ServicePack2 "<application>Windows Server&nbsp;2008 with Service Pack&nbsp;2</application>">
+<!ENTITY WindowsServer2008R2 "<application>Windows Server&nbsp;2008&nbsp;R2</application>">
 <!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
+<!ENTITY WindowsXPServicePack3 "<application>Windows&nbsp;XP with Service Pack&nbsp;3</application>">
 <!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">
+<!ENTITY WindowsVistaServicePack2 "<application>Windows&nbsp;Vista with Service Pack&nbsp;2</application>">
 <!ENTITY Windows7 "<application>Windows&nbsp;7</application>">
 <!ENTITY GNU "<application>GNU</application>">
 <!ENTITY GNULinux "&GNU;/Linux">
