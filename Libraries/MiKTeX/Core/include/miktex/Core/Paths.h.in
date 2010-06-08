@@ -307,6 +307,8 @@
 
 #define MIKTEX_MPM_INI_FILENAME "mpm.ini"
 
+#define MIKTEX_YAP_INI_FILENAME "yap.ini"
+
 #define MIKTEX_PDFTEX_CFG_FILENAME "pdftex.cfg"
 
 #define MIKTEX_PDFTEXCONFIG_TEX_FILENAME "pdftexconfig.tex"

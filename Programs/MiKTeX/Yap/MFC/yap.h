@@ -1,6 +1,6 @@
 /* yap.h: main header file for the Yap application		-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of Yap.
 
@@ -358,6 +358,134 @@ private:
 private:
   void
   DestroyMetafontModes ();
+
+private:
+  template<typename ValueType>
+  void
+  PutValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const ValueType &	value)
+  {
+    pCfg->PutValue (lpszKeyName, lpszValueName, NUMTOSTR(value));
+  }
+
+private:
+  template<>
+  void
+  PutValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const bool &	value)
+  {
+    pCfg->PutValue (lpszKeyName, lpszValueName, value ? "1" : "0");
+  }
+
+private:
+  template<>
+  void
+  PutValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const CString &	value)
+  {
+    pCfg->PutValue (lpszKeyName, lpszValueName, value);
+  }
+
+private:
+  template<typename ValueType>
+  void
+  UpdateValue (/*[in]*/ const char *		lpszKeyName,
+	       /*[in]*/ const char *		lpszValueName,
+	       /*[in]*/ const ValueType &	value,
+	       /*[in]*/ const ValueType &	defaultValue)
+  {
+    if (value == defaultValue)
+    {
+      string s;
+      if (pCfg->TryGetValue(lpszKeyName, lpszValueName, s))
+      {
+	pCfg->DeleteValue (lpszKeyName, lpszValueName);
+      }
+    }
+    else
+    {
+      PutValue (lpszKeyName, lpszValueName, value);
+    }
+  }
+
+private:
+  template<typename ValueType>
+  ValueType
+  GetValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const ValueType &	defaultValue)
+  {
+    string value;
+    if (pCfg->TryGetValue(lpszKeyName, lpszValueName, value))
+    {
+      return (static_cast<ValueType>(atoi(value.c_str())));
+    }
+    else
+    {
+      return (defaultValue);
+    }
+  }
+
+private:
+  template<>
+  bool
+  GetValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const bool &	defaultValue)
+  {
+    string value;
+    if (pCfg->TryGetValue(lpszKeyName, lpszValueName, value))
+    {
+      return (atoi(value.c_str()) == 0 ? false : true);
+    }
+    else
+    {
+      return (defaultValue);
+    }
+  }
+
+private:
+  template<>
+  double
+  GetValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const double &	defaultValue)
+  {
+    string value;
+    if (pCfg->TryGetValue(lpszKeyName, lpszValueName, value))
+    {
+      return (atof(value.c_str()));
+    }
+    else
+    {
+      return (defaultValue);
+    }
+  }
+
+private:
+  template<>
+  CString
+  GetValue (/*[in]*/ const char *	lpszKeyName,
+	    /*[in]*/ const char *	lpszValueName,
+	    /*[in]*/ const CString &	defaultValue)
+  {
+    string value;
+    if (pCfg->TryGetValue(lpszKeyName, lpszValueName, value))
+    {
+      return (value.c_str());
+    }
+    else
+    {
+      return (defaultValue);
+    }
+  }
+
+
+private:
+  SmartPointer<Cfg> pCfg;
 };
 
 /* _________________________________________________________________________
