@@ -37,7 +37,7 @@ authorization from the copyright holders.
 
 #ifdef XETEX_OT_MATH_IMPLEMENTATION
 #include "MathTable.h"
-#include "LEFontInstance.h"
+#include "layout/LEFontInstance.h"
 #else
 #if defined(MIKTEX)		/* "C" linkage not required */
 #include "MathTable.h"

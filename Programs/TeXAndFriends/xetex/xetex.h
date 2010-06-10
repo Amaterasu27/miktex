@@ -92,6 +92,8 @@ authorization from the copyright holders.
 #else
 #define xdvbufferbyte(i)						xdvbuffer[i]
 #endif
+#define getnativewordcp(p,s)					get_native_word_cp(&(mem[p]), s)
+
 
 void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
 
@@ -144,6 +146,10 @@ void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp 
 
 #include "trans.h"	/* functions for affine transform operations */
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
-#include "TECkit_Common.h" /* include this before XeTeX_ext.h */
+#if defined(MIKTEX)
+#include <TECkit_Common.h>
+#else
+#include <teckit/TECkit_Common.h> /* include this before XeTeX_ext.h */
+#endif
 #undef Byte
 #include "XeTeX_ext.h" /* other extension functions */

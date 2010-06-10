@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -33,7 +33,7 @@ include_directories(BEFORE
   ${CMAKE_BINARY_DIR}/${rel_xpdf_dir}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include/layout
+  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
@@ -129,6 +129,7 @@ add_custom_command(
 set(xetex_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex-latex3.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-hz.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
@@ -228,6 +229,7 @@ set(${xetex_dll_name}_sources
   XeTeX_pic.c
   bmpimage.c
   cmaps.cpp
+  hz.cpp
   jpegimage.c
   mfileio.c
   numbers.c

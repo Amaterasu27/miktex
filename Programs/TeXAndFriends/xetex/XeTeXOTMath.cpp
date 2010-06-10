@@ -40,7 +40,7 @@ authorization from the copyright holders.
 #include "XeTeXLayoutInterface.h"
 #include "XeTeXFontInst.h"
 
-#include "CoverageTables.h"
+#include "layout/CoverageTables.h"
 
 #define kMATHTableTag	0x4D415448
 
@@ -54,7 +54,7 @@ extern "C" {
 }
 #endif
 
-#include "LESwaps.h"
+#include "layout/LESwaps.h"
 
 static SInt16 getMathConstant(LEFontInstance* fontInst, mathConstantIndex whichConstant)
 {

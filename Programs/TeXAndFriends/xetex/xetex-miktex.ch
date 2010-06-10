@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2009 Christian Schenk
+%% Copyright (C) 2007-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -344,7 +344,7 @@ k: integer;
 @z
 
 @x
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and u_open_in(cur_file, kpse_tex_format, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
 @y
   if u_open_in(cur_file, XeTeX_default_input_mode, XeTeX_default_input_encoding) then

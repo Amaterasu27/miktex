@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2009 Christian Schenk
+%% Copyright (C) 2007-2010 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -423,7 +423,7 @@ end
 @x
   if a_open_in(cur_file) then goto done;
 @y
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @z
