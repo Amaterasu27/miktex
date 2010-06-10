@@ -211,6 +211,17 @@ SessionImpl::FindStartupConfigFile (/*[in]*/ bool	  common,
 	  return (true);
 	}
 #endif
+#if defined(MIKTEX_WINDOWS) && defined(_DEBUG)
+      if (Utils::GetPathNamePrefix(myloc, "binlib/Debug", prefix))
+      {
+	path = prefix;
+	path += "miktexstartup.ini.debug";
+	if (File::Exists(path))\
+	{
+	  return (true);
+	}
+      }
+#endif
     }
   else
     {

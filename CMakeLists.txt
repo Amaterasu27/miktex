@@ -814,6 +814,12 @@ foreach(tpm ${tpms})
   )
 endforeach(tpm)
 
+if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/miktexstartup.ini.debug.in
+	${CMAKE_BINARY_DIR}/miktexstartup.ini.debug)
+endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
+
 ###############################################################################
 ## add sub-directories
 
