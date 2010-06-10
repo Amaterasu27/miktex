@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,13 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-if(NATIVE_WINDOWS)
-  add_definitions(
-    -DPNG_BUILD_DLL
-  )
-endif(NATIVE_WINDOWS)
+add_definitions(-DPNG_CONFIGURE_LIBPNG)
+add_definitions(-DPNG_NO_CONSOLE_IO)
+add_definitions(-DZLIB_DLL)
+
+if(MSVC)
+  add_definitions(-DPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
+endif(MSVC)
 
 set(${png_dll_name}_sources
   libpng-version.h
@@ -32,6 +34,7 @@ set(${png_dll_name}_sources
   pngget.c
   pngmem.c
   pngpread.c
+  pngpriv.h
   pngread.c
   pngrio.c
   pngrtran.c
@@ -51,7 +54,6 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/libpng.rc
   )
   set(${png_dll_name}_sources ${${png_dll_name}_sources}
-    libpng.def
     ${CMAKE_CURRENT_BINARY_DIR}/libpng.rc
   )
 endif(NATIVE_WINDOWS)
@@ -63,6 +65,12 @@ set_target_properties(${png_dll_name}
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
 )
+
+if(WIN32)
+  set_target_properties(${png_dll_name}
+  PROPERTIES
+    DEFINE_SYMBOL PNG_BUILD_DLL)
+endif()
 
 target_link_libraries(${png_dll_name} ${zlib_dll_name})
 

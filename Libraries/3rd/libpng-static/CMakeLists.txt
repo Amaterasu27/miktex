@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,13 @@
 use_static_crt()
 use_static_libraries()
 
+add_definitions(-DPNG_CONFIGURE_LIBPNG)
+add_definitions(-DPNG_NO_CONSOLE_IO)
+
+if(MSVC)
+  add_definitions(-DPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
+endif(MSVC)
+
 set(${png_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/libpng-version.h
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/png.c
@@ -29,6 +36,7 @@ set(${png_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngget.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngmem.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngpread.c
+  ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngpriv.h
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngread.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngrio.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngrtran.c
