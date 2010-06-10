@@ -37,6 +37,9 @@
 #include FT_TRUETYPE_TABLES_H
 #endif
 
+/* Acoid conflict with CHAR from <winnt.h>.  */
+#define CHAR SFNT_CHAR
+
 /* Data Types as described in Apple's TTRefMan */
 typedef unsigned char  BYTE;
 typedef signed char    CHAR;
@@ -139,9 +142,9 @@ extern  int  put_big_endian (void *s, LONG q, int n);
 extern sfnt *sfnt_open  (FT_Face face, int accept_types);
 #else
 extern sfnt *sfnt_open  (FILE *fp);
+extern sfnt *dfont_open (FILE *fp, int index);
 #endif
 extern void  sfnt_close (sfnt *sfont);
-extern sfnt *dfont_open (FILE *fp, int index);
 
 /* table directory */
 extern int   sfnt_read_table_directory (sfnt *sfont, ULONG offset);

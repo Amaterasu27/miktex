@@ -25,13 +25,16 @@
 #ifndef _SYSTEM_H_
 #define _SYSTEM_H_
 
-#if defined(MIKTEX)
-#  include <miktex/Core/Core>
-#  include <miktex/KPSE/Emulation>
+#ifdef MIKTEX
+#include <miktex/Core/Core>
+#if 0
+#include "gnu-miktex.h"
 #endif
-
+#include <miktex/KPSE/Emulation>
+#else
 #include <kpathsea/c-auto.h>
 #include <kpathsea/kpathsea.h>
+#endif
 
 #ifdef WIN32
 #  undef ERROR

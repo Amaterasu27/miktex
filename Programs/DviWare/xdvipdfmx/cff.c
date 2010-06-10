@@ -183,6 +183,10 @@ cff_font *cff_open(sfnt *sfont, long offset, int n)
 
   cff_seek_set(cff, cff->gsubr_offset); /* seek back to GSubr */
 
+#ifdef XETEX
+  cff->ft_to_gid = NULL;
+#endif
+
   return cff;
 }
 
@@ -221,6 +225,9 @@ cff_close (cff_font *cff)
     }
     if (cff->_string)
       cff_release_index(cff->_string);
+#ifdef XETEX
+    if (cff->ft_to_gid) RELEASE(cff->ft_to_gid);
+#endif
     RELEASE(cff);
   }
 
@@ -498,7 +505,7 @@ char *cff_get_string (cff_font *cff, s_SID id)
   return result;
 }
 
-long cff_get_sid (cff_font *cff, char *str)
+long cff_get_sid (cff_font *cff, const char *str)
 {
   card16 i;
 

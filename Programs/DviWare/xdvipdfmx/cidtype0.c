@@ -1090,9 +1090,9 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   /* CFF code need to be rewrote... */
   cff_dict_add(cffont->topdict, "ROS", 3);
   cff_dict_set(cffont->topdict, "ROS", 0,
-	       (double) cff_get_sid(cffont, (char *)"Adobe"));
+	       (double) cff_get_sid(cffont, "Adobe"));
   cff_dict_set(cffont->topdict, "ROS", 1,
-	       (double) cff_get_sid(cffont, (char *)"Identity"));
+	       (double) cff_get_sid(cffont, "Identity"));
   cff_dict_set(cffont->topdict, "ROS", 2, 0.0);
 
   destlen = write_fontfile(font, cffont);
@@ -1537,6 +1537,7 @@ CIDFont_type0_t1open (CIDFont *font, const char *name,
 
 #ifdef XETEX
   font->ft_to_gid = cff_get_ft_to_gid(cffont);
+  cffont->ft_to_gid = NULL;
 #endif
 
   cff_close(cffont);
@@ -2038,9 +2039,9 @@ CIDFont_type0_t1dofont (CIDFont *font)
   /* CFF code need to be rewrote... */
   cff_dict_add(cffont->topdict, "ROS", 3);
   cff_dict_set(cffont->topdict, "ROS", 0,
-	       (double) cff_get_sid(cffont, (char *)"Adobe"));
+	       (double) cff_get_sid(cffont, "Adobe"));
   cff_dict_set(cffont->topdict, "ROS", 1,
-	       (double) cff_get_sid(cffont, (char *)"Identity"));
+	       (double) cff_get_sid(cffont, "Identity"));
   cff_dict_set(cffont->topdict, "ROS", 2, 0.0);
 
   cffont->num_glyphs = num_glyphs;
@@ -2065,5 +2066,8 @@ CIDFont_type0_t1dofont (CIDFont *font)
 void
 CIDFont_type0_release(CIDFont *font)
 {
+#ifdef XETEX
+  if (font->ft_to_gid) RELEASE(font->ft_to_gid);
+#endif
   return;
 }

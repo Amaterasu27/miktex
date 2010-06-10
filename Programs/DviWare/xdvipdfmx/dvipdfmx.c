@@ -45,6 +45,7 @@
 
 #include "dvi.h"
 
+#include "pdflimits.h"
 #include "pdfdoc.h"
 #include "pdfdev.h"
 #include "pdfparse.h"
@@ -188,9 +189,10 @@ usage (int exit_code)
 
 
 static int
-read_length (double *vp, char **pp, char *endptr)
+read_length (double *vp, const char **pp, const char *endptr)
 {
-  char   *q, *p = *pp;
+  char   *q;
+  const char *p = *pp;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -261,7 +263,7 @@ select_paper (const char *paperspec)
     paper_width  = paperpswidth (pi);
     paper_height = paperpsheight(pi);
   } else {
-    char  *p = (char *) paperspec, *endptr, *comma;
+    const char  *p = paperspec, *endptr, *comma;
     comma  = strchr(p, ',');
     endptr = p + strlen(p);
     if (!comma)
@@ -285,7 +287,8 @@ int max_page_ranges = 0;
 static void
 select_pages (const char *pagespec)
 {
-  char  *q, *p = (char *) pagespec;
+  char  *q;
+  const char *p = pagespec;
 
   while (*p != '\0') {
     /* Enlarge page range table if necessary */
@@ -402,19 +405,19 @@ do_args (int argc, char *argv[])
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
         nextptr = argv[1];
-        read_length(&annot_grow, &nextptr, nextptr + strlen(nextptr));
+        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
         nextptr = argv[1];
-        read_length(&x_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
         nextptr = argv[1];
-        read_length(&y_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':
@@ -467,9 +470,14 @@ do_args (int argc, char *argv[])
           ver_minor = atoi(argv[1]);
           POP_ARG();
         }
-        if (ver_minor < 3 || ver_minor > 6) {
-          WARN("PDF version 1.%d not supported. (1.4 used instead)", ver_minor);
-          ver_minor = 4;
+        if (ver_minor < PDF_VERSION_MIN) {
+          WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
+               ver_minor, PDF_VERSION_MIN);
+          ver_minor = PDF_VERSION_MIN;
+        } else if (ver_minor > PDF_VERSION_MAX) {
+          WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
+               ver_minor, PDF_VERSION_MAX);
+          ver_minor = PDF_VERSION_MAX;
         }
         pdf_set_version((unsigned) ver_minor);
       }
@@ -583,7 +591,8 @@ cleanup (void)
 static void
 read_config_file (const char *config)
 {
-  char *start, *end, *option;
+  const char *start, *end;
+  char *option;
   FILE *fp;
 
   fp = DPXFOPEN(config, DPX_RES_TYPE_TEXT);
@@ -699,7 +708,7 @@ do_dvi_pages (void)
         page_width = paper_width; page_height = paper_height;
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
-        dvi_scan_paper_size(page_no, &w, &h, &xo, &yo, &lm);
+        dvi_scan_specials(page_no, &w, &h, &xo, &yo, &lm, NULL);
         if (lm != landscape_mode) {
           SWAP(w, h);
           landscape_mode = lm;
@@ -863,6 +872,7 @@ main (int argc, char *argv[])
     y_offset = 0.0;
     dvi2pts  = 0.01; /* dvi2pts controls accuracy. */
   } else {
+    unsigned ver_minor = 0;
     /* Dependency between DVI and PDF side is rather complicated... */
     dvi2pts = dvi_init(dvi_filename, mag);
     if (dvi2pts == 0.0)
@@ -870,7 +880,10 @@ main (int argc, char *argv[])
 
     pdf_doc_set_creator(dvi_comment());
 
-    dvi_scan_paper_size(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode);
+    dvi_scan_specials(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode, &ver_minor);
+    if (ver_minor >= PDF_VERSION_MIN && ver_minor <= PDF_VERSION_MAX) {
+      pdf_set_version(ver_minor);
+    }
     if (landscape_mode) {
       SWAP(paper_width, paper_height);
     }

@@ -1080,13 +1080,13 @@ get_pfb_segment (FILE *fp, int expected_type, long *length)
   return buffer;
 }
 
-char *
+const char *
 t1_get_standard_glyph (int code)
 {
   if (!StandardEncoding[code])
     return NULL;
 
-  return (char *) StandardEncoding[code];
+  return StandardEncoding[code];
 }
 
 int
@@ -1162,6 +1162,10 @@ init_cff_font (cff_font *cff)
   cff->num_glyphs   = 0;
   cff->num_fds      = 1;
   cff->_string = cff_new_index(0);
+
+#ifdef XETEX
+  cff->ft_to_gid = NULL;
+#endif
 }
 
 cff_font *
