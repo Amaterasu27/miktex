@@ -1,6 +1,6 @@
 /* miktex/KPSE/Emulation.h: Web2C/KPSE emulation		-*- C++ -*-
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -244,8 +244,6 @@
 
 #define find_suffix(name) MiKTeX::KPSE::FindSuffix(name)
 
-#define isblank(c) ((c) == ' ' || (c) == '\t')
-
 #define kpse_set_program_enabled(fmt, value, level)
 
 #define kpse_bug_address miktex_kpse_bug_address
@@ -406,11 +404,7 @@
 #define recorder_record_input(fname)
 #define recorder_record_output(fname)
 
-#ifndef isblank
-#define isblank(c) ((c) == ' ' || (c) == '\t')
-#endif
-
-#define ISBLANK(c) (isascii (c) && isblank (c))
+#define ISBLANK(c) (isascii(c) && ((c) == ' ' || (c) == '\t'))
 
 /* _________________________________________________________________________
 
