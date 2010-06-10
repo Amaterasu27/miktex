@@ -1,7 +1,7 @@
 
 /*
  *
- * (C) Copyright IBM Corp. 1998-2005 - All Rights Reserved
+ * (C) Copyright IBM Corp. 1998-2009 - All Rights Reserved
  *
  */
 
@@ -34,7 +34,7 @@ class LEGlyphStorage;
  *
  * @internal
  */
-class U_EXPORT IndicOpenTypeLayoutEngine : public OpenTypeLayoutEngine
+class IndicOpenTypeLayoutEngine : public OpenTypeLayoutEngine
 {
 public:
     /**
@@ -47,6 +47,7 @@ public:
      * @param scriptCode - the script
      * @param langaugeCode - the language
      * @param gsubTable - the GSUB table
+     * @param success - set to an error code if the operation fails
      *
      * @see LayoutEngine::layoutEngineFactory
      * @see OpenTypeLayoutEngine
@@ -54,8 +55,9 @@ public:
      *
      * @internal
      */
+    /*MIKTEX*/U_LAYOUT_API
     IndicOpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
-                            le_int32 typoFlags, const GlyphSubstitutionTableHeader *gsubTable);
+                            le_int32 typoFlags, le_bool version2, const GlyphSubstitutionTableHeader *gsubTable, LEErrorCode &success);
 
     /**
      * This constructor is used when the font requires a "canned" GSUB table which can't be known
@@ -64,14 +66,16 @@ public:
      * @param fontInstance - the font
      * @param scriptCode - the script
      * @param langaugeCode - the language
+     * @param success - set to an error code if the operation fails
      *
      * @see OpenTypeLayoutEngine
      * @see ScriptAndLangaugeTags.h for script and language codes
      *
      * @internal
      */
+    /*MIKTEX*/U_LAYOUT_API
     IndicOpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
-			      le_int32 typoFlags);
+			      le_int32 typoFlags, LEErrorCode &success);
 
     /**
      * The destructor, virtual for correct polymorphic invocation.
@@ -152,9 +156,12 @@ protected:
     virtual le_int32 glyphProcessing(const LEUnicode chars[], le_int32 offset, le_int32 count, le_int32 max, le_bool rightToLeft,
             LEGlyphStorage &glyphStorage, LEErrorCode &success);
 
+    le_bool fVersion2;
+
 private:
 
     MPreFixups *fMPreFixups;
+
 };
 
 U_NAMESPACE_END

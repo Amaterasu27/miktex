@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2009 Christian Schenk
+## Copyright (C) 2007-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,9 +19,9 @@
 
 if(NATIVE_WINDOWS)
   if(CMAKE_CL_64)
-    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc90/amd64)
+    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/vc100/x64)
   else(CMAKE_CL_64)
-    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/msvc90)
+    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/vc100/x86)
   endif(CMAKE_CL_64)
   configure_file(
     ${iculibdir_}/icudt.lib

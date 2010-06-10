@@ -1,6 +1,6 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2008, International Business Machines Corporation and
+ * Copyright (C) 1996-2010, International Business Machines Corporation and
  * others. All Rights Reserved.
  *******************************************************************************
  */
@@ -11,6 +11,7 @@
 #include "unicode/utypes.h"
 #include "unicode/uenum.h"
 #include "unicode/uloc.h"
+#include "unicode/localpointer.h"
 
 #if !UCONFIG_NO_FORMATTING
 
@@ -149,9 +150,21 @@ typedef void* UCalendar;
  * @stable ICU 2.0
  */
 enum UCalendarType {
-  /** A traditional calendar for the locale */
+  /**
+   * Despite the name, UCAL_TRADITIONAL designates the locale's default calendar,
+   * which may be the Gregorian calendar or some other calendar.
+   * @stable ICU 2.0
+   */
   UCAL_TRADITIONAL,
-  /** The Gregorian calendar */
+  /**
+   * A better name for UCAL_TRADITIONAL.
+   * @draft ICU 4.2
+   */
+  UCAL_DEFAULT = UCAL_TRADITIONAL,
+  /**
+   * Unambiguously designates the Gregorian calendar for the locale.
+   * @stable ICU 2.0
+   */
   UCAL_GREGORIAN
 };
 
@@ -598,10 +611,20 @@ ucal_getNow(void);
  * Open a UCalendar.
  * A UCalendar may be used to convert a millisecond value to a year,
  * month, and day.
+ * <p>
+ * Note: When unknown TimeZone ID is specified, the UCalendar returned
+ * by the function is initialized with GMT ("Etc/GMT") without any
+ * errors/warnings.  If you want to check if a TimeZone ID is valid,
+ * use ucal_getCanonicalTimeZoneID prior to this function.
+ * 
  * @param zoneID The desired TimeZone ID.  If 0, use the default time zone.
  * @param len The length of zoneID, or -1 if null-terminated.
  * @param locale The desired locale
- * @param type The type of UCalendar to open.
+ * @param type The type of UCalendar to open. This can be UCAL_GREGORIAN to open the Gregorian
+ * calendar for the locale, or UCAL_DEFAULT to open the default calendar for the locale (the
+ * default calendar may also be Gregorian). To open a specific non-Gregorian calendar for the
+ * locale, use uloc_setKeywordValue to set the value of the calendar keyword for the locale
+ * and then pass the locale to ucal_open with UCAL_DEFAULT as the type.
  * @param status A pointer to an UErrorCode to receive any errors
  * @return A pointer to a UCalendar, or 0 if an error occurred.
  * @stable ICU 2.0
@@ -622,15 +645,34 @@ ucal_open(const UChar*   zoneID,
 U_STABLE void U_EXPORT2 
 ucal_close(UCalendar *cal);
 
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUCalendarPointer
+ * "Smart pointer" class, closes a UCalendar via ucal_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @draft ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUCalendarPointer, UCalendar, ucal_close);
+
+U_NAMESPACE_END
+
+#endif
+
 /**
  * Open a copy of a UCalendar.
  * This function performs a deep copy.
  * @param cal The calendar to copy
  * @param status A pointer to an UErrorCode to receive any errors.
  * @return A pointer to a UCalendar identical to cal.
- * @draft ICU 4.0
+ * @stable ICU 4.0
  */
-U_DRAFT UCalendar* U_EXPORT2 
+U_STABLE UCalendar* U_EXPORT2 
 ucal_clone(const UCalendar* cal,
            UErrorCode*      status);
 
@@ -797,13 +839,13 @@ ucal_setAttribute(UCalendar*          cal,
  * Get a locale for which calendars are available.
  * A UCalendar in a locale returned by this function will contain the correct
  * day and month names for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which calendars are available, or 0 if none.
  * @see ucal_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2 
-ucal_getAvailable(int32_t index);
+ucal_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have calendars available.
@@ -1097,9 +1139,9 @@ ucal_getLocaleByType(const UCalendar *cal, ULocDataLocaleType type, UErrorCode* 
  * Returns the timezone data version currently used by ICU.
  * @param status error code for the operation
  * @return the version string, such as "2007f"
- * @stable ICU 4.0
+ * @stable ICU 3.8
  */
-U_DRAFT const char * U_EXPORT2
+U_STABLE const char * U_EXPORT2
 ucal_getTZDataVersion(UErrorCode* status);
 
 /**
@@ -1118,11 +1160,122 @@ ucal_getTZDataVersion(UErrorCode* status);
  *                  is set.
  * @return          The result string length, not including the terminating
  *                  null.
- * @draft ICU 4.0
+ * @stable ICU 4.0
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucal_getCanonicalTimeZoneID(const UChar* id, int32_t len,
                             UChar* result, int32_t resultCapacity, UBool *isSystemID, UErrorCode* status);
+/**
+ * Get the resource keyword value string designating the calendar type for the UCalendar.
+ * @param cal The UCalendar to query.
+ * @param status The error code for the operation.
+ * @return The resource keyword value string.
+ * @stable ICU 4.2
+ */
+U_STABLE const char * U_EXPORT2
+ucal_getType(const UCalendar *cal, UErrorCode* status);
+
+/**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "calendar" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @stable ICU 4.2
+ */
+U_STABLE UEnumeration* U_EXPORT2
+ucal_getKeywordValuesForLocale(const char* key,
+                               const char* locale,
+                               UBool commonlyUsed,
+                               UErrorCode* status);
+
+
+/** Weekday types, as returned by ucal_getDayOfWeekType().
+ * @draft ICU 4.4
+ */
+enum UCalendarWeekdayType {
+  /**
+   * Designates a full weekday (no part of the day is included in the weekend).
+   */
+  UCAL_WEEKDAY,
+  /**
+   * Designates a full weekend day (the entire day is included in the weekend).
+   */
+  UCAL_WEEKEND,
+  /**
+   * Designates a day that starts as a weekday and transitions to the weekend.
+   * Call ucal_getWeekendTransition() to get the time of transition.
+   */
+  UCAL_WEEKEND_ONSET,
+  /**
+   * Designates a day that starts as the weekend and transitions to a weekday.
+   * Call ucal_getWeekendTransition() to get the time of transition.
+   */
+  UCAL_WEEKEND_CEASE
+};
+
+/** @draft ICU 4.4 */
+typedef enum UCalendarWeekdayType UCalendarWeekdayType;
+
+/**
+ * Returns whether the given day of the week is a weekday, a
+ * weekend day, or a day that transitions from one to the other,
+ * in this calendar system. If a transition occurs at midnight,
+ * then the days before and after the transition will have the
+ * type UCAL_WEEKDAY or UCAL_WEEKEND. If a transition occurs at a time
+ * other than midnight, then the day of the transition will have
+ * the type UCAL_WEEKEND_ONSET or UCAL_WEEKEND_CEASE. In this case, the
+ * method getWeekendTransition() will return the point of
+ * transition.
+ * @param cal The UCalendar to query.
+ * @param dayOfWeek The day of the week whose type is desired (UCAL_SUNDAY..UCAL_SATURDAY).
+ * @param status The error code for the operation.
+ * @return The UCalendarWeekdayType for the day of the week.
+ * @draft ICU 4.4
+ */
+U_DRAFT UCalendarWeekdayType U_EXPORT2
+ucal_getDayOfWeekType(const UCalendar *cal, UCalendarDaysOfWeek dayOfWeek, UErrorCode* status);
+
+/**
+ * Returns the time during the day at which the weekend begins or ends in
+ * this calendar system.  If ucal_getDayOfWeekType() rerturns UCAL_WEEKEND_ONSET
+ * for the specified dayOfWeek, return the time at which the weekend begins.
+ * If ucal_getDayOfWeekType() returns UCAL_WEEKEND_CEASE for the specified dayOfWeek,
+ * return the time at which the weekend ends. If ucal_getDayOfWeekType() returns
+ * some other UCalendarWeekdayType for the specified dayOfWeek, is it an error condition
+ * (U_ILLEGAL_ARGUMENT_ERROR).
+ * @param cal The UCalendar to query.
+ * @param dayOfWeek The day of the week for which the weekend transition time is
+ * desired (UCAL_SUNDAY..UCAL_SATURDAY).
+ * @param status The error code for the operation.
+ * @return The milliseconds after midnight at which the weekend begins or ends.
+ * @draft ICU 4.4
+ */
+U_DRAFT int32_t U_EXPORT2
+ucal_getWeekendTransition(const UCalendar *cal, UCalendarDaysOfWeek dayOfWeek, UErrorCode *status);
+
+/**
+ * Returns TRUE if the given UDate is in the weekend in
+ * this calendar system.
+ * @param cal The UCalendar to query.
+ * @param date The UDate in question.
+ * @param status The error code for the operation.
+ * @return TRUE if the given UDate is in the weekend in
+ * this calendar system, FALSE otherwise.
+ * @draft ICU 4.4
+ */
+U_DRAFT UBool U_EXPORT2
+ucal_isWeekend(const UCalendar *cal, UDate date, UErrorCode *status);
+
+
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
 #endif

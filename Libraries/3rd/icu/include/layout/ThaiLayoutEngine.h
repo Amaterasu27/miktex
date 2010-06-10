@@ -26,7 +26,7 @@ class LEGlyphStorage;
  *
  * @internal
  */
-class U_EXPORT ThaiLayoutEngine : public LayoutEngine
+class ThaiLayoutEngine : public LayoutEngine
 {
 public:
     /**
@@ -37,13 +37,15 @@ public:
      * @param fontInstance - the font
      * @param scriptCode - the script
      * @param languageCode - the language
+     * @param success - set to an error code if the operation fails
      *
      * @see LEFontInstance
      * @see ScriptAndLanguageTags.h for script and language codes
      *
      * @internal
      */
-    ThaiLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode, le_int32 typoFlags);
+    /*MIKTEX*/U_LAYOUT_API
+    ThaiLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode, le_int32 typoFlags, LEErrorCode &success);
 
     /**
      * The destructor, virtual for correct polymorphic invocation.
