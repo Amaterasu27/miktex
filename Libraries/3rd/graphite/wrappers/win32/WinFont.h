@@ -114,6 +114,9 @@ protected:
 	// font table caches:
 	byte * m_pbCmapTbl;
 	byte * m_pbHeadTbl;
+	byte * m_pbHmtxTbl;
+	byte * m_pbLocaTbl;
+	byte * m_pbGlyfTbl;
 	byte * m_pbNameTbl;
 	byte * m_pbSileTbl;
 	byte * m_pbSilfTbl;
@@ -193,6 +196,7 @@ protected:
 			}
 		};
 
+        FontHandleCache() : m_bValid(true) {};
 		~FontHandleCache();
 
 		HFONT GetFont(LOGFONT & lf);
@@ -203,6 +207,7 @@ protected:
 	protected:
 		FontHandleHashMap m_hmlffcv;
 
+        bool m_bValid;
 		void ResetFontCache(); // delete all the fonts in the cache
 	};
 

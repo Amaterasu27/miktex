@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999 - 2008 SIL International. All rights reserved.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -453,15 +453,13 @@ public:
 	bool IsWhiteSpace(GrSlotState * pslot);
 
 	//	For transduction logging:
+	//bool WriteTransductionLog(GrCharStream * pchstrm, Segment * psegRet,
+	//	int cbPrev, byte * pbPrevSegDat, byte * pbNextSegDat, int * pcbNextSegDat);
+	//bool WriteAssociationLog(GrCharStream * pchstrm, Segment * psegRet);
 	bool WriteTransductionLog(std::ostream * pstrmLog,
 		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSetDat, byte * pbPrevSegDat);
 	bool WriteAssociationLog(std::ostream * pstrmLog,
 		GrCharStream * pchstrm, Segment * psegRet);
-	bool WriteXmlLog(std::ostream * pstrmLog,
-		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat);
-	bool WriteXmlAssocLog(std::ostream * pstrmLog,
-		GrCharStream * pchstrm, Segment * psegRet);
-
 #ifdef TRACING
 	void WriteXductnLog(std::ostream & strmOut, GrCharStream * pchstrm, Segment * psegRet,
 		int cbPrevSegDat, byte * pbPrevSegDat);
@@ -482,30 +480,6 @@ public:
 	void LogHexInTable(std::ostream & strmOut, gid16 chw, bool fPlus = false);
 	void LogDirCodeInTable(std::ostream & strmOut, int dirc);
 	void LogBreakWeightInTable(std::ostream & strmOut, int lb);
-
-	void WriteXmlLogAux(std::ostream & strmOut,
-		GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat);
-	void LogXmlUnderlying(std::ostream & strmOut, GrCharStream * pchstrm, int cchwBackup, size_t nIndent);
-	void LogXmlUnderlyingAux(std::ostream & strmOut, GrCharStream * pchstrm,
-		int cch32Backup, int cch32Lim, size_t nIndent,
-		bool fLogText, bool fLogFeatures, bool fLogColor, bool fLogStrOff, bool fLogLig, bool fLogGlyphs);
-	void LogXmlPass(std::ostream & strmOut, int ipass, int cslotSkipped, int nIndent);
-
-	void LogXmlTagOpen(std::ostream & strmOut, std::string strTag, size_t nIndent, bool fContent);
-	void LogXmlTagPostAttrs(std::ostream & strmOut, bool fContent);
-	void LogXmlTagClose(std::ostream & strmOut, std::string strTag, size_t nIndent, bool fContent);
-	void LogXmlTagAttr(std::ostream & strmOut, std::string strAttr, int nValue, size_t nIndent = 0);
-	void LogXmlTagAttr(std::ostream & strmOut, std::string strAttr, const char * szValue, size_t nIndent = 0);
-	void LogXmlTagAttrHex(std::ostream & strmOut, std::string strAttr, int nValue, size_t nIndent = 0);
-	std::string HexString(int n1, int n2, int n3, int n4, int n5, int n6);
-	std::string HexString(std::vector<int>);
-	void LogXmlTagColor(std::ostream & strmOut, std::string strAttr, int clrValue, bool fBack,
-		size_t nIndent = 0);
-	void LogXmlDirCode(std::ostream & strmOut, std::string strAttr, int dircValue, size_t nIndent = 0);
-	void LogXmlBreakWeight(std::ostream & strmOut, std::string strAttr, int dircValue,
-		size_t nIndent = 0);
-	void LogXmlComment(std::ostream & strmOut, std::string strComment, size_t nIndent = 0);
-
 #endif // TRACING
 
 protected:
@@ -522,7 +496,7 @@ protected:
 
 	bool Backtrack(int * islotPrevLB,
 	   LineBrk * plbPref, LineBrk lbMax, TrWsHandling, bool fMoreText,
-	   int ichwCallerBtLim, LineBrk * plbFound);
+	   int ichwCallerBtLim, bool fEndLine, LineBrk * plbFound);
 
 	LineBrk IncLineBreak(LineBrk lb);
 
@@ -530,8 +504,8 @@ protected:
 		int islotStream0Break, int islotSurfaceBreak, LineBrk lbEnd,
 		bool fNextSegNeedsContext, GrCharStream * pchstrm);
 
-	void SetFinalPositions(Segment * pseg, bool fWidthIsCharCount);
-	void RecordAssocsAndOutput(Font * pfont, Segment * pseg,
+	void RecordAssocsAndOutput(Font * pfont,
+		Segment * pseg, bool fWidthIsCharCount,
 		TrWsHandling twsh, bool fParaRtl, int nDirDepth);
 
 	void CalculateAssociations(Segment * pseg, int csloutSurface);

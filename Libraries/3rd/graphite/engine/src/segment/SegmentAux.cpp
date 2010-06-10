@@ -205,12 +205,12 @@ Rect GlyphInfo::componentBox(size_t icomp)
 toffset GlyphInfo::componentFirstChar(size_t icomp)
 {
 	Assert((int)icomp < m_pslout->NumberOfComponents());
-	return m_pslout->UnderlyingComponent(icomp) + m_pseg->startCharacter();
+	return m_pslout->FirstUnderlyingComponent(icomp) + m_pseg->startCharacter();
 }
 toffset GlyphInfo::componentLastChar(size_t icomp)
 {
 	Assert((int)icomp < m_pslout->NumberOfComponents());
-	return m_pslout->UnderlyingComponent(icomp) + m_pseg->startCharacter();
+	return m_pslout->LastUnderlyingComponent(icomp) + m_pseg->startCharacter();
 }
 
 bool GlyphInfo::erroneous()

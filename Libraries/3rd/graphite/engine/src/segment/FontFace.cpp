@@ -340,9 +340,9 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 
 //	ibGlocStart = cbGlatTbl;
 	fOk = CheckTableVersions(&grstrm,
-    		(byte *)pSilfTbl, 0,
-    		(byte *)pGlocTbl, 0,
-    		(byte *)pFeatTbl, 0,
+    		(const byte *)pSilfTbl, 0,
+    		(const byte *)pGlocTbl, 0,
+    		(const byte *)pFeatTbl, 0,
     		&m_fxdBadVersion);
 	if (!fOk)
 	{
@@ -376,7 +376,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 	try 
 	{
 		// Parse the "Silf" table.
-		grstrm.OpenBuffer((byte*)pSilfTbl, cbSilfSz);
+		grstrm.OpenBuffer((const byte*)pSilfTbl, cbSilfSz);
 		int chwGlyphIDMax, fxdVersion;
 		bool f = ReadSilfTable(grstrm, 0, 0, &chwGlyphIDMax, &fxdVersion);
 		grstrm.Close();
@@ -391,8 +391,8 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		{
 			GrBufferIStream grstrmGlat;
 	
-			grstrm.OpenBuffer((byte *)pGlocTbl, cbGlocSz);
-			grstrmGlat.OpenBuffer((byte *)pGlatTbl, cbGlatSz);
+			grstrm.OpenBuffer((const byte *)pGlocTbl, cbGlocSz);
+			grstrmGlat.OpenBuffer((const byte *)pGlatTbl, cbGlatSz);
 			f = ReadGlocAndGlatTables(grstrm, 0, grstrmGlat, 0, chwGlyphIDMax, fxdVersion);
 			grstrm.Close();
 			grstrmGlat.Close();
@@ -405,7 +405,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		}
 	
 		//	Parse the "Feat" table.
-		grstrm.OpenBuffer((byte *)pFeatTbl, cbFeatSz);
+		grstrm.OpenBuffer((const byte *)pFeatTbl, cbFeatSz);
 		f = ReadFeatTable(grstrm, 0);
 		grstrm.Close();
 		if (!f)
@@ -418,7 +418,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		//	Parse the "Sill" table.
 		if (pSillTbl)
 		{
-			grstrm.OpenBuffer((byte *)pSillTbl, cbFeatSz);
+			grstrm.OpenBuffer((const byte *)pSillTbl, cbFeatSz);
 			f = ReadSillTable(grstrm, 0);
 			grstrm.Close();
 			if (!f)
@@ -551,7 +551,7 @@ bool GrEngine::SetCmapAndNameTables(Font * pfont)
 
 	if (!m_fNameTblCopy)
 	{
-		res = (pNameTbl = (byte *)pfont->getTable(TtfUtil::TableIdTag(ktiName), &cbNameSz)) ? kresOk : kresFail;
+		res = (pNameTbl = (const byte *)pfont->getTable(TtfUtil::TableIdTag(ktiName), &cbNameSz)) ? kresOk : kresFail;
 		fOk = pNameTbl && (cbNameSz == 0 || TtfUtil::CheckTable(ktiName, pNameTbl, cbNameSz));
 		if (!fOk)
 		{

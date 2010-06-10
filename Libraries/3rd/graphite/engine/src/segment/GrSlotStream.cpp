@@ -1094,6 +1094,7 @@ bool RightToLeftDir(DirCode dirc)
 	case kdircLRO:
 	case kdircLRE:
 	case kdircPdfL:
+    case kdircLlb:
 		return false;
 
 	case kdircR:
@@ -1106,6 +1107,13 @@ bool RightToLeftDir(DirCode dirc)
 		return true;
 
 	case kdircNeutral:
+    case kdircWhiteSpace:
+	case kdircComSep:
+	case kdircEuroSep:
+	case kdircEuroTerm:
+	case kdircBndNeutral:
+	case kdircNSM:
+	case kdircPDF:
 		return false;
 
 	default:
@@ -1970,7 +1978,12 @@ int GrSlotStream::ChunkInNextLim(int islot)
 	while (m_vislotNextChunkMap[islotRet] == -1 && islotRet < m_islotReadPos)
 	{
 		++islotRet;
-		Assert(islotRet < signed(m_vislotNextChunkMap.size()));
+		//Assert(islotRet < signed(m_vislotNextChunkMap.size()));
+        if (islotRet >= signed(m_vislotNextChunkMap.size()))
+ 		{
+ 			islotRet = m_vislotNextChunkMap.size() - 1;
+ 			break;
+ 		}
 	}
 	return islotRet;
 }

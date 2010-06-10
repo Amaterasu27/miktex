@@ -36,9 +36,9 @@ Description:
 /***********************************************************************************************
 	Local Constants and static variables
 ***********************************************************************************************/
-// max number of components allowed in composite glyphs
 namespace 
 {
+	// max number of components allowed in composite glyphs
 	const int kMaxGlyphComponents = 8;
 
 	// These are basic byte order swapping functions
@@ -157,7 +157,7 @@ namespace
 		"scedilla", "Cacute", "cacute", "Ccaron", "ccaron", 
 		"dcroat" };
 
-}
+} // end of namespace
 
 /***********************************************************************************************
 	Methods
@@ -585,9 +585,9 @@ int GetLangsForNames(const void * pName, int nPlatformId, int nEncodingId,
 			bool fNameFound = false;
 			int nLangId = read(pRecord->language_id);
 			int nNameId = read(pRecord->name_id);
-			for (int i = 0; i < cNameIds; i++)
+			for (int j = 0; j < cNameIds; j++)
 			{
-				if (nNameId == nameIdList[i])
+				if (nNameId == nameIdList[j])
 				{
 					fNameFound = true;
 					break;
@@ -1223,7 +1223,7 @@ bool GlyfPoints(const void * pSimpleGlyf, int * prgnX, int * prgnY,
 		(&pGlyph->end_pts_of_contours[cContours]);
 	
 	// skip over hints & point to first flag
-	int cbHints = read(*(uint16 *)pbGlyph);
+	int cbHints = read(*(const uint16 *)pbGlyph);
 	pbGlyph += sizeof(uint16);
 	pbGlyph += cbHints;
 
@@ -1277,7 +1277,7 @@ bool GlyfPoints(const void * pSimpleGlyf, int * prgnX, int * prgnY,
 			}
 			else
 			{
-				prgnX[iFlag] = read(*(int16 *)pbGlyph);
+				prgnX[iFlag] = read(*(const int16 *)pbGlyph);
 				pbGlyph += sizeof(int16);
 			}
 		}
@@ -1306,7 +1306,7 @@ bool GlyfPoints(const void * pSimpleGlyf, int * prgnX, int * prgnY,
 			}
 			else
 			{
-				prgnY[iFlag] = read(*(int16 *)pbGlyph);
+				prgnY[iFlag] = read(*(const int16 *)pbGlyph);
 				pbGlyph += sizeof(int16);
 			}
 		}
@@ -1342,9 +1342,9 @@ bool GetComponentGlyphIds(const void * pSimpleGlyf, int * prgnCompId,
 	size_t iCurrentComp = 0;
 	do 
 	{
-		GlyphFlags = read(*((uint16 *)pbGlyph));
+		GlyphFlags = read(*((const uint16 *)pbGlyph));
 		pbGlyph += sizeof(uint16);
-		prgnCompId[iCurrentComp++] = read(*((uint16 *)pbGlyph));
+		prgnCompId[iCurrentComp++] = read(*((const uint16 *)pbGlyph));
 		pbGlyph += sizeof(uint16);
 		if (iCurrentComp >= cnCompIdTotal) 
 			return false;
@@ -1386,18 +1386,18 @@ bool GetComponentPlacement(const void * pSimpleGlyf, int nCompId,
 	uint16 GlyphFlags;
 	do 
 	{
-		GlyphFlags = read(*((uint16 *)pbGlyph));
+		GlyphFlags = read(*((const uint16 *)pbGlyph));
 		pbGlyph += sizeof(uint16);
-		if (read(*((uint16 *)pbGlyph)) == nCompId)
+		if (read(*((const uint16 *)pbGlyph)) == nCompId)
 		{
 			pbGlyph += sizeof(uint16); // skip over glyph id of component
 			fOffset = (GlyphFlags & CompoundGlyph::ArgsAreXYValues) == CompoundGlyph::ArgsAreXYValues;
 
 			if (GlyphFlags & CompoundGlyph::Arg1Arg2Words )
 			{
-				a = read(*(int16 *)pbGlyph);
+				a = read(*(const int16 *)pbGlyph);
 				pbGlyph += sizeof(int16);
-				b = read(*(int16 *)pbGlyph);
+				b = read(*(const int16 *)pbGlyph);
 				pbGlyph += sizeof(int16);
 			}
 			else
@@ -1451,9 +1451,9 @@ bool GetComponentTransform(const void * pSimpleGlyf, int nCompId,
 	uint16 GlyphFlags;
 	do 
 	{
-		GlyphFlags = read(*((uint16 *)pbGlyph));
+		GlyphFlags = read(*((const uint16 *)pbGlyph));
 		pbGlyph += sizeof(uint16);
-		if (read(*((uint16 *)pbGlyph)) == nCompId)
+		if (read(*((const uint16 *)pbGlyph)) == nCompId)
 		{
 			pbGlyph += sizeof(uint16); // skip over glyph id of component
 			pbGlyph += GlyphFlags & CompoundGlyph::Arg1Arg2Words  ? 4 : 2; // skip over placement data
@@ -1465,7 +1465,7 @@ bool GetComponentTransform(const void * pSimpleGlyf, int nCompId,
 
 			if (GlyphFlags & CompoundGlyph::HaveScale)
 			{
-				flt11 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt11 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
 				flt12 = 0;
 				flt21 = 0;
@@ -1473,22 +1473,22 @@ bool GetComponentTransform(const void * pSimpleGlyf, int nCompId,
 			}
 			else if (GlyphFlags & CompoundGlyph::HaveXAndYScale)
 			{
-				flt11 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt11 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
 				flt12 = 0;
 				flt21 = 0;
-				flt22 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt22 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
 			}
 			else if (GlyphFlags & CompoundGlyph::HaveTwoByTwo)
 			{
-				flt11 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt11 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
-				flt12 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt12 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
-				flt21 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt21 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
-				flt22 = fixed_to_float<14>(read(*(uint16 *)pbGlyph));
+				flt22 = fixed_to_float<14>(read(*(const uint16 *)pbGlyph));
 				pbGlyph += sizeof(uint16);
 			}
 			else

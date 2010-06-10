@@ -90,7 +90,7 @@ bool GrBufferIStream::Open(const char * pcFileName, std::ios::openmode kMode)
 /*----------------------------------------------------------------------------------------------
 	Initialize the stream to a buffer.
 ----------------------------------------------------------------------------------------------*/
-bool GrBufferIStream::OpenBuffer(byte * pbBuffer, int cb)
+bool GrBufferIStream::OpenBuffer(const byte * pbBuffer, int cb)
 {
 	Assert(m_pbStart == NULL);
 	Assert(m_pbNext == NULL);
@@ -133,7 +133,7 @@ byte GrBufferIStream::ReadByteFromFont()
 ----------------------------------------------------------------------------------------------*/
 short GrBufferIStream::ReadShortFromFont()
 {
-	short snInput = *(short *)m_pbNext;
+	short snInput = *(const short *)m_pbNext;
 	m_pbNext += isizeof(short);
 	if (m_pbLim && m_pbNext > m_pbLim)
 		THROW(kresReadFault);
@@ -147,7 +147,7 @@ short GrBufferIStream::ReadShortFromFont()
 ----------------------------------------------------------------------------------------------*/
 utf16 GrBufferIStream::ReadUShortFromFont()
 {
-	utf16 chwInput = *(utf16 *)m_pbNext;
+	utf16 chwInput = *(const utf16 *)m_pbNext;
 	m_pbNext += isizeof(utf16);
 	if (m_pbLim && m_pbNext > m_pbLim)
 		THROW(kresReadFault);
@@ -161,7 +161,7 @@ utf16 GrBufferIStream::ReadUShortFromFont()
 ----------------------------------------------------------------------------------------------*/
 int GrBufferIStream::ReadIntFromFont()
 {
-	int nInput = *(int *)m_pbNext;
+	int nInput = *(const int *)m_pbNext;
 	m_pbNext += isizeof(int);
 	if (m_pbLim && m_pbNext > m_pbLim)
 		THROW(kresReadFault);

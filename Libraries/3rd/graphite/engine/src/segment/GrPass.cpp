@@ -375,6 +375,7 @@ void GrPass::ExtendOutput(GrTableManager * ptman,
 			}
 			DoResyncSkip(psstrmOut);
 			DoCleanUpSegMin(ptman, psstrmIn, islotInitReadPos, psstrmOut);
+			DoCleanUpSegLim(ptman, psstrmOut, twsh);
 			psstrmOut->MarkFullyWritten();
 			*pnRet = kNextPass;
 			*pcslotGot = cslotGot;
@@ -436,7 +437,10 @@ void GrPass::ExtendOutput(GrTableManager * ptman,
 	psstrmIn->ClearReprocBuffer();
 
 	if (psstrmOut->PastEndOfPositioning(true))
+	{
+		DoCleanUpSegLim(ptman, psstrmOut, twsh);
 		psstrmOut->MarkFullyWritten();
+	}
 
 	*pnRet = kNextPass;
 	*pcslotGot = cslotGot;
@@ -502,6 +506,7 @@ void GrBidiPass::ExtendOutput(GrTableManager * ptman,
 				psstrmIn->ClearReprocBuffer();
 				DoResyncSkip(psstrmOut);
 				DoCleanUpSegMin(ptman, psstrmIn, islotInitReadPos, psstrmOut);
+				DoCleanUpSegLim(ptman, psstrmOut, twsh);
 				psstrmOut->MarkFullyWritten();
 				*pnRet = kNextPass;
 				*pcslotGot = cslotGot;
@@ -614,7 +619,10 @@ void GrBidiPass::ExtendOutput(GrTableManager * ptman,
 	Assert(psstrmIn->SlotsToReprocess() == 0);
 
 	if (psstrmOut->PastEndOfPositioning(true))
+	{
+		DoCleanUpSegLim(ptman, psstrmOut, twsh);
 		psstrmOut->MarkFullyWritten();
+	}
 
 	*pnRet = kNextPass;
 	*pcslotGot = cslotGot;
@@ -1152,6 +1160,31 @@ void GrSubPass::DoCleanUpSegMin(GrTableManager * ptman,
 		islotSegMinOut--;
 	}
 	psstrmOut->SetSegMin(islotSegMinOut, true);
+}
+
+/*----------------------------------------------------------------------------------------------
+	This method is something of a kludge. We try to put inserted glyphs after the final
+	line-break, but if we don't have line break, they should go inside the segment.
+	This method is only called after the pass is fully written.
+----------------------------------------------------------------------------------------------*/
+void GrSubPass::DoCleanUpSegLim(GrTableManager * ptman, GrSlotStream * psstrmOut,
+	TrWsHandling twsh)
+{
+	int islotSegLimOut = psstrmOut->SegLimIfKnown();
+	if (islotSegLimOut == -1)
+		return;	// output hasn't set it; nothing to fix
+
+	if (twsh == ktwshNoWs)
+		return;	// we just stripped off the whitespace; don't put it back!
+
+	//gid16 chwLB = ptman->LBGlyphID();
+	// If there is a LB glyph, it should be at islotSegLimOut--
+	// unless we backtracked an inserted one earlier.
+	if (ptman->State()->HasInsertedLB()) // && psstrmOut->SlotAt(islotSegLimOut)->IsFinalLineBreak(chwLB))
+		return;
+
+	// Okay, no LB; make sure all output glyphs are included in this segment.
+	psstrmOut->SetSegLimToWritePos(true);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1806,6 +1839,8 @@ int GrBidiPass::Unwind(GrTableManager * ptman,
 		islotIn = max(islotIn - 1, 0);
 		while (islotIn > 0 && !StrongDir(psstrmIn->SlotAt(islotIn)->Directionality()))
 		{
+			// Slightly redundant with ZapCalculatedDirLevels, but possibly needed for slots
+			// that have been modified by the substitution passes.
 			psstrmIn->SlotAt(islotIn)->ZapDirLevel();
 			islotIn--;
 		}

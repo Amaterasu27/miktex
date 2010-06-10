@@ -54,6 +54,7 @@ float fabsf(float x);
 #include <vector>
 ////#include <algorithm>
 #include <string>
+#include <cstring>
 
 // gAssert should be used for any kind of assertions that can be caused by a corrupted font,
 // particularly those that won't be caught when loading the tables.

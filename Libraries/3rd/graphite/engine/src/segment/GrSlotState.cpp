@@ -48,7 +48,7 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 	Assert(ipass == 0);
 	m_chwGlyphID = chw;
 	m_chwActual = kInvalidGlyph;
-	m_xysGlyphWidth = -1;
+	m_xysGlyphWidth = kNegInfFloat;
 	m_bStyleIndex = byte(fval.m_nStyleIndex);
 	u_intslot nullSlot;
 	nullSlot.pslot = NULL;
@@ -89,7 +89,7 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 {
 	m_chwGlyphID = chw;
 	m_chwActual = kInvalidGlyph;
-	m_xysGlyphWidth = -1;
+	m_xysGlyphWidth = kNegInfFloat;
 	u_intslot nullSlot;
 	nullSlot.pslot = NULL;
 	std::fill_n(PUserDefnBuf(), m_cnUserDefn, nullSlot);
@@ -112,7 +112,7 @@ void GrSlotState::Initialize(gid16 chw, GrEngine * pgreng,
 {
 	m_chwGlyphID = chw;
 	m_chwActual = kInvalidGlyph;
-	m_xysGlyphWidth = -1;
+	m_xysGlyphWidth = kNegInfFloat;
 	u_intslot nullSlot;
 	nullSlot.pslot = NULL;
 	std::fill_n(PUserDefnBuf(), m_cnUserDefn, nullSlot);
@@ -486,16 +486,19 @@ void GrSlotState::SetComponentRefsFor(GrSlotOutput * pslout, int slatiArg)
 		else
 		{
 			// Follow the chain back through the passes.
-			pslot = RawBeforeAssocSlot();
-			if (pslot)
+			for (int islot = 0; islot < AssocsSize(); islot++)
 			{
-				Assert(PassModified() >= pslot->PassModified());
-				// Passing slati here is definitely needed for our Arabic font: for instance when
-				// you type something like "mla", so the l is transformed into a temporary glyph
-				// before creating the ligature. However, this seems to have broken something,
-				// which I will probably find eventually.  :-(
-				pslot->SetComponentRefsFor(pslout, slatiArg);
-				//pslot->SetComponentRefsFor(pslout, -1);
+				pslot = m_vpslotAssoc[islot];
+				if (pslot)
+				{
+					Assert(PassModified() >= pslot->PassModified());
+					// Passing slati here is definitely needed for our Arabic font: for instance when
+					// you type something like "mla", so the l is transformed into a temporary glyph
+					// before creating the ligature. However, this seems to have broken something,
+					// which I will probably find eventually.  :-(
+					pslot->SetComponentRefsFor(pslout, slatiArg);
+					//pslot->SetComponentRefsFor(pslout, -1);
+				}
 			}
 		}
 	}
@@ -513,7 +516,8 @@ void GrSlotState::SetComponentRefsFor(GrSlotOutput * pslout, int slatiArg)
 	or >= the length of the segment, if it maps to a character in the following segment.
 	ENHANCE: merge with method above.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::AllComponentRefs(std::vector<int> & vichw)
+void GrSlotState::AllComponentRefs(std::vector<int> & vichw, std::vector<int> & vicomp,
+	int iComponent)
 {
 	if (PassModified() > 0)
 	{
@@ -526,20 +530,15 @@ void GrSlotState::AllComponentRefs(std::vector<int> & vichw)
 				if (pslot)
 				{
 					Assert(PassModified() >= pslot->PassModified());
-					pslot->AllComponentRefs(vichw);
+					pslot->AllComponentRefs(vichw, vicomp, iComponent);
 				}
 			}
 		}
 		else
 		{
-			//	ENHANCE: Strictly speaking we should probably have separate before-
-			//	and after-lists for the components, but I think it would be pretty
-			//	rare to have both deletion and ligatures overlapping, so I'm not
-			//	going to bother with it for now.
-			//for (int islot = 0; islot < AssocsSize(); islot++)
-			for (int islot = 0; islot < 1; islot++)
+			for (int islot = 0; islot < AssocsSize(); islot++)
 			{
-				m_vpslotAssoc[islot]->AllComponentRefs(vichw);
+				m_vpslotAssoc[islot]->AllComponentRefs(vichw, vicomp, iComponent);
 			}
 		}
 	}
@@ -547,6 +546,7 @@ void GrSlotState::AllComponentRefs(std::vector<int> & vichw)
 	{
 		Assert(m_ichwSegOffset != kInvalid);
 		vichw.push_back(m_ichwSegOffset);
+		vicomp.push_back(iComponent);
 	}
 }
 
@@ -733,14 +733,66 @@ float GrSlotOutput::GlyphMetricLogUnits(Font * pfont, int nMetricID)
 //	return 0;		
 //}
 
+float GrSlotState::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyphID)
+{
+	GlyphMetric gmet = GlyphMetric(nMetricID);
+	switch (gmet)
+	{
+	case kgmetAscent:
+	case kgmetDescent:
+		if (m_xysFontAscent == kNegInfFloat)
+		{
+			m_xysFontAscent = GrSlotAbstract::GetGlyphMetric(pfont, kgmetAscent, chwGlyphID);
+			m_xysFontDescent = GrSlotAbstract::GetGlyphMetric(pfont, kgmetDescent, chwGlyphID);
+		}
+		break;
+	default:
+		if (m_xysGlyphWidth == kNegInfFloat)
+		{
+			GetGlyphMetricAux(pfont, chwGlyphID, m_xysGlyphX, m_xysGlyphY, m_xysGlyphWidth,
+				m_xysGlyphHeight, m_xysAdvX, m_xysAdvY, m_bIsSpace);
+		}
+		break;
+	}
+
+	switch (gmet)
+	{ // There may be off-by-one errors below, depending on what width and height mean
+	case kgmetAscent:
+		return m_xysFontAscent;
+	case kgmetDescent:
+		return m_xysFontDescent;
+	case kgmetLsb:
+		return m_xysGlyphX;
+	case kgmetRsb:
+		return (m_xysAdvX - m_xysGlyphX - m_xysGlyphWidth);
+	case kgmetBbTop:
+		return m_xysGlyphY;
+	case kgmetBbBottom:
+		return (m_xysGlyphY - m_xysGlyphHeight);
+	case kgmetBbLeft:
+		return m_xysGlyphX;
+	case kgmetBbRight:
+		return (m_xysGlyphX + m_xysGlyphWidth);
+	case kgmetBbHeight:
+		return m_xysGlyphHeight;
+	case kgmetBbWidth:
+		return m_xysGlyphWidth;
+	case kgmetAdvWidth:
+		return m_xysAdvX;
+	case kgmetAdvHeight:
+		return m_xysAdvY;
+	default:
+		Warn("GetGlyphMetric was asked for an illegal metric.");
+	};
+
+	return 0;
+}
 
 float GrSlotAbstract::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyphID)
 {
 	GlyphMetric gmet = GlyphMetric(nMetricID);
 
 	float yAscent, yDescent;
-	gr::Point ptAdvances;
-	gr::Rect rectBb;
 
 	if (kgmetAscent == gmet)
 	{
@@ -765,26 +817,8 @@ float GrSlotAbstract::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyph
 	}
 
 	float xysGlyphX, xysGlyphY, xysGlyphWidth, xysGlyphHeight, xysAdvX, xysAdvY;
-	//if (m_xysGlyphWidth == -1)
-	//{
-		pfont->getGlyphMetrics(chwGlyphID, rectBb, ptAdvances);
-
-		xysGlyphX = rectBb.left;
-		xysGlyphY = rectBb.top;
-		xysGlyphWidth = (rectBb.right - rectBb.left);
-		xysGlyphHeight = (rectBb.top - rectBb.bottom);
-		xysAdvX = ptAdvances.x;
-		xysAdvY = ptAdvances.y;
-
-		m_bIsSpace = (0 == xysGlyphX && 0 == xysGlyphY); // should agree with test done in IsSpace() below
-
-		if (m_bIsSpace == 1)
-		{
-			// White space glyph - only case where nGlyphX == nGlyphY == 0
-			// nGlyphWidth & nGlyphHeight are always set to 16 for unknown reasons, so correct.
-			xysGlyphWidth = xysGlyphHeight = 0; 
-		}
-	//}
+	GetGlyphMetricAux(pfont, chwGlyphID, xysGlyphX, xysGlyphY, xysGlyphWidth,
+		xysGlyphHeight, xysAdvX, xysAdvY, m_bIsSpace);
 
 	switch (gmet)
 	{ // There may be off-by-one errors below, depending on what width and height mean
@@ -813,6 +847,31 @@ float GrSlotAbstract::GetGlyphMetric(Font * pfont, int nMetricID, gid16 chwGlyph
 	};
 
 	return 0;		
+}
+
+void GrSlotAbstract::GetGlyphMetricAux(Font * pfont, gid16 chwGlyphID,
+	float & xysGlyphX, float & xysGlyphY,
+	float & xysGlyphWidth, float & xysGlyphHeight, float & xysAdvX, float & xysAdvY, sdata8 & bIsSpace)
+{
+	gr::Point ptAdvances;
+	gr::Rect rectBb;
+	pfont->getGlyphMetrics(chwGlyphID, rectBb, ptAdvances);
+
+	xysGlyphX = rectBb.left;
+	xysGlyphY = rectBb.top;
+	xysGlyphWidth = (rectBb.right - rectBb.left);
+	xysGlyphHeight = (rectBb.top - rectBb.bottom);
+	xysAdvX = ptAdvances.x;
+	xysAdvY = ptAdvances.y;
+
+	bIsSpace = (0 == xysGlyphX && 0 == xysGlyphY); // should agree with test done in IsSpace() below
+
+	if (bIsSpace == 1)
+	{
+		// White space glyph - only case where nGlyphX == nGlyphY == 0
+		// nGlyphWidth & nGlyphHeight are always set to 16 for unknown reasons, so correct.
+		xysGlyphWidth = xysGlyphHeight = 0; 
+	}
 }
 
 /*----------------------------------------------------------------------------------------------

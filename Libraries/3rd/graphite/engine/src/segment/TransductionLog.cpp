@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 2000 - 2008 SIL International. All rights reserved.
+Copyright (C) 2000, 2001 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -20,7 +20,7 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-
+#include <cstring>
 #include <math.h>
 
 #undef THIS_FILE
@@ -132,6 +132,9 @@ bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
 		return false;
 
 	std::ostream & strmOut = *pstrmLog;
+	LogFinalPositions(strmOut);
+
+	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
 
 	psegRet->LogUnderlyingToSurface(this, strmOut, pchstrm);
 	psegRet->LogSurfaceToUnderlying(this, strmOut);
@@ -193,9 +196,8 @@ void GrTableManager::WriteXductnLog(std::ostream & strmOut,
 			LogPassOutput(strmOut, ipass, *(pbPrevSegDat + 4 + ipass));
 	}
 
-	LogFinalPositions(strmOut);
-
-	strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
+	// Do this later, after outputting final positions:
+	//strmOut << "\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n";
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -862,7 +864,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 				for (int islot = 0; islot < psstrm->WritePos(); islot++)
 				{
 					GrSlotState * pslot = psstrm->SlotAt(islot);
-					pslot->LogSlotAttributeValue(this, strmOut, ipass, slat, iIndex,
+					pslot->LogSlotAttribute(this, strmOut, ipass, slat, iIndex,
 						fPreJust, fPostJust);
 				}
 
@@ -1243,7 +1245,31 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 				strmOut << "       ";
 			}
 			else if (icomp < psloutTmp->NumberOfComponents())
-				ptman->LogInTable(strmOut, psloutTmp->UnderlyingComponent(icomp));
+			{
+				if (psloutTmp->FirstUnderlyingComponent(icomp)
+						!= psloutTmp->LastUnderlyingComponent(icomp)) // $$$$$
+				{
+					//	Multiple characters represented by this component.
+					char rgch[10];
+					std::string strTmp;
+					sprintf(rgch, "%d", psloutTmp->FirstUnderlyingComponent(icomp));
+					strTmp += rgch;
+					memset(rgch, 0, 10);
+					sprintf(rgch, "%d", psloutTmp->LastUnderlyingComponent(icomp));
+					strTmp += "/";
+					strTmp += rgch;
+					if (strlen(strTmp.c_str()) > SP_PER_SLOT-1)
+						strmOut << "****** ";
+					else
+					{
+						while (strlen(strTmp.c_str()) < SP_PER_SLOT)  // pad with spaces
+							strTmp += " ";
+						strmOut << strTmp;
+					}
+				}
+				else
+					ptman->LogInTable(strmOut, psloutTmp->FirstUnderlyingComponent(icomp)); // $$$$$
+			}
 			else
 				strmOut << "       ";
 		}
@@ -1601,7 +1627,7 @@ void GrSlotState::SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp,
 /*----------------------------------------------------------------------------------------------
 	Log the value of the slot attribute for the given slot, if it changed.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::LogSlotAttributeValue(GrTableManager * ptman,
+void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 	std::ostream & strmOut, int ipass, int slat, int iIndex,
 	bool fPreJust, bool fPostJust)
 {
@@ -1843,10 +1869,16 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 
 	if (fBoth)
 	{
-		GrSlotState * pslotBefore = AssocSlot(0);
-		GrSlotState * pslotAfter = AssocSlot(m_vpslotAssoc.size() - 1);
+		GrSlotState * pslotBefore = (m_vpslotAssoc.size()) ? m_vpslotAssoc[0] : NULL;
+		GrSlotState * pslotAfter = (m_vpslotAssoc.size()) ? m_vpslotAssoc.back() : NULL;
+		// handle possible reprocessing
+		while (pslotBefore && pslotBefore->PassModified() == m_ipassModified)
+			pslotBefore = pslotBefore->m_pslotPrevState;
+		while (pslotAfter && pslotAfter->PassModified() == m_ipassModified)
+			pslotAfter = pslotAfter->m_pslotPrevState;
 
 		int nBefore, nAfter;
+
 
 		int csp = 4;
 		if (pslotBefore)
@@ -1886,7 +1918,10 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 	else if (fAfter)
 	{
 		Assert(m_vpslotAssoc.size());
-		GrSlotState * pslotAfter = AssocSlot(m_vpslotAssoc.size() - 1);
+		GrSlotState * pslotAfter = m_vpslotAssoc.back();
+		// handle possible reprocessing
+		while (pslotAfter && pslotAfter->PassModified() == m_ipassModified)
+			pslotAfter = pslotAfter->m_pslotPrevState;
 
 		if (pslotAfter)
 		{
@@ -1896,9 +1931,12 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 		else
 			strmOut << "??     ";
 	}
-	else if (iassoc < signed(m_vpslotAssoc.size() - 1))
+	else if (iassoc < signed(m_vpslotAssoc.size()))
 	{
-		GrSlotState * pslot = AssocSlot(iassoc);
+		GrSlotState * pslot = m_vpslotAssoc[iassoc];
+		// handle possible reprocessing
+		while (pslot && pslot->PassModified() == m_ipassModified)
+			pslot = pslot->m_pslotPrevState;
 
 		if (pslot)
 		{
@@ -2068,7 +2106,7 @@ void GrTableManager::LogBreakWeightInTable(std::ostream & strmOut, int lb)
 		case klbHyphenBreak:	strmOut << "-intra "; break;
 		case klbLetterBreak:	strmOut << "-lettr "; break;
 		case klbClipBreak:		strmOut << "-clip  "; break;
-		default:				LogInTable(strmOut, lb*-1); break;
+		default:				LogInTable(strmOut, lb); break;
 		}
 	}
 	else

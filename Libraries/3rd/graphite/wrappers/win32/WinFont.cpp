@@ -74,6 +74,9 @@ WinFont::WinFont(HDC hdc)
 
 	m_pbCmapTbl = NULL;
 	m_pbHeadTbl = NULL;
+	m_pbHmtxTbl = NULL;
+	m_pbLocaTbl = NULL;
+	m_pbGlyfTbl = NULL;
 	m_pbNameTbl = NULL;
 	m_pbSileTbl = NULL;
 	m_pbSilfTbl = NULL;
@@ -144,6 +147,9 @@ WinFont::~WinFont()
 {
 	delete[] m_pbCmapTbl;
 	delete[] m_pbHeadTbl;
+	delete[] m_pbHmtxTbl;
+	delete[] m_pbLocaTbl;
+	delete[] m_pbGlyfTbl;
 	delete[] m_pbNameTbl;
 	delete[] m_pbSileTbl;
 	delete[] m_pbSilfTbl;
@@ -194,6 +200,9 @@ WinFont::WinFont(WinFont & font)
 
 	m_pbCmapTbl = NULL;
 	m_pbHeadTbl = NULL;
+	m_pbHmtxTbl = NULL;
+	m_pbLocaTbl = NULL;
+	m_pbGlyfTbl = NULL;
 	m_pbNameTbl = NULL;
 	m_pbSileTbl = NULL;
 	m_pbSilfTbl = NULL;
@@ -210,7 +219,12 @@ WinFont::WinFont(WinFont & font)
 ----------------------------------------------------------------------------------------------*/
 bool WinFont::FontHasGraphiteTables(HDC hdc)
 {
-	DWORD cbTableSz = ::GetFontData(hdc, kttiSilf, 0, NULL, 0);
+	fontTableId32 tableID = kttiSilf;
+	fontTableId32 tableIdBIG  = (tableID & 0x000000FF) << 24;
+	              tableIdBIG += (tableID & 0x0000FF00) << 8;
+	              tableIdBIG += (tableID & 0x00FF0000) >> 8;
+	              tableIdBIG += (tableID & 0xFF000000) >> 24;
+	DWORD cbTableSz = ::GetFontData(hdc, tableIdBIG, 0, NULL, 0);
 	if (cbTableSz == GDI_ERROR)
 		return false;
 	else if (cbTableSz == 0)
@@ -226,28 +240,24 @@ const void * WinFont::getTable(fontTableId32 tableID, size_t * pcbSize)
 {
 	*pcbSize = 0;
 
-	// TODO: rework this so it doesn't call TableIdTag, which is not supposed to be part of the
-	// public interface.
-	if (tableID == kttiCmap && m_pbCmapTbl)
-		return (void *)m_pbCmapTbl;
-	else if (tableID == kttiHead && m_pbHeadTbl)
-		return (void *)m_pbHeadTbl;
-	else if (tableID == kttiName && m_pbNameTbl)
-		return (void *)m_pbNameTbl;
-	else if (tableID == kttiSile && m_pbSileTbl)
-		return (void *)m_pbSileTbl;
-	else if (tableID == kttiSilf && m_pbSilfTbl)
-		return (void *)m_pbSilfTbl;
-	else if (tableID == kttiFeat && m_pbFeatTbl)
-		return (void *)m_pbFeatTbl;
-	else if (tableID == kttiGloc && m_pbGlocTbl)
-		return (void *)m_pbGlocTbl;
-	else if (tableID == kttiGlat && m_pbGlatTbl)
-		return (void *)m_pbGlatTbl;
-	else if (tableID == kttiSill && m_pbSillTbl)
-		return (void *)m_pbSillTbl;
-	else if (tableID == kttiOs2 && m_pbOs2Tbl)
-		return (void *)m_pbOs2Tbl;
+	switch (tableID)
+	{
+	case kttiCmap:	if (m_pbCmapTbl) return (void *)m_pbCmapTbl; break;
+	case kttiHead:	if (m_pbHeadTbl) return (void *)m_pbHeadTbl; break;
+	case kttiHmtx:	if (m_pbHmtxTbl) return (void *)m_pbHmtxTbl; break;
+	case kttiLoca:	if (m_pbLocaTbl) return (void *)m_pbLocaTbl; break;
+	case kttiGlyf:	if (m_pbGlyfTbl) return (void *)m_pbGlyfTbl; break;
+	case kttiName:	if (m_pbNameTbl) return (void *)m_pbNameTbl; break;
+	case kttiSile:	if (m_pbSileTbl) return (void *)m_pbSileTbl; break;
+	case kttiSilf:	if (m_pbSilfTbl) return (void *)m_pbSilfTbl; break;
+	case kttiFeat:	if (m_pbFeatTbl) return (void *)m_pbFeatTbl; break;
+	case kttiGloc:	if (m_pbGlocTbl) return (void *)m_pbGlocTbl; break;
+	case kttiGlat:	if (m_pbGlatTbl) return (void *)m_pbGlatTbl; break;
+	case kttiSill:	if (m_pbSillTbl) return (void *)m_pbSillTbl; break;
+	case kttiOs2:	if (m_pbOs2Tbl)  return (void *)m_pbOs2Tbl;  break;
+	default:
+		break; // fall through
+	}
 
 	byte * prgbBuffer;
 	// The tableID is in native (little-endian) byte order, but the GDI methods expects big-endian.
@@ -282,32 +292,25 @@ const void * WinFont::getTable(fontTableId32 tableID, size_t * pcbSize)
 	}
 	*pcbSize = cbTableSz; // allows error checking
 
-	if (tableID == kttiCmap)
-		m_pbCmapTbl = prgbBuffer;
-	else if (tableID == kttiHead)
-		m_pbHeadTbl = prgbBuffer;
-	else if (tableID == kttiName)
-		m_pbNameTbl = prgbBuffer;
-	else if (tableID == kttiSile)
-		m_pbSileTbl = prgbBuffer;
-	else if (tableID == kttiSilf)
-		m_pbSilfTbl = prgbBuffer;
-	else if (tableID == kttiFeat)
-		m_pbFeatTbl = prgbBuffer;
-	else if (tableID == kttiGloc)
-		m_pbGlocTbl = prgbBuffer;
-	else if (tableID == kttiGlat)
-		m_pbGlatTbl = prgbBuffer;
-	else if (tableID == kttiSill)
-		m_pbSillTbl = prgbBuffer;
-	else if (tableID == kttiOs2)
-		m_pbOs2Tbl  = prgbBuffer;
-	else
+	switch (tableID)
 	{
+	case kttiCmap:	m_pbCmapTbl = prgbBuffer; break;
+	case kttiHead:	m_pbHeadTbl = prgbBuffer; break;
+	case kttiHmtx:	m_pbHmtxTbl = prgbBuffer; break;
+	case kttiLoca:	m_pbLocaTbl = prgbBuffer; break;
+	case kttiGlyf:	m_pbGlyfTbl = prgbBuffer; break;
+	case kttiName:	m_pbNameTbl = prgbBuffer; break;
+	case kttiSile:	m_pbSileTbl = prgbBuffer; break;
+	case kttiSilf:	m_pbSilfTbl = prgbBuffer; break;
+	case kttiFeat:	m_pbFeatTbl = prgbBuffer; break;
+	case kttiGloc:	m_pbGlocTbl = prgbBuffer; break;
+	case kttiGlat:	m_pbGlatTbl = prgbBuffer; break;
+	case kttiSill:	m_pbSillTbl = prgbBuffer; break;
+	case kttiOs2:	m_pbOs2Tbl  = prgbBuffer; break;
+	default:
 		delete[] prgbBuffer;
 		THROW(kresUnexpected);
 	}
-
 	return prgbBuffer;
 }
 
@@ -764,7 +767,7 @@ HFONT WinFont::FontHandleCache::GetFont(LOGFONT & lf)
 ----------------------------------------------------------------------------------------------*/
 void WinFont::FontHandleCache::DeleteFont(HFONT hfont)
 {
-	if (!hfont)
+	if (!hfont || !m_bValid)
 		return;
 
 	// find the font in the hash map
@@ -779,7 +782,7 @@ void WinFont::FontHandleCache::DeleteFont(HFONT hfont)
 			{
 				// delete font
 				::DeleteObject(hfont);
-				m_hmlffcv.erase(it->first);
+				m_hmlffcv.erase(it);
 			}
 			else
 			{
@@ -837,7 +840,7 @@ bool WinFont::LogFontHashFuncs::operator() (const WinFont::LogFontWrapper & key1
 --------------------------------------------------------------------------------------*/
 bool WinFont::LogFontWrapper::operator==(const WinFont::LogFontWrapper & lfw) const
 {
-	return memcmp(&m_lf, &(lfw.m_lf), sizeof(LOGFONT));
+	return (memcmp(&m_lf, &(lfw.m_lf), sizeof(LOGFONT)) == 0);
 }
 
 

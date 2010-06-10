@@ -475,7 +475,7 @@ void WinSegmentPainter::SetUpFromSegment()
 
 	int dxdSum = 0;
 	int igbb;
-	for (igbb = 0; igbb < m_cgbb; igbb++)
+	for (igbb = 0; igbb < m_cgbb; igbb++) // left to right processing
 	{
 		GlyphBb & gbb = m_prggbb[igbb];
 		GlyphIterator git3 = gitStart;

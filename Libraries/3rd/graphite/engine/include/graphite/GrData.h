@@ -195,7 +195,8 @@ typedef enum tagJustGlyphAttr
 class GrSlotState;
 typedef union {
     int nValue;
-    GrSlotState *pslot;
+	short smallint[2];	// min = smallint[0], max = smallint[1]
+    GrSlotState * pslot;
 } u_intslot;
 
 /*****

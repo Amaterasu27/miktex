@@ -53,8 +53,8 @@ public:
 	virtual void setPosition(float xdPosition, float ydPosition);
     virtual void setScalingFactors(float xFactor, float yFactor);
 
-	virtual void setBuggyDisplayFormat(int strategy, long textColor, long backColor,
-		long underlineColor)
+	virtual void setBuggyDisplayFormat(int /*strategy*/, long /*textColor*/, long /*backColor*/,
+		long /*underlineColor*/)
 	{
 		// Currently not implemented to do anything useful.
 	}
@@ -197,7 +197,7 @@ protected:
 
 	// Low-level routines--these must be implemented appropriate by subclasses:
 
-	virtual void InvertRect(float xLeft, float yTop, float xRight, float yBottom)
+	virtual void InvertRect(float /*xLeft*/, float /*yTop*/, float /*xRight*/, float /*yBottom*/)
 	{
 		GrAssert(false); // no device context
 	}

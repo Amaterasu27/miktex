@@ -64,7 +64,7 @@ public:
 	virtual ~Segment();
 
 	// Basic copy constructor:
-	Segment(Segment & seg);
+	Segment(const Segment & seg);
 
 	// For making modified copies of segments:
 	static Segment * LineContextSegment(Segment & seg, bool fStartLine, bool fEndLine);
@@ -203,7 +203,7 @@ public:
 //		m_psegNext = psegNext;
 //	}
 
-	void SetFaceName(std::wstring stu, std::wstring stuBase)
+	void SetFaceName(std::wstring /*stu*/, std::wstring /*stuBase*/)
 	{
 //		m_stuFaceName = stu;
 //		m_stuBaseFaceName = stuBase;
@@ -323,10 +323,6 @@ public:
 	void LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strmOut,
 		GrCharStream * pchstrm);
 	void LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strmOut);
-	void LogXmlUnderlyingToSurface(std::ostream & strmOut, GrTableManager * ptman,
-		GrCharStream * pchstrm, int nIndent);
-	void LogXmlSurfaceToUnderlying(std::ostream & strmOut, GrTableManager * ptman,
-		GrCharStream * pchstrm, int nIndent);
 
 	// calculate memory usage
 	void calculateMemoryUsage(SegmentMemoryUsage & smu);

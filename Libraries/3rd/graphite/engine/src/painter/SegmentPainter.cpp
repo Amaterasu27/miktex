@@ -170,6 +170,19 @@ LgIpValidResult SegmentPainter::isValidInsertionPoint(int ichw)
 	int isloutLig = m_pseg->m_prgisloutLigature[ichwSegOffset - m_pseg->m_ichwAssocsMin];
 	if (isloutLig != kNegInfinity)
 	{
+		//	Ligature.
+		int isloutLigAfter = m_pseg->m_prgisloutLigature[ichwSegOffset - 1 - m_pseg->m_ichwAssocsMin];
+		if (isloutLig == isloutLigAfter)
+		{
+			int icompBefore = m_pseg->m_prgiComponent[ichwSegOffset - m_pseg->m_ichwAssocsMin];
+			int icompAfter =  m_pseg->m_prgiComponent[ichwSegOffset - 1 - m_pseg->m_ichwAssocsMin];
+			if (icompBefore == icompAfter)
+				//	If inserting before this character yields the same visible component
+				//	as inserting after the previous, then this character is invisible, or has
+				//	been merged with the previous, and it doesn't make sense to put an insertion
+				//	point here.
+				return kipvrBad;
+		}
 		return kipvrOK;
 	}
 
@@ -177,11 +190,11 @@ LgIpValidResult SegmentPainter::isValidInsertionPoint(int ichw)
 
 	LgIpValidResult ipvrRet;
 
-	int isloutBefore = m_pseg->UnderlyingToLogicalSurface(ichw, true);
-	int isloutAfter = m_pseg->UnderlyingToLogicalSurface(ichw - 1, false);
+	int isloutBefore = m_pseg->UnderlyingToLogicalSurface(ichw, true);	// leading edge
+	int isloutAfter = m_pseg->UnderlyingToLogicalSurface(ichw - 1, false);	// trailing edge of previous
 	int isloutTest = m_pseg->UnderlyingToLogicalInThisSeg(ichw);
 	if (isloutBefore == isloutAfter)
-		//	If inserting before this character yields the same visible result as
+		//	If inserting before this character yields the same visible glyph as
 		//	inserting after the previous, then this character is invisible, or has
 		//	been merged with the previous, and it doesn't make sense to put an insertion
 		//	point here.
@@ -430,7 +443,7 @@ bool SegmentPainter::drawSelectionRange(int ichwAnchor, int ichwEnd,
 
 	AssertNoOverlaps(vrdNoOverlaps);
 
-	//	Draw the hightlight.
+	//	Draw the highlight.
 	for (irect = 0; irect < vrdNoOverlaps.size(); irect++)
 	{
 		Rect rdTmp = vrdNoOverlaps[irect];
@@ -1330,7 +1343,7 @@ void SegmentPainter::InvertSplitIP(float xs, float ysTop, float ysBottom,
 	float xd = ScaleXToDest(xs);
 	float ydTop = ScaleYToDest(ysTop);
 	float ydBottom = ScaleYToDest(ysBottom);
-	float dydMinSplitHeight = dysMinSplitHeight;
+	float dydMinSplitHeight = dysMinSplitHeight * m_yFactor;
 
 	float ydMid = (ydTop + ydBottom) / 2;
 
@@ -1756,7 +1769,7 @@ void SegmentPainter::CalcPartialLigatures(bool * prgfAllSelected,
 			int icomp;
 			for (icomp = 0; icomp < pslout->NumberOfComponents(); icomp++)
 			{
-				int ichwUnderlying = pslout->UnderlyingComponent(icomp);
+				int ichwUnderlying = pslout->FirstUnderlyingComponent(icomp); // is it possible to select one char of a component and not another?
 				if (ichwUnderlying < ichwMinSel - m_pseg->m_ichwMin ||
 					ichwUnderlying >= ichwLimSel - m_pseg->m_ichwMin)
 				{
@@ -1765,8 +1778,13 @@ void SegmentPainter::CalcPartialLigatures(bool * prgfAllSelected,
 			}
 			for (icomp = 0; icomp < pslout->NumberOfComponents(); icomp++)
 			{
-				int ichwUnderlying = pslout->UnderlyingComponent(icomp);
-				prgfAllSelected[ichwUnderlying] = fAll;
+				for (int ichw = pslout->FirstUnderlyingComponent(icomp) ; 
+					ichw <= pslout->LastUnderlyingComponent(icomp) ;
+					ichw++)
+				{
+					if (m_pseg->m_prgiComponent[ichw - m_pseg->m_ichwAssocsMin] == icomp)
+						prgfAllSelected[ichw] = fAll;
+				}
 			}
 		}
 	}
@@ -1915,7 +1933,7 @@ void SegmentPainter::CalcHighlightRect(int ichw,
 				//	Highlight entire width of the glyph from the top of the line to the bottom.
 				//	Horizontally, highlight from the origin of the glyph to the advance width.
 
-				//xsGlyphRight = xsGlyphLeft + psloutTmp->GlyphMetricLogUnits(&font kgmetAdvWidth);
+				//xsGlyphRight = xsGlyphLeft + psloutTmp->GlyphMetricLogUnits(&font, kgmetAdvWidth);
 				xsGlyphRight = xsGlyphLeft + psloutTmp->ClusterAdvance();
 
 				if (xsGlyphLeft > xsGlyphRight)
@@ -2930,7 +2948,7 @@ bool SegmentPainter::AdjacentLigComponent(int * pichw, bool * pfAssocPrev,
 		}
 	}
 
-	*pichw = pslout->UnderlyingComponent(icompNext) + m_pseg->m_ichwMin;
+	*pichw = pslout->FirstUnderlyingComponent(icompNext) + m_pseg->m_ichwMin; // TODO: handle multiple components per ligature
 	if (*pfAssocPrev)
 		++(*pichw);
 

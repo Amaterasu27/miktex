@@ -54,7 +54,7 @@ public:
 	virtual void GetPositionInFont(long * plPos) = 0;
 	virtual void SetPositionInFont(long lPos) = 0;
 
-	virtual bool OpenBuffer(byte * pbBuffer, int cb) = 0;
+	virtual bool OpenBuffer(const byte * pbBuffer, int cb) = 0;
 	virtual void CloseBuffer() = 0;
 
 protected:
@@ -87,16 +87,16 @@ public:
 	virtual void GetPositionInFont(long * plPos);
 	virtual void SetPositionInFont(long lPos);
 
-	virtual bool OpenBuffer(byte * pbBuffer, int cb);
+	virtual bool OpenBuffer(const byte * pbBuffer, int cb);
 	virtual void CloseBuffer()
 	{
 		Close();
 	}
 
 protected:
-	byte * m_pbStart;
-	byte * m_pbNext;
-	byte * m_pbLim;
+	const byte * m_pbStart;
+	const byte * m_pbNext;
+	const byte * m_pbLim;
 };
 
 } // namespace gr

@@ -433,7 +433,7 @@ void Segment::InitWhiteSpaceSegment(int nNewDepth)
 /*----------------------------------------------------------------------------------------------
 	Basic copy method.
 ----------------------------------------------------------------------------------------------*/
-Segment::Segment(Segment & seg)
+Segment::Segment(const Segment & seg)
 {
 	int islout;
 
@@ -1124,7 +1124,7 @@ LineBrk Segment::getBreakWeight(int ich, bool fBreakBefore)
 	GrSlotOutput * psloutFirst = m_prgslout + isloutFirst;
 	bool fNotFirst = false;
 	if ((psloutFirst->NumberOfComponents() > 0)
-		&& psloutFirst->UnderlyingComponent(0) != ich)
+		&& psloutFirst->FirstUnderlyingComponent(0) != ich)
 	{
 		// Not the first component of a ligature.
 		lbFirst = (LineBrk) ((int)klbClipBreak * -1);
@@ -1140,8 +1140,9 @@ LineBrk Segment::getBreakWeight(int ich, bool fBreakBefore)
 		return klbClipBreak;
 	GrSlotOutput * psloutLast = m_prgslout + isloutLast;
 	bool fNotLast = false;
+	int icompLast = psloutLast->NumberOfComponents() - 1;
 	if ((psloutLast->NumberOfComponents() > 0)
-		&& psloutLast->UnderlyingComponent(psloutLast->NumberOfComponents() - 1) != ich)
+		&& psloutLast->LastUnderlyingComponent(icompLast) != ich)
 	{
 		// Not the last component of a ligature.
 		lbLast = klbClipBreak;
@@ -1363,20 +1364,23 @@ int Segment::findNextBreakPoint(int ichStart,
 		ichTry++;
 	}
 
-	if (ichTry >= m_ichwMin + m_dichwLim)
+	if (ichBestBreak > -1)
 	{
-		// Break at the end of the segment.
-		ichBreak = m_ichwMin + m_dichwLim;
-		*pdxBreakWidth = getRangeWidth(ichStart, m_dichwLim, fStartLine, fEndLine);
-		return ichBreak;
-	}
+		if (ichTry >= m_ichwMin + m_dichwLim)
+		{
+			// Break at the end of the segment.
+			ichBreak = m_ichwMin + m_dichwLim;
+			*pdxBreakWidth = getRangeWidth(ichStart, m_dichwLim, fStartLine, fEndLine);
+			return ichBreak;
+		}
 
-	if (ichBestBreak > -1 && lbBest <= lbPref)
-	{
-		// Found a reasonable break by looking forward; return it.
-		ichBreak = ichBestBreak;// + m_ichwMin;
-		*pdxBreakWidth = getRangeWidth(ichStart, ichBestBreak, fStartLine, fEndLine);
-		return ichBreak;
+		if (lbBest <= lbPref)
+		{
+			// Found a reasonable break by looking forward; return it.
+			ichBreak = ichBestBreak;// + m_ichwMin;
+			*pdxBreakWidth = getRangeWidth(ichStart, ichBestBreak, fStartLine, fEndLine);
+			return ichBreak;
+		}
 	}
 
 	//	Didn't find a really good break point looking forward from our rough guess.
@@ -1636,15 +1640,18 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 //	m_cnUserDefn = ptman->NumUserDefn();
 	m_cnCompPerLig = ptman->NumCompPerLig();
 //	m_cnFeat = ptman->NumFeat();
-	//	Normal buffers, plus underlying indices of ligature components, plus
-	//	map from used components to defined components.
+	//	Normal buffers, plus:
+	//		- underlying indices of ligature components
+	//		- map from used components to defined components
 //	int cnExtraPerSlot = m_cnUserDefn +	(m_cnCompPerLig * 2) + m_cnFeat + (m_cnCompPerLig * 2);
 
 	// We don't need to store the user-defined slot attributes or the features in the segment itself.
 	// What we need is: (1) component.ref attr settings, (2) slot-attribute indices,
-	// (3) underlying indicates of ligature components, and (4) map from used components
+	// (3) underlying indices of ligature components, and (4) map from used components
 	// to defined components
-	int cnExtraPerSlot = m_cnCompPerLig * 4;
+	// 18Jul08 - it looks like all we need are underlying chars for ligature components and
+	// map from components to defined components.
+	int cnExtraPerSlot = m_cnCompPerLig * 2;
 	m_prgslout = new GrSlotOutput[m_cslout];
 	m_prgnSlotVarLenBuf = new u_intslot[m_cslout * cnExtraPerSlot];
 
@@ -1764,8 +1771,9 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal,
 		m_prgginf[iginf].m_pseg = this;
 
 		// Fill in stuff in the output slot that is needed by the GlyphInfo object.
-		pslout->m_xsAdvanceX = pslot->GlyphMetricLogUnits(ptman, kgmetAdvWidth);
-		//pslout->m_ysAdvanceY = pslot->GlyphMetricLogUnits(ptman, kgmetAdvHeight);
+		////pslout->m_xsAdvanceX = pslot->GlyphMetricLogUnits(ptman, kgmetAdvWidth); // wrong
+		pslout->m_xsAdvanceX = ptman->EmToLogUnits(pslot->AdvanceX(ptman));
+		//pslout->m_ysAdvanceY = ptman->EmToLogUnits(pslot->AdvanceY(ptman));
 		//pslout->m_rectBB.top
 		//	= pslot->YPosition() + pslot->GlyphMetricLogUnits(ptman, kgmetBbTop);
 		//pslout->m_rectBB.bottom
@@ -2396,14 +2404,17 @@ int Segment::LogicalSurfaceToUnderlying(int islout, float xsOffset, float ysClic
 			
 			//	Click was within the component's box.
 
-			dichw = pslout->UnderlyingComponent(icomp);
-			Assert(m_ichwMin + dichw >= 0);
-			Assert(dichw < m_dichwLim);
-
 			fRight = (xsOffset - xsLeft > xsRight - xsOffset);
 			fAfter = (fGlyphRtl) ? !fRight : fRight;
 			if (pfAfter)
 				*pfAfter = fAfter;
+
+			if (fAfter)
+				dichw = pslout->LastUnderlyingComponent(icomp);
+			else
+				dichw = pslout->FirstUnderlyingComponent(icomp);
+			Assert(m_ichwMin + dichw >= 0);
+			Assert(dichw < m_dichwLim);
 
 			Assert(GrCharStream::AtUnicodeCharBoundary(m_pgts, m_ichwMin + dichw));
 

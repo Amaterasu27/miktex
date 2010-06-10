@@ -25,8 +25,8 @@ Description:
 DEFINE_THIS_FILE
 #ifndef _WIN32
 #include <stdlib.h>
-#include <math.h>
 #endif
+#include <math.h>
 
 //:>********************************************************************************************
 //:>	Forward declarations
@@ -488,7 +488,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 			//	Final output has overflowed its space--find (or adjust) the break point.
 
 			bool fFoundBreak = Backtrack(&islotUnderBreak,
-				&lbBestToTry, lbMax, twsh, fMoreText, ichwCallerBtLim, &lbFound);
+				&lbBestToTry, lbMax, twsh, fMoreText, ichwCallerBtLim, fEndLine, &lbFound);
 			if (!fFoundBreak)
 			{
 				// Nothing will fit. Initialize the new segment just enough so that
@@ -634,16 +634,13 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 		psegNew->FixTermination(est);
 	}
 
-	SetFinalPositions(psegNew, fWidthIsCharCount);
-
-	//	Do this before fixing up the associations below, so we can see the raw ones produced by the
-	//	rules themselves.
+	//	Do this before fixing up the associations below.
 	//if (m_pgreng->LoggingTransduction())
 	//	WriteTransductionLog(pchstrm, *ppsegRet,
 	//		cbPrev, pbPrevSegDat, pbNextSegDat, pcbNextSegDat);
 	WriteTransductionLog(pstrmLog, pchstrm, psegNew, cbPrev, pbPrevSegDat);
 
-	RecordAssocsAndOutput(pfont, psegNew, twsh, fParaRtl, nDirDepth);
+	RecordAssocsAndOutput(pfont, psegNew, fWidthIsCharCount, twsh, fParaRtl, nDirDepth);
 
 	//	Do this after fixing up the associations.
 	//if (m_pgreng->LoggingTransduction())
@@ -935,7 +932,7 @@ void GrTableManager::InitSegmentAsEmpty(Segment * psegNew, Font * pfont,
 ----------------------------------------------------------------------------------------------*/
 bool GrTableManager::Backtrack(int * pislotPrevBreak,
 	LineBrk * plbMin, LineBrk lbMax, TrWsHandling twsh, bool fMoreText,
-	int ichwCallerBtLim,
+	int ichwCallerBtLim, bool fEndLine,
 	LineBrk * plbFound)
 {
 	int islotStartTry;
@@ -976,20 +973,27 @@ bool GrTableManager::Backtrack(int * pislotPrevBreak,
 	if (twsh == ktwshNoWs)
 		// omitting trailing white-space
 		fInsertLB = false;
-	else if (twsh == ktwshOnlyWs)
-		// trailing white-space segment
-		fInsertLB = true;
-	else if (ichwCallerBtLim > -1)
-		// backtracking
-		fInsertLB = true;
-	else if (*pislotPrevBreak > -1)
-		// no longer at the edge of the writing system or font
-		fInsertLB = true;
-	else if (!fMoreText)
-		// at final edge of total range to render
-		fInsertLB = true;
-	else
+
+	//	These rules seem more complicated than what is necessary... :-/
+	//else if (twsh == ktwshOnlyWs)
+	//	// trailing white-space segment
+	//	fInsertLB = true;
+	//else if (ichwCallerBtLim > -1)
+	//	// backtracking
+	//	fInsertLB = true;
+	//else if (*pislotPrevBreak > -1)
+	//	// no longer at the edge of the writing system or font
+	//	fInsertLB = true;
+	//else if (!fMoreText)
+	//	// at final edge of total range to render
+	//	fInsertLB = true;
+	//else
+	//	fInsertLB = false;
+
+	else if (!fEndLine)
 		fInsertLB = false;
+	else
+		fInsertLB = true;
 
 	//	Try to insert a line-break in the output of the (final) line-break pass (if any, or
 	//	the output of the glyph-generation pass). First try the preferred (strictest)
@@ -1334,11 +1338,21 @@ LBackupPC:
 
 	pseg->RecordInitializationForNextSeg(*pcbNextSegDat, pbNextSegDat);
 }
+
 /*----------------------------------------------------------------------------------------------
-	Make sure the final positions are set for every glyph.
+	Calculate the associations, and record the output slots in the segment.
 ----------------------------------------------------------------------------------------------*/
-void GrTableManager::SetFinalPositions(Segment * pseg,  bool fWidthIsCharCount)
+void GrTableManager::RecordAssocsAndOutput(Font * pfont,
+	Segment * pseg, bool fWidthIsCharCount,
+	TrWsHandling twsh, bool fParaRtl, int nDirDepth)
 {
+	int cchwUnderlying = pseg->stopCharacter() - pseg->startCharacter();
+
+	GrSlotStream * psstrmFinal = OutputStream(m_cpass-1);
+	int csloutSurface = psstrmFinal->WritePos() - psstrmFinal->IndexOffset(); // # of output slots
+
+	psstrmFinal->SetNeutralAssociations(LBGlyphID());
+
 	float xsTotalWidth, xsVisWidth;
 
 #ifdef OLD_TEST_STUFF
@@ -1351,19 +1365,6 @@ void GrTableManager::SetFinalPositions(Segment * pseg,  bool fWidthIsCharCount)
 	CalcPositionsUpTo(m_cpass-1, reinterpret_cast<GrSlotState *>(NULL),
 		&xsTotalWidth, &xsVisWidth); 
 	pseg->SetWidths(xsVisWidth, xsTotalWidth);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Calculate the associations, and record the output slots in the segment.
-----------------------------------------------------------------------------------------------*/
-void GrTableManager::RecordAssocsAndOutput(Font * pfont, Segment * pseg,
-	TrWsHandling twsh, bool fParaRtl, int nDirDepth)
-{
-	int cchwUnderlying = pseg->stopCharacter() - pseg->startCharacter();
-	GrSlotStream * psstrmFinal = OutputStream(m_cpass-1);
-	int csloutSurface = psstrmFinal->WritePos() - psstrmFinal->IndexOffset(); // # of output slots
-
-	psstrmFinal->SetNeutralAssociations(LBGlyphID());
 
 	pseg->SetUpOutputArrays(pfont, this, psstrmFinal, cchwUnderlying, csloutSurface, LBGlyphID(),
 		twsh, fParaRtl, nDirDepth);
@@ -1382,6 +1383,7 @@ void GrTableManager::CalculateAssociations(Segment * pseg, int csloutSurface)
 
 	std::vector<int> vichwAssocs;
 	std::vector<int> vichwComponents;
+	std::vector<int> vicomp;
 
 	for (int islot = psstrmFinal->IndexOffset(); islot < psstrmFinal->WritePos(); islot++)
 	{
@@ -1399,12 +1401,13 @@ void GrTableManager::CalculateAssociations(Segment * pseg, int csloutSurface)
 			}
 
 			vichwComponents.clear();
+			vicomp.clear();
 			if (pslot->HasComponents())
-				pslot->AllComponentRefs(vichwComponents);
+				pslot->AllComponentRefs(vichwComponents, vicomp);
 
 			for (iichw = 0; iichw < vichwComponents.size(); iichw++)
 			{
-				pseg->RecordLigature(vichwComponents[iichw], islout, iichw);
+				pseg->RecordLigature(vichwComponents[iichw], islout, vicomp[iichw]);
 			}
 		}
 	}

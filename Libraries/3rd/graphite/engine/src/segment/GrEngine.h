@@ -541,9 +541,9 @@ protected:
 	void DestroyEverything();
 
 	bool CheckTableVersions(GrIStream * pgrstrm,
-		byte *silf_tbl, int lSilfStart,
-		byte *gloc_tbl, int lGlocStart,
-		byte *feat_tbl, int lFeatStart,
+		const byte *silf_tbl, int lSilfStart,
+		const byte *gloc_tbl, int lGlocStart,
+		const byte *feat_tbl, int lFeatStart,
 		int * pfxdBadVersion);
 	//bool ReadSileTable(GrIStream & grstrm, long lTableSTart,
 	//	int * pmFontEmUnits, bool * pfMismatchedBase);

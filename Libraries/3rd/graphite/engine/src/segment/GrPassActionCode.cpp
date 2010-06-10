@@ -10,8 +10,6 @@ Last reviewed: Not yet.
 
 Description:
     A continution of the GrPass file, including functions to run the action commands.
-    
-This comment could create a merge conflict. It can be removed.
 ----------------------------------------------------------------------------------------------*/
 
 //:>********************************************************************************************

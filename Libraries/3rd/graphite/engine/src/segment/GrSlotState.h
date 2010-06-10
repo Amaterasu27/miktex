@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999 - 2008 SIL International. All rights reserved.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -48,7 +48,7 @@ public:
 	{
 	}
 
-	~GrSlotAbstract()
+	virtual ~GrSlotAbstract()
 	{
 		// the table manager is responsible for destroying the contents of m_prgnVarLenBuf
 	}
@@ -86,7 +86,15 @@ public:
 
 	gid16 GlyphID()				{ return m_chwGlyphID; }
 	gid16 RawActualGlyph()		{ return m_chwActual; }
-	float GetGlyphMetric(Font * pfont, int nGlyphMetricID, gid16 chwGlyphID);
+	virtual float GetGlyphMetric(Font * pfont, int nGlyphMetricID, gid16 chwGlyphID);
+
+protected:
+	void GetGlyphMetricAux(Font * pfont, gid16 chwGlyphID,
+		float & xysGlyphX, float & xysGlyphY,
+		float & xysGlyphWidth, float & xysGlyphHeight, float & xysAdvX, float & xysAdvY,
+		sdata8 & bIsSpace);
+
+public:
 
 	//GrSlotState * CompRefSlot(int i);
 
@@ -197,6 +205,7 @@ protected:
 ----------------------------------------------------------------------------------------------*/
 class GrSlotState : public GrSlotAbstract
 {
+
 	friend class GrSlotStream;
 	friend class FontMemoryUsage;
 
@@ -222,17 +231,13 @@ public:
 		ZapCompositeMetrics();
 	}
 
-	~GrSlotState()
+	virtual ~GrSlotState()
 	{
 	}
 
 	void BasicInitialize(int cnUserDefn, int cnCompPerLig, int cnFeat, u_intslot * pnBuf)
 	{
 		BasicInitializeAbstract(cnCompPerLig, pnBuf);
-
-		m_xysGlyphWidth = -1;
-		m_xysFontAscent = -1;
-		m_xysFontDescent = -1;
 
 		m_mAdvanceX = kNotYetSet;
 		m_mAdvanceY = kNotYetSet;
@@ -262,6 +267,15 @@ public:
 		m_cnFeat = byte(cnFeat);
 
 		m_fHasComponents = false;
+
+		m_xysFontAscent = kNegInfFloat;
+		m_xysFontDescent = kNegInfFloat;
+		m_xysGlyphWidth = kNegInfFloat;
+		m_xysGlyphHeight = kNegInfFloat;
+		m_xysGlyphX = kNegInfFloat;
+		m_xysGlyphY = kNegInfFloat;
+		m_xysAdvX = kNegInfFloat;
+		m_xysAdvY = kNegInfFloat;
 	}
 
 	void Initialize(gid16 chw, GrEngine *, GrFeatureValues fval,
@@ -277,6 +291,8 @@ public:
 
 	void CopyFrom(GrSlotState * pslot, bool fCopyEverything = true);
 
+	virtual float GetGlyphMetric(Font * pfont, int nGlyphMetricID, gid16 chwGlyphID);
+
 	//	General:
 	int RawSegOffset()		{ return m_ichwSegOffset; }
 
@@ -284,11 +300,10 @@ public:
 	{
 		m_chwGlyphID = chw;
 		m_chwActual = kInvalidGlyph;
-		m_xysGlyphWidth = -1; // indicate glyph metrics are invalid
+		m_xysGlyphWidth = kNegInfFloat; // indicate glyph metrics are invalid
 		m_ipassFsmCol = -1;
 		m_colFsm = -1;
 	}
-
 	int PosPassIndex()
 	{
 		return m_islotPosPass;
@@ -330,7 +345,7 @@ public:
 	void Associate(std::vector<GrSlotState*> &);
 	void ClearAssocs();
 
-	int AssocsSize()				{ return m_vpslotAssoc.size(); }
+	int AssocsSize()					{ return m_vpslotAssoc.size(); }
 	GrSlotState * RawBeforeAssocSlot()
 	{
 		if (m_vpslotAssoc.size() == 0)
@@ -343,21 +358,7 @@ public:
 			return NULL;
 		return m_vpslotAssoc.back();
 	}
-	////GrSlotState * AssocSlot(int i)		{ return m_vpslotAssoc[i]; }
-
-	GrSlotState * AssocSlot(int i)
-	{
-		if (i < 0)
-			return NULL;
-		if (i >= signed(m_vpslotAssoc.size()))
-			return NULL;
-
-		GrSlotState * pslotAssoc = m_vpslotAssoc[i];
-		// handle possible reprocessing
-		while (pslotAssoc && pslotAssoc->PassModified() == m_ipassModified)
-			pslotAssoc = pslotAssoc->m_pslotPrevState;
-		return pslotAssoc;
-	}
+	GrSlotState * AssocSlot(int i)		{ return m_vpslotAssoc[i]; }
 
 	void AllAssocs(std::vector<int> & vichw);
 	int BeforeAssoc();
@@ -366,7 +367,7 @@ public:
 	void CleanUpAssocs();
 
 	void SetComponentRefsFor(GrSlotOutput *, int iComp = -1);
-	void AllComponentRefs(std::vector<int> & vichw);
+	void AllComponentRefs(std::vector<int> & vichw, std::vector<int> & vicomp, int iComponent = -1);
 
 	int PassModified()			{ return m_ipassModified; }
 	int SegOffset();
@@ -531,7 +532,7 @@ public:
 		Assert(mVal < 0xFFFF); m_mShiftY = short(mVal & 0xFFFF);
 		m_fShiftMod = true;
 	}
-
+	
 	void SetAttachTo(int srVal)
 	{
 		Assert(srVal < 0xFFFF);
@@ -861,18 +862,13 @@ public:
 			pfval->m_rgnFValues[i] = PFeatureBuf()[i].nValue;
 	}
 
-	//	For transduction logging:
+//	For transduction logging:
 #ifdef TRACING
 	void SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp, int * pcassoc);
-	void LogSlotAttributeValue(GrTableManager *, std::ostream &, int ipass, int slat, int icomp,
+	void LogSlotAttribute(GrTableManager *, std::ostream &, int ipass, int slat, int icomp,
 		bool fPreJust, bool fPostJust);
 	void LogAssociation(GrTableManager * ptman,
 		std::ostream & strmOut, int ipass, int iassoc, bool fBoth, bool fAfter);
-	void LogXmlAttributes(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-		int ipass, int islot,
-		bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int nIndent);
-	int GetSlotAttrValue(std::ostream & strmOut, GrTableManager * ptman,
-		int ipass, int slat, int iIndex, bool fPreJust, bool fPostJust);
 	int m_islotTmpIn;		// for use by transduction log; index of slot in input stream
 	int m_islotTmpOut;		// ditto; index of slot in output stream
 #endif // TRACING
@@ -987,7 +983,7 @@ protected:
 	bool m_fHasComponents;	// default = false
 
 	//	Private methods:
-
+	
 	void CopyAbstractFrom(GrSlotState * pslot);
 
 	void AdjustRootMetrics(GrTableManager * ptman, GrSlotStream *);
@@ -1095,16 +1091,52 @@ public:
 	{
 		m_ichwAfterAssoc = ichw;
 	}
+
+	//u_intslot * PCompRefBufSlout()
+	//{
+	//	return m_prgnVarLenBuf;
+	//}
+	int CExtraSpaceSlout()
+	{
+		return (m_cnCompPerLig * 2);
+	}
+
+	int IbufUnderlyingCompOffset()
+	{
+		return 0;
+	}
+	int IbufCompIdOffset()
+	{
+		return m_cnCompPerLig;
+	}
+
 	void AddComponentReference(int ichw, int slati)
 	{
+		short ichw16 = short(ichw);
 		if (m_cComponents >= m_cnCompPerLig)
 		{
-			Assert(false);	// ignore the requested component ref
+			Assert(false);	// too many--ignore the requested component ref
 		}
 		else
 		{
-			m_prgnVarLenBuf[m_cComponents].nValue
-				= ichw;
+			int iComp;
+			for (iComp = 0; iComp < m_cComponents; iComp++)
+			{
+				if (ComponentId(iComp) == slati)
+				{
+					//	We already have at least one character for this component. Add another.
+					if (m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[0] > ichw16)
+						m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[0] = ichw16; // min
+					if (m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[1] < ichw16)
+						m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[1] = ichw16; // max
+					return;
+				}
+			}
+
+			iComp = m_cComponents;
+
+			m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[0] = ichw16;	// min
+			m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[1] = ichw16; // max
 
 			// OBSOLETE comment:
 			//	Maps the used components to the defined components. Normally this will be
@@ -1112,8 +1144,7 @@ public:
 			//	have defined components a, b, and c, but only mapped a and c to actual
 			//	characters. This buffer will then hold [0,2].
 
-			m_prgnVarLenBuf[m_cnCompPerLig + m_cComponents].nValue
-				= slati;
+			m_prgnVarLenBuf[IbufCompIdOffset() + iComp].nValue = slati;
 
 //			Assert(iComp >= m_cComponents); // because we process them in order they are defined
 											// in, but we could have skipped some that are
@@ -1127,24 +1158,21 @@ public:
 	}
 	//	Index of ligature components, relative to the beginning of the segment.
 	//	iComp is index of components USED in this glyph.
-	int UnderlyingComponent(int iComp)
+	int FirstUnderlyingComponent(int iComp)
 	{
 		Assert(iComp < m_cnCompPerLig);
-		return m_prgnVarLenBuf[iComp].nValue;
+		int ichw = m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[0];
+		return ichw;
+	}
+	int LastUnderlyingComponent(int iComp)
+	{
+		Assert(iComp < m_cnCompPerLig);
+		int ichw = m_prgnVarLenBuf[IbufUnderlyingCompOffset() + iComp].smallint[1];
+		return ichw;
 	}
 	int ComponentId(int iComp)
 	{
-		return m_prgnVarLenBuf[m_cnCompPerLig + iComp].nValue;
-	}
-
-	//u_intslot * PCompRefBufSlout()
-	//{
-	//	return m_prgnVarLenBuf;
-	//}
-
-	int CExtraSpaceSlout()
-	{
-		return (m_cnCompPerLig * 2);
+		return m_prgnVarLenBuf[IbufCompIdOffset() + iComp].nValue;
 	}
 
 	void SetClusterBase(int islout)
@@ -1224,7 +1252,7 @@ public:
 	//{
 	//	return m_xysAdvX;
 	//}
-
+	
 	bool IsSpace();
 
 	void AdjustPosXBy(float dxs)
@@ -1262,7 +1290,7 @@ protected:
 	int m_isloutClusterBase;	// the index of the slot that serves as the base for the
 								// cluster this slot is a part of; -1 if not part of cluster
 
-	int	m_ichwBeforeAssoc;		// index of associated character in the string
+	int	m_ichwBeforeAssoc;		// index of associated character(s) in the string
 	int	m_ichwAfterAssoc;		// (relative to the official beginning of the segment)
 								// char might possibly not be officially in this segment,
 								// in which case value is infinity

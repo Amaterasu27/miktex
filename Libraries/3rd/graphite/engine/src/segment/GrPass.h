@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (C) 1999 - 2008 SIL International. All rights reserved.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -85,10 +85,6 @@ public:
 #ifdef TRACING
 	void LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn);
 	void LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream * psstrmOut);
-	void LogXmlRules(std::ostream & strmOut, GrTableManager *, GrSlotStream * psstrmIn, int nIndent);
-	void LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-		int ipassJust1, bool fPreJust, bool fPostJust, bool fBidi, bool fBidiNext, int cslotsSkipped,
-		int nIndent);
 #endif // TRACING
 
 protected:
@@ -262,6 +258,11 @@ public:
 	{
 	}
 
+	virtual void DoCleanUpSegLim(GrTableManager * ptman, GrSlotStream * psstrmOut,
+		TrWsHandling twsh)
+	{
+	}
+
 	virtual bool IsPosPass()
 	{
 		return false;
@@ -368,10 +369,6 @@ public:
 #ifdef TRACING
 	void LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn);
 	void LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream * psstrmOut);
-	void LogXmlRules(std::ostream & strmOut, GrTableManager * ptman,
-		GrSlotStream * psstrmIn, int nIndent);
-	void LogXmlGlyphs(std::ostream & strmOut, GrTableManager * ptman, GrSlotStream * psstrmOut,
-		int ipassJust1, bool fPreJust, bool fPostJust, int cslotsSkipped, int nIndent);
 #endif // TRACING
 
 protected:
@@ -581,6 +578,8 @@ protected:
 
 	virtual void DoCleanUpSegMin(GrTableManager * ptman,
 		GrSlotStream * psstrmIn, int islotInitReadPos, GrSlotStream * psstrmOut);
+	virtual void DoCleanUpSegLim(GrTableManager * ptman, GrSlotStream * psstrmOut,
+		TrWsHandling twsh);
 
 public:
 #ifdef OLD_TEST_STUFF

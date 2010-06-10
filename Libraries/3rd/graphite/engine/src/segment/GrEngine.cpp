@@ -891,9 +891,9 @@ int GrEngine::FindFontLim(ITextSource * pgts, int ichwMinFont, int * pnDirDepth)
 	implementation of the engine can't handle.
 ----------------------------------------------------------------------------------------------*/
 bool GrEngine::CheckTableVersions(GrIStream * pgrstrm,
-		byte *pSilfTbl, int lSilfStart,
-		byte *pGlobTbl, int lGlocStart,
-		byte *pFeatTbl, int lFeatStart,
+		const byte *pSilfTbl, int lSilfStart,
+		const byte *pGlobTbl, int lGlocStart,
+		const byte *pFeatTbl, int lFeatStart,
 		int * pfxdBadVersion)
 {
 	pgrstrm->OpenBuffer(pSilfTbl, isizeof(int));
@@ -1210,10 +1210,10 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 
 	//	rendering behaviors--ignore for now
 	byte cBehaviors = grstrm.ReadByteFromFont();
-	data16 chwBehaviors[kMaxRenderingBehavior];
+	unsigned int nBehaviors[kMaxRenderingBehavior];
 	for (i = 0; i < cBehaviors; i++)
 	{
-		chwBehaviors[i] = grstrm.ReadUShortFromFont();
+		nBehaviors[i] = unsigned(grstrm.ReadIntFromFont());
 	}
 
 	//	linebreak glyph ID
@@ -1668,7 +1668,8 @@ std::wstring GrEngine::StringFromNameTable(int nLangID, int nNameID)
 {
 	std::wstring stuName;
 	stuName.erase();
-	size_t lOffset = 0, lSize = 0;
+	size_t lOffset = 0;
+	size_t lSize = 0;
 
 	// The Graphite compiler stores our names in either 
 	// the MS (platform id = 3) Unicode (writing system id = 1) table
