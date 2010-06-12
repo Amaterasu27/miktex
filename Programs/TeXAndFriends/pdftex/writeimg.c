@@ -21,7 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #if defined(MIKTEX)
 #  include <miktex/Core/First>
 #endif
-
 #include "ptexlib.h"
 #include "image.h"
 #include <kpathsea/c-auto.h>
@@ -40,11 +39,11 @@ float epdf_width;
 float epdf_height;
 float epdf_orig_x;
 float epdf_orig_y;
-integer epdf_selected_page;
-integer epdf_num_pages;
-integer epdf_page_box;
+float epdf_rotate;
+int epdf_selected_page;
+int epdf_num_pages;
+int epdf_page_box;
 void *epdf_doc;
-integer epdf_lastGroupObjectNum;
 
 static integer new_image_entry(void)
 {
@@ -56,6 +55,7 @@ static integer new_image_entry(void)
     image_ptr->y_res = 0;
     image_ptr->width = 0;
     image_ptr->height = 0;
+    image_ptr->rotate = 0;
     image_ptr->colorspace_ref = 0;
     image_ptr->group_ref = 0;
     return image_ptr++ - image_array;
@@ -74,6 +74,11 @@ integer imagewidth(integer img)
 integer imageheight(integer img)
 {
     return img_height(img);
+}
+
+integer imagerotate(integer img)
+{
+    return img_rotate(img);
 }
 
 integer imagexres(integer img)
@@ -314,12 +319,12 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
                                  pdfversion, pdfinclusionerrorlevel);
         img_width(img) = bp2int(epdf_width);
         img_height(img) = bp2int(epdf_height);
+        img_rotate(img) = epdf_rotate;
         img_pages(img) = epdf_num_pages;
         pdf_ptr(img)->orig_x = bp2int(epdf_orig_x);
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
         pdf_ptr(img)->selected_page = page_num;
         pdf_ptr(img)->doc = epdf_doc;
-        img_group_ref(img) = epdf_lastGroupObjectNum;
         break;
     case IMAGE_TYPE_PNG:
         img_pages(img) = 1;
@@ -367,20 +372,13 @@ void writeimage(integer img)
         epdf_doc = pdf_ptr(img)->doc;
         epdf_selected_page = pdf_ptr(img)->selected_page;
         epdf_page_box = pdf_ptr(img)->page_box;
-        epdf_lastGroupObjectNum = img_group_ref(img);
         write_epdf();
         break;
     default:
         pdftex_fail("unknown type of image");
     }
+
     tex_printf(">");
-    if (img_type(img) == IMAGE_TYPE_PDF) {
-        write_additional_epdf_objects();
-    } else {
-        if (img_type(img) == IMAGE_TYPE_PNG) {
-            write_additional_png_objects();
-        }
-    }
     cur_file_name = NULL;
 }
 
@@ -413,7 +411,7 @@ void deleteimage(integer img)
     return;
 }
 
-void img_free()
+void img_free(void)
 {
     xfree(image_array);
 }
@@ -444,7 +442,6 @@ void img_free()
 #  define generic_undump(x) THEAPP.Undump(THEDATA(fmtfile), (x))
 #  define undumpthings(a, n) THEAPP.Undump(THEDATA(fmtfile), (a), (n))
 #endif
-
 /* #define dumpsizet   generic_dump */
 #define dumpinteger generic_dump
 
@@ -494,7 +491,8 @@ void img_free()
 #endif
 
 
-void dumpimagemeta()
+
+void dumpimagemeta(void)
 {
     int cur_image, img;
 

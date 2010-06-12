@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 3759
-#define MIKTEX_COMP_ORIG_VERSION_STR "1.40.10"
+#define MIKTEX_COMP_J2000_VERSION 3814
+#define MIKTEX_COMP_ORIG_VERSION_STR "1.40.11"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "\
 Copyright (C) 1982 D. E. Knuth, \

@@ -31,7 +31,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #    endif
 #    define assert MIKTEX_ASSERT
 #  endif
-
 /* WEB2C macros and prototypes */
 #  if !defined(PDFTEXCOERCE) && !defined(PDFETEXCOERCE)
 #    ifdef pdfTeX
@@ -90,7 +89,11 @@ typedef struct {
 #  define FD_FLAGS_DEFAULT_NON_EMBED 0x22
                                         /* a nonsymbolic serif font */
 
+#if defined(MIKTEX)
+typedef struct fm_entry {
+#else
 typedef struct {
+#endif
     /* parameters scanned from the map file: */
     char *tfm_name;             /* TFM file name (1st field in map line) */
     char *sfd_name;             /* subfont directory name, like @sfd_name@ */
@@ -116,7 +119,11 @@ typedef struct {
     boolean set;                /* true if parameter has been set */
 } intparm;
 
+#if defined(MIKTEX)
+typedef struct fd_entry {
+#else
 typedef struct fd_entry_ {
+#endif
     integer fd_objnum;          /* object number of the font descriptor object */
     char *fontname;             /* /FontName (without subset tag) */
     char *subset_tag;           /* 6-character subset tag */
@@ -167,28 +174,31 @@ typedef struct {
 extern boolean true_dimen;
 extern char **t1_glyph_names, *t1_builtin_glyph_names[];
 extern char *cur_file_name;
-extern const char notdef[];
 extern integer t1_length1, t1_length2, t1_length3;
 extern integer ttf_length;
 extern strnumber last_tex_string;
 extern size_t last_ptr_index;
+extern char *fb_array;
+extern FILE *t3_file;
+extern const char *ptexbanner;
 
 /* pdftexlib function prototypes */
 
-/* epdf.c */
-extern integer get_fontfile_num(int);
-extern integer get_fontname_num(int);
-extern void epdf_free(void);
+/* prototypes used in C code as well as pdftoepdf.cc */
+#if defined(MIKTEX)
+#include <pdftex-common.h>
+#else
+#include <pdftexdir/pdftex-common.h>
+#endif
 
 /* mapfile.c */
-extern fm_entry *lookup_fontmap(char *);
 extern boolean hasfmentry(internalfontnumber);
 extern void fm_free(void);
 extern void fm_read_info(void);
 extern ff_entry *check_ff_exist(char *, boolean);
 extern void pdfmapfile(integer);
 extern void pdfmapline(integer);
-extern void pdfinitmapfile(string map_name);
+extern void pdfinitmapfile(const_string map_name);
 extern fm_entry *new_fm_entry(void);
 extern void delete_fm_entry(fm_entry *);
 extern int avl_do_entry(fm_entry *, int);
@@ -227,26 +237,16 @@ extern void fb_seek(integer);
 extern void libpdffinish(void);
 extern char *makecfilename(strnumber s);
 extern void make_subset_tag(fd_entry *);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdf_printf(const char *, ...);
-extern void pdf_puts(const char *);
-__attribute__ ((noreturn, format(printf, 1, 2)))
-extern void pdftex_fail(const char *, ...);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdftex_warn(const char *, ...);
 extern void setjobid(int, int, int, int);
-__attribute__ ((format(printf, 1, 2)))
-extern void tex_printf(const char *, ...);
 extern void writestreamlength(integer, longinteger);
-extern char *convertStringToPDFString(const char *in, int len);
 extern void printID(strnumber);
-extern void printcreationdate();
-extern void printmoddate();
+extern void printcreationdate(void);
+extern void printmoddate(void);
 extern void escapename(poolpointer in);
 extern void escapestring(poolpointer in);
 extern void escapehex(poolpointer in);
 extern void unescapehex(poolpointer in);
-extern void getcreationdate();
+extern void getcreationdate(void);
 extern void getfilemoddate(strnumber s);
 extern void getfilesize(strnumber s);
 extern void getmd5sum(strnumber s, boolean file);
@@ -254,12 +254,12 @@ extern void getfiledump(strnumber s, int offset, int length);
 extern void matchstrings(strnumber s, strnumber t, int subcount, boolean icase);
 extern void getmatch(int i);
 extern void makepdftexbanner(void);
-extern void initstarttime();
+extern void initstarttime(void);
 extern void removepdffile(void);
 extern void garbagewarning(void);
 extern void initversionstring(char **versions);
 extern int newcolorstack(integer s, integer literal_mode, boolean pagestart);
-extern int colorstackused();
+extern int colorstackused(void);
 extern integer colorstackset(int colstack_no, integer s);
 extern integer colorstackpush(int colstack_no, integer s);
 extern integer colorstackpop(int colstack_no);
@@ -269,16 +269,16 @@ extern void checkpdfsave(int cur_h, int cur_v);
 extern void checkpdfrestore(int cur_h, int cur_v);
 extern void pdfshipoutbegin(boolean shipping_page);
 extern void pdfshipoutend(boolean shipping_page);
-extern void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v);
+extern integer pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v);
 extern void matrixtransformpoint(scaled x, scaled y);
 extern void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury);
-extern boolean matrixused();
+extern boolean matrixused(void);
 extern void matrixrecalculate(scaled urx);
-extern scaled getllx();
-extern scaled getlly();
-extern scaled geturx();
-extern scaled getury();
-extern void allocvffnts();
+extern scaled getllx(void);
+extern scaled getlly(void);
+extern scaled geturx(void);
+extern scaled getury(void);
+extern void allocvffnts(void);
 
 /* vfpacket.c */
 extern integer newvfpacket(internalfontnumber);
@@ -298,7 +298,8 @@ extern void write_fontencodings(void);
 extern void dopdffont(integer, internalfontnumber);
 extern fd_entry *lookup_fd_entry(char *, integer, integer);
 extern fd_entry *new_fd_entry(void);
-extern void writefontstuff();
+extern void writefontstuff(void);
+extern void register_fd_entry(fd_entry *);
 
 /* writeimg.c */
 extern boolean checkimageb(integer);
@@ -308,7 +309,9 @@ extern boolean ispdfimage(integer);
 extern boolean ispngimage(integer);
 extern integer epdforigx(integer);
 extern integer epdforigy(integer);
+extern integer imagecolor(integer);
 extern integer imageheight(integer);
+extern integer imagerotate(integer);
 extern integer imagepages(integer);
 extern integer imagewidth(integer);
 extern integer imagexres(integer);
@@ -321,11 +324,11 @@ extern void deleteimage(integer);
 extern void img_free(void);
 extern void updateimageprocset(integer);
 extern void writeimage(integer);
-extern void dumpimagemeta();
+extern void dumpimagemeta(void);
 extern void undumpimagemeta(integer, integer);
 
 /* writejbig2.c */
-extern void flushjbig2page0objects();
+extern void flushjbig2page0objects(void);
 
 /* writet1.c */
 extern boolean t1_subset(char *, char *, unsigned char *);

@@ -52,8 +52,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 /*
 static FILE *pkfile ;
 */
-
-extern FILE *t3_file;
 #define pkfile t3_file
 
 static shalfword pkbyte(void)
@@ -174,9 +172,6 @@ static halfword pkpackednum(void)
             repeatcount = pkpackednum();
         else
             repeatcount = 1;
-#ifdef DEBUG
-        printf("[%d]", (int) repeatcount);
-#endif
         return ((*realfunc) ());
     }
 }
@@ -276,12 +271,6 @@ static void unpack(chardesc * cd)
         bitweight = 0;
         while (rowsleft > 0) {
             count = (*realfunc) ();
-#ifdef DEBUG
-            if (turnon)
-                printf("(%d) ", (int) count);
-            else
-                printf("%d ", (int) count);
-#endif
             while (count != 0) {
                 if ((count < wordweight) && (count < hbit)) {
                     if (turnon)

@@ -32,7 +32,7 @@ static int comp_fe_entry(const void *pa, const void *pb, void *p)
     return strcmp(((const fe_entry *) pa)->name, ((const fe_entry *) pb)->name);
 }
 
-fe_entry *new_fe_entry()
+static fe_entry *new_fe_entry(void)
 {
     fe_entry *fe;
     fe = xtalloc(1, fe_entry);
@@ -43,7 +43,7 @@ fe_entry *new_fe_entry()
     return fe;
 }
 
-fe_entry *lookup_fe_entry(char *s)
+static fe_entry *lookup_fe_entry(char *s)
 {
     fe_entry fe;
     assert(s != NULL);
@@ -55,7 +55,7 @@ fe_entry *lookup_fe_entry(char *s)
     return (fe_entry *) avl_find(fe_tree, &fe);
 }
 
-void register_fe_entry(fe_entry * fe)
+static void register_fe_entry(fe_entry * fe)
 {
     void **aa;
     if (fe_tree == NULL) {
@@ -84,7 +84,7 @@ fe_entry *get_fe_entry(char *s)
 
 /**********************************************************************/
 
-void epdf_write_enc(char **glyph_names, integer fe_objnum)
+void epdf_write_enc(char **glyph_names, int fe_objnum)
 {
     int i, i_old;
     assert(glyph_names != NULL);
@@ -108,7 +108,7 @@ void epdf_write_enc(char **glyph_names, integer fe_objnum)
     pdfenddict();
 }
 
-void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
+static void write_enc(char **glyph_names, struct avl_table *tx_tree, int fe_objnum)
 {
     int i_old, *p;
     struct avl_traverser t;
@@ -135,13 +135,13 @@ void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
     pdfenddict();
 }
 
-void write_fontencoding(fe_entry * fe)
+static void write_fontencoding(fe_entry * fe)
 {
     assert(fe != NULL);
     write_enc(fe->glyph_names, fe->tx_tree, fe->fe_objnum);
 }
 
-void write_fontencodings()
+void write_fontencodings(void)
 {
     fe_entry *fe;
     struct avl_traverser t;
@@ -171,7 +171,7 @@ static void destroy_fe_entry(void *pa, void *pb)
     xfree(p);
 }
 
-void enc_free()
+void enc_free(void)
 {
     if (fe_tree != NULL)
         avl_destroy(fe_tree, destroy_fe_entry);

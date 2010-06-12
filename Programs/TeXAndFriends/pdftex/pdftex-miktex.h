@@ -1,6 +1,6 @@
 /* pdftex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 1998-2009 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -189,6 +189,7 @@ public:
     Allocate ("pdffontknbsbase", THEDATA(pdffontknbsbase), nFonts);
     Allocate ("pdffontlpbase", THEDATA(pdffontlpbase), nFonts);
     Allocate ("pdffontmap", THEDATA(pdffontmap), nFonts);
+    Allocate ("pdffontnobuiltintounicode", THEDATA(pdffontnobuiltintounicode), nFonts);
     Allocate ("pdffontnum", THEDATA(pdffontnum), nFonts);
     Allocate ("pdffontrpbase", THEDATA(pdffontrpbase), nFonts);
     Allocate ("pdffontshbsbase", THEDATA(pdffontshbsbase), nFonts);
@@ -208,7 +209,6 @@ public:
     Allocate ("vfifnts", THEDATA(vfifnts), nFonts);
     Allocate ("vflocalfontnum", THEDATA(vflocalfontnum), nFonts);
     Allocate ("vfpacketbase", THEDATA(vfpacketbase), nFonts);
-
   }
 
 public:
@@ -233,6 +233,7 @@ public:
     Free ("pdffontlpbase", THEDATA(pdffontlpbase));
     Free ("pdffontmap", THEDATA(pdffontmap));
     Free ("pdffontnum", THEDATA(pdffontnum));
+    Free ("pdffontnobuiltintounicode", THEDATA(pdffontnobuiltintounicode));
     Free ("pdffontrpbase", THEDATA(pdffontrpbase));
     Free ("pdffontshbsbase", THEDATA(pdffontshbsbase));
     Free ("pdffontshrink", THEDATA(pdffontshrink));
@@ -338,6 +339,7 @@ public:
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontknbsbase));
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontlpbase));
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontmap));
+    MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontnobuiltintounicode));
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontnum));
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontrpbase));
     MIKTEX_ASSERT_VALID_HEAP_POINTER_OR_NIL (THEDATA(pdffontshbsbase));
@@ -510,6 +512,7 @@ C4PEXTERN C4P_integer k;
 #define pdfcryptversion THEDATA(pdfcryptversion)
 #define pdffile THEDATA(pdffile)
 #define pdffontattr THEDATA(pdffontattr)
+#define pdffontnobuiltintounicode THEDATA(pdffontnobuiltintounicode)
 #define pdffontefbase THEDATA(pdffontefbase)
 #define pdffontexpandfont THEDATA(pdffontexpandfont)
 #define pdffontexpandratio THEDATA(pdffontexpandratio)
@@ -542,6 +545,7 @@ C4PEXTERN C4P_integer k;
 #define rulewd THEDATA(rulewd)
 #define strpool THEDATA(strpool)
 #define strstart THEDATA(strstart)
+#define texmflogname THEDATA(logname)
 #define tmpf THEDATA(tmpf)
 #define totalpages THEDATA(totalpages)
 #define vfefnts THEDATA(vfefnts)

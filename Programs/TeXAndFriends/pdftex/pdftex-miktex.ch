@@ -381,7 +381,7 @@ pdf_print("/Producer (MiKTeX pdfTeX-");
 
 % _____________________________________________________________________________
 %
-% [57.1499]
+% [57.1502]
 % _____________________________________________________________________________
 
 @x
@@ -392,7 +392,7 @@ miktex_reallocate(pdf_mem, pdf_mem_size);
 
 % _____________________________________________________________________________
 %
-% [58.1501]
+% [58.1509]
 % _____________________________________________________________________________
 
 @x
@@ -400,6 +400,19 @@ main_control; {come to life}
 @y
 make_pdftex_banner;
 main_control; {come to life}
+@z
+
+% _____________________________________________________________________________
+%
+% [57.1525]
+% _____________________________________________________________________________
+
+@x
+var k:integer; {all-purpose integers}
+@!p:pointer; {all-purpose pointers}
+@y
+var i,@!j,@!k:integer; {all-purpose integers}
+@!p,@!q,@!r:pointer; {all-purpose pointers}
 @z
 
 % _____________________________________________________________________________
@@ -438,6 +451,7 @@ for font_k := font_base to font_max do begin
     pdf_font_sh_bs_base[font_k] := 0;
     pdf_font_kn_bc_base[font_k] := 0;
     pdf_font_kn_ac_base[font_k] := 0;
+    pdf_font_nobuiltin_tounicode[font_k] := false;
 end;
 @z
 

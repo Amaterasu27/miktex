@@ -57,7 +57,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #define enc_eof()       feof(encfile)
 #define pdftex_fail     ttf_fail
 
-#define print_str(S)    if (S != NULL) fprintf(outfile, #S " %s\n", S)
 #define print_dimen(N)  if (N != 0) fprintf(outfile, #N " %i\n", (int)get_ttf_funit(N))
 
 #define get_ttf_funit(n) \
@@ -138,7 +137,10 @@ TTF_USHORT unicode_map[0xFFFF];
 
 #include "macnames.c"
 
-void ttf_fail(char *fmt, ...)
+#if defined __GNUC__ && __GNUC__ >=3
+__attribute__((__noreturn__))
+#endif
+static void ttf_fail(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -156,7 +158,7 @@ void ttf_fail(char *fmt, ...)
 #endif
 }
 
-void ttf_warn(char *fmt, ...)
+static void ttf_warn(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -169,7 +171,7 @@ void ttf_warn(char *fmt, ...)
     va_end(args);
 }
 
-int xgetc(FILE * stream)
+static int xgetc(FILE * stream)
 {
     int c = getc(stream);
     if (c < 0 && c != EOF)
@@ -177,7 +179,7 @@ int xgetc(FILE * stream)
     return c;
 }
 
-long ttf_getnum(int s)
+static long ttf_getnum(int s)
 {
     long i = 0;
     int c;
@@ -190,7 +192,7 @@ long ttf_getnum(int s)
     return i;
 }
 
-dirtab_entry *name_lookup(char *s)
+static dirtab_entry *name_lookup(const char *s)
 {
     dirtab_entry *p;
     for (p = dir_tab; p - dir_tab < ntabs; p++)
@@ -201,7 +203,7 @@ dirtab_entry *name_lookup(char *s)
     return p;
 }
 
-void ttf_seek_tab(char *name, TTF_LONG offset)
+static void ttf_seek_tab(const char *name, TTF_LONG offset)
 {
     dirtab_entry *p = name_lookup(name);
     if (p == NULL)
@@ -210,13 +212,13 @@ void ttf_seek_tab(char *name, TTF_LONG offset)
         ttf_fail("fseek() failed while reading `%s' table", name);
 }
 
-void ttf_seek_off(char *name, TTF_LONG offset)
+static void ttf_seek_off(const char *name, TTF_LONG offset)
 {
     if (fseek(fontfile, offset, SEEK_SET) < 0)
         ttf_fail("fseek() failed while reading `%s' table", name);
 }
 
-void store_kern_value(TTF_USHORT i, TTF_USHORT j, TTF_FWORD v)
+static void store_kern_value(TTF_USHORT i, TTF_USHORT j, TTF_FWORD v)
 {
     kern_entry *pk;
     for (pk = kern_tab + i; pk->next != NULL; pk = pk->next);
@@ -227,7 +229,8 @@ void store_kern_value(TTF_USHORT i, TTF_USHORT j, TTF_FWORD v)
     pk->value = v;
 }
 
-TTF_FWORD get_kern_value(TTF_USHORT i, TTF_USHORT j)
+#if 0 /* unused */
+static TTF_FWORD get_kern_value(TTF_USHORT i, TTF_USHORT j)
 {
     kern_entry *pk;
     for (pk = kern_tab + i; pk->next != NULL; pk = pk->next)
@@ -235,8 +238,9 @@ TTF_FWORD get_kern_value(TTF_USHORT i, TTF_USHORT j)
             return pk->value;
     return 0;
 }
+#endif
 
-void free_tabs()
+static void free_tabs(void)
 {
     int i;
     kern_entry *p, *q, *r;
@@ -268,7 +272,7 @@ void free_tabs()
     xfree(kern_tab);
 }
 
-void enc_getline()
+static void enc_getline(void)
 {
     char *p;
     int c;
@@ -285,7 +289,7 @@ void enc_getline()
         goto restart;
 }
 
-void read_encoding(char *encname)
+static void read_encoding(char *encname)
 {
     char buf[ENC_BUF_SIZE], *q, *r;
     int i;
@@ -331,7 +335,7 @@ void read_encoding(char *encname)
                  names_count, 256);
 }
 
-void append_unicode(long glyph_index, TTF_USHORT code)
+static void append_unicode(long glyph_index, TTF_USHORT code)
 {
     mtx_entry *m;
     unicode_entry *u, *v;
@@ -348,7 +352,7 @@ void append_unicode(long glyph_index, TTF_USHORT code)
     }
 }
 
-void read_cmap()
+static void read_cmap(void)
 {
     cmap_entry *e;
     seg_entry *seg_tab, *s;
@@ -435,7 +439,7 @@ void read_cmap()
                  select_unicode, unicode_map_count);
 }
 
-void read_font()
+static void read_font(void)
 {
     long i, j, k, l, n, m, platform_id, encoding_id;
     TTF_FWORD kern_value;
@@ -499,7 +503,7 @@ void read_font()
     switch (post_format) {
     case 0x00010000:
         for (pm = mtx_tab; pm - mtx_tab < NMACGLYPHS; pm++)
-            pm->name = (char *) mac_glyph_names[pm - mtx_tab];
+            pm->name = mac_glyph_names[pm - mtx_tab];
         break;
     case 0x00020000:
         l = get_ushort();       /* some fonts have this value different from nglyphs */
@@ -517,7 +521,7 @@ void read_font()
         }
         for (pm = mtx_tab; pm - mtx_tab < l; pm++) {
             if (pm->index < NMACGLYPHS)
-                pm->name = (char *) mac_glyph_names[pm->index];
+                pm->name = mac_glyph_names[pm->index];
             else {
                 k = pm->index - NMACGLYPHS;
                 if (k < m) {
@@ -687,7 +691,7 @@ void read_font()
     }
 }
 
-int null_glyph(const char *s)
+static int null_glyph(const char *s)
 {
     return (s == NULL || s == notdef);
     /*
@@ -698,7 +702,7 @@ int null_glyph(const char *s)
      */
 }
 
-void print_glyph_name(FILE * f, long glyph_index, int convention)
+static void print_glyph_name(FILE * f, long glyph_index, int convention)
 {
     unicode_entry *u;
     static char buf[1024];
@@ -744,7 +748,7 @@ void print_glyph_name(FILE * f, long glyph_index, int convention)
     }
 }
 
-void print_char_metric(FILE * f, int charcode, long glyph_index)
+static void print_char_metric(FILE * f, int charcode, long glyph_index)
 {
     assert(glyph_index >= 0 && glyph_index < nglyphs);
     fprintf(f, "C %i ; WX %i ; N ", (int) charcode,
@@ -757,7 +761,24 @@ void print_char_metric(FILE * f, int charcode, long glyph_index)
             (int) get_ttf_funit(mtx_tab[glyph_index].bbox[3]));
 }
 
-void print_afm(char *date, char *fontname)
+static void print_str(char *s)
+{
+    char *p, *e;
+
+    if (s == NULL)
+        return;
+
+    e = strend(s);
+    for (p = s; p < e; p++) {
+        if (*p == 10 || *p == 13)
+            fputs("\\n", outfile);
+        else
+            fputc(*p, outfile);
+    }
+    fputs("\n", outfile);
+}
+
+static void print_afm(char *date, char *fontname)
 {
     int ncharmetrics;
     mtx_entry *pm;
@@ -765,6 +786,9 @@ void print_afm(char *date, char *fontname)
     unsigned int index;
     char **pe;
     kern_entry *pk, *qk;
+    char *p;
+    double d;
+    long l;
     fputs("StartFontMetrics 2.0\n", outfile);
     fprintf(outfile,
             "Comment Converted at %s by ttf2afm from font file `%s'\n", date,
@@ -773,10 +797,14 @@ void print_afm(char *date, char *fontname)
     print_str(FullName);
     print_str(FamilyName);
     print_str(Weight);
-    fprintf(outfile, "ItalicAngle %i", (int) (ItalicAngle / 0x10000));
-    if (ItalicAngle % 0x10000 > 0)
-        fprintf(outfile, ".%i",
-                (int) ((ItalicAngle % 0x10000) * 1000) / 0x10000);
+    l = ItalicAngle >> 16;
+    if (l > 0x8000)
+        l = l - 0x10000;
+    d = (ItalicAngle & 0xffff)/65536.0;
+    if (d >= 0.1)
+        fprintf(outfile, "ItalicAngle %.1f", d + l);
+    else
+        fprintf(outfile, "ItalicAngle %li", l);
     fputs("\n", outfile);
     fprintf(outfile, "IsFixedPitch %s\n", IsFixedPitch ? "true" : "false");
     fprintf(outfile, "FontBBox %i %i %i %i\n",
@@ -786,6 +814,11 @@ void print_afm(char *date, char *fontname)
     print_dimen(UnderlinePosition);
     print_dimen(UnderlineThickness);
     print_str(Version);
+    /* remove trailing whitespaces from Notice */
+    if (Notice != NULL) {
+        for (p = strend(Notice); p > Notice && isspace(*p); p--);
+        *p = 0;
+    }
     print_str(Notice);
     fputs("EncodingScheme FontSpecific\n", outfile);
     print_dimen(CapHeight);
@@ -862,7 +895,7 @@ void print_afm(char *date, char *fontname)
     fputs("EndFontMetrics\n", outfile);
 }
 
-void print_encoding(char *fontname)
+static void print_encoding(char *fontname)
 {
     long int i, k, first_code, length;
     FILE *file;
@@ -973,7 +1006,7 @@ void print_encoding(char *fontname)
     xfree(enc_name);
 }
 
-void usage()
+static void usage(void)
 {
     cur_file_name = NULL;
     fprintf(stderr,
@@ -1002,7 +1035,7 @@ int main(int argc, char **argv)
     char date[128], *s;
     time_t t = time(&t);
     int c;
-    kpse_set_progname(argv[0]);
+    kpse_set_program_name(argv[0], NULL);
     kpse_init_prog("ttf2afm", 0, 0, 0);
     while ((c = getopt(argc, argv, "iucve:o:m:")) != -1)
         switch (c) {

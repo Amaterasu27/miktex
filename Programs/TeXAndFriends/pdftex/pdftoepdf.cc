@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2010 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -17,6 +17,12 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+/* For MINGW32 <rpcndr.h> defines 'boolean' as 'unsigned char',
+   conflicting with the definition for Pascal's boolean as 'int'
+   in <kpathsea/types.h>.
+*/
+#define boolean MINGW32_boolean
 
 #include <stdlib.h>
 #include <math.h>
@@ -56,10 +62,37 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "GlobalParams.h"
 #include "Error.h"
 
-#include "epdf.h"
+#undef boolean
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
+
+#if ! defined(MIKTEX)
+extern "C" {
+#endif
+
+#include <openbsd-compat.h>
+
+#include <kpathsea/c-auto.h>
+#include <kpathsea/c-proto.h>
+#include <kpathsea/lib.h>
+
+#if ! defined(MIKTEX)
+#include <w2c/c-auto.h>         /* define SIZEOF_LONG */
+#include <w2c/config.h>         /* define type integer */
+#endif
+
+#if defined(MIKTEX)
+#include <ptexmac.h>
+#include <pdftex-common.h>
+#else
+#include <pdftexdir/ptexmac.h>
+#include <pdftexdir/pdftex-common.h>
+#endif
+
+#if ! defined(MIKTEX)
+}
+#endif
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
 // this has been registered with Adobe by Hans Hagen.
@@ -107,14 +140,14 @@ struct InObj {
     Ref ref;                    // ref in original PDF
     InObjType type;             // object type
     InObj *next;                // next entry in list of indirect objects
-    integer num;                // new object number in output PDF
+    int num;                    // new object number in output PDF
     fd_entry *fd;               // pointer to /FontDescriptor object structure
-    integer enc_objnum;         // Encoding for objFont
+    int enc_objnum;             // Encoding for objFont
     int written;                // has it been written to output PDF?
 };
 
 struct UsedEncoding {
-    integer enc_objnum;
+    int enc_objnum;
     GfxFont *font;
     UsedEncoding *next;
 };
@@ -155,20 +188,12 @@ static PdfDocument *find_add_document(char *file_name)
     if (p) {
         xref = p->xref;
         (p->occurences)++;
-#ifdef DEBUG
-        fprintf(stderr, "\npdfTeX Debug: Incrementing %s (%d)\n", p->file_name,
-                p->occurences);
-#endif
         return p;
     }
     p = new PdfDocument;
     p->file_name = xstrdup(file_name);
     p->xref = xref = 0;
     p->occurences = 0;
-#ifdef DEBUG
-    fprintf(stderr, "\npdfTeX Debug: Creating %s (%d)\n", p->file_name,
-            p->occurences);
-#endif
     GString *docName = new GString(p->file_name);
     p->doc = new PDFDoc(docName);       // takes ownership of docName
     if (!p->doc->isOk() || !p->doc->okToPrint()) {
@@ -241,7 +266,7 @@ static int addEncoding(GfxFont * gfont)
 #define addOther(ref) \
         addInObj(objOther, ref, 0, 0)
 
-static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
+static int addInObj(InObjType type, Ref ref, fd_entry * fd, int e)
 {
     InObj *p, *q, *n = new InObj;
     if (ref.num == 0)
@@ -341,9 +366,9 @@ static void copyFontDict(Object * obj, InObj * r)
         copyDictEntry(obj, i);
     }
     // write new FontDescriptor, BaseFont, and Encoding
-    pdf_printf("/FontDescriptor %d 0 R\n", (int) get_fd_objnum(r->fd));
-    pdf_printf("/BaseFont %d 0 R\n", (int) get_fn_objnum(r->fd));
-    pdf_printf("/Encoding %d 0 R\n", (int) r->enc_objnum);
+    pdf_printf("/FontDescriptor %d 0 R\n", get_fd_objnum(r->fd));
+    pdf_printf("/BaseFont %d 0 R\n", get_fn_objnum(r->fd));
+    pdf_printf("/Encoding %d 0 R\n", r->enc_objnum);
     pdf_puts(">>");
 }
 
@@ -392,7 +417,7 @@ static void copyFont(char *tag, Object * fontRef)
     for (p = inObjList; p; p = p->next) {
         if (p->ref.num == ref.num && p->ref.gen == ref.gen) {
             copyName(tag);
-            pdf_printf(" %d 0 R ", (int) p->num);
+            pdf_printf(" %d 0 R ", p->num);
             return;
         }
     }
@@ -444,6 +469,11 @@ static void copyFontResources(Object * obj)
         obj->dictGetValNF(i, &fontRef);
         if (fontRef->isRef())
             copyFont(obj->dictGetKey(i), &fontRef);
+        else if (fontRef->isDict()) {   // some programs generate pdf with embedded font object
+            copyName(obj->dictGetKey(i));
+            pdf_puts(" ");
+            copyObject(&fontRef);
+        }
         else
             pdftex_fail("PDF inclusion: invalid font in reference type <%s>",
                         fontRef->getTypeName());
@@ -454,13 +484,22 @@ static void copyFontResources(Object * obj)
 static void copyOtherResources(Object * obj, char *key)
 {
     // copies all other resources (write_epdf handles Fonts and ProcSets),
-    // but gives a warning if an object is not a dictionary.
 
-    if (!obj->isDict())
+    // if Subtype is present, it must be a name
+    if (strcmp("Subtype", key) == 0) {
+        if (!obj->isName()) {
+            pdftex_warn("PDF inclusion: Subtype in Resources dict is not a name"
+                        " (key '%s', type <%s>); ignored.",
+                        key, obj->getTypeName());
+            return;
+        }
+    } else if (!obj->isDict()) {
         //FIXME: Write the message only to the log file
         pdftex_warn("PDF inclusion: invalid other resource which is no dict"
-                    " (key '%s', type <%s>); copying it anyway.",
+                    " (key '%s', type <%s>); ignored.",
                     key, obj->getTypeName());
+        return;
+    }
     copyName(key);
     pdf_puts(" ");
     copyObject(obj);
@@ -582,14 +621,12 @@ static void copyObject(Object * obj)
         pdf_puts(">>");
     } else if (obj->isStream()) {
         initDictFromDict(obj1, obj->streamGetDict());
-        obj->streamGetDict()->incRef();
         pdf_puts("<<\n");
         copyDict(&obj1);
         pdf_puts(">>\n");
         pdf_puts("stream\n");
         copyStream(obj->getStream()->getUndecodedStream());
-        if (pdflastbyte != '\n')
-            pdf_puts("\n");
+        pdf_newline();
         pdf_puts("endstream");  // can't simply write pdfendstream()
     } else if (obj->isRef()) {
         ref = obj->getRef();
@@ -615,15 +652,15 @@ static void writeRefs()
             xref->fetch(r->ref.num, r->ref.gen, &obj1);
             if (r->type == objFont) {
                 assert(!obj1.isStream());
-                zpdfbeginobj(r->num, 2);        // \pdfobjcompresslevel = 2 is for this
+                pdfbeginobj(r->num, 2);         // \pdfobjcompresslevel = 2 is for this
                 copyFontDict(&obj1, r);
                 pdf_puts("\n");
                 pdfendobj();
             } else if (r->type != objFontDesc) {        // /FontDescriptor is written via write_fontdescriptor()
                 if (obj1.isStream())
-                    zpdfbeginobj(r->num, 0);
+                    pdfbeginobj(r->num, 0);
                 else
-                    zpdfbeginobj(r->num, 2);    // \pdfobjcompresslevel = 2 is for this
+                    pdfbeginobj(r->num, 2);     // \pdfobjcompresslevel = 2 is for this
                 copyObject(&obj1);
                 pdf_puts("\n");
                 pdfendobj();
@@ -648,23 +685,23 @@ static void writeEncodings()
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
                 glyphNames[i] = s;
             else
-#if defined(MIKTEX)
-	        glyphNames[i] = (char*)notdef;
-#else
-                glyphNames[i] = notdef;
-#endif
+                glyphNames[i] = (char *) notdef;
         }
         epdf_write_enc(glyphNames, r->enc_objnum);
     }
     for (r = encodingList; r != 0; r = n) {
         n = r->next;
+#ifdef POPPLER_VERSION
+        r->font->decRefCnt();
+#else
         delete r->font;
+#endif
         delete r;
     }
 }
 
 // get the pagebox according to the pagebox_spec
-static PDFRectangle *get_pagebox(Page * page, integer pagebox_spec)
+static PDFRectangle *get_pagebox(Page * page, int pagebox_spec)
 {
     if (pagebox_spec == pdfboxspecmedia)
         return page->getMediaBox();
@@ -689,16 +726,19 @@ static PDFRectangle *get_pagebox(Page * page, integer pagebox_spec)
 // It makes no sense to give page_name _and_ page_num.
 // Returns the page number.
 
-integer
-read_pdf_info(char *image_name, char *page_name, integer page_num,
-              integer pagebox_spec, integer minor_pdf_version_wanted,
-              integer pdf_inclusion_errorlevel)
+int
+read_pdf_info(char *image_name, char *page_name, int page_num,
+              int pagebox_spec, int minor_pdf_version_wanted,
+              int pdf_inclusion_errorlevel)
 {
     PdfDocument *pdf_doc;
     Page *page;
-    int rotate;
     PDFRectangle *pagebox;
+#ifdef HAVE_GETPDFMAJORVERSION
+    int pdf_major_version_found, pdf_minor_version_found;
+#else
     float pdf_version_found, pdf_version_wanted;
+#endif
     // initialize
     if (!isInit) {
         globalParams = new GlobalParams();
@@ -713,9 +753,23 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
+#ifdef HAVE_GETPDFMAJORVERSION
+    pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
+    pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
+    if ((pdf_major_version_found > 1)
+     || (pdf_minor_version_found > minor_pdf_version_wanted)) {
+        const char *msg =
+            "PDF inclusion: found PDF version <%d.%d>, but at most version <1.%d> allowed";
+        if (pdf_inclusion_errorlevel > 0) {
+            pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        } else {
+            pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        }
+    }
+#else
     pdf_version_found = pdf_doc->doc->getPDFVersion();
     pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
-    if (pdf_version_found > pdf_version_wanted) {
+    if (pdf_version_found > pdf_version_wanted + 0.01) {
         char msg[] =
             "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
         if (pdf_inclusion_errorlevel > 0) {
@@ -724,6 +778,7 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
             pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
         }
     }
+#endif
     epdf_num_pages = pdf_doc->doc->getCatalog()->getNumPages();
     if (page_name) {
         // get page by name
@@ -741,7 +796,7 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
         // get page by number
         if (page_num <= 0 || page_num > epdf_num_pages)
             pdftex_fail("PDF inclusion: required page does not exist <%i>",
-                        (int) epdf_num_pages);
+                        epdf_num_pages);
     }
     // get the required page
     page = pdf_doc->doc->getCatalog()->getPage(page_num);
@@ -763,51 +818,10 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
         epdf_height = pagebox->y1 - pagebox->y2;
     }
 
-    rotate = page->getRotate();
-    // handle page rotation and adjust dimens as needed
-    if (rotate != 0) {
-        if (rotate % 90 == 0) {
-            // handle only the simple case: multiple of 90s.
-            // these are the only values allowed according to the
-            // reference (v1.3, p. 78).
-            // 180 needs no special treatment here
-            register float f;
-            switch (rotate) {
-            case 90:
-                f = epdf_height;
-                epdf_height = epdf_width;
-                epdf_width = f;
-                break;
-            case 270:
-                f = epdf_height;
-                epdf_height = epdf_width;
-                epdf_width = f;
-                break;
-            }
-        }
-    }
-    // get the group and make sure it's indirect
-    if (page->getGroup() != NULL) {
-        initDictFromDict(lastGroup, page->getGroup());
-        if (lastGroup->dictGetLength() > 0) {
-            groupIsIndirect = lastGroup->isRef();
-            if (groupIsIndirect) {
-                // FIXME: Here we already copy the object. It would be
-                // better to do this only after write_epdf, otherwise we
-                // may copy ununsed /Group objects
-                copyObject(&lastGroup);
-                epdf_lastGroupObjectNum =
-                    getNewObjectNumber(lastGroup->getRef());
-            } else {
-                // make the group an indirect object; copying is done later
-                // by write_additional_epdf_objects after write_epdf
-                epdf_lastGroupObjectNum = pdfnewobjnum();
-            }
-            pdf_puts("\n");
-        }
-    } else {
-        epdf_lastGroupObjectNum = 0;
-    }
+    // get page rotation
+    epdf_rotate = page->getRotate() % 360;
+    if (epdf_rotate < 0)
+        epdf_rotate += 360;
 
     pdf_doc->xref = pdf_doc->doc->getXRef();
     return page_num;
@@ -820,8 +834,9 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
 void write_epdf(void)
 {
     Page *page;
-    PdfObject contents, obj1, obj2;
-    PdfObject metadata, pieceinfo, separationInfo;
+    Ref *pageRef;
+    Dict *pageDict;
+    PdfObject contents, obj1, obj2, pageObj, dictObj;
     Object info;
     char *key;
     char s[256];
@@ -829,16 +844,25 @@ void write_epdf(void)
     int rotate;
     double scale[6] = { 0, 0, 0, 0, 0, 0 };
     bool writematrix = false;
+    static char *pageDictKeys[] = { 
+        "Group",
+        "LastModified",
+        "Metadata",
+        "PieceInfo",
+        "SeparationInfo",
+//         "Resources",
+        NULL
+    };
+
     PdfDocument *pdf_doc = (PdfDocument *) epdf_doc;
     (pdf_doc->occurences)--;
-#ifdef DEBUG
-    fprintf(stderr, "\npdfTeX Debug: Decrementing %s (%d)\n",
-            pdf_doc->file_name, pdf_doc->occurences);
-#endif
     xref = pdf_doc->xref;
     inObjList = pdf_doc->inObjList;
     encodingList = 0;
     page = pdf_doc->doc->getCatalog()->getPage(epdf_selected_page);
+    pageRef = pdf_doc->doc->getCatalog()->getPageRef(epdf_selected_page);
+    xref->fetch(pageRef->num, pageRef->gen, &pageObj);
+    pageDict = pageObj->getDict();
     rotate = page->getRotate();
     PDFRectangle *pagebox;
     // write the Page header
@@ -850,7 +874,7 @@ void write_epdf(void)
     pdf_printf("/%s.FileName (%s)\n", pdfkeyprefix,
                convertStringToPDFString(pdf_doc->file_name,
                                         strlen(pdf_doc->file_name)));
-    pdf_printf("/%s.PageNumber %i\n", pdfkeyprefix, (int) epdf_selected_page);
+    pdf_printf("/%s.PageNumber %i\n", pdfkeyprefix, epdf_selected_page);
     pdf_doc->doc->getDocInfoNF(&info);
     if (info.isRef()) {
         // the info dict must be indirect (PDF Ref p. 61)
@@ -905,46 +929,21 @@ void write_epdf(void)
             pagebox->x1, pagebox->y1, pagebox->x2, pagebox->y2);
     pdf_puts(stripzeros(s));
 
-    // write the page Group if it's there
-    if (epdf_lastGroupObjectNum > 0) {
-        initDictFromDict(lastGroup, page->getGroup());
-        if (lastGroup->dictGetLength() > 0) {
-            pdf_puts("/Group ");
-            groupIsIndirect = lastGroup->isRef();
-            pdf_printf("%d 0 R", epdf_lastGroupObjectNum);
-            pdf_puts("\n");
+    // Metadata validity check (as a stream it must be indirect)
+    pageDict->lookupNF("Metadata", &dictObj);
+    if (!dictObj->isNull() && !dictObj->isRef())
+        pdftex_warn("PDF inclusion: /Metadata must be indirect object");
+
+    // copy selected items in Page dictionary except Resources
+    for (i = 0; pageDictKeys[i] != NULL; i++) {
+        pageDict->lookupNF(pageDictKeys[i], &dictObj);
+        if (!dictObj->isNull()) {
+            pdf_newline();
+            pdf_printf("/%s ", pageDictKeys[i]);
+            copyObject(&dictObj); // preserves indirection
         }
     }
-    // write the page Metadata if it's there
-    if (page->getMetadata() != NULL) {
-        metadata->initStream(page->getMetadata());
-        pdf_puts("/Metadata ");
-        copyObject(&metadata);
-        pdf_puts("\n");
-    }
-    // write the page PieceInfo if it's there
-    if (page->getPieceInfo() != NULL) {
-        initDictFromDict(pieceinfo, page->getPieceInfo());
-        if (pieceinfo->dictGetLength() > 0) {
-            pdf_puts("/PieceInfo ");
-            copyObject(&pieceinfo);
-            pdf_puts("\n");
-        }
-    }
-    // copy LastModified (needed when PieceInfo is there)
-    if (page->getLastModified() != NULL) {
-        pdf_printf("/LastModified (%s)\n",
-                   page->getLastModified()->getCString());
-    }
-    // write the page SeparationInfo if it's there
-    if (page->getSeparationInfo() != NULL) {
-        initDictFromDict(separationInfo, page->getSeparationInfo());
-        if (separationInfo->dictGetLength() > 0) {
-            pdf_puts("/SeparationInfo ");
-            copyObject(&separationInfo);
-            pdf_puts("\n");
-        }
-    }
+
     // write the Resources dictionary
     if (page->getResourceDict() == NULL) {
         // Resources can be missing (files without them have been spotted
@@ -954,10 +953,10 @@ void write_epdf(void)
             ("PDF inclusion: /Resources missing. 'This practice is not recommended' (PDF Ref)");
     } else {
         initDictFromDict(obj1, page->getResourceDict());
-        page->getResourceDict()->incRef();
         if (!obj1->isDict())
             pdftex_fail("PDF inclusion: invalid resources dict type <%s>",
                         obj1->getTypeName());
+        pdf_newline();
         pdf_puts("/Resources <<\n");
         for (i = 0, l = obj1->dictGetLength(); i < l; ++i) {
             obj1->dictGetVal(i, &obj2);
@@ -971,6 +970,7 @@ void write_epdf(void)
         }
         pdf_puts(">>\n");
     }
+
     // write the page contents
     page->getContents(&contents);
     if (contents->isStream()) {
@@ -1014,6 +1014,8 @@ void write_epdf(void)
             Object contentsobj;
             copyStream((contents->arrayGet(i, &contentsobj))->getStream());
             contentsobj.free();
+            if (i < l - 1)
+                pdf_newline();  // add a newline after each stream except the last
         }
         pdfendstream();
     } else {                    // the contents are optional, but we need to include an empty stream
@@ -1029,17 +1031,6 @@ void write_epdf(void)
     pdf_doc->xref = xref;
 }
 
-// Called after the xobject generated by write_epdf has been finished; used to
-// write out objects that have been made indirect
-void write_additional_epdf_objects(void)
-{
-    if ((epdf_lastGroupObjectNum > 0) && !groupIsIndirect) {
-        zpdfbeginobj(epdf_lastGroupObjectNum, 2);
-        copyObject(&lastGroup);
-        pdfendobj();
-    }
-}
-
 // Called when an image has been written and it's resources in image_tab are
 // freed and it's not referenced anymore.
 
@@ -1048,9 +1039,6 @@ void epdf_delete()
     PdfDocument *pdf_doc = (PdfDocument *) epdf_doc;
     xref = pdf_doc->xref;
     if (pdf_doc->occurences < 0) {
-#ifdef DEBUG
-        fprintf(stderr, "\npdfTeX Debug: Deleting %s\n", pdf_doc->file_name);
-#endif
         delete_document(pdf_doc);
     }
 }

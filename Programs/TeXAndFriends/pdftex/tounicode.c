@@ -352,8 +352,8 @@ integer write_tounicode(char **glyph_names, const char *tfmname,
     if (encname) {
         assert(strlen(tfmname) + strlen(encname) + 1 < SMALL_BUF_SIZE);
         strcat(buf, encname);
-    if ((p = strrchr(buf, '.')) != NULL && strcmp(p, ".enc") == 0)
-        *p = 0;                 /* strip ".enc" from encoding name */
+        if ((p = strrchr(buf, '.')) != NULL && strcmp(p, ".enc") == 0)
+            *p = 0;                 /* strip ".enc" from encoding name */
         else /* some silly encoding file name not ending in enc; use as-is */
             pdftex_warn("Dubious encoding file name: `%s'", encname);
     } else { /* this is a builtin encoding, so name is e.g. "cmr10-builtin" */

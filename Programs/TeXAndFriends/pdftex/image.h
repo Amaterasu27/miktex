@@ -58,6 +58,7 @@ typedef struct {
     int color_type;
     integer width;
     integer height;
+    integer rotate;
     integer x_res;
     integer y_res;
     integer num_pages;
@@ -94,6 +95,7 @@ extern integer image_max;
 #define img_pages(N)    (img_ptr(N)->num_pages)
 #define img_width(N)    (img_ptr(N)->width)
 #define img_height(N)   (img_ptr(N)->height)
+#define img_rotate(N)   (img_ptr(N)->rotate)
 #define img_xres(N)     (img_ptr(N)->x_res)
 #define img_yres(N)     (img_ptr(N)->y_res)
 #define png_ptr(N)      (img_ptr(N)->image_struct.png.png_ptr)
@@ -103,14 +105,8 @@ extern integer image_max;
 #define jbig2_ptr(N)    (img_ptr(N)->image_struct.jbig2)
 #define tif_ptr(N)      (img_ptr(N)->image_struct.tif)
 
-extern integer read_pdf_info(char *, char *, integer, integer, integer,
-                             integer);
-extern void write_epdf(void);
-extern void write_additional_epdf_objects(void);
-extern void epdf_delete(void);
 extern void read_png_info(integer);
 extern void write_png(integer);
-extern void write_additional_png_objects(void);
 extern void read_jpg_info(integer);
 extern void write_jpg(integer);
 extern void read_jbig2_info(integer);

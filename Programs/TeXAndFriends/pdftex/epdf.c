@@ -21,9 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include <string.h>
 
-extern void epdf_check_mem(void);
-extern void register_fd_entry(fd_entry *);
-
 
 int is_subsetable(fm_entry * fm)
 {
@@ -51,13 +48,13 @@ fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
     return fd;
 }
 
-integer get_fd_objnum(fd_entry * fd)
+int get_fd_objnum(fd_entry * fd)
 {
     assert(fd->fd_objnum != 0);
     return fd->fd_objnum;
 }
 
-integer get_fn_objnum(fd_entry * fd)
+int get_fn_objnum(fd_entry * fd)
 {
     if (fd->fn_objnum == 0)
         fd->fn_objnum = pdfnewobjnum();
