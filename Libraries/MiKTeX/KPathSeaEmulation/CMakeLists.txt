@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -62,6 +62,7 @@ set(kpathsea_includes
   tex-make.h
   types.h
   variable.h
+  version.h
 )
 
 foreach(inc ${kpathsea_includes})
