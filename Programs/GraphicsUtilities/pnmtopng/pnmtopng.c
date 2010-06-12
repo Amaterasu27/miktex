@@ -37,6 +37,10 @@
 
 #include "pnm.h"
 #include "png.h"
+#if defined(MIKTEX)
+#  define trans trans_alpha
+#  define trans_values trans_color
+#endif
 
 #include "ppmcmap.h"
 

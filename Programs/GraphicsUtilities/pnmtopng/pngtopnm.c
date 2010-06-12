@@ -21,6 +21,10 @@
 #include <math.h>
 #include "pnm.h"
 #include "png.h"
+#if defined(MIKTEX)
+#  define trans trans_alpha
+#  define trans_values trans_color
+#endif
 
 #ifndef TRUE
 #  define TRUE 1
