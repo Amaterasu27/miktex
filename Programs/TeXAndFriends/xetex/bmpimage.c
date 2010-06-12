@@ -52,7 +52,6 @@
 #if defined(MIKTEX)
 #include <cstdarg>
 #endif
-
 #include "bmpimage.h"
 
 #define DIB_FILE_HEADER_SIZE 14

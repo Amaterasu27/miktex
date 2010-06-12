@@ -28,7 +28,6 @@ print OUT <<__EOT__;
 #include "${prog}d.h"
 
 #include <stdio.h>
-
 #if defined(MIKTEX)
 #  define poolptr g_poolptr
 #  define strpool g_strpool

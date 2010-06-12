@@ -58,7 +58,6 @@ extern "C" {
   extern void set_cp_code(int fontNum, unsigned int code, int side, int value);
   extern int get_cp_code(int fontNum, unsigned int code, int side);
 }
-
 #else
 #define EXTERN extern
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */

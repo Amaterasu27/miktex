@@ -78,7 +78,6 @@
 #  include <cstdlib>
 #  include <MiKTeX/KPSE/Emulation>
 #endif
-
 #include "mfileio.h"
 #include "numbers.h"
 

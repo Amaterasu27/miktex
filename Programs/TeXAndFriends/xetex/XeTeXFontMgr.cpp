@@ -35,7 +35,6 @@ authorization from the copyright holders.
 #include "xetex-miktex.h"
 const double M_PI = 3.14159265358979323846;
 #endif
-
 #ifdef XETEX_MAC
 #include "XeTeXFontMgr_Mac.h"
 #else
