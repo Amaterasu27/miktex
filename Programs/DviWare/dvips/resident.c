@@ -722,7 +722,11 @@ case 'R':
          lastresortsizes[i] = 32000 ;
 #else /* KPATHSEA */
 	 for (p = was_inline + 1; *p; p++) {
+#if defined(MIKTEX)
+	   if (ISBLANK (*p)) {
+#else
 	   if (isblank (*p)) {
+#endif
 	     *p = ':';
 	   }
 	 }
