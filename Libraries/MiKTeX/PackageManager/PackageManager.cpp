@@ -37,8 +37,6 @@ using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace std;
 
-#define IGNORE_OTHER_SYSTEMS 1
-
 string PackageManagerImpl::proxyUser;
 string PackageManagerImpl::proxyPassword;
 

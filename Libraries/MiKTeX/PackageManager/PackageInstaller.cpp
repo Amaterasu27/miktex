@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -2361,6 +2361,15 @@ PackageInstallerImpl::InstallRemove ()
 	      continue;
 	    }
 
+#if IGNORE_OTHER_SYSTEMS
+	  // check target system
+	  string targetSystem = dbLight.GetPackageTargetSystem(szPackage);
+	  if (! (targetSystem.empty() || targetSystem == MIKTEX_SYSTEM_TAG))
+	  {
+	    continue;
+	  }
+#endif
+
 	  if (repositoryType == RepositoryType::Local
 	      || repositoryType == RepositoryType::Remote)
 	    {
@@ -3198,6 +3207,7 @@ The removal failed for the following reason:")
       break;
     case ERROR_MISSING_PACKAGE:
       lpszArg1 = va_arg(marker, const char *);
+      trace_error->WriteFormattedLine ("libmpm", T_("missing package file: %s"), Q_(lpszArg1));
       message << T_("\
 The operation could not be completed because a required \
 file does not exist.");

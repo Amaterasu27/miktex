@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -48,6 +48,8 @@ namespace MiKTeX {					\
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
 namespace MiKTeXPackageManagerLib = MAKE_CURVER_ID(MiKTeXPackageManager);
 #endif
+
+#define IGNORE_OTHER_SYSTEMS 1
 
 /* _________________________________________________________________________
 
@@ -980,6 +982,18 @@ public:
 	version = "";
       }
     return (version);
+  }
+
+public:
+  std::string
+  GetPackageTargetSystem (/*[in]*/ const char *	lpszDeploymentName)
+  {
+    std::string targetSystem;
+    if (! TryGetValue(lpszDeploymentName, "TargetSystem", targetSystem))
+      {
+	targetSystem = "";
+      }
+    return (targetSystem);
   }
 
 public:

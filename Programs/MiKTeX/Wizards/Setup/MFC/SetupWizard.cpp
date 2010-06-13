@@ -1,6 +1,6 @@
 /* SetupWizard.cpp:
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2010 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -130,8 +130,9 @@ SetupWizard::OnInitDialog ()
       CString title;
       if (theApp.isMiKTeXDirect)
 	{
-	  title.Format (T_("MiKTeX %s Setup"),
-			MIKTEXTEXT(MIKTEX_FULL_VERSION_STR));
+	  title.Format (T_("MiKTeX %s Setup (%d-bit)"),
+			MIKTEXTEXT(MIKTEX_FULL_VERSION_STR),
+			static_cast<int>(sizeof(void*)) * 8);
 	}
       else if (theApp.prefabricated)
 	{
@@ -156,14 +157,16 @@ SetupWizard::OnInitDialog ()
 	      __assume (false);
 	      break;
 	    }
-	  title.Format (T_("%sMiKTeX %s Installer"),
+	  title.Format (T_("%sMiKTeX %s Installer (%d-bit)"),
 			static_cast<const char *>(prefix),
-			static_cast<const char *>(version));
+			static_cast<const char *>(version),
+			static_cast<int>(sizeof(void*)) * 8);
 	}
       else
 	{
-	  title.Format (T_("MiKTeX %s Net Installer"),
-			MIKTEXTEXT(MIKTEX_VERSION_STR));
+	  title.Format (T_("MiKTeX %s Net Installer (%d-bit)"),
+			MIKTEXTEXT(MIKTEX_VERSION_STR),
+			static_cast<int>(sizeof(void*)) * 8);
 	}
       SetTitle (title);
       SetActivePage (&m_License);

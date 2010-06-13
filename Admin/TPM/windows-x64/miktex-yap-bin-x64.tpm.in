@@ -11,8 +11,8 @@
       This package includes the Yap executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/x64/x64/${dvi_dll_name}.dll
-texmf/miktex/bin/x64/x64/yap.exe
+texmf/miktex/bin/x64/${dvi_dll_name}.dll
+texmf/miktex/bin/x64/yap.exe
     </TPM:RunFiles>
     <TPM:DocFiles>
 texmf/doc/miktex/yap.chm
