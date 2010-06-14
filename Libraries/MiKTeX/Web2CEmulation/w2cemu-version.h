@@ -1,6 +1,6 @@
-/* mp-version.h: version number					-*- C++ -*-
+/* w2cemu-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -18,10 +18,5 @@
    USA.  */
 
 #define MIKTEX_COMP_J2000_VERSION 3816
-#define MIKTEX_COMP_ORIG_VERSION_STR "1.005"
-
-#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1990 - 1995 by AT&T Bell Laboratories"
-#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1990 - 1995 by AT&T Bell Laboratories"
-#define MIKTEX_COMP_TM_STR "TeX is a trademark of the American Mathematical Society. METAFONT is a trademark of Addison-Wesley Publishing Company. PostScript is a trademark of Adobe Systems Incorporated."
 
 #include <miktex/Core/Version>

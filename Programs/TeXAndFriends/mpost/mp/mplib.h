@@ -47,6 +47,7 @@ $Id$
 
 #if defined(MIKTEX)
 #  include <MiKTeX/KPSE/Emulation>
+#  include <MiKTeX/W2C/Emulation>
 #  include "mp-miktex.h"
 #  define snprintf _snprintf
 #endif

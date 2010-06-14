@@ -341,6 +341,7 @@ if(LINK_EVERYTHING_STATICALLY)
       ${goo_lib_name}
     ${kpsemu_lib_name}
     ${png_lib_name}
+    ${w2cemu_lib_name}
   )
 else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${pdftex_dll_name}
@@ -349,6 +350,7 @@ else(LINK_EVERYTHING_STATICALLY)
     ${kpsemu_dll_name}
     ${png_dll_name}
     ${xpdf_lib_name}
+    ${w2cemu_dll_name}
   )
 endif(LINK_EVERYTHING_STATICALLY)
 

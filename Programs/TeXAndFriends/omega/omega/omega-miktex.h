@@ -302,6 +302,7 @@ miktexopenonmfile (/*[in]*/ alphafile &		f,
 #define otpoutputend THEDATA(otpoutputend)
 
 #include <miktex/KPSE/Emulation>
+#include <miktex/W2C/Emulation>
 
 #define cint c4p_P2.c4p_int
 #define cint1 c4p_P2.hh.c4p_P1.lh

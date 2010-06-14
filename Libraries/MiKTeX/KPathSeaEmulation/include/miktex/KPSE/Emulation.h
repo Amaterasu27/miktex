@@ -1,4 +1,4 @@
-/* miktex/KPSE/Emulation.h: Web2C/KPSE emulation		-*- C++ -*-
+/* miktex/KPSE/Emulation.h: kpathsea emulation			-*- C++ -*-
 
    Copyright (C) 2000-2010 Christian Schenk
 
@@ -39,7 +39,6 @@
 
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>
-#include <miktex/Core/IntegerTypes>
 
 // DLL import/export switch
 #if ! defined(D0A4167033297F40884B97769F47801C)
@@ -65,34 +64,80 @@
     }						\
   }
 
-#define MIKTEXWEB2C_BEGIN_NAMESPACE		\
-  namespace MiKTeX {				\
-    namespace Web2C {
-
-#define MIKTEXWEB2C_END_NAMESPACE		\
-    }						\
-  }
-
 /* _________________________________________________________________________
 
-   Macros
+   c-fopen.h
    _________________________________________________________________________ */
 
-#define FOPEN_R_MODE "r"
-#define FOPEN_W_MODE "w"
-#define FOPEN_RBIN_MODE "rb"
-#define FOPEN_WBIN_MODE "wb"
-#define FOPEN_ABIN_MODE "ab"
+#ifndef FOPEN_R_MODE
+#  define FOPEN_R_MODE "r"
+#endif
+
+#ifndef FOPEN_W_MODE
+#  define FOPEN_W_MODE "w"
+#endif
+
+#ifndef FOPEN_RBIN_MODE
+#  define FOPEN_RBIN_MODE "rb"
+#endif
+
+#ifndef FOPEN_WBIN_MODE
+#  define FOPEN_WBIN_MODE "wb"
+#endif
+
+#ifndef FOPEN_ABIN_MODE
+#  define FOPEN_ABIN_MODE "ab"
+#endif
 
 #if defined(MIKTEX_WINDOWS)
-# define DIR_SEP_STRING "\\"
+#  define SET_BINARY(f) _setmode((f), _O_BINARY)
 #else
-# define DIR_SEP_STRING "/"
+#  define SET_BINARY(f)
 #endif
 
 /* _________________________________________________________________________
 
-   P?H and P?C Macros
+   c-memstr.h
+   _________________________________________________________________________ */
+
+#if ! defined(HAVE_RINDEX) && ! defined(rindex)
+#  define rindex(s, c) strrchr(s, c)
+#endif
+
+/* _________________________________________________________________________
+
+   confdefs.h
+   _________________________________________________________________________ */
+
+#define KPSEVERSION "kpathsea version 3.3.2"
+
+/* _________________________________________________________________________
+
+   c-pathch.h
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+#  define DIR_SEP_STRING "\\"
+#else
+#  define DIR_SEP_STRING "/"
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+#  define IS_DIR_SEP(ch) ((ch) == '\\' || (ch) == '/')
+#else
+#  define IS_DIR_SEP(ch) ((ch) == '/')
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+#  define NAME_BEGINS_WITH_DEVICE(name) \
+    ((name)[0] != 0 && isascii((name)[0]) && isalpha((name)[0]) && ((name)[1] == ':'))
+#else
+#  define NAME_BEGINS_WITH_DEVICE(name) 0
+#endif
+
+/* _________________________________________________________________________
+
+   Obsolete
    _________________________________________________________________________ */
 
 #define AA(args) args
@@ -127,9 +172,26 @@
 #define PVAR1C(t1, n1, ap) \
   (t1 n1, ...) { va_list ap; va_start (ap, n1);
 
+#if defined(__cplusplus)
+#  define STRCASECMP(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
+#else
+#  define STRCASECMP(s1, s2) miktex_strcasecmp(s1, s2)
+#endif
+
 /* _________________________________________________________________________
 
-   FATAL Macros
+   strings.h (not really kpathsea)
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+#  define strcasecmp(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
+#else
+#  define strcasecmp(s1, s2) miktex_strcasecmp(s1, s2)
+#endif
+
+/* _________________________________________________________________________
+
+   lib.h
    _________________________________________________________________________ */
 
 #define START_FATAL()						\
@@ -167,27 +229,7 @@
     fprintf (stderr, "%s: ", program_invocation_name);	\
     perror (str);					\
     throw (1);						\
-   } while (0)
-
-/* _________________________________________________________________________
-
-   DEBUG Macros
-   _________________________________________________________________________ */
-
-#define KPSE_DEBUG_SET(x)
-
-/* _________________________________________________________________________
-
-   Emulation Macros
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-#  define KPSEDLL __declspec(dllimport)
-#else
-#  define KPSEDLL
-#endif
-
-#define KPSEVERSION "kpathsea version 3.3.2"
+  } while (0)
 
 #if defined(__cplusplus)
 #  define FILESTRCASEEQ(s1, s2) (MiKTeX::Core::PathName::Compare(s1, s2) == 0)
@@ -195,160 +237,28 @@
 #  define FILESTRCASEEQ(s1, s2) (miktex_pathcmp(s1, s2) == 0)
 #endif
 
-#define ISALNUM(c) isalnum(c)
-
-#define ISXDIGIT(c) isxdigit(c)
-
-#define IS_DIR_SEP(c) ((c) == '\\' || (c) == '/')
-
-#define MAKE_TEX_PK_BY_DEFAULT 1
-
-#define NAME_BEGINS_WITH_DEVICE(name) (isalpha(name[0]) && (name[1] == ':'))
-
-#if defined(MIKTEX_WINDOWS)
-#  define SET_BINARY(f) _setmode((f), _O_BINARY)
-#else
-#  define SET_BINARY(f)
-#endif
-
-#if defined(__cplusplus)
-#  define STRCASECMP(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
-#  define strcasecmp(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
-#else
-#  define STRCASECMP(s1, s2) miktex_strcasecmp(s1, s2)
-#  define strcasecmp(s1, s2) miktex_strcasecmp(s1, s2)
-#endif
-
-#define STREQ(s1, s2) ((s1) && (s2) && (strcmp(s1, s2) == 0))
-
-#define TOLOWER(c) tolower(c)
+#define STREQ(s1, s2) ((s1) != 0 && (s2) != 0 && (strcmp(s1, s2) == 0))
 
 #define XRETALLOC(addr, n, t) \
-  ((addr) = (t *) xrealloc(addr, (n) * sizeof(t)))
+  ((addr) = (t*)xrealloc(addr, (n) * sizeof(t)))
 
-#define XTALLOC(n, t) ((t *) xmalloc((n) * sizeof(t)))
+#define XTALLOC(n, t) ((t*)xmalloc((n) * sizeof(t)))
 
 #define concat(s1, s2)						\
   strcat(strcpy((char *)xmalloc(strlen(s1) + strlen(s2) + 1),	\
-                (s1)),						\
-	 (s2))
+                s1),						\
+	 s2)
 
 #define concat3(s1, s2, s3)					\
   strcat(strcat(strcpy((char *)xmalloc(strlen(s1)		\
                                              + strlen(s2)	\
 					     + strlen(s3)	\
                                              + 1),		\
-                       (s1)),					\
-		(s2)),						\
-         (s3))
+                       s1),					\
+		s2),						\
+         s3)
 
 #define find_suffix(name) MiKTeX::KPSE::FindSuffix(name)
-
-#define kpse_set_program_enabled(fmt, value, level)
-
-#define kpse_bug_address miktex_kpse_bug_address
-
-#define kpse_fallback_resolutions_string \
-  miktex_kpse_fallback_resolutions_string
-
-#define kpse_absolute_p(path) \
-  MiKTeX::Core::Utils::IsAbsolutePath(path)
-
-#define kpse_var_expand(str) (str)
-
-#define kpathsea_debug miktex_kpathsea_debug
-
-#define kpathsea_version_string miktex_kpathsea_version_string
-
-#if defined(__cplusplus)
-#  define kpse_bitmap_tolerance MiKTeX::KPSE::BitmapTolerance
-#else
-#  define kpse_bitmap_tolerance miktex_kpse_bitmap_tolerance
-#endif
-
-#if defined(__cplusplus)
-#  define kpse_find_file MiKTeX::KPSE::FindFile
-#else
-#  define kpse_find_file miktex_kpse_find_file
-#endif
-
-#define kpse_tex_hush(what) 0
-
-#if defined(__cplusplus)
-#  define kpse_find_glyph MiKTeX::KPSE::FindGlyph
-#else
-#  define kpse_find_glyph miktex_kpse_find_glyph
-#endif
-
-#define kpse_find_ofm(name) miktex_kpse_find_file(name, kpse_ofm_format, 1)
-
-#define kpse_find_pict(name) miktex_kpse_find_file(name, kpse_pict_format, 1)
-
-#define kpse_find_pk(font_name, dpi, glyph_file) \
-  miktex_kpse_find_glyph (font_name, dpi, kpse_pk_format, glyph_file)
-
-#define kpse_find_vf(name) miktex_kpse_find_file (name, kpse_vf_format, 0)
-
-#define kpse_find_tex(name)  kpse_find_file(name, kpse_tex_format, true)
-
-#define kpse_find_tfm(name) miktex_kpse_find_file(name, kpse_tfm_format, 1)
-
-#if defined(__cplusplus)
-#  define kpse_init_prog MiKTeX::KPSE::InitProg
-#else
-#  define kpse_init_prog miktex_kpse_init_prog
-#endif
-
-#if defined(__cplusplus)
-#  define kpse_magstep_fix MiKTeX::KPSE::MagStepFix
-#else
-#  define kpse_magstep_fix miktex_kpse_magstep_fix
-#endif
-
-#define kpse_make_tex_discard_errors miktex_kpse_make_tex_discard_errors
-
-#if defined(__cplusplus)
-#  define kpse_open_file MiKTeX::KPSE::OpenFile
-#else
-#  define kpse_open_file miktex_kpse_open_file
-#endif
-
-#if defined(__cplusplus)
-#  define kpse_set_program_name(argv0, progname) \
-     MiKTeX::KPSE::SetProgramName(argv0, progname)
-#else
-#  define kpse_set_program_name(argv0, progname) \
-     miktex_kpse_set_program_name(argv0, progname)
-#endif
-
-#define kpse_set_progname(argv0) kpse_set_program_name(argv0, 0)
-
-#define kpse_reset_program_name(progname)
-
-#if defined(__cplusplus)
-#  define kpse_var_value MiKTeX::KPSE::VarValue
-#else
-#  define kpse_var_value miktex_kpse_var_value
-#endif
-
-#define open_input(f_ptr, filefmt, fopen_mode) \
-  MiKTeX::Web2C::OpenInput(nameoffile+1, f_ptr, filefmt, fopen_mode)
-
-#if ! defined(__USE_GNU)
-#  if defined(__cplusplus)
-#    define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
-#  else
-#    define program_invocation_name miktex_get_program_invocation_name()
-#  endif
-#endif
-
-#if ! defined(rindex)
-#  define rindex strrchr
-#endif
-
-#define	secondsandmicros(s, m) MiKTeX::Web2C::GetSecondsAndMicros(&s, &m)
-
-#define versionstring miktex_web2c_version_string
 
 #if defined(__cplusplus)
 #  define xbasename MiKTeX::KPSE::BaseName
@@ -373,9 +283,23 @@
 #define xftell MiKTeX::KPSE::FTell64
 
 #if defined(__cplusplus)
-#  define xmalloc(size) MiKTeX::Debug::Malloc((size), __FILE__, __LINE__)
+#  define xmalloc(size) MiKTeX::Debug::Malloc(size, __FILE__, __LINE__)
 #else
-#  define xmalloc(size) miktex_core_malloc((size), __FILE__, __LINE__)
+#  define xmalloc(size) miktex_core_malloc(size, __FILE__, __LINE__)
+#endif
+
+#if defined(__cplusplus)
+#  define xrealloc(ptr, size) \
+	MiKTeX::Debug::Realloc(ptr, size, __FILE__, __LINE__)
+#else
+#  define xrealloc(ptr, size) \
+	miktex_core_realloc(ptr, size, __FILE__, __LINE__)
+#endif
+
+#if defined(__cplusplus)
+#  define xstrdup(str) MiKTeX::Debug::StrDup(str, __FILE__, __LINE__)
+#else
+#  define xstrdup(str) miktex_core_strdup(str, __FILE__, __LINE__)
 #endif
 
 #if defined(__cplusplus)
@@ -384,32 +308,93 @@
 #  define xputenv miktex_putenv
 #endif
 
-#if defined(__cplusplus)
-#  define xrealloc(ptr, size) \
-	MiKTeX::Debug::Realloc((ptr), (size), __FILE__, __LINE__)
-#else
-#  define xrealloc(ptr, size) \
-	miktex_core_realloc((ptr), (size), __FILE__, __LINE__)
-#endif
+/* _________________________________________________________________________
 
-#if defined(__cplusplus)
-#  define xstrdup(str) MiKTeX::Debug::StrDup((str), __FILE__, __LINE__)
-#else
-#  define xstrdup(str) miktex_core_strdup((str), __FILE__, __LINE__)
-#endif
+   c-type.h
+   _________________________________________________________________________ */
 
-#define xmallocarray(type,size) ((type*)xmalloc((size+1)*sizeof(type)))
-#define xreallocarray(ptr,type,size) ((type*)xrealloc(ptr,(size+1)*sizeof(type)))
+#define ISALNUM(c) (isascii(c) && isalnum(c))
 
-#define recorder_record_input(fname)
-#define recorder_record_output(fname)
+#define ISXDIGIT(c) (isascii(c) && isxdigit(c))
+
+#define TOLOWER(c) ((isascii(c) && isupper(c)) ? tolower(c) : (c))
 
 #define ISBLANK(c) (isascii(c) && ((c) == ' ' || (c) == '\t'))
 
 /* _________________________________________________________________________
 
-   Basic Types
+   debug.h
    _________________________________________________________________________ */
+
+#define KPSE_DEBUG_SET(bit)
+
+/* _________________________________________________________________________
+
+   c-proto.h
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+#  define KPSEDLL __declspec(dllimport)
+#else
+#  define KPSEDLL
+#endif
+
+/* _________________________________________________________________________
+
+   c-auto.h
+   _________________________________________________________________________ */
+
+#define MAKE_TEX_PK_BY_DEFAULT 1
+
+/* _________________________________________________________________________
+
+   tex-file.h
+   _________________________________________________________________________ */
+
+#define kpse_set_program_enabled(fmt, value, level)
+
+#define kpse_reset_program_name(progname)
+
+#if defined(__cplusplus)
+#  define kpse_find_file MiKTeX::KPSE::FindFile
+#else
+#  define kpse_find_file miktex_kpse_find_file
+#endif
+
+#define kpse_find_ofm(name) miktex_kpse_find_file(name, kpse_ofm_format, 1)
+
+#define kpse_find_pict(name) miktex_kpse_find_file(name, kpse_pict_format, 1)
+
+#define kpse_find_tex(name)  kpse_find_file(name, kpse_tex_format, true)
+
+#define kpse_find_tfm(name) miktex_kpse_find_file(name, kpse_tfm_format, 1)
+
+#if defined(__cplusplus)
+#  define kpse_open_file MiKTeX::KPSE::OpenFile
+#else
+#  define kpse_open_file miktex_kpse_open_file
+#endif
+
+/* _________________________________________________________________________
+
+   types.h
+   _________________________________________________________________________ */
+
+#define kpse_bug_address miktex_kpse_bug_address
+
+#define kpse_fallback_resolutions_string \
+  miktex_kpse_fallback_resolutions_string
+
+#define kpathsea_debug miktex_kpathsea_debug
+
+#define kpse_make_tex_discard_errors miktex_kpse_make_tex_discard_errors
+
+#undef program_invocation_name
+#if defined(__cplusplus)
+#   define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
+#else
+#  define program_invocation_name miktex_get_program_invocation_name()
+#endif
 
 #if defined(__cplusplus)
 MIKTEX_BEGIN_EXTERN_C_BLOCK
@@ -418,31 +403,15 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK
 typedef char * string;
 typedef const char * const_string;
 
-#if ! defined(NO_BOOLEAN)
+#if ! defined(HAVE_BOOLEAN)
 #  if defined(__cplusplus)
 #    define boolean bool
 #  else
 #    if ! defined(false) && ! defined(true)
-typedef enum { false = 0, true = 1 } MIKTEX_TEXK_BOOLEAN;
+typedef enum { false = 0, true = 1 } MIKTEX_KPSE_BOOLEAN;
 #    endif
 #    define boolean unsigned char
 #  endif
-#endif
-
-typedef int integer;
-typedef MIKTEX_INT64 longinteger;
-
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
-
-/* _________________________________________________________________________
-
-   Kpathsea Types
-   _________________________________________________________________________ */
-
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
 typedef enum
@@ -501,6 +470,49 @@ typedef enum
   kpse_last_format
 } kpse_file_format_type;
 
+
+#if defined(__cplusplus)
+MIKTEX_END_EXTERN_C_BLOCK
+#endif
+
+/* _________________________________________________________________________
+
+   absolute.h
+   _________________________________________________________________________ */
+
+#define kpse_absolute_p(filename, relative_ok)	  \
+  (MIKTEX_ASSERT(! (relative_ok)),		  \
+   MiKTeX::Core::Utils::IsAbsolutePath(filename))
+
+/* _________________________________________________________________________
+
+   variable.h
+   _________________________________________________________________________ */
+
+#define kpse_var_expand(src) (src)
+
+#if defined(__cplusplus)
+#  define kpse_var_value MiKTeX::KPSE::VarValue
+#else
+#  define kpse_var_value miktex_kpse_var_value
+#endif
+
+/* _________________________________________________________________________
+
+   version.h
+   _________________________________________________________________________ */
+
+#define kpathsea_version_string miktex_kpathsea_version_string
+
+/* _________________________________________________________________________
+
+   tex-glyph.h
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+MIKTEX_BEGIN_EXTERN_C_BLOCK
+#endif
+
 typedef enum
 {
   kpse_glyph_source_normal,
@@ -521,9 +533,71 @@ typedef struct
 MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
+#if defined(__cplusplus)
+#  define kpse_bitmap_tolerance MiKTeX::KPSE::BitmapTolerance
+#else
+#  define kpse_bitmap_tolerance miktex_kpse_bitmap_tolerance
+#endif
+
+#if defined(__cplusplus)
+#  define kpse_find_glyph MiKTeX::KPSE::FindGlyph
+#else
+#  define kpse_find_glyph miktex_kpse_find_glyph
+#endif
+
+#define kpse_find_pk(font_name, dpi, glyph_file) \
+  miktex_kpse_find_glyph (font_name, dpi, kpse_pk_format, glyph_file)
+
+#define kpse_find_vf(name) miktex_kpse_find_file (name, kpse_vf_format, 0)
+
+
 /* _________________________________________________________________________
 
-   Prototypes (KPSE Namespace)
+   tex-hush.h
+   _________________________________________________________________________ */
+
+#define kpse_tex_hush(what) 0
+
+/* _________________________________________________________________________
+
+   proginit.h
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+#  define kpse_init_prog MiKTeX::KPSE::InitProg
+#else
+#  define kpse_init_prog miktex_kpse_init_prog
+#endif
+
+/* _________________________________________________________________________
+
+   magstep.h
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+#  define kpse_magstep_fix MiKTeX::KPSE::MagStepFix
+#else
+#  define kpse_magstep_fix miktex_kpse_magstep_fix
+#endif
+
+/* _________________________________________________________________________
+
+   progname.h
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+#  define kpse_set_program_name(argv0, progname) \
+     MiKTeX::KPSE::SetProgramName(argv0, progname)
+#else
+#  define kpse_set_program_name(argv0, progname) \
+     miktex_kpse_set_program_name(argv0, progname)
+#endif
+
+#define kpse_set_progname(argv0) kpse_set_program_name(argv0, 0)
+
+/* _________________________________________________________________________
+
+   Prototypes (C++)
    _________________________________________________________________________ */
 
 #if defined(__cplusplus)
@@ -628,27 +702,6 @@ MIKTEXKPSCEEAPI(char *)
 VarValue (/*[in]*/ const char * lpszVarName);
 
 MIKTEXKPSE_END_NAMESPACE;
-#endif
-
-/* _________________________________________________________________________
-
-   Prototypes (Web2C Namespace)
-   _________________________________________________________________________ */
-
-#if defined(__cplusplus)
-MIKTEXWEB2C_BEGIN_NAMESPACE;
-
-MIKTEXKPSCEEAPI(void)
-GetSecondsAndMicros (/*[out]*/ int * pSeconds,
-		     /*[out]*/ int * pMicros);
-
-MIKTEXKPSCEEAPI(int)
-OpenInput (/*[in,out]*/ char *			lpszFileName,
-	   /*[in]*/ FILE **			ppfile,
-	   /*[in]*/ kpse_file_format_type	format,
-	   /*[in]*/ const char *		lpszMode);
-
-MIKTEXWEB2C_END_NAMESPACE;
 #endif
 
 /* _________________________________________________________________________
@@ -763,10 +816,6 @@ miktex_kpse_make_tex_discard_errors;
 extern
 MIKTEXKPSDATA(char *)
 miktex_kpathsea_version_string;
-
-extern
-MIKTEXKPSDATA(char *)
-miktex_web2c_version_string;
 
 extern
 MIKTEXKPSDATA(unsigned)

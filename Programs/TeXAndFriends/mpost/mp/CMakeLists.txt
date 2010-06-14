@@ -98,6 +98,7 @@ create_web_app(MetaPost mp mpost)
 
 target_link_libraries(${mp_dll_name}
   ${kpsemu_dll_name}
+  ${w2cemu_dll_name}
 )
 
 set(trapmp_dll_name "trapmp_")
@@ -139,6 +140,7 @@ set_target_properties(${trapmp_dll_name} PROPERTIES COMPILE_FLAGS "-DMIKTEX_TRAP
 
 target_link_libraries(${trapmp_dll_name}
   ${kpsemu_dll_name}
+  ${w2cemu_dll_name}
 )
 
 set(trapmp_options)

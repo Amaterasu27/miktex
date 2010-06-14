@@ -24,6 +24,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #  if defined(MIKTEX)
 #    include <miktex/KPSE/Emulation>
+#    include <miktex/W2C/Emulation>
 #    include "pdftex-miktex.h"
 #    include <miktex/Core/Debug>
 #    if defined(assert)

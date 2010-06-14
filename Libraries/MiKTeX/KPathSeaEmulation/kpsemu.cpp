@@ -711,39 +711,6 @@ miktex_fopen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   Web2C::OpenInput
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(int)
-Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
-		  /*[in]*/ FILE **			ppfile,
-		  /*[in]*/ kpse_file_format_type	format,
-		  /*[in]*/ const char *			lpszMode)
-{
-  char * lpszPath = KPSE::FindFile(lpszFileName, format, 0);
-  if (lpszPath == 0)
-    {
-      return (0);
-    }
-  try
-    {
-      *ppfile = KPSE::TryFOpen(lpszPath, lpszMode);
-    }
-  catch (const exception &)
-    {
-      MIKTEX_FREE (lpszPath);
-      throw;
-    }
-  if (*ppfile != 0)
-    {
-      Utils::CopyString (lpszFileName, BufferSizes::MaxPath, lpszPath);
-    }
-  MIKTEX_FREE (lpszPath);
-  return (*ppfile == 0 ? 0 : 1);
-}
-
-/* _________________________________________________________________________
-
    miktex_program_invocation_name
    _________________________________________________________________________ */
 
@@ -796,14 +763,6 @@ miktex_kpse_fallback_resolutions_string = 0;
 
 MIKTEXKPSDATA(char *)
 miktex_kpathsea_version_string = KPSEVERSION;
-
-/* _________________________________________________________________________
-
-   miktex_web2c_version_string
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(char *)
-miktex_web2c_version_string = "0.0";
 
 /* _________________________________________________________________________
 
@@ -1083,25 +1042,4 @@ miktex_putenv (/*[in]*/ const char * lpszVarName,
   C_FUNC_BEGIN ();
   Utils::SetEnvironmentString (lpszVarName, lpszValue);
   C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   Web2C::GetSecondsAndMicros
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void)
-Web2C::GetSecondsAndMicros (/*[out]*/ integer * pSeconds,
-			    /*[out]*/ integer * pMicros)
-{
-#if defined(MIKTEX_WINDOWS)
-  unsigned long clock = GetTickCount();
-  *pSeconds = clock / 1000;
-  *pMicros = clock % 1000;
-#else
-  struct timeval tv;
-  gettimeofday (&tv, 0);
-  *pSeconds = tv.tv_sec;
-  *pMicros = tv.tv_usec;
-#endif
 }

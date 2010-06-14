@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,7 +73,7 @@ set(gftype_dll_name	"${miktex_dll_prefix}-gftype")
 set(graphite_engine_dll_name	"${miktex_dll_prefix}-graphite-engine")
 set(hunspell_dll_name	"${miktex_dll_prefix}-hunspell")
 set(jpeg_dll_name	"${miktex_dll_prefix}-jpeg")
-set(kpsemu_dll_name	"${miktex_dll_prefix}-kpseweb2cemu")
+set(kpsemu_dll_name	"${miktex_dll_prefix}-kpathsea")
 set(lzma_dll_name	"${miktex_dll_prefix}-lzma")
 set(makex_dll_name	"${miktex_dll_prefix}-make")
 set(mcd_dll_name	"${miktex_dll_prefix}-compilerdriver")
@@ -120,6 +120,7 @@ if(NOT USE_SYSTEM_URIPARSER)
 endif(NOT USE_SYSTEM_URIPARSER)
 set(vftovp_dll_name	"${miktex_dll_prefix}-vftovp")
 set(vptovf_dll_name	"${miktex_dll_prefix}-vptovf")
+set(w2cemu_dll_name	"${miktex_dll_prefix}-web2c")
 set(weave_dll_name	"${miktex_dll_prefix}-weave")
 set(xetex_dll_name	"${miktex_dll_prefix}-xetex")
 if(NOT USE_SYSTEM_ZLIB)
@@ -151,7 +152,7 @@ set(fofi_lib_name	"fofi-static")
 set(getopt_lib_name	"getopt-static")
 set(goo_lib_name	"goo-static")
 set(graphite_engine_lib_name	"graphite-engine-static")
-set(kpsemu_lib_name	"kpseweb2cemu-static")
+set(kpsemu_lib_name	"kpathsea-static")
 set(lzma_lib_name	"lzma-static")
 set(makex_lib_name	"make-static")
 set(md5_lib_name	"md5-static")

@@ -648,6 +648,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
   ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_w2cemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_lzmalib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
@@ -996,6 +997,8 @@ endif(BUILDING_MIKTEX)
 
 add_subdirectory(${rel_kpsemu_dir})
 add_subdirectory(${rel_kpsemu_dir}-static)
+
+add_subdirectory(${rel_w2cemu_dir})
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})
