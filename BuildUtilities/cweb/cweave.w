@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 3.61 --- July 2000
+% Version 3.64 --- February 2002
 % (essentially the same as version 3.6, which added
 %  recently introduced features of standard C++ to version 3.4)
 
@@ -29,11 +29,11 @@
 \def\skipxTeX{\\{skip\_\TEX/}}
 \def\copyxTeX{\\{copy\_\TEX/}}
 
-\def\title{CWEAVE (Version 3.61)}
+\def\title{CWEAVE (Version 3.64)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CWEAVE} processor}
   \vskip 15pt
-  \centerline{(Version 3.61)}
+  \centerline{(Version 3.64)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -65,7 +65,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 3.61)\n"
+@d banner "This is CWEAVE (Version 3.64)\n"
 
 @c @<Include files@>@/
 @h
@@ -101,7 +101,7 @@ char **av; /* argument values */
 {
   argc=ac; argv=av;
   program=cweave;
-  make_xrefs=force_lines=1; /* controlled by command-line options */
+  make_xrefs=force_lines=make_pb=1; /* controlled by command-line options */
   common_init();
   @<Set initial values@>;
   if (show_banner) printf(banner); /* print a ``banner line'' */
@@ -117,23 +117,23 @@ handle \TEX/, so they should be sufficient for most applications of \.{CWEAVE}.
 If you change |max_bytes|, |max_names|, |hash_size|, or |buf_size|
 you have to change them also in the file |"common.w"|.
 
-@d max_bytes 90000 /* the number of bytes in identifiers,
+@d max_bytes 1000000 /* the number of bytes in identifiers,
   index entries, and section names */
-@d max_names 4000 /* number of identifiers, strings, section names;
+@d max_names 10239 /* number of identifiers, strings, section names;
   must be less than 10240; used in |"common.w"| */
-@d max_sections 2000 /* greater than the total number of sections */
-@d hash_size 353 /* should be prime */
-@d buf_size 100 /* maximum length of input line, plus one */
-@d longest_name 10000 /* section names and strings shouldn't be longer than this */
+@d max_sections 10239 /* greater than the total number of sections */
+@d hash_size 8501 /* should be prime */
+@d buf_size 1000 /* maximum length of input line, plus one */
+@d longest_name 1000 /* section names and strings shouldn't be longer than this */
 @d long_buf_size (buf_size+longest_name)
 @d line_length 80 /* lines of \TEX/ output have at most this many characters;
   should be less than 256 */
-@d max_refs 20000 /* number of cross-references; must be less than 65536 */
-@d max_toks 20000 /* number of symbols in \CEE/ texts being parsed;
+@d max_refs 65535 /* number of cross-references; must be less than 65536 */
+@d max_toks 65535 /* number of symbols in \CEE/ texts being parsed;
   must be less than 65536 */
-@d max_texts 4000 /* number of phrases in \CEE/ texts being parsed;
+@d max_texts 10239 /* number of phrases in \CEE/ texts being parsed;
   must be less than 10240 */
-@d max_scraps 2000 /* number of tokens in \CEE/ texts being parsed */
+@d max_scraps 10000 /* number of tokens in \CEE/ texts being parsed */
 @d stack_size 400 /* number of simultaneous output levels */
 
 @ The next few sections contain stuff from the file |"common.w"| that must
@@ -703,7 +703,7 @@ get_next() /* produces the next input token */
     @<Check if we're at the end of a preprocessor command@>;
     if (loc>limit && get_line()==0) return(new_section);
     c=*(loc++);
-    if (xisdigit(c) || c=='\\' || c=='.') @<Get a constant@>@;
+    if (xisdigit(c) || c=='.') @<Get a constant@>@;
     else if (c=='\'' || c=='"' || (c=='L'&&(*loc=='\'' || *loc=='"'))@|
            || (c=='<' && sharp_include_line==1))
         @<Get a string@>@;
@@ -805,7 +805,7 @@ switch(c) {
 and hexadecimal numbers; it is reasonable to stick to each convention
 within its realm.  Thus the \CEE/ part of a \.{CWEB} file has octals
 introduced by \.0 and hexadecimals by \.{0x}, but \.{CWEAVE} will print
-with \TeX/ macros that the user can redefine to fit the context.
+with \TEX/ macros that the user can redefine to fit the context.
 In order to simplify such macros, we replace some of the characters.
 
 Notice that in this section and the next, |id_first| and |id_loc|
@@ -813,9 +813,7 @@ are pointers into the array |section_text|, not into |buffer|.
 
 @<Get a constant@>= {
   id_first=id_loc=section_text+1;
-  if (*(loc-1)=='\\') {*id_loc++='~';
-  while (xisdigit(*loc)) *id_loc++=*loc++;} /* octal constant */
-  else if (*(loc-1)=='0') {
+  if (*(loc-1)=='0') {
     if (*loc=='x' || *loc=='X') {*id_loc++='^'; loc++;
       while (xisxdigit(*loc)) *id_loc++=*loc++;} /* hex constant */
     else if (xisdigit(*loc)) {*id_loc++='~';
