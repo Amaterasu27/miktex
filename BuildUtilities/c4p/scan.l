@@ -1,6 +1,6 @@
  /* scan.l: C4P Lexical Scanner Specification		-*- C++ -*-
 
-    Copyright (C) 1991-2008 Christian Schenk
+    Copyright (C) 1991-2010 Christian Schenk
 
     This file is part of C4P.
 
@@ -29,6 +29,7 @@
 
 #include "common.h"
 #include "gram.h"
+#define YY_NO_UNISTD_H
 
 extern YYSTYPE yylval;
 
