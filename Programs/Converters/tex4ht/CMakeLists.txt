@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,11 +22,11 @@ add_definitions(
   -DCDECL=__cdecl
   -DCPLUSPLUSMAIN
   -DDISABLE_INSTALLER
-  -DHAVE_CONFIG_H
   -DHAVE_IO_H
   -DHAVE_STRING_H
   -DKPATHSEA
   -Dmain=Main
+  -DUSE_MIKTEX_EXIT
 )
 
 if(NATIVE_WINDOWS)
@@ -44,7 +44,6 @@ set_source_files_properties(
 
 set(htcmd_sources
   ${wrapper_cpp}
-  config.h
   htcmd-version.h
   htcmd.c
 )
@@ -70,7 +69,6 @@ install(TARGETS htcmd DESTINATION ${bindir})
 
 set(t4ht_sources
   ${wrapper_cpp}
-  config.h
   t4ht-version.h
   t4ht.c
 )
@@ -96,7 +94,6 @@ install(TARGETS t4ht DESTINATION ${bindir})
 
 set(tex4ht_sources
   ${wrapper_cpp}
-  config.h
   tex4ht-version.h
   tex4ht.c
 )
