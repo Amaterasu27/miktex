@@ -28,7 +28,6 @@
 
 #if defined(__cplusplus)
 extern "C" {
-#endif
 
 #if defined(MIKTEX)
 
@@ -53,10 +52,8 @@ extern "C" {
 #  endif
 #endif
 
-#if defined(__cplusplus)
 namespace MiKTeX {
   namespace Core {
-#endif
 
 #endif	/* MiKTeX */
 
@@ -89,13 +86,12 @@ void MD5Update PROTO_LIST
 void MD5Final PROTO_LIST ((unsigned char [16], MD5_CTX *));
 #endif
 
-#if defined(MIKTEX) && defined(__cplusplus)
-  } /* MD5 */
+#if defined(MIKTEX)
+  } /* namespace Core */
 } /* namespace MiKTeX */
 #endif
 
-#if defined(__cplusplus)
 } /* extern "C" */
-#endif
+#endif /* C++ */
 
 #endif
