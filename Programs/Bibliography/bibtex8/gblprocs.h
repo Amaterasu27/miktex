@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: gblprocs.h,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:47:30 $
 **
 **  DESCRIPTION
 **
@@ -74,9 +74,6 @@
 **  CHANGE LOG
 **
 **      $Log: gblprocs.h,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:47:30  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -100,7 +97,6 @@ void                    a_close (const AlphaFile_T file_pointer);
 Boolean_T               a_open_in (AlphaFile_T *file_pointer,
                                    Integer_T search_path);
 Boolean_T               a_open_out (AlphaFile_T *file_pointer);
-void                    add_area (StrNumber_T area);
 void                    add_buf_pool (StrNumber_T pstr);
 void                    add_database_cite (CiteNumber_T *newcite);
 void                    add_extension (StrNumber_T ext);
@@ -179,7 +175,6 @@ Boolean_T               eoln (const AlphaFile_T file_pointer);
 void                    execute_fn (HashLoc_T exfnloc);
 
 void                    figure_out_the_formatted_name (void);
-void                    file_nm_size_overflow (void);
 Boolean_T               find_cite_locs_for_this_cite_ke (StrNumber_T citestr);
 
 void                    get_aux_command_and_process (void);
@@ -279,7 +274,6 @@ void                    scan_identifier (ASCIICode_T char1,
 Boolean_T               scan_integer (void);
 Boolean_T               scan_nonneg_integer (void);
 Boolean_T               scan_white_space (void);
-void                    singl_fn_overflow (void);
 void                    skip_illegal_stuff_after_token (void);
 void                    skip_stuff_at_sp_brace_level_gr (void);
 void                    skip_token_print (void);

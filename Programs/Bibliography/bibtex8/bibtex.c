@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: bibtex.c,v $
-**      $Revision: 1.5 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -80,9 +80,6 @@
 **  CHANGE LOG
 **
 **      $Log: bibtex.c,v $
-**      Revision 1.5  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -98,9 +95,12 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: bibtex.c,v 1.5 2005/09/07 14:33:13 csc Exp $";
 
 #define __BIBTEX_C__
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -266,14 +266,13 @@ BEGIN
     command_line_arg_strings = (char **) argv;
 
 #ifdef KPATHSEA
-    kpse_set_program_name(argv[0], NULL);
+    kpse_set_program_name(argv[0], "bibtex8");
 #endif
 
     history = SPOTLESS;
     parse_cmd_line (argc, argv);
 
     set_array_sizes ();
-    allocate_arrays ();
     report_search_paths ();
 
     initialize ();
@@ -408,7 +407,7 @@ Close_Up_Shop_Label:
                     (long) hash_used, (long) Hash_Size);
       TRACE_PR_LN3 (" Strings:          %6ld out of %ld",
                     (long) str_ptr, (long) Max_Strings);
-      TRACE_PR_LN3 (" String pool:      %6ld out of %ld",
+      TRACE_PR_LN3 (" Free string pool: %6ld out of %ld",
                     (long) pool_ptr, (long) Pool_Size);
       TRACE_PR_LN3 (" Wizard functions: %6ld out of %ld",
                     (long) wiz_def_ptr, (long) Wiz_Fn_Space);
@@ -449,7 +448,7 @@ Close_Up_Shop_Label:
           END
           break;
         case FATAL_MESSAGE:
-          PRINT ("(That was a fatal error)");
+          PRINT_LN ("(That was a fatal error)");
           break;
         default:
           PRINT ("History is bunk");
@@ -481,9 +480,7 @@ Exit_Program_Label:
             break;
     END
 
-#if ! defined(MIKTEX)
     exit (exit_status);
-#endif
     return (exit_status);
 END
 

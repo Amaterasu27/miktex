@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: utils.h,v $
-**      $Revision: 1.3 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -74,9 +74,6 @@
 **  CHANGE LOG
 **
 **      $Log: utils.h,v $
-**      Revision 1.3  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -97,6 +94,7 @@
 
 
 #ifdef WIN32
+#  undef CDECL
 #  define CDECL __cdecl
 #else
 #  define CDECL
@@ -106,11 +104,8 @@
 /*
 ** Declaration of public functions defined in utils.c
 */
-void                    allocate_arrays (void);
-int                     checkdbg (char *str);
-long                    checklong (char *str);
 void                    close_file (const AlphaFile_T file_pointer);
-void CDECL            debug_msg (const int status, char *printf_fmt, ...);
+void CDECL            debug_msg (const int status, const char *printf_fmt, ...);
 #ifndef KPATHSEA
 int                     find_file (const char *envvar,
                                 const char *fallback_path,
@@ -120,11 +115,13 @@ FILE                   *open_ip_file (Integer_T search_path);
 FILE                   *open_op_file (void);
 void                   *mymalloc (const unsigned long bytes_required,
 				const char *var_name);
+void                   *myrealloc (void *old_ptr, const unsigned long bytes_required,
+				const char *var_name);
 void                    parse_cmd_line (int argc, char **argv);
 void                    report_bibtex_capacity (void);
 void                    report_search_paths (void);
 void		        set_array_sizes (void);
-void CDECL            usage (char *printf_fmt, ...);
+void CDECL            usage (const char *printf_fmt, ...);
                                                               
 
 #ifdef SUPPORT_8BIT

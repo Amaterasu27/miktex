@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: bibtex.h,v $
-**      $Revision: 1.5 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:47:30 $
 **
 **  DESCRIPTION
 **
@@ -74,27 +74,6 @@
 **  CHANGE LOG
 **
 **      $Log: bibtex.h,v $
-**      Revision 1.5  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
-**      Revision 1.4  2004/10/03 20:51:15  csc
-**      *** empty log message ***
-**
-**      Revision 1.3  2004/02/22 21:21:36  csc
-**      *** empty log message ***
-**
-**      Revision 1.2  2000/09/22 19:15:04  csc
-**      increased buf_size (bug_id=114544)
-**
-**      Revision 1.1.1.1  2000/09/07 13:00:06  csc
-**      Import of MiKTeX 2.0 beta
-**
-**      Revision 1.2  2000/07/31 17:55:16  mik
-**      *** empty log message ***
-**
-**      Revision 1.1.1.1  1996/08/18 19:49:32  mik
-**      Re-import of bibtex8 3.71
-**
 **      Revision 3.71  1996/08/18  20:47:30  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -121,9 +100,9 @@
  * is modified.
  ***************************************************************************/
 #ifdef SUPPORT_8BIT
-# define BANNER     "This is 8-bit Big BibTeX version 0.99c"
+# define BANNER     "This is 8-bit Big BibTeX version 0.99d"
 #else                           /* NOT SUPPORT_8BIT */
-# define BANNER     "This is Big BibTeX version 0.99c"
+# define BANNER     "This is Big BibTeX version 0.99d"
 #endif                          /* SUPPORT_8BIT */
 
 
@@ -286,58 +265,20 @@
 #define MIN_PRINT_LINE              3
 #define MAX_PRINT_LINE              79
 #define AUX_STACK_SIZE              20
-#if defined(MIKTEX)
-#define MAX_BIB_FILES               1200
-#else
 #define MAX_BIB_FILES               20
-#endif
 
-#if defined(MIKTEX)
-#define BUF_SIZE                   20000
-#else
-#define BUF_SIZE                   3000
-#endif
-#if defined(MIKTEX)
-#define MAX_CITES                  3000
-#else
+#define BUF_SIZE                   10000
 #define MAX_CITES                  750
-#endif
-#if defined(MIKTEX)
-#define MAX_ENT_INTS               28000
-#else
-#define MAX_ENT_INTS               3000
-#endif
-#if defined(MIKTEX)
-#define MAX_ENT_STRS               12000
-#else
-#define MAX_ENT_STRS               3000
-#endif
-#if defined(MIKTEX)
-#define MAX_FIELDS                 80000L
-#else
-#define MAX_FIELDS                 17250L
-#endif
-#if defined(MIKTEX)
-#define MAX_STRINGS                20000
-#else
+#define MAX_FIELDS                 5000
 #define MAX_STRINGS                4000
-#endif
-#if defined(MIKTEX)
-#define POOL_SIZE                  657890L
-#else
 #define POOL_SIZE                  65000L
-#endif
 
 #define MIN_CROSSREFS               2
-#define WIZ_FN_SPACE                5000
-#define SINGLE_FN_SPACE             100
-#if defined(MIKTEX)
-#define ENT_STR_SIZE                250
-#else
+#define WIZ_FN_SPACE                3000
+#define SINGLE_FN_SPACE             50
 #define ENT_STR_SIZE                100
-#endif
 #define GLOB_STR_SIZE               1000
-#define LIT_STK_SIZE                100
+#define LIT_STK_SIZE                50
 
 
 /***************************************************************************
@@ -348,7 +289,6 @@
  * themselves.
  ***************************************************************************/
 #define HASH_SIZE                  5000
-#define HASH_PRIME                 4253
 
 #ifdef MSDOS
 # define FILE_NAME_SIZE             64
@@ -356,12 +296,7 @@
 # define FILE_NAME_SIZE             255
 #endif                          /* MSDOS */
 
-#if defined(MIKTEX)
-#define MAX_GLOB_STRS               20
-#else
 #define MAX_GLOB_STRS               10
-#endif
-#define MAX_GLOB_STR_MINUS_1        (MAX_GLOB_STRS - 1)
 
 /***************************************************************************
  * WEB section number:   18
@@ -530,7 +465,7 @@
  ***************************************************************************/
 #define APPEND_CHAR(X)              {str_pool[pool_ptr] = (X);\
                                      INCR(pool_ptr);}
-#define STR_ROOM(X)                 {if((pool_ptr+(X))>Pool_Size)\
+#define STR_ROOM(X)                 {while((pool_ptr+(X))>Pool_Size)\
                                         pool_overflow();}
 
 /***************************************************************************
@@ -1009,20 +944,6 @@
             goto Next_Token_Label;}
 
 /***************************************************************************
- * WEB section number:  188
- * ~~~~~~~~~~~~~~~~~~~
- * This macro inserts a hash-table location (or one of the two
- * special markers |quote_next_fn| and |end_of_def|) into the
- * |singl_function| array, which will later be copied into the
- * |wiz_functions| array.
- ***************************************************************************/
-#define INSERT_FN_LOC(X)            {\
-    singl_function[single_ptr] = (X);\
-    if (single_ptr == SINGLE_FN_SPACE)\
-        {singl_fn_overflow();}\
-    INCR (single_ptr);}
-
-/***************************************************************************
  * WEB section number:  194
  * ~~~~~~~~~~~~~~~~~~~
  * This module marks the implicit function as being quoted, generates a
@@ -1041,7 +962,7 @@
  * sure it will fit; for use in |int_to_ASCII|.
  ***************************************************************************/
 #define APPEND_INT_CHAR(X)          {\
-            if (int_ptr == BUF_SIZE)\
+            if (int_ptr == Buf_Size)\
                 { buffer_overflow ();}\
             int_buf[int_ptr] = (X);\
             INCR (int_ptr); }
@@ -1186,7 +1107,7 @@
  * will fit; since it's so low level, it's implemented as a macro.
  ***************************************************************************/
 #define COPY_CHAR(X)                {\
-            if (FIELD_END == BUF_SIZE)\
+            if (FIELD_END == Buf_Size)\
                 { BIB_FIELD_TOO_LONG_ERR; }\
             else\
                 { FIELD_VL_STR[FIELD_END] = (X);\
@@ -1366,7 +1287,7 @@
             ex_buf[ex_buf_ptr] = (X);\
             INCR(ex_buf_ptr);}
 #define APPEND_EX_BUF_CHAR_AND_CHECK(X)    {\
-            if (ex_buf_ptr == BUF_SIZE) {buffer_overflow ();}; \
+            if (ex_buf_ptr == Buf_Size) {buffer_overflow ();}; \
             APPEND_EX_BUF_CHAR(X)}
 
 /***************************************************************************
@@ -1528,8 +1449,38 @@
  * accessing a 2D array by converting the row/col into an offset from the
  * beginning of a 1D array.
  ***************************************************************************/
-#define ENTRY_STRS(_r,_c)       entry_strs[(_r * (ENT_STR_SIZE+1)) + _c]
-#define GLOBAL_STRS(_r,_c)      global_strs[(_r * (GLOB_STR_SIZE+1)) + _c]
+#define ENTRY_STRS(_r,_c)       entry_strs[(_r * (Ent_Str_Size+1)) + _c]
+#define GLOBAL_STRS(_r,_c)      global_strs[(_r * (Glob_Str_Size+1)) + _c]
+
+
+/***************************************************************************
+ * WEB section number:  N/A
+ * ~~~~~~~~~~~~~~~~~~~
+ * Macros adapted from Kpathsea (lib.h) and Web2C (cpascal.h) to dynamically
+ * resize arrays.
+ ***************************************************************************/
+/* Reallocate N items of type T for ARRAY using myrealloc.  */
+#define MYRETALLOC(array, addr, n, t) ((addr) = (t *) myrealloc(addr, (n) * sizeof(t), array))
+/* BibTeX needs this to dynamically reallocate arrays.  Too bad we can't
+   rely on stringification, or we could avoid the ARRAY_NAME arg.
+   Actually allocate one more than requests, so we can index the last
+   entry, as Pascal wants to do.  */
+#define BIB_XRETALLOC_NOSET(array_name, array_var, type, size_var, new_size) \
+  if (log_file != NULL)\
+    fprintf (log_file, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
+             array_name, (int) sizeof (type), new_size, size_var); \
+  MYRETALLOC (array_name, array_var, new_size + 1, type)
+/* Same as above, but also increase SIZE_VAR for the last (or only) array.  */
+#define BIB_XRETALLOC(array_name, array_var, type, size_var, new_size) do { \
+  BIB_XRETALLOC_NOSET(array_name, array_var, type, size_var, new_size); \
+  size_var = new_size; \
+} while (0)
+/* Same as above, but for the pseudo-TYPE ASCIICode_T[LENGTH+1].  */
+#define BIB_XRETALLOC_STRING(array_name, array_var, length, size_var, new_size) \
+  if (log_file != NULL)\
+    fprintf (log_file, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
+             array_name, (int) (length + 1), new_size, size_var); \
+  MYRETALLOC (array_name, array_var, (new_size) * (length + 1), ASCIICode_T)
 
 #endif                          /* __BIBTEX_H__ */
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,27 +17,41 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+## cannot compile as C++: too many implicit casts
+set(BIBTEX8_COMPILE_AS_CXX 0)
+
 default_char_type_is_unsigned()
 
 include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
 add_definitions(
-  -DCPLUSPLUSMAIN
+  -DHAVE_CONFIG_H
   -DKPATHSEA
   -DSUPPORT_8BIT
 )
 
-set_source_files_properties(
-  bibtex-1.c
-  bibtex-2.c
-  bibtex-3.c
-  bibtex-4.c
-  bibtex.c
-  utils.c
-  PROPERTIES LANGUAGE CXX
-)
+if(BIBTEX8_COMPILE_AS_CXX)
+  set_source_files_properties(
+    bibtex-1.c
+    bibtex-2.c
+    bibtex-3.c
+    bibtex-4.c
+    bibtex.c
+    utils.c
+    PROPERTIES LANGUAGE CXX
+  )
+  add_definitions(
+    -DCPLUSPLUSMAIN
+  )
+endif(BIBTEX8_COMPILE_AS_CXX)
 
 set(bibtex8_sources
   ${wrapper_cpp}

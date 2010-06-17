@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: datatype.h,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -81,9 +81,6 @@
 **  CHANGE LOG
 **
 **      $Log: datatype.h,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -144,13 +141,13 @@ typedef long                Integer_T;
 ** data types used in the BibTeX WEB source.
 **============================================================================
 */
-typedef Integer8_T          ASCIICode_T;
+typedef UChar_T             ASCIICode_T;
 typedef File_ptr            AlphaFile_T;
 typedef Integer16_T         AuxNumber_T;
 typedef Integer16_T         BibNumber_T;
 typedef Integer16_T         BltInRange_T;
 typedef Integer16_T         BufPointer_T;
-typedef ASCIICode_T         BufType_T[BUF_SIZE + 1];
+typedef ASCIICode_T        *BufType_T;
 typedef Integer16_T         CiteNumber_T;
 typedef Integer16_T         FieldLoc_T;
 typedef Integer8_T          FnClass_T;
@@ -168,9 +165,9 @@ typedef Integer8_T          IDType_T;
 typedef Integer16_T         IntEntLoc_T;
 typedef Integer8_T          LexType_T;
 typedef Integer16_T         LitStkLoc_T;
-typedef Integer8_T          PdsLen_T;
+typedef UChar_T             PdsLen_T;
 typedef Integer8_T          PdsLoc_T;
-typedef Char_T              PdsType_T[FILE_NAME_SIZE + 1];
+typedef const UChar_T      *PdsType_T;
 typedef Unsigned16_T        PoolPointer_T;
 typedef Integer8_T          StkType_T;
 typedef Integer16_T         StrEntLoc_T;

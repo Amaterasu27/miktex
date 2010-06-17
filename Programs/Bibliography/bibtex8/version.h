@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: version.h,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -71,9 +71,6 @@
 **  CHANGE LOG
 **
 **      $Log: version.h,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **

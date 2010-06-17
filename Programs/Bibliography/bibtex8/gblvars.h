@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: gblvars.h,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:47:30 $
 **
 **  DESCRIPTION
 **
@@ -74,9 +74,6 @@
 **  CHANGE LOG
 **
 **      $Log: gblvars.h,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:47:30  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -162,19 +159,16 @@ __EXTERN__ HashLoc_T                    b_write;
 __EXTERN__ Integer_T                    bad;
 __EXTERN__ AlphaFile_T                  bbl_file;
 __EXTERN__ Integer_T                    bbl_line_num;
-__EXTERN__ PdsType_T		        bib_area_string;
 __EXTERN__ Integer_T                    bib_brace_level;
 __EXTERN__ Integer_T                    bib_line_num;
 __EXTERN__ BibNumber_T                  bib_ptr;
 __EXTERN__ Boolean_T                    bib_seen;
 __EXTERN__ Integer_T                    brace_level;
-__EXTERN__ PdsType_T		        bst_area_string;
 __EXTERN__ LongJumpBuf_T                Bst_Done_Flag;
 __EXTERN__ AlphaFile_T                  bst_file;
 __EXTERN__ Integer_T                    bst_line_num;
 __EXTERN__ Boolean_T                    bst_seen;
 __EXTERN__ StrNumber_T                  bst_str;
-__EXTERN__ BufType_T                    buffer;
 __EXTERN__ BufPointer_T                 buf_ptr1;
 __EXTERN__ BufPointer_T                 buf_ptr2;
 
@@ -206,7 +200,6 @@ __EXTERN__ CiteNumber_T                 entry_cite_ptr;
 __EXTERN__ Boolean_T                    entry_seen;
 __EXTERN__ HashLoc_T                    entry_type_loc;
 __EXTERN__ Integer_T                    err_count;
-__EXTERN__ BufType_T                    ex_buf;
 __EXTERN__ BufPointer_T                 ex_buf_length;
 __EXTERN__ BufPointer_T                 ex_buf_ptr;
 __EXTERN__ BufPointer_T                 ex_buf_xptr;
@@ -268,7 +261,6 @@ __EXTERN__ BufPointer_T                 num_tokens;
 __EXTERN__ Integer8_T                   number_of_command_line_args;
 
 __EXTERN__ CiteNumber_T                 old_num_cites;
-__EXTERN__ BufType_T                    out_buf;
 __EXTERN__ BufPointer_T                 out_buf_length;
 __EXTERN__ BufPointer_T                 out_buf_ptr;
 
@@ -295,9 +287,7 @@ __EXTERN__ ASCIICode_T                  right_str_delim;
 
 __EXTERN__ StrNumber_T                  s_aux_extension;
 __EXTERN__ StrNumber_T                  s_bbl_extension;
-__EXTERN__ StrNumber_T                  s_bib_area;
 __EXTERN__ StrNumber_T                  s_bib_extension;
-__EXTERN__ StrNumber_T                  s_bst_area;
 __EXTERN__ StrNumber_T                  s_bst_extension;
 __EXTERN__ StrNumber_T                  s_default;
 __EXTERN__ StrNumber_T                  s_l;
@@ -319,11 +309,10 @@ __EXTERN__ Boolean_T                    store_entry;
 __EXTERN__ Boolean_T                    store_field;
 __EXTERN__ Boolean_T                    store_token;
 __EXTERN__ StrEntLoc_T                  str_ent_ptr;
-__EXTERN__ Integer8_T                   str_glb_ptr;
+__EXTERN__ UChar_T                      str_glb_ptr;
 __EXTERN__ Integer_T                    string_width;
 __EXTERN__ StrNumber_T                  str_num;
 __EXTERN__ StrNumber_T                  str_ptr;
-__EXTERN__ BufType_T                    sv_buffer;
 __EXTERN__ BufPointer_T                 sv_ptr1;
 __EXTERN__ BufPointer_T                 sv_ptr2;
 
@@ -360,20 +349,10 @@ __EXTERN__ Integer_T                    total_ex_count;
 __EXTERN__ AlphaFile_T                  aux_file[AUX_STACK_SIZE + 1];
 __EXTERN__ StrNumber_T                  aux_list[AUX_STACK_SIZE + 1];
 __EXTERN__ Integer_T                    aux_ln_stack[AUX_STACK_SIZE + 1];
-__EXTERN__ AlphaFile_T                  bib_file[MAX_BIB_FILES + 1];
-__EXTERN__ StrNumber_T                  bib_list[MAX_BIB_FILES + 1];
 __EXTERN__ Integer_T                    char_width[LAST_ASCII_CHAR + 1];
-__EXTERN__ Integer_T                    glb_str_end[MAX_GLOB_STRS];
-__EXTERN__ StrNumber_T                  glb_str_ptr[MAX_GLOB_STRS];
 __EXTERN__ IDType_T                     id_class[LAST_ASCII_CHAR + 1];
 __EXTERN__ LexType_T                    lex_class[LAST_ASCII_CHAR + 1];
-__EXTERN__ Integer_T                    lit_stack[LIT_STK_SIZE + 1];
-__EXTERN__ StkType_T                    lit_stk_type[LIT_STK_SIZE + 1];
-__EXTERN__ ASCIICode_T                  name_sep_char[BUF_SIZE + 1];
-__EXTERN__ BufPointer_T                 name_tok[BUF_SIZE + 1];
-__EXTERN__ char                         name_of_file[FILE_NAME_SIZE + 1];
-__EXTERN__ StrNumber_T                  s_preamble[MAX_BIB_FILES + 1];
-__EXTERN__ char                         xchr[LAST_ASCII_CHAR + 1];
+__EXTERN__ unsigned char                xchr[LAST_ASCII_CHAR + 1];
 __EXTERN__ ASCIICode_T                  xord[LAST_TEXT_CHAR + 1];
 
 #ifdef SUPPORT_8BIT
@@ -406,20 +385,34 @@ __EXTERN__ int 			        c8order[LAST_TEXT_CHAR + 1];
 ** DYNAMICALLY ALLOCATED GLOBAL ARRAYS DECLARED HERE
 **----------------------------------------------------------------------------
 */
+__EXTERN__ AlphaFile_T                 *bib_file;
+__EXTERN__ StrNumber_T                 *bib_list;
+__EXTERN__ ASCIICode_T                 *buffer;
 __EXTERN__ StrNumber_T                 *cite_info;
 __EXTERN__ StrNumber_T                 *cite_list;
 __EXTERN__ Boolean_T                   *entry_exists;
 __EXTERN__ Integer_T                   *entry_ints;
 __EXTERN__ ASCIICode_T                 *entry_strs;
+__EXTERN__ ASCIICode_T                 *ex_buf;
 __EXTERN__ StrNumber_T                 *field_info;
 __EXTERN__ FnClass_T                   *fn_type;
-__EXTERN__ ASCIICode_T                 *global_strs[MAX_GLOB_STRS + 1];
+__EXTERN__ Integer_T                   *glb_str_end;
+__EXTERN__ StrNumber_T                 *glb_str_ptr;
+__EXTERN__ ASCIICode_T                 *global_strs;
 __EXTERN__ StrIlk_T                    *hash_ilk;
 __EXTERN__ HashPointer_T               *hash_next;
 __EXTERN__ StrNumber_T                 *hash_text;
 __EXTERN__ Integer_T                   *ilk_info;
+__EXTERN__ Integer_T                   *lit_stack;
+__EXTERN__ StkType_T                   *lit_stk_type;
+__EXTERN__ unsigned char               *name_of_file;
+__EXTERN__ ASCIICode_T                 *name_sep_char;
+__EXTERN__ BufPointer_T                *name_tok;
+__EXTERN__ ASCIICode_T                 *out_buf;
+__EXTERN__ StrNumber_T                 *s_preamble;
 __EXTERN__ ASCIICode_T                 *str_pool;
 __EXTERN__ PoolPointer_T               *str_start;
+__EXTERN__ ASCIICode_T                 *sv_buffer;
 __EXTERN__ HashPtr2_T                  *type_list;
 __EXTERN__ HashPtr2_T                  *wiz_functions;
 
@@ -438,14 +431,8 @@ __EXTERN__ Boolean_T                    Flag_huge;
 __EXTERN__ Boolean_T                    Flag_stats;
 __EXTERN__ Boolean_T                    Flag_trace;
 __EXTERN__ Boolean_T                    Flag_wolfgang;
-__EXTERN__ Integer_T                    M_cites;
-__EXTERN__ Integer_T                    M_entints;
-__EXTERN__ Integer_T                    M_entstrs;
-__EXTERN__ Integer_T                    M_fields;
 __EXTERN__ Integer_T                    M_min_crossrefs;
-__EXTERN__ Integer_T                    M_pool;
 __EXTERN__ Integer_T                    M_strings;
-__EXTERN__ Integer_T                    M_wiz_fn_space;
 __EXTERN__ char                        *Str_auxfile;
 __EXTERN__ char                        *Str_csfile;
 
@@ -457,12 +444,16 @@ __EXTERN__ char                        *Str_csfile;
 ** now be set dynamically from the command line.
 **----------------------------------------------------------------------------
 */
+__EXTERN__ Integer_T                    Buf_Size;
+__EXTERN__ Integer_T                    Ent_Str_Size;
+__EXTERN__ Integer_T                    Glob_Str_Size;
 __EXTERN__ Integer_T                    Hash_Prime;
 __EXTERN__ Integer_T                    Hash_Size;
+__EXTERN__ Integer_T                    Lit_Stk_Size;
+__EXTERN__ Integer_T                    Max_Bib_Files;
 __EXTERN__ Integer_T                    Max_Cites;
-__EXTERN__ Integer_T                    Max_Ent_Ints;
-__EXTERN__ Integer_T                    Max_Ent_Strs;
 __EXTERN__ Integer_T                    Max_Fields;
+__EXTERN__ Integer_T                    Max_Glob_Strs;
 __EXTERN__ Integer_T                    Max_Strings;
 __EXTERN__ Integer_T                    Min_Crossrefs;
 __EXTERN__ Integer_T                    Pool_Size;

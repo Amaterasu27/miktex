@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: bibtex-4.c,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:47:30 $
 **
 **  DESCRIPTION
 **
@@ -107,9 +107,6 @@
 **  CHANGE LOG
 **
 **      $Log: bibtex-4.c,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:47:30  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -125,7 +122,10 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: bibtex-4.c,v 1.2 2005/09/07 14:33:13 csc Exp $";
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -1314,10 +1314,10 @@ BEGIN
 	    ent_chr_ptr = 0;
 	    sp_ptr = str_start[pop_lit2];
 	    sp_xptr1 = str_start[pop_lit2 + 1];
-	    if ((sp_xptr1 - sp_ptr) > ENT_STR_SIZE)
+	    if ((sp_xptr1 - sp_ptr) > Ent_Str_Size)
 	    BEGIN
-	      BST_STRING_SIZE_EXCEEDED (ENT_STR_SIZE, "%ld, the entry");
-	      sp_xptr1 = sp_ptr + ENT_STR_SIZE;
+	      BST_STRING_SIZE_EXCEEDED (Ent_Str_Size, ", the entry");
+	      sp_xptr1 = sp_ptr + Ent_Str_Size;
 	    END
 	    while (sp_ptr < sp_xptr1)
 	    BEGIN
@@ -1376,14 +1376,14 @@ BEGIN
 	      glob_chr_ptr = 0;
 	      sp_ptr = str_start[pop_lit2];
 	      sp_end = str_start[pop_lit2 + 1];
-	      if ((sp_end - sp_ptr) > GLOB_STR_SIZE)
+	      if ((sp_end - sp_ptr) > Glob_Str_Size)
 	      BEGIN
-		BST_STRING_SIZE_EXCEEDED (GLOB_STR_SIZE, "%ld, the global");
-		sp_end = sp_ptr + GLOB_STR_SIZE;
+		BST_STRING_SIZE_EXCEEDED (Glob_Str_Size, ", the global");
+		sp_end = sp_ptr + Glob_Str_Size;
 	      END
 	      while (sp_ptr < sp_end)
 	      BEGIN
-		global_strs[str_glb_ptr][glob_chr_ptr] = str_pool[sp_ptr];
+		GLOBAL_STRS(str_glb_ptr, glob_chr_ptr) = str_pool[sp_ptr];
 		INCR (glob_chr_ptr);
 		INCR (sp_ptr);
 	      END
@@ -1994,6 +1994,7 @@ BEGIN
         sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
         sp_ptr = sp_end - pop_lit1;
       END
+      STR_ROOM (sp_end - sp_ptr);
       while (sp_ptr < sp_end)
       BEGIN
         APPEND_CHAR (str_pool[sp_ptr]);
@@ -2250,6 +2251,7 @@ BEGIN
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 445 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
+    STR_ROOM (sp_brace_level + sp_end - sp_ptr);
     if (pop_lit2 >= cmd_str_ptr)
     BEGIN
       pool_ptr = sp_end;

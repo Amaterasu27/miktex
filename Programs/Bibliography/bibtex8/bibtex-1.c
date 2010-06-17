@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: bibtex-1.c,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:47:30 $
 **
 **  DESCRIPTION
 **
@@ -119,9 +119,6 @@
 **  CHANGE LOG
 **
 **      $Log: bibtex-1.c,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:47:30  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -137,7 +134,10 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: bibtex-1.c,v 1.2 2005/09/07 14:33:13 csc Exp $";
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -157,36 +157,9 @@ static char *rcsid = "$Id: bibtex-1.c,v 1.2 2005/09/07 14:33:13 csc Exp $";
  * of the filename.  It also sets the global variable |name_length| to the
  * appropriate value.
  *
- * NOTE: because C arrays start at index 0, not 1, the subscripts of array
- *	 |name_of_file| are generally 1 less than those in the WEB source.
+ * REMOVED: |add_area|.
  ***************************************************************************/
-void          add_area (StrNumber_T area)
-BEGIN
-  PoolPointer_T       p_ptr;
 
-  if ((name_length + LENGTH (area)) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT ("File=");
-    PRINT_POOL_STR (area);
-    PRINT2 ("%s,", name_of_file);
-    file_nm_size_overflow ();
-  END
-  name_ptr = name_length - 1;
-  while (name_ptr >= 0)
-  BEGIN
-    name_of_file[name_ptr + LENGTH (area)] = name_of_file[name_ptr];
-    DECR (name_ptr);
-  END
-  name_ptr = 0;
-  p_ptr = str_start[area];
-  while (p_ptr < str_start[area + 1])
-  BEGIN
-    name_of_file[name_ptr] = CHR (str_pool[p_ptr]);
-    INCR (name_ptr);
-    INCR (p_ptr);
-  END
-  name_length = name_length + LENGTH (area);
-END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  61 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
@@ -203,7 +176,7 @@ void          add_buf_pool (StrNumber_T p_str)
 BEGIN
   p_ptr1 = str_start[p_str];
   p_ptr2 = str_start[p_str + 1];
-  if ((ex_buf_length + (p_ptr2 - p_ptr1)) > BUF_SIZE)
+  if ((ex_buf_length + (p_ptr2 - p_ptr1)) > Buf_Size)
   BEGIN
     buffer_overflow ();
   END
@@ -231,7 +204,7 @@ END
 void          add_database_cite (CiteNumber_T *new_cite)
 BEGIN
   check_cite_overflow (*new_cite);
-  check_field_overflow (num_fields * (*new_cite));
+  check_field_overflow (num_fields * (*new_cite + 1));
   cite_list[*new_cite] = hash_text[cite_loc];
   ilk_info[cite_loc] = *new_cite;
   ilk_info[lc_cite_loc] = cite_loc;
@@ -256,13 +229,6 @@ void          add_extension (StrNumber_T ext)
 BEGIN
   PoolPointer_T       p_ptr;
 
-  if ((name_length + LENGTH (ext)) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT2 ("File=%s, extension=", name_of_file);
-    PRINT_POOL_STR (ext);
-    PRINT_LN (",");
-    file_nm_size_overflow ();
-  END
   name_ptr = name_length;
   p_ptr = str_start[ext];
   while (p_ptr < str_start[ext + 1])
@@ -272,12 +238,7 @@ BEGIN
     INCR (p_ptr);
   END
   name_length = name_length + LENGTH (ext);
-  name_ptr = name_length;
-  while (name_ptr < FILE_NAME_SIZE)
-  BEGIN
-    name_of_file[name_ptr] = ' ';
-    INCR (name_ptr);
-  END
+  name_of_file[name_length] = 0;
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  60 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -292,20 +253,21 @@ END
  * length of the current string in |out_buf|, and thus also gives the
  * location for the next character.  If there are enough characters
  * present in the output buffer, it writes one or more lines out to the
- * .bbl file.  It may break a line at any |white_space| character it
- * likes, but if it does, it will add two |space|s to the next output
- * line.
+ * .bbl file.  It breaks a line only at a |white_space| character,
+ * and when it does, it adds two |space|s to the next output line.
  ***************************************************************************/
 void          add_out_pool (StrNumber_T p_str)
 BEGIN
   BufPointer_T      break_ptr;
   BufPointer_T      end_ptr;
+  Boolean_T         break_pt_found;
+  Boolean_T         unbreakable_tail;
 
   p_ptr1 = str_start[p_str];
   p_ptr2 = str_start[p_str + 1];
-  if ((out_buf_length + (p_ptr2 - p_ptr1)) > BUF_SIZE)
+  if ((out_buf_length + (p_ptr2 - p_ptr1)) > Buf_Size)
   BEGIN
-    BIBTEX_OVERFLOW ("output buffer size ", BUF_SIZE);
+    buffer_overflow ();
   END
   out_buf_ptr = out_buf_length;
   while (p_ptr1 < p_ptr2)
@@ -315,7 +277,8 @@ BEGIN
     INCR (out_buf_ptr);
   END
   out_buf_length = out_buf_ptr;
-  while (out_buf_length > MAX_PRINT_LINE)
+  unbreakable_tail = FALSE;
+  while ((out_buf_length > MAX_PRINT_LINE) && ! unbreakable_tail)
 
 /***************************************************************************
  * WEB section number:	 323
@@ -324,11 +287,15 @@ BEGIN
  * backwards from |out_buf[max_print_line]| until
  * |out_buf[min_print_line]|; we break at the |white_space| and indent
  * the next line two |space|s.  The next module handles things when
- * there's no |white_space| character to break at.
+ * there's no |white_space| character to break at.  (It seems that the
+ * annoyances to the average user of a warning message when there's an
+ * output line longer than |max_print_line| outweigh the benefits, so we
+ * don't issue such warnings in the current code.)
  ***************************************************************************/
   BEGIN
     end_ptr = out_buf_length;
     out_buf_ptr = MAX_PRINT_LINE;
+    break_pt_found = FALSE;
     while ((lex_class[out_buf[out_buf_ptr]] != WHITE_SPACE)
         && (out_buf_ptr >= MIN_PRINT_LINE))
     BEGIN
@@ -339,30 +306,56 @@ BEGIN
 /***************************************************************************
  * WEB section number:	 324
  * ~~~~~~~~~~~~~~~~~~~
- * If there's no |white_space| character to break the line at, we break
- * it at |out_buf[max_print_line-1]|, append a |comment| character, and
- * don't indent the next line.
+ * If there's no |white_space| character up through
+ * |out_buf[max_print_line]|, we instead break the line at the first
+ * following |white_space| character, if one exists.  And if, starting
+ * with that |white_space| character, there are multiple consecutive
+ * |white_space| characters, |out_buf_ptr| points to the last of them.
+ * If no |white_space| character exists, we haven't found a viable break
+ * point, so we don't break the line (yet).
  ***************************************************************************/
     BEGIN
-      out_buf[end_ptr] = out_buf[MAX_PRINT_LINE - 1];
-      out_buf[MAX_PRINT_LINE - 1] = COMMENT;
-      out_buf_length = MAX_PRINT_LINE;
-      break_ptr = out_buf_length - 1;
-      output_bbl_line ();
-      out_buf[MAX_PRINT_LINE - 1] = out_buf[end_ptr];
-      out_buf_ptr = 0;
-      tmp_ptr = break_ptr;
-      while (tmp_ptr < end_ptr)
+      out_buf_ptr = MAX_PRINT_LINE + 1;
+      while (out_buf_ptr < end_ptr)
       BEGIN
-        out_buf[out_buf_ptr] = out_buf[tmp_ptr];
-        INCR (out_buf_ptr);
-        INCR (tmp_ptr);
+        if (lex_class[out_buf[out_buf_ptr]] != WHITE_SPACE)
+        BEGIN
+          INCR (out_buf_ptr);
+        END
+        else
+        BEGIN
+          goto Loop1_Exit;
+        END
       END
-      out_buf_length = end_ptr - break_ptr;
+Loop1_Exit:
+      if (out_buf_ptr == end_ptr)
+      BEGIN
+        unbreakable_tail = TRUE;
+      END
+      else
+      BEGIN
+        break_pt_found = TRUE;
+        while (out_buf_ptr + 1 < end_ptr)
+        BEGIN
+          if (lex_class[out_buf[out_buf_ptr + 1]] == WHITE_SPACE)
+          BEGIN
+            INCR (out_buf_ptr);
+          END
+          else
+          BEGIN
+            goto Loop2_Exit;
+          END
+        END
+Loop2_Exit: DO_NOTHING;
+      END
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 324 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
     else
+    BEGIN
+      break_pt_found = TRUE;
+    END
+    if (break_pt_found)
     BEGIN
       out_buf_length = out_buf_ptr;
       break_ptr = out_buf_length + 1;
@@ -470,9 +463,14 @@ BEGIN
  * the |s_bib_extension| string, the resulting file name can be opened.
  ***************************************************************************/
     BEGIN
-      if (bib_ptr == MAX_BIB_FILES)
+      if (bib_ptr == Max_Bib_Files)
       BEGIN
-        BIBTEX_OVERFLOW ("number of database files ", MAX_BIB_FILES);
+        BIB_XRETALLOC_NOSET ("bib_file", bib_file, AlphaFile_T,
+                             Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+        BIB_XRETALLOC_NOSET ("bib_list", bib_list, StrNumber_T,
+                             Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+        BIB_XRETALLOC ("s_preamble", s_preamble, StrNumber_T,
+                       Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
       END
       CUR_BIB_STR = hash_text[str_lookup (buffer, buf_ptr1, TOKEN_LEN,
   					  BIB_FILE_ILK, DO_INSERT)];
@@ -484,8 +482,6 @@ BEGIN
       add_extension (s_bib_extension);
       if ( ! a_open_in (&CUR_BIB_FILE, BIB_FILE_SEARCH_PATH))
       BEGIN
-        add_area (s_bib_area);
-	if ( ! a_open_in (&CUR_BIB_FILE, BIB_FILE_SEARCH_PATH))
         BEGIN
           OPEN_BIBDATA_AUX_ERR ("I couldn't open database file ");
           perror ("\nReason");
@@ -563,8 +559,6 @@ BEGIN
     add_extension (s_bst_extension);
     if ( ! a_open_in (&bst_file, BST_FILE_SEARCH_PATH))
     BEGIN
-      add_area (s_bst_area);
-      if ( ! a_open_in (&bst_file, BST_FILE_SEARCH_PATH))
       BEGIN
 	PRINT ("I couldn't open style file ");
 	print_bst_name ();
@@ -942,12 +936,7 @@ BEGIN
  ***************************************************************************/
     BEGIN
       start_name (CUR_AUX_STR);
-      name_ptr = name_length;
-      while (name_ptr < FILE_NAME_SIZE)
-      BEGIN
-	name_of_file[name_ptr] = ' ';
-	INCR (name_ptr);
-      END
+      name_of_file[name_length] = 0;
       if ( ! a_open_in (&CUR_AUX_FILE, AUX_FILE_SEARCH_PATH))
       BEGIN
 	PRINT ("I couldn't open auxiliary file ");
@@ -1089,7 +1078,7 @@ END
  ***************************************************************************/
 void          bib_field_too_long_print (void)
 BEGIN
-  BIB_ERR2 ("Your field is more than %ld characters",  (long) BUF_SIZE);
+  BIB_ERR2 ("Your field is more than %ld characters",  (long) Buf_Size);
 
 Exit_Label: DO_NOTHING;
 END
@@ -2312,16 +2301,13 @@ BEGIN
  * value to which all integers are initialized.
  ***************************************************************************/
       BEGIN
-	if ((num_ent_ints * num_cites) > Max_Ent_Ints)
+	int_ent_ptr = (num_ent_ints + 1) * (num_cites + 1);
+	entry_ints = (Integer_T *) mymalloc ((unsigned long) sizeof (Integer_T)
+	    * (unsigned long) int_ent_ptr, "entry_ints");
+	while (int_ent_ptr > 0)
 	BEGIN
-	  PRINT2 ("%ld: ", (long) (num_ent_ints * num_cites));
-	  BIBTEX_OVERFLOW ("total number of integer entry-variables ", Max_Ent_Ints);
-	END
-	int_ent_ptr = 0;
-	while (int_ent_ptr < (num_ent_ints * num_cites))
-	BEGIN
+	  DECR (int_ent_ptr);
 	  entry_ints[int_ent_ptr] = 0;
-	  INCR (int_ent_ptr);
 	END
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 287 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2333,16 +2319,14 @@ BEGIN
  * null string, the value to which all strings are initialized.
  ***************************************************************************/
       BEGIN
-	if ((num_ent_strs * num_cites) > Max_Ent_Strs)
+	str_ent_ptr = (num_ent_strs + 1) * (num_cites + 1);
+	entry_strs = (ASCIICode_T *) mymalloc ((unsigned long) sizeof (ASCIICode_T)
+	    * (unsigned long) (Ent_Str_Size + 1)
+	    * (unsigned long) str_ent_ptr, "entry_strs");
+	while (str_ent_ptr > 0)
 	BEGIN
-	  PRINT2 ("%ld: ", (long) (num_ent_strs * num_cites));
-	  BIBTEX_OVERFLOW ("total number of string entry-variables ", Max_Ent_Strs);
-	END
-	str_ent_ptr = 0;
-	while (str_ent_ptr < (num_ent_strs * num_cites))
-	BEGIN
+	  DECR (str_ent_ptr);
 	  ENTRY_STRS(str_ent_ptr,0) = END_OF_STRING;
-	  INCR (str_ent_ptr);
 	END
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 288 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2577,9 +2561,21 @@ BEGIN
       CHECK_FOR_ALREADY_SEEN_FUNCTION (fn_loc);
       fn_type[fn_loc] = STR_GLOBAL_VAR;
       FN_INFO[fn_loc] = num_glb_strs;
-      if (num_glb_strs == MAX_GLOB_STRS)
+      if (num_glb_strs == Max_Glob_Strs)
       BEGIN
-	BIBTEX_OVERFLOW ("number of string global-variables %ld", MAX_GLOB_STRS);
+        BIB_XRETALLOC_NOSET ("glb_str_ptr", glb_str_ptr, StrNumber_T,
+                             Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        BIB_XRETALLOC_STRING ("global_strs", global_strs, Glob_Str_Size,
+                              Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        BIB_XRETALLOC ("glb_str_end", glb_str_end, Integer_T,
+                       Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        str_glb_ptr = num_glb_strs;
+        while (str_glb_ptr < Max_Glob_Strs)
+        BEGIN
+          glb_str_ptr[str_glb_ptr] = 0;
+          glb_str_end[str_glb_ptr] = 0;
+          INCR (str_glb_ptr);
+        END
       END
       INCR (num_glb_strs);
     END
@@ -2619,7 +2615,18 @@ END
  ***************************************************************************/
 void          buffer_overflow (void)
 BEGIN
-  BIBTEX_OVERFLOW ("buffer size ", BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("buffer", buffer, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("ex_buf", ex_buf, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("name_sep_char", name_sep_char, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("name_tok", name_tok, BufPointer_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("out_buf", out_buf, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC ("sv_buffer", sv_buffer, ASCIICode_T,
+                 Buf_Size, Buf_Size + BUF_SIZE);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  46 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2701,9 +2708,20 @@ void          check_cite_overflow (CiteNumber_T last_cite)
 BEGIN
   if (last_cite == Max_Cites)
   BEGIN
-    PRINT_POOL_STR (hash_text[cite_loc]);
-    PRINT_LN (" is the key:");
-    BIBTEX_OVERFLOW ("number of cite keys ", Max_Cites);
+    BIB_XRETALLOC_NOSET ("cite_info", cite_info, StrNumber_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ("cite_list", cite_list, StrNumber_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ("entry_exists", entry_exists, Boolean_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC ("type_list", type_list, HashPtr2_T,
+                   Max_Cites, Max_Cites + MAX_CITES);
+    while (last_cite < Max_Cites)
+    BEGIN
+      type_list[last_cite] = EMPTY;
+      cite_info[last_cite] = ANY_VALUE;
+      INCR (last_cite);
+    END
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 138 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2752,8 +2770,15 @@ void          check_field_overflow (Integer_T total_fields)
 BEGIN
   if (total_fields > Max_Fields)
   BEGIN
-    PRINT_LN2 ("%ld fields:", (long) total_fields);
-    BIBTEX_OVERFLOW ("total number of fields ", Max_Fields);
+    field_ptr = Max_Fields;
+    BIB_XRETALLOC ("field_info", field_info, StrNumber_T,
+                   Max_Fields, total_fields + MAX_FIELDS);
+    /* Initialize to |missing|.  */
+    while (field_ptr < Max_Fields)
+    BEGIN
+      field_info[field_ptr] = MISSING;
+      INCR (field_ptr);
+    END
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 226 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/

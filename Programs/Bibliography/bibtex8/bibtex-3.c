@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: bibtex-3.c,v $
-**      $Revision: 1.2 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -113,9 +113,6 @@
 **  CHANGE LOG
 **
 **      $Log: bibtex-3.c,v $
-**      Revision 1.2  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -134,7 +131,10 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: bibtex-3.c,v 1.2 2005/09/07 14:33:13 csc Exp $";
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -177,10 +177,6 @@ BEGIN
   s_bst_extension = hash_text[pre_def_loc];
   pre_define (".bib        ", 4, FILE_EXT_ILK);
   s_bib_extension = hash_text[pre_def_loc];
-  pre_define ("            ", 0, FILE_AREA_ILK);
-  s_bst_area = hash_text[pre_def_loc];
-  pre_define ("            ", 0, FILE_AREA_ILK);
-  s_bib_area = hash_text[pre_def_loc];
 
 /***************************************************************************
  * WEB section number:	79
@@ -355,10 +351,10 @@ BEGIN
   INCR (num_ent_strs);
   pre_define ("entry.max$  ", 10, BST_FN_ILK);
   fn_type[pre_def_loc] = INT_GLOBAL_VAR;
-  FN_INFO[pre_def_loc] = ENT_STR_SIZE;
+  FN_INFO[pre_def_loc] = Ent_Str_Size;
   pre_define ("global.max$ ", 11, BST_FN_ILK);
   fn_type[pre_def_loc] = INT_GLOBAL_VAR;
-  FN_INFO[pre_def_loc] = GLOB_STR_SIZE;
+  FN_INFO[pre_def_loc] = Glob_Str_Size;
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 340 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 END
@@ -871,9 +867,12 @@ BEGIN
   }                             /* end if (Flag_trace) */
 #endif                      			/* TRACE */
 
-  if (lit_stk_ptr == LIT_STK_SIZE)
+  if (lit_stk_ptr == Lit_Stk_Size)
   BEGIN
-    BIBTEX_OVERFLOW ("literal-stack size ", LIT_STK_SIZE);
+    BIB_XRETALLOC_NOSET ("lit_stack", lit_stack, Integer_T,
+                         Lit_Stk_Size, Lit_Stk_Size + LIT_STK_SIZE);
+    BIB_XRETALLOC ("lit_stk_type", lit_stk_type, StkType_T,
+                   Lit_Stk_Size, Lit_Stk_Size + LIT_STK_SIZE);
   END
   INCR (lit_stk_ptr);
 END
@@ -1763,6 +1762,22 @@ END
 
 
 /***************************************************************************
+ * WEB section number:  188
+ * ~~~~~~~~~~~~~~~~~~~
+ * This macro inserts a hash-table location (or one of the two
+ * special markers |quote_next_fn| and |end_of_def|) into the
+ * |singl_function| array, which will later be copied into the
+ * |wiz_functions| array.
+ ***************************************************************************/
+#define INSERT_FN_LOC(X)            {\
+    singl_function[single_ptr] = (X);\
+    if (single_ptr == Single_Fn_Space)\
+        {BIB_XRETALLOC ("singl_function", singl_function, HashPtr2_T,\
+                        Single_Fn_Space, Single_Fn_Space + Single_Fn_Space);}\
+    INCR (single_ptr);}
+
+
+/***************************************************************************
  * WEB section number:	 187
  * ~~~~~~~~~~~~~~~~~~~
  * This recursive function reads and stores the list of functions
@@ -1772,12 +1787,16 @@ END
 void          scan_fn_def (HashLoc_T fn_hash_loc)
 BEGIN
   typedef Integer_T     FnDefLoc_T;
-  HashPtr2_T		singl_function[SINGLE_FN_SPACE + 1];
+  HashPtr2_T	*singl_function;
   FnDefLoc_T		single_ptr;
   FnDefLoc_T		copy_ptr;
   BufPointer_T		end_of_num;
   HashLoc_T		impl_fn_loc;
+  Integer_T             Single_Fn_Space;
 
+  Single_Fn_Space = SINGLE_FN_SPACE;
+  singl_function = (HashPtr2_T *) mymalloc ((Single_Fn_Space + 1)
+      * (unsigned long) sizeof (HashPtr2_T), "singl_function");
   EAT_BST_WHITE_AND_EOF_CHECK ("function");
   single_ptr = 0;
   while (SCAN_CHAR != RIGHT_BRACE)
@@ -2058,10 +2077,10 @@ Next_Token_Label:
  ***************************************************************************/
   BEGIN
       INSERT_FN_LOC (END_OF_DEF);
-      if ((single_ptr + wiz_def_ptr) > Wiz_Fn_Space)
+      while ((single_ptr + wiz_def_ptr) > Wiz_Fn_Space)
       BEGIN
-	PRINT2 ("%ld: ", (long) (single_ptr + wiz_def_ptr));
-	BIBTEX_OVERFLOW ("wizard-defined function space ", Wiz_Fn_Space);
+	BIB_XRETALLOC ("wiz_functions", wiz_functions, HashPtr2_T,
+                       Wiz_Fn_Space, Wiz_Fn_Space + WIZ_FN_SPACE);
       END
       FN_INFO[fn_hash_loc] = wiz_def_ptr;
       copy_ptr = 0;
@@ -2075,7 +2094,7 @@ Next_Token_Label:
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 200 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
   INCR (buf_ptr2);
-Exit_Label: DO_NOTHING;
+Exit_Label: free (singl_function);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 187 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2243,23 +2262,6 @@ END
 
 
 /***************************************************************************
- * WEB section number:	 188
- * ~~~~~~~~~~~~~~~~~~~
- * This macro inserts a hash-table location (or one of the two
- * special markers |quote_next_fn| and |end_of_def|) into the
- * |singl_function| array, which will later be copied into the
- * |wiz_functions| array.
- ***************************************************************************/
-void          singl_fn_overflow (void)
-BEGIN
-  BIBTEX_OVERFLOW ("single function space ", SINGLE_FN_SPACE);
-END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 188 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-
-
-
-/***************************************************************************
  * WEB section number:	 186
  * ~~~~~~~~~~~~~~~~~~~
  * And another.
@@ -2353,13 +2355,8 @@ void          start_name (StrNumber_T file_name)
 BEGIN
   PoolPointer_T       p_ptr;
 
-  if (LENGTH (file_name) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT ("File=");
-    PRINT_POOL_STR (file_name);
-    PRINT_LN (",");
-    file_nm_size_overflow ();
-  END
+  free (name_of_file);
+  name_of_file = (unsigned char *) mymalloc (LENGTH (file_name) + 5, "name_of_file");
   name_ptr = 0;
   p_ptr = str_start[file_name];
   while (p_ptr < str_start[file_name + 1])
@@ -2369,6 +2366,7 @@ BEGIN
     INCR (p_ptr);
   END
   name_length = LENGTH (file_name);
+  name_of_file[name_length] = 0;
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  58 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2506,6 +2504,7 @@ BEGIN
   p = h + HASH_BASE;
   hash_found = FALSE;
   old_string = FALSE;
+  str_num = 0;	/* avoid uninitialized warning */
   LOOP
   BEGIN
 

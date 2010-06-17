@@ -5,8 +5,8 @@
 **  MODULE
 **
 **      $RCSfile: sysdep.h,v $
-**      $Revision: 1.3 $
-**      $Date: 2005/09/07 14:33:13 $
+**      $Revision: 3.71 $
+**      $Date: 1996/08/18 20:37:06 $
 **
 **  DESCRIPTION
 **
@@ -80,9 +80,6 @@
 **  CHANGE LOG
 **
 **      $Log: sysdep.h,v $
-**      Revision 1.3  2005/09/07 14:33:13  csc
-**      *** empty log message ***
-**
 **      Revision 3.71  1996/08/18  20:37:06  kempson
 **      Official release 3.71 (see HISTORY file for details).
 **
@@ -135,6 +132,8 @@
 #ifdef WIN32
 # ifdef _MSC_VER
 #  define IMPLEMENTATION            "Microsoft(R) C/C++ for Win32"
+# elif defined(__MINGW32__)
+#  define IMPLEMENTATION            "MinGW32 C/C++ for Win32"
 # else
 #  define IMPLEMENTATION            "Unknown C/C++ for Win32"
 # endif				/* _MSC_VER */
@@ -157,7 +156,9 @@
 #endif				/* OS2 */
 
 #ifdef  UNIX
-# define IMPLEMENTATION             "C for Unix"
+# ifndef IMPLEMENTATION
+#  define IMPLEMENTATION            "C for Unix"
+# endif
 # define PATH_DELIM                 ':'
 #endif				/* UNIX */
 
@@ -207,8 +208,12 @@
 */
 #define BEGIN                       {
 #define END                         }
-#define TRUE                        1
-#define FALSE                       0
+#ifndef TRUE
+# define TRUE                       1
+#endif
+#ifndef FALSE
+# define FALSE                      0
+#endif
 #define REPEAT                      do
 #define UNTIL(X)                    while ( ! (X))
 #define DIV                         /
