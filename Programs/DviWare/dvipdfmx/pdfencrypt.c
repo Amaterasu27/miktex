@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.13 2009/03/27 23:47:01 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.14 2010/02/07 12:58:48 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -36,7 +36,6 @@
 #include <unistd.h>
 #endif /* WIN32 */
 
-#include "system.h"
 #include "system.h"
 #include "mem.h"
 #include "error.h"
@@ -80,8 +79,8 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
-#define PRODUCER "%s-%s, Copyright \251 2002 by Jin-Hwan Cho and Shunsaku Hirata"
-static void compute_id_string (char *dviname, char *pdfname)
+#define PRODUCER "%s-%s, Copyright \251 2002-2010 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
+void pdf_enc_compute_id_string (char *dviname, char *pdfname)
 {
   char *date_string, *producer;
   time_t current_time;
@@ -324,7 +323,7 @@ static void compute_user_password (void)
     break;
   case 3:
     MD5_init(&md5_ctx);
-    MD5_write(&md5_ctx, (unsigned char *)padding_string, MAX_STR_LEN);
+    MD5_write(&md5_ctx, padding_string, MAX_STR_LEN);
 
     MD5_write(&md5_ctx, id_string, MAX_KEY_LEN);
     MD5_final(md5_buf, &md5_ctx);
@@ -395,7 +394,6 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfn
   if (revision == 3)
     permission |= ~0xFFFL;
 
-  compute_id_string(dviname, pdfname);
   compute_owner_password();
   compute_user_password();
 }

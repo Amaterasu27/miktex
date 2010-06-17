@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.70 2009/05/06 06:07:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.72 2010/02/07 12:53:44 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -505,14 +505,20 @@ pdf_set_info (pdf_obj *object)
 }
 
 void
-pdf_set_encrypt (pdf_obj *encrypt, pdf_obj *id)
+pdf_set_id (pdf_obj *id)
+{
+  if (pdf_add_dict(trailer_dict, pdf_new_name("ID"), id)) {
+    ERROR ("ID already set!");
+  }
+}
+
+void
+pdf_set_encrypt (pdf_obj *encrypt)
 {
   if (pdf_add_dict(trailer_dict, pdf_new_name("Encrypt"), pdf_ref_obj(encrypt))) {
     ERROR("Encrypt object already set!");
   }
   encrypt->flags |= OBJ_NO_ENCRYPT;
-
-  pdf_add_dict(trailer_dict, pdf_new_name("ID"), id);
 }
 
 static
@@ -554,7 +560,7 @@ void pdf_out (FILE *file, const void *buffer, long length)
       pdf_output_line_position += length;
       /* "foo\nbar\n "... */
       if (length > 0 &&
-	((char *)buffer)[length-1] == '\n')
+	((const char *)buffer)[length-1] == '\n')
         pdf_output_line_position = 0;
     }
   }
@@ -2187,7 +2193,8 @@ find_xref (FILE *pdf_input_file)
   mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
 
   {
-    char *start, *end, *number;
+    const char *start, *end;
+    char *number;
 
     start = work_buffer;
     end   = start + strlen(work_buffer);
@@ -2219,7 +2226,7 @@ parse_trailer (pdf_file *pf)
     WARN("buffer:\n->%s<-\n", work_buffer);
     result = NULL;
   } else {
-    char *p = work_buffer + strlen("trailer");
+    const char *p = work_buffer + strlen("trailer");
     skip_white(&p, work_buffer + WORK_BUFFER_SIZE);
     result = parse_pdf_dict(&p, work_buffer + WORK_BUFFER_SIZE, pf);
   }
@@ -2279,7 +2286,8 @@ pdf_read_object (unsigned long obj_num, unsigned short obj_gen,
 		pdf_file *pf, long offset, long limit)
 {
   long     length;
-  char    *buffer, *p, *endptr;
+  char    *buffer;
+  const char *p, *endptr;
   pdf_obj *result;
 
   length = limit - offset;
@@ -2297,7 +2305,7 @@ pdf_read_object (unsigned long obj_num, unsigned short obj_gen,
 
   /* Check for obj_num and obj_gen */
   {
-    char         *q = p; /* <== p */
+    const char   *q = p; /* <== p */
     char         *sp;
     unsigned long n, g;
 
@@ -2356,7 +2364,8 @@ read_objstm (pdf_file *pf, unsigned long num)
   unsigned long offset = pf->xref_table[num].field2;
   unsigned short gen = pf->xref_table[num].field3;
   long limit = next_object_offset(pf, num), n, first, *header = NULL;
-  char *data, data1, *p, *q;
+  char *data = NULL, *q;
+  const char *p, *endptr;
   int i;
 
   pdf_obj *objstm, *dict, *type, *n_obj, *first_obj;
@@ -2399,13 +2408,13 @@ read_objstm (pdf_file *pf, unsigned long num)
   *(header++) = n;
   *(header++) = first;
 
-  data = (char *) pdf_stream_dataptr(objstm);
-
-  /* hack to avoid parsing beyond offset table */
-  data1 = data[first];
+  /* avoid parsing beyond offset table */
+  data = NEW(first + 1, char);
+  memcpy(data, pdf_stream_dataptr(objstm), first);
   data[first] = 0;
 
-  p = data;
+  p      = data;
+  endptr = p + first;
   i = 2*n;
   while (i--) {
     *(header++) = strtoul(p, &q, 10);
@@ -2413,17 +2422,19 @@ read_objstm (pdf_file *pf, unsigned long num)
       goto error;
     p = q;
   }
-  data[first] = data1;
 
   /* Any garbage after last entry? */
-  skip_white(&p, data+first);
-  if (p != data+first)
+  skip_white(&p, endptr);
+  if (p != endptr)
     goto error;
+  RELEASE(data);
   
   return pf->xref_table[num].direct = objstm;
 
  error:
   WARN("Cannot parse object stream.");
+  if (data)
+    RELEASE(data);
   if (objstm)
     pdf_release_obj(objstm);
   return NULL;
@@ -2461,7 +2472,7 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
     unsigned short index = pf->xref_table[obj_num].field3;
     pdf_obj *objstm;
     long *data, n, first, length;
-    char *p, *q;
+    const char *p, *q;
 
     if (objstm_num >= pf->num_obj ||
 	pf->xref_table[objstm_num].type != 1 ||
@@ -2477,7 +2488,7 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
       goto error;
 
     length = pdf_stream_length(objstm);
-    p = (char *) pdf_stream_dataptr(objstm) + first + data[2*index+1];
+    p = (const char *) pdf_stream_dataptr(objstm) + first + data[2*index+1];
     q = p + (index == n-1 ? length : first+data[2*index+3]);
     result = parse_pdf_object(&p, q, pf);
     if (!result)
@@ -2677,7 +2688,7 @@ parse_xrefstm_subsec (pdf_file *pf,
 static int
 parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 {
-  pdf_obj *xrefstm, *size_obj, *W_obj, *index;
+  pdf_obj *xrefstm, *size_obj, *W_obj, *index_obj;
   unsigned long size;
   long length;
   int W[3], i, wsum = 0;
@@ -2717,22 +2728,22 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 
   p = pdf_stream_dataptr(xrefstm);
 
-  index = pdf_lookup_dict(*trailer, "Index");
-  if (index) {
+  index_obj = pdf_lookup_dict(*trailer, "Index");
+  if (index_obj) {
     unsigned int index_len;
-    if (!PDF_OBJ_ARRAYTYPE(index) ||
-	((index_len = pdf_array_length(index)) % 2 ))
+    if (!PDF_OBJ_ARRAYTYPE(index_obj) ||
+	((index_len = pdf_array_length(index_obj)) % 2 ))
       goto error;
 
     i = 0;
     while (i < index_len) {
-      pdf_obj *first = pdf_get_array(index, i++);
-      pdf_obj *size  = pdf_get_array(index, i++);
+      pdf_obj *first = pdf_get_array(index_obj, i++);
+      size_obj  = pdf_get_array(index_obj, i++);
       if (!PDF_OBJ_NUMBERTYPE(first) ||
-	  !PDF_OBJ_NUMBERTYPE(size) ||
+	  !PDF_OBJ_NUMBERTYPE(size_obj) ||
 	  parse_xrefstm_subsec(pf, &p, &length, W, wsum,
 			       (long) pdf_number_value(first),
-			       (long) pdf_number_value(size)))
+			       (long) pdf_number_value(size_obj)))
 	goto error;
     }
   } else if (parse_xrefstm_subsec(pf, &p, &length, W, wsum, 0, size))
@@ -2883,7 +2894,7 @@ void
 pdf_files_init (void)
 {
   pdf_files = NEW(1, struct ht_table);
-  ht_init_table(pdf_files);
+  ht_init_table(pdf_files, (void (*)(void *)) pdf_file_free);
 }
 
 int
@@ -2949,10 +2960,10 @@ pdf_open (const char *ident, FILE *file)
 
     new_version = pdf_deref_obj(pdf_lookup_dict(pf->catalog, "Version"));
     if (new_version) {
-      unsigned char minor;
+      unsigned int minor;
 
       if (!PDF_OBJ_NAMETYPE(new_version) ||
-	  sscanf(pdf_name_value(new_version), "1.%hhu", &minor) != 1) {
+	  sscanf(pdf_name_value(new_version), "1.%u", &minor) != 1) {
 	pdf_release_obj(new_version);
 	WARN("Illegal Version entry in document catalog. Broken PDF file?");
 	goto error;
@@ -2985,28 +2996,19 @@ void
 pdf_files_close (void)
 {
   ASSERT(pdf_files);
-  ht_clear_table(pdf_files, (void (*)(void *)) pdf_file_free);
+  ht_clear_table(pdf_files);
   RELEASE(pdf_files);
 }
 
 static int
 check_for_pdf_version (FILE *file) 
 {
-#if defined(MIKTEX)
-  unsigned minor;
+  unsigned int minor;
 
   rewind(file);
 
   return (ungetc(fgetc(file), file) == '%' &&
 	  fscanf(file, "%%PDF-1.%u", &minor) == 1) ? minor : -1;
-#else
-  unsigned char minor;
-
-  rewind(file);
-
-  return (ungetc(fgetc(file), file) == '%' &&
-	  fscanf(file, "%%PDF-1.%hhu", &minor) == 1) ? minor : -1;
-#endif
 }
 
 int

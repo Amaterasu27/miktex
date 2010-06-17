@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.36 2008/05/17 04:18:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.37 2010/03/21 13:16:12 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -184,7 +184,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
 {
   int   cmap_id = -1, i;
   char *cmap_name;
-  char *append;
+  const char *append;
 
   if (!reg || !ord ||
       select < 0 || select > KNOWN_ENCODINGS_MAX)
@@ -195,7 +195,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
     return NULL;
 
   for (i = 0; cmap_id < 0 && i < 5; i++) {
-    append = (char *) known_encodings[select].pdfnames[i];
+    append = known_encodings[select].pdfnames[i];
     if (!append)
       break;
     cmap_name = NEW(strlen(reg) + strlen(ord) + strlen(append) + 3, char);
@@ -207,7 +207,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
     WARN("Could not find CID-to-Code mapping for \"%s-%s\".", reg, ord);
     WARN("I tried to load (one of) the following file(s):");
     for (i = 0; i < 5; i++) {
-      append = (char *) known_encodings[select].pdfnames[i];
+      append = known_encodings[select].pdfnames[i];
       if (!append)
 	break;
       MESG(" %s-%s-%s", reg, ord, append);
@@ -469,8 +469,15 @@ cid_to_code (CMap *cmap, CID cid)
     return (long) outbuf[0];
   else if (outbytesleft == 30)
     return (long) (outbuf[0] << 8|outbuf[1]);
-  else if (outbytesleft == 28)
-    return (long) (outbuf[0] << 24|outbuf[1] << 16|outbuf[2] << 8|outbuf[3]);
+  else if (outbytesleft == 28) { /* We assume the output encoding is UTF-16. */
+    CID hi, lo;
+    hi = outbuf[0] << 8|outbuf[1];
+    lo = outbuf[2] << 8|outbuf[3];
+    if (hi >= 0xd800 && hi <= 0xdbff && lo >= 0xdc00 && lo <= 0xdfff)
+      return (long) ((hi - 0xd800) * 0x400 + 0x10000 + lo - 0xdc00);
+    else
+      return (long) (hi << 16|lo);
+  }
 
   return 0;
 }

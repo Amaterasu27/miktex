@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.6 2009/04/26 21:23:29 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.7 2009/09/18 23:56:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -73,13 +73,30 @@ printable_key (const char *key, int keylen)
   return (char *) pkey;
 }
 
+static void CDECL
+hval_free (void *hval)
+{
+  struct obj_data *value;
+
+  value = (struct obj_data *) hval;
+
+  if (value->object) {
+    pdf_release_obj(value->object);
+    value->object     = NULL;
+  }
+
+  RELEASE(value);
+
+  return;
+}
+
 struct ht_table *
 pdf_new_name_tree (void)
 {
   struct ht_table *names;
 
   names = NEW(1, struct ht_table);
-  ht_init_table(names);
+  ht_init_table(names, hval_free);
 
   return names;
 }
@@ -108,23 +125,6 @@ check_objects_defined (struct ht_table *ht_tab)
   }
 }
 
-static void CDECL
-hval_free (void *hval)
-{
-  struct obj_data *value;
-
-  value = (struct obj_data *) hval;
-
-  if (value->object) {
-    pdf_release_obj(value->object);
-    value->object     = NULL;
-  }
-
-  RELEASE(value);
-
-  return;
-}
-
 void
 pdf_delete_name_tree (struct ht_table **names)
 {
@@ -132,7 +132,7 @@ pdf_delete_name_tree (struct ht_table **names)
 
   check_objects_defined(*names);
 
-  ht_clear_table(*names, hval_free);
+  ht_clear_table(*names);
   RELEASE(*names);
   *names = NULL;
 }
@@ -251,11 +251,11 @@ struct named_object
 static int CDECL
 cmp_key (const void *d1, const void *d2)
 {
-  struct named_object *sd1, *sd2;
+  const struct named_object *sd1, *sd2;
   int    keylen, cmp;
 
-  sd1 = (struct named_object *) d1;
-  sd2 = (struct named_object *) d2;
+  sd1 = (const struct named_object *) d1;
+  sd2 = (const struct named_object *) d2;
 
   if (!sd1->key)
     cmp = -1;

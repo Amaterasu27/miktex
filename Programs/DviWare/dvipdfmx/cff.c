@@ -24,7 +24,6 @@
 #include <string.h>
 
 #include "system.h"
-#include "system.h"
 #include "mem.h"
 #include "error.h"
 #include "mfileio.h"
@@ -499,7 +498,7 @@ char *cff_get_string (cff_font *cff, s_SID id)
   return result;
 }
 
-long cff_get_sid (cff_font *cff, char *str)
+long cff_get_sid (cff_font *cff, const char *str)
 {
   card16 i;
 

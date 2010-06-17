@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.77 2009/07/08 09:33:22 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.83 2010/03/28 06:03:57 chofchof Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2009 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -127,65 +127,75 @@ set_default_pdf_filename(void)
 }
 
 static void
+show_version (void)
+{
+  fprintf(stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
+  fprintf(stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
+  fprintf(stdout, "\nCopyright (C) 2002-2009 by the DVIPDFMx project team\n");
+  fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
+  fprintf(stdout, "it under the terms of the GNU General Public License as published by\n");
+  fprintf(stdout, "the Free Software Foundation; either version 2 of the License, or\n");
+  fprintf(stdout, "(at your option) any later version.\n");
+}
+
+static void
+show_usage (void)
+{
+  fprintf(stdout, "\nUsage: dvipdfmx [options] dvifile\n");
+  fprintf(stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
+  fprintf(stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
+  fprintf(stdout, "-f filename\tSet font map file name [cid-x.map]\n");
+  fprintf(stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
+  fprintf(stdout, "-l \t\tLandscape mode\n");
+  fprintf(stdout, "-m number\tSet additional magnification\n");
+  fprintf(stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
+  fprintf(stdout, "-p papersize\tSet papersize [a4]\n");
+  fprintf(stdout, "-q \t\tBe quiet\n");
+  fprintf(stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
+  fprintf(stdout, "-s pages\tSelect page ranges (-)\n");
+  fprintf(stdout, "-t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
+  fprintf(stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
+  fprintf(stdout, "-y dimension\tSet vertical offset [1.0in]\n");
+  fprintf(stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
+
+  fprintf(stdout, "-v \t\tBe verbose\n");
+  fprintf(stdout, "-vv\t\tBe more verbose\n");
+  fprintf(stdout, "-C number\tSpecify miscellaneous option flags [0]:\n");
+  fprintf(stdout, "\t\t  0x0001 reserved\n");
+  fprintf(stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
+  fprintf(stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
+  fprintf(stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
+  fprintf(stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
+  fprintf(stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
+  fprintf(stdout, "\t\tPositive values are always ORed with previously given flags.\n");
+  fprintf(stdout, "\t\tAnd negative values replace old values.\n");
+  fprintf(stdout, "-D template\tPS->PDF conversion command line template [none]\n");
+  fprintf(stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
+  fprintf(stdout, "-K number\tEncryption key bits [40]\n");
+  fprintf(stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
+  fprintf(stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
+  fprintf(stdout, "-S \t\tEnable PDF encryption\n");
+  fprintf(stdout, "-V number\tSet PDF minor version [4]\n");
+  fprintf(stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
+  fprintf(stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
+  fprintf(stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
+}
+
+static void
 usage (void)
 {
   if (really_quiet)
     return;
-
-  fprintf (stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
-  fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (C) 2002-2009 by the DVIPDFMx project team\n");
-  fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
-  fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
-  fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
-  fprintf (stdout, "(at your option) any later version.\n");
-  fprintf (stdout, "\nUsage: dvipdfmx [options] dvifile\n");
-  fprintf (stdout, "-c \t\tIgnore color specials (for B&W printing)\n");
-  fprintf (stdout, "-d number\tSet PDF decimal digits (0-5) [2]\n");
-  fprintf (stdout, "-f filename\tSet font map file name [cid-x.map]\n");
-  fprintf (stdout, "-g dimension\tAnnotation \"grow\" amount [0.0in]\n");
-  fprintf (stdout, "-l \t\tLandscape mode\n");
-  fprintf (stdout, "-m number\tSet additional magnification\n");
-  fprintf (stdout, "-o filename\tSet output file name [dvifile.pdf]\n");
-  fprintf (stdout, "-p papersize\tSet papersize [a4]\n");
-  fprintf (stdout, "-q \t\tBe quiet\n");
-  fprintf (stdout, "-r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
-  fprintf (stdout, "-s pages\tSelect page ranges (-)\n");
-  fprintf (stdout, "-t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
-  fprintf (stdout, "-x dimension\tSet horizontal offset [1.0in]\n");
-  fprintf (stdout, "-y dimension\tSet vertical offset [1.0in]\n");
-  fprintf (stdout, "-z number  \tSet zlib compression level (0-9) [9]\n");
-
-  fprintf (stdout, "-v \t\tBe verbose\n");
-  fprintf (stdout, "-vv\t\tBe more verbose\n");
-  fprintf (stdout, "-C number\tSpecify miscellaneous option flags [0]:\n");
-  fprintf (stdout, "\t\t  0x0001 reserved\n");
-  fprintf (stdout, "\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
-  fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
-  fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
-  fprintf (stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
-  fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
-  fprintf (stdout, "\t\tAnd negative values replace old values.\n");
-  fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
-  fprintf (stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
-  fprintf (stdout, "-K number\tEncryption key bits [40]\n");
-  fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
-  fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
-  fprintf (stdout, "-S \t\tEnable PDF encryption\n");
-  fprintf (stdout, "-V number\tSet PDF minor version [4]\n");
-  fprintf (stdout, "\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
-  fprintf (stdout, "Argument of \"-s\" lists physical page ranges separated by commas, e.g., \"-s 1-3,5-6\"\n");
-  fprintf (stdout, "Papersize is specified by paper format (e.g., \"a4\") or by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
-
+  fprintf(stdout, "\nTry \"dvipdfmx --help\" for more information.\n");
   exit(1);
 }
 
 
 static int
-read_length (double *vp, char **pp, char *endptr)
+read_length (double *vp, const char **pp, const char *endptr)
 {
-  char   *q, *p = *pp;
+  char   *q;
+  const char *p = *pp;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -243,7 +253,7 @@ select_paper (const char *paperspec)
     paper_width  = paperpswidth (pi);
     paper_height = paperpsheight(pi);
   } else {
-    char  *p = (char *) paperspec, *endptr, *comma;
+    const char  *p = paperspec, *endptr, *comma;
     comma  = strchr(p, ',');
     endptr = p + strlen(p);
     if (!comma)
@@ -267,7 +277,8 @@ int max_page_ranges = 0;
 static void
 select_pages (const char *pagespec)
 {
-  char  *q, *p = (char *) pagespec;
+  char  *q;
+  const char *p = pagespec;
 
   while (*p != '\0') {
     /* Enlarge page range table if necessary */
@@ -320,7 +331,7 @@ select_pages (const char *pagespec)
 /* It doesn't work as expected (due to dvi filename). */
 #define CHECK_ARG(n,m) if (argc < (n) + 1) {\
   if (!really_quiet)\
-    fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
+    fprintf(stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
   usage();\
 }
 
@@ -332,6 +343,8 @@ set_verbose (int argc, char *argv[])
       char *flag;
 
       for (flag = argv[0] + 1; *flag != 0; flag++) {
+        if (*flag == '-')
+          break;
         if (*flag == 'q')
           really_quiet = 1;
         if (*flag == 'v')
@@ -365,6 +378,21 @@ do_args (int argc, char *argv[])
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
+      case '-':
+        if (++flag) {
+          if (!strcmp(flag, "help")) {
+            show_version();
+            show_usage();
+            exit(0);
+          } else if (!strcmp(flag, "version")) {
+            show_version();
+            exit(0);
+          }
+        }
+	if (!really_quiet)
+	  fprintf(stderr, "Unknown option in \"--%s\"", flag);
+        usage();
+        break;
       case 'D':
         CHECK_ARG(1, "PS->PDF conversion command line template");
         set_distiller_template(argv[1]);
@@ -387,19 +415,19 @@ do_args (int argc, char *argv[])
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
         nextptr = argv[1];
-        read_length(&annot_grow, &nextptr, nextptr + strlen(nextptr));
+        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
         nextptr = argv[1];
-        read_length(&x_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
         nextptr = argv[1];
-        read_length(&y_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':
@@ -541,7 +569,7 @@ do_args (int argc, char *argv[])
 	} /* else fall through */
       default:
 	if (!really_quiet)
-	  fprintf (stderr, "Unknown option in \"%s\"", flag);
+	  fprintf(stderr, "Unknown option in \"-%s\"", flag);
         usage();
         break;
       }
@@ -588,7 +616,8 @@ read_config_file (FILE * fp)
 read_config_file (const char *config)
 #endif
 {
-  char *start, *end, *option;
+  const char *start, *end;
+  char *option;
 #if defined(MIKTEX)
 #else
   FILE *fp;
@@ -695,6 +724,7 @@ system_default (void)
 void
 error_cleanup (void)
 {
+  pdf_close_images();  /* delete temporary files */
   pdf_error_cleanup();
   if (pdf_filename) {
     remove(pdf_filename);
@@ -754,7 +784,7 @@ do_dvi_pages (void)
         /* Users want to change page size even after page is started! */
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
-        dvi_scan_paper_size(page_no, &w, &h, &xo, &yo, &lm);
+        dvi_scan_specials(page_no, &w, &h, &xo, &yo, &lm, NULL);
         if (lm != landscape_mode) {
           SWAP(w, h);
           landscape_mode = lm;
@@ -852,8 +882,10 @@ do_mps_pages (void)
 /* TODO: MetaPost mode */
 #if defined(MIKTEX)
 #  define main Main
-#  undef CDECL
-#  define CDECL __declspec(dllexport)
+#  if defined(MIKTEX)
+#    undef CDECL
+#    define CDECL __declspec(dllexport)
+#  endif
 #endif
 int CDECL
 main (int argc, char *argv[]) 
@@ -896,6 +928,9 @@ main (int argc, char *argv[])
   argc-=1;
 
   set_verbose(argc, argv);
+  /* quiet mode cannot be set in config file */
+  if (really_quiet)
+    shut_up();
 
   pdf_init_fontmaps(); /* This must come before parsing options... */
 
@@ -906,9 +941,6 @@ main (int argc, char *argv[])
 #endif
 
   do_args (argc, argv);
-
-  if (really_quiet)
-    shut_up();
 
 #ifndef MIKTEX_NO_KPATHSEA
   kpse_init_prog("", font_dpi, NULL, NULL);
@@ -928,6 +960,7 @@ main (int argc, char *argv[])
 
   MESG("%s -> %s\n", dvi_filename, pdf_filename);
 
+  pdf_enc_compute_id_string(dvi_filename, pdf_filename);
   if (do_encryption) {
     if (key_bits > 40 && pdf_get_version() < 4)
       ERROR("Chosen key length requires at least PDF 1.4. "
@@ -940,6 +973,7 @@ main (int argc, char *argv[])
     y_offset = 0.0;
     dvi2pts  = 0.01; /* dvi2pts controls accuracy. */
   } else {
+    unsigned ver_minor = 0;
     /* Dependency between DVI and PDF side is rather complicated... */
     dvi2pts = dvi_init(dvi_filename, mag);
     if (dvi2pts == 0.0)
@@ -947,7 +981,10 @@ main (int argc, char *argv[])
 
     pdf_doc_set_creator(dvi_comment());
 
-    dvi_scan_paper_size(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode);
+    dvi_scan_specials(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode, &ver_minor);
+    if (ver_minor >= PDF_VERSION_MIN && ver_minor <= PDF_VERSION_MAX) {
+      pdf_set_version(ver_minor);
+    }
     if (landscape_mode) {
       SWAP(paper_width, paper_height);
     }

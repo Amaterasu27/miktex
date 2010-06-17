@@ -187,8 +187,7 @@ dpx_foolsearch (const char  *foolname,
 
   return  fqpn;
 }
-#else /* TEXK */
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
+#else /* !MIKTEX */
 #  define TDS11DOC "http://www.tug.org/ftp/tex/tds-1.1/tds.html#Fonts"
 static void
 insistupdate (const char      *filename,
@@ -198,7 +197,6 @@ insistupdate (const char      *filename,
               kpse_file_format_type realformat)
 {
 #if defined(MIKTEX)
-  /* users are not fools */
 #else
   kpse_format_info_type *fif;
   kpse_format_info_type *fir;
@@ -218,7 +216,6 @@ insistupdate (const char      *filename,
   WARN(">> Please read \"README\" file.");
 #endif
 }
-#endif /* TDS 1.1 */
 
 static char *
 dpx_find__app__xyz (const char *filename,
@@ -360,11 +357,9 @@ dpx_find_fontmap_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".map", 1);
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
-#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -386,11 +381,9 @@ dpx_find_agl_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
-#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -437,9 +430,7 @@ dpx_find_cmap_file (const char *filename)
     memset(_tmpbuf, 0, _MAX_PATH+1);
   }
 #else
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L  
   fqpn = kpse_find_file(filename, kpse_cmap_format, 0); 
-#endif  
 #endif
 
   /* Files found above are assumed to be CMap,
@@ -449,10 +440,8 @@ dpx_find_cmap_file (const char *filename)
     fqpn = dpx_foolsearch(fools[i], filename, 1);
     if (fqpn) {
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_cmap_format); 
-#endif
 #endif
       if (!qcheck_filetype(fqpn, DPX_RES_TYPE_CMAP)) {
         WARN("Found file \"%s\" for PostScript CMap but it doesn't look like a CMap...", fqpn);
@@ -484,19 +473,15 @@ dpx_find_sfd_file (const char *filename)
 
   q    = ensuresuffix(filename, ".sfd");
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_sfd_format, 0);
-#endif
 #endif /* !MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_sfd_format); 
-#endif
 #endif
   }
   RELEASE(q);
@@ -522,21 +507,15 @@ dpx_find_enc_file (const char *filename)
     strcpy(fqpn, _tmpbuf);
   }
 #else
-# if defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_enc_format, 0);
-# else
-  fqpn = kpse_find_file(q, kpse_tex_ps_header_format, 0);
-# endif
 #endif /* MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_enc_format); 
-#endif
 #endif
   }
   RELEASE(q);
@@ -583,19 +562,15 @@ dpx_find_opentype_file (const char *filename)
 
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
-#endif
     fqpn = dpx_foolsearch(PACKAGE, q, 0);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, PACKAGE,
                    kpse_program_binary_format, kpse_opentype_format); 
   }
-#endif
 #endif
   RELEASE(q);
 
@@ -648,6 +623,7 @@ dpx_create_temp_file (void)
   {
     tmp = NEW(_MAX_PATH + 1, char);
     miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
+#if defined(MIKTEX)
     {
       char * lpsz;
       for (lpsz = tmp; *lpsz != 0; ++ lpsz)
@@ -658,19 +634,20 @@ dpx_create_temp_file (void)
 	    }
 	}
     }
+#endif
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
 #  define TEMPLATE     "/dvipdfmx.XXXXXXX"
   {
-    char *_tmpd;
+    const char *_tmpd;
     int   _fd = -1;
 #  ifdef  HAVE_GETENV
     _tmpd = getenv("TMPDIR");
     if (!_tmpd)
-      _tmpd = (char *) __TMPDIR;
+      _tmpd = __TMPDIR;
 #  else
-    _tmpd = (char *) __TMPDIR;
+    _tmpd = __TMPDIR;
 #  endif /* HAVE_GETENV */
     tmp = NEW(strlen(_tmpd) + strlen(TEMPLATE) + 1, char);
     strcpy(tmp, _tmpd);
@@ -724,7 +701,7 @@ dpx_file_apply_filter (const char *cmdtmpl,
                       unsigned char version)
 {
   char   *cmd = NULL;
-  char   *p, *q;
+  const char   *p, *q;
   size_t  n, size;
   int     error = 0;
 
@@ -736,7 +713,7 @@ dpx_file_apply_filter (const char *cmdtmpl,
   size = strlen(cmdtmpl) + strlen(input) + strlen(output) + 3;
   cmd  = NEW(size, char);
   memset(cmd, 0, size);
-  for (n = 0, p = (char *) cmdtmpl; *p != 0; p++) {
+  for (n = 0, p = cmdtmpl; *p != 0; p++) {
 #define need(s,l,m,n) \
 if ((l) + (n) >= (m)) { \
   (m) += (n) + 128; \
@@ -764,7 +741,7 @@ if ((l) + (n) >= (m)) { \
         }
       case  'v': /* Version number, e.g. 1.4 */ {
        char buf[6];
-       sprintf(buf, "1.%hhu", version);
+       sprintf(buf, "1.%hu", (unsigned short) version);
        need(cmd, n, size, strlen(buf));
        strcpy(cmd + n, buf);  n += strlen(buf);
        break;

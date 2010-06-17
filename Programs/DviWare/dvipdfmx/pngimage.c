@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.27 2009/05/10 17:04:54 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.28 2010/02/23 03:28:10 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -148,7 +148,7 @@ check_for_png (FILE *png_file)
   rewind (png_file);
   if (fread (sigbytes, 1, sizeof(sigbytes), png_file) !=
       sizeof(sigbytes) ||
-      (!png_check_sig (sigbytes, sizeof(sigbytes))))
+      (png_sig_cmp (sigbytes, 0, sizeof(sigbytes))))
     return 0;
   else
     return 1;

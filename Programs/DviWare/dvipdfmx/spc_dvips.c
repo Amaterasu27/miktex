@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.12 2008/11/30 21:17:58 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.13 2009/11/28 22:41:44 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -21,6 +21,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
+
+#include <string.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -55,9 +57,10 @@ static double pending_y     = 0.0;
 static int    position_set  = 0;
 
 static char *
-parse_filename (char **pp, char *endptr)
+parse_filename (const char **pp, const char *endptr)
 {
-  char  *r, *q = NULL, *p = *pp;
+  char  *r;
+  const char *q = NULL, *p = *pp;
   char   qchar;
   int    n;
 
@@ -148,7 +151,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
 
   ASSERT(spe && args);
 
-  spc_warn(spe, "ps:plotfile found (not properly implemented)");
+  spc_warn(spe, "\"ps: plotfile\" found (not properly implemented)");
 
   skip_white(&args->curptr, args->endptr);
   filename = parse_filename(&args->curptr, args->endptr);
@@ -184,10 +187,7 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
   int     st_depth, gs_depth;
   double  x_user, y_user;
 
-  ASSERT(spe && args);
-
-  if (args->curptr >= args->endptr)
-    return  -1;
+  ASSERT(spe && args && args->curptr <= args->endptr);
 
   if (args->curptr + strlen(":[begin]") <= args->endptr &&
       !strncmp(args->curptr, ":[begin]", strlen(":[begin]"))) {
@@ -285,8 +285,8 @@ spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
 static struct spc_handler dvips_handlers[] = {
   {"PSfile",        spc_handler_ps_file},
   {"psfile",        spc_handler_ps_file},
-  {"ps: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
-  {"PS: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
+  {"ps: plotfile ", spc_handler_ps_plotfile},
+  {"PS: plotfile ", spc_handler_ps_plotfile},
   {"PS:",           spc_handler_ps_literal},
   {"ps:",           spc_handler_ps_literal},
   {"\" ",           spc_handler_ps_default}
@@ -302,11 +302,11 @@ spc_dvips_at_end_page (void)
 int
 spc_dvips_check_special (const char *buf, long len)
 {
-  char *p, *endptr;
+  const char *p, *endptr;
   int   i;
 
-  p      = (char *) buf;
-  endptr =  p + len;
+  p      = buf;
+  endptr = p + len;
 
   skip_white(&p, endptr);
   if (p >= endptr)
@@ -329,7 +329,7 @@ int
 spc_dvips_setup_handler (struct spc_handler *handle,
 			 struct spc_env *spe, struct spc_arg *args)
 {
-  char *key;
+  const char *key;
   int   i, keylen;
 
   ASSERT(handle && spe && args);
@@ -341,10 +341,14 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 	 isalpha(args->curptr[0])) {
     args->curptr++;
   }
-  /* ps:: --> : */
+  /* Test for "ps:". The "ps::" special is subsumed under this case.  */
   if (args->curptr < args->endptr &&
       args->curptr[0] == ':') {
     args->curptr++;
+    if (args->curptr+strlen(" plotfile ") <= args->endptr &&
+	!strncmp(args->curptr, " plotfile ", strlen(" plotfile "))) {
+      args->curptr += strlen(" plotfile ");
+      }
   } else if (args->curptr+1 < args->endptr &&
              args->curptr[0] == '"' && args->curptr[1] == ' ') {
     args->curptr += 2;
@@ -363,9 +367,9 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
       skip_white(&args->curptr, args->endptr);
 
-      args->command = (char *) dvips_handlers[i].key;
+      args->command = dvips_handlers[i].key;
 
-      handle->key  = (char *) "ps:";
+      handle->key  = "ps:";
       handle->exec = dvips_handlers[i].exec;
 
       return  0;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.41 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.42 2009/09/18 23:56:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -222,9 +222,9 @@ readline (char *buf, int buf_len, FILE *fp)
 #  define ISBLANK(c) ((c) == ' ' || (c) == '\t')
 #endif
 static void
-skip_blank (char **pp, char *endptr)
+skip_blank (const char **pp, const char *endptr)
 {
-  char  *p = *pp;
+  const char  *p = *pp;
   if (!p || p >= endptr)
     return;
   for ( ; p < endptr && ISBLANK(*p); p++);
@@ -232,9 +232,10 @@ skip_blank (char **pp, char *endptr)
 }
 
 static char *
-parse_string_value (char **pp, char *endptr)
+parse_string_value (const char **pp, const char *endptr)
 {
-  char  *q = NULL, *p = *pp;
+  char  *q = NULL;
+  const char *p = *pp;
   int    n;
 
   if (!p || p >= endptr)
@@ -255,9 +256,10 @@ parse_string_value (char **pp, char *endptr)
 
 /* no preceeding spaces allowed */
 static char *
-parse_integer_value (char **pp, char *endptr, int base)
+parse_integer_value (const char **pp, const char *endptr, int base)
 {
-  char  *q, *p = *pp;
+  char  *q;
+  const char *p = *pp;
   int    has_sign = 0, has_prefix = 0, n;
 
   ASSERT( base == 0 || (base >= 2 && base <= 36) );
@@ -308,9 +310,9 @@ parse_integer_value (char **pp, char *endptr, int base)
 
 static int
 fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
-                          const char *mapdef, char *endptr)
+                          const char *mapdef, const char *endptr)
 {
-  char  *p = (char *) mapdef;
+  const char  *p = mapdef;
 
   /*
    * Parse record line in map file.  First two fields (after TeX font
@@ -485,7 +487,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
           RELEASE(q);
           return  -1;
         }
-        *r = 0; r++; skip_blank(&r, r + strlen(r));
+        *r = 0; r++; skip_blank((const char **)&r, r + strlen(r));
         if (*r == '\0') {
           WARN("Invalid value for option 'm': %s,", q);
           RELEASE(q);
@@ -556,9 +558,10 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
 /* Parse record line in map file of DVIPS/pdfTeX format. */
 static int
 fontmap_parse_mapdef_dps (fontmap_rec *mrec,
-                          const char *mapdef, char *endptr)
+                          const char *mapdef, const char *endptr)
 {
-  char *p = (char *)mapdef, *q;
+  const char *p = mapdef;
+  char *q;
 
   skip_blank(&p, endptr);
 
@@ -592,7 +595,8 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
 
     case '"': /* Options */
       if ((q = parse_string_value(&p, endptr))) {
-        char *r = q, *e = q+strlen(q), *s, *t;
+        const char *r = q, *e = q+strlen(q);
+        char *s, *t;
         skip_blank(&r, e);
         while (r < e) {
           if ((s = parse_float_decimal(&r, e))) {
@@ -644,7 +648,7 @@ chop_sfd_name (const char *tex_name, char **sfd_name)
 
   *sfd_name = NULL;
 
-  p = strchr((char *) tex_name, '@');
+  p = strchr(tex_name, '@');
   if (!p ||
       p[1] == '\0' || p == tex_name) {
     return  NULL;
@@ -739,7 +743,7 @@ pdf_append_fontmap_record (const char *kp, const fontmap_rec *vp)
         mrec->map_name = mstrdup(kp); /* link */
         mrec->charmap.sfd_name   = mstrdup(sfd_name);
         mrec->charmap.subfont_id = mstrdup(subfont_ids[n]);
-        ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec, hval_free);
+        ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec);
       }
       RELEASE(tfm_name);
     }
@@ -755,7 +759,7 @@ pdf_append_fontmap_record (const char *kp, const fontmap_rec *vp)
       RELEASE(mrec->map_name);
       mrec->map_name = NULL;
     }
-    ht_insert_table(fontmap, kp, strlen(kp), mrec, hval_free);
+    ht_insert_table(fontmap, kp, strlen(kp), mrec);
   }
   if (verbose > 3)
     MESG("\n");
@@ -790,14 +794,14 @@ pdf_remove_fontmap_record (const char *kp)
         continue;
       if (verbose > 3)
         MESG(" %s", tfm_name);
-      ht_remove_table(fontmap, tfm_name, strlen(tfm_name), hval_free);
+      ht_remove_table(fontmap, tfm_name, strlen(tfm_name));
       RELEASE(tfm_name);
     }
     RELEASE(fnt_name);
     RELEASE(sfd_name);
   }
 
-  ht_remove_table(fontmap, kp, strlen(kp), hval_free);
+  ht_remove_table(fontmap, kp, strlen(kp));
 
   if (verbose > 3)
     MESG("\n");
@@ -843,7 +847,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
       mrec->map_name = mstrdup(kp); /* link to this entry */
       mrec->charmap.sfd_name   = mstrdup(sfd_name);
       mrec->charmap.subfont_id = mstrdup(subfont_ids[n]);
-      ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec, hval_free);
+      ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec);
       RELEASE(tfm_name);
     }
     RELEASE(fnt_name);
@@ -856,7 +860,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     RELEASE(mrec->map_name);
     mrec->map_name = NULL;
   }
-  ht_insert_table(fontmap, kp, strlen(kp), mrec, hval_free);
+  ht_insert_table(fontmap, kp, strlen(kp), mrec);
 
   if (verbose > 3)
     MESG("\n");
@@ -869,11 +873,12 @@ int
 pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len, int format)
 {
   int    error;
-  char  *q, *p, *endptr;
+  char  *q;
+  const char *p, *endptr;
 
   ASSERT(mrec);
 
-  p      = (char *) mline;
+  p      = mline;
   endptr = p + mline_len;
 
   skip_blank(&p, endptr);
@@ -924,12 +929,12 @@ int
 is_pdfm_mapline (const char *mline) /* NULL terminated. */
 {
   int   n = 0;
-  char *p, *endptr;
+  const char *p, *endptr;
 
   if (strchr(mline, '"') || strchr(mline, '<'))
     return -1; /* DVIPS/pdfTeX format */
 
-  p      = (char *) mline;
+  p      = mline;
   endptr = p + strlen(mline);
 
   skip_blank(&p, endptr);
@@ -951,7 +956,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
 {
   fontmap_rec *mrec;
   FILE        *fp;
-  char        *p = NULL, *endptr;
+  const char  *p = NULL, *endptr;
   long         llen, lpos  = 0;
   int          error = 0, format = 0;
 
@@ -1096,14 +1101,14 @@ void
 pdf_init_fontmaps (void)
 {
   fontmap = NEW(1, struct ht_table);
-  ht_init_table(fontmap);
+  ht_init_table(fontmap, hval_free);
 }
 
 void
 pdf_close_fontmaps (void)
 {
   if (fontmap) {
-    ht_clear_table(fontmap, hval_free);
+    ht_clear_table(fontmap);
     RELEASE(fontmap);
   }
   fontmap = NULL;
@@ -1128,9 +1133,10 @@ pdf_clear_fontmaps (void)
  */
 
 static char *
-substr (char **str, char stop)
+substr (const char **str, char stop)
 {
-  char *sstr, *endptr;
+  char *sstr;
+  const char *endptr;
 
   endptr = strchr(*str, stop);
   if (!endptr || endptr == *str)
@@ -1150,12 +1156,13 @@ static char *
 strip_options (const char *map_name, fontmap_opt *opt)
 {
   char *font_name;
-  char *p, *next = NULL;
+  const char *p;
+  char *next = NULL;
   int   have_csi = 0, have_style = 0;
 
   ASSERT(opt);
 
-  p = (char *) map_name;
+  p = map_name;
   font_name      = NULL;
   opt->charcoll  = NULL;
   opt->index     = 0;

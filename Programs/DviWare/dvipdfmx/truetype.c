@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.10 2008/05/22 11:03:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.11 2009/08/28 00:26:17 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -254,7 +254,7 @@ do_widths (pdf_font *font, double *widths)
       else
         width = 1000. * tfm_get_width(tfm_id, code);
       pdf_add_array(tmparray,
-                    pdf_new_number(ROUND(width, 1.0)));
+                    pdf_new_number(ROUND(width, 0.1)));
     } else {
       pdf_add_array(tmparray, pdf_new_number(0.0));
     }
@@ -444,6 +444,7 @@ static int
 selectglyph (USHORT in, const char *suffix, struct glyph_mapper *gm, USHORT *out)
 {
   char  *s, *q, t[5];
+  const char *r;
   int    n, error = 0;
 
   ASSERT(suffix && gm && out);
@@ -456,9 +457,9 @@ selectglyph (USHORT in, const char *suffix, struct glyph_mapper *gm, USHORT *out
    * agl.c currently only knows less ambiguos cases;
    * e.g., 'sc', 'superior', etc.
    */
-  q = (char *) agl_suffix_to_otltag(s);
-  if (q) { /* We found feature tag for 'suffix'. */
-    error = select_gsub(q, gm); /* no fallback for this */
+  r = agl_suffix_to_otltag(s);
+  if (r) { /* We found feature tag for 'suffix'. */
+    error = select_gsub(r, gm); /* no fallback for this */
     if (!error)
       error = otl_gsub_apply(gm->gsub, &in);
   } else { /* 'suffix' may represent feature tag. */
