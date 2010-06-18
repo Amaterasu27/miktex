@@ -68,7 +68,12 @@ pack&nbsp;2 installed.</para>
 <title>Upgrades</title>
 
 <itemizedlist>
-<listitem><para>...</para></listitem>
+<listitem><para>&BibTeX; 0.99d</para></listitem>
+<listitem><para>&Dvipng; 1.13</para></listitem>
+<listitem><para>&Dvips; 5.99</para></listitem>
+<listitem><para>&MakeIndex; 1.15</para></listitem>
+<listitem><para>&pdfTeX; 1.40.11</para></listitem>
+<listitem><para>&XeTeX; 0.9997.1</para></listitem>
 </itemizedlist>
 
 </section>
