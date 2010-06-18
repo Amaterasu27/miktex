@@ -66,7 +66,7 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    miktex_web2c_version_string
    _________________________________________________________________________ */
 
-MIKTEXW2CDATA(char *)
+MIKTEXW2CDATA(const char *)
 miktex_web2c_version_string = "0.0";
 
 /* _________________________________________________________________________

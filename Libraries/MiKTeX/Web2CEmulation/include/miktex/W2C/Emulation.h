@@ -44,9 +44,6 @@
 #define MIKTEXW2CCEEAPI(type) MIKTEXW2CEXPORT type MIKTEXCEECALL
 #define MIKTEXW2CDATA(type) MIKTEXW2CEXPORT type
 
-#define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
-#define MIKTEX_END_EXTERN_C_BLOCK }
-
 #define MIKTEXWEB2C_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace Web2C {
@@ -137,7 +134,7 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
 extern
-MIKTEXW2CDATA(char *)
+MIKTEXW2CDATA(const char *)
 miktex_web2c_version_string;
 
 #if defined(__cplusplus)
@@ -145,8 +142,5 @@ MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
 /* _________________________________________________________________________ */
-
-#undef MIKTEX_BEGIN_EXTERN_C_BLOCK
-#undef MIKTEX_END_EXTERN_C_BLOCK
 
 #endif

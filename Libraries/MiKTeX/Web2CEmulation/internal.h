@@ -124,27 +124,5 @@
    C API Helper
    _________________________________________________________________________ */
 
-#define C_FUNC_BEGIN()				\
-  {						\
-    try						\
-      {
-
-#define C_FUNC_END()				\
-      }						\
-    catch (const MiKTeXException & e)		\
-      {						\
-        if (stderr != 0)			\
-	  {					\
-	    Utils::PrintException (e);		\
-	  }					\
-        exit (1);				\
-      }						\
-    catch (const exception & e)			\
-      {						\
-        if (stderr != 0)			\
-	  {					\
-	    Utils::PrintException (e);		\
-	  }					\
-        exit (1);				\
-      }						\
-  }
+#define C_FUNC_BEGIN()
+#define C_FUNC_END()
