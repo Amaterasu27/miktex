@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2008 Christian Schenk
+## Copyright (C) 2007-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,3 +30,5 @@ add_subdirectory(fc-cache)
 add_subdirectory(fc-cat)
 add_subdirectory(fc-list)
 add_subdirectory(fc-match)
+add_subdirectory(fc-query)
+add_subdirectory(fc-scan)

@@ -19,6 +19,7 @@
 
 add_definitions(
   -DHAVE_CONFIG_H
+  -DDONT_USE_MIKTEX_EXIT
 )
 
 include_directories(

@@ -52,6 +52,9 @@
 /* Define to 1 if you have the `FT_Has_PS_Glyph_Names' function. */
 #define HAVE_FT_HAS_PS_GLYPH_NAMES 1
 
+/* Define to 1 if you have the `FT_Select_Size' function. */
+#undef HAVE_FT_SELECT_SIZE
+
 /* Define to 1 if you have the `geteuid' function. */
 #undef HAVE_GETEUID
 
@@ -153,6 +156,10 @@
 /* Define to 1 if you have the `XML_SetDoctypeDeclHandler' function. */
 #undef HAVE_XML_SETDOCTYPEDECLHANDLER
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
 /* Name of package */
 #undef PACKAGE
 
@@ -191,3 +198,8 @@
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
+
+#if defined(MIKTEX) && ! defined(DONT_USE_MIKTEX_EXIT)
+#  define USE_MIKTEX_EXIT
+#  undef USE_FCSTAT
+#endif

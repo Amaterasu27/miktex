@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2009 Christian Schenk
+## Copyright (C) 2007-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -45,6 +45,7 @@ set(${fontconfig_dll_name}_sources
   fcdefault.c
   fcdeprecate.h
   fcdir.c
+  fcformat.c
   fcfreetype.c
   fcfs.c
   fcftint.h

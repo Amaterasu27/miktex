@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,6 +19,7 @@
 
 add_definitions(
   -DHAVE_CONFIG_H
+  -DDONT_USE_MIKTEX_EXIT
 )
 
 include_directories(

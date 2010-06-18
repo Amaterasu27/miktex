@@ -12,9 +12,9 @@
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
- * KEITH PACKARD DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * THE AUTHOR(S) DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
- * EVENT SHALL KEITH PACKARD BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
  * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
@@ -54,6 +54,7 @@ static void MD5Transform(FcChar32 buf[4], FcChar32 in[16]);
 
 #define CACHEBASE_LEN (1 + 32 + 1 + sizeof (FC_ARCHITECTURE) + sizeof (FC_CACHE_SUFFIX))
 
+#if ! defined(MIKTEX) || defined(USE_FCSTAT)
 #ifdef _WIN32
 
 #include <windows.h>
@@ -85,7 +86,7 @@ typedef __int64 INT64;
  * just use the UTC timestamps from NTFS, converted to the Unix epoch.
  */
 
-static int
+int
 FcStat (const char *file, struct stat *statb)
 {
     WIN32_FILE_ATTRIBUTE_DATA wfad;
@@ -131,17 +132,8 @@ FcStat (const char *file, struct stat *statb)
     
     return 0;
 }
-
-#else
-
-#define FcStat stat
-
 #endif
-
-#if defined(MIKTEX_WINDOWS)
-/* The work-around (see above) does not work for us; undo it */
-#  define FcStat stat
-#endif
+#endif /* ! MiKTeX */
 
 static const char bin2hex[] = { '0', '1', '2', '3',
 				'4', '5', '6', '7',
@@ -299,7 +291,6 @@ struct _FcCacheSkip {
     time_t	    cache_ctime;
     size_t	    cache_size;
 #endif
-
     FcCacheSkip	    *next[1];
 };
 
@@ -546,7 +537,7 @@ FcCacheTimeValid (FcCache *cache, struct stat *dir_stat)
 
     if (!dir_stat)
     {
-	if (stat ((const char *) FcCacheDir (cache), &dir_static) < 0)
+	if (FcStat ((const char *) FcCacheDir (cache), &dir_static) < 0)
 	    return FcFalse;
 	dir_stat = &dir_static;
     }
@@ -569,7 +560,13 @@ FcDirCacheMapFd (int fd, struct stat *fd_stat, struct stat *dir_stat)
 	return NULL;
     cache = FcCacheFindByStat (fd_stat);
     if (cache)
-	return cache;
+    {
+	if (FcCacheTimeValid (cache, dir_stat))
+	    return cache;
+	FcDirCacheUnload (cache);
+	cache = NULL;
+    }
+
     /*
      * Lage cache files are mmap'ed, smaller cache files are read. This
      * balances the system cost of mmap against per-process memory usage.
@@ -578,6 +575,8 @@ FcDirCacheMapFd (int fd, struct stat *fd_stat, struct stat *dir_stat)
     {
 #if defined(HAVE_MMAP) || defined(__CYGWIN__)
 	cache = mmap (0, fd_stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
+	if (cache == MAP_FAILED)
+	    cache = NULL;
 #elif defined(_WIN32)
 	{
 	    HANDLE hFileMap;
@@ -848,9 +847,9 @@ FcMakeDirectory (const FcChar8 *dir)
     if (!parent)
 	return FcFalse;
     if (access ((char *) parent, F_OK) == 0)
-	ret = mkdir ((char *) dir, 0777) == 0;
+	ret = mkdir ((char *) dir, 0755) == 0 && chmod ((char *) dir, 0755) == 0;
     else if (access ((char *) parent, F_OK) == -1)
-	ret = FcMakeDirectory (parent) && (mkdir ((char *) dir, 0777) == 0);
+	ret = FcMakeDirectory (parent) && (mkdir ((char *) dir, 0755) == 0) && chmod ((char *) dir, 0755) == 0;
     else
 	ret = FcFalse;
     FcStrFree (parent);
@@ -869,6 +868,8 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
     FcStrList	    *list;
     FcChar8	    *cache_dir = NULL;
     FcChar8	    *test_dir;
+    FcCacheSkip     *skip;
+    struct stat     cache_stat;
     int		    magic;
     int		    written;
 
@@ -880,7 +881,7 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
     if (!list)
 	return FcFalse;
     while ((test_dir = FcStrListNext (list))) {
-	if (access ((char *) test_dir, W_OK) == 0)
+	if (access ((char *) test_dir, W_OK|X_OK) == 0)
 	{
 	    cache_dir = test_dir;
 	    break;
@@ -896,6 +897,14 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
 		    cache_dir = test_dir;
 		    break;
 		}
+	    }
+	    /*
+	     * Otherwise, try making it writable
+	     */
+	    else if (chmod ((char *) test_dir, 0755) == 0)
+	    {
+		cache_dir = test_dir;
+		break;
 	    }
 	}
     }
@@ -950,6 +959,20 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
 #endif
     if (!FcAtomicReplaceOrig(atomic))
         goto bail4;
+
+    /* If the file is small, update the cache chain entry such that the
+     * new cache file is not read again.  If it's large, we don't do that
+     * such that we reload it, using mmap, which is shared across processes.
+     */
+    if (cache->size < FC_CACHE_MIN_MMAP &&
+	(skip = FcCacheFindByAddr (cache)) &&
+	FcStat (cache_hashed, &cache_stat))
+    {
+	skip->cache_dev = cache_stat.st_dev;
+	skip->cache_ino = cache_stat.st_ino;
+	skip->cache_mtime = cache_stat.st_mtime;
+    }
+
     FcStrFree (cache_hashed);
     FcAtomicUnlock (atomic);
     FcAtomicDestroy (atomic);

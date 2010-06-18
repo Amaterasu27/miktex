@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,40 +21,49 @@ set(orth_files
   aa.orth
   ab.orth
   af.orth
+  ak.orth
   am.orth
+  an.orth
   ar.orth
   as.orth
   ast.orth
-  ava.orth
+  av.orth
   ay.orth
-  az.orth
+  az_az.orth
   az_ir.orth
   ba.orth
-  bam.orth
   be.orth
+  ber_dz.orth
+  ber_ma.orth
   bg.orth
   bh.orth
   bho.orth
   bi.orth
   bin.orth
+  bm.orth
   bn.orth
   bo.orth
   br.orth
   bs.orth
   bua.orth
+  byn.orth
   ca.orth
   ce.orth
   ch.orth
   chm.orth
   chr.orth
   co.orth
+  crh.orth
   cs.orth
+  csb.orth
   cu.orth
   cv.orth
   cy.orth
   da.orth
   de.orth
+  dv.orth
   dz.orth
+  ee.orth
   el.orth
   en.orth
   eo.orth
@@ -62,11 +71,13 @@ set(orth_files
   et.orth
   eu.orth
   fa.orth
+  fat.orth
+  ff.orth
   fi.orth
+  fil.orth
   fj.orth
   fo.orth
   fr.orth
-  ful.orth
   fur.orth
   fy.orth
   ga.orth
@@ -80,82 +91,114 @@ set(orth_files
   haw.orth
   he.orth
   hi.orth
+  hne.orth
   ho.orth
   hr.orth
+  hsb.orth
+  ht.orth
   hu.orth
   hy.orth
+  hz.orth
   ia.orth
-  ibo.orth
   id.orth
   ie.orth
+  ig.orth
+  ii.orth
   ik.orth
   io.orth
   is.orth
   it.orth
   iu.orth
   ja.orth
+  jv.orth
   ka.orth
   kaa.orth
+  kab.orth
   ki.orth
+  kj.orth
   kk.orth
   kl.orth
   km.orth
   kn.orth
   ko.orth
   kok.orth
+  kr.orth
   ks.orth
-  ku.orth
+  ku_am.orth
+  ku_iq.orth
   ku_ir.orth
+  ku_tr.orth
   kum.orth
   kv.orth
   kw.orth
+  kwm.orth
   ky.orth
   la.orth
+  lah.orth
   lb.orth
   lez.orth
+  lg.orth
+  li.orth
   ln.orth
   lo.orth
   lt.orth
   lv.orth
+  mai.orth
   mg.orth
   mh.orth
   mi.orth
   mk.orth
   ml.orth
-  mn.orth
+  mn_cn.orth
+  mn_mn.orth
   mo.orth
   mr.orth
+  ms.orth
   mt.orth
   my.orth
+  na.orth
   nb.orth
   nds.orth
   ne.orth
+  ng.orth
   nl.orth
   nn.orth
   no.orth
   nr.orth
   nso.orth
+  nv.orth
   ny.orth
   oc.orth
   om.orth
   or.orth
   os.orth
+  ota.orth
   pa.orth
+  pa_pk.orth
+  pap_an.orth
+  pap_aw.orth
   pl.orth
   ps_af.orth
   ps_pk.orth
   pt.orth
+  qu.orth
   rm.orth
+  rn.orth
   ro.orth
   ru.orth
+  rw.orth
   sa.orth
   sah.orth
+  sc.orth
   sco.orth
+  sd.orth
   se.orth
   sel.orth
+  sg.orth
   sh.orth
   shs.orth
   si.orth
+  sid.orth
   sk.orth
   sl.orth
   sm.orth
@@ -163,11 +206,13 @@ set(orth_files
   smj.orth
   smn.orth
   sms.orth
+  sn.orth
   so.orth
   sq.orth
   sr.orth
   ss.orth
   st.orth
+  su.orth
   sv.orth
   sw.orth
   syr.orth
@@ -186,22 +231,25 @@ set(orth_files
   ts.orth
   tt.orth
   tw.orth
+  ty.orth
   tyv.orth
   ug.orth
   uk.orth
   ur.orth
   uz.orth
-  ven.orth
+  ve.orth
   vi.orth
   vo.orth
   vot.orth
   wa.orth
+  wal.orth
   wen.orth
   wo.orth
   xh.orth
   yap.orth
   yi.orth
   yo.orth
+  za.orth
   zh_cn.orth
   zh_hk.orth
   zh_mo.orth
@@ -212,6 +260,7 @@ set(orth_files
 
 add_definitions(
   -DHAVE_CONFIG_H
+  -DDONT_USE_MIKTEX_EXIT
 )
 
 include_directories(BEFORE
