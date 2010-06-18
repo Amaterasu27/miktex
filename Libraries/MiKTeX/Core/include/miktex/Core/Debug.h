@@ -171,7 +171,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 #else
 
-#  define MIKTEX_ASSERT(expr)
+#  define MIKTEX_ASSERT(expr) (static_cast<void>(0))
 
 #endif
 
