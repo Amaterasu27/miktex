@@ -133,6 +133,13 @@ miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
 				/*[out]*/ char *	lpszMnemonic,
 				/*[in]*/ size_t		bufSize);
 
+MIKTEXCOREEXPORT MIKTEXNORETURN void MIKTEXCEECALL
+miktex_exit (/*[in]*/ int status);
+
+#if defined(USE_MIKTEX_EXIT)
+#  define exit(status) miktex_exit(status)
+#endif
+
 MIKTEXCEEAPI(int)
 miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
@@ -235,16 +242,6 @@ MIKTEXCEEAPI(char*)
 miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
 			  /*[in]*/ size_t	    sizeUtf8,
 			  /*[out]*/ char *	    lpszUtf8);
-
-#if defined(MIKTEX_2_4_COMPAT)
-#  define miktex_find_app_input_file(progname, name, result) \
-  miktex_find_input_file(progname, name, result)
-#  define miktex_initialize()
-#  define miktex_uninitialize()
-#  define miktex_create_temp_file_2(tex, lpszFileName) \
-  miktex_create_temp_file_name(lpszFileName)
-#  define miktex_get_acrobat_font_dir(lpszPath) 0
-#endif
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK;
