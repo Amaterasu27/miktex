@@ -13,11 +13,11 @@
 #define D_HEADER                (1<<4)
 #define D_COMPRESS              (1<<5)
 #define D_FILES			(1<<6)
-#define D_MEM                   (1<<7)
+#define D_MEM                   (0) /* too verbose 1<<7 */
 #define D_CONFIG                (1<<8)
 
 #ifndef KPATHSEA
 #define fopen my_real_fopen
-extern FILE *my_real_fopen() ;
+extern FILE *my_real_fopen();
 #endif
 #endif /* DEBUG */

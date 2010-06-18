@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,21 +23,10 @@ include_directories(BEFORE
 )
 
 add_definitions(
-  -DCREATIONDATE
-  -DDEFRES=600
-  -DEMTEX
   -DHAVE_BMEPS_RUN
-  -DHPS
   -DKPATHSEA
-  -DMAKE_TEX_PK_BY_DEFAULT
   -DMIKTEX
-  -DNeedFunctionPrototypes
   -DSHIFTLOWCHARS
-  -DTPIC
-  -DWRITEBIN=FOPEN_WBIN_MODE
-  -Dpclose=_pclose
-  -Dpopen=_popen
-  -UDOWNLOAD_USING_PDFTEX
 )
 
 set(dvips_c_sources
@@ -80,7 +69,7 @@ set(dvips_sources
   ${wrapper_cpp}
 )
 
-set_source_files_properties(${dvips_sources}
+set_source_files_properties(${wrapper_cpp}
   PROPERTIES
     COMPILE_FLAGS "-DCPLUSPLUSMAIN -DBEQUIET"
 )

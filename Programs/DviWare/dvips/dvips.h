@@ -1,6 +1,6 @@
-/*   $Id: dvips.h 13914 2009-06-23 09:46:14Z peter $
+/*   $Id: dvips.h 18730 2010-06-04 15:04:36Z karl $
  *   This is dvips, a freely redistributable PostScript driver
- *   for dvi files.  It is (C) Copyright 1986-2008 by Tomas Rokicki.
+ *   for dvi files.  It is (C) Copyright 1986-2010 by Tomas Rokicki.
  *   You may freely use, modify and/or distribute this program or any
  *   portion thereof.
  */
@@ -8,8 +8,14 @@
 /*   This file is the header for dvips's global data structures. */
 
 #define CREATIONDATE
+
+#define MAX_CODE 0x110000
+#define MAX_2BYTES_CODE 0x10000
+#define VF_MEM_UNIT 0x10000
+#define CD_IDX(i)  ((i>=MAX_2BYTES_CODE ? MAX_2BYTES_CODE : i))
+
 #define BANNER \
-"This is dvips(k) 5.98 Copyright 2009 Radical Eye Software"
+"This is dvips(k) 5.99 Copyright 2010 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #if defined(MIKTEX)
 #include <miktex/Core/Core>
@@ -18,9 +24,10 @@
 #include <miktex/KPSE/Emulation>
 #undef kpse_tex_hush
 #define kpse_tex_hush(what) 1
+#include <miktex/unxemu.h>
 #include <cstdlib>
 using namespace MiKTeX::Core;
-#define exit(code) throw (code)
+#define exit(status) throw(status)
 #define ERRBUFSIZE 512
 #define MAXPATHLEN 260
 #endif
@@ -42,7 +49,7 @@ using namespace MiKTeX::Core;
 #endif
 #endif
 #if defined(lint) && defined(sun)
-extern char *sprintf() ;
+extern char *sprintf();
 #endif
 #include "paths.h"
 #include "debug.h"
@@ -70,9 +77,9 @@ extern char *sprintf() ;
 #define STRINGSIZE (200000) /* maximum total chars in strings in program */
 #define RASTERCHUNK (8192)  /* size of chunk of raster */
 #define MINCHUNK (240)      /* minimum size char to get own raster */
-#define STACKSIZE (350)     /* maximum stack size for dvi files */
-#define MAXFRAME (10)       /* maximum depth of virtual font recursion */
-#define MAXFONTHD (100)     /* number of unique names of included fonts */
+#define STACKSIZE (500)     /* maximum stack size for dvi files */
+#define MAXFRAME (50)       /* maximum depth of virtual font recursion */
+#define MAXFONTHD (1024)    /* number of unique names of included fonts */
 #define STDOUTSIZE (75)     /* width of a standard output line */
 #define DOWNLOADEDPSSIZE (1000)  /* max number of downloaded fonts to check */
 /*
@@ -105,14 +112,14 @@ typedef int integer;
 typedef char boolean;
 #endif
 typedef double real;
-typedef short shalfword ;
-typedef unsigned short halfword ;
-typedef unsigned char quarterword ;
+typedef short shalfword;
+typedef unsigned short halfword;
+typedef unsigned char quarterword;
 #ifdef WIN32
 #define Boolean boolean
 #else
 #ifndef __THINK__
-typedef short Boolean ;
+typedef short Boolean;
 #endif
 #endif
 /*
@@ -138,12 +145,12 @@ typedef short Boolean ;
  */
 #define RESHASHPRIME (73)
 struct resfont {
-   struct resfont *next ;
+   struct resfont *next;
    char *Keyname, *PSname, *TeXname, *Fontfile, *Vectfile;
-   char *specialinstructions ;
-   char *downloadheader ; /* possibly multiple files */
-   quarterword sent ;
-} ;
+   char *specialinstructions;
+   char *downloadheader; /* possibly multiple files */
+   quarterword sent;
+};
 
 /*
  *   A chardesc describes an individual character.  Before the fonts are
@@ -151,11 +158,11 @@ struct resfont {
  *   with the following meanings:
  */
 typedef struct tcd {
-   integer TFMwidth ;
-   quarterword *packptr ;
-   shalfword pixelwidth ;
-   quarterword flags, flags2 ;
-} chardesctype ;
+   integer TFMwidth;
+   quarterword *packptr;
+   shalfword pixelwidth;
+   quarterword flags, flags2;
+} chardesctype;
 #define EXISTS (1)
 #define PREVPAGE (2)
 #define THISPAGE (4)
@@ -177,49 +184,50 @@ typedef struct tcd {
  *   psfile.  It can be 0, PREVPAGE, THISPAGE, or EXISTS.
  */
 typedef struct tfd {
-   integer checksum, scaledsize, designsize, thinspace ;
-   halfword dpi, loadeddpi ;
-   halfword alreadyscaled ;
-   halfword psname ;
-   halfword loaded ;
+   integer checksum, scaledsize, designsize, thinspace, dir;
+   halfword dpi, loadeddpi;
+   halfword alreadyscaled;
+   halfword psname;
+   halfword loaded;
    quarterword psflag;
-   quarterword codewidth ;
-   integer maxchars ;
-   char *name, *area ;
-   struct resfont *resfont ;
-   struct tft *localfonts ;
-   struct tfd *next ;
+   quarterword codewidth;
+   integer maxchars;
+   char *name, *area;
+   struct resfont *resfont;
+   struct tft *localfonts;
+   struct tfd *next;
    struct tfd *nextsize;
    char *scalename;
-   chardesctype *chardesc ;
-} fontdesctype ;
+   chardesctype *chardesc;
+   int iswide;
+} fontdesctype;
 
 /*  A fontmap associates a fontdesc with a font number.
  */
 typedef struct tft {
-   integer fontnum ;
-   fontdesctype *desc ;
-   struct tft *next ;
-} fontmaptype ;
+   integer fontnum;
+   fontdesctype *desc;
+   struct tft *next;
+} fontmaptype;
 
 /*   Virtual fonts require a `macro' capability that is implemented by
  *   using a stack of `frames'.
  */
 typedef struct {
-   quarterword *curp, *curl ;
-   fontdesctype *curf ;
-   fontmaptype *ff ;
-} frametype ;
+   quarterword *curp, *curl;
+   fontdesctype *curf;
+   fontmaptype *ff;
+} frametype;
 
 /*
  *   The next type holds the font usage information in a 256-bit table;
  *   there's a 1 for each character that was used in a section.
  */
 typedef struct {
-   fontdesctype *fd ;
-   halfword psfused ;
-   halfword bitmap[16] ;
-} charusetype ;
+   fontdesctype *fd;
+   halfword psfused;
+   halfword bitmap[16];
+} charusetype;
 
 /*   Next we want to record the relevant data for a section.  A section is
  *   a largest portion of the document whose font usage does not overflow
@@ -232,17 +240,17 @@ typedef struct {
  *   the second phase.
  */
 typedef struct t {
-   integer bos ;
-   struct t *next ;
-   halfword numpages ;
-} sectiontype ;
+   integer bos;
+   struct t *next;
+   halfword numpages;
+} sectiontype;
 
 /*
  *   Sections are actually represented not by sectiontype but by a more
  *   complex data structure of variable size, having the following layout:
- *      sectiontype sect ;
- *      charusetype charuse[numfonts] ;
- *      fontdesctype *sentinel = NULL ;
+ *      sectiontype sect;
+ *      charusetype charuse[numfonts];
+ *      fontdesctype *sentinel = NULL;
  *   (Here numfonts is the number of bitmap fonts currently defined.)
  *    Since we can't declare this or take a sizeof it, we build it and
  *   manipulate it ourselves (see the end of the prescan routine).
@@ -251,12 +259,12 @@ typedef struct t {
  *   This is how we build up headers and other lists.
  */
 struct header_list {
-   struct header_list *next ;
-   char *Hname ;
-   char *precode ;
-   char *postcode ;
-   char name[1] ;
-} ;
+   struct header_list *next;
+   const char *Hname;
+   char *precode;
+   char *postcode;
+   char name[1];
+};
 /*
  *   Some machines define putlong in their library.
  *   We get around this here.
@@ -266,11 +274,11 @@ struct header_list {
  *   Information on available paper sizes is stored here.
  */
 struct papsiz {
-   struct papsiz *next ;
-   integer xsize, ysize ;
-   char *name ;
-   char *specdat ;
-} ;
+   struct papsiz *next;
+   integer xsize, ysize;
+   const char *name;
+   const char *specdat;
+};
 #ifdef MVSXA /* IBM: MVS/XA */
 /* this is where we fix problems with conflicts for truncation
    of long names (we might only do this if LONGNAME not set but ...) */
@@ -278,7 +286,7 @@ struct papsiz {
 #   define flushDashedPath flshDshdPth  /* conflict with flushDash */
 #   define PageList PgList  /* re-definition conflict with pagelist  */
 /* adding ascii2ebcdic conversion table to extern */
-    extern char ascii2ebcdic[] ;
+    extern char ascii2ebcdic[];
 #endif  /* IBM: MVS/XA */
 #ifdef VMCMS /* IBM: VM/CMS */
 /* this is where we fix problems with conflicts for truncation
@@ -286,9 +294,9 @@ struct papsiz {
 #   define pprescanpages pprscnpgs  /* confict with pprescan */
 #   define flushDashedPath flshDshdPth  /* conflict with flushDash */
 /* adding ascii2ebcdic conversion table to extern */
-    extern char ascii2ebcdic[] ;
+    extern char ascii2ebcdic[];
 /* redefining fopen for VMCMS, see DVIPSCMS.C */
-    extern FILE *cmsfopen() ;
+    extern FILE *cmsfopen();
 #   ifdef fopen
 #      undef fopen
 #   endif
@@ -338,12 +346,10 @@ struct papsiz {
 #include <io.h>
 #include <fcntl.h>
 #define O_BINARY _O_BINARY
-#define popen _popen
-#define pclose _pclose
 #define register
-#define SET_BINARY(fd) _setmode((fd), _O_BINARY)
+#define SET_BINARY(fd) (void)_setmode((fd), _O_BINARY)
 #else /* !WIN32 */
-#define SET_BINARY(fd)
+#define SET_BINARY(fd) (void)0
 #endif
 
 #if defined(DEVICESEP)
