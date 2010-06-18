@@ -6,42 +6,6 @@
 //
 //========================================================================
 
-/* ------------------------------------------------------------------------
-* Changed by Martin Schröder <martin@pdftex.org>
-* $Id: Page.cc 421 2008-04-26 21:59:55Z oneiros $
-* Changelog:
-* ------------------------------------------------------------------------
-* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
-* 
-* Merging xpdf 3.02 from HEAD into stable
-* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
-* 
-* ------------------------------------------------------------------------
-* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
-* 
-* 1.30.1
-* 
-* ------------------------------------------------------------------------
-* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
-* 
-* 1.20a
-* 
-* ------------------------------------------------------------------------
-* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
-* 
-* released v1.11b
-* 
-* ------------------------------------------------------------------------
-* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
-* 
-* Moved sources to src
-* 
-* ------------------------------------------------------------------------
-* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
-* 
-* 1.11a
-* ------------------------------------------------------------------------ */
-
 #include <aconf.h>
 
 #ifdef USE_GCC_PRAGMAS
@@ -456,9 +420,9 @@ void Page::processLinks(OutputDev *out, Catalog *catalog) {
   delete links;
 }
 
-#ifndef PDF_PARSER_ONLY
 void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
 			 int rotate, GBool useMediaBox, GBool upsideDown) {
+#ifndef PDF_PARSER_ONLY
   GfxState *state;
   int i;
 
@@ -475,5 +439,5 @@ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
     ctm[i] = state->getCTM()[i];
   }
   delete state;
-}
 #endif
+}

@@ -5,57 +5,9 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-
-/* ------------------------------------------------------------------------
-* Changed by Martin Schröder <martin@pdftex.org>
-* $Id: XRef.cc 421 2008-04-26 21:59:55Z oneiros $
-* Changelog:
-* ------------------------------------------------------------------------
-* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
-* 
-* Merging xpdf 3.02 from HEAD into stable
-* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
-* 
-* ------------------------------------------------------------------------
-* r77 | ms | 2007-01-01 13:01:00 +0100 (Mo, 01 Jan 2007) | 2 lines
-* 
-* 1.40.0
-* 
-* ------------------------------------------------------------------------
-* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
-* 
-* 1.30.1
-* 
-* ------------------------------------------------------------------------
-* r24 | ms | 2005-02-04 13:01:00 +0100 (Fr, 04 Feb 2005) | 2 lines
-* 
-* 1.21a
-* 
-* ------------------------------------------------------------------------
-* r21 | ms | 2004-12-22 13:01:00 +0100 (Mi, 22 Dez 2004) | 2 lines
-* 
-* 1.20b
-* 
-* ------------------------------------------------------------------------
-* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
-* 
-* 1.20a
-* 
-* ------------------------------------------------------------------------
-* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
-* 
-* released v1.11b
-* 
-* ------------------------------------------------------------------------
-* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
-* 
-* Moved sources to src
-* 
-* ------------------------------------------------------------------------
-* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
-* 
-* 1.11a
-* ------------------------------------------------------------------------ */
+//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
+//  See top-level ChangeLog for a list of all modifications
+//========================================================================
 
 #include <aconf.h>
 
@@ -107,6 +59,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objs = NULL;
   objNums = NULL;
   offsets = NULL;
+  ok = gFalse;
 
   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
     goto err1;
@@ -133,6 +86,13 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     goto err1;
   }
 
+  // this is an arbitrary limit to avoid integer overflow problems
+  // in the 'new Object[nObjects]' call (Acrobat apparently limits
+  // object streams to 100-200 objects)
+  if (nObjects > 1000000) {
+    error(-1, "Too many objects in an object stream");
+    goto err1;
+  }
   objs = new Object[nObjects];
   objNums = (int *)gmallocn(nObjects, sizeof(int));
   offsets = (int *)gmallocn(nObjects, sizeof(int));
@@ -149,7 +109,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       obj1.free();
       obj2.free();
       delete parser;
-//       gfree(offsets);
+//    gfree(offsets);
       goto err1;
     }
     objNums[i] = obj1.getInt();
@@ -159,7 +119,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     if (objNums[i] < 0 || offsets[i] < 0 ||
 	(i > 0 && offsets[i] < offsets[i-1])) {
       delete parser;
-//       gfree(offsets);
+//    gfree(offsets);
       goto err1;
     }
   }
@@ -188,11 +148,11 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     delete parser;
   }
 
-//   gfree(offsets);
+//gfree(offsets);
+  ok = gTrue;
 
  err1:
   objStr.free();
-  return;
 }
 
 ObjectStream::~ObjectStream() {
@@ -866,6 +826,11 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
 	delete objStr;
       }
       objStr = new ObjectStream(this, e->offset);
+      if (!objStr->isOk()) {
+	delete objStr;
+	objStr = NULL;
+	goto err;
+      }
     }
     objStr->getObject(e->gen, num, obj);
     break;

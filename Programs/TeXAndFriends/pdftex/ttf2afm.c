@@ -36,6 +36,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <limits.h>
 #include <writettf.h>
 #define assert MIKTEX_ASSERT
+#define exit(status) throw(status)
 #else
 #include <libgen.h>
 #include <pdftexdir/ptexmac.h>

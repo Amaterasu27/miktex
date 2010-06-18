@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,10 +19,9 @@
 
 add_definitions(
   -DHAVE_POPEN
-  -DPDF_PARSER_ONLY
-  -DUSE_GZIP
   -DNATIVE_WINDOWS_LEAN_AND_MEAN
   -DPDF_PARSER_ONLY
+  -DUSE_GZIP
 )
 
 include_directories(
