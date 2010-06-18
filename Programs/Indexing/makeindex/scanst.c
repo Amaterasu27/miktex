@@ -105,20 +105,20 @@ static char page_prec[ARRAY_MAX] = PRECEDENCE_DEF;
 
 static int put_dot;
 
-static	int	count_lfd ARGS((char *str));
-static	int	next_nonblank ARGS((void));
-static	int	process_precedence ARGS((void));
-static	int	scan_char ARGS((char *c));
-static	int	scan_spec ARGS((char *spec));
-static	int	scan_string ARGS((char *str));
+static	int	count_lfd (char *str);
+static	int	next_nonblank (void);
+static	int	process_precedence (void);
+static	int	scan_char (char *c);
+static	int	scan_spec (char *spec);
+static	int	scan_string (char *str);
 
 void
-scan_sty(VOID_ARG)
+scan_sty(void)
 {
     char    spec[STRING_MAX];
     int     tmp;
 
-    MESSAGE("Scanning style file %s", sty_fn);
+    MESSAGE1("Scanning style file %s", sty_fn);
     while (scan_spec(spec)) {
 	sty_tc++;
 	put_dot = TRUE;
@@ -253,7 +253,7 @@ scan_sty(VOID_ARG)
 	else {
 	    (void) next_nonblank();
 	    STY_SKIPLINE;
-	    STY_ERROR("Unknown specifier %s.\n", spec);
+	    STY_ERROR1("Unknown specifier %s.\n", spec);
 	    put_dot = FALSE;
 	}
 	if (put_dot) {
@@ -263,7 +263,7 @@ scan_sty(VOID_ARG)
 
     /* check if quote and escape are distinct */
     if (idx_quote == idx_escape) {
-	STY_ERROR(
+	STY_ERROR1(
 	       "Quote and escape symbols must be distinct (both `%c' now).\n",
 	       idx_quote);
 	idx_quote = IDX_QUOTE;
@@ -274,12 +274,7 @@ scan_sty(VOID_ARG)
 }
 
 static int
-#if STDC
 scan_spec(char spec[])
-#else
-scan_spec(spec)
-char    spec[];
-#endif
 {
     int     i = 0;
     int     c;
@@ -299,7 +294,7 @@ char    spec[];
     if (i < STRING_MAX) {
 	spec[i] = NUL;
 	if (c == EOF) {
-	    STY_ERROR(
+	    STY_ERROR1(
 		      "No attribute for specifier %s (premature EOF)\n",
 		      spec);
 	    return (-1);
@@ -316,7 +311,7 @@ char    spec[];
 
 
 static int
-next_nonblank(VOID_ARG)
+next_nonblank(void)
 {
     int     c;
 
@@ -338,12 +333,7 @@ next_nonblank(VOID_ARG)
 
 
 static int
-#if STDC
 scan_string(char str[])
-#else
-scan_string(str)
-char    str[];
-#endif
 {
     char    clone[ARRAY_MAX];
     int     i = 0;
@@ -354,7 +344,7 @@ char    str[];
 	while (TRUE)
 	    switch (c = GET_CHAR(sty_fp)) {
 	    case EOF:
-		STY_ERROR("No closing delimiter in %s.\n",
+		STY_ERROR1("No closing delimiter in %s.\n",
 			  clone);
 		return (FALSE);
 	    case STR_DELIM:
@@ -399,7 +389,7 @@ char    str[];
 	break;
     default:
 	STY_SKIPLINE;
-	STY_ERROR("No opening delimiter.\n", "");
+	STY_ERROR("No opening delimiter.\n");
 	return (FALSE);
     }
     return (TRUE);                     /* function value no longer used */
@@ -407,12 +397,7 @@ char    str[];
 
 
 static int
-#if STDC
 scan_char(char *c)
-#else
-scan_char(c)
-char   *c;
-#endif
 {
     int     clone;
 
@@ -421,12 +406,12 @@ char   *c;
 	switch (clone = GET_CHAR(sty_fp)) {
 	case CHR_DELIM:
 	    STY_SKIPLINE;
-	    STY_ERROR("Premature closing delimiter.\n", "");
+	    STY_ERROR("Premature closing delimiter.\n");
 	    return (FALSE);
 	case LFD:
 	    sty_lc++;
 	case EOF:
-	    STY_ERROR("No character (premature EOF).\n", "");
+	    STY_ERROR("No character (premature EOF).\n");
 	    return (FALSE);
 	case BSH:
 	    clone = GET_CHAR(sty_fp);
@@ -435,7 +420,7 @@ char   *c;
 		*c = (char) clone;
 		return (TRUE);
 	    } else {
-		STY_ERROR("No closing delimiter or too many letters.\n", "");
+		STY_ERROR("No closing delimiter or too many letters.\n");
 		return (FALSE);
 	    }
 	}
@@ -445,7 +430,7 @@ char   *c;
 	break;
     default:
 	STY_SKIPLINE;
-	STY_ERROR("No opening delimiter.\n", "");
+	STY_ERROR("No opening delimiter.\n");
 	return (FALSE);
     }
     return (TRUE);                     /* function value no longer used */
@@ -453,12 +438,7 @@ char   *c;
 
 
 static int
-#if STDC
 count_lfd(char *str)
-#else
-count_lfd(str)
-char   *str;
-#endif
 {
     int     i = 0;
     int     n = 0;
@@ -473,7 +453,7 @@ char   *str;
 
 
 static int
-process_precedence(VOID_ARG)
+process_precedence(void)
 {
     int     order[PAGETYPE_MAX];
     int     type[PAGETYPE_MAX];
@@ -520,7 +500,7 @@ process_precedence(VOID_ARG)
 	    break;
 	default:
 	    STY_SKIPLINE;
-	    STY_ERROR("Unknow type `%c' in page precedence specification.\n",
+	    STY_ERROR1("Unknow type `%c' in page precedence specification.\n",
 		      page_prec[i]);
 	    return (FALSE);
 	}
@@ -528,7 +508,7 @@ process_precedence(VOID_ARG)
     }
     if (page_prec[i] != NUL) {
 	STY_SKIPLINE;
-	STY_ERROR("Page precedence specification string too long.\n", "");
+	STY_ERROR("Page precedence specification string too long.\n");
 	return (FALSE);
     }
     last = i;

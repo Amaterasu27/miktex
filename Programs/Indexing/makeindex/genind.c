@@ -49,24 +49,24 @@ static int ind_lc = 0;			/* overall line count */
 static int ind_ec = 0;			/* erroneous line count */
 static int ind_indent;
 
-static	void	flush_line ARGS((int print));
-static	void	insert_page ARGS((void));
-static	int	make_entry ARGS((int n));
-static	void	make_item ARGS((char* term));
-static  unsigned char first_letter ARGS((char* term));
-static	void	new_entry ARGS((void));
-static	void	old_entry ARGS((void));
-static	int	page_diff ARGS((struct KFIELD *a,struct KFIELD *b));
-static	void	put_header ARGS((int let));
-static	void	wrap_line ARGS((int print));
+static	void	flush_line (int print);
+static	void	insert_page (void);
+static	int	make_entry (int n);
+static	void	make_item (const char* term);
+static  unsigned char first_letter (char* term);
+static	void	new_entry (void);
+static	void	old_entry (void);
+static	int	page_diff (struct KFIELD *a,struct KFIELD *b);
+static	void	put_header (int let);
+static	void	wrap_line (int print);
 
 void
-gen_ind(VOID_ARG)
+gen_ind(void)
 {
     int     n;
     int     tmp_lc;
 
-    MESSAGE("Generating output file %s...", ind_fn);
+    MESSAGE1("Generating output file %s...", ind_fn);
     PUT(preamble);
     ind_lc += prelen;
     if (init_page)
@@ -83,7 +83,7 @@ gen_ind(VOID_ARG)
     tmp_lc = ind_lc;
     if (in_range) {
 	curr = range_ptr;
-	IND_ERROR("Unmatched range opening operator %c.\n", idx_ropen);
+	IND_ERROR1("Unmatched range opening operator %c.\n", idx_ropen);
     }
     prev = curr;
     flush_line(TRUE);
@@ -99,12 +99,7 @@ gen_ind(VOID_ARG)
 
 
 static int
-#if STDC
 make_entry(int n)
-#else
-make_entry(n)
-int     n;
-#endif
 {
     int     let;
 
@@ -137,7 +132,7 @@ int     n;
 
     if (*curr->encap == idx_ropen)
 	if (in_range) {
-	    IND_ERROR("Extra range opening operator %c.\n", idx_ropen);
+	    IND_ERROR1("Extra range opening operator %c.\n", idx_ropen);
 	} else {
 	    in_range = TRUE;
 	    range_ptr = curr;
@@ -147,27 +142,22 @@ int     n;
 	    in_range = FALSE;
 	    if (STRNEQ(&(curr->encap[1]), "") &&
 		STRNEQ(prev_encap, &(curr->encap[1]))) {
-IND_ERROR("Range closing operator has an inconsistent encapsulator %s.\n",
+IND_ERROR1("Range closing operator has an inconsistent encapsulator %s.\n",
 			  &(curr->encap[1]));
 	    }
 	} else {
-	    IND_ERROR("Unmatched range closing operator %c.\n", idx_rclose);
+	    IND_ERROR1("Unmatched range closing operator %c.\n", idx_rclose);
 	}
     else if ((*curr->encap != NUL) &&
 	     STRNEQ(curr->encap, prev_encap) && in_range)
-	IND_ERROR("Inconsistent page encapsulator %s within range.\n",
+	IND_ERROR1("Inconsistent page encapsulator %s within range.\n",
 		  curr->encap);
     return (1);
 }
 
 
 static void
-#if STDC
-make_item(char *term)
-#else
-make_item(term)
-char   *term;
-#endif
+make_item(const char *term)
 {
     int     i;
 
@@ -229,12 +219,7 @@ char   *term;
 }
 
 static unsigned char
-#if STDC
 first_letter(char *term)
-#else
-first_letter(term)
-char   *term;
-#endif
 {
     if (thai_sort)
         return strchr("אבגדה", term[0]) ? term[1] : term[0];
@@ -243,9 +228,9 @@ char   *term;
 }
 
 static void
-new_entry(VOID_ARG)
+new_entry(void)
 {
-    int    let;
+    int let = -1; /* see comment below */
     FIELD_PTR ptr;
 #ifdef HAVE_SETLOCALE
     char *prev_locale;
@@ -256,7 +241,7 @@ new_entry(VOID_ARG)
     if (in_range) {
 	ptr = curr;
 	curr = range_ptr;
-	IND_ERROR("Unmatched range opening operator %c.\n", idx_ropen);
+	IND_ERROR1("Unmatched range opening operator %c.\n", idx_ropen);
 	in_range = FALSE;
 	curr = ptr;
     }
@@ -275,6 +260,11 @@ new_entry(VOID_ARG)
 	PUT(group_skip);
 	ind_lc += skiplen;
 	/* beginning of a new letter? */
+	/* Although we may use let unassigned here, it doesn't matter,
+	   because put_header will not use its arg except in case
+	   ALPHA, when it is assigned in the midst of condition above.
+	   Let's not perturb the logic, just initialize it (above) to
+	   avoid the warning.  */
 	put_header(let);
 	make_item(NIL);
     } else
@@ -286,7 +276,7 @@ new_entry(VOID_ARG)
 
 
 static void
-old_entry(VOID_ARG)
+old_entry(void)
 {
     int     diff;
 
@@ -318,16 +308,13 @@ old_entry(VOID_ARG)
 	flush_line(FALSE);
 	if ((diff == 0) && (prev->type == curr->type)) {
 IND_ERROR(
-"Conflicting entries: multiple encaps for the same page under same key.\n",
-"");
+"Conflicting entries: multiple encaps for the same page under same key.\n");
 	} else if (in_range && (prev->type != curr->type)) {
 IND_ERROR(
-"Illegal range formation: starting & ending pages are of different types.\n",
-"");
+"Illegal range formation: starting & ending pages are of different types.\n");
 	} else if (in_range && (diff == -1)) {
 IND_ERROR(
-"Illegal range formation: starting & ending pages cross chap/sec breaks.\n",
-"");
+"Illegal range formation: starting & ending pages cross chap/sec breaks.\n");
 	}
 	SAVE;
     }
@@ -335,13 +322,7 @@ IND_ERROR(
 
 
 static int
-#if STDC
 page_diff(FIELD_PTR a,FIELD_PTR b)
-#else
-page_diff(a, b)
-FIELD_PTR a;
-FIELD_PTR b;
-#endif
 {
     short   i;
 
@@ -354,12 +335,7 @@ FIELD_PTR b;
 }
 
 static void
-#if STDC
 put_header(int let)
-#else
-put_header(let)
-int	let;
-#endif
 {
     if (headings_flag)
     {
@@ -411,12 +387,7 @@ int	let;
    multiple page ranges (when defined) */
 
 static void
-#if STDC
 flush_line(int print)
-#else
-flush_line(print)
-int     print;
-#endif
 {
     char    tmp[sizeof(buff)];
 
@@ -486,12 +457,7 @@ int     print;
 }
 
 static void
-#if STDC
 wrap_line(int print)
-#else
-wrap_line(print)
-int     print;
-#endif
 {
     int     len;
 
@@ -522,7 +488,7 @@ int     print;
 
 
 static void
-insert_page(VOID_ARG)
+insert_page(void)
 {
     int     i = 0;
     int     j = 0;

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,8 +24,6 @@ add_definitions(
   -DHAVE_STRCHR
   -DHAVE_STRINGS_H
   -DHAVE_STRRCHR
-  -DIBM_PC_MICROSOFT
-  -DOS_WIN32
   -UDEBUG
 )
 
@@ -36,19 +34,33 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-set(makeindex_sources
-  ${wrapper_cpp}
+set (makeindex_c_sources
   genind.c
-  genind.h
-  makeindex-version.h
   mkind.c
-  mkind.h
   qsort.c
   scanid.c
-  scanid.h
   scanst.c
-  scanst.h
   sortid.c
+)
+
+set(makeindex_sources
+  ${makeindex_c_sources}
+  ${wrapper_cpp}
+  genind.h
+  makeindex-version.h
+  mkind.h
+  scanid.h
+  scanst.h
+)
+
+set_source_files_properties(${wrapper_cpp}
+  PROPERTIES
+    COMPILE_FLAGS "-DCPLUSPLUSMAIN -DBEQUIET"
+)
+
+set_source_files_properties(${makeindex_c_sources}
+  PROPERTIES
+    LANGUAGE CXX
 )
 
 if(NATIVE_WINDOWS)

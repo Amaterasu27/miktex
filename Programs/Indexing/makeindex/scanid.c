@@ -39,31 +39,28 @@ static int first_entry = TRUE;
 static int comp_len;
 static char key[ARGUMENT_MAX];
 static char no[NUMBER_MAX];
-#ifndef WIN32
-extern char *strchr ARGS((const char* s,int c));
-#endif
 
 NODE_PTR head;
 NODE_PTR tail;
 
-static	void	flush_to_eol ARGS((void));
-static	int	make_key ARGS((void));
-static	void	make_string ARGS((char **ppstr,int n));
-static	int	scan_alpha_lower ARGS((char *no,int *npg,short *count));
-static	int	scan_alpha_upper ARGS((char *no,int *npg,short *count));
-static	int	scan_arabic ARGS((char *no,int *npg,short *count));
-static	int	scan_arg1 ARGS((void));
-static	int	scan_arg2 ARGS((void));
-static	int	scan_field ARGS((int *n,char field[],int len_field,
-				 int ck_level, int ck_encap,int ck_actual));
-static	int	scan_key ARGS((struct KFIELD *data));
-static	int	scan_no ARGS((char *no,int *npg,short *count,short *type));
-static	int	scan_roman_lower ARGS((char *no,int *npg,short *count));
-static	int	scan_roman_upper ARGS((char *no,int *npg,short *count));
-static	void	search_quote ARGS((char **sort_key,char **actual_key));
+static	void	flush_to_eol (void);
+static	int	make_key (void);
+static	void	make_string (char **ppstr,int n);
+static	int	scan_alpha_lower (char *no,int *npg,short *count);
+static	int	scan_alpha_upper (char *no,int *npg,short *count);
+static	int	scan_arabic (char *no,int *npg,short *count);
+static	int	scan_arg1 (void);
+static	int	scan_arg2 (void);
+static	int	scan_field (int *n,char field[],int len_field,
+				 int ck_level, int ck_encap,int ck_actual);
+static	int	scan_key (struct KFIELD *data);
+static	int	scan_no (char *no,int *npg,short *count,short *type);
+static	int	scan_roman_lower (char *no,int *npg,short *count);
+static	int	scan_roman_upper (char *no,int *npg,short *count);
+static	void	search_quote (char **sort_key,char **actual_key);
 
 void
-scan_idx(VOID_ARG)
+scan_idx(void)
 {
     char    keyword[ARRAY_MAX];
     int     c;
@@ -71,7 +68,7 @@ scan_idx(VOID_ARG)
     int     not_eof = TRUE;
     int     arg_count = -1;
 
-    MESSAGE("Scanning input file %s...", idx_fn);
+    MESSAGE1("Scanning input file %s...", idx_fn);
     idx_lc = idx_tc = idx_ec = idx_dc = 0;
     comp_len = strlen(page_comp);
     while (not_eof) {
@@ -93,8 +90,7 @@ scan_idx(VOID_ARG)
 		    IDX_DOT(DOT_MAX);
 		arg_count = -1;
 	    } else if (arg_count > -1) {
-		IDX_ERROR("Missing arguments -- need two (premature LFD).\n",
-			  NULL);
+		IDX_ERROR("Missing arguments -- need two (premature LFD).\n");
 		arg_count = -1;
 	    }
 	case TAB:
@@ -119,7 +115,7 @@ scan_idx(VOID_ARG)
 			}
 		    } else {
 			IDX_SKIPLINE;
-			IDX_ERROR("Unknown index keyword %s.\n", keyword);
+			IDX_ERROR1("Unknown index keyword %s.\n", keyword);
 		    }
 		} else {
 		    if (i < ARRAY_MAX)
@@ -139,13 +135,13 @@ scan_idx(VOID_ARG)
 		    }
 		} else {
 		    IDX_SKIPLINE;
-IDX_ERROR(
+IDX_ERROR1(
 "No opening delimiter for second argument (illegal character `%c').\n", c);
 		}
 		break;
 	    case 2:
 		IDX_SKIPLINE;
-IDX_ERROR(
+IDX_ERROR1(
 "No closing delimiter for second argument (illegal character `%c').\n", c);
 		break;
 	    }
@@ -162,7 +158,7 @@ IDX_ERROR(
 }
 
 static void
-flush_to_eol(VOID_ARG)
+flush_to_eol(void)
 {	/* flush to end-of-line, or end-of-file, whichever is first */
     int a;
 
@@ -171,7 +167,7 @@ flush_to_eol(VOID_ARG)
 }
 
 static int
-make_key(VOID_ARG)
+make_key(void)
 {
     NODE_PTR ptr;
     int     i;
@@ -237,13 +233,7 @@ make_key(VOID_ARG)
 }
 
 static void
-#if STDC
 make_string(char **ppstr, int n)
-#else
-make_string(ppstr,n)			/* allocate n-byte string if *ppstr */
-char	**ppstr;			/* points to an empty string */
-int	n;
-#endif
 {
     if (*ppstr)			/* Do NOT leaking here, <werner@suse.de> */
 	free(*ppstr);
@@ -260,12 +250,7 @@ int	n;
 }
 
 static int
-#if STDC
 scan_key(FIELD_PTR data)
-#else
-scan_key(data)
-FIELD_PTR data;
-#endif
 {
     int     i = 0;		       /* current level */
     int     n = 0;		       /* index to the key[] array */
@@ -344,18 +329,8 @@ FIELD_PTR data;
 }
 
 static int
-#if STDC
 scan_field(int *n, char field[], int len_field, int ck_level, int ck_encap, 
 	int ck_actual)
-#else
-scan_field(n, field, len_field, ck_level, ck_encap, ck_actual)
-int    *n;
-char    field[];
-int	len_field;	/* length of field[], EXCLUDING space for final NUL */
-int     ck_level;
-int     ck_encap;
-int     ck_actual;
-#endif
 {
     int     i = 0;
     int     nbsh;		       /* backslash count */
@@ -413,12 +388,12 @@ int     ck_actual;
 	{
 	FIELD_OVERFLOW:
 	    if (!ck_encap) {
-		IDX_ERROR("Encapsulator of page number too long (max. %d).\n",
+		IDX_ERROR1("Encapsulator of page number too long (max. %d).\n",
 			  len_field);
 	    } else if (ck_actual) {
-		IDX_ERROR("Index sort key too long (max. %d).\n", len_field);
+		IDX_ERROR1("Index sort key too long (max. %d).\n", len_field);
 	    } else {
-		IDX_ERROR("Text of key entry too long (max. %d).\n", len_field);
+		IDX_ERROR1("Text of key entry too long (max. %d).\n", len_field);
 	    }
 	    return (FALSE);
 	}
@@ -427,12 +402,7 @@ int     ck_actual;
 }
 
 int
-#if STDC
 group_type(char *str)
-#else
-group_type(str)
-char   *str;
-#endif
 {
     int     i = 0;
 
@@ -449,15 +419,7 @@ char   *str;
 }
 
 static int
-#if STDC
 scan_no(char no[], int npg[], short *count, short *type)
-#else
-scan_no(no, npg, count, type)
-char    no[];
-int   npg[];
-short  *count;
-short  *type;
-#endif
 {
     int     i = 1;
 
@@ -485,7 +447,7 @@ short  *type;
 	if (!scan_alpha_upper(no, npg, count))
 	    return (FALSE);
     } else {
-	IDX_ERROR("Illegal page number %s.\n", no);
+	IDX_ERROR1("Illegal page number %s.\n", no);
 	return (FALSE);
     }
     return (TRUE);
@@ -493,14 +455,7 @@ short  *type;
 
 
 static int
-#if STDC
 scan_arabic(char no[], int npg[], short *count)
-#else
-scan_arabic(no, npg, count)
-char    no[];
-int   npg[];
-short  *count;
-#endif
 {
     short   i = 0;
     char    str[ARABIC_MAX+1];		/* space for trailing NUL */
@@ -531,14 +486,7 @@ IDX_ERROR2("Illegal Arabic digit: position %d in %s.\n", i + 1, no);
 
 
 static int
-#if STDC
 scan_roman_lower(char no[], int npg[], short *count)
-#else
-scan_roman_lower(no, npg, count)
-char    no[];
-int   npg[];
-short  *count;
-#endif
 {
     short   i = 0;
     int     inp = 0;
@@ -581,14 +529,7 @@ IDX_ERROR2("Illegal Roman number: position %d in %s.\n", i + 1, no);
 
 
 static int
-#if STDC
 scan_roman_upper(char no[], int npg[], short *count)
-#else
-scan_roman_upper(no, npg, count)
-char    no[];
-int   npg[];
-short  *count;
-#endif
 {
     short   i = 0;
     int     inp = 0;
@@ -631,14 +572,7 @@ IDX_ERROR2("Illegal Roman number: position %d in %s.\n", i + 1, no);
 
 
 static int
-#if STDC
 scan_alpha_lower(char no[], int npg[], short *count)
-#else
-scan_alpha_lower(no, npg, count)
-char    no[];
-int   npg[];
-short  *count;
-#endif
 {
     short   i;
 
@@ -653,14 +587,7 @@ short  *count;
 
 
 static int
-#if STDC
 scan_alpha_upper(char no[], int npg[], short *count)
-#else
-scan_alpha_upper(no, npg, count)
-char    no[];
-int   npg[];
-short  *count;
-#endif
 {
     short   i;
 
@@ -675,7 +602,7 @@ short  *count;
 
 
 static int
-scan_arg1(VOID_ARG)
+scan_arg1(void)
 {
     int     i = 0;
     int     n = 0;		       /* delimiter count */
@@ -721,7 +648,7 @@ scan_arg1(VOID_ARG)
 	    {
 	    case LFD:
 		idx_lc++;
-		IDX_ERROR("Incomplete first argument (premature LFD).\n", "");
+		IDX_ERROR("Incomplete first argument (premature LFD).\n");
 		return (FALSE);
 	    case TAB:
 	    case SPC:
@@ -742,13 +669,13 @@ scan_arg1(VOID_ARG)
 
     flush_to_eol();			/* Skip to end of line */
     idx_lc++;
-    IDX_ERROR("First argument too long (max %d).\n", ARGUMENT_MAX);
+    IDX_ERROR1("First argument too long (max %d).\n", ARGUMENT_MAX);
     return (FALSE);
 }
 
 
 static int
-scan_arg2(VOID_ARG)
+scan_arg2(void)
 {
     int     i = 0;
     int     a;
@@ -764,7 +691,7 @@ scan_arg2(VOID_ARG)
 	    switch (a) {
 	    case LFD:
 		idx_lc++;
-IDX_ERROR("Incomplete second argument (premature LFD).\n", "");
+IDX_ERROR("Incomplete second argument (premature LFD).\n");
 		return (FALSE);
 	    case TAB:
 	    case SPC:
@@ -774,7 +701,7 @@ IDX_ERROR("Incomplete second argument (premature LFD).\n", "");
 		if (hit_blank) {
 		    flush_to_eol();	/* Skip to end of line */
 		    idx_lc++;
-IDX_ERROR("Illegal space within numerals in second argument.\n", "");
+IDX_ERROR("Illegal space within numerals in second argument.\n");
 		    return (FALSE);
 		}
 		no[i++] = (char) a;
@@ -784,22 +711,16 @@ IDX_ERROR("Illegal space within numerals in second argument.\n", "");
     }
     flush_to_eol();	/* Skip to end of line */
     idx_lc++;
-    IDX_ERROR("Second argument too long (max %d).\n", NUMBER_MAX);
+    IDX_ERROR1("Second argument too long (max %d).\n", NUMBER_MAX);
     return (FALSE);
 }
 
 
 static void
-#if STDC
 search_quote(char **sort_key, char **actual_key)
-#else
-search_quote(sort_key, actual_key)
-char  **sort_key;
-char  **actual_key;
-#endif
 {
     char   *ptr;		       /* pointer to sort_key */
-    char   *sort;		       /* contains sorting text */
+    const char   *sort;		       /* contains sorting text */
     int     char_found = FALSE;
 
     strcpy(*actual_key, *sort_key);

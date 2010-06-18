@@ -26,7 +26,10 @@
  */
 
 #if defined(MIKTEX)
-#  define bzero(ptr, len) memset(ptr, 0, len)
+#  include <miktex/Core/Version>
+#  if defined(MIKTEX_WINDOWS)
+#    include <miktex/unxemu.h>
+#  endif
 #else
 #include "c-auto.h"
 #endif
@@ -56,16 +59,10 @@
 
    If no OS_xxxx symbol is defined, OS_BSD is assumed.
 
-   If Standard C prototypes are supported, define the symbol
-   STDC_PROTOTYPES in the appropriate OS_xxxx section below, and insert
-   #include's for the standard system files which define library
-   prototypes.  STDC_PROTOTYPES will be defined automatically if
-   __STDC__ is; the latter must be defined by all Standard C conformant
-   implementations.
+   Standard C prototypes are now required.
 
    All function declarations in MakeIndex are contained at the end of
-   this file.  If 185STDC_PROTOTYPES is not selected, then all the standard
-   library functions must be declared explicitly.
+   this file.
 
    If the host system restricts external names to 6 characters, set
    SHORTNAMES non-zero in the appropriate OS_xxxx section below.
@@ -79,8 +76,6 @@
 
 /**********************************************************************/
 
-#define STDC	(__STDC__ || __cplusplus)
-
 /*
  * Establish needed operating symbols (defaulting to OS_BSD if none
  * specified at compile time).  If you add one, add it to the check
@@ -88,7 +83,6 @@
  */
 
 #define SHORTNAMES 0
-#define STDC_PROTOTYPES STDC
 
 /**********************************************************************/
 
@@ -97,8 +91,8 @@
 #endif
 
 #if USE_KPATHSEA
-#ifndef DEBUG     /* strange logic: makeindex uses DEBUG to force debugging */
-#define NO_DEBUG  /* kpathsea uses NO_DEBUG to suppress it.                 */
+#ifndef DEBUG       /* strange logic: makeindex uses DEBUG to force debugging */
+#define NO_DEBUG 1  /* kpathsea uses NO_DEBUG to suppress it.                 */
 #endif
 #include <kpathsea/config.h>
 #include <kpathsea/c-limits.h>
@@ -114,6 +108,10 @@
 #endif
 
 #include    <stdio.h>
+
+#if defined(MIKTEX)
+#  define exit(status) throw(status)
+#endif
 
 #ifdef HAVE_CTYPE_H
 #include    <ctype.h>
@@ -259,7 +257,13 @@
 #define STREQ(A, B)  (strcmp(A, B) == 0)
 #define STRNEQ(A, B) (strcmp(A, B) != 0)
 
-#define MESSAGE(F, S) { \
+#define MESSAGE(F) { \
+    if (verbose) \
+	fprintf(stderr, F); \
+    fprintf(ilg_fp, F); \
+}
+
+#define MESSAGE1(F, S) { \
     if (verbose) \
 	fprintf(stderr, F, S); \
     fprintf(ilg_fp, F, S); \
@@ -269,7 +273,17 @@
 #undef FATAL
 #endif
 
-#define FATAL(F, S) { \
+#define FATAL(F) { \
+    fprintf(stderr, F); \
+    fprintf(stderr, USAGE, pgm_fn); \
+    EXIT(1); \
+}
+
+#if USE_KPATHSEA /* kpathsea defines a different FATAL1 */
+#undef FATAL1
+#endif
+
+#define FATAL1(F, S) { \
     fprintf(stderr, F, S); \
     fprintf(stderr, USAGE, pgm_fn); \
     EXIT(1); \
@@ -310,7 +324,7 @@ violations are possible, with core dumps, or worse, incorrect output,
 ensuing.
 ======================================================================*/
 
-#define ARABIC_MAX    10	/* maximum digits in an Arabic page */
+#define ARABIC_MAX    99	/* maximum digits in an Arabic page */
 				/* number field */
 
 #define ARGUMENT_MAX  1024	/* maximum length of sort or actual key */
@@ -331,7 +345,7 @@ ensuing.
 #define LINE_MAX      72	/* maximum output line length (longer */
 				/* ones wrap if possible) */
 
-#define NUMBER_MAX    16	/* maximum digits in a Roman or Arabic */
+#define NUMBER_MAX    99	/* maximum digits in a Roman or Arabic */
 				/* page number */
 				/* (MAX(ARABIC_MAX,ROMAN_MAX)) */
 
@@ -340,22 +354,26 @@ ensuing.
 
 #define PAGETYPE_MAX  5		/* fixed at 5; see use in scanst.c */
 
-#define ROMAN_MAX     16	/* maximum length of Roman page number */
+#define ROMAN_MAX     99	/* maximum length of Roman page number */
 				/* field */
 
-#define STRING_MAX    256	/* maximum length of host filename */
+#define STRING_MAX    999	/* maximum length of host filename */
 
 /*====================================================================*/
 
 #if USE_KPATHSEA
-#define VERSION       "version 2.14 [02-Oct-2002] (kpathsea + Thai support)"
+#if defined(MIKTEX)
+#define VERSION       "version 2.15 [" MIKTEX_BANNER_STR "] (kpathsea + Thai support)"
 #else
-#define VERSION       "version 2.14 [02-Oct-2002] (with Thai support)"
+#define VERSION       "version 2.15 [TeX Live 2009] (kpathsea + Thai support)"
+#endif
+#else
+#define VERSION       "version 2.15 [20-Nov-2007] (with Thai support)"
 #endif
 
 #define PUT_VERSION { \
-    MESSAGE("This is %s, ", pgm_fn); \
-    MESSAGE("%s.\n", VERSION); \
+    MESSAGE1("This is %s, ", pgm_fn); \
+    MESSAGE1("%s.\n", VERSION); \
     need_version = FALSE; \
 }
 
@@ -382,6 +400,7 @@ ensuing.
 #define ARAB      2
 #define ALPL      3
 #define ALPU      4
+#undef DUPLICATE /* may already be defined for WIN32 */
 #define DUPLICATE 9999
 
 #define SYMBOL -1
@@ -399,7 +418,7 @@ typedef struct KFIELD
     short   count;			/* page field count */
     short   type;			/* page number type */
     char    *encap;			/* encapsulator */
-    char    *fn;			/* input filename */
+    const char    *fn;			/* input filename */
     int     lc;				/* line number */
 }	FIELD, *FIELD_PTR;
 
@@ -481,10 +500,10 @@ extern FILE *sty_fp;
 extern FILE *ind_fp;
 extern FILE *ilg_fp;
 
-extern char *idx_fn;
-extern char *pgm_fn;
-extern char *ind_fn;
-extern char *ilg_fn;
+extern const char *idx_fn;
+extern const char *pgm_fn;
+extern const char *ind_fn;
+extern const char *ilg_fn;
 
 #ifndef MKIND_C
 extern char sty_fn[];
@@ -541,51 +560,26 @@ fprintf(ilg_fp, \
     fprintf(ilg_fp, "done (%d %s, %d %s).\n", (A), B, C, D); \
 }
 
-#if    STDC_PROTOTYPES
-#define ARGS(arg_list)	arg_list
-#define VOIDP		void*
-#define VOID_ARG	void
-#else
-#define ARGS(arg_list)	()
-#define const
-#define VOIDP		char*
-#define VOID_ARG
-#endif
+extern void gen_ind (void);
+extern int group_type (char *str);
+extern int main (int argc, char **argv);
+extern void qqsort (char *base, int n, int size,
+		int (*compar)(char*,char*));
+extern void scan_idx (void);
+extern void scan_sty (void);
+extern void sort_idx (void);
+extern int strtoint (char *str);
 
-extern void gen_ind ARGS((void));
-extern int group_type ARGS((char *str));
-extern int main ARGS((int argc, char **argv));
-extern void qqsort ARGS((char *base, int n, int size,
-		int (*compar)ARGS((char*,char*))));
-extern void scan_idx ARGS((void));
-extern void scan_sty ARGS((void));
-extern void sort_idx ARGS((void));
-extern int strtoint ARGS((char *str));
-
-#if STDC
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
 #if __NeXT__
-int	access ARGS((const char *, int));
+int	access (const char *, int);
 #else
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #endif
-#else
-/* Miscellaneous standard library routines */
-int	access ARGS((const char *, int));
-
-char   *getenv ARGS((const char *name));
-
-char   *strchr ARGS((const char *s,int c));
-char   *strrchr ARGS((const char *s,int c));
-#ifndef USE_KPATHSEA
-VOIDP	calloc ARGS((size_t nitems,size_t size));
-VOIDP	malloc ARGS((size_t size));
-#endif
-#endif /* __STDC__ */
 
 #ifndef    R_OK
 #define R_OK 4                         /* only symbol from sys/file.h */
