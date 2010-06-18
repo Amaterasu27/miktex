@@ -479,6 +479,9 @@
   MIKTEX_PATH_DIRECTORY_DELIMITER_STRING	\
   "config"
 
+#define MIKTEX_PATH_CWEB_DIR			\
+  "cweb"
+
 #define MIKTEX_PATH_PSUTILS_DIR			\
   "psutils"
 

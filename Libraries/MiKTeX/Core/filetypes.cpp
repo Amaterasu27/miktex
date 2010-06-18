@@ -277,6 +277,21 @@ SessionImpl::RegisterFileTypes ()
 		 ));
 
   RegisterFileType
+    (FileType::CWEB,
+     "cweb",
+     "CWeb",
+     ListBuilder(
+		 ".w"
+		 ),
+     ListBuilder(
+		 CURRENT_DIRECTORY,
+		 SearchSpecBuilder(MIKTEX_PATH_CWEB_DIR)
+		 ),
+     ListBuilder(
+		 "CWEBINPUTS"
+		 ));
+
+  RegisterFileType
     (FileType::DVI,
      "dvi",
      0,
