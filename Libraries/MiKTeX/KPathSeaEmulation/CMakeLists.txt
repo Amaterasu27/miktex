@@ -43,6 +43,7 @@ set(kpathsea_includes
   c-std.h
   c-unistd.h
   c-vararg.h
+  concatn.h
   config.h
   debug.h
   expand.h
@@ -51,6 +52,7 @@ set(kpathsea_includes
   lib.h
   line.h
   magstep.h
+  paths.h
   pathsearch.h
   proginit.h
   progname.h

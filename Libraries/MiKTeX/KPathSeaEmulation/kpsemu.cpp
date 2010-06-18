@@ -1,7 +1,7 @@
 /* kpsemu.cpp: texk compatibility functions
 
    Copyright (C) 1994, 95 Karl Berry
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -87,7 +87,7 @@ magstep (/*[in]*/ int	n,
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-KPSE::FindGlyph (/*[in]*/ char *			lpszFontName,
+KPSE::FindGlyph (/*[in]*/ const char *			lpszFontName,
 		 /*[in]*/ unsigned			dpi,
 		 /*[in]*/ kpse_file_format_type		format,
 		 /*[out]*/ kpse_glyph_file_type *	glyph_file)
@@ -129,7 +129,7 @@ KPSE::FindGlyph (/*[in]*/ char *			lpszFontName,
   char * lpsz = MIKTEX_STRDUP(path.Get());
   if (glyph_file != 0)
     {
-      glyph_file->name = lpszFontName;
+      glyph_file->name = const_cast<char*>(lpszFontName);
       glyph_file->dpi = dpi;
       glyph_file->format = format;
       glyph_file->source = kpse_glyph_source_normal;
@@ -143,7 +143,7 @@ KPSE::FindGlyph (/*[in]*/ char *			lpszFontName,
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_glyph (/*[in]*/ char *				lpszFontName,
+miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
 			/*[in]*/ unsigned			dpi,
 			/*[in]*/ kpse_file_format_type		format,
 			/*[out]*/ kpse_glyph_file_type *	glyph_file)
@@ -248,6 +248,9 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
       break;
     case kpse_cmap_format:
       found = pSession->FindFile(lpszFileName, FileType::CMAP, result);
+      break;
+    case kpse_cweb_format:
+      found = pSession->FindFile(lpszFileName, FileType::CWEB, result);
       break;
     default:
       found = false;
@@ -441,6 +444,57 @@ miktex_strdup (/*[in]*/ const char *	lpsz,
 
 /* _________________________________________________________________________
 
+   ConcatV
+   _________________________________________________________________________ */
+
+char *
+ConcatV (/*[in]*/ const char *	lpsz1,
+	 /*[in]*/ va_list	marker)
+{
+  CharBuffer<char> buf;
+  for (const char * lpsz = lpsz1;
+       lpsz != 0;
+       va_arg(marker, const char *))
+  {
+    buf.Append (lpsz);
+  }
+  return (KPSE::StrDup(buf.Get(), __FILE__, __LINE__));
+}
+
+/* _________________________________________________________________________
+
+   KPSE::Concat
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+KPSE::Concat (/*[in]*/ const char * lpsz1, ...)
+{
+  va_list marker;
+  va_start (marker, lpsz1);
+  char * lpszRet = ConcatV(lpsz1, marker);
+  va_end (marker);
+  return (lpszRet);
+}
+
+/* _________________________________________________________________________
+
+   miktex_concat
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_concat (/*[in]*/ const char * lpsz1, ...)
+{
+  C_FUNC_BEGIN();
+  va_list marker;
+  va_start (marker, lpsz1);
+  char * lpszRet = ConcatV(lpsz1, marker);
+  va_end (marker);
+  return (lpszRet);
+  C_FUNC_END();
+}
+
+/* _________________________________________________________________________
+
    KPSE::BaseName
    _________________________________________________________________________ */
 
@@ -467,9 +521,9 @@ KPSE::BaseName (/*[in]*/ const char * lpszFileName)
 MIKTEXKPSCEEAPI(const char *)
 miktex_basename (/*[in]*/ const char * lpszFileName)
 {
-  //C_FUNC_BEGIN ();
+  C_FUNC_BEGIN ();
   return (KPSE::BaseName(lpszFileName));
-  //C_FUNC_END ();
+  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -481,9 +535,9 @@ MIKTEXKPSCEEAPI(int)
 miktex_strcasecmp (/*[in]*/ const char * lpsz1,
 		   /*[in]*/ const char * lpsz2)
 {
-  //C_FUNC_BEGIN ();
+  C_FUNC_BEGIN ();
   return (StringCompare(lpsz1, lpsz2, true));
-  //C_FUNC_END ();
+  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -714,15 +768,9 @@ miktex_fopen (/*[in]*/ const char *	lpszFileName,
    miktex_program_invocation_name
    _________________________________________________________________________ */
 
-#if MIKTEX_SERIES_INT <= 207
-extern "C"
-MIKTEXKPSDATA(char *)
-miktex_program_invocation_name = 0;
-#else
 namespace {
   char * miktex_program_invocation_name = 0;
 }
-#endif
 
 /* _________________________________________________________________________
 
@@ -794,9 +842,9 @@ MIKTEXKPSCEEAPI(int)
 miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
 			      /*[in]*/ double	dpi2)
 {
-  //C_FUNC_BEGIN ();
+  C_FUNC_BEGIN ();
   return (KPSE::BitmapTolerance(dpi1, dpi2));
-  //C_FUNC_END ();
+  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -861,9 +909,9 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 			 /*[in]*/ unsigned	bdpi,
 			 /*[in]*/ int *		m_ret)
 {
-  //C_FUNC_BEGIN ();
+  C_FUNC_BEGIN ();
   return (KPSE::MagStepFix(dpi, bdpi, m_ret));
-  //C_FUNC_END ();
+  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -961,7 +1009,7 @@ MIKTEXKPSCEEAPI(const char *)
 miktex_get_program_invocation_name ()
 {
   C_FUNC_BEGIN ();
-  KPSE::GetProgramInvocationName ();
+  return (KPSE::GetProgramInvocationName());
   C_FUNC_END ();
 }
 
@@ -1041,5 +1089,31 @@ miktex_putenv (/*[in]*/ const char * lpszVarName,
 {
   C_FUNC_BEGIN ();
   Utils::SetEnvironmentString (lpszVarName, lpszValue);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpse_in_name_ok
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+miktex_kpse_in_name_ok (/*[in]*/ const char *lpszFileName)
+{
+  C_FUNC_BEGIN ();
+  return (Utils::IsSafeFileName(lpszFileName, true) ? 1 : 0);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpse_out_name_ok
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+miktex_kpse_out_name_ok (/*[in]*/ const char *lpszFileName)
+{
+  C_FUNC_BEGIN ();
+  return (Utils::IsSafeFileName(lpszFileName, false) ? 1 : 0);
   C_FUNC_END ();
 }

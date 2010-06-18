@@ -53,9 +53,6 @@
 #define MIKTEXKPSCEEAPI(type) MIKTEXKPSEXPORT type MIKTEXCEECALL
 #define MIKTEXKPSDATA(type) MIKTEXKPSEXPORT type
 
-#define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
-#define MIKTEX_END_EXTERN_C_BLOCK }
-
 #define MIKTEXKPSE_BEGIN_NAMESPACE		\
   namespace MiKTeX {				\
     namespace KPSE {
@@ -63,6 +60,17 @@
 #define MIKTEXKPSE_END_NAMESPACE		\
     }						\
   }
+
+/* _________________________________________________________________________
+
+   config.h
+   _________________________________________________________________________ */
+
+#if defined (MIKTEX_WINDOWS)
+#  define DEV_NULL "NUL"
+#else
+#  define DEV_NULL "/dev/null"
+#endif
 
 /* _________________________________________________________________________
 
@@ -90,7 +98,7 @@
 #endif
 
 #if defined(MIKTEX_WINDOWS)
-#  define SET_BINARY(f) _setmode((f), _O_BINARY)
+#  define SET_BINARY(f) _setmode(f, _O_BINARY)
 #else
 #  define SET_BINARY(f)
 #endif
@@ -110,6 +118,13 @@
    _________________________________________________________________________ */
 
 #define KPSEVERSION "kpathsea version 3.3.2"
+
+/* _________________________________________________________________________
+
+   paths.h
+   _________________________________________________________________________ */
+
+#define DEFAULT_BIBTEX_CSFILE "88591lat.csf"
 
 /* _________________________________________________________________________
 
@@ -180,17 +195,6 @@
 
 /* _________________________________________________________________________
 
-   strings.h (not really kpathsea)
-   _________________________________________________________________________ */
-
-#if defined(__cplusplus)
-#  define strcasecmp(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
-#else
-#  define strcasecmp(s1, s2) miktex_strcasecmp(s1, s2)
-#endif
-
-/* _________________________________________________________________________
-
    lib.h
    _________________________________________________________________________ */
 
@@ -244,19 +248,14 @@
 
 #define XTALLOC(n, t) ((t*)xmalloc((n) * sizeof(t)))
 
-#define concat(s1, s2)						\
-  strcat(strcpy((char *)xmalloc(strlen(s1) + strlen(s2) + 1),	\
-                s1),						\
-	 s2)
+#define concat concatn
+#define concat3 concatn
 
-#define concat3(s1, s2, s3)					\
-  strcat(strcat(strcpy((char *)xmalloc(strlen(s1)		\
-                                             + strlen(s2)	\
-					     + strlen(s3)	\
-                                             + 1),		\
-                       s1),					\
-		s2),						\
-         s3)
+#if defined(__cplusplus)
+#  define concatn MiKTeX::KPSE::Concat
+#else
+#  define concatn miktex_concat
+#endif
 
 #define find_suffix(name) MiKTeX::KPSE::FindSuffix(name)
 
@@ -361,18 +360,34 @@
 #  define kpse_find_file miktex_kpse_find_file
 #endif
 
-#define kpse_find_ofm(name) miktex_kpse_find_file(name, kpse_ofm_format, 1)
+#define kpse_find_ofm(name) kpse_find_file(name, kpse_ofm_format, 1)
 
-#define kpse_find_pict(name) miktex_kpse_find_file(name, kpse_pict_format, 1)
+#define kpse_find_pict(name) kpse_find_file(name, kpse_pict_format, 1)
 
-#define kpse_find_tex(name)  kpse_find_file(name, kpse_tex_format, true)
+#define kpse_find_tex(name)  kpse_find_file(name, kpse_tex_format, 1)
 
-#define kpse_find_tfm(name) miktex_kpse_find_file(name, kpse_tfm_format, 1)
+#define kpse_find_tfm(name) kpse_find_file(name, kpse_tfm_format, 1)
 
 #if defined(__cplusplus)
 #  define kpse_open_file MiKTeX::KPSE::OpenFile
 #else
 #  define kpse_open_file miktex_kpse_open_file
+#endif
+
+#if defined(__cplusplus)
+#define kpse_in_name_ok(fname) \
+  (MiKTeX::Core::Utils::IsSafeFileName(fname, true) ? 1 : 0)
+#else
+#define kpse_in_name_ok(fname) \
+  miktex_kpse_in_name_ok(fname)
+#endif
+
+#if defined(__cplusplus)
+#define kpse_out_name_ok(fname) \
+  (MiKTeX::Core::Utils::IsSafeFileName(fname, false) ? 1 : 0)
+#else
+#define kpse_out_name_ok(fname) \
+  miktex_kpse_out_name_ok(fname)
 #endif
 
 /* _________________________________________________________________________
@@ -404,13 +419,18 @@ typedef char * string;
 typedef const char * const_string;
 
 #if ! defined(HAVE_BOOLEAN)
-#  if defined(__cplusplus)
-#    define boolean bool
+#  define HAVE_BOOLEAN
+#  if defined(MIKTEX_WINDOWS)
+     // shadow definition in rpcndr.h
+#    define boolean int
 #  else
-#    if ! defined(false) && ! defined(true)
-typedef enum { false = 0, true = 1 } MIKTEX_KPSE_BOOLEAN;
+     typedef int boolean;
+#  endif
+#  if ! defined(__cplusplus)
+#    if ! defined(true)
+#      define true 1
+#      define false 0
 #    endif
-#    define boolean unsigned char
 #  endif
 #endif
 
@@ -480,9 +500,14 @@ MIKTEX_END_EXTERN_C_BLOCK
    absolute.h
    _________________________________________________________________________ */
 
+#if 0
 #define kpse_absolute_p(filename, relative_ok)	  \
   (MIKTEX_ASSERT(! (relative_ok)),		  \
    MiKTeX::Core::Utils::IsAbsolutePath(filename))
+#else
+#define kpse_absolute_p(filename, relative_ok)	  \
+   MiKTeX::Core::Utils::IsAbsolutePath(filename)
+#endif
 
 /* _________________________________________________________________________
 
@@ -546,9 +571,9 @@ MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
 #define kpse_find_pk(font_name, dpi, glyph_file) \
-  miktex_kpse_find_glyph (font_name, dpi, kpse_pk_format, glyph_file)
+  kpse_find_glyph(font_name, dpi, kpse_pk_format, glyph_file)
 
-#define kpse_find_vf(name) miktex_kpse_find_file (name, kpse_vf_format, 0)
+#define kpse_find_vf(name) kpse_find_file(name, kpse_vf_format, 0)
 
 
 /* _________________________________________________________________________
@@ -620,7 +645,7 @@ FindFile (/*[in]*/ const char *			lpszFileName,
 	  /*[in]*/ int				mustExist);
 
 MIKTEXKPSCEEAPI(char *)
-FindGlyph (/*[in]*/ char *			lpszFontName,
+FindGlyph (/*[in]*/ const char *		lpszFontName,
 	   /*[in]*/ unsigned			dpi,
 	   /*[in]*/ kpse_file_format_type	format,
 	   /*[out]*/ kpse_glyph_file_type *	glyph_file);
@@ -665,6 +690,9 @@ InitProg (/*[in]*/ const char *	lpszPrefix,
 	  /*[in]*/ const char *	lpszMode,
 	  /*[in]*/ const char *	lpszFallback);
 
+MIKTEXKPSCEEAPI(char *)
+Concat (/*[in]*/ const char * lpsz1, ...);
+
 MIKTEXKPSCEEAPI(unsigned)
 MagStepFix (/*[in]*/ unsigned	dpi,
 	    /*[in]*/ unsigned	bdpi,
@@ -706,7 +734,7 @@ MIKTEXKPSE_END_NAMESPACE;
 
 /* _________________________________________________________________________
 
-   Prototypes (C)
+   C Wrappers
    _________________________________________________________________________ */
 
 #if defined(__cplusplus)
@@ -715,6 +743,9 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK
 
 MIKTEXKPSCEEAPI(const char *)
 miktex_basename (/*[in]*/ const char * lpszFileName);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_concat (/*[in]*/ const char * lpsz1, ...);
 
 MIKTEXKPSCEEAPI(void)
 miktex_fclose (/*[in]*/ FILE *			stream,
@@ -737,10 +768,13 @@ miktex_kpse_find_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ int			mustExist);
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_glyph (/*[in]*/ char *				lpszFontName,
+miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
 			/*[in]*/ unsigned			dpi,
 			/*[in]*/ kpse_file_format_type		format,
 			/*[out]*/ kpse_glyph_file_type *	glyph_file);
+
+MIKTEXKPSCEEAPI(int)
+miktex_kpse_in_name_ok (/*[in]*/ const char *lpszFileName);
 
 MIKTEXKPSCEEAPI(void)
 miktex_kpse_init_prog (/*[in]*/ const char *	lpszPrefix,
@@ -756,6 +790,9 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 MIKTEXKPSCEEAPI(FILE *)
 miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ kpse_file_format_type	format);
+
+MIKTEXKPSCEEAPI(int)
+miktex_kpse_out_name_ok (/*[in]*/ const char *lpszFileName);
 
 MIKTEXKPSCEEAPI(void)
 miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
@@ -826,8 +863,5 @@ MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
 /* _________________________________________________________________________ */
-
-#undef MIKTEX_BEGIN_EXTERN_C_BLOCK
-#undef MIKTEX_END_EXTERN_C_BLOCK
 
 #endif
