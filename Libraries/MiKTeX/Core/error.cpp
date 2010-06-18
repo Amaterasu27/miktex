@@ -493,3 +493,14 @@ UnauthorizedAccessException::UnauthorizedAccessException
 		     sourceLine)
 {
 }
+
+/* _________________________________________________________________________
+
+   miktex_exit
+   _________________________________________________________________________ */
+
+MIKTEXCOREEXPORT MIKTEXNORETURN void MIKTEXCEECALL
+miktex_exit (/*[in]*/ int status)
+{
+  throw (status);
+}
