@@ -26,27 +26,31 @@
 
 struct encoding* encodingp=NULL;
 
-struct encoding* InitEncoding(char* encoding) 
+static struct encoding* InitEncoding(char* encoding) 
 {
   char *pos,*max,*buf,*enc_file;
   int i;
   struct encoding* encp=NULL;
   struct filemmap fmmap;
+  boolean mmapfailed;
   
 #ifdef HAVE_KPSE_ENC_FORMATS
-  TEMPSTR(enc_file,kpse_find_file(encoding,kpse_enc_format,false));
+  enc_file=kpse_find_file(encoding,kpse_enc_format,false);
 #else
-  TEMPSTR(enc_file,kpse_find_file(encoding,kpse_tex_ps_header_format,false));
+  enc_file=kpse_find_file(encoding,kpse_tex_ps_header_format,false);
 #endif
   if (enc_file == NULL) {
     Warning("encoding file %s could not be found",encoding);
     return(NULL);
   }
   DEBUG_PRINT((DEBUG_FT|DEBUG_ENC),("\n  OPEN ENCODING:\t'%s'", enc_file));
-  if (MmapFile(enc_file,&fmmap)) return(NULL);
+  mmapfailed = MmapFile(enc_file,&fmmap);
+  free(enc_file);
+  if (mmapfailed) 
+    return(NULL);
   if ((encp = calloc(sizeof(struct encoding)+strlen(encoding)+1
 		     +fmmap.size,1))==NULL) {
-    Warning("cannot alloc space for encoding",enc_file);
+    Warning("cannot alloc space for encoding",encoding);
     UnMmapFile(&fmmap);
     return(NULL);
   }

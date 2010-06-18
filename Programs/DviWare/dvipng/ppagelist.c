@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -107,7 +107,7 @@ bool InPageList(int32_t i)
   return(false);
 }
 
-void ListPage(int32_t pslow, int32_t pshigh)
+static void ListPage(int32_t pslow, int32_t pshigh)
 {
   register struct pp_list   *pl;
 
@@ -119,7 +119,7 @@ void ListPage(int32_t pslow, int32_t pshigh)
   if (pl == NULL) {
     if ((pl = (struct pp_list *)malloc(sizeof(struct pp_list)))
 	==NULL) 
-      Fatal("cannot allocate memory for page queue");
+      Fatal("cannot malloc memory for page queue");
     pl -> next = ppages;
     ppages = pl;
   }
@@ -130,9 +130,10 @@ void ListPage(int32_t pslow, int32_t pshigh)
 /* Parse a string representing a list of pages.  Return 0 iff ok.  As a
    side effect, the page selection(s) is (are) prepended to ppages. */
 
-bool ParsePages(char *s)
+bool ParsePages(const char *s)
 {
-  char *c;		/* conversion start */
+  const char *c;	/* conversion start */
+  char *t;
   long int ps_low = PAGE_MINPAGE, ps_high = PAGE_MAXPAGE;
 
   while (*s==' ' || *s=='\t') s++;
@@ -140,23 +141,27 @@ bool ParsePages(char *s)
     if (*s=='-' || *s==':') { /* range with no starting value */
       ps_low = PAGE_MINPAGE;
       c=s+1;
-      ps_high = strtol(c,&s,10);
+      ps_high = strtol(c,&t,10);
+      s = t;
       if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
       while (*s==' ' || *s=='\t') s++;
       if (*s=='-' || *s==':') { /* Oh, range with negative starting value */
 	ps_low = -ps_high;
 	c=s+1;
-	ps_high = strtol(c,&s,10);
+	ps_high = strtol(c,&t,10);
+	s = t;
 	if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
       }
     } else { /* range with starting value, or singleton */
       c=s;
-      ps_low = ps_high = strtol(c,&s,10);
+      ps_low = ps_high = strtol(c,&t,10);
+      s = t;
       if (c==s) 
 	return(true);
       if (*s=='-' || *s==':') { /* range */
 	c=s+1;
-	ps_high = strtol(c,&s,10);
+	ps_high = strtol(c,&t,10);
+	s = t;
 	if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
       }
     }

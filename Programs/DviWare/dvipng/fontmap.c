@@ -18,19 +18,19 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
 
 static struct filemmap psfont_mmap;
-#if HAVE_FT2
+#ifdef HAVE_FT2
 static struct filemmap ttfont_mmap;
 #endif
 static struct psfontmap *psfontmap=NULL;
 
-char* newword(char** buffer, char* end) 
+static char* newword(char** buffer, char* end) 
 {
   char *word,*pos=*buffer;
 
@@ -55,7 +55,7 @@ char* copyword(char* orig)
   return(word);
 }
 
-char* find_format(char* name)
+static char* find_format(const char* name)
 {
   /* Cater for both new (first case) and old (second case) kpathsea */
   char* format =
@@ -106,10 +106,10 @@ struct psfontmap *NewPSFont(struct psfontmap* copyfrom)
     newentry->psfile = copyword(copyfrom->psfile);
     newentry->encname = copyword(copyfrom->encname);
     newentry->encoding = copyfrom->encoding;
-#if HAVE_LIBT1
+#ifdef HAVE_LIBT1
     newentry->t1_transformp = copyfrom->t1_transformp;
 #endif
-#if HAVE_FT2
+#ifdef HAVE_FT2
     newentry->ft_transformp = copyfrom->ft_transformp;
     newentry->subfont = copyfrom->subfont;
 #endif
@@ -120,10 +120,10 @@ struct psfontmap *NewPSFont(struct psfontmap* copyfrom)
     newentry->psfile = NULL;
     newentry->encname = NULL;
     newentry->encoding = NULL;
-#if HAVE_LIBT1
+#ifdef HAVE_LIBT1
     newentry->t1_transformp = NULL;
 #endif
-#if HAVE_FT2
+#ifdef HAVE_FT2
     newentry->ft_transformp = NULL;
     newentry->subfont = NULL;
 #endif
@@ -134,8 +134,8 @@ struct psfontmap *NewPSFont(struct psfontmap* copyfrom)
   return(newentry);
 }
 
-struct psfontmap *SearchPSFontMap(char* fontname,
-				  struct filemmap* search_mmap)
+static struct psfontmap *SearchPSFontMap(char* fontname,
+					 struct filemmap* search_mmap)
 {
   static char *pos=NULL,*end=NULL;
   static struct filemmap* searching_mmap=NULL;
@@ -196,7 +196,7 @@ void ClearPSFontMap(void)
 #endif
 }
 
-void ReadPSFontMap(struct psfontmap *entry)
+static void ReadPSFontMap(struct psfontmap *entry)
 {
   char *pos,*end,*psname;
   int nameno = 0;
@@ -249,14 +249,14 @@ void ReadPSFontMap(struct psfontmap *entry)
 	}
 	free(word);
       }
-#if HAVE_FT2
+#ifdef HAVE_FT2
       entry->ft_transformp=&(entry->ft_transform);
       entry->ft_transform.xx=(FT_Fixed)(cxx*0x10000);
       entry->ft_transform.xy=(FT_Fixed)(cxy*0x10000);
       entry->ft_transform.yx=0;
       entry->ft_transform.yy=0x10000;
 #endif
-#if HAVE_LIBT1
+#ifdef HAVE_LIBT1
       entry->t1_transformp=&(entry->t1_transform);
       entry->t1_transform.cxx=cxx;
       entry->t1_transform.cxy=cxy;
@@ -314,7 +314,6 @@ struct psfontmap* FindPSFontMap(char* fontname)
       search_mmap_p=&ttfont_mmap;
       entry=SearchPSFontMap(fontname,search_mmap_p);
     }
-#endif
   }
   if(entry==NULL) {
     struct psfontmap* entry_subfont=NULL;
@@ -330,6 +329,7 @@ struct psfontmap* FindPSFontMap(char* fontname)
 	  entry=entry->next;
       }
     }
+#endif
   }
   if (entry!=NULL && entry->psfile==NULL) 
     ReadPSFontMap(entry);

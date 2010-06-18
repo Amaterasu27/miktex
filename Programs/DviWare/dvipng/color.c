@@ -18,14 +18,11 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
-#if HAVE_ALLOCA_H
-# include <alloca.h>
-#endif
 
 /*
  * Color. We delete and recreate the gdImage for each new page. This
@@ -39,11 +36,11 @@ struct colorname {
   char              name[1];
 } *colornamep=NULL,*xcp=NULL;
 
-char *colordef[]={"xcolor.sty","dvipsnam.def",
-		  "svgnam.def","x11nam.def",NULL};
+const char *colordef[]={"xcolor.sty","dvipsnam.def",
+			"svgnam.def","x11nam.def",NULL};
 char *xcpname=NULL;
 
-void initcolor() 
+void initcolor(void) 
 {
    csp = 1;
    cstack[0].red=255; 
@@ -54,15 +51,15 @@ void initcolor()
    cstack[1].blue=0; 
 }
 
-struct colorname * NewColor(char* prefix, int nprefix,
-              char* name, int nname,
-	      char* model, int nmodel,
-	      char* values, int nvalues)
+static struct colorname * NewColor(const char* prefix, int nprefix,
+				   char* name, int nname,
+				   char* model, int nmodel,
+				   char* values, int nvalues)
 {
   struct colorname *tmp = 
     malloc(sizeof(struct colorname)+3+nprefix+nname+nmodel+nvalues);
   if (tmp==NULL) 
-    Fatal("Cannot allocate space for color name");
+    Fatal("Cannot malloc space for color name");
   tmp->color=tmp->name+nprefix+nname+1;
   strncpy(tmp->name,prefix,nprefix);
   strncpy(tmp->name+nprefix,name,nname);
@@ -92,19 +89,24 @@ struct colorname * NewColor(char* prefix, int nprefix,
 #define FINDPSNAMEEND(s,n) n=0; while(s<max && *s!='{') { s++; n++; }
 #define BLANKCOMMAS(s) 
 
-struct colorname* LoadColornameFile(char* filename)
+static struct colorname* LoadColornameFile(const char* filename)
 {
   struct colorname *list=NULL,*tmp=NULL; 
   char *filepath,*pos,*max;
-  char *prefix="",*name,*values,*model;
+  const char *prefix="";
+  char *name,*values,*model;
   int nprefix=0,nname,nvalues,nmodel;
   struct filemmap fmmap;
+  boolean mmapfailed;
 
-  TEMPSTR(filepath,kpse_find_file(filename,kpse_tex_format,false));
+  filepath=kpse_find_file(filename,kpse_tex_format,false);
   if (filepath == NULL)
     return NULL;
   DEBUG_PRINT(DEBUG_COLOR,("\n  OPEN COLOR NAMES:\t'%s'", filepath));
-  if (MmapFile(filepath,&fmmap)) return NULL;
+  mmapfailed=MmapFile(filepath,&fmmap);
+  free(filepath);
+  if (mmapfailed)
+    return NULL;
   pos=fmmap.data;
   max=fmmap.data+fmmap.size;
   while (pos<max && *pos!='\\') pos++;
@@ -165,7 +167,7 @@ struct colorname* LoadColornameFile(char* filename)
   return(list);
 }
 
-void ClearXColorPrologue(void)
+static void ClearXColorPrologue(void)
 {
   struct colorname *next;
   while (xcp) {
@@ -190,7 +192,7 @@ void ClearColorNames(void)
   ClearXColorPrologue();
 }
 
-void InitXColorPrologue(char* name)
+void InitXColorPrologue(const char* name)
 {
   ClearXColorPrologue();
   xcpname=malloc(strlen(name)+1);
@@ -199,19 +201,24 @@ void InitXColorPrologue(char* name)
   strcpy(xcpname,name);
 }
 
-struct colorname* LoadXColorPrologue(void)
+static struct colorname* LoadXColorPrologue(void)
 {
   struct colorname *list=NULL,*tmp=NULL; 
   char *filepath,*pos,*max;
-  char *prefix="",*name,*values,*model;
+  const char *prefix="";
+  char *name,*values,*model;
   int nprefix=0,nname,nvalues,nmodel;
   struct filemmap fmmap;
+  boolean mmapfailed;
 
-  TEMPSTR(filepath,kpse_find_file(xcpname,kpse_program_text_format,false));
+  filepath=kpse_find_file(xcpname,kpse_program_text_format,false);
   if (filepath == NULL)
     return NULL;
   DEBUG_PRINT(DEBUG_COLOR,("\n  OPEN XCOLOR PROLOGUE:\t'%s'", filepath));
-  if (MmapFile(filepath,&fmmap)) return NULL;
+  mmapfailed = MmapFile(filepath,&fmmap);
+  free(filepath);
+  if (mmapfailed)
+    return NULL;
   pos=fmmap.data;
   max=fmmap.data+fmmap.size;
   while(pos<max) {
@@ -244,7 +251,7 @@ struct colorname* LoadXColorPrologue(void)
 #define NEXTINT(c) strtol(c,&end,10); WARN_IF_FAILED(c,end); c=end
 #define NEXTHEX(c) strtol(c,&end,16); WARN_IF_FAILED(c,end); c=end
 
-void stringrgb(char* color,int *r,int *g,int *b)
+void stringrgb(const char* color,int *r,int *g,int *b)
 {
   char* end;
   static int unloaded=1;
@@ -364,14 +371,14 @@ void stringrgb(char* color,int *r,int *g,int *b)
   DEBUG_PRINT(DEBUG_COLOR,("%d %d %d) ",*r,*g,*b))
 }
 
-void background(char* p)
+void background(const char* p)
 {
   stringrgb(p, &cstack[0].red, &cstack[0].green, &cstack[0].blue);
   DEBUG_PRINT(DEBUG_COLOR,("\n  BACKGROUND:\t(%d %d %d) ",
 			   cstack[0].red, cstack[0].green, cstack[0].blue));
 }
 
-void pushcolor(char * p)
+void pushcolor(const char * p)
 {
   if ( ++csp == STACK_SIZE )
     Fatal("out of color stack space") ;
@@ -380,13 +387,13 @@ void pushcolor(char * p)
 			   cstack[csp].red, cstack[csp].green, cstack[csp].blue))
 }
 
-void popcolor()
+void popcolor(void)
 {
   if (csp > 1) csp--; /* Last color is global */
   DEBUG_PRINT(DEBUG_COLOR,("\n  COLOR POP\t"))
 }
 
-void resetcolorstack(char * p)
+void resetcolorstack(const char * p)
 {
   if ( csp > 1 )
     Warning("global color change within nested colors");

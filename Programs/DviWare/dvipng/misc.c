@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -29,7 +29,7 @@
 #define basename xbasename
 #endif
 #include <fcntl.h> /* open/close */
-#ifndef MIKTEX
+#ifdef HAVE_MMAP
 #include <sys/mman.h>
 #endif
 #include <sys/stat.h>
@@ -62,7 +62,7 @@ bool DecodeArgs(int argc, char ** argv)
     Message(BE_NONQUIET,"This is %s",programname);
     if (strcmp(basename(programname),PACKAGE_NAME)!=0)
       Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
-    Message(BE_NONQUIET," %s Copyright 2002-2008 Jan-Ake Larsson\n",
+    Message(BE_NONQUIET," %s Copyright 2002-2010 Jan-Ake Larsson\n",
 	    PACKAGE_VERSION);
   }
 
@@ -195,7 +195,7 @@ bool DecodeArgs(int argc, char ** argv)
 	}
 	break ;
       case 't':       /* specify paper format, only for cropmarks */
-#if HAVE_GDIMAGECREATETRUECOLOR
+#ifdef HAVE_GDIMAGECREATETRUECOLOR
 	/* Truecolor */
 	if (strncmp(p,"ruecolor",8)==0) { 
 	  if (p[8] != '0') {
@@ -505,7 +505,7 @@ bool DecodeArgs(int argc, char ** argv)
 #ifdef HAVE_LIBT1
 	  printf("Using t1lib %s\n", T1_GetLibIdent());
 #endif
-	  puts ("Copyright (C) 2002-2008 Jan-Ake Larsson.\n\
+	  puts ("Copyright (C) 2002-2010 Jan-Ake Larsson.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU Lesser General Public License\n\
 version 3, see the COPYING file in the dvipng distribution\n\
@@ -538,6 +538,18 @@ or <http://www.gnu.org/licenses/>.");
 	  Warning("Non-numeric quality (-Q) value, ignored");
 	}
 	break;
+      case 'w':
+	if (strncmp(p,"idth",4) == 0 ) { /* Width reporting */ 
+	  if (p[4] != '0') {
+	    option_flags |= REPORT_WIDTH;
+	    Message(PARSE_STDIN,"Width reporting on\n",p);
+	  } else {
+	    option_flags &= ~REPORT_WIDTH;
+	    Message(PARSE_STDIN,"Width reporting off\n");
+	  }
+	  break;
+	}
+	goto DEFAULT;
 #ifdef HAVE_GDIMAGEPNGEX
       case 'z':
 	if (*p == 0 && argv[i+1])
@@ -690,7 +702,7 @@ int32_t SNumRead(unsigned char* current, register int n)
 /**********************************************************************/
 /******************************  Fatal  *******************************/
 /**********************************************************************/
-void Fatal (char *fmt, ...)
+void Fatal (const char *fmt, ...)
 {
   va_list args;
 
@@ -719,7 +731,7 @@ void Fatal (char *fmt, ...)
 /**********************************************************************/
 /*****************************  Warning  ******************************/
 /**********************************************************************/
-void Warning(char *fmt, ...)
+void Warning(const char *fmt, ...)
 {
   va_list args;
 
@@ -738,7 +750,7 @@ void Warning(char *fmt, ...)
 /**********************************************************************/
 /*****************************  Message  ******************************/
 /**********************************************************************/
-void Message(int activeflags, char *fmt, ...)
+void Message(int activeflags, const char *fmt, ...)
 {
   va_list args;
 
@@ -752,13 +764,13 @@ void Message(int activeflags, char *fmt, ...)
 
 bool MmapFile (char *filename,struct filemmap *fmmap)
 {
-#ifndef MIKTEX
+#ifndef WIN32
   struct stat stat;
 #endif
 
   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
   fmmap->data=NULL;
-#ifndef MIKTEX
+#ifndef WIN32
   if ((fmmap->fd = open(filename,O_RDONLY)) == -1) {
     Warning("cannot open file <%s>", filename);
     return(true);
@@ -789,7 +801,7 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   }
   close(fmmap->fd);
 # endif /* HAVE_MMAP */
-#else /* MIKTEX */
+#else /* WIN32 */
   fmmap->hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, 0, 
 			    OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
   if (fmmap->hFile == INVALID_HANDLE_VALUE) {
@@ -810,14 +822,14 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
     CloseHandle (fmmap->hFile);
     return(true);
   }
-#endif  /* MIKTEX */
+#endif  /* WIN32 */
   return(false);
 }
 
 void UnMmapFile(struct filemmap* fmmap)
 {
   if (fmmap->data!=NULL) {
-#ifndef MIKTEX
+#ifndef WIN32
 # ifdef HAVE_MMAP
     if (munmap(fmmap->data,fmmap->size))
       Warning("cannot munmap file at 0x%X",fmmap->data);
@@ -826,11 +838,11 @@ void UnMmapFile(struct filemmap* fmmap)
 # else /* HAVE_MMAP */
     free(fmmap->data);
 # endif /* HAVE_MMAP */
-#else  /* MIKTEX */
+#else  /* WIN32 */
     UnmapViewOfFile (fmmap->data);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
-#endif	/* MIKTEX */
+#endif	/* WIN32 */
   }
   fmmap->data=NULL;
 }

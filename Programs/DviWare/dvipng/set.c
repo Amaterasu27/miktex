@@ -18,24 +18,21 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
-#if HAVE_ALLOCA_H
-# include <alloca.h>
-#endif
 #include <math.h>
 
 #ifndef HAVE_GDIMAGECREATETRUECOLOR
 #define gdImageColorAllocateAlpha(i,r,g,b,a) gdImageColorAllocate(i,r,g,b) 
 #define gdImageColorResolveAlpha(i,r,g,b,a)  gdImageColorResolve(i,r,g,b) 
 #define gdImageAlpha(i,c)                    0
-#define gdAlphaMax                      127
+#define gdAlphaMax                           127
 #endif
 #ifndef HAVE_GDIMAGEPNGEX
-#define  gdImagePngEx(i,f,z)                 gdImagePng(i,f)
+#define gdImagePngEx(i,f,z)                  gdImagePng(i,f)
 #endif
 
 /* Persistent color cache. Index is ink thickness, 
@@ -84,8 +81,8 @@ void CreateImage(pixels x_width,pixels y_width)
 }
 
 
-void ChangeColor(gdImagePtr imagep,int x1,int y1,
-		 int x2,int y2,int color1,int color2)
+static void ChangeColor(gdImagePtr imagep,int x1,int y1,
+			int x2,int y2,int color1,int color2)
 /* In the given rectangle, change color1 to color2 */
 {
   int x,y;
@@ -99,7 +96,7 @@ void ChangeColor(gdImagePtr imagep,int x1,int y1,
 
 void WriteImage(char *pngname, int pagenum)
 {
-  char* pos;
+  char* pos, *freeme=NULL;
   FILE* outfp=NULL;
 
   /* Set transparent background. Maybe alpha is not available or
@@ -146,9 +143,9 @@ void WriteImage(char *pngname, int pagenum)
 	|| (*pos=='0' && pos[1]>='1' && pos[1]<='9' && pos[2]=='d')) {
       /* %d -> pagenumber, so add 9 string positions 
 	 since pagenumber max +-2^31 or +-2*10^9 */
-      char* tempname = alloca(strlen(pngname)+9);
-      sprintf(tempname,pngname,pagenum);
-      pngname = tempname;
+      freeme = malloc(strlen(pngname)+9);
+      sprintf(freeme,pngname,pagenum);
+      pngname = freeme;
     } else {
       Fatal("unacceptible format spec in output file name");
     }
@@ -171,6 +168,8 @@ void WriteImage(char *pngname, int pagenum)
     gdImagePngEx(page_imagep,outfp,compression);
   fclose(outfp);
   DEBUG_PRINT(DEBUG_DVI,("\n  WROTE:   \t%s\n",pngname));
+  if (freeme)
+    free(freeme);
   DestroyImage();
 }
 
@@ -203,23 +202,13 @@ void Gamma(double gamma)
   }
 }
 
-dviunits SetGlyph(int32_t c, int32_t hh,int32_t vv)
+dviunits SetGlyph(struct char_entry *ptr, int32_t hh,int32_t vv)
 /* gdImageChar can only do monochrome glyphs */
 {
-  register struct char_entry *ptr;
   int dst_alpha,dst_weight,tot_weight,alpha;
   int x,y,pos=0;
   int bgColor,pixelgrey,pixelcolor;
 
-  if (c<0 || c>LASTFNTCHAR) {
-    Warning("glyph index too large (%d), skipping",c);
-    return(0);
-  }
-  ptr=currentfont->chr[c];
-  if (ptr==NULL) {
-    Warning("unable to draw glyph %d, skipping",c);
-    return(0);
-  }
   hh -= ptr->xOffset/shrinkfactor;
   vv -= ptr->yOffset/shrinkfactor;
   /* Initialize persistent color cache. Perhaps this should be in

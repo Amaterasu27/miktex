@@ -206,7 +206,7 @@
 #define PACKAGE_TARNAME "dvipng"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.12"
+#define PACKAGE_VERSION "1.13"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -245,3 +245,6 @@
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork
+
+/* Define as 1 so that miktex_exit() shadows exit() */
+#define USE_MIKTEX_EXIT 1

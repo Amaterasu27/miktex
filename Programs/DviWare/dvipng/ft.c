@@ -18,14 +18,11 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2009 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
-#if HAVE_ALLOCA_H
-# include <alloca.h>
-#endif
 
 void LoadFT(int32_t c, struct char_entry * ptr)
 {
@@ -60,7 +57,7 @@ void LoadFT(int32_t c, struct char_entry * ptr)
   DEBUG_PRINT(DEBUG_FT,(" (%dx%d)",bitmap.width,bitmap.rows));
     
   if ((ptr->data = calloc(bitmap.width*bitmap.rows,sizeof(char))) == NULL)
-    Fatal("unable to allocate image space for char %c", (char)c);
+    Fatal("unable to malloc image space for char %c", (char)c);
   ptr->w = bitmap.width;
   ptr->h = bitmap.rows;
 
@@ -145,7 +142,7 @@ bool InitFT(struct font_entry * tfontp)
 }
 
 
-void UnLoadFT(struct char_entry *ptr)
+static void UnLoadFT(struct char_entry *ptr)
 {
   if (ptr->data!=NULL)
     free(ptr->data);
@@ -168,7 +165,9 @@ void DoneFT(struct font_entry *tfontp)
     }
     c++;
   }
-  tfontp->name[0]='\0';
+  if (tfontp->name!=NULL)
+    free(tfontp->name);
+  tfontp->name=NULL;
 }
 
 

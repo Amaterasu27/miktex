@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -27,11 +27,10 @@
 #define VF_ID 202
 #define LONG_CHAR 242
 
-int32_t SetVF(int32_t c) 
+int32_t SetVF(struct char_entry* ptr) 
 {
   struct font_entry* currentvf;
   unsigned char *command,*end;
-  struct char_entry* ptr=currentfont->chr[c];
 
   currentvf=currentfont;
   BeginVFMacro(currentvf);
@@ -139,5 +138,7 @@ void DoneVF(struct font_entry *tfontp)
   }
   FreeFontNumP(tfontp->vffontnump);
   tfontp->vffontnump=NULL;
-  tfontp->name[0]='\0';
+  if (tfontp->name!=NULL)
+    free(tfontp->name);
+  tfontp->name=NULL;
 }

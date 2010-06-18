@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,17 +17,14 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+## cannot compile as C++: too many implicit casts
+set(DVIPNG_COMPILE_AS_CXX 0)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_definitions(
-  -Dalloca=_alloca
-  -DUSE_MIKTEX_EXIT
-)
-
-set(dvipng_sources
-  ${wrapper_cpp}
+set(dvipng_c_sources
   color.c
   draw.c
   dvi.c
@@ -47,11 +44,36 @@ set(dvipng_sources
   vf.c
 )
 
+set(dvipng_sources
+  ${dvipng_c_sources}
+  ${wrapper_cpp}
+  commands.h
+  config.h
+  dvipng-version.h
+  dvipng.h
+)
+
 if(NATIVE_WINDOWS)
   set(dvipng_sources ${dvipng_sources}
     dvipng.rc
   )
 endif(NATIVE_WINDOWS)
+
+if(DVIPNG_COMPILE_AS_CXX)
+  set_source_files_properties(${dvipng_c_sources}
+    PROPERTIES
+      LANGUAGE CXX
+  )
+  set_source_files_properties(${wrapper_cpp}
+    PROPERTIES
+      COMPILE_FLAGS "-DCPLUSPLUSMAIN -DBEQUIET"
+  )
+else(DVIPNG_COMPILE_AS_CXX)
+  set_source_files_properties(${wrapper_cpp}
+    PROPERTIES
+      COMPILE_FLAGS "-DBEQUIET"
+  )
+endif(DVIPNG_COMPILE_AS_CXX)
 
 add_executable(dvipng ${dvipng_sources})
 

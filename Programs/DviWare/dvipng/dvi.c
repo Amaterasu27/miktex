@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -28,21 +28,26 @@
 #    define basename xbasename
 #  else
 # include <gnu-miktex.h>
-#endif
+#  endif
 # define SLEEP    Sleep(1000)
 #else  /* MIKTEX */
 # ifdef HAVE_LIBGEN_H
 #  include <libgen.h>
 # else
-# define basename xbasename
-#endif
-# define SLEEP    sleep(1)
+#  define basename xbasename
+# endif
+# ifdef WIN32
+#  define SLEEP   Sleep(1000)
+#  include <stdlib.h>
+# else
+#  define SLEEP   sleep(1)
+# endif /* WIN32 */
 #endif	/* MIKTEX */
 #include <sys/stat.h>
 
 bool followmode=0;
 
-bool DVIFollowToggle()
+bool DVIFollowToggle(void)
 {
   return followmode = ! followmode;
 }
@@ -60,7 +65,7 @@ static unsigned char fgetc_follow(FILE* fp)
   return (unsigned char)got;
 }
 
-void DVIInit(struct dvi_data* dvi)
+static void DVIInit(struct dvi_data* dvi)
 {
   int     k;
   unsigned char* pre;
@@ -106,14 +111,14 @@ struct dvi_data* DVIOpen(char* dviname,char* outname)
   struct dvi_data* dvi;
 
   if ((dvi = calloc(1,sizeof(struct dvi_data)))==NULL)
-    Fatal("cannot allocate memory for DVI struct");
+    Fatal("cannot malloc memory for DVI struct");
 
   dvi->type = DVI_TYPE;
   dvi->fontnump=NULL;
 
   dvi->name = malloc(strlen(dviname)+5);
   if (dvi->name==NULL)
-    Fatal("cannot allocate space for DVI filename");
+    Fatal("cannot malloc space for DVI filename");
   strcpy(dvi->name, dviname);
   tmpstring = strrchr(dvi->name, '.');
   if (tmpstring == NULL || strcmp(tmpstring,".dvi") != 0) 
@@ -124,7 +129,7 @@ struct dvi_data* DVIOpen(char* dviname,char* outname)
     if (dvi->outname==NULL) {
       free(dvi->name);
       free(dvi);
-      Fatal("cannot allocate space for output filename");
+      Fatal("cannot malloc space for output filename");
     }
     strcpy(dvi->outname,basename(dviname));
     tmpstring = strrchr(dvi->outname, '.');
@@ -136,7 +141,7 @@ struct dvi_data* DVIOpen(char* dviname,char* outname)
     if (dvi->outname==NULL) {
       free(dvi->name);
       free(dvi);
-      Fatal("cannot allocate space for output filename");
+      Fatal("cannot malloc space for output filename");
     }
     strcpy(dvi->outname,outname);
   }
@@ -182,7 +187,7 @@ unsigned char* DVIGetCommand(struct dvi_data* dvi)
   if (commlen==0) {
     commlen=STRSIZE;
     if ((current=command=malloc(commlen))==NULL)
-      Fatal("cannot allocate memory for DVI command");
+      Fatal("cannot malloc memory for DVI command");
   }
   DEBUG_PRINT(DEBUG_DVI,("\n@%ld ", ftell(dvi->filep)));
   *(current++) = fgetc_follow(dvi->filep);
@@ -213,7 +218,7 @@ unsigned char* DVIGetCommand(struct dvi_data* dvi)
       /* string + command length exceeds that of buffer */
       commlen=strlength+1 + (uint32_t)length;
       if ((command=realloc(command,commlen))==NULL)
-	Fatal("cannot allocate memory for DVI command");
+	Fatal("cannot malloc memory for DVI command");
       current = command + length;
     }
     while(current < command+length+strlength) 
@@ -281,7 +286,7 @@ uint32_t CommandLength(unsigned char* command)
   return(length);
 }
 
-void SkipPage(struct dvi_data* dvi)
+static void SkipPage(struct dvi_data* dvi)
 { 
   /* Skip present page */
   unsigned char* command;           
@@ -311,7 +316,7 @@ void SkipPage(struct dvi_data* dvi)
   DEBUG_PRINT(DEBUG_DVI,("SKIP CMD:\t%s", dvi_commands[*command]));
 }
 
-struct page_list* InitPage(struct dvi_data* dvi)
+static struct page_list* InitPage(struct dvi_data* dvi)
 {
   /* Find page start, return pointer to page_list entry if found */
   struct page_list* tpagelistp=NULL;
@@ -336,7 +341,7 @@ struct page_list* InitPage(struct dvi_data* dvi)
   if ((tpagelistp = 
        malloc(sizeof(struct page_list)
 	      +(csp+1-2)*sizeof(struct dvi_color)))==NULL)
-    Fatal("cannot allocate memory for new page entry");
+    Fatal("cannot malloc memory for new page entry");
   tpagelistp->next = NULL;
   if ( *command == BOP ) {  /*  Init page */
     int i;
@@ -432,7 +437,7 @@ struct page_list* FindPage(struct dvi_data* dvi, int32_t pagenum, bool abspage)
 }
 
 
-void DelPageList(struct dvi_data* dvi)
+static void DelPageList(struct dvi_data* dvi)
 {
   struct page_list* temp;
   

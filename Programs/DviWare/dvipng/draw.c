@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -79,9 +79,15 @@ dviunits SetChar(int32_t c)
 
   if (currentfont==NULL) 
     Fatal("faulty DVI, trying to set character from null font");
-
-  if (c>=0 && c<=LASTFNTCHAR) 
-    ptr = currentfont->chr[c];
+  if (c<0 || c>LASTFNTCHAR) {
+    Warning("glyph index out of range (%d), skipping",c);
+    return(0);
+  }
+  ptr=currentfont->chr[c];
+  if (ptr==NULL) {
+    Warning("unable to draw glyph %d, skipping",c);
+    return(0);
+  }
 #ifdef DEBUG
   switch (currentfont->type) {
   case FONT_TYPE_VF: DEBUG_PRINT(DEBUG_DVI,("\n  VF CHAR:\t")); break;
@@ -90,15 +96,15 @@ dviunits SetChar(int32_t c)
   case FONT_TYPE_FT: DEBUG_PRINT(DEBUG_DVI,("\n  FT CHAR:\t")); break;
   default: DEBUG_PRINT(DEBUG_DVI,("\n  NO CHAR:\t"))
   }
-  if (isprint(c))
+  if (debug & DEBUG_DVI && c>=0 && c<=UCHAR_MAX && isprint(c))
     DEBUG_PRINT(DEBUG_DVI,("'%c' ",c));
   DEBUG_PRINT(DEBUG_DVI,("%d at (%d,%d) tfmw %d", c,
 			 dvi_stack->hh,dvi_stack->vv,ptr?ptr->tfmw:0));
 #endif
   if (currentfont->type==FONT_TYPE_VF) {
-    return(SetVF(c));
+    return(SetVF(ptr));
   } else {
-    if (ptr!=NULL && ptr->data == NULL) 
+    if (ptr->data == NULL) 
       switch(currentfont->type) {
       case FONT_TYPE_PK:	LoadPK(c, ptr); break;
 #ifdef HAVE_LIBT1
@@ -111,8 +117,8 @@ dviunits SetChar(int32_t c)
 	Fatal("undefined fonttype %d",currentfont->type);
       }
     if (page_imagep != NULL)
-      return(SetGlyph(c, dvi_stack->hh, dvi_stack->vv));
-    else if (ptr!=NULL) {
+      return(SetGlyph(ptr, dvi_stack->hh, dvi_stack->vv));
+    else {
       /* Expand bounding box if necessary */
       min(x_min,dvi_stack->hh - ptr->xOffset/shrinkfactor);
       min(y_min,dvi_stack->vv - ptr->yOffset/shrinkfactor);
@@ -246,7 +252,7 @@ void DrawCommand(unsigned char* command, void* parent /* dvi/vf */)
       FontDef(command, parent); 
     } else {
       Fatal("%s within VF macro from %s",dvi_commands[*command],
-	    ((struct font_entry*)parent)->name);
+	    ((struct font_entry*)parent)->n);
     }
     break;
   case PRE: case POST: case POST_POST:
@@ -284,7 +290,7 @@ void EndVFMacro(void)
 }
 
 
-void DrawPage(dviunits hoffset, dviunits voffset) 
+static void DrawPage(dviunits hoffset, dviunits voffset) 
      /* To be used after having read BOP and will exit cleanly when
       * encountering EOP.
       */
@@ -364,6 +370,7 @@ void DrawPages(void)
 #endif
       Message(REPORT_DEPTH," depth=%d", y_width-y_offset-1);
       Message(REPORT_HEIGHT," height=%d", y_offset+1);
+      Message(REPORT_WIDTH," width=%d", x_width);
       page_flags &= ~PAGE_PREVIEW_BOP;
       DrawPage(x_offset*dvi->conv*shrinkfactor,
 	       y_offset*dvi->conv*shrinkfactor);

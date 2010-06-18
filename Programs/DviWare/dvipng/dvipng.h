@@ -18,13 +18,23 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
 #ifndef DVIPNG_H
 #define DVIPNG_H
 #include "config.h"
+#if defined(MIKTEX_WINDOWS)
+#  include <miktex/unxemu.h>
+#endif
+
+/* Autoconf may define malloc to rpl_malloc, if the system does not
+ * have a GNU Libc-compatible malloc (for which malloc(0) gives a
+ * valid pointer). We don't need that (yet) */
+#ifdef malloc
+# undef malloc
+#endif
 
 #define  STRSIZE         255     /* stringsize for file specifications  */
 
@@ -105,13 +115,6 @@ typedef int bool;
 # endif
 #endif
 
-/* Autoconf may define malloc to rpl_malloc, if the system does not
- * have a GNU Libc-compatible malloc (for which malloc(0) gives a
- * valid pointer). We don't need that (yet) */
-#ifdef malloc
-# undef malloc
-#endif
-
 
 /*************************************************************/
 /*************************  protos.h  ************************/
@@ -131,19 +134,6 @@ typedef int32_t dviunits;
 /*#define PIXROUND(x,c) ((x)/(c))*/
 /* integer round to the nearest number, not towards zero */
 #define PIXROUND(num,den) ((num)>0 ? ((num)+(den)/2)/(den) : -(((den)/2-(num))/(den)))
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined _AIX
-# define alloca __alloca
-#endif
-#define TEMPSTR(s,a) { char* tmp=a; \
-               if (tmp!=NULL) {\
-                 s=alloca(strlen(tmp)+1);strcpy(s,tmp);free(tmp);\
-               } else \
-                 s=NULL;}
-
-/*************************************************************************/
 
 
 /********************************************************/
@@ -208,12 +198,12 @@ void             ClearPSHeaders(void);
 /********************************************************/
 
 struct filemmap {
-#ifdef MIKTEX
+#ifdef WIN32
   HANDLE hFile;
   HANDLE hMap;
-#else  /* MIKTEX */
+#else  /* WIN32 */
   int fd;
-#endif	/* MIKTEX */
+#endif	/* WIN32 */
   char* data;
   size_t size;
 };
@@ -223,9 +213,9 @@ void    DecodeString(char *);
 bool    MmapFile (char *filename,struct filemmap *fmmap);
 void    UnMmapFile(struct filemmap* fmmap);
 
-void    Message(int, char *fmt, ...);
-void    Warning(char *fmt, ...);
-void    Fatal(char *fmt, ...);
+void    Message(int, const char *fmt, ...);
+void    Warning(const char *fmt, ...);
+void    Fatal(const char *fmt, ...);
 
 int32_t   SNumRead(unsigned char*, register int);
 uint32_t   UNumRead(unsigned char*, register int);
@@ -292,7 +282,7 @@ struct font_entry {    /* font entry */
   uint8_t      a, l;                                                   
   char         n[STRSIZE];      /* FNT_DEF command parameters        */
   int          dpi;             /* computed from s and d             */
-  char         name[STRSIZE];   /* full name of PK/VF file           */
+  char *       name;            /* full name of PK/VF file           */
   struct filemmap fmmap;        /* file memory map                   */
   uint32_t     magnification;   /* magnification read from font file */
   uint32_t     designsize;      /* design size read from font file   */
@@ -354,10 +344,10 @@ void    LoadT1(int32_t, struct char_entry *);
 #endif
 
 /********************************************************/
-/*********************  pplist.h  ***********************/
+/*********************  ppagelist.h  ********************/
 /********************************************************/
 
-bool    ParsePages(char*);
+bool    ParsePages(const char*);
 void    FirstPage(int32_t,bool);
 void    LastPage(int32_t,bool);
 void    ClearPpList(void);
@@ -387,28 +377,28 @@ void      DrawPages(void);
 void      WriteImage(char*, int);
 void      LoadPK(int32_t, register struct char_entry *);
 int32_t   SetChar(int32_t);
-dviunits  SetGlyph(int32_t c, int32_t hh,int32_t vv);
+dviunits  SetGlyph(struct char_entry *ptr, int32_t hh,int32_t vv);
 void      Gamma(double gamma);
-int32_t   SetVF(int32_t);
+int32_t   SetVF(struct char_entry *ptr);
 int32_t   SetRule(int32_t, int32_t, int32_t, int32_t);
 void      SetSpecial(char *, int32_t, int32_t);
 void      BeginVFMacro(struct font_entry*);
 void      EndVFMacro(void);
 
 /**************************************************/
-void handlepapersize(char*,int32_t*,int32_t*);
+void handlepapersize(const char*,int32_t*,int32_t*);
 
-void stringrgb(char* colorstring,int *r,int *g,int *b);
-void background(char *);
+void stringrgb(const char* colorstring,int *r,int *g,int *b);
+void background(const char *);
 void initcolor(void);
 void popcolor(void);
-void pushcolor(char *);
-void resetcolorstack(char *);
+void pushcolor(const char *);
+void resetcolorstack(const char *);
 void StoreColorStack(struct page_list *tpagep);
 void ReadColorStack(struct page_list *tpagep);
 void StoreBackgroundColor(struct page_list *tpagep);
 void ClearColorNames(void);
-void InitXColorPrologue(char* prologuename);
+void InitXColorPrologue(const char* prologuename);
 
 /**********************************************************************/
 /*************************  Global Variables  *************************/
@@ -434,21 +424,21 @@ EXTERN struct internal_state {
 #define PARSE_STDIN                  (1<<2)
 #define EXPAND_BBOX                  (1<<3)
 #define TIGHT_BBOX                   (1<<4)
-/* #define CACHE_IMAGES                 (1<<5) */
-#define FORCE_TRUECOLOR              (1<<6)
-#define USE_FREETYPE                 (1<<7)
-#define USE_LIBT1                    (1<<8)
-#define REPORT_HEIGHT                (1<<9)
-#define REPORT_DEPTH                 (1<<10)
+#define FORCE_TRUECOLOR              (1<<5)
+#define USE_FREETYPE                 (1<<6)
+#define USE_LIBT1                    (1<<7)
+#define REPORT_HEIGHT                (1<<8)
+#define REPORT_DEPTH                 (1<<9)
+#define REPORT_WIDTH                 (1<<10)
 #define DVI_PAGENUM                  (1<<11)
 #define MODE_PICKY                   (1<<12)
-#define GIF_OUTPUT                   (1<<15)
-#define MODE_STRICT                  (1<<16)
-#define NO_GHOSTSCRIPT               (1<<17)
-#define NO_GSSAFER                   (1<<18)
-#define BG_TRANSPARENT               (1<<19)
-#define BG_TRANSPARENT_ALPHA         (1<<20)
-#define FORCE_PALETTE                (1<<22)
+#define GIF_OUTPUT                   (1<<13)
+#define MODE_STRICT                  (1<<14)
+#define NO_GHOSTSCRIPT               (1<<15)
+#define NO_GSSAFER                   (1<<16)
+#define BG_TRANSPARENT               (1<<17)
+#define BG_TRANSPARENT_ALPHA         (1<<18)
+#define FORCE_PALETTE                (1<<19)
 EXTERN uint32_t option_flags INIT(BE_NONQUIET | USE_FREETYPE | USE_LIBT1);
 
 #define PAGE_GAVE_WARN               1
@@ -478,16 +468,16 @@ EXTERN unsigned int debug INIT(0);
 
 /************************timing stuff*********************/
 #ifdef TIMING
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
+# ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
-# else
 #  include <time.h>
+# else
+#  ifdef HAVE_SYS_TIME_H
+#   include <sys/time.h>
+#  else
+#   include <time.h>
+#  endif
 # endif
-#endif
 EXTERN double timer INIT(0);
 EXTERN double my_tic,my_toc INIT(0);
 EXTERN int      ndone INIT(0);          /* number of pages converted       */
@@ -518,10 +508,8 @@ EXTERN int    dpi                  INIT(100);
 #ifdef HAVE_GDIMAGEPNGEX
 EXTERN int   compression INIT(1);
 #endif
-#ifdef MIKTEX
 #undef min
 #undef max
-#endif        /* MIKTEX */
 # define  max(x,y)       if ((y)>(x)) x = y
 # define  min(x,y)       if ((y)<(x)) x = y
 

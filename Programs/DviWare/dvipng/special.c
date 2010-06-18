@@ -18,13 +18,19 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2009 Jan-Åke Larsson
+  Copyright (C) 2002-2010 Jan-Åke Larsson
 
 ************************************************************************/
 
 #include "dvipng.h"
-#if defined(MIKTEX)
-#  include <tchar.h>
+
+#ifndef MIKTEX
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#include <process.h>
+#define snprintf _snprintf
+#endif /* WIN32 */
 #endif
 
 #define SKIPSPACES(s) while(s && *s==' ' && *s!='\0') s++
@@ -43,7 +49,7 @@ struct pscode {
 
 struct pscode* psheaderp=NULL; /* static, DVI-specific header list */
 
-void PSCodeInit(struct pscode *entry, char *special)
+static void PSCodeInit(struct pscode *entry, char *special)
 {
   entry->next=NULL;
   entry->special=special;
@@ -94,7 +100,7 @@ void ClearPSHeaders(void)
   }
 }
 
-void writepscode(struct pscode* pscodep, FILE* psstream)
+static void writepscode(struct pscode* pscodep, FILE* psstream)
 {
   while (pscodep!=NULL) {
     if (pscodep->code!=NULL) {
@@ -134,25 +140,34 @@ void writepscode(struct pscode* pscodep, FILE* psstream)
 }
 
 
-gdImagePtr
-ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution, 
+static gdImagePtr
+ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolution,
        int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
 {
 #ifndef MIKTEX
   int downpipe[2], uppipe[2];
+#ifdef WIN32
+  unsigned long nexitcode = STILL_ACTIVE;
+  HANDLE hchild;
+  int savestdin, savestdout;
+#else /* !WIN32 */
   pid_t pid;
+#endif /* !WIN32 */
+#else /* MIKTEX */
+#if defined(MIKTEX)
+  char szCommandLine[2048];
+  char szGsPath[_MAX_PATH];
 #else
-#  if ! defined(MIKTEX)
   HANDLE hPngStream;
   HANDLE hPsStream;
   HANDLE hStdErr;
   PROCESS_INFORMATION pi;
-#  endif
   _TCHAR szCommandLine[2048];
   _TCHAR szGsPath[_MAX_PATH];
 #define GS_PATH szGsPath
   int fd;
 #endif
+#endif /* MIKTEX */
   FILE *psstream=NULL, *pngstream=NULL;
   char resolution[STRSIZE]; 
   /*   char devicesize[STRSIZE];  */
@@ -175,6 +190,7 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
 	       (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 
 	       (option_flags & NO_GSSAFER) ? "": "- "));
 #ifndef MIKTEX
+#ifndef WIN32
   if (pipe(downpipe) || pipe(uppipe)) return(NULL);
   /* Ready to fork */
   pid = fork ();
@@ -192,18 +208,51 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
 	   (option_flags & NO_GSSAFER) ? NULL: "-",
 	   NULL);
     _exit (EXIT_FAILURE);
+#else /* WIN32 */
+  if (_pipe(downpipe, 65536, O_BINARY | _O_NOINHERIT)==-1 ||
+      _pipe(uppipe, 65536, O_BINARY | _O_NOINHERIT)==-1) {
+     fprintf(stderr, "Pipe error.\n");
+     return NULL;
+#endif /* WIN32 */
   }
   /* Parent process. */
-  
+#ifdef WIN32
+  savestdin = _dup(fileno(stdin));
+  _dup2(downpipe[0], fileno(stdin));
+#endif /* WIN32 */
   close(downpipe[0]);
+#ifdef WIN32
+  savestdout = _dup(fileno(stdout));
+  _dup2(uppipe[1], fileno(stdout));
+  close(uppipe[1]);
+#endif /* WIN32 */
   psstream=fdopen(downpipe[1],"wb");
   /* fclose(psstream);  psstream=fopen("test.ps","wb"); */
+#ifndef WIN32
   if (psstream == NULL) 
     close(downpipe[1]);
   close(uppipe[1]);
   pngstream=fdopen(uppipe[0],"rb");
   if (pngstream == NULL) 
     close(uppipe[0]);
+#else /* WIN32 */
+  if (psstream == NULL) {
+     fprintf(stderr, "psstream == NULL\n");
+     close(downpipe[1]);
+  }
+  pngstream=fdopen(uppipe[0],"rb");
+  if (pngstream == NULL) {
+     fprintf(stderr, "pngstream == NULL\n");
+     close(uppipe[0]);
+  }
+  hchild=(HANDLE)spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
+         "-dBATCH", "-dNOPAUSE", "-q", "-sOutputFile=-", 
+         "-dTextAlphaBits=4", "-dGraphicsAlphaBits=4",
+         (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 
+         (option_flags & NO_GSSAFER) ? NULL : "-", NULL);
+
+  if(hchild) {
+#endif /* WIN32 */
 #else /* MIKTEX */
   if (! miktex_find_miktex_executable("mgs.exe", szGsPath)) {
       Warning("Ghostscript could not be found");
@@ -249,7 +298,7 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
       _close (fd);
   }
 #  endif
-#endif 
+#endif /* MIKTEX */
   if (psstream) {
     writepscode(psheaderp,psstream);
     DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\t<</PageSize[%d %d]/PageOffset[%d %d[1 1 dtransform exch]{0 ge{neg}if exch}forall]>>setpagedevice",
@@ -277,7 +326,24 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
 #  if ! defined(MIKTEX)
   CloseHandle(pi.hProcess);
 #  endif
-#endif
+#else /* !MIKTEX */
+#ifdef WIN32
+  }
+  while(nexitcode == STILL_ACTIVE)
+    GetExitCodeProcess((HANDLE)hchild, &nexitcode);
+
+  CloseHandle((HANDLE)hchild);
+  _dup2(savestdin, fileno(stdin));
+  _dup2(savestdout, fileno(stdout));
+  close(savestdin);
+  close(savestdout);
+  close(uppipe[0]);
+  close(uppipe[1]);
+  close(downpipe[0]);
+  close(downpipe[1]);
+#endif /* WIN32 */
+#endif /* !MIKTEX */
+
   if (psimage == NULL) {
     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\tNO IMAGE "));
     if (!showpage) {
@@ -297,7 +363,7 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
   return psimage;
 }
 
-gdImagePtr
+static gdImagePtr
 rescale(gdImagePtr psimage, int pngwidth, int pngheight)
 {
   gdImagePtr scaledimage=psimage;
@@ -328,7 +394,7 @@ rescale(gdImagePtr psimage, int pngwidth, int pngheight)
   return(scaledimage);
 }
 
-void newpsheader(char* special) {
+static void newpsheader(const char* special) {
   struct pscode* tmp;
   char* txt;
 
@@ -344,7 +410,7 @@ void newpsheader(char* special) {
     newpsheader("! TeXDict begin");
   if (psheaderp==NULL) {
     if ((tmp=psheaderp=malloc(sizeof(struct pscode)))==NULL)
-      Fatal("cannot allocate space for PostScript header struct");
+      Fatal("cannot malloc space for PostScript header struct");
   } else {
     /* No duplicates. This still misses pre=..., because we still
        change that. To be fixed */
@@ -357,7 +423,7 @@ void newpsheader(char* special) {
 	return;
     }
     if ((tmp->next=malloc(sizeof(struct pscode)))==NULL)
-      Fatal("cannot allocate space for PostScript header struct");
+      Fatal("cannot malloc space for PostScript header struct");
     tmp=tmp->next;
   }
   DEBUG_PRINT(DEBUG_GS,("\n  PS HEADER "));
@@ -470,7 +536,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 #endif
 
       PSCodeInit(&image, NULL);
-      TEMPSTR(image.filename,kpse_find_file(psname,kpse_pict_format,0));
+      image.filename=kpse_find_file(psname,kpse_pict_format,0);
       if (MmapFile(image.filename,&(image.fmmap)) || image.fmmap.size==0) {
 	Warning("Image file %s unusable, image will be left blank",
 		image.filename);
@@ -598,6 +664,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
         Warning("Unable to load %s, image will be left blank",image.filename);
         page_flags |= PAGE_GAVE_WARN;
       } 
+      free(image.filename);
       Message(BE_NONQUIET,">");
     } else { /* Don't draw */
       page_flags |= PAGE_TRUECOLOR;
@@ -655,15 +722,8 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 
   if (dvi->flags & DVI_PREVIEW_BOP_HOOK && ~page_flags & PAGE_PREVIEW_BOP 
       && strncmp(special,"ps::",4)==0) {
-#if defined(MIKTEX)
-    dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
-    page_flags |= PAGE_PREVIEW_BOP;
-    /* Hokay, decode bounding box */
-#else
-    page_flags |= PAGE_PREVIEW_BOP;
     /* Hokay, decode bounding box */
     dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
-#endif
     adj_llx = strtol(special+4,&special,10);
     adj_lly = strtol(special,&special,10);
     adj_urx = strtol(special,&special,10);
@@ -671,6 +731,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
     ht = strtol(special,&special,10);
     dp = strtol(special,&special,10);
     wd = strtol(special,&special,10);
+    page_flags |= PAGE_PREVIEW_BOP;
     if (wd>0) {
       x_offset_tightpage = 
 	(-adj_llx+dvi->conv*shrinkfactor-1)/dvi->conv/shrinkfactor;
@@ -698,6 +759,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       struct pscode *tmp;
       gdImagePtr psimage=NULL;
       char *txt;
+      const char *newspecial=NULL; /* Avoid warning from special="..." */
       
       /* Some packages split their literal PostScript code into
 	 several specials. Check for those, and concatenate them so
@@ -705,13 +767,13 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       if (pscodep==NULL) {
 	Message(BE_NONQUIET," <literal PS");
 	if ((tmp=pscodep=malloc(sizeof(struct pscode)))==NULL)
-	  Fatal("cannot allocate space for raw PostScript struct");
+	  Fatal("cannot malloc space for raw PostScript struct");
       } else {
 	tmp=pscodep;
 	while(tmp->next != NULL)
 	  tmp=tmp->next;
 	if ((tmp->next=malloc(sizeof(struct pscode)))==NULL)
-	  Fatal("cannot allocate space for raw PostScript struct");
+	  Fatal("cannot malloc space for raw PostScript struct");
 	tmp=tmp->next;
       }
       if (strncmp(special,"ps::[begin]",11)==0)
@@ -723,23 +785,30 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 	   specials. The first numbers are generally valid for the bop
 	   instruction, and the latter code is to move the origin to
 	   the right place. */
-	special="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
+	newspecial="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
       else if (strcmp(special,"ps:: pgfc")==0)
-	special="ps:: pgfc eop end";
+	newspecial="ps:: pgfc eop end";
       nextisps=DVIIsNextPSSpecial(dvi);
       if (psenvironment || nextisps) {
 	if (!nextisps) {
 	  Warning("PostScript environment contains DVI commands");
 	  page_flags |= PAGE_GAVE_WARN;
 	}
-	/* Don't use alloca, we do not want to run out of stack space */
 	DEBUG_PRINT(DEBUG_GS,("\n  PS SPECIAL "));
-	txt=malloc(strlen(special)+1);
-	strcpy(txt,special);
+	if (newspecial == NULL)
+	  newspecial=special;
+	if ((txt=malloc(strlen(newspecial)+1))==NULL)
+	  Fatal("cannot allocate space for raw PostScript special");
+	strcpy(txt,newspecial);
 	PSCodeInit(tmp,txt);
 	return;
       }
       DEBUG_PRINT(DEBUG_DVI,("\n  LAST PS SPECIAL "));
+      if (newspecial != NULL) {
+	if ((special=malloc(strlen(newspecial)+1))==NULL)
+	  Fatal("cannot allocate space for raw PostScript special");
+	strcpy(special,newspecial);
+      }
       PSCodeInit(tmp,special);
       /* Now, render image */
       if (option_flags & NO_GHOSTSCRIPT)
@@ -781,6 +850,8 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       }
       free(pscodep);
       pscodep=NULL;
+      if (newspecial != NULL)
+	free(special);
       if (psimage==NULL) 
 	page_flags |= PAGE_GAVE_WARN;
       Message(BE_NONQUIET,">");
