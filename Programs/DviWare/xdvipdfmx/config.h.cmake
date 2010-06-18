@@ -185,5 +185,5 @@
 #cmakedefine size_t
 
 #if defined(MIKTEX)
-#  define MIKTEX_2_4_COMPAT 1
+#  define USE_MIKTEX_EXIT 1
 #endif
