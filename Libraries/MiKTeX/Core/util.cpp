@@ -136,7 +136,7 @@ bool
 Utils::Contains (/*[in]*/ const char *	lpszList,
 		 /*[in]*/ const char *	lpszElement,
 		 /*[in]*/ const char *	lpszDelims,
-		 /*[in]*/ bool			ignoreCase)
+		 /*[in]*/ bool		ignoreCase)
 {
   for (Tokenizer tok (lpszList, lpszDelims); tok.GetCurrent() != 0; ++ tok)
     {
@@ -1020,7 +1020,7 @@ MiKTeX::Debug::StrDup (/*[in]*/ const char *	lpsz,
 {
   size_t len = StrLen(lpsz);
   char * lpsz2 =
-    reinterpret_cast<char *>(Malloc(sizeof(*lpszFileName) * (len + 1),
+    reinterpret_cast<char *>(Malloc(sizeof(*lpsz) * (len + 1),
 				    lpszFileName,
 				    line));
   Utils::CopyString (lpsz2, len + 1, lpsz);
