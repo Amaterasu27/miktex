@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,7 +35,7 @@ include_directories(BEFORE
 )
 set(ft_modules
   src/base/ftbbox.c
-  src/base/ftbdf.c
+#  src/base/ftbdf.c
   src/base/ftmm.c
   src/base/ftpfr.c
   src/base/ftsynth.c
@@ -63,6 +63,7 @@ set(ft_sources
   src/base/ftbitmap.c
   src/cache/ftcache.c
   builds/win32/ftdebug.c
+  src/base/ftfstype.c
   src/base/ftgasp.c
   src/base/ftglyph.c
   src/gzip/ftgzip.c

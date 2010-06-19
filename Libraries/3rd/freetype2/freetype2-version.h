@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 3275
-#define MIKTEX_COMP_ORIG_VERSION_STR "2.3.7"
+#define MIKTEX_COMP_J2000_VERSION 3822
+#define MIKTEX_COMP_ORIG_VERSION_STR "2.3.11"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1996-2001, 2002, 2003, 2004, 2006, 2007 by David Turner, Robert Wilhelm, and Werner Lemberg."
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1996-2001, 2002, 2003, 2004, 2006, 2007 by David Turner, Robert Wilhelm, and Werner Lemberg."
