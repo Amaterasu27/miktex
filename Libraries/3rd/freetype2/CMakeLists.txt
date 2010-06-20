@@ -35,7 +35,7 @@ include_directories(BEFORE
 )
 set(ft_modules
   src/base/ftbbox.c
-#  src/base/ftbdf.c
+  src/base/ftbdf.c
   src/base/ftmm.c
   src/base/ftpfr.c
   src/base/ftsynth.c
