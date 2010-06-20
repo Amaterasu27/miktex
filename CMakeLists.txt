@@ -942,10 +942,6 @@ add_subdirectory(${rel_c4p_dir})
 
 add_subdirectory(${rel_inipool_dir})
 
-add_subdirectory(${rel_cweb_dir})
-
-add_subdirectory(${rel_tie_dir})
-
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_md5_dir})
 endif(NOT LINK_EVERYTHING_STATICALLY)
@@ -1003,6 +999,10 @@ add_subdirectory(${rel_w2cemu_dir})
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})
 endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+
+add_subdirectory(${rel_cweb_dir})
+
+add_subdirectory(${rel_tie_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_fontconfig_dir})
