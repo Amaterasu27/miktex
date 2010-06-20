@@ -1,10 +1,12 @@
 /*
 
-example.c
+	WS-example.c
+
+	Example to demonstrate WS-Header.h
 
 --------------------------------------------------------------------------------
 gSOAP XML Web services tools
-Copyright (C) 2004-2005, Robert van Engelen, Genivia Inc. All Rights Reserved.
+Copyright (C) 2004-2008, Robert van Engelen, Genivia Inc. All Rights Reserved.
 This software is released under one of the following two licenses:
 GPL or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -25,6 +27,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 Author contact information:
 engelen@genivia.com / engelen@acm.org
+
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------

@@ -1,8 +1,21 @@
 /*
 
-stllist.h
+xmlmime5.h
 
-Use #import "stllist.h" in a gSOAP header file to enable STL lists.
+This file is depricated. Please use xmime5.h
+
+Use #import "xmlmime5.h" in a gSOAP header file to enable xmlmime 2005/05
+bindings.
+
+The xmlmime5:contentType attribute can be used to associate a MIME type with
+binary content, as in:
+
+#import "xmlmime5.h"
+struct ns__myBinaryData
+{ unsigned char *__ptr;
+  int __size;
+  @char *xmlmime5__contentType;
+};
 
 Use soapcpp2 option -Ipath:path:... to specify the path(s) for #import
 
@@ -42,6 +55,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 Author contact information:
 engelen@genivia.com / engelen@acm.org
 
+
 This program is released under the GPL with the additional exemption that
 compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
@@ -49,5 +63,4 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include <list>
-template <class T> class std::list;
+//gsoap xmlmime schema import: http://www.w3.org/2005/05/xmlmime

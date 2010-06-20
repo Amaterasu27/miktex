@@ -1,10 +1,16 @@
 /*
+	stdstring.h
 
-stllist.h
+	Module for sharing std::string serializers.
 
-Use #import "stllist.h" in a gSOAP header file to enable STL lists.
+	Usage:
+	#import "stdstring.h"
 
-Use soapcpp2 option -Ipath:path:... to specify the path(s) for #import
+	Compile the module to create a library with:
+	> soapcpp2 -l -CS stdstring.h
+	> cc -c STRC.cpp
+
+	Then link STRC.o that contains the serializers to your code.
 
 gSOAP XML Web services tools
 Copyright (C) 2000-2005, Robert van Engelen, Genivia Inc., All Rights Reserved.
@@ -41,13 +47,10 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 Author contact information:
 engelen@genivia.com / engelen@acm.org
-
-This program is released under the GPL with the additional exemption that
-compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include <list>
-template <class T> class std::list;
+#module "STR"
+std::string;

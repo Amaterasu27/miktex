@@ -2,6 +2,8 @@
 
 xmlmime.h
 
+This file is depricated. Please use xmime.h
+
 Use #import "xmlmime.h" in a gSOAP header file to enable xmlmime 2004/11
 bindings.
 
@@ -52,6 +54,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 Author contact information:
 engelen@genivia.com / engelen@acm.org
+
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------

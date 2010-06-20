@@ -2,10 +2,11 @@
 
 dom.h
 
-gSOAP DOM interface
+gSOAP DOM interface. Use #import "dom.h" in gSOAP header files to add DOM-based
+xsd__anyType and xsd__anyAttribute types. Automatic with wsdl2h option -d.
 
 gSOAP XML Web services tools
-Copyright (C) 2001-2005, Robert van Engelen, Genivia, Inc. All Rights Reserved.
+Copyright (C) 2001-2008, Robert van Engelen, Genivia, Inc. All Rights Reserved.
 This part of the software is released under one of the following licenses:
 GPL, the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -20,7 +21,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2004 Robert A. van Engelen, Genivia inc. All Rights Reserved.
+Copyright (C) 2000-2008 Robert A. van Engelen, Genivia inc. All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -39,6 +40,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 Author contact information:
 engelen@genivia.com / engelen@acm.org
+
+This program is released under the GPL with the additional exemption that
+compiling, linking, and/or using OpenSSL is allowed.
 --------------------------------------------------------------------------------
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
@@ -69,32 +73,35 @@ file, import the dom.h file into your header file:
     #import "dom.h"
 @endcode
 
-By importing dom.h a special data type @ref xsd__anyType is available that
-represents a hierarchical DOM node set. The DOM node set data structure can be
-used within structs, classes, STL containers, and as arguments of service
-operations. For example:
+By importing dom.h two special data types @ref xsd__anyType and @ref
+xsd__anyAttribute are available representing a hierarchical DOM node set of
+elements and attributes, respectively. The DOM node element and attribute data
+structures can be used within structs, classes, STL containers, and as
+arguments of service operations. For example:
 
 @code
     #import "dom.h"
     #import "wsu.h"
     class ns__myProduct
     { public:
-	@char*            wsu__Id;
-	_wsu__Timestamp*  wsu__Timestamp;
-        char*             name;
-	int               SKU;
-	double            price;
-	xsd__anyType*	  any;
-                          ns__myProduct();
-                          ~ns__myProduct();
+	@char*               wsu__Id;
+	@xsd__anyAttribute   atts;
+	_wsu__Timestamp*     wsu__Timestamp;
+        char*                name;
+	int                  SKU;
+	double               price;
+	xsd__anyType*	     elts;
+                             ns__myProduct();
+                             ~ns__myProduct();
     };
 @endcode
 
 It is important to declare the @ref xsd__anyType at the end of the struct or
-class, since the DOM parser consumes any XML element (the field name, 'any' in
+class, since the DOM parser consumes any XML element (the field name, 'elts' in
 this case, is irrelavant).  Thus, the other fields must be defined first to
 ensure they are populated first before the DOM node set is populated with any
-non-previously matched XML element.
+non-previously matched XML element. Likewise, the @ref xsd__anyAttribute member
+should be placed after the other attributes.
 
 Note that we also imported wsu.h as an example to show how to add a wsu:Id
 attribute to a struct or class if we want to digitally sign instances, and how
@@ -154,8 +161,10 @@ In C we use the DOM "serializers" to accomplish this as follows:
      || soap_end_recv(dom.soap))
       ... // parse error
     dom.soap->sendfd = stdout;
-    if (soap_begin_send(dom.soap)
-     || soap_out_xsd__anyType(dom.soap, NULL, 0, &dom, NULL)
+    if (soap_begin_send(dom.soap))
+      ... // output error
+    dom.soap->ns = 2; // note: must use this to omit namespaces table dumping
+    if (soap_out_xsd__anyType(dom.soap, NULL, 0, &dom, NULL)
      || soap_end_send(dom.soap))
       ... // output error
     soap_end(dom.soap);
@@ -392,7 +401,7 @@ nodes and attribute nodes, respectively.
     dom.set(myURI, "list");
     dom.add(soap_dom_attribute(dom.soap, myURI, "version", "0.9"));
     dom.add(soap_dom_element(dom.soap, myURI, "documentation", "List of products"));
-    dom.add(soap_dom_element(dom.soap, myURI, "product", SOAP_TYPE_ns__myProduct, &product);
+    dom.add(soap_dom_element(dom.soap, myURI, "product", &product, SOAP_TYPE_ns__myProduct);
     cout << dom;
     ...
 @endcode
@@ -625,6 +634,9 @@ The @ref soap_dom_attribute constructors:
 
 */
 
-/// @brief The custom serializer for DOM nodes is represented by xsd__anyType.
+/// @brief The custom serializer for DOM element nodes is represented by xsd__anyType.
 extern typedef struct soap_dom_element xsd__anyType;
+
+/// @brief The custom serializer for DOM attribute nodes is represented by xsd__anyAttribute.
+extern typedef struct soap_dom_attribute xsd__anyAttribute;
 

@@ -1,8 +1,19 @@
 /*
 
-stllist.h
+xmime4.h
 
-Use #import "stllist.h" in a gSOAP header file to enable STL lists.
+Use #import "xmlmime.h" in a gSOAP header file to enable xmlmime 2004/11
+bindings.
+
+The xmime4:contentType attribute can be used to associate a MIME type with
+binary content, as in:
+
+#import "xmime4.h"
+struct ns__myBinaryData
+{ unsigned char *__ptr;
+  int __size;
+  @char *xmime4__contentType;
+};
 
 Use soapcpp2 option -Ipath:path:... to specify the path(s) for #import
 
@@ -49,5 +60,4 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
 
-#include <list>
-template <class T> class std::list;
+//gsoap xmime4 schema import: http://www.w3.org/2004/11/xmlmime

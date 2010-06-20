@@ -1,21 +1,23 @@
 /*
+	wsa5.h
 
-wsa5.h
+	Usage: See plugin/wsaapi.c
 
-Usage: See plugin/wsaapi.c
+	Generated with:
+	wsdl2h -cgye -o wsa5.h -t WS/WS-typemap.dat WS/WS-Addressing05.xsd
 
-Generated with:
-wsdl2h -cgye -o wsa5.h -t WS/WS-typemap.dat WS/WS-Addressing05.xsd
+	Modified by Robert van Engelen:
 
-Modified by Robert van Engelen:
-
-- Removed //gsoapopt
-- Removed xsd__boolean declaration
-- Added the following directive to import WS-Addressing namespace:
-  //gsoap wsa5  schema import:	http://www.w3.org/2005/08/addressing
-  This ensures that the WS-Addressing schemas are not copied into the generated
-  WSDL by soapcpp2 but are referenced with schema import in the generated WSDL.
-- Added #define SOAP_WSA_2005
+	- Removed //gsoapopt
+	- Removed xsd__boolean declaration
+	- Added the following directive to import WS-Addressing namespace:
+  	//gsoap wsa5  schema import:	http://www.w3.org/2005/08/addressing
+	This ensures that the WS-Addressing schemas are not copied into the
+	generated WSDL by soapcpp2 but are referenced with schema import in the
+	generated WSDL.
+	- Added //gsoap wsa5  schema namespace2: http://schemas.xmlsoap.org/ws/2004/08/addressing
+	- Added #define SOAP_WSA_2005
+	- Added SOAP_ENV__Header struct
 
 */
 
@@ -41,7 +43,8 @@ Modified by Robert van Engelen:
  *                                                                            *
 \******************************************************************************/
 
-//gsoap wsa5  schema import:	http://www.w3.org/2005/08/addressing
+//gsoap wsa5  schema import:		http://www.w3.org/2005/08/addressing
+//gsoap wsa5  schema namespace2:	http://schemas.xmlsoap.org/ws/2004/08/addressing
 //gsoap wsa5  schema elementForm:	qualified
 //gsoap wsa5  schema attributeForm:	unqualified
 
@@ -89,7 +92,7 @@ typedef char* wsa5__FaultCodesOpenEnumType;
 /// "http://www.w3.org/2005/08/addressing":RelationshipType is a simpleType restriction of xs:anyURI.
 enum wsa5__RelationshipType
 {
-	http___x002f_x002fwww_x002ew3_x002eorg_x002f2005_x002f08_x002faddressing_x002freply,	///< xs:anyURI value="http://www.w3.org/2005/08/addressing/reply"
+	http_x003a_x002f_x002fwww_x002ew3_x002eorg_x002f2005_x002f08_x002faddressing_x002freply,	///< xs:anyURI value="http://www.w3.org/2005/08/addressing/reply"
 };
 /// Typedef synonym for enum wsa5__RelationshipType.
 typedef enum wsa5__RelationshipType wsa5__RelationshipType;
@@ -245,5 +248,17 @@ typedef struct wsa5__ProblemActionType _wsa5__ProblemAction;
 /// Attribute "http://www.w3.org/2005/08/addressing":IsReferenceParameter of simpleType xs:boolean.
 /// Imported attribute _wsa5__IsReferenceParameter from typemap WS/WS-typemap.dat.
 typedef enum _wsa5__IsReferenceParameter { wsa5__false, wsa5__true } _wsa5__IsReferenceParameter;
+
+/// Added
+struct SOAP_ENV__Header
+{
+                 _wsa5__MessageID  wsa5__MessageID 0;
+                 _wsa5__RelatesTo *wsa5__RelatesTo 0;
+                 _wsa5__From      *wsa5__From      0;
+  mustUnderstand _wsa5__ReplyTo   *wsa5__ReplyTo   0;
+  mustUnderstand _wsa5__FaultTo   *wsa5__FaultTo   0;
+  mustUnderstand _wsa5__To         wsa5__To        0;
+  mustUnderstand _wsa5__Action     wsa5__Action    0;
+};
 
 /* End of wsa5.h */
