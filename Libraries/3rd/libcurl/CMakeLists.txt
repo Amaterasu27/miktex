@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,8 +29,7 @@ endif(NATIVE_WINDOWS)
 set(${curl_dll_name}_sources
   arpa_telnet.h
   base64.c
-  base64.h
-  ca-bundle.h
+  config-win32.h
   connect.c
   connect.h
   content_encoding.c
@@ -38,6 +37,26 @@ set(${curl_dll_name}_sources
   cookie.c
   cookie.h
   curl-version.h
+  curl_addrinfo.c
+  curl_addrinfo.h
+  curl_base64.h
+  curl_fnmatch.c
+  curl_fnmatch.h
+  curl_hmac.h
+  curl_ldap.h
+  curl_md5.h
+  curl_memory.h
+  curl_memrchr.c
+  curl_memrchr.h
+  curl_rand.c
+  curl_rand.h
+  curl_rtmp.c
+  curl_rtmp.h
+  curl_sspi.c
+  curl_sspi.h
+  curl_threads.c
+  curl_threads.h
+  curlx.h
   dict.c
   dict.h
   easy.c
@@ -46,16 +65,22 @@ set(${curl_dll_name}_sources
   escape.h
   file.c
   file.h
+  fileinfo.c
+  fileinfo.h
   formdata.c
   formdata.h
   ftp.c
   ftp.h
+  ftplistparser.c
+  ftplistparser.h
   getenv.c
   getinfo.c
   getinfo.h
+  gtls.c
   gtls.h
   hash.c
   hash.h
+  hmac.c
   hostares.c
   hostasyn.c
   hostip.c
@@ -76,7 +101,8 @@ set(${curl_dll_name}_sources
   http_ntlm.h
   if2ip.c
   if2ip.h
-  inet_ntoa_r.h
+  imap.c
+  imap.h
   inet_ntop.c
   inet_ntop.h
   inet_pton.c
@@ -86,37 +112,60 @@ set(${curl_dll_name}_sources
   llist.c
   llist.h
   md5.c
-  md5.h
   memdebug.c
   memdebug.h
-  memory.h
   mprintf.c
   multi.c
   multiif.h
   netrc.c
   netrc.h
+  nonblock.c
+  nonblock.h
+  nssg.h
+  openldap.c
   parsedate.c
   parsedate.h
+  pingpong.c
+  pingpong.h
+  polarssl.c
+  polarssl.h
+  pop3.c
+  pop3.h
   progress.c
   progress.h
+  qssl.h
+  rawstr.c
+  rawstr.h
+  rtsp.c
+  rtsp.h
   select.c
   select.h
   sendf.c
   sendf.h
   setup.h
+  setup_once.h
   share.c
   share.h
+  slist.c
+  slist.h
+  smtp.c
+  smtp.h
   sockaddr.h
   socks.c
   socks.h
+  socks_gssapi.c
+  socks_sspi.c
   speedcheck.c
   speedcheck.h
   splay.c
   splay.h
+  ssh.c
+  ssh.h
   sslgen.c
   sslgen.h
   ssluse.c
   ssluse.h
+  strdup.h
   strequal.c
   strequal.h
   strerror.c
@@ -137,6 +186,10 @@ set(${curl_dll_name}_sources
   url.h
   urldata.h
   version.c
+  warnless.c
+  warnless.h
+  wildcard.c
+  wildcard.h
 )
 
 if(NATIVE_WINDOWS)
@@ -159,7 +212,7 @@ set_target_properties(${curl_dll_name}
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(${curl_dll_name} winmm wsock32 Wldap32)
+  target_link_libraries(${curl_dll_name} winmm wsock32 ws2_32 Wldap32)
 endif(NATIVE_WINDOWS)
 
 rebase(${curl_dll_name})

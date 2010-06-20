@@ -1,5 +1,3 @@
-#ifndef __INET_NTOA_R_H
-#define __INET_NTOA_R_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2005, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,25 +18,44 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: inet_ntoa_r.h,v 1.3 2005/05/26 20:56:25 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
-#ifdef HAVE_INET_NTOA_R_2_ARGS
-/*
- * uClibc 0.9.26 (at least) doesn't define this prototype. The buffer
- * must be at least 16 characters long.
- */
-char *inet_ntoa_r(const struct in_addr in, char buffer[]);
+#include <curl/curl.h>
 
-#else
-/*
- * My solaris 5.6 system running gcc 2.8.1 does *not* have this prototype
- * in any system include file! Isn't that weird?
- */
-char *inet_ntoa_r(const struct in_addr in, char *buffer, int buflen);
+#include "curl_rand.h"
 
-#endif
+#define _MPRINTF_REPLACE /* use our functions only */
+#include <curl/mprintf.h>
 
-#endif
+#include "curl_memory.h"
+/* The last #include file should be: */
+#include "memdebug.h"
+
+/* Private pseudo-random number seed. Unsigned integer >= 32bit. Threads
+   mutual exclusion is not implemented to acess it since we do not require
+   high quality random numbers (only used in form boudary generation). */
+
+static unsigned int randseed;
+
+/* Pseudo-random number support. */
+
+unsigned int Curl_rand(void)
+{
+  unsigned int r;
+  /* Return an unsigned 32-bit pseudo-random number. */
+  r = randseed = randseed * 1103515245 + 12345;
+  return (r << 16) | ((r >> 16) & 0xFFFF);
+}
+
+void Curl_srand(void)
+{
+  /* Randomize pseudo-random number sequence. */
+
+  randseed = (unsigned int) time(NULL);
+  Curl_rand();
+  Curl_rand();
+  Curl_rand();
+}
+

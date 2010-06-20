@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: url.h,v 1.36 2007-10-22 15:05:35 bagder Exp $
  ***************************************************************************/
 
 #include <stdarg.h> /* to make sure we have ap_list */
@@ -30,6 +29,7 @@
  */
 
 CURLcode Curl_open(struct SessionHandle **curl);
+CURLcode Curl_init_userdefined(struct UserDefined *set);
 CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
                      va_list arg);
 CURLcode Curl_dupset(struct SessionHandle * dst, struct SessionHandle * src);
@@ -64,29 +64,33 @@ int Curl_doing_getsock(struct connectdata *conn,
                        curl_socket_t *socks,
                        int numsocks);
 
+bool Curl_isPipeliningEnabled(const struct SessionHandle *handle);
 CURLcode Curl_addHandleToPipeline(struct SessionHandle *handle,
                                   struct curl_llist *pipeline);
 int Curl_removeHandleFromPipeline(struct SessionHandle *handle,
                                   struct curl_llist *pipeline);
-bool Curl_isHandleAtHead(struct SessionHandle *handle,
-                         struct curl_llist *pipeline);
+/* remove the specified connection from all (possible) pipelines and related
+   queues */
+void Curl_getoff_all_pipelines(struct SessionHandle *data,
+                               struct connectdata *conn);
 
 void Curl_close_connections(struct SessionHandle *data);
-
-#if 0
-CURLcode Curl_protocol_fdset(struct connectdata *conn,
-                             fd_set *read_fd_set,
-                             fd_set *write_fd_set,
-                             int *max_fdp);
-CURLcode Curl_doing_fdset(struct connectdata *conn,
-                          fd_set *read_fd_set,
-                          fd_set *write_fd_set,
-                          int *max_fdp);
-#endif
 
 /* Called on connect, and if there's already a protocol-specific struct
    allocated for a different connection, this frees it that it can be setup
    properly later on. */
 void Curl_reset_reqproto(struct connectdata *conn);
+
+#define CURL_DEFAULT_PROXY_PORT 1080 /* default proxy port unless specified */
+#define CURL_DEFAULT_SOCKS5_GSSAPI_SERVICE "rcmd" /* default socks5 gssapi service */
+
+CURLcode Curl_connected_proxy(struct connectdata *conn);
+
+#ifdef CURL_DISABLE_VERBOSE_STRINGS
+#define Curl_verboseconnect(x)  do { } while (0)
+#else
+void Curl_verboseconnect(struct connectdata *conn);
+#endif
+
 
 #endif
