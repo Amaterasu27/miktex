@@ -28,7 +28,7 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-add_definitions(-DHUNSPELL_EXPORTS)
+add_definitions(-DBUILDING_LIBHUNSPELL)
 
 set(${hunspell_dll_name}_sources
   src/hunspell/affentry.cxx
@@ -49,6 +49,7 @@ set(${hunspell_dll_name}_sources
   src/hunspell/hunspell.cxx
   src/hunspell/hunspell.h
   src/hunspell/hunspell.hxx
+  src/hunspell/hunvisapi.h
   src/hunspell/hunzip.cxx
   src/hunspell/hunzip.hxx
   src/hunspell/langnum.hxx
