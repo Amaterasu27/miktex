@@ -79,6 +79,16 @@ void URI_FUNC(ResetUri)(URI_TYPE(Uri) * uri) {
 /* Properly removes "." and ".." path segments */
 UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 		UriBool relative) {
+	if (uri == NULL) {
+		return URI_TRUE;
+	}
+	return URI_FUNC(RemoveDotSegmentsEx)(uri, relative, uri->owner);
+}
+
+
+
+UriBool URI_FUNC(RemoveDotSegmentsEx)(URI_TYPE(Uri) * uri,
+        UriBool relative, UriBool pathOwned) {
 	URI_TYPE(PathSegment) * walker;
 	if ((uri == NULL) || (uri->pathHead == NULL)) {
 		return URI_TRUE;
@@ -122,13 +132,13 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 							prev->next = walker->next;
 						}
 
-						if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+						if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 							free((URI_CHAR *)walker->text.first);
 						}
 						free(walker);
 					} else {
 						/* Last segment */
-						if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+						if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 							free((URI_CHAR *)walker->text.first);
 						}
 
@@ -189,12 +199,12 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 								/* Last segment -> insert "" segment to represent trailing slash, update tail */
 								URI_TYPE(PathSegment) * const segment = malloc(1 * sizeof(URI_TYPE(PathSegment)));
 								if (segment == NULL) {
-									if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+									if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 										free((URI_CHAR *)walker->text.first);
 									}
 									free(walker);
 
-									if (uri->owner && (prev->text.first != prev->text.afterLast)) {
+									if (pathOwned && (prev->text.first != prev->text.afterLast)) {
 										free((URI_CHAR *)prev->text.first);
 									}
 									free(prev);
@@ -208,12 +218,12 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 								uri->pathTail = segment;
 							}
 
-							if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+							if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 								free((URI_CHAR *)walker->text.first);
 							}
 							free(walker);
 
-							if (uri->owner && (prev->text.first != prev->text.afterLast)) {
+							if (pathOwned && (prev->text.first != prev->text.afterLast)) {
 								free((URI_CHAR *)prev->text.first);
 							}
 							free(prev);
@@ -225,14 +235,14 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 								uri->pathHead = walker->next;
 								walker->next->reserved = NULL;
 
-								if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+								if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 									free((URI_CHAR *)walker->text.first);
 								}
 								free(walker);
 							} else {
-								/* Re-use segment for "" path segment to represent trailing slash, update tail */ 
+								/* Re-use segment for "" path segment to represent trailing slash, update tail */
 								URI_TYPE(PathSegment) * const segment = walker;
-								if (uri->owner && (segment->text.first != segment->text.afterLast)) {
+								if (pathOwned && (segment->text.first != segment->text.afterLast)) {
 									free((URI_CHAR *)segment->text.first);
 								}
 								segment->text.first = URI_FUNC(SafeToPointTo);
@@ -241,7 +251,7 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 								uri->pathTail = segment;
 							}
 
-							if (uri->owner && (prev->text.first != prev->text.afterLast)) {
+							if (pathOwned && (prev->text.first != prev->text.afterLast)) {
 								free((URI_CHAR *)prev->text.first);
 							}
 							free(prev);
@@ -259,7 +269,7 @@ UriBool URI_FUNC(RemoveDotSegments)(URI_TYPE(Uri) * uri,
 							uri->pathTail = NULL;
 						}
 
-						if (uri->owner && (walker->text.first != walker->text.afterLast)) {
+						if (pathOwned && (walker->text.first != walker->text.afterLast)) {
 							free((URI_CHAR *)walker->text.first);
 						}
 						free(walker);
@@ -334,6 +344,14 @@ unsigned char URI_FUNC(HexdigToInt)(URI_CHAR hexdig) {
 
 
 URI_CHAR URI_FUNC(HexToLetter)(unsigned int value) {
+	/* Uppercase recommended in section 2.1. of RFC 3986 *
+	 * http://tools.ietf.org/html/rfc3986#section-2.1    */
+	return URI_FUNC(HexToLetterEx)(value, URI_TRUE);
+}
+
+
+
+URI_CHAR URI_FUNC(HexToLetterEx)(unsigned int value, UriBool uppercase) {
 	switch (value) {
 	case  0: return _UT('0');
 	case  1: return _UT('1');
@@ -346,14 +364,12 @@ URI_CHAR URI_FUNC(HexToLetter)(unsigned int value) {
 	case  8: return _UT('8');
 	case  9: return _UT('9');
 
-	/* Uppercase recommended in section 2.1. of RFC 3986 *
-	 * http://tools.ietf.org/html/rfc3986#section-2.1    */
-	case 10: return _UT('A');
-	case 11: return _UT('B');
-	case 12: return _UT('C');
-	case 13: return _UT('D');
-	case 14: return _UT('E');
-	default: return _UT('F');
+	case 10: return (uppercase == URI_TRUE) ? _UT('A') : _UT('a');
+	case 11: return (uppercase == URI_TRUE) ? _UT('B') : _UT('b');
+	case 12: return (uppercase == URI_TRUE) ? _UT('C') : _UT('c');
+	case 13: return (uppercase == URI_TRUE) ? _UT('D') : _UT('d');
+	case 14: return (uppercase == URI_TRUE) ? _UT('E') : _UT('e');
+	default: return (uppercase == URI_TRUE) ? _UT('F') : _UT('f');
 	}
 }
 

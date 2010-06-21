@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,6 +18,18 @@
 ## USA.
 
 disable_runtime_checks()
+
+add_definitions(
+  -DHAVE_SYS_TYPES_H
+  -DHAVE_STDINT_H
+  -DHAVE_STDDEF_H
+  -D_LARGEFILE64_SOURCE=1
+)
+
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
 
 hide_symbols()
 

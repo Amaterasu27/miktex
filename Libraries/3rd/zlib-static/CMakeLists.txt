@@ -22,6 +22,18 @@ disable_runtime_checks()
 use_static_crt()
 use_static_libraries()
 
+add_definitions(
+  -DHAVE_SYS_TYPES_H
+  -DHAVE_STDINT_H
+  -DHAVE_STDDEF_H
+  -D_LARGEFILE64_SOURCE=1
+)
+
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
+
 set(${zlib_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/adler32.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/compress.c

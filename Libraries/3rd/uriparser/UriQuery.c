@@ -336,6 +336,8 @@ UriBool URI_FUNC(AppendQueryItem)(URI_TYPE(QueryList) ** prevNext,
 void URI_FUNC(FreeQueryList)(URI_TYPE(QueryList) * queryList) {
 	while (queryList != NULL) {
 		URI_TYPE(QueryList) * nextBackup = queryList->next;
+		free(queryList->key);
+		free(queryList->value);
 		free(queryList);
 		queryList = nextBackup;
 	}
@@ -398,7 +400,7 @@ int URI_FUNC(DissectQueryMallocEx)(URI_TYPE(QueryList) ** dest, int * itemCount,
 			}
 
 			/* Make future items children of the current */
-			if (prevNext != NULL) {
+			if ((prevNext != NULL) && (*prevNext != NULL)) {
 				prevNext = &((*prevNext)->next);
 			}
 

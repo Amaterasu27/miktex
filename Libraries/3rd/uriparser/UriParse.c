@@ -1856,7 +1856,7 @@ static const URI_CHAR * URI_FUNC(ParseUriReference)(URI_TYPE(ParserState) * stat
 	case _UT('~'):
 	case _UT('-'):
 	case _UT('@'):
-		state->uri->scheme.first = first; /* SCHEME BEGIN */
+		state->uri->scheme.first = first; /* SEGMENT BEGIN, ABUSE SCHEME POINTER */
 		return URI_FUNC(ParseMustBeSegmentNzNc)(state, first + 1, afterLast);
 
 	case _UT('%'):
@@ -1866,7 +1866,7 @@ static const URI_CHAR * URI_FUNC(ParseUriReference)(URI_TYPE(ParserState) * stat
 			if (afterPctEncoded == NULL) {
 				return NULL;
 			}
-			state->uri->scheme.first = first; /* SCHEME BEGIN */
+			state->uri->scheme.first = first; /* SEGMENT BEGIN, ABUSE SCHEME POINTER */
 			return URI_FUNC(ParseMustBeSegmentNzNc)(state, afterPctEncoded, afterLast);
 		}
 
@@ -2030,7 +2030,7 @@ int URI_FUNC(ParseUriEx)(URI_TYPE(ParserState) * state, const URI_CHAR * first, 
 	URI_TYPE(Uri) * uri;
 
 	/* Check params */
-	if ((state == NULL) || (state == NULL) || (state == NULL)) {
+	if ((state == NULL) || (first == NULL) || (afterLast == NULL)) {
 		return URI_ERROR_NULL;
 	}
 	uri = state->uri;
