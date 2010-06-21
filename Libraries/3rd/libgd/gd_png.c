@@ -1,4 +1,4 @@
-/* $Id: gd_png.c,v 1.21 2007/01/07 18:18:06 pajoye Exp $ */
+/* $Id: gd_png.c,v 1.21.2.2 2007/05/17 14:38:24 pajoye Exp $ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -81,7 +81,11 @@ gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 static void
 gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-  gdGetBuf (data, length, (gdIOCtx *) png_get_io_ptr (png_ptr));
+  int check;
+  check = gdGetBuf (data, length, (gdIOCtx *) png_get_io_ptr (png_ptr));
+  if (check != length) {
+    png_error(png_ptr, "Read Error: truncated data");
+  }
 }
 
 static void
@@ -746,7 +750,7 @@ BGD_DECLARE(void) gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 	      for (i = 0; i < j; ++i)
 		gdFree (row_pointers[i]);
               /* 2.0.29: memory leak TBB */
-              free(row_pointers);
+              gdFree(row_pointers);
 	      return;
 	    }
 	  pOutputRow = *prow_pointers++;

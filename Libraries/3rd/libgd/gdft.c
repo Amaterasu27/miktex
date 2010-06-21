@@ -217,6 +217,16 @@ static int comp_entities(const void *e1, const void *e2) {
   return strcmp(en1->name, en2->name);
 }
 
+extern int any2eucjp (char *, char *, unsigned int);
+
+/* Persistent font cache until explicitly cleared */
+/* Fonts can be used across multiple images */
+
+/* 2.0.16: thread safety (the font cache is shared) */
+gdMutexDeclare (gdFontCacheMutex);
+static gdCache_head_t *fontCache;
+static FT_Library library;
+
 #define Tcl_UniChar int
 #define TCL_UTF_MAX 3
 static int
@@ -775,16 +785,6 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
   return (char *) NULL;
 }
 
-extern int any2eucjp (char *, char *, unsigned int);
-
-/* Persistent font cache until explicitly cleared */
-/* Fonts can be used across multiple images */
-
-/* 2.0.16: thread safety (the font cache is shared) */
-gdMutexDeclare (gdFontCacheMutex);
-static gdCache_head_t *fontCache;
-static FT_Library library;
-
 BGD_DECLARE(void) gdFreeFontCache ()
 {
   gdFontCacheShutdown ();
@@ -794,11 +794,13 @@ BGD_DECLARE(void) gdFontCacheShutdown ()
 {
   if (fontCache)
     {
-      gdMutexShutdown (gdFontCacheMutex);
+			gdMutexLock(gdFontCacheMutex);
       gdCacheDelete (fontCache);
-      FT_Done_FreeType (library);
       /* 2.0.16: Gustavo Scotti: make sure we don't free this twice */
       fontCache = 0;
+			gdMutexUnlock(gdFontCacheMutex);
+      gdMutexShutdown (gdFontCacheMutex);
+      FT_Done_FreeType (library);
     }
 }
 
@@ -1580,9 +1582,14 @@ static char * font_path(char **fontpath, char *name_list)
       fullname = gdRealloc (fullname,
                           strlen (fontsearchpath) + strlen (name) + 8);
       /* if name is an absolute or relative pathname then test directly */
+#ifdef NETWARE
+      /* netware uses the format "volume:/path" or the standard "/path" */
+      if (name[0] != 0 && (strstr(name, ":/") || name[0] == '/'))
+#else
       if (strchr (name, '/')
 	  || (name[0] != 0 && name[1] == ':'
 	      && (name[2] == '/' || name[2] == '\\')))
+#endif
 	{
 	  sprintf (fullname, "%s", name);
 	  if (access (fullname, R_OK) == 0)
@@ -1641,7 +1648,7 @@ static char * font_path(char **fontpath, char *name_list)
   gdFree (fontlist);
   if (!font_found)
     {
-      free (fullname);
+      gdFree (fullname);
       return "Could not find/open font";
     }
 

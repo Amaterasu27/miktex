@@ -1,4 +1,4 @@
-/* $Id: gd.c,v 1.49.2.2 2007/02/07 00:21:27 pajoye Exp $ */
+/* $Id: gd.c,v 1.49.2.16 2007/06/19 20:25:51 pajoye Exp $ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -141,17 +141,28 @@ BGD_DECLARE(gdImagePtr) gdImageCreateTrueColor (int sx, int sy)
 {
   int i;
   gdImagePtr im;
+
+  if (overflow2(sx, sy)) {
+    return NULL;
+  }
+
+  if (overflow2(sizeof (int *), sy)) {
+    return 0;
+  }
+
+  if (overflow2(sizeof(int), sx)) {
+    return NULL;
+  }
+
   im = (gdImage *) gdMalloc (sizeof (gdImage));
   if (!im) {
     return 0;
   }
   memset (im, 0, sizeof (gdImage));
-  if (overflow2(sizeof (int *), sy)) {
-    return 0;
-  }
+
   im->tpixels = (int **) gdMalloc (sizeof (int *) * sy);
   if (!im->tpixels) {
-    free(im);
+    gdFree(im);
     return 0;
   }
   im->polyInts = 0;
@@ -1000,6 +1011,44 @@ BGD_DECLARE(void) gdImageAABlend (gdImagePtr im)
 
 static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int col);
 
+static void gdImageHLine(gdImagePtr im, int y, int x1, int x2, int col)
+{
+	if (im->thick > 1) {
+		int thickhalf = im->thick >> 1;
+		gdImageFilledRectangle(im, x1, y - thickhalf, x2, y + im->thick - thickhalf - 1, col);
+	} else {
+		if (x2 < x1) {
+			int t = x2;
+			x2 = x1;
+			x1 = t;
+		}
+
+		for (;x1 <= x2; x1++) {
+			gdImageSetPixel(im, x1, y, col);
+		}
+	}
+	return;
+}
+
+static void gdImageVLine(gdImagePtr im, int x, int y1, int y2, int col)
+{
+	if (im->thick > 1) {
+		int thickhalf = im->thick >> 1;
+		gdImageFilledRectangle(im, x - thickhalf, y1, x + im->thick - thickhalf - 1, y2, col);
+	} else {
+		if (y2 < y1) {
+			int t = y1;
+			y1 = y2;
+			y2 = t;
+		}
+
+		for (;y1 <= y2; y1++) {
+			gdImageSetPixel(im, x, y1, col);
+		}
+	}
+	return;
+}
+
 /* Bresenham as presented in Foley & Van Dam */
 BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, int color)
 {
@@ -1007,6 +1056,7 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
   int wid;
   int w, wstart;
   int thick;
+
   if (color == gdAntiAliased)
     {
       /* 
@@ -1031,6 +1081,15 @@ BGD_DECLARE(void) gdImageLine (gdImagePtr im, int x1, int y1, int x2, int y2, in
 
   dx = abs (x2 - x1);
   dy = abs (y2 - y1);
+
+	if (dx == 0) {
+		gdImageVLine(im, x1, y1, y2, color);
+		return;
+	} else if (dy == 0) {
+		gdImageHLine(im, y1, x1, x2, color);
+		return;
+	}
+
   if (dy <= dx)
     {
       /* More-or-less horizontal. use wid for vertical stroke */
@@ -1549,10 +1608,31 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
   int i;
   int lx = 0, ly = 0;
   int fx = 0, fy = 0;
-  while (e < s)
-    {
-      e += 360;
-    }
+
+  if ((s % 360)  == (e % 360)) {
+	  s = 0; e = 360;
+  } else {
+	  if (s > 360) {
+		  s = s % 360;
+	  }
+
+	  if (e > 360) {
+		  e = e % 360;
+	  }
+
+	  while (s < 0) {
+		  s += 360;
+	  }
+
+	  while (e < s) {
+		  e += 360;
+	  }
+
+	  if (s == e) {
+		  s = 0; e = 360;
+	  }
+  }
+
   for (i = s; (i <= e); i++)
     {
       int x, y;
@@ -1562,7 +1642,7 @@ BGD_DECLARE(void) gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h,
 	{
 	  if (!(style & gdChord))
 	    {
-	      if (style & gdNoFill)
+		if (style & gdNoFill)
 		{
 		  gdImageLine (im, lx, ly, x, y, color);
 		}
@@ -1948,6 +2028,13 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 
 	for (i=0; i<im->sy;i++) {
 		pts[i] = (int *) gdCalloc(im->sx, sizeof(int));
+
+		if (!pts[i]) {
+			for (--i ; i >= 0; i--) {
+				gdFree(pts[i]);
+			}
+			return;
+		}
 	}
 
 	stack = (struct seg *)gdMalloc(sizeof(struct seg) * ((int)(im->sy*im->sx)/4));
@@ -1984,7 +2071,7 @@ void _gdImageFillTiled(gdImagePtr im, int x, int y, int nc)
 		}
 		x = x1+1;
 		do {
-			for (; x<=wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
+			for (; x<wx2 && (!pts[y][x] && gdImageGetPixel(im,x, y)==oc) ; x++) {
 				if (pts[y][x]){
 					/* we should never be here */
 					break;
@@ -2088,13 +2175,24 @@ BGD_DECLARE(void) gdImageFilledRectangle (gdImagePtr im, int x1, int y1, int x2,
      nicely kills any plotting for rectangles completely outside the
      window as it makes the tests in the for loops fail */
   if (x1 < 0)
-    x1 = 0;
+	  x1 = 0;
   if (x1 > gdImageSX (im))
-    x1 = gdImageSX (im);
+	  x1 = gdImageSX (im);
   if (y1 < 0)
-    y1 = 0;
+	  y1 = 0;
   if (y1 > gdImageSY (im))
-    y1 = gdImageSY (im);
+	  y1 = gdImageSY (im);
+
+  if (x1 > x2) {
+	  x = x1;
+	  x1 = x2;
+	  x2 = x;
+  }
+  if (y1 > y2) {
+	  y = y1;
+	  y1 = y2;
+	  y2 = y;
+  }
 
   for (y = y1; (y <= y2); y++)
     {
@@ -2757,6 +2855,10 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromXbm (FILE * fd)
     }
   bytes = (w * h / 8) + 1;
   im = gdImageCreate (w, h);
+  if (!im) {
+    return 0;
+  }
+
   gdImageColorAllocate (im, 255, 255, 255);
   gdImageColorAllocate (im, 0, 0, 0);
   x = 0;
@@ -3372,6 +3474,7 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
 	/* keep them as 32bits */
 	long x, y, inc;
 	long dx, dy,tmp;
+
 	if (!im->trueColor) {
 		/* TBB: don't crash when the image is of the wrong type */
 		gdImageLine(im, x1, y1, x2, y2, col);
@@ -3384,6 +3487,15 @@ static void gdImageAALine (gdImagePtr im, int x1, int y1, int x2, int y2, int co
           return;
 	dx = x2 - x1;
 	dy = y2 - y1;
+
+	/* Axis aligned lines */
+	if (dx == 0) {
+		gdImageVLine(im, x1, y1, y2, col);
+		return;
+	} else if (dy == 0) {
+		gdImageHLine(im, y1, x1, x2, col);
+		return;
+	}
 
 	if (dx == 0 && dy == 0) {
 		/* TBB: allow setting points */
