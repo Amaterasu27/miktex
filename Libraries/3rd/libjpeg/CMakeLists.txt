@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,64 +22,56 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(${jpeg_dll_name}_sources
+  #COMOBJECTS
+  jaricom.c
+  jcomapi.c
+  jutils.c
+  jerror.c
+  jmemmgr.c
+  #SYSDEPMEM
+  jmemnobs.c
+  #CLIBOBJECTS
   jcapimin.c
   jcapistd.c
+  jcarith.c
+  jctrans.c
+  jcparam.c
+  jdatadst.c
+  jcinit.c
+  jcmaster.c
+  jcmarker.c
+  jcmainct.c
+  jcprepct.c
   jccoefct.c
   jccolor.c
-  jcdctmgr.c
-  jchuff.c
-  jchuff.h
-  jcinit.c
-  jcmainct.c
-  jcmarker.c
-  jcmaster.c
-  jcomapi.c
-  jconfig.h
-  jcparam.c
-  jcphuff.c
-  jcprepct.c
   jcsample.c
-  jctrans.c
+  jchuff.c
+  jcdctmgr.c
+  jfdctfst.c
+  jfdctflt.c
+  jfdctint.c
+  #DLIBOBJECTS
   jdapimin.c
   jdapistd.c
-  jdatadst.c
-  jdatasrc.c
-  jdcoefct.c
-  jdcolor.c
-  jdct.h
-  jddctmgr.c
-  jdhuff.c
-  jdhuff.h
-  jdinput.c
-  jdmainct.c
-  jdmarker.c
-  jdmaster.c
-  jdmerge.c
-  jdphuff.c
-  jdpostct.c
-  jdsample.c
+  jdarith.c
   jdtrans.c
-  jerror.c
-  jerror.h
-  jfdctflt.c
-  jfdctfst.c
-  jfdctint.c
-  jidctflt.c
+  jdatasrc.c
+  jdmaster.c
+  jdinput.c
+  jdmarker.c
+  jdhuff.c
+  jdmainct.c
+  jdcoefct.c
+  jdpostct.c
+  jddctmgr.c
   jidctfst.c
+  jidctflt.c
   jidctint.c
-  jidctred.c
-  jinclude.h
-  jmemmgr.c
-  jmemnobs.c
-  jmemsys.h
-  jmorecfg.h
-  jpegint.h
-  jpeglib.h
+  jdsample.c
+  jdcolor.c
   jquant1.c
   jquant2.c
-  jutils.c
-  jversion.h
-  libjpeg-version.h
+  jdmerge.c
 )
 
 if(NATIVE_WINDOWS)
