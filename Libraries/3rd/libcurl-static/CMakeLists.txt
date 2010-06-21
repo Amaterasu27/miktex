@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,8 +32,7 @@ use_static_libraries()
 set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/arpa_telnet.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/base64.c
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/base64.h
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ca-bundle.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/config-win32.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/connect.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/connect.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/content_encoding.c
@@ -41,6 +40,26 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/cookie.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/cookie.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl-version.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_addrinfo.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_addrinfo.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_base64.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_fnmatch.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_fnmatch.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_hmac.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_ldap.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_md5.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_memory.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_memrchr.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_memrchr.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_rand.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_rand.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_rtmp.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_rtmp.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_sspi.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_sspi.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_threads.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curl_threads.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/curlx.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/dict.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/dict.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/easy.c
@@ -49,16 +68,22 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/escape.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/file.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/file.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/fileinfo.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/fileinfo.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/formdata.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/formdata.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ftp.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ftp.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ftplistparser.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ftplistparser.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/getenv.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/getinfo.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/getinfo.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/gtls.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/gtls.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hash.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hash.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hmac.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hostares.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hostasyn.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/hostip.c
@@ -79,7 +104,8 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/http_ntlm.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/if2ip.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/if2ip.h
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/inet_ntoa_r.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/imap.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/imap.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/inet_ntop.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/inet_ntop.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/inet_pton.c
@@ -89,37 +115,60 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/llist.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/llist.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/md5.c
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/md5.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/memdebug.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/memdebug.h
-  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/memory.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/mprintf.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/multi.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/multiif.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/netrc.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/netrc.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/nonblock.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/nonblock.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/nssg.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/openldap.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/parsedate.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/parsedate.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/pingpong.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/pingpong.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/polarssl.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/polarssl.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/pop3.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/pop3.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/progress.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/progress.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/qssl.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/rawstr.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/rawstr.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/rtsp.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/rtsp.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/select.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/select.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sendf.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sendf.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/setup.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/setup_once.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/share.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/share.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/slist.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/slist.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/smtp.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/smtp.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sockaddr.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks_gssapi.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/socks_sspi.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/speedcheck.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/speedcheck.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/splay.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/splay.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ssh.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ssh.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sslgen.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/sslgen.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ssluse.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/ssluse.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/strdup.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/strequal.c
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/strequal.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/strerror.c
@@ -140,6 +189,10 @@ set(${curl_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/url.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/urldata.h
   ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/version.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/warnless.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/warnless.h
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/wildcard.c
+  ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/wildcard.h
 )
 
 if(NATIVE_WINDOWS)
