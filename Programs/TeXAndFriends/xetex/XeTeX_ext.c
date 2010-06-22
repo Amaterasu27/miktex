@@ -385,8 +385,9 @@ input_line(UFILE* f)
 static char* byteBuffer = NULL;
 static UInt32 *utf32Buf = NULL;
 	int	i, tmpLen;
-
 	int norm = getinputnormalizationstate();
+
+	last = first;
 
 	if (f->encodingMode == ICUMAPPING) {
 		UInt32		bytesRead = 0;
@@ -491,7 +492,6 @@ static UInt32 *utf32Buf = NULL;
 				break;
 				
 			default: // none
-				last = first;
 				if (last < bufsize && i != EOF && i != '\n' && i != '\r')
 					buffer[last++] = i;
 				if (i != EOF && i != '\n' && i != '\r')
