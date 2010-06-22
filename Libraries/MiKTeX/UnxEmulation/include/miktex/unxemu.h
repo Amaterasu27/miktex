@@ -70,6 +70,12 @@
 #  define strcasecmp(s1, s2) miktex_strcasecmp(s1, s2)
 #endif
 
+#if defined(__cplusplus)
+#  define strncasecmp(s1, s2, n) MiKTeX::Core::StringCompare(s1, s2, n, true)
+#else
+#  define strncasecmp(s1, s2, n) miktex_strncasecmp(s1, s2, n)
+#endif
+
 /* _________________________________________________________________________
 
    unistd.h

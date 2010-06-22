@@ -1238,11 +1238,29 @@ StringCompare (/*[in]*/ const char *	lpsz1,
 #if defined(_MSC_VER)
   return (ignoreCase
 	  ? _stricmp(lpsz1, lpsz2)
-	  : _stricmp(lpsz1, lpsz2));
+	  : strcmp(lpsz1, lpsz2));
 #else
   return (ignoreCase
 	  ? strcasecmp(lpsz1, lpsz2)
 	  : strcmp(lpsz1, lpsz2));
+#endif
+}
+
+inline
+int
+StringCompare (/*[in]*/ const char *	lpsz1,
+	       /*[in]*/ const char *	lpsz2,
+	       /*[in]*/ size_t          n,
+	       /*[in]*/ bool		ignoreCase)
+{
+#if defined(_MSC_VER)
+  return (ignoreCase
+	  ? _strnicmp(lpsz1, lpsz2, n)
+	  : strncmp(lpsz1, lpsz2, n));
+#else
+  return (ignoreCase
+	  ? strncasecmp(lpsz1, lpsz2, n)
+	  : strncmp(lpsz1, lpsz2, n));
 #endif
 }
 
