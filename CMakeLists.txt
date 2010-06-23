@@ -913,6 +913,11 @@ if(NOT USE_SYSTEM_ZLIB)
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_ZLIB)
 
+add_subdirectory(${rel_lua_dir}-static)
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_lua_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
+
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
