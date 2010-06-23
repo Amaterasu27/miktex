@@ -178,6 +178,7 @@
     <addaction name="actionClose"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
+    <addaction name="actionSave_All"/>
     <addaction name="actionRevert_to_Saved"/>
     <addaction name="separator"/>
     <addaction name="actionRemove_Aux_Files"/>
@@ -243,6 +244,7 @@
     <addaction name="actionPlace_on_Right"/>
     <addaction name="separator"/>
     <addaction name="actionGo_to_Preview"/>
+    <addaction name="actionAuto_Follow_Focus"/>
     <addaction name="actionShow_Hide_Console"/>
    </widget>
    <widget class="QMenu" name="menuSearch">
@@ -285,6 +287,7 @@
      </property>
      <addaction name="actionSmartQuotes_None"/>
      <addaction name="separator"/>
+     <addaction name="actionApply_to_Selection"/>
     </widget>
     <addaction name="actionFont"/>
     <addaction name="separator"/>
@@ -314,9 +317,16 @@
     <property name="title">
      <string>Scripts</string>
     </property>
-    <addaction name="actionUpdate_Scripts"/>
-    <addaction name="actionManage_Scripts"/>
-    <addaction name="actionShow_Scripts_Folder"/>
+    <widget class="QMenu" name="menuScripting_TeXworks">
+     <property name="title">
+      <string>Scripting TeXworks</string>
+     </property>
+     <addaction name="actionAbout_Scripts"/>
+     <addaction name="actionManage_Scripts"/>
+     <addaction name="actionUpdate_Scripts"/>
+     <addaction name="actionShow_Scripts_Folder"/>
+    </widget>
+    <addaction name="menuScripting_TeXworks"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
@@ -1031,18 +1041,56 @@
   </action>
   <action name="actionUpdate_Scripts">
    <property name="text">
-    <string>Update Scripts</string>
+    <string>Reload Script List</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionManage_Scripts">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Manage Scripts</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAuto_Follow_Focus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto-Follow Focus</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAbout_Scripts">
+   <property name="text">
+    <string>About Scripts...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionApply_to_Selection">
+   <property name="text">
+    <string>Apply to Selection</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionSave_All">
+   <property name="text">
+    <string>Save All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>

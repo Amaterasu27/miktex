@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "ui_TeXDocument.h"
 
 #include "FindDialog.h"
+#include "TWApp.h"
 
 #include <hunspell.h>
 
@@ -47,6 +48,8 @@ class QFileSystemWatcher;
 
 class TeXHighlighter;
 class PDFDocument;
+
+const int kTeXWindowStateVersion = 1; // increment this if we add toolbars/docks/etc
 
 class TeXDocument : public TWScriptable, private Ui::TeXDocument
 {
@@ -79,6 +82,8 @@ public:
 	QString getLineText(int lineNo) const;
 	CompletingEdit* editor()
 		{ return textEdit; }
+	int selectionStart() { return textCursor().selectionStart(); }
+	int selectionLength() { return textCursor().selectionEnd() - textCursor().selectionStart(); }
 
 	PDFDocument* pdfDocument()
 		{ return pdfDoc; }
@@ -87,6 +92,9 @@ public:
 	int removeTags(int offset, int len);
 	void goToTag(int index);
 	void tagsChanged();
+
+	bool isModified() const { return textEdit->document()->isModified(); }
+	void setModified(const bool m = true) { textEdit->document()->setModified(m); }
 
 	class Tag {
 	public:
@@ -105,9 +113,11 @@ public:
 	Q_PROPERTY(QString consoleOutput READ consoleText STORED false);
 	Q_PROPERTY(QString text READ text STORED false);
     Q_PROPERTY(QString fileName READ fileName);
-
+	Q_PROPERTY(bool untitled READ untitled STORED false);
+	Q_PROPERTY(bool modified READ isModified WRITE setModified STORED false);
+	
 signals:
-	void syncFromSource(const QString&, int);
+	void syncFromSource(const QString&, int, bool);
 	void activatedWindow(QWidget*);
 	void tagListUpdated();
 
@@ -121,13 +131,13 @@ protected:
 	virtual void dropEvent(QDropEvent *event);
 
 public slots:
-	void selectWindow(bool activate = true);
 	void typeset();
 	void interrupt();
 	void newFile();
 	void newFromTemplate();
 	void open();
 	bool save();
+	bool saveAll();
 	bool saveAs();
 	void revert();
 	void clear();
@@ -158,12 +168,18 @@ public slots:
 	void syncClick(int lineNo);
 	void openAt(QAction *action);
 	void sideBySide();
-	void placeOnLeft();
-	void placeOnRight();
 	void removeAuxFiles();
 	void setSpellcheckLanguage(const QString& lang);
 	void selectRange(int start, int length = 0);
 	void insertText(const QString& text);
+	void selectAll() { textEdit->selectAll(); }
+ 	void setWindowModified(bool modified) {
+		QMainWindow::setWindowModified(modified);
+		TWApp::instance()->updateWindowMenus();
+	}
+	void setSmartQuotesMode(const QString& mode);
+	void setAutoIndentMode(const QString& mode);
+	void setSyntaxColoringMode(const QString& mode);
 	
 private slots:
 	void setLangInternal(const QString& lang);
@@ -183,10 +199,11 @@ private slots:
 	void selectedEngine(QAction* engineAction);
 	void selectedEngine(const QString& name);
 	void contentsChanged(int position, int charsRemoved, int charsAdded);
-	void hideFloatersUnlessThis(QWidget* currWindow);
 	void reloadIfChangedOnDisk();
 	void setupFileWatcher();
 	void errorLineClicked(QTableWidgetItem* i);
+	void lineEndingPopup(const QPoint loc);
+	void encodingPopup(const QPoint loc);
 	
 #if defined(MIKTEX)
 	void print ();
@@ -199,12 +216,13 @@ private:
 	bool saveFilesHavingRoot(const QString& aRootFile);
 	void clearFileWatcher();
 	QTextCodec *scanForEncoding(const QString &peekStr, bool &hasMetadata, QString &reqName);
-	QString readFile(const QString &fileName, QTextCodec **codecUsed);
+	QString readFile(const QString &fileName, QTextCodec **codecUsed, int *lineEndings = NULL);
 	void loadFile(const QString &fileName, bool asTemplate = false, bool inBackground = false);
 	bool saveFile(const QString &fileName);
 	void setCurrentFile(const QString &fileName);
+	void saveRecentFileInfo();
 	bool getPreviewFileName(QString &pdfName);
-	bool showPdfIfAvailable();
+	bool openPdfIfAvailable(bool show);
 	void prefixLines(const QString &prefix);
 	void unPrefixLines(const QString &prefix);
 	void replaceSelection(const QString& newText);
@@ -222,12 +240,11 @@ private:
 	void findRootFilePath();
 	const QString& getRootFilePath();
 	void maybeCenterSelection(int oldScrollValue = -1);
-	void showFloaters();
 	void presentResults(const QList<SearchResult>& results);
-
-	QString selectedText() { return textCursor().selectedText(); }
-	int selectionStart() { return textCursor().selectionStart(); }
-	int selectionLength() { return textCursor().selectionEnd() - textCursor().selectionStart(); }
+	void showLineEndingSetting();
+	void showEncodingSetting();
+	
+	QString selectedText() { return textCursor().selectedText().replace(QChar(QChar::ParagraphSeparator), "\n"); }
 	QString consoleText() { return textEdit_console->toPlainText(); }
 	QString text() { return textEdit->toPlainText(); }
 	
@@ -235,19 +252,22 @@ private:
 	PDFDocument *pdfDoc;
 
 	QTextCodec *codec;
+	int lineEndings;
 	QString curFile;
 	QString rootFilePath;
 	bool isUntitled;
 	QDateTime lastModified;
 
 	QLabel *lineNumberLabel;
+	QLabel *encodingLabel;
+	QLabel *lineEndingLabel;
 
 	QActionGroup *engineActions;
 	QString engineName;
 
 	QComboBox *engine;
 	QProcess *process;
-	bool consoleWasHidden;
+	bool keepConsoleOpen;
 	bool showPdfWhenFinished;
 	bool userInterrupt;
 	QDateTime oldPdfTime;
@@ -256,8 +276,6 @@ private:
 	QMenu *menuRecent;
 
 	Hunhandle *pHunspell;
-
-	QList<QWidget*> latentVisibleWidgets;
 
 	QFileSystemWatcher *watcher;
 	

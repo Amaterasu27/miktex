@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include <QAction>
 #include <QString>
 #include <QList>
-#include <QHash>
 #include <QDir>
 #include <QMap>
 #include <QPair>
@@ -47,6 +46,7 @@
 class QMainWindow;
 class QCompleter;
 class TeXDocument;
+class PDFDocument;
 
 // static utility methods
 class TWUtils
@@ -70,7 +70,7 @@ public:
 	static QStringList *getTranslationList();
 	
 	// get list of available dictionaries
-	static QStringList *getDictionaryList();
+	static QHash<QString, QString> *getDictionaryList(const bool forceReload = false);
 	
 	// get dictionary for a given language
 	static Hunhandle *getDictionary(const QString& language);
@@ -122,9 +122,9 @@ public:
 private:
 	TWUtils();
 
-	static QList<QTextCodec*>	*codecList;
-	static QStringList			*dictionaryList;
-	static QStringList			*translationList;
+	static QList<QTextCodec*>		*codecList;
+	static QHash<QString, QString>	*dictionaryList;
+	static QStringList				*translationList;
 
 	static QHash<const QString,Hunhandle*>	*dictionaries;
 

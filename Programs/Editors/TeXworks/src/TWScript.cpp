@@ -1,6 +1,6 @@
 /*
  This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-09  Stefan Löffler & Jonathan Kew
+ Copyright (C) 2007-2010  Stefan Löffler & Jonathan Kew
  
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,27 +20,32 @@
 */
 
 #include "TWScript.h"
+#include "TWScriptAPI.h"
+
 #include <QTextStream>
 #include <QMetaObject>
 #include <QMetaMethod>
+#include <QApplication>
+#include <QTextCodec>
 
-bool TWScript::setFile(const QString& filename)
+TWScript::TWScript(TWScriptLanguageInterface *interface, const QString& fileName)
+	: m_Interface(interface), m_Filename(fileName), m_Type(ScriptUnknown), m_Enabled(true), m_FileSize(0)
 {
-	if (!QFile::exists(filename))
-		return false;
-	m_Filename = filename;
-	return parseHeader();
+	m_Codec = QTextCodec::codecForName("UTF-8");
+	if (!m_Codec)
+		m_Codec = QTextCodec::codecForLocale();
 }
 
-void TWScript::clearHeaderData() {
-	m_Type = ScriptUnknown;
-	m_Title = QString();
-	m_Description = QString();
-	m_Author = QString();
-	m_Version = QString();
-	m_Hook = QString();
-	m_Context = QString();
-	m_KeySequence = QKeySequence();
+bool TWScript::run(QObject *context, QVariant& result)
+{
+	TWScriptAPI tw(this, qApp, context, result);
+	return execute(&tw);
+}
+
+bool TWScript::hasChanged() const
+{
+	QFileInfo fi(m_Filename);
+	return (fi.size() != m_FileSize || fi.lastModified() != m_LastModified);
 }
 
 bool TWScript::doParseHeader(const QString& beginComment, const QString& endComment,
@@ -49,65 +54,89 @@ bool TWScript::doParseHeader(const QString& beginComment, const QString& endComm
 	QFile file(m_Filename);
 	QStringList lines;
 	QString line;
-	
+	bool codecChanged = true;
+	bool success = false;
+	QTextCodec* codec;
+
 	if (!file.exists() || !file.open(QIODevice::ReadOnly))
 		return false;
 	
-	// skip any empty lines
-	QTextStream s(&file);
-	if (skipEmpty) {
-		while (!s.atEnd()) {
-			line = s.readLine().trimmed();
-			if (!line.isEmpty())
+	m_Codec = QTextCodec::codecForName("UTF-8");
+	if (!m_Codec)
+		m_Codec = QTextCodec::codecForLocale();
+
+	while (codecChanged) {
+		codec = m_Codec;
+		file.seek(0);
+		lines = codec->toUnicode(file.readAll()).split(QRegExp("\r\n|[\n\r]"));
+	
+		// skip any empty lines
+		if (skipEmpty) {
+			while (!lines.isEmpty() && lines.first().isEmpty())
+				lines.removeFirst();
+		}
+		if (lines.isEmpty())
+			break;
+	
+		// is this a valid TW script?
+		line = lines.takeFirst();
+		if (!beginComment.isEmpty()) {
+			if (!line.startsWith(beginComment))
+				break;
+			line = line.mid(beginComment.size()).trimmed();
+		}
+		else if (!Comment.isEmpty()) {
+			if (!line.startsWith(Comment))
+				break;
+			line = line.mid(Comment.size()).trimmed();
+		}
+		if (!line.startsWith("TeXworksScript"))
+			break;
+	
+		// scan to find the extent of the header lines
+		QStringList::iterator i;
+		for (i = lines.begin(); i != lines.end(); ++i) {
+			// have we reached the end?
+			if (skipEmpty && i->isEmpty()) {
+				i = lines.erase(i);
+				--i;
+				continue;
+			}
+			if (!endComment.isEmpty()) {
+				if (i->startsWith(endComment))
+					break;
+			}
+			if (!i->startsWith(Comment))
+				break;
+			*i = i->mid(Comment.size()).trimmed();
+		}
+		lines.erase(i, lines.end());
+		
+		codecChanged = false;
+		switch (doParseHeader(lines)) {
+			case ParseHeader_OK:
+				success = true;
+				break;
+			case ParseHeader_Failed:
+				success = false;
+				break;
+			case ParseHeader_CodecChanged:
+				codecChanged = true;
 				break;
 		}
 	}
 	
-	// is this a valid TW script?
-	if (!beginComment.isEmpty()) {
-		if (!line.startsWith(beginComment)) {
-			file.close();
-			return false;
-		}
-		line = line.mid(beginComment.size()).trimmed();
-	}
-	else if (!Comment.isEmpty()) {
-		if (!line.startsWith(Comment)) {
-			file.close();
-			return false;
-		}
-		line = line.mid(Comment.size()).trimmed();
-	}
-	if (!line.startsWith("TeXworksScript")) {
-		file.close();
-		return false;
-	}
-	
-	// read the header lines
-	while (!s.atEnd()) {
-		line = s.readLine().trimmed();
-		
-		if (skipEmpty && line.isEmpty()) continue;
-		
-		// have we reached the end?
-		if (!endComment.isEmpty()) {
-			if (line.startsWith(endComment)) break;
-		}
-		else if (!line.startsWith(Comment))
-			break;
-		
-		lines.append(line.mid(Comment.size()).trimmed());
-	}
 	file.close();
-	
-	return doParseHeader(lines);
+	return success;
 }
 
-bool TWScript::doParseHeader(const QStringList & lines)
+TWScript::ParseHeaderResult TWScript::doParseHeader(const QStringList & lines)
 {
 	QString line, key, value;
+	QFileInfo fi(m_Filename);
 	
-	clearHeaderData();
+	m_FileSize = fi.size();
+	m_LastModified = fi.lastModified();
 	
 	foreach (line, lines) {
 		key = line.section(':', 0, 0).trimmed();
@@ -125,9 +154,20 @@ bool TWScript::doParseHeader(const QStringList & lines)
 		else if (key == "Hook") m_Hook = value;
 		else if (key == "Context") m_Context = value;
 		else if (key == "Shortcut") m_KeySequence = QKeySequence(value);
+		else if (key == "Encoding") {
+			QTextCodec * codec = QTextCodec::codecForName(value.toUtf8());
+			if (codec) {
+				if (!m_Codec || codec->name() != m_Codec->name()) {
+					m_Codec = codec;
+					return ParseHeader_CodecChanged;
+				}
+			}
+		}
 	}
 	
-	return m_Type != ScriptUnknown && !m_Title.isEmpty();
+	if (m_Type != ScriptUnknown && !m_Title.isEmpty())
+		return ParseHeader_OK;
+	return ParseHeader_Failed;
 }
 
 /*static*/
@@ -136,7 +176,8 @@ TWScript::PropertyResult TWScript::doGetProperty(const QObject * obj, const QStr
 	int iProp, i;
 	QMetaProperty prop;
 	
-	if (!obj || !(obj->metaObject())) return Property_Invalid;
+	if (!obj || !(obj->metaObject()))
+		return Property_Invalid;
 	
 	// Get the parameters
 	iProp = obj->metaObject()->indexOfProperty(qPrintable(name));
@@ -166,17 +207,20 @@ TWScript::PropertyResult TWScript::doSetProperty(QObject * obj, const QString& n
 	int iProp;
 	QMetaProperty prop;
 	
-	if (!obj || !(obj->metaObject())) return Property_Invalid;
+	if (!obj || !(obj->metaObject()))
+		return Property_Invalid;
 	
 	iProp = obj->metaObject()->indexOfProperty(qPrintable(name));
 	
 	// if we didn't find the property abort
-	if (iProp < 0) return Property_DoesNotExist;
+	if (iProp < 0)
+		return Property_DoesNotExist;
 	
 	prop = obj->metaObject()->property(iProp);
 	
 	// If we can't set the property's value, abort
-	if (!prop.isWritable()) return Property_NotWritable;
+	if (!prop.isWritable())
+		return Property_NotWritable;
 	
 	prop.write(obj, value);
 	return Property_OK;
@@ -189,49 +233,87 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 	const QMetaObject * mo;
 	bool methodExists = false;
 	QList<QGenericArgument> genericArgs;
-	int type, i, j;
+	int type, typeOfArg, i, j;
 	QString typeName;
 	char * strTypeName;
 	QMetaMethod mm;
 	QGenericReturnArgument retValArg;
 	void * retValBuffer = NULL;
 	TWScript::MethodResult status;
+	void * myNullPtr = NULL;
 	
-	if (!obj || !(obj->metaObject())) return Method_Invalid;
+	if (!obj || !(obj->metaObject()))
+		return Method_Invalid;
 	
 	mo = obj->metaObject();
 	
 	for (i = 0; i < mo->methodCount(); ++i) {
 		mm = mo->method(i);
 		// Check for the method name
-		if (!QString(mm.signature()).startsWith(name + "(")) continue;
+		if (!QString(mm.signature()).startsWith(name + "("))
+			continue;
 		// we can only call public methods
-		if (mm.access() != QMetaMethod::Public) continue;
+		if (mm.access() != QMetaMethod::Public)
+			continue;
 		
 		methodExists = true;
 		
 		// we need the correct number of arguments
-		if (mm.parameterTypes().count() != arguments.count()) continue;
+		if (mm.parameterTypes().count() != arguments.count())
+			continue;
 		
 		// Check if the given arguments are compatible with those taken by the
 		// method
 		for (j = 0; j < arguments.count(); ++j) {
+			// QVariant can be passed as-is
+			if (mm.parameterTypes()[j] == "QVariant")
+				continue;
+			
 			type = QMetaType::type(mm.parameterTypes()[j]);
-			if (!arguments[j].canConvert((QVariant::Type)type)) break;
+			typeOfArg = (int)arguments[j].type();
+			if (typeOfArg == (int)type)
+				continue;
+			if (arguments[j].canConvert((QVariant::Type)type))
+				continue;
+			// allow invalid===NULL for pointers
+			if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || QMetaType::QWidgetStar))
+				continue;
+			// QObject* and QWidget* may be convertible
+			if (typeOfArg == QMetaType::QWidgetStar && type == QMetaType::QObjectStar)
+				continue;
+			if (typeOfArg == QMetaType::QObjectStar && type == QMetaType::QWidgetStar && (arguments[j].value<QObject*>() == NULL || qobject_cast<QWidget*>(arguments[j].value<QObject*>())))
+				continue;
+			break;
 		}
-		if (j < arguments.count()) continue;
+		if (j < arguments.count())
+			continue;
 		
 		// Convert the arguments into QGenericArgument structures
 		for (j = 0; j < arguments.count() && j < 10; ++j) {
 			typeName = mm.parameterTypes()[j];
 			type = QMetaType::type(qPrintable(typeName));
+			typeOfArg = (int)arguments[j].type();
 			
 			// allocate type name on the heap so it survives the method call
-			strTypeName = new char[typeName.size()];
+			strTypeName = new char[typeName.size() + 1];
 			strcpy(strTypeName, qPrintable(typeName));
 			
-			arguments[j].convert((QVariant::Type)type);
+			if (typeName == "QVariant") {
+				genericArgs.append(QGenericArgument(strTypeName, &arguments[j]));
+				continue;
+			}
+			if (arguments[j].canConvert((QVariant::Type)type))
+				arguments[j].convert((QVariant::Type)type);
+			else if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || QMetaType::QWidgetStar)) {
+				genericArgs.append(QGenericArgument(strTypeName, &myNullPtr));
+				continue;
+			}
+			else if (typeOfArg == QMetaType::QWidgetStar && type == QMetaType::QObjectStar)
+				arguments[j] = QVariant::fromValue(qobject_cast<QObject*>(arguments[j].value<QWidget*>()));
+			else if (typeOfArg == QMetaType::QObjectStar && type == QMetaType::QWidgetStar && (arguments[j].value<QObject*>() == NULL || qobject_cast<QWidget*>(arguments[j].value<QObject*>())))
+				arguments[j] = QVariant::fromValue(qobject_cast<QWidget*>(arguments[j].value<QObject*>()));
 			// \TODO	handle failure during conversion
+			else { }
 			
 			// Note: This line is a hack!
 			// QVariant::data() is undocumented; QGenericArgument should not be
@@ -240,8 +322,8 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 			genericArgs.append(QGenericArgument(strTypeName, arguments[j].data()));
 		}
 		// Fill up the list so we get the 10 values we need later on
-		for (; j < 10; ++j) genericArgs.append(QGenericArgument());
-		
+		for (; j < 10; ++j)
+			genericArgs.append(QGenericArgument());
 		
 		typeName = mm.typeName();
 		if (typeName.isEmpty()) {
@@ -260,17 +342,19 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 			retValArg = QGenericReturnArgument(mm.typeName(), retValBuffer);
 		}
 		
-		if (mm.invoke(obj, Qt::DirectConnection, retValArg,
-					  genericArgs[0],
-					  genericArgs[1],
-					  genericArgs[2],
-					  genericArgs[3],
-					  genericArgs[4],
-					  genericArgs[5],
-					  genericArgs[6],
-					  genericArgs[7],
-					  genericArgs[8],
-					  genericArgs[9])
+		if (mo->invokeMethod(obj, qPrintable(name),
+							 Qt::DirectConnection,
+							 retValArg,
+							 genericArgs[0],
+							 genericArgs[1],
+							 genericArgs[2],
+							 genericArgs[3],
+							 genericArgs[4],
+							 genericArgs[5],
+							 genericArgs[6],
+							 genericArgs[7],
+							 genericArgs[8],
+							 genericArgs[9])
 		   ) {
 			if (retValBuffer)
 				result = QVariant(QMetaType::type(mm.typeName()), retValBuffer);
@@ -280,9 +364,11 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 				result = QVariant();
 			status = Method_OK;
 		}
-		else status = Method_Failed;
+		else
+			status = Method_Failed;
 		
-		if (retValBuffer) QMetaType::destroy(QMetaType::type(mm.typeName()), retValBuffer);
+		if (retValBuffer)
+			QMetaType::destroy(QMetaType::type(mm.typeName()), retValBuffer);
 		
 		for (j = 0; j < arguments.count() && j < 10; ++j) {
 			// we pushed the data on the heap, we need to remove it from there
@@ -292,6 +378,54 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 		return status;
 	}
 	
-	if (methodExists) return Method_WrongArgs;
+	if (methodExists)
+		return Method_WrongArgs;
 	return Method_DoesNotExist;
 }
+
+void TWScript::setGlobal(const QString& key, const QVariant& val)
+{
+	QVariant v = val;
+
+	if (key.isEmpty())
+		return;
+
+	// For objects on the heap make sure we are notified when their lifetimes
+	// end so that we can remove them from our hash accordingly
+	switch (val.type()) {
+		case QMetaType::QObjectStar:
+			connect(v.value<QObject*>(), SIGNAL(destroyed(QObject*)), this, SLOT(globalDestroyed(QObject*)));
+			break;
+		case QMetaType::QWidgetStar:
+			connect((QWidget*)v.data(), SIGNAL(destroyed(QObject*)), this, SLOT(globalDestroyed(QObject*)));
+			break;
+		default: break;
+	}
+	m_globals[key] = v;
+}
+
+void TWScript::globalDestroyed(QObject * obj)
+{
+	QHash<QString, QVariant>::iterator i = m_globals.begin();
+	
+	while (i != m_globals.end()) {
+		switch (i.value().type()) {
+			case QMetaType::QObjectStar:
+				if (i.value().value<QObject*>() == obj)
+					i = m_globals.erase(i);
+				else
+					++i;
+				break;
+			case QMetaType::QWidgetStar:
+				if (i.value().value<QWidget*>() == obj)
+					i = m_globals.erase(i);
+				else
+					++i;
+				break;
+			default:
+				++i;
+				break;
+		}
+	}
+}
+

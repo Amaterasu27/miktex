@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -39,6 +39,16 @@
 #include <QSignalMapper>
 
 #pragma mark === TWUtils ===
+
+#ifdef Q_WS_X11
+// compile-time default paths - customize by defining in the .pro file
+#ifndef TW_DICPATH
+#define TW_DICPATH "/usr/share/myspell/dicts"
+#endif
+#ifndef TW_HELPPATH
+#define TW_HELPPATH "/usr/local/share/texworks-help"
+#endif
+#endif
 
 bool TWUtils::isPDFfile(const QString& fileName)
 {
@@ -81,8 +91,13 @@ const QString TWUtils::getLibraryPath(const QString& subdir)
 		libPath = QDir::homePath() + "/Library/" + TEXWORKS_NAME + "/" + subdir;
 #endif
 #ifdef Q_WS_X11
-		if (subdir == "dictionaries")
-			libPath = "/usr/share/myspell/dicts";
+		if (subdir == "dictionaries") {
+			libPath = TW_DICPATH;
+			const char* dicPath = getenv("TW_DICPATH");
+			if (dicPath != NULL)
+				libPath = dicPath;
+			return libPath; // don't try to create the system dicts directory
+		}
 		else
 			libPath = QDir::homePath() + "/." + TEXWORKS_NAME + "/" + subdir;
 #endif
@@ -214,11 +229,7 @@ void TWUtils::insertHelpMenuItems(QMenu* helpMenu)
 #endif
 #ifdef Q_WS_X11
 	if (!helpDir.exists())
-#ifdef TW_HELPPATH
 		helpDir.cd(TW_HELPPATH);
-#else
-		helpDir.cd("/usr/local/share/texworks-help");
-#endif // defined(TW_HELPPATH)
 #endif
 #endif
 	const char* helpPath = getenv("TW_HELPPATH");
@@ -326,23 +337,30 @@ QStringList* TWUtils::getTranslationList()
 			*translationList << locName;
 	}
 	
+	// English is always available, and it has to be the first item
+	translationList->removeAll("en");
+	translationList->prepend("en");
+	
 	return translationList;
 }
 
-QStringList* TWUtils::dictionaryList = NULL;
+QHash<QString, QString>* TWUtils::dictionaryList = NULL;
 
-QStringList* TWUtils::getDictionaryList()
+QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /*= false*/)
 {
-	if (dictionaryList != NULL)
-		return dictionaryList;
+	if (dictionaryList != NULL) {
+		if (!forceReload)
+			return dictionaryList;
+		delete dictionaryList;
+	}
 
-	dictionaryList = new QStringList;
+	dictionaryList = new QHash<QString, QString>();
 	QDir dicDir(TWUtils::getLibraryPath("dictionaries"));
 	foreach (QFileInfo affFileInfo, dicDir.entryInfoList(QStringList("*.aff"),
 				QDir::Files | QDir::Readable, QDir::Name | QDir::IgnoreCase)) {
 		QFileInfo dicFileInfo(affFileInfo.dir(), affFileInfo.completeBaseName() + ".dic");
 		if (dicFileInfo.isReadable())
-			*dictionaryList << dicFileInfo.completeBaseName();
+			dictionaryList->insertMulti(affFileInfo.canonicalFilePath(), affFileInfo.completeBaseName());
 	}
 
 #if defined(MIKTEX)
@@ -359,7 +377,7 @@ QStringList* TWUtils::getDictionaryList()
 	    QString lang = dicFileInfo.completeBaseName();
 	    if (dicFileInfo.isReadable() && ! dictionaryList->contains(lang))
 	    {
-	      *dictionaryList << lang;
+	      dictionaryList->insertMulti(affFileInfo.canonicalFilePath(), affFileInfo.completeBaseName());
 	    }
 	  }
 	}
@@ -445,8 +463,31 @@ QString TWUtils::strippedName(const QString &fullFileName)
 void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu) /* static */
 {
 	QSETTINGS_OBJECT(settings);
-	QStringList files = settings.value("recentFileList").toStringList();
-	int numRecentFiles = files.size();
+	QStringList fileList;
+	if (settings.contains("recentFiles")) {
+		QList<QVariant> files = settings.value("recentFiles").toList();
+		foreach (const QVariant& v, files) {
+			QMap<QString,QVariant> map = v.toMap();
+			if (map.contains("path"))
+				fileList.append(map.value("path").toString());
+		}
+	}
+	else {
+		// check for an old "recentFilesList" entry, and migrate it
+		if (settings.contains("recentFileList")) {
+			fileList = settings.value("recentFileList").toStringList();
+			QList<QVariant> files;
+			foreach (const QString& path, fileList) {
+				QMap<QString,QVariant> map;
+				map.insert("path", path);
+				files.append(QVariant(map));
+			}
+			settings.remove("recentFileList");
+			settings.setValue("recentFiles", files);
+		}
+	}
+	
+	int numRecentFiles = fileList.size();
 
 	while (actions.size() < numRecentFiles) {
 		QAction *act = new QAction(parent);
@@ -462,9 +503,10 @@ void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions,
 	}
 
 	for (int i = 0; i < numRecentFiles; ++i) {
-		QString text = TWUtils::strippedName(files[i]);
+		QString path = fileList[i];
+		QString text = TWUtils::strippedName(path);
 		actions[i]->setText(text);
-		actions[i]->setData(files[i]);
+		actions[i]->setData(path);
 		actions[i]->setVisible(true);
 	}
 }
@@ -487,7 +529,13 @@ void TWUtils::updateWindowMenu(QWidget *window, QMenu *menu) /* static */
 		if (first && !menu->actions().isEmpty())
 			menu->addSeparator();
 		first = false;
-		SelWinAction *selWin = new SelWinAction(menu, texDoc->fileName());
+		QString label = texDoc->fileName();
+		SelWinAction *selWin = new SelWinAction(menu, label);
+		if (texDoc->isModified()) {
+			QFont f(selWin->font());
+			f.setItalic(true);
+			selWin->setFont(f);
+		}
 		if (texDoc == qobject_cast<TeXDocument*>(window)) {
 			selWin->setCheckable(true);
 			selWin->setChecked(true);
@@ -551,6 +599,41 @@ void TWUtils::zoomToHalfScreen(QWidget *window, bool rhs)
 	QRect r = desktop->availableGeometry(window);
 	int wDiff = window->frameGeometry().width() - window->width();
 	int hDiff = window->frameGeometry().height() - window->height();
+
+	if (hDiff == 0 && wDiff == 0) {
+		// window may not be decorated yet, so we don't know how large
+		// the title bar etc. is. Try to extrapolate from other top-level
+		// windows (if some are available). We assume that if either
+		// hDiff or wDiff is non-zero, we have found a decorated window
+		// and can use its values.
+		foreach (QWidget * widget, QApplication::topLevelWidgets()) {
+			if (!qobject_cast<QMainWindow*>(widget))
+				continue;
+			hDiff = widget->frameGeometry().height() - widget->height();
+			wDiff = widget->frameGeometry().width() - widget->width();
+			if (hDiff != 0 || wDiff != 0)
+				break;
+		}
+		if (hDiff == 0 && wDiff == 0) {
+			// Give the user the possibility to specify his own values by
+			// hacking the config files.
+			// (Note: this should only be necessary in some special cases, e.g.
+			// on X11 systems with special effects enabled)
+			QSETTINGS_OBJECT(settings);
+			wDiff = qMax(0, settings.value("windowWDiff", 0).toInt());
+			hDiff = qMax(0, settings.value("windowHDiff", 0).toInt());
+		}
+		// If we still have no valid value for hDiff/wDiff, just guess (on some
+		// platforms)
+		if (hDiff == 0 && wDiff == 0) {
+#ifdef Q_WS_WIN
+			// (these values were determined on WinXP with default theme)
+			hDiff = 34;
+			wDiff = 8;
+#endif
+		}
+	}
+	
 	if (rhs) {
 		r.setLeft(r.left() + r.right() / 2);
 		window->move(r.left(), r.top());
@@ -565,8 +648,20 @@ void TWUtils::zoomToHalfScreen(QWidget *window, bool rhs)
 
 void TWUtils::sideBySide(QWidget *window1, QWidget *window2)
 {
-	zoomToHalfScreen(window1, false);
-	zoomToHalfScreen(window2, true);
+	QDesktopWidget *desktop = QApplication::desktop();
+
+	// if the windows reside on the same screen zoom each so that it occupies 
+	// half of that screen
+	if (desktop->screenNumber(window1) == desktop->screenNumber(window2)) {
+		zoomToHalfScreen(window1, false);
+		zoomToHalfScreen(window2, true);
+	}
+	// if the windows reside on different screens zoom each so that it uses
+	// its whole screen
+	else {
+		zoomToScreen(window1);
+		zoomToScreen(window2);
+	}
 }
 
 void TWUtils::tileWindowsInRect(const QWidgetList& windows, const QRect& bounds)

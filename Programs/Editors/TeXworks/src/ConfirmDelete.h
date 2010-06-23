@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@ public:
 	static void doConfirmDelete(const QDir& dir, const QStringList& fileList);
 
 private slots:
+	void doSelectAll();
+	void doSelectNone();
+	void doToggleSelection();
+	void setDeleteButtonEnabledStatus();
 
 private:
 	void init();

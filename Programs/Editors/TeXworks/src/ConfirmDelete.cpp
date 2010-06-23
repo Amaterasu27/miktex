@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@ void ConfirmDelete::init()
 {
 	setupUi(this);
 	buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Delete"));
+	connect(selectAll, SIGNAL(clicked()), this, SLOT(doSelectAll()));
+	connect(selectNone, SIGNAL(clicked()), this, SLOT(doSelectNone()));
+	connect(toggleSelection, SIGNAL(clicked()), this, SLOT(doToggleSelection()));
+	connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setDeleteButtonEnabledStatus()));
 }
 
 void ConfirmDelete::doConfirmDelete(const QDir& dir, const QStringList& fileList)
@@ -49,7 +53,7 @@ void ConfirmDelete::doConfirmDelete(const QDir& dir, const QStringList& fileList
 	dlg.listWidget->addItems(fileList);
 	for (int i = 0; i < dlg.listWidget->count(); ++i)
 		dlg.listWidget->item(i)->setCheckState(Qt::Checked);
-	
+
 	dlg.show();
 	DialogCode	result = (DialogCode)dlg.exec();
 
@@ -66,4 +70,36 @@ void ConfirmDelete::doConfirmDelete(const QDir& dir, const QStringList& fileList
 			(void)QMessageBox::warning(NULL, tr("Unable to delete"),
 									   tr("Some of the auxiliary files could not be removed. Perhaps you don't have permission to delete them."));
 	}
+}
+
+void ConfirmDelete::doSelectAll()
+{
+	for (int i = 0; i < listWidget->count(); ++i)
+		listWidget->item(i)->setCheckState(Qt::Checked);
+	setDeleteButtonEnabledStatus();
+}
+
+void ConfirmDelete::doSelectNone()
+{
+	for (int i = 0; i < listWidget->count(); ++i)
+		listWidget->item(i)->setCheckState(Qt::Unchecked);
+	setDeleteButtonEnabledStatus();
+}
+
+void ConfirmDelete::doToggleSelection()
+{
+	for (int i = 0; i < listWidget->count(); ++i) {
+		Qt::CheckState checked = listWidget->item(i)->checkState();
+		listWidget->item(i)->setCheckState(checked == Qt::Unchecked ? Qt::Checked : Qt::Unchecked);
+	}
+	setDeleteButtonEnabledStatus();
+}
+
+void ConfirmDelete::setDeleteButtonEnabledStatus()
+{
+	bool anyChecked = false;
+	for (int i = 0; i < listWidget->count() && !anyChecked; ++i)
+		if (listWidget->item(i)->checkState() == Qt::Checked)
+			anyChecked = true;
+	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(anyChecked);
 }

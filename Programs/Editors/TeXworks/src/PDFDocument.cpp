@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@
 #include <QScrollBar>
 #include <QRegion>
 #include <QVector>
-#include <QHash>
 #include <QList>
 #include <QStack>
 #include <QInputDialog>
@@ -81,6 +80,9 @@ const int kMagnifier = 1;
 const int kScroll = 2;
 const int kSelectText = 3;
 const int kSelectImage = 4;
+
+// duration of highlighting in PDF view (might make configurable?)
+const int kPDFHighlightDuration = 2000;
 
 #pragma mark === PDFMagnifier ===
 
@@ -212,6 +214,9 @@ PDFWidget::PDFWidget()
 	shortcutLeft = new QShortcut(QKeySequence("Left"), this, SLOT(leftOrPrev()));
 	shortcutDown = new QShortcut(QKeySequence("Down"), this, SLOT(downOrNext()));
 	shortcutRight = new QShortcut(QKeySequence("Right"), this, SLOT(rightOrNext()));
+
+	highlightRemover.setSingleShot(true);
+	connect(&highlightRemover, SIGNAL(timeout()), this, SLOT(clearHighlight()));
 }
 
 PDFWidget::~PDFWidget()
@@ -385,6 +390,11 @@ void PDFWidget::mouseReleaseEvent(QMouseEvent *event)
 				}
 				break;
 			case kMagnifier:
+				// Ensure we stop using the tool before hiding the magnifier.
+				// Otherwise other events in the queue may be processed between
+				// "close()" and "usingTool=" that could show the magnifier
+				// again
+				usingTool = kNone;
 				magnifier->close();
 				break;
 		}
@@ -443,7 +453,15 @@ void PDFWidget::doLink(const Poppler::Link *link)
 			{
 				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
 				Q_ASSERT(browse != NULL);
-				TWApp::instance()->openUrl(QUrl::fromEncoded(browse->url().toAscii()));
+				QUrl url = QUrl::fromEncoded(browse->url().toAscii());
+				if (url.scheme() == "file") {
+					PDFDocument *doc = qobject_cast<PDFDocument*>(window());
+					if (doc) {
+						QFileInfo fi(QFileInfo(doc->fileName()).canonicalPath(), url.toLocalFile());
+						url = QUrl::fromLocalFile(fi.canonicalFilePath());
+					}
+				}
+				TWApp::instance()->openUrl(url);
 			}
 			break;
 // unsupported link types:
@@ -700,6 +718,7 @@ void PDFWidget::setResolution(int res)
 
 void PDFWidget::setHighlightPath(const QPainterPath& path)
 {
+	highlightRemover.stop();
 	highlightPath = path;
 	if (!path.isEmpty()) {
 		QScrollArea*	scrollArea = getScrollArea();
@@ -708,7 +727,15 @@ void PDFWidget::setHighlightPath(const QPainterPath& path)
 			scrollArea->ensureVisible((int)((r.left() + r.right()) / 2 * dpi / 72 * scaleFactor),
 										(int)((r.top() + r.bottom()) / 2 * dpi / 72 * scaleFactor));
 		}
+		if (kPDFHighlightDuration > 0)
+			highlightRemover.start(kPDFHighlightDuration);
 	}
+}
+
+void PDFWidget::clearHighlight()
+{
+	highlightPath = QPainterPath();
+	update();
 }
 
 void PDFWidget::reloadPage()
@@ -1026,18 +1053,27 @@ QScrollArea* PDFWidget::getScrollArea()
 QList<PDFDocument*> PDFDocument::docList;
 
 PDFDocument::PDFDocument(const QString &fileName, TeXDocument *texDoc)
-	: watcher(NULL), reloadTimer(NULL), scanner(NULL)
+	: watcher(NULL), reloadTimer(NULL), scanner(NULL), openedManually(false)
 {
 	init();
 
 	if (texDoc == NULL) {
-		TWApp::instance()->addToRecentFiles(fileName);
+		openedManually = true;
 		watcher = new QFileSystemWatcher(this);
 		connect(watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reloadWhenIdle()));
 	}
 
 	loadFile(fileName);
 
+	QMap<QString,QVariant> properties = TWApp::instance()->getFileProperties(curFile);
+	if (properties.contains("geometry"))
+		restoreGeometry(properties.value("geometry").toByteArray());
+	else
+		TWUtils::zoomToHalfScreen(this, true);
+
+	if (properties.contains("state"))
+		restoreState(properties.value("state").toByteArray(), kPDFWindowStateVersion);
+	
 	if (texDoc != NULL) {
 		stackUnder((QWidget*)texDoc);
 		actionSide_by_Side->setEnabled(true);
@@ -1159,7 +1195,7 @@ PDFDocument::init()
 
 	connect(this, SIGNAL(destroyed()), qApp, SLOT(updateWindowMenus()));
 
-	connect(qApp, SIGNAL(syncPdf(const QString&, int)), this, SLOT(syncFromSource(const QString&, int)));
+	connect(qApp, SIGNAL(syncPdf(const QString&, int, bool)), this, SLOT(syncFromSource(const QString&, int, bool)));
 
 	menuShow->addAction(toolBar->toggleViewAction());
 	menuShow->addSeparator();
@@ -1192,7 +1228,8 @@ PDFDocument::init()
 
 	TWApp::instance()->updateWindowMenus();
 	
-	initScriptable(menuScripts, actionManage_Scripts, actionUpdate_Scripts, actionShow_Scripts_Folder);
+	initScriptable(menuScripts, actionAbout_Scripts, actionManage_Scripts,
+				   actionUpdate_Scripts, actionShow_Scripts_Folder);
 	
 	TWUtils::insertHelpMenuItems(menuHelp);
 	TWUtils::installCustomShortcuts(this);
@@ -1218,8 +1255,6 @@ PDFDocument::init()
 	menuFile->insertAction (actionClose, actionPrintPDF);
 	menuFile->insertSeparator (actionClose);
 #endif
-
-	TWUtils::zoomToHalfScreen(this, true);
 }
 
 void PDFDocument::changeEvent(QEvent *event)
@@ -1267,16 +1302,6 @@ void PDFDocument::updateWindowMenu()
 	TWUtils::updateWindowMenu(this, menuWindow);
 }
 
-void PDFDocument::selectWindow(bool activate)
-{
-	show();
-	raise();
-	if (activate)
-		activateWindow();
-	if (isMinimized())
-		showNormal();
-}
-
 void PDFDocument::sideBySide()
 {
 	if (sourceDocList.count() > 0) {
@@ -1286,44 +1311,6 @@ void PDFDocument::sideBySide()
 	}
 	else
 		placeOnRight();
-}
-
-void PDFDocument::placeOnLeft()
-{
-	TWUtils::zoomToHalfScreen(this, false);
-}
-
-void PDFDocument::placeOnRight()
-{
-	TWUtils::zoomToHalfScreen(this, true);
-}
-
-void PDFDocument::hideFloatersUnlessThis(QWidget* currWindow)
-{
-	PDFDocument* p = qobject_cast<PDFDocument*>(currWindow);
-	if (p == this)
-		return;
-	foreach (QObject* child, children()) {
-		QToolBar* tb = qobject_cast<QToolBar*>(child);
-		if (tb && tb->isVisible() && tb->isFloating()) {
-			latentVisibleWidgets.append(tb);
-			tb->hide();
-			continue;
-		}
-		QDockWidget* dw = qobject_cast<QDockWidget*>(child);
-		if (dw && dw->isVisible() && dw->isFloating()) {
-			latentVisibleWidgets.append(dw);
-			dw->hide();
-			continue;
-		}
-	}
-}
-
-void PDFDocument::showFloaters()
-{
-	foreach (QWidget* w, latentVisibleWidgets)
-		w->show();
-	latentVisibleWidgets.clear();
 }
 
 bool PDFDocument::event(QEvent *event)
@@ -1342,7 +1329,19 @@ bool PDFDocument::event(QEvent *event)
 void PDFDocument::closeEvent(QCloseEvent *event)
 {
 	event->accept();
+	if (openedManually) {
+		saveRecentFileInfo();
+	}
 	deleteLater();
+}
+
+void PDFDocument::saveRecentFileInfo()
+{
+	QMap<QString,QVariant> fileProperties;
+	fileProperties.insert("path", curFile);
+	fileProperties.insert("geometry", saveGeometry());
+	fileProperties.insert("state", saveState(kPDFWindowStateVersion));
+	TWApp::instance()->addToRecentFiles(fileProperties);
 }
 
 void PDFDocument::loadFile(const QString &fileName)
@@ -1441,7 +1440,7 @@ void PDFDocument::syncClick(int pageIndex, const QPointF& pos)
 	}
 }
 
-void PDFDocument::syncFromSource(const QString& sourceFile, int lineNo)
+void PDFDocument::syncFromSource(const QString& sourceFile, int lineNo, bool activatePreview)
 {
 	if (scanner == NULL)
 		return;
@@ -1483,7 +1482,8 @@ void PDFDocument::syncFromSource(const QString& sourceFile, int lineNo)
 			path.setFillRule(Qt::WindingFill);
 			pdfWidget->setHighlightPath(path);
 			pdfWidget->update();
-			selectWindow();
+			if (activatePreview)
+				selectWindow();
 		}
 	}
 }

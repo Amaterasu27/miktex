@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -48,6 +48,17 @@ public:
 	void lineNumberAreaPaintEvent(QPaintEvent *event);
 	int lineNumberAreaWidth();
 
+	bool getLineNumbersVisible() const { return lineNumberArea->isVisible(); }
+
+	QString getIndentMode() const {
+		return autoIndentMode >= 0 && autoIndentMode < autoIndentModes().size() ?
+			autoIndentModes().at(autoIndentMode) : QString();
+	}
+	QString getQuotesMode() const {
+		return smartQuotesMode >= 0 && smartQuotesMode < smartQuotesModes().size() ?
+			smartQuotesModes().at(smartQuotesMode) : QString();
+	}
+	
 	static QStringList autoIndentModes();
 	static QStringList smartQuotesModes();
 	
@@ -56,6 +67,7 @@ public:
 public slots:
 	void setAutoIndentMode(int index);
 	void setSmartQuotesMode(int index);
+	void smartenQuotes();
 	void updateLineNumberAreaWidth(int newBlockCount);
 	
 signals:

@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -57,11 +57,20 @@ void TemplateDialog::init()
 	
 	connect(treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 			this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
+	
+	connect(treeView, SIGNAL(activated(const QModelIndex&)), this, SLOT(itemActivated(const QModelIndex&)));
 
 	QSETTINGS_OBJECT(settings);
 	if (settings.value("syntaxColoring", true).toBool()) {
 		new TeXHighlighter(textEdit->document());
 	}
+}
+
+void TemplateDialog::itemActivated(const QModelIndex & index)
+{
+	QDirModel * model = qobject_cast<QDirModel*>(treeView->model());
+	if (model && !model->isDir(index))
+		accept();
 }
 
 void TemplateDialog::selectionChanged(const QItemSelection &selected, const QItemSelection &/*deselected*/)

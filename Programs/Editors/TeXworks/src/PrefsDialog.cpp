@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -262,18 +262,6 @@ void PrefsDialog::buttonClicked(QAbstractButton *whichButton)
 		restoreDefaults();
 }
 
-const int kDefault_LaunchOption = 1;
-const int kDefault_ToolBarIcons = 2;
-const bool kDefault_ToolBarText = false;
-const int kDefault_SyntaxColoring = 0;
-const int kDefault_IndentMode = -1;
-const int kDefault_QuotesMode = -1;
-const bool kDefault_LineNumbers = false;
-const bool kDefault_WrapLines = true;
-const int kDefault_TabWidth = 32;
-const bool kDefault_HideConsole = true;
-const bool kDefault_HighlightCurrentLine = true;
-
 void PrefsDialog::restoreDefaults()
 {
 	switch (tabWidget->currentIndex()) {
@@ -377,7 +365,7 @@ void PrefsDialog::initPathAndToolLists()
 {
 	binPathList->clear();
 	toolList->clear();
-	binPathList->addItems(TWApp::instance()->getBinaryPaths());
+	binPathList->addItems(TWApp::instance()->getPrefsBinaryPaths());
 	engineList = TWApp::instance()->getEngineList();
 	foreach (Engine e, engineList) {
 		toolList->addItem(e.name());
@@ -395,7 +383,14 @@ void PrefsDialog::initPathAndToolLists()
 
 const int kSystemLocaleIndex = 0;
 const int kEnglishLocaleIndex = 1;
-const int kFirstTranslationIndex = 2;
+const int kFirstTranslationIndex = 1;
+
+typedef QPair<QString, QString> DictPair;
+
+static bool dictPairLessThan(const DictPair& d1, const DictPair& d2)
+{
+	return d1.first.toLower() < d2.first.toLower();
+}
 
 QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 {
@@ -415,8 +410,32 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	QStringList quotesModes = CompletingEdit::smartQuotesModes();
 	dlg.smartQuotes->addItems(quotesModes);
 
-	dlg.language->addItems(*TWUtils::getDictionaryList());
-	
+	QList< DictPair > dictList;
+	foreach (const QString& dictKey, TWUtils::getDictionaryList()->uniqueKeys()) {
+		QString dict, label;
+		QLocale loc;
+
+		foreach (dict, TWUtils::getDictionaryList()->values(dictKey)) {
+			loc = QLocale(dict);
+			if (loc.language() != QLocale::C) break;
+		}
+
+		if (loc.language() == QLocale::C)
+			label = dict;
+		else {
+			label = QLocale::languageToString(loc.language());
+			QLocale::Country country = loc.country();
+			if (country != QLocale::AnyCountry)
+				label += " - " + QLocale::countryToString(country);
+			label += " (" + dict + ")";
+		}
+
+		dictList << qMakePair(label, dict);
+	}
+	qSort(dictList.begin(), dictList.end(), dictPairLessThan);
+	foreach (const DictPair& dict, dictList)
+		dlg.language->addItem(dict.first, dict.second);
+		
 	QSETTINGS_OBJECT(settings);
 	// initialize controls based on the current settings
 	
@@ -451,7 +470,6 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	QString oldLocale = settings.value("locale").toString();
 	// System and English are predefined at index 0 and 1 (see constants above)
 	dlg.localePopup->addItem(tr("System default [%1]").arg(QLocale::languageToString(QLocale(QLocale::system().name()).language())));
-	dlg.localePopup->addItem("English");	// we don't localize locale names for now
 	int oldLocaleIndex = oldLocale.isEmpty() ? kSystemLocaleIndex : kEnglishLocaleIndex;
 	QStringList *trList = TWUtils::getTranslationList();
 	QStringList::ConstIterator iter;
@@ -499,8 +517,8 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	dlg.encoding->setCurrentIndex(nameList.indexOf(TWApp::instance()->getDefaultCodec()->name()));
 	dlg.highlightCurrentLine->setChecked(settings.value("highlightCurrentLine", kDefault_HighlightCurrentLine).toBool());
 
-	QString defLang = settings.value("language", tr("None")).toString();
-	int i = dlg.language->findText(settings.value("language", tr("None")).toString());
+	QString defDict = settings.value("language", "None").toString();
+	int i = dlg.language->findData(defDict);
 	if (i >= 0)
 		dlg.language->setCurrentIndex(i);
 
@@ -602,10 +620,6 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 						settings.remove("locale");
 					}
 					break;
-				case kEnglishLocaleIndex: // built-in English
-					TWApp::instance()->applyTranslation(QString());
-					settings.setValue("locale", "en");
-					break;
 				default:
 					{
 						QString locale = trList->at(dlg.localePopup->currentIndex() - kFirstTranslationIndex);
@@ -627,10 +641,26 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 		font.setPointSize(dlg.fontSize->value());
 		settings.setValue("font", font.toString());
 		TWApp::instance()->setDefaultCodec(QTextCodec::codecForName(dlg.encoding->currentText().toAscii()));
-		settings.setValue("language", dlg.language->currentText());
+		if (dlg.language->currentIndex() >= 0) {
+			QVariant data = dlg.language->itemData(dlg.language->currentIndex());
+			if (data.isValid())
+				settings.setValue("language", data);
+			else
+				settings.setValue("language", "None");
+		}
+		else
+			settings.setValue("language", "None");
 		bool highlightLine = dlg.highlightCurrentLine->isChecked();
 		settings.setValue("highlightCurrentLine", highlightLine);
 		CompletingEdit::setHighlightCurrentLine(highlightLine);
+		
+		// Since the tab width can't be set by any other means, forcibly update
+		// all windows now
+		foreach (QWidget* widget, TWApp::instance()->allWidgets()) {
+			QTextEdit* editor = qobject_cast<QTextEdit*>(widget);
+			if (editor)
+			    editor->setTabStopWidth(dlg.tabWidth->value());
+		}
 		
 		// Preview
 		int scaleOption = 1;

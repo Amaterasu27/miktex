@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ void TeXDock::myVisibilityChanged(bool visible)
 TagsDock::TagsDock(TeXDocument *doc)
 	: TeXDock(tr("Tags"), doc)
 {
+	setObjectName("tags");
 	setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	tree = new TeXDockTreeWidget(this);
 	tree->header()->hide();

@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <QCursor>
 #include <QButtonGroup>
 #include <QPainterPath>
+#include <QTimer>
 
 #include "FindDialog.h"
 #include "poppler-qt4.h"
@@ -41,6 +42,8 @@ const int kDefault_MagnifierSize = 2;
 const bool kDefault_CircularMagnifier = true;
 const int kDefault_PreviewScaleOption = 1;
 const int kDefault_PreviewScale = 200;
+
+const int kPDFWindowStateVersion = 1;
 
 class QAction;
 class QMenu;
@@ -119,6 +122,8 @@ private slots:
 	void downOrNext();
 	void rightOrNext();
 
+	void clearHighlight();
+	
 public slots:
 	void windowResized();
 	void fitWindow(bool checked = true);
@@ -186,7 +191,8 @@ private:
 	int		usingTool;	// the tool actually being used in an ongoing mouse drag
 
 	QPainterPath	highlightPath;
-
+	QTimer highlightRemover;
+	
 	static QCursor	*magnifierCursor;
 	static QCursor	*zoomInCursor;
 	static QCursor	*zoomOutCursor;
@@ -243,19 +249,16 @@ protected:
 	virtual void dropEvent(QDropEvent *event);
 
 public slots:
-	void selectWindow(bool activate = true);
 	void texClosed(QObject *obj);
 	void reload();
 	void retypeset();
 	void interrupt();
 	void sideBySide();
-	void placeOnLeft();
-	void placeOnRight();
 	void doFindDialog();
 	void doFindAgain(bool newSearch = false);
 	void goToSource();
 	void toggleFullScreen();
-	void syncFromSource(const QString& sourceFile, int lineNo);
+	void syncFromSource(const QString& sourceFile, int lineNo, bool activatePreview);
 	
 private slots:
 	void updateRecentFileActions();
@@ -264,7 +267,6 @@ private slots:
 	void enableZoomActions(qreal);
 	void adjustScaleActions(autoScaleOption);
 	void syncClick(int page, const QPointF& pos);
-	void hideFloatersUnlessThis(QWidget* currWindow);
 	void reloadWhenIdle();
 #if defined(MIKTEX)
 	void print ();
@@ -279,7 +281,7 @@ private:
 	void loadFile(const QString &fileName);
 	void setCurrentFile(const QString &fileName);
 	void loadSyncData();
-	void showFloaters();
+	void saveRecentFileInfo();
 
 	QString curFile;
 	
@@ -297,13 +299,13 @@ private:
 	QMenu *menuRecent;
 	QShortcut *exitFullscreen;
 
-	QList<QWidget*> latentVisibleWidgets;
-
 	QFileSystemWatcher *watcher;
 	QTimer *reloadTimer;
 	
 	synctex_scanner_t scanner;
 
+	bool openedManually;
+	
 	static QList<PDFDocument*> docList;
 	
 	PDFSearchResult lastSearchResult;

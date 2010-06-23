@@ -11,6 +11,7 @@
       This package includes the TeXworks editor.
     </TPM:Description>
     <TPM:RunFiles>
+texmf/miktex/bin/x64/${twluaplugin_dll_name}.dll
 texmf/miktex/bin/x64/miktex-texworks.exe
 texmf/miktex/bin/x64/texworks.exe
     </TPM:RunFiles>

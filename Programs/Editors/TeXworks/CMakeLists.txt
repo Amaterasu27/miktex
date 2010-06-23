@@ -17,6 +17,8 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+add_subdirectory(plugins-src/TWLuaPlugin)
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -30,10 +32,13 @@ include_directories(
 )
 
 add_definitions(
+  -DTW_BUILD_ID=MiKTeX
   -DHAVE_POPPLER_XPDF_HEADERS
 )
 
 set(texworks_sources
+  src/CommandlineParser.cpp
+  src/CommandlineParser.h
   src/CompletingEdit.cpp
   src/CompletingEdit.h
   src/ConfirmDelete.cpp
@@ -48,11 +53,15 @@ set(texworks_sources
   src/PDFDocument.h
   src/PrefsDialog.cpp
   src/PrefsDialog.h
+  src/ScriptManager.cpp
+  src/ScriptManager.h
   src/SvnRev.h
   src/TWApp.cpp
   src/TWApp.h
   src/TWScript.cpp
   src/TWScript.h
+  src/TWScriptAPI.cpp
+  src/TWScriptAPI.h
   src/TWScriptable.cpp
   src/TWScriptable.h
   src/TWUtils.cpp
@@ -118,8 +127,10 @@ set(texworks_moc_sources
   src/PDFDocks.h
   src/PDFDocument.h
   src/PrefsDialog.h
+  src/ScriptManager.h
   src/TWApp.h
   src/TWScript.h
+  src/TWScriptAPI.h
   src/TWScriptable.h
   src/TWUtils.h
   src/TeXDocks.h
@@ -136,6 +147,7 @@ set(texworks_ui_files
   src/PDFFind.ui
   src/PrefsDialog.ui
   src/Replace.ui
+  src/ScriptManager.ui
   src/SearchResults.ui
   src/TeXDocument.ui
   src/TemplateDialog.ui

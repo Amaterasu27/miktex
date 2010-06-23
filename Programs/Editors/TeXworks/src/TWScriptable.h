@@ -1,6 +1,6 @@
 /*
  This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-09  Jonathan Kew
+ Copyright (C) 2007-2010  Jonathan Kew
  
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -65,40 +65,75 @@ class JSScript : public TWScript
 	Q_INTERFACES(TWScript)
 	
 public:
-	JSScript(const QString& filename) : TWScript(filename) { }
+#if defined(MIKTEX_WINDOWS) && defined(interface)
+#  undef interface
+#endif
+	JSScript(TWScriptLanguageInterface* interface, const QString& filename)
+		: TWScript(interface, filename) { }
+		
+	virtual bool parseHeader() { return doParseHeader("", "", "//"); };
+
+protected:
+	virtual bool execute(TWScriptAPI *tw) const;
+};
+
+// for JSScript, we provide a plugin-like factory, but it's actually compiled
+// and linked directly with the main application (at least for now)
+class JSScriptInterface : public QObject, public TWScriptLanguageInterface
+{
+	Q_OBJECT
+	Q_INTERFACES(TWScriptLanguageInterface)
 	
-	virtual ScriptLanguage getLanguage() const { return LanguageQtScript; }
-	
-	virtual bool parseHeader();
-	virtual bool run(QObject *context, QVariant& result) const;
+public:
+	JSScriptInterface() {};
+	virtual ~JSScriptInterface() {};
+
+	virtual TWScript* newScript(const QString& fileName);
+
+	virtual QString scriptLanguageName() const { return QString("QtScript"); }
+	virtual QString scriptLanguageURL() const { return QString("http://doc.trolltech.com/4.5/qtscript.html"); }
+	virtual bool canHandleFile(const QFileInfo& fileInfo) const { return fileInfo.suffix() == QString("js"); }
 };
 
 class TWScriptManager
 {
 public:
-	TWScriptManager() { }
-	virtual ~TWScriptManager() { }
+	TWScriptManager();
+	virtual ~TWScriptManager() {};
 	
 	bool addScript(QObject* scriptList, TWScript* script);
-	int addScriptsInDirectory(const QDir& dir) {
-		return addScriptsInDirectory(&m_Scripts, dir);
+	void addScriptsInDirectory(const QDir& dir, const QStringList& disabled, const QStringList& ignore = QStringList()) {
+		addScriptsInDirectory(&m_Scripts, &m_Hooks, dir, disabled, ignore);
 	}
 	void clear();
-	
+		
 	TWScriptList* getScripts() { return &m_Scripts; }
+	TWScriptList* getHookScripts() { return &m_Hooks; }
 	QList<TWScript*> getHookScripts(const QString& hook) const;
 
+	const QList<TWScriptLanguageInterface*>& languages() const { return scriptLanguages; }
+
+	void reloadScripts(bool forceAll = false);
+	void saveDisabledList();
+
 protected:
-	int addScriptsInDirectory(TWScriptList *scriptList, const QDir& dir);
+	void addScriptsInDirectory(TWScriptList *scriptList,
+							   TWScriptList *hookList,
+							   const QDir& dir,
+							   const QStringList& disabled,
+							   const QStringList& ignore);
+	void loadPlugins();
+	void reloadScriptsInList(TWScriptList * list, QStringList & processed);
 	
 private:
 	TWScriptList m_Scripts; // hierarchical list of standalone scripts
-	TWScriptList m_Hooks; // flat list of hook scripts (not shown in menus)
+	TWScriptList m_Hooks; // hierarchical list of hook scripts
+
+	QList<TWScriptLanguageInterface*> scriptLanguages;
 };
 
-
-// parent class for document windows that handle a Scripts menu
-// (i.e. both the source and PDF window types)
+// parent class for document windows (i.e. both the source and PDF window types);
+// handles the Scripts menu and other common functionality
 class TWScriptable : public QMainWindow
 {
 	Q_OBJECT
@@ -107,27 +142,38 @@ public:
 	TWScriptable();
 	virtual ~TWScriptable() { }
 	
-	void updateScriptsMenu();
-
 public slots:
+	void updateScriptsMenu();
 	void runScript(QObject * script, TWScript::ScriptType scriptType = TWScript::ScriptStandalone);
 	void runHooks(const QString& hookName);
 	
-private slots:
-	void doManageScriptsDialog();
+	void selectWindow(bool activate = true);
+	void placeOnLeft();
+	void placeOnRight();
 
+private slots:
+	void doManageScripts();
+	void doAboutScripts();
+	
+	void hideFloatersUnlessThis(QWidget* currWindow);
+	
 protected:
 	void initScriptable(QMenu* scriptsMenu,
+						QAction* aboutScriptsAction,
 						QAction* manageScriptsAction,
 						QAction* updateScriptsAction,
 						QAction* showScriptsFolderAction);
 
 	int addScriptsToMenu(QMenu *menu, TWScriptList *scripts);
 
+	void showFloaters();
+
 private:
 	QMenu* scriptsMenu;
 	QSignalMapper* scriptMapper;
 	int staticScriptMenuItemCount;
+
+	QList<QWidget*> latentVisibleWidgets;
 };
 
 
@@ -136,10 +182,17 @@ class TWSystemCmd : public QProcess {
 	
 public:
 	TWSystemCmd(QObject* parent, bool isOutputWanted = true)
-		: QProcess(parent), wantOutput(isOutputWanted) {}
+		: QProcess(parent), wantOutput(isOutputWanted)
+	{
+		connect(this, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
+		connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+		connect(this, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
+	}
 	virtual ~TWSystemCmd() {}
 	
-public slots:
+	QString getResult() { return result; }
+	
+private slots:
 	void processError(QProcess::ProcessError error) {
 		if (wantOutput)
 			result = tr("ERROR: failure code %1").arg(error);
@@ -166,8 +219,6 @@ public slots:
 		}
 	}
 
-	QString getResult() { return result; }
-	
 private:
 	bool wantOutput;
 	QString result;

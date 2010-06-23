@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-08  Jonathan Kew
+	Copyright (C) 2007-2010  Jonathan Kew
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ public:
 
 private slots:
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+	void itemActivated(const QModelIndex & index);
 	
 private:
 	void init();
