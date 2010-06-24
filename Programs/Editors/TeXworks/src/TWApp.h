@@ -46,7 +46,12 @@
 #endif
 #define STRINGIFY_2(s) #s
 #define STRINGIFY(s) STRINGIFY_2(s)
+#if defined(MIKTEX)
+#undef TW_BUILD_ID
+#define TW_BUILD_ID_STR MIKTEX_BANNER_STR
+#else // MIKTEX
 #define TW_BUILD_ID_STR STRINGIFY(TW_BUILD_ID)
+#endif // MIKTEX
 
 class QString;
 class QMenu;

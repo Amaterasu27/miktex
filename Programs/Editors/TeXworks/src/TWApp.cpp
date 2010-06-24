@@ -308,11 +308,7 @@ void TWApp::about()
 	QString aboutText = tr("<p>%1 is a simple environment for editing, typesetting, and previewing TeX documents.</p>").arg(TEXWORKS_NAME);
 	aboutText += "<small>";
 	aboutText += "<p>&#xA9; 2007-2010 Jonathan Kew &amp; Stefan L&#xF6;ffler";
-#if defined(MIKTEX)
-	aboutText += tr("<br>Version %1 r.%2 (<a href=\"http://miktex.org/%3/\">MiKTeX %3</a>)</p>").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(MIKTEX_SERIES_STR);
-#else
 	aboutText += tr("<br>Version %1 r.%2 (%3)").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(TW_BUILD_ID_STR);
-#endif
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2.");
 	aboutText += tr("<p><a href=\"http://qt.nokia.com/\">Qt application framework</a> v%1 by Qt Software, a division of Nokia Corporation.").arg(qVersion());
 	aboutText += tr("<br><a href=\"http://poppler.freedesktop.org/\">Poppler</a> PDF rendering library by Kristian H&#xF8;gsberg, Albert Astals Cid and others.");
@@ -346,6 +342,9 @@ typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 
 QString GetWindowsVersionString()
 {
+#if defined(MIKTEX)
+  return (MiKTeX::Core::Utils::GetOSVersionString().c_str());
+#else // MIKTEX
 	OSVERSIONINFOEXA osvi;
 	SYSTEM_INFO si;
 	PGNSI pGNSI;
@@ -431,6 +430,7 @@ QString GetWindowsVersionString()
 	}
 	
 	return result;
+#endif // MIKTEX
 }
 #endif
 
@@ -542,6 +542,10 @@ void TWApp::writeToMailingList()
 	body += qVersion();
 	body += " (runtime)\n";
 	body += "------------------------------\n";
+
+#if defined(MIKTEX)
+	body.replace ("\n", "%0A");
+#endif
 
 	openUrl(QUrl(QString("mailto:%1?subject=%2&body=%3").arg(address).arg(subject).arg(body)));
 }

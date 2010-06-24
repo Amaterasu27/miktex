@@ -17,10 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(${QT_DEFINITIONS})
+#add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
-add_definitions(-DQT_NO_DEBUG)
-add_definitions(-DQT_SHARED)
+#add_definitions(-DQT_NO_DEBUG)
+#add_definitions(-DQT_SHARED)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_lua_dir}/etc
@@ -80,7 +80,7 @@ target_link_libraries(${twluaplugin_dll_name} ${libs})
 rebase(${twluaplugin_dll_name})
 
 install(TARGETS ${twluaplugin_dll_name}
-  RUNTIME DESTINATION "${bindir}"
+  RUNTIME DESTINATION "${miktex_texworks_plugins_dir}"
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
 )

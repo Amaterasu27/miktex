@@ -356,6 +356,8 @@
 
 #define MIKTEX_PATH_INTERNAL_BIN_DIR "@rel_miktex_internal_bin_dir@"
 
+#define MIKTEX_PATH_TEXWORKS_PLUGINS_DIR "@rel_miktex_texworks_plugins_dir@"
+
 #define MIKTEX_PATH_FNDB_DIR "@rel_miktex_fndb_dir@"
 
 #if defined(MIKTEX_WINDOWS)

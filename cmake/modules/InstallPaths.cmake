@@ -37,6 +37,10 @@ set(rel_miktex_internal_bin_dir "${rel_miktex_bin_dir}/internal")
 
 set(miktex_internal_bindir "${texmfdir}/${rel_miktex_internal_bin_dir}")
 
+set(rel_miktex_texworks_plugins_dir "${rel_miktex_bin_dir}/texworks-plugins")
+
+set(miktex_texworks_plugins_dir "${texmfdir}/${rel_miktex_texworks_plugins_dir}")
+
 if(NATIVE_WINDOWS)
   set(bindir ${miktex_bindir})
 else(NATIVE_WINDOWS)

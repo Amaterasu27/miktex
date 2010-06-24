@@ -157,6 +157,12 @@ void TWScriptManager::loadPlugins()
 	// allow a hard-coded path for distro packagers
 	QDir pluginsDir = QDir(TW_PLUGINPATH);
 #else
+#if defined(MIKTEX)
+	MiKTeX::Core::SessionWrapper pSession (true);
+	MiKTeX::Core::PathName dir = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::CommonInstallRoot);
+	dir += MIKTEX_PATH_TEXWORKS_PLUGINS_DIR;
+	QDir pluginsDir (dir.Get());
+#else // MIKTEX
 	// find the plugins directory, relative to the executable
 	QDir pluginsDir = QDir(qApp->applicationDirPath());
 #if defined(Q_OS_WIN)
@@ -172,6 +178,7 @@ void TWScriptManager::loadPlugins()
 #endif
 	pluginsDir.cd("plugins");
 #endif
+#endif // MIKTEX
 
 	// allow an env var to override the default plugin path
 	const char* pluginPath = getenv("TW_PLUGINPATH");
@@ -187,6 +194,12 @@ void TWScriptManager::loadPlugins()
 		loader.setLoadHints(QLibrary::ExportExternalSymbolsHint);
 #endif
 		QObject *plugin = loader.instance();
+#if defined(MIKTEX)
+		if (plugin == 0)
+		{
+		  QString str = loader.errorString();
+		}
+#endif
 		TWScriptLanguageInterface *s = qobject_cast<TWScriptLanguageInterface*>(plugin);
 		if (s)
 			scriptLanguages += s;

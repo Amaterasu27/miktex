@@ -32,7 +32,6 @@ include_directories(
 )
 
 add_definitions(
-  -DTW_BUILD_ID=MiKTeX
   -DHAVE_POPPLER_XPDF_HEADERS
 )
 
