@@ -18,7 +18,7 @@
    USA.  */
 
 #define MIKTEX_COMP_J2000_VERSION 3820
-#define MIKTEX_COMP_ORIG_VERSION_STR "20100328 TL 2010"
+#define MIKTEX_COMP_ORIG_VERSION_STR "20100328"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1998,1999 Mark Wicks, Copyright (C) 2002-2009 by the DVIPDFMx project team"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1998,1999 Mark Wicks, @ 2002-2009 by the DVIPDFMx project team"

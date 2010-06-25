@@ -18,7 +18,7 @@
    USA.  */
 
 #define MIKTEX_COMP_J2000_VERSION 3819
-#define MIKTEX_COMP_ORIG_VERSION_STR "2.15 TL 2010"
+#define MIKTEX_COMP_ORIG_VERSION_STR "2.15"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1989 Chen & Harrison International Systems, Inc., (C) 1988 Olivetti Research Center (C), 1987 Regents of the University of California"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1989 Chen & Harrison International Systems, Inc., @ 1988 Olivetti Research Center, @ 1987 Regents of the University of California"

@@ -18,7 +18,7 @@
    USA.  */
 
 #define MIKTEX_COMP_J2000_VERSION 3819
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.7.8 TL 2010"
+#define MIKTEX_COMP_ORIG_VERSION_STR "0.7.8"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 2006 SIL International and Jin-Hwan Cho"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2006 SIL International and Jin-Hwan Cho"
