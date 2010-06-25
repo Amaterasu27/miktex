@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -80,34 +80,10 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 /* _________________________________________________________________________
 
    C API Helper
-
-   Calling exit() isn't nice. But it's C.
    _________________________________________________________________________ */
 
-#define C_FUNC_BEGIN()				\
-  {						\
-    try						\
-      {
-
-#define C_FUNC_END()				\
-      }						\
-    catch (const MiKTeXException & e)		\
-      {						\
-        if (stderr != 0)			\
-	  {					\
-	    Utils::PrintException (e);		\
-	  }					\
-        exit (1);				\
-      }						\
-    catch (const exception & e)			\
-      {						\
-        if (stderr != 0)			\
-	  {					\
-	    Utils::PrintException (e);		\
-	  }					\
-        exit (1);				\
-      }						\
-  }
+#define C_FUNC_BEGIN()
+#define C_FUNC_END()
 
 /* _________________________________________________________________________
 

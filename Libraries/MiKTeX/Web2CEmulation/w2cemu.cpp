@@ -26,7 +26,77 @@
 using namespace std;
 using namespace MiKTeX;
 using namespace MiKTeX::Core;
-using namespace MiKTeX::KPSE;
+
+/* _________________________________________________________________________
+
+   TranslateModeString
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(void)
+TranslateModeString (/*[in]*/ const char *	lpszMode,
+		     /*[out]*/ FileMode &	mode,
+		     /*[out]*/ FileAccess &	access,
+		     /*[out]*/ bool &		isTextFile)
+{
+  if (StringCompare(lpszMode, "r") == 0)
+    {
+      mode = FileMode::Open;
+      access = FileAccess::Read;
+      isTextFile = true;
+    }
+  else if (StringCompare(lpszMode, "w") == 0)
+    {
+      mode = FileMode::Create;
+      access = FileAccess::Write;
+      isTextFile = true;
+    }
+  else if (StringCompare(lpszMode, "rb") == 0)
+    {
+      mode = FileMode::Open;
+      access = FileAccess::Read;
+      isTextFile = false;
+    }
+  else if (StringCompare(lpszMode, "wb") == 0)
+    {
+      mode = FileMode::Create;
+      access = FileAccess::Write;
+      isTextFile = false;
+    }
+  else if (StringCompare(lpszMode, "ab") == 0)
+    {
+      mode = FileMode::Append;
+      access = FileAccess::Write;
+      isTextFile = false;
+    }
+  else
+    {
+      Session::FatalMiKTeXError ("TranslateModeString",
+				 T_("Unsupported mode."),
+				 lpszMode,
+				 __FILE__,
+				 __LINE__);
+
+    }
+}
+
+/* _________________________________________________________________________
+
+   TryFOpen
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(FILE *)
+TryFOpen (/*[in]*/ const char *	lpszFileName,
+	  /*[in]*/ const char *	lpszMode)
+{
+  FileMode mode (FileMode::Open);
+  FileAccess access (FileAccess::Read);
+  bool isTextFile;
+  TranslateModeString (lpszMode, mode, access, isTextFile);
+  return (SessionWrapper(true)->TryOpenFile(lpszFileName,
+					    mode,
+					    access,
+					    isTextFile));
+}
 
 /* _________________________________________________________________________
 
@@ -39,14 +109,14 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
 		  /*[in]*/ kpse_file_format_type	format,
 		  /*[in]*/ const char *			lpszMode)
 {
-  char * lpszPath = KPSE::FindFile(lpszFileName, format, 0);
+  char * lpszPath = miktex_kpse_find_file(lpszFileName, format, 0);
   if (lpszPath == 0)
     {
       return (0);
     }
   try
     {
-      *ppfile = KPSE::TryFOpen(lpszPath, lpszMode);
+      *ppfile = TryFOpen(lpszPath, lpszMode);
     }
   catch (const exception &)
     {
@@ -67,7 +137,7 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXW2CDATA(const char *)
-miktex_web2c_version_string = "0.0";
+miktex_web2c_version_string = "MiKTeX-web2c-emulation";
 
 /* _________________________________________________________________________
 

@@ -455,13 +455,13 @@ void writestreamlength(integer length, longinteger offset)
         jobname_cstr = xstrdup(makecstring(jobname));
     if (fixedpdfdraftmode == 0) {
 #if defined(MIKTEX)
-        xfseek(pdffile, offset, SEEK_SET, jobname_cstr);
+        miktex_xfseeko64(pdffile, offset, SEEK_SET, jobname_cstr);
 #else
         xfseeko(pdffile, (off_t) offset, SEEK_SET, jobname_cstr);
 #endif
         fprintf(pdffile, "%li", (long int) length);
 #if defined(MIKTEX)
-        xfseek(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
+        miktex_xfseeko64(pdffile, pdfoffset(), SEEK_SET, jobname_cstr);
 #else
         xfseeko(pdffile, (off_t) pdfoffset(), SEEK_SET, jobname_cstr);
 #endif

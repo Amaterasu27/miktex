@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(DF03C93E_3151_47A6_AEEE_6CFC30D01E42)
-#define DF03C93E_3151_47A6_AEEE_6CFC30D01E42
+#if ! defined(DF03C93E315147A6AEEE6CFC30D01E42)
+#define DF03C93E315147A6AEEE6CFC30D01E42
 
 #if defined(_MSC_VER)
 #  include <io.h>
@@ -52,14 +52,6 @@
 // API decoration for exported functions and data
 #define MIKTEXKPSCEEAPI(type) MIKTEXKPSEXPORT type MIKTEXCEECALL
 #define MIKTEXKPSDATA(type) MIKTEXKPSEXPORT type
-
-#define MIKTEXKPSE_BEGIN_NAMESPACE		\
-  namespace MiKTeX {				\
-    namespace KPSE {
-
-#define MIKTEXKPSE_END_NAMESPACE		\
-    }						\
-  }
 
 /* _________________________________________________________________________
 
@@ -117,7 +109,7 @@
    confdefs.h
    _________________________________________________________________________ */
 
-#define KPSEVERSION "kpathsea version 3.3.2"
+#define KPSEVERSION "MIKTEXKPS"
 
 /* _________________________________________________________________________
 
@@ -152,49 +144,6 @@
 
 /* _________________________________________________________________________
 
-   Obsolete
-   _________________________________________________________________________ */
-
-#define AA(args) args
-
-#define P1H(x1) (x1)
-#define P2H(p1,p2) (p1, p2)
-#define P3H(p1,p2,p3) (p1, p2, p3)
-#define P4H(p1,p2,p3,p4) (p1, p2, p3, p4)
-#define P5H(p1,p2,p3,p4,p5) (p1, p2, p3, p4, p5)
-#define P6H(p1,p2,p3,p4,p5,p6) (p1, p2, p3, p4, p5, p6)
-#define P7H(p1,p2,p3,p4,p5,p6,p7) (p1, p2, p3, p4, p5, p6, p7)
-#define P8H(p1,p2,p3,p4,p5,p6,p7,p8) (p1, p2, p3, p4, p5, p6, p7, p8)
-#define P9H(p1,p2,p3,p4,p5,p6,p7,p8,p9) (p1, p2, p3, p4, p5, p6, p7, p8, p9)
-
-#define P1C(t1, v1) (t1 v1)
-#define P2C(t1, v1, t2, v2) (t1 v1, t2 v2)
-#define P3C(t1, v1, t2, v2, t3, v3) (t1 v1, t2 v2, t3 v3)
-#define P4C(t1, v1, t2, v2, t3, v3, t4, v4) (t1 v1, t2 v2, t3 v3, t4 v4)
-#define P5C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5) \
-  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5)
-#define P6C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6)	\
-  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6)
-#define P7C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6, t7, v7)	\
-  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7)
-#define P8C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6, t7, v7, t8, v8) \
-  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7, t8 v8)
-#define P9C(t1,v1, t2,v2, t3,v3, t4,v4, t5,v5, t6,v6, t7,v7, t8,v8, t9,v9) \
-  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7, t8 v8, t9 v9)
-
-#define PVAR1H(p1) (p1, ...)
-
-#define PVAR1C(t1, n1, ap) \
-  (t1 n1, ...) { va_list ap; va_start (ap, n1);
-
-#if defined(__cplusplus)
-#  define STRCASECMP(s1, s2) MiKTeX::Core::StringCompare(s1, s2, true)
-#else
-#  define STRCASECMP(s1, s2) miktex_strcasecmp(s1, s2)
-#endif
-
-/* _________________________________________________________________________
-
    lib.h
    _________________________________________________________________________ */
 
@@ -204,7 +153,7 @@
 
 #define END_FATAL()				\
     fputs (".\n", stderr);			\
-    throw (1);					\
+    miktex_exit (1);				\
   } while (0)
 
 #define FATAL(str)							\
@@ -232,14 +181,10 @@
   do {							\
     fprintf (stderr, "%s: ", program_invocation_name);	\
     perror (str);					\
-    throw (1);						\
+    miktex_exit (1);					\
   } while (0)
 
-#if defined(__cplusplus)
-#  define FILESTRCASEEQ(s1, s2) (MiKTeX::Core::PathName::Compare(s1, s2) == 0)
-#else
-#  define FILESTRCASEEQ(s1, s2) (miktex_pathcmp(s1, s2) == 0)
-#endif
+#define FILESTRCASEEQ(s1, s2) (miktex_pathcmp(s1, s2) == 0)
 
 #define STREQ(s1, s2) ((s1) != 0 && (s2) != 0 && (strcmp(s1, s2) == 0))
 
@@ -248,64 +193,44 @@
 
 #define XTALLOC(n, t) ((t*)xmalloc((n) * sizeof(t)))
 
-#define concat concatn
-#define concat3 concatn
+#define concat(s1, s2) concatn(s1, s2)
+#define concat3(s1, s2, s3) concatn(s1, s2, s3)
 
-#if defined(__cplusplus)
-#  define concatn MiKTeX::KPSE::Concat
-#else
-#  define concatn miktex_concat
-#endif
+#define find_suffix(name) miktex_find_suffix(name)
 
-#define find_suffix(name) MiKTeX::KPSE::FindSuffix(name)
+#define xbasename(name) miktex_xbasename(name)
 
-#if defined(__cplusplus)
-#  define xbasename MiKTeX::KPSE::BaseName
-#else
-#  define xbasename miktex_basename
-#endif
+#define xfclose(fp, filename) miktex_xfclose(fp, filename)
 
-#if defined(__cplusplus)
-#  define xfclose MiKTeX::KPSE::FClose
-#else
-#  define xfclose miktex_fclose
-#endif
+#define xfopen(filename, mode) miktex_xfopen(filename, mode)
 
-#if defined(__cplusplus)
-#  define xfopen MiKTeX::KPSE::FOpen
-#else
-#  define xfopen miktex_fopen
-#endif
+#define xfseek(fp, offset, wherefrom, filename) \
+      miktex_xfseek(fp, offset, wherefrom, filename)
 
-#define xfseek MiKTeX::KPSE::FSeek64
+#define xfseeko(fp, offset, wherefrom, filename) \
+      miktex_xfseeko(fp, offset, wherefrom, filename)
 
-#define xftell MiKTeX::KPSE::FTell64
+#define xftell(fp, filename) \
+      miktex_xftell(fp, filename)
 
-#if defined(__cplusplus)
-#  define xmalloc(size) MiKTeX::Debug::Malloc(size, __FILE__, __LINE__)
-#else
-#  define xmalloc(size) miktex_core_malloc(size, __FILE__, __LINE__)
-#endif
+#define xftello(fp, filename) \
+      miktex_xftello(fp, filename)
 
-#if defined(__cplusplus)
-#  define xrealloc(ptr, size) \
-	MiKTeX::Debug::Realloc(ptr, size, __FILE__, __LINE__)
-#else
-#  define xrealloc(ptr, size) \
+#define xmalloc(size) miktex_core_malloc(size, __FILE__, __LINE__)
+
+#define xrealloc(ptr, size) \
 	miktex_core_realloc(ptr, size, __FILE__, __LINE__)
-#endif
 
-#if defined(__cplusplus)
-#  define xstrdup(str) MiKTeX::Debug::StrDup(str, __FILE__, __LINE__)
-#else
-#  define xstrdup(str) miktex_core_strdup(str, __FILE__, __LINE__)
-#endif
+#define xstrdup(str) miktex_core_strdup(str, __FILE__, __LINE__)
 
-#if defined(__cplusplus)
-#  define xputenv MiKTeX::Core::Utils::SetEnvironmentString
-#else
-#  define xputenv miktex_putenv
-#endif
+#define xputenv(var, value) miktex_xputenv(var, value)
+
+/* _________________________________________________________________________
+
+   concatn.h
+   _________________________________________________________________________ */
+
+#define concatn miktex_concatn
 
 /* _________________________________________________________________________
 
@@ -354,11 +279,8 @@
 
 #define kpse_reset_program_name(progname)
 
-#if defined(__cplusplus)
-#  define kpse_find_file MiKTeX::KPSE::FindFile
-#else
-#  define kpse_find_file miktex_kpse_find_file
-#endif
+#define kpse_find_file(name, format, must_exist) \
+      miktex_kpse_find_file(name, format, must_exist)
 
 #define kpse_find_ofm(name) kpse_find_file(name, kpse_ofm_format, 1)
 
@@ -368,27 +290,11 @@
 
 #define kpse_find_tfm(name) kpse_find_file(name, kpse_tfm_format, 1)
 
-#if defined(__cplusplus)
-#  define kpse_open_file MiKTeX::KPSE::OpenFile
-#else
-#  define kpse_open_file miktex_kpse_open_file
-#endif
+#define kpse_open_file miktex_kpse_open_file(name, format)
 
-#if defined(__cplusplus)
-#define kpse_in_name_ok(fname) \
-  (MiKTeX::Core::Utils::IsSafeFileName(fname, true) ? 1 : 0)
-#else
-#define kpse_in_name_ok(fname) \
-  miktex_kpse_in_name_ok(fname)
-#endif
+#define kpse_in_name_ok(fname) miktex_kpse_in_name_ok(fname)
 
-#if defined(__cplusplus)
-#define kpse_out_name_ok(fname) \
-  (MiKTeX::Core::Utils::IsSafeFileName(fname, false) ? 1 : 0)
-#else
-#define kpse_out_name_ok(fname) \
-  miktex_kpse_out_name_ok(fname)
-#endif
+#define kpse_out_name_ok(fname) miktex_kpse_out_name_ok(fname)
 
 /* _________________________________________________________________________
 
@@ -405,11 +311,7 @@
 #define kpse_make_tex_discard_errors miktex_kpse_make_tex_discard_errors
 
 #undef program_invocation_name
-#if defined(__cplusplus)
-#   define program_invocation_name MiKTeX::KPSE::GetProgramInvocationName()
-#else
-#  define program_invocation_name miktex_get_program_invocation_name()
-#endif
+#define program_invocation_name miktex_get_program_invocation_name()
 
 #if defined(__cplusplus)
 MIKTEX_BEGIN_EXTERN_C_BLOCK
@@ -500,27 +402,17 @@ MIKTEX_END_EXTERN_C_BLOCK
    absolute.h
    _________________________________________________________________________ */
 
-#if 0
 #define kpse_absolute_p(filename, relative_ok)	  \
-  (MIKTEX_ASSERT(! (relative_ok)),		  \
-   MiKTeX::Core::Utils::IsAbsolutePath(filename))
-#else
-#define kpse_absolute_p(filename, relative_ok)	  \
-   MiKTeX::Core::Utils::IsAbsolutePath(filename)
-#endif
+      miktex_kpse_absolute_p(filename, relative_ok)
 
 /* _________________________________________________________________________
 
    variable.h
    _________________________________________________________________________ */
 
-#define kpse_var_expand(src) (src)
+#define kpse_var_expand(src) miktex_kpse_var_expand(src)
 
-#if defined(__cplusplus)
-#  define kpse_var_value MiKTeX::KPSE::VarValue
-#else
-#  define kpse_var_value miktex_kpse_var_value
-#endif
+#define kpse_var_value(var) miktex_kpse_var_value(var)
 
 /* _________________________________________________________________________
 
@@ -558,23 +450,15 @@ typedef struct
 MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
-#if defined(__cplusplus)
-#  define kpse_bitmap_tolerance MiKTeX::KPSE::BitmapTolerance
-#else
-#  define kpse_bitmap_tolerance miktex_kpse_bitmap_tolerance
-#endif
+#define kpse_bitmap_tolerance(dpi1, dpi2) miktex_kpse_bitmap_tolerance(dpi1, dpi2)
 
-#if defined(__cplusplus)
-#  define kpse_find_glyph MiKTeX::KPSE::FindGlyph
-#else
-#  define kpse_find_glyph miktex_kpse_find_glyph
-#endif
+#define kpse_find_glyph(font_name, dpi, format, glyph_file) \
+      miktex_kpse_find_glyph(font_name, dpi, format, glyph_file)
 
 #define kpse_find_pk(font_name, dpi, glyph_file) \
   kpse_find_glyph(font_name, dpi, kpse_pk_format, glyph_file)
 
 #define kpse_find_vf(name) kpse_find_file(name, kpse_vf_format, 0)
-
 
 /* _________________________________________________________________________
 
@@ -588,149 +472,26 @@ MIKTEX_END_EXTERN_C_BLOCK
    proginit.h
    _________________________________________________________________________ */
 
-#if defined(__cplusplus)
-#  define kpse_init_prog MiKTeX::KPSE::InitProg
-#else
-#  define kpse_init_prog miktex_kpse_init_prog
-#endif
+#define kpse_init_prog(prefix, dpi, mode, fallback) \
+      miktex_kpse_init_prog(prefix, dpi, mode, fallback)
 
 /* _________________________________________________________________________
 
    magstep.h
    _________________________________________________________________________ */
 
-#if defined(__cplusplus)
-#  define kpse_magstep_fix MiKTeX::KPSE::MagStepFix
-#else
-#  define kpse_magstep_fix miktex_kpse_magstep_fix
-#endif
+#define kpse_magstep_fix(dpi, bdpi, m_ret) \
+      miktex_kpse_magstep_fix(dpi, bdpi, m_ret)
 
 /* _________________________________________________________________________
 
    progname.h
    _________________________________________________________________________ */
 
-#if defined(__cplusplus)
-#  define kpse_set_program_name(argv0, progname) \
-     MiKTeX::KPSE::SetProgramName(argv0, progname)
-#else
-#  define kpse_set_program_name(argv0, progname) \
+#define kpse_set_program_name(argv0, progname) \
      miktex_kpse_set_program_name(argv0, progname)
-#endif
 
 #define kpse_set_progname(argv0) kpse_set_program_name(argv0, 0)
-
-/* _________________________________________________________________________
-
-   Prototypes (C++)
-   _________________________________________________________________________ */
-
-#if defined(__cplusplus)
-MIKTEXKPSE_BEGIN_NAMESPACE;
-
-MIKTEXKPSCEEAPI(const char *)
-BaseName (/*[in]*/ const char * lpszFileName);
-
-MIKTEXKPSCEEAPI(int)
-BitmapTolerance (/*[in]*/ double	dpi1,
-		 /*[in]*/ double	dpi2);
-
-MIKTEXKPSCEEAPI(void)
-FClose (/*[in]*/ FILE *		stream,
-	/*[in]*/ const char *	fileName);
-
-MIKTEXKPSCEEAPI(char *)
-FindFile (/*[in]*/ const char *			lpszFileName,
-	  /*[in]*/ kpse_file_format_type	format,
-	  /*[in]*/ int				mustExist);
-
-MIKTEXKPSCEEAPI(char *)
-FindGlyph (/*[in]*/ const char *		lpszFontName,
-	   /*[in]*/ unsigned			dpi,
-	   /*[in]*/ kpse_file_format_type	format,
-	   /*[out]*/ kpse_glyph_file_type *	glyph_file);
-
-MIKTEXKPSCEEAPI(char *)
-FindSuffix (const char * lpszPath);
-
-MIKTEXKPSCEEAPI(FILE *)
-FOpen (/*[in]*/ const char *	lpszName,
-       /*[in]*/ const char *	lpszMode);
-
-MIKTEXKPSCEEAPI(FILE *)
-TryFOpen (/*[in]*/ const char *	lpszName,
-	  /*[in]*/ const char *	lpszMode);
-
-MIKTEXKPSCEEAPI(int)
-FSeek (/*[in]*/ FILE *		stream,
-       /*[in]*/ long		offset,
-       /*[in]*/ int		where,
-       /*[in]*/ const char *	lpszFileName);
-
-MIKTEXKPSCEEAPI(int)
-FSeek64 (/*[in]*/ FILE *	stream,
-	 /*[in]*/ MIKTEX_INT64	offset,
-	 /*[in]*/ int		where,
-	 /*[in]*/ const char *	lpszFileName);
-
-MIKTEXKPSCEEAPI(long)
-FTell (/*[in]*/ FILE *		stream,
-       /*[in]*/ const char *	lpszFileName);
-
-MIKTEXKPSCEEAPI(MIKTEX_INT64)
-FTell64 (/*[in]*/ FILE *	stream,
-	 /*[in]*/ const char *	lpszFileName);
-
-MIKTEXKPSCEEAPI(const char *)
-GetProgramInvocationName ();
-
-MIKTEXKPSCEEAPI(void)
-InitProg (/*[in]*/ const char *	lpszPrefix,
-	  /*[in]*/ unsigned	dpi,
-	  /*[in]*/ const char *	lpszMode,
-	  /*[in]*/ const char *	lpszFallback);
-
-MIKTEXKPSCEEAPI(char *)
-Concat (/*[in]*/ const char * lpsz1, ...);
-
-MIKTEXKPSCEEAPI(unsigned)
-MagStepFix (/*[in]*/ unsigned	dpi,
-	    /*[in]*/ unsigned	bdpi,
-	    /*[out]*/ int *	pRet);
-
-MIKTEXKPSCEEAPI(void *)
-Malloc (/*[in]*/ size_t		size,
-	/*[in]*/ const char *	lpszFileName,
-	/*[in]*/ int		line);
-
-MIKTEXKPSCEEAPI(FILE *)
-OpenFile (/*[in]*/ const char *			lpszFileName,
-	  /*[in]*/ kpse_file_format_type	format);
-
-MIKTEXKPSCEEAPI(void)
-PutEnv (/*[in]*/ const char * lpszVarName,
-	/*[in]*/ const char * lpszValue);
-
-MIKTEXKPSCEEAPI(void *)
-Realloc (/*[in]*/ void *	ptr,
-	 /*[in]*/ size_t	size,
-	 /*[in]*/ const char *	lpszFileName,
-	 /*[in]*/ int		line);
-
-MIKTEXKPSCEEAPI(void)
-SetProgramName (/*[in]*/ const char *	lpszArgv0,
-		/*[in]*/ const char *	lpszProgramName);
-
-MIKTEXKPSCEEAPI(char *)
-StrDup (/*[in]*/ const char *	lpsz,
-	/*[in]*/ const char *	lpszFileName,
-	/*[in]*/ int		line);
-
-MIKTEXKPSCEEAPI(char *)
-VarValue (/*[in]*/ const char * lpszVarName);
-
-MIKTEXKPSE_END_NAMESPACE;
-#endif
 
 /* _________________________________________________________________________
 
@@ -741,19 +502,15 @@ MIKTEXKPSE_END_NAMESPACE;
 MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
-MIKTEXKPSCEEAPI(const char *)
-miktex_basename (/*[in]*/ const char * lpszFileName);
+MIKTEXKPSCEEAPI(boolean)
+miktex_kpse_absolute_p (/*[in]*/ const char * lpszFileName,
+			/*[in]*/ boolean      relativeOk);
 
 MIKTEXKPSCEEAPI(char *)
-miktex_concat (/*[in]*/ const char * lpsz1, ...);
+miktex_concatn (/*[in]*/ const char * lpsz1, ...);
 
-MIKTEXKPSCEEAPI(void)
-miktex_fclose (/*[in]*/ FILE *			stream,
-	       /*[in]*/ const char *	fileName);
-
-MIKTEXKPSCEEAPI(FILE *)
-miktex_fopen (/*[in]*/ const char *	lpszName,
-	      /*[in]*/ const char *	lpszMode);
+MIKTEXKPSCEEAPI(char *)
+miktex_find_suffix (const char * lpszPath);
 
 MIKTEXKPSCEEAPI(const char *)
 miktex_get_program_invocation_name ();
@@ -801,29 +558,61 @@ miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
 MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName);
 
-MIKTEXKPSCEEAPI(void *)
-miktex_malloc (/*[in]*/ size_t		size,
-	       /*[in]*/ const char *	lpszFileName,
-	       /*[in]*/ int		line);
-
-MIKTEXKPSCEEAPI(void *)
-miktex_realloc (/*[in]*/ void *		ptr,
-		/*[in]*/ size_t		size,
-		/*[in]*/ const char *	lpszFileName,
-		/*[in]*/ int		line);
+MIKTEXKPSCEEAPI(char *)
+miktex_kpse_var_expand (/*[in]*/ const char * lpszSource);
 
 MIKTEXKPSCEEAPI(void)
 miktex_putenv (/*[in]*/ const char * lpszVarName,
 	       /*[in]*/ const char * lpszValue);
 
-MIKTEXKPSCEEAPI(char *)
-miktex_strdup (/*[in]*/ const char *	s,
-	       /*[in]*/ const char *	lpszFileName,
-	       /*[in]*/ int		line);
-
 MIKTEXKPSCEEAPI(int)
 miktex_strcasecmp (/*[in]*/ const char * lpsz1,
 		   /*[in]*/ const char * lpsz2);
+
+MIKTEXKPSCEEAPI(const char *)
+miktex_xbasename (/*[in]*/ const char * lpszFileName);
+
+MIKTEXKPSCEEAPI(void)
+miktex_xfclose (/*[in]*/ FILE *		stream,
+		/*[in]*/ const char *	fileName);
+
+MIKTEXKPSCEEAPI(FILE *)
+miktex_xfopen (/*[in]*/ const char *	lpszName,
+	       /*[in]*/ const char *	lpszMode);
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseek (/*[in]*/ FILE *			pfile,
+	       /*[in]*/ long			offset,
+	       /*[in]*/ int			where,
+	       /*[in]*/ const char *		lpszFileName);
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseeko (/*[in]*/ FILE *			pfile,
+	        /*[in]*/ off_t			offset,
+	        /*[in]*/ int			where,
+	        /*[in]*/ const char *		lpszFileName);
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseeko64 (/*[in]*/ FILE *		pfile,
+	          /*[in]*/ MIKTEX_INT64		offset,
+		  /*[in]*/ int			where,
+		  /*[in]*/ const char *		lpszFileName);
+
+MIKTEXKPSCEEAPI(long)
+miktex_xftell (/*[in]*/ FILE *		pfile,
+	      /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(off_t)
+miktex_xftello (/*[in]*/ FILE *		pfile,
+	       /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(MIKTEX_INT64)
+miktex_xftello64 (/*[in]*/ FILE *	pfile,
+	          /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(void)
+miktex_xputenv (/*[in]*/ const char * lpszVarName,
+		/*[in]*/ const char * lpszValue);
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK

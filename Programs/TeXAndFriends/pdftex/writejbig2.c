@@ -296,11 +296,7 @@ void readfilehdr(FILEINFO * fip)
     fip->sequentialaccess = (fip->filehdrflags & 0x01) ? true : false;
     if (fip->sequentialaccess) {        /* Annex D.1 vs. Annex D.2 */
         xfseek(fip->file, 0, SEEK_END, fip->filename);
-#if defined(MIKTEX)
-        fip->filesize = (long) xftell(fip->file, fip->filename);
-#else
         fip->filesize = (long) xftello(fip->file, fip->filename);
-#endif
         xfseek(fip->file, 9, SEEK_SET, fip->filename);
     }
     /* Annex D.4.3 Number of pages */
@@ -362,11 +358,7 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
         sip->segpage = ygetc(fip->file);
     /* 7.2.7 Segment data length */
     sip->segdatalen = read4bytes(fip->file);
-#if defined(MIKTEX)
-    sip->hdrend = (long) xftell(fip->file, fip->filename);
-#else
     sip->hdrend = (long) xftello(fip->file, fip->filename);
-#endif
     /* ---- at end of segment header ---- */
     return true;
 }
@@ -598,11 +590,7 @@ void rd_jbig2_info(FILEINFO * fip)
         sip->dataend = sip->datastart + sip->segdatalen;
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-#if defined(MIKTEX)
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filename);
-#else
             xfseeko(fip->file, (off_t) sip->datastart, SEEK_SET, fip->filename);
-#endif
         seekdist = sip->segdatalen;
         /* 7.4.8 Page information segment syntax */
         if (sip->pageinfoflag) {
@@ -622,19 +610,11 @@ void rd_jbig2_info(FILEINFO * fip)
         }
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-#if defined(MIKTEX)
-            xfseek(fip->file, sip->hdrend, SEEK_SET, fip->filename);
-#else
             xfseeko(fip->file, (off_t) sip->hdrend, SEEK_SET, fip->filename);
-#endif
         if (!fip->sequentialaccess)
             streampos += sip->segdatalen;
         if (fip->sequentialaccess)
-#if defined(MIKTEX)
-            xfseek(fip->file, seekdist, SEEK_CUR, fip->filename);
-#else
             xfseeko(fip->file, (off_t) seekdist, SEEK_CUR, fip->filename);
-#endif
         if (sip->endofpageflag && currentpage && (pip->stripinginfo >> 15))
             pip->height = pip->stripedheight;
     }
@@ -694,11 +674,7 @@ void wr_jbig2(FILEINFO * fip, unsigned long page)
 #endif
             /* mark refered-to page 0 segments, change segpages > 1 to 1 */
             writeseghdr(fip, sip);
-#if defined(MIKTEX)
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filename);
-#else
             xfseeko(fip->file, (off_t) sip->datastart, SEEK_SET, fip->filename);
-#endif
             for (i = sip->datastart; i < sip->dataend; i++)
                 pdfout(ygetc(fip->file));
         }

@@ -692,7 +692,7 @@ figcopyfile(char *s, int systemtype)
 		Find filename suffix
 	*/
 
-	static char *get_filename_suffix P1C(char *, fn)
+	static char *get_filename_suffix (char * fn)
 	{
 	  char *back = NULL;
 	  char *ptr;
@@ -716,7 +716,7 @@ figcopyfile(char *s, int systemtype)
 	}
 	
 	
-	static void print_filename P1C(char *, s)
+	static void print_filename (char * s)
 	{
 	  char *ptr, *x;
 	  ptr = s; x = NULL;
@@ -742,7 +742,7 @@ figcopyfile(char *s, int systemtype)
 		New function figcopyfile
 	*/
 
-	void figcopyfile P2C(char *, s, int, systemtype)
+	void figcopyfile (char * s, int systemtype)
 	{
 	  FILE *inputfile;
 	  if(systemtype) {
@@ -770,7 +770,7 @@ figcopyfile(char *s, int systemtype)
 		    }
 		  }
 		} else {
-		  if( STRCASECMP((herunning->suffix),suffix) == 0 ) {
+		  if( strcasecmp((herunning->suffix),suffix) == 0 ) {
 		    hefound = herunning; found_level = 2;
 		  }
 		}

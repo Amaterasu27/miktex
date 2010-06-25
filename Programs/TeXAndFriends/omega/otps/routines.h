@@ -19,6 +19,31 @@ You should have received a copy of the GNU Library General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+#if defined(MIKTEX)
+#define P1H(x1) (x1)
+#define P2H(p1,p2) (p1, p2)
+#define P3H(p1,p2,p3) (p1, p2, p3)
+#define P4H(p1,p2,p3,p4) (p1, p2, p3, p4)
+#define P5H(p1,p2,p3,p4,p5) (p1, p2, p3, p4, p5)
+#define P6H(p1,p2,p3,p4,p5,p6) (p1, p2, p3, p4, p5, p6)
+#define P7H(p1,p2,p3,p4,p5,p6,p7) (p1, p2, p3, p4, p5, p6, p7)
+#define P8H(p1,p2,p3,p4,p5,p6,p7,p8) (p1, p2, p3, p4, p5, p6, p7, p8)
+#define P9H(p1,p2,p3,p4,p5,p6,p7,p8,p9) (p1, p2, p3, p4, p5, p6, p7, p8, p9)
+#define P1C(t1, v1) (t1 v1)
+#define P2C(t1, v1, t2, v2) (t1 v1, t2 v2)
+#define P3C(t1, v1, t2, v2, t3, v3) (t1 v1, t2 v2, t3 v3)
+#define P4C(t1, v1, t2, v2, t3, v3, t4, v4) (t1 v1, t2 v2, t3 v3, t4 v4)
+#define P5C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5) \
+  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5)
+#define P6C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6)	\
+  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6)
+#define P7C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6, t7, v7)	\
+  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7)
+#define P8C(t1, v1, t2, v2, t3, v3, t4, v4, t5, v5, t6, v6, t7, v7, t8, v8) \
+  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7, t8 v8)
+#define P9C(t1,v1, t2,v2, t3,v3, t4,v4, t5,v5, t6,v6, t7,v7, t8,v8, t9,v9) \
+  (t1 v1, t2 v2, t3 v3, t4 v4, t5 v5, t6 v6, t7 v7, t8 v8, t9 v9)
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

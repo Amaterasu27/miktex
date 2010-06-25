@@ -27,7 +27,6 @@
 using namespace std;
 using namespace MiKTeX;
 using namespace MiKTeX::Core;
-using namespace MiKTeX::KPSE;
 
 namespace {
   unsigned kpse_baseResolution = 600;
@@ -83,14 +82,14 @@ magstep (/*[in]*/ int	n,
 
 /* _________________________________________________________________________
 
-   KPSE::FindGlyph
+   miktex_kpse_find_glyph
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-KPSE::FindGlyph (/*[in]*/ const char *			lpszFontName,
-		 /*[in]*/ unsigned			dpi,
-		 /*[in]*/ kpse_file_format_type		format,
-		 /*[out]*/ kpse_glyph_file_type *	glyph_file)
+miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
+			/*[in]*/ unsigned			dpi,
+			/*[in]*/ kpse_file_format_type		format,
+			/*[out]*/ kpse_glyph_file_type *	glyph_file)
 {
   if (format != kpse_pk_format)
     {
@@ -126,7 +125,7 @@ KPSE::FindGlyph (/*[in]*/ const char *			lpszFontName,
 	   return (0);
 	 }
     }
-  char * lpsz = MIKTEX_STRDUP(path.Get());
+  char * lpsz = xstrdup(path.Get());
   if (glyph_file != 0)
     {
       glyph_file->name = const_cast<char*>(lpszFontName);
@@ -139,29 +138,13 @@ KPSE::FindGlyph (/*[in]*/ const char *			lpszFontName,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_find_glyph
+   miktex_kpse_find_file
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
-			/*[in]*/ unsigned			dpi,
-			/*[in]*/ kpse_file_format_type		format,
-			/*[out]*/ kpse_glyph_file_type *	glyph_file)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::FindGlyph(lpszFontName, dpi, format, glyph_file));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FindFile
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
-		/*[in]*/ kpse_file_format_type	format,
-		/*[in]*/ int			mustExist)
+miktex_kpse_find_file (/*[in]*/ const char *		lpszFileName,
+		       /*[in]*/ kpse_file_format_type	format,
+		       /*[in]*/ int			mustExist)
 {
   MIKTEX_ASSERT (lpszFileName != 0);
   bool found = false;
@@ -269,22 +252,7 @@ KPSE::FindFile (/*[in]*/ const char *		lpszFileName,
       return (0);
     }
   result.ToUnix ();
-  return (MIKTEX_STRDUP(result.Get()));
-}
-
-/* _________________________________________________________________________
-
-   miktex_kpse_find_file
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_file (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ kpse_file_format_type	format,
-		       /*[in]*/ int			mustExist)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::FindFile(lpszFileName, format, mustExist));
-  C_FUNC_END ();
+  return (xstrdup(result.Get()));
 }
 
 /* _________________________________________________________________________
@@ -315,353 +283,7 @@ IsBinary (/*[in]*/ kpse_file_format_type	format)
 
 /* _________________________________________________________________________
 
-   KPSE::OpenFile
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(FILE *)
-KPSE::OpenFile (/*[in]*/ const char *		lpszFileName,
-		/*[in]*/ kpse_file_format_type	format)
-{
-  MIKTEX_ASSERT (lpszFileName != 0);
-  char * lpszPath = KPSE::FindFile(lpszFileName, format, 1);
-  if (lpszPath == 0)
-    {
-      return (0);
-    }
-  FILE * pfile;
-  try
-    {
-      pfile = TryFOpen(lpszPath, IsBinary(format) ? "rb" : "r");
-    }
-  catch (const exception &)
-    {
-      MIKTEX_FREE (lpszPath);
-      throw;
-    }
-  MIKTEX_FREE (lpszPath);
-  return (pfile);
-}
-
-/* _________________________________________________________________________
-
-   miktex_kpse_open_file
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(FILE *)
-miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ kpse_file_format_type	format)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::OpenFile(lpszFileName, format));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::Malloc
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void *)
-KPSE::Malloc (/*[in]*/ size_t		size,
-	      /*[in]*/ const char *	lpszFileName,
-	      /*[in]*/ int		line)
-{
-  return (Debug::Malloc(size, lpszFileName, line));
-}
-
-/* _________________________________________________________________________
-
-   miktex_malloc
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void *)
-miktex_malloc (/*[in]*/ size_t		size,
-	       /*[in]*/ const char *	lpszFileName,
-	       /*[in]*/ int		line)
-{
-  C_FUNC_BEGIN ();
-  return (Debug::Malloc(size, lpszFileName, line));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::Realloc
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void *)
-KPSE::Realloc (/*[in]*/ void *		ptr,
-	       /*[in]*/ size_t		size,
-	       /*[in]*/ const char *	lpszFileName,
-	       /*[in]*/ int		line)
-{
-  return (Debug::Realloc(ptr, size, lpszFileName, line));
-}
-
-/* _________________________________________________________________________
-
-   miktex_realloc
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void *)
-miktex_realloc (/*[in]*/ void *		ptr,
-		/*[in]*/ size_t		size,
-		/*[in]*/ const char *	lpszFileName,
-		/*[in]*/ int		line)
-{
-  C_FUNC_BEGIN();
-  return (Debug::Realloc(ptr, size, lpszFileName, line));
-  C_FUNC_END();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::StrDup
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-KPSE::StrDup (/*[in]*/ const char *	lpsz,
-	      /*[in]*/ const char *	lpszFileName,
-	      /*[in]*/ int		line)
-{
-  return (Debug::StrDup(lpsz, lpszFileName, line));
-}
-
-/* _________________________________________________________________________
-
-   miktex_strdup
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-miktex_strdup (/*[in]*/ const char *	lpsz,
-	       /*[in]*/ const char *	lpszFileName,
-	       /*[in]*/ int		line)
-{
-  C_FUNC_BEGIN ();
-  return (Debug::StrDup(lpsz, lpszFileName, line));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   ConcatV
-   _________________________________________________________________________ */
-
-char *
-ConcatV (/*[in]*/ const char *	lpsz1,
-	 /*[in]*/ va_list	marker)
-{
-  CharBuffer<char> buf;
-  for (const char * lpsz = lpsz1;
-       lpsz != 0;
-       va_arg(marker, const char *))
-  {
-    buf.Append (lpsz);
-  }
-  return (KPSE::StrDup(buf.Get(), __FILE__, __LINE__));
-}
-
-/* _________________________________________________________________________
-
-   KPSE::Concat
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-KPSE::Concat (/*[in]*/ const char * lpsz1, ...)
-{
-  va_list marker;
-  va_start (marker, lpsz1);
-  char * lpszRet = ConcatV(lpsz1, marker);
-  va_end (marker);
-  return (lpszRet);
-}
-
-/* _________________________________________________________________________
-
-   miktex_concat
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-miktex_concat (/*[in]*/ const char * lpsz1, ...)
-{
-  C_FUNC_BEGIN();
-  va_list marker;
-  va_start (marker, lpsz1);
-  char * lpszRet = ConcatV(lpsz1, marker);
-  va_end (marker);
-  return (lpszRet);
-  C_FUNC_END();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::BaseName
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(const char *)
-KPSE::BaseName (/*[in]*/ const char * lpszFileName)
-{
-  const char * lpsz = lpszFileName + StrLen(lpszFileName);
-  while (lpsz != lpszFileName)
-    {
-      -- lpsz;
-      if (IsDirectoryDelimiter(*lpsz) || *lpsz == ':')
-	{
-	  return (lpsz + 1);
-	}
-    }
-  return (lpszFileName);
-}
-
-/* _________________________________________________________________________
-
-   miktex_basename
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(const char *)
-miktex_basename (/*[in]*/ const char * lpszFileName)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::BaseName(lpszFileName));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   miktex_strcasecmp
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(int)
-miktex_strcasecmp (/*[in]*/ const char * lpsz1,
-		   /*[in]*/ const char * lpsz2)
-{
-  C_FUNC_BEGIN ();
-  return (StringCompare(lpsz1, lpsz2, true));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FSeek
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(int)
-KPSE::FSeek (/*[in]*/ FILE *			pfile,
-	     /*[in]*/ long			offset,
-	     /*[in]*/ int			where,
-	     /*[in]*/ const char *		lpszFileName)
-{
-  if (fseek(pfile, offset, where) != 0)
-    {
-      FATAL_CRT_ERROR ("fseek", lpszFileName);
-    }
-  return (0);
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FSeek64
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(int)
-KPSE::FSeek64 (/*[in]*/ FILE *			pfile,
-	       /*[in]*/ MIKTEX_INT64		offset,
-	       /*[in]*/ int			where,
-	       /*[in]*/ const char *		lpszFileName)
-{
-#if defined(_MSC_VER)
-  if (_fseeki64(pfile, offset, where) != 0)
-    {
-      FATAL_CRT_ERROR ("_fseeki64", lpszFileName);
-    }
-  return (0);
-#elif defined(HAVE_FSEEKO64)
-  if (fseeko64(pfile, offset, where) != 0)
-    {
-      FATAL_CRT_ERROR ("fseeko64", lpszFileName);
-    }
-  return (0);
-#else
-#  error Unimplemented: KPSE::FSeek64()
-#endif
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FTell
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(long)
-KPSE::FTell (/*[in]*/ FILE *		pfile,
-	     /*[in]*/ const char *	lpszFileName)
-{
-  long pos = ftell(pfile);
-  if (pos < 0)
-    {
-      FATAL_CRT_ERROR ("ftell", lpszFileName);
-    }
-  return (pos);
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FTell64
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(MIKTEX_INT64)
-KPSE::FTell64 (/*[in]*/ FILE *		pfile,
-	       /*[in]*/ const char *	lpszFileName)
-{
-#if defined(_MSC_VER)
-  MIKTEX_INT64 pos = _ftelli64(pfile);
-  if (pos < 0)
-    {
-      FATAL_CRT_ERROR ("_ftelli64", lpszFileName);
-    }
-  return (pos);
-#elif defined(HAVE_FTELLO64)
-  MIKTEX_INT64 pos = ftello64(pfile);
-  if (pos < 0)
-    {
-      FATAL_CRT_ERROR ("ftello64", lpszFileName);
-    }
-  return (pos);
-  
-#else
-#  error Unimplemented: KPSE::FTell64
-#endif
-}
-
-/* _________________________________________________________________________
-
-   KPSE::FClose
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void)
-KPSE::FClose (/*[in]*/ FILE *		pfile,
-	      /*[in]*/ const char *	lpszFileName)
-{
-  lpszFileName;
-  SessionWrapper(true)->CloseFile (pfile);
-}
-
-/* _________________________________________________________________________
-
-   miktex_fclose
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void)
-miktex_fclose (/*[in]*/ FILE *		pfile,
-	       /*[in]*/ const char *	lpszFileName)
-{
-  C_FUNC_BEGIN ();
-  KPSE::FClose (pfile, lpszFileName);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   
+   TranslateModeString
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(void)
@@ -713,12 +335,12 @@ TranslateModeString (/*[in]*/ const char *	lpszMode,
 
 /* _________________________________________________________________________
 
-   KPSE::TryFOpen
+   TryFOpen
    _________________________________________________________________________ */
 
-MIKTEXKPSCEEAPI(FILE *)
-KPSE::TryFOpen (/*[in]*/ const char *	lpszFileName,
-		/*[in]*/ const char *	lpszMode)
+MIKTEXSTATICFUNC(FILE *)
+TryFOpen (/*[in]*/ const char *	lpszFileName,
+	  /*[in]*/ const char *	lpszMode)
 {
   FileMode mode (FileMode::Open);
   FileAccess access (FileAccess::Read);
@@ -732,12 +354,236 @@ KPSE::TryFOpen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   KPSE::FOpen
+   miktex_kpse_open_file
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(FILE *)
-KPSE::FOpen (/*[in]*/ const char *	lpszFileName,
-	     /*[in]*/ const char *	lpszMode)
+miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
+		       /*[in]*/ kpse_file_format_type	format)
+{
+  MIKTEX_ASSERT (lpszFileName != 0);
+  char * lpszPath = kpse_find_file(lpszFileName, format, 1);
+  if (lpszPath == 0)
+    {
+      return (0);
+    }
+  FILE * pfile;
+  try
+    {
+      pfile = TryFOpen(lpszPath, IsBinary(format) ? "rb" : "r");
+    }
+  catch (const exception &)
+    {
+      MIKTEX_FREE (lpszPath);
+      throw;
+    }
+  MIKTEX_FREE (lpszPath);
+  return (pfile);
+}
+
+/* _________________________________________________________________________
+
+   miktex_concatn
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_concatn (/*[in]*/ const char * lpsz1, ...)
+{
+  va_list marker;
+  va_start (marker, lpsz1);
+  CharBuffer<char> buf;
+  for (const char * lpsz = lpsz1;
+       lpsz != 0;
+       va_arg(marker, const char *))
+  {
+    buf.Append (lpsz);
+  }
+  char * lpszRet = xstrdup(buf.Get());
+  va_end (marker);
+  return (lpszRet);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xbasename
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+miktex_xbasename (/*[in]*/ const char * lpszFileName)
+{
+  const char * lpsz = lpszFileName + StrLen(lpszFileName);
+  while (lpsz != lpszFileName)
+    {
+      -- lpsz;
+      if (IsDirectoryDelimiter(*lpsz) || *lpsz == ':')
+	{
+	  return (lpsz + 1);
+	}
+    }
+  return (lpszFileName);
+}
+
+/* _________________________________________________________________________
+
+   miktex_strcasecmp
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+miktex_strcasecmp (/*[in]*/ const char * lpsz1,
+		   /*[in]*/ const char * lpsz2)
+{
+  return (StringCompare(lpsz1, lpsz2, true));
+}
+
+/* _________________________________________________________________________
+
+   miktex_xfseek
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseek (/*[in]*/ FILE *			pfile,
+	       /*[in]*/ long			offset,
+	       /*[in]*/ int			where,
+	       /*[in]*/ const char *		lpszFileName)
+{
+  if (fseek(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR ("fseek", lpszFileName);
+    }
+  return (0);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xfseeko
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseeko (/*[in]*/ FILE *			pfile,
+	        /*[in]*/ off_t			offset,
+		/*[in]*/ int			where,
+		/*[in]*/ const char *		lpszFileName)
+{
+  if (fseek(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR ("fseek", lpszFileName);
+    }
+  return (0);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xfseeko64
+   _________________________________________________________________________ */
+
+
+MIKTEXKPSCEEAPI(int)
+miktex_xfseeko64 (/*[in]*/ FILE *		pfile,
+	          /*[in]*/ MIKTEX_INT64		offset,
+		  /*[in]*/ int			where,
+		  /*[in]*/ const char *		lpszFileName)
+{
+#if defined(_MSC_VER)
+  if (_fseeki64(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR ("_fseeki64", lpszFileName);
+    }
+  return (0);
+#elif defined(HAVE_FSEEKO64)
+  if (fseeko64(pfile, offset, where) != 0)
+    {
+      FATAL_CRT_ERROR ("fseeko64", lpszFileName);
+    }
+  return (0);
+#else
+#  error Unimplemented: miktex_xfseeko64()
+#endif
+}
+
+/* _________________________________________________________________________
+
+   miktex_xftell
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(long)
+miktex_xftell (/*[in]*/ FILE *		pfile,
+	      /*[in]*/ const char *	lpszFileName)
+{
+  long pos = ftell(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR ("ftell", lpszFileName);
+    }
+  return (pos);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xftello
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(off_t)
+miktex_xftello (/*[in]*/ FILE *		pfile,
+		/*[in]*/ const char *	lpszFileName)
+{
+  long pos = ftell(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR ("ftell", lpszFileName);
+    }
+  return (pos);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xftello64
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(MIKTEX_INT64)
+miktex_xftello64 (/*[in]*/ FILE *	pfile,
+	          /*[in]*/ const char *	lpszFileName)
+{
+#if defined(_MSC_VER)
+  MIKTEX_INT64 pos = _ftelli64(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR ("_ftelli64", lpszFileName);
+    }
+  return (pos);
+#elif defined(HAVE_FTELLO64)
+  MIKTEX_INT64 pos = ftello64(pfile);
+  if (pos < 0)
+    {
+      FATAL_CRT_ERROR ("ftello64", lpszFileName);
+    }
+  return (pos);
+  
+#else
+#  error Unimplemented: miktex_xftello64
+#endif
+}
+
+/* _________________________________________________________________________
+
+   miktex_xfclose
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+miktex_xfclose (/*[in]*/ FILE *		pfile,
+	        /*[in]*/ const char *	lpszFileName)
+{
+  lpszFileName;
+  SessionWrapper(true)->CloseFile (pfile);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xfopen
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(FILE *)
+miktex_xfopen (/*[in]*/ const char *	lpszFileName,
+	       /*[in]*/ const char *	lpszMode)
 {
   FileMode mode (FileMode::Open);
   FileAccess access (FileAccess::Read);
@@ -747,20 +593,6 @@ KPSE::FOpen (/*[in]*/ const char *	lpszFileName,
 					 mode,
 					 access,
 					 isTextFile));
-}
-
-/* _________________________________________________________________________
-
-   miktex_fopen
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(FILE *)
-miktex_fopen (/*[in]*/ const char *	lpszFileName,
-	      /*[in]*/ const char *	lpszMode)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::FOpen(lpszFileName, lpszMode));
-  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -814,7 +646,7 @@ miktex_kpathsea_version_string = KPSEVERSION;
 
 /* _________________________________________________________________________
 
-   KPSE::BitmapTolerance
+   miktex_kpse_bitmap_tolerance
 
    [KB] The tolerances change whether we base things on DPI1 or DPI2.
    _________________________________________________________________________ */
@@ -822,8 +654,8 @@ miktex_kpathsea_version_string = KPSEVERSION;
 #define KPSE_BITMAP_TOLERANCE(r) ((r) / 500.0 + 1)
 
 MIKTEXKPSCEEAPI(int)
-KPSE::BitmapTolerance (/*[in]*/ double	dpi1,
-		       /*[in]*/ double	dpi2)
+miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
+			      /*[in]*/ double	dpi2)
 {
   unsigned tolerance = static_cast<unsigned>(KPSE_BITMAP_TOLERANCE(dpi2));
   unsigned lower_bound = (static_cast<int>(dpi2 - tolerance) < 0
@@ -831,25 +663,11 @@ KPSE::BitmapTolerance (/*[in]*/ double	dpi1,
 			  : static_cast<unsigned>(dpi2 - tolerance));
   unsigned upper_bound = static_cast<unsigned>(dpi2 + tolerance);
   return (lower_bound <= dpi1 && dpi1 <= upper_bound);
-}
+}  
 
 /* _________________________________________________________________________
 
-   miktex_kpse_bitmap_tolerance
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(int)
-miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
-			      /*[in]*/ double	dpi2)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::BitmapTolerance(dpi1, dpi2));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::MagStepFix
+   miktex_kpse_magstep_fix
 
    [KB]: This is adapted from code written by Tom Rokicki for dvips.
    It's part of Kpathsea now so all the drivers can use it.  The idea
@@ -869,9 +687,9 @@ miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
 #define MAGSTEP_MAX 40
 
 MIKTEXKPSCEEAPI(unsigned)
-KPSE::MagStepFix (/*[in]*/ unsigned	dpi,
-		  /*[in]*/ unsigned	bdpi,
-		  /*[in]*/ int *	m_ret)
+miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
+			 /*[in]*/ unsigned	bdpi,
+			 /*[in]*/ int *		m_ret)
 {
   int m;
   int mdpi = -1;
@@ -901,29 +719,14 @@ KPSE::MagStepFix (/*[in]*/ unsigned	dpi,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_magstep_fix
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(unsigned)
-miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
-			 /*[in]*/ unsigned	bdpi,
-			 /*[in]*/ int *		m_ret)
-{
-  C_FUNC_BEGIN ();
-  return (KPSE::MagStepFix(dpi, bdpi, m_ret));
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::InitProg
+   miktex_kpse_init_prog
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(void)
-KPSE::InitProg (/*[in]*/ const char *		prefix,
-		/*[in]*/ unsigned		dpi,
-		/*[in]*/ const char *		mode,
-		/*[in]*/ const char *		fallback)
+miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
+		       /*[in]*/ unsigned	dpi,
+		       /*[in]*/ const char *	mode,
+		       /*[in]*/ const char *	fallback)
 {
   prefix;
   fallback;
@@ -936,42 +739,6 @@ KPSE::InitProg (/*[in]*/ const char *		prefix,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_init_prog
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void)
-miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
-		       /*[in]*/ unsigned	dpi,
-		       /*[in]*/ const char *	mode,
-		       /*[in]*/ const char *	fallback)
-{
-  C_FUNC_BEGIN ();
-  KPSE::InitProg (prefix, dpi, mode, fallback);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::SetProgramName
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(void)
-KPSE::SetProgramName (/*[in]*/ const char *	lpszArgv0,
-		      /*[in]*/ const char *	lpszProgramName)
-{
-  if (miktex_program_invocation_name != 0)
-    {
-      MIKTEX_FREE (miktex_program_invocation_name);
-    }
-  miktex_program_invocation_name = MIKTEX_STRDUP(lpszArgv0);
-  if (lpszProgramName != 0)
-    {
-      SessionWrapper(true)->PushAppName (lpszProgramName);
-    }
-}
-
-/* _________________________________________________________________________
-
    miktex_kpse_set_program_name
    _________________________________________________________________________ */
 
@@ -979,25 +746,15 @@ MIKTEXKPSCEEAPI(void)
 miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
 			      /*[in]*/ const char *	lpszProgramName)
 {
-  C_FUNC_BEGIN ();
-  KPSE::SetProgramName (lpszArgv0, lpszProgramName);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   KPSE::GetProgramInvocationName
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(const char *)
-KPSE::GetProgramInvocationName ()
-{
-  if (miktex_program_invocation_name == 0)
+  if (miktex_program_invocation_name != 0)
     {
-      miktex_program_invocation_name =
-	MIKTEX_STRDUP(Utils::GetExeName().c_str());
+      MIKTEX_FREE (miktex_program_invocation_name);
     }
-  return (miktex_program_invocation_name);
+  miktex_program_invocation_name = xstrdup(lpszArgv0);
+  if (lpszProgramName != 0)
+    {
+      SessionWrapper(true)->PushAppName (lpszProgramName);
+    }
 }
 
 /* _________________________________________________________________________
@@ -1008,18 +765,21 @@ KPSE::GetProgramInvocationName ()
 MIKTEXKPSCEEAPI(const char *)
 miktex_get_program_invocation_name ()
 {
-  C_FUNC_BEGIN ();
-  return (KPSE::GetProgramInvocationName());
-  C_FUNC_END ();
+  if (miktex_program_invocation_name == 0)
+    {
+      miktex_program_invocation_name =
+	xstrdup(Utils::GetExeName().c_str());
+    }
+  return (miktex_program_invocation_name);
 }
 
 /* _________________________________________________________________________
 
-   KPSE::FindSuffix
+   miktex_find_suffix
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-KPSE::FindSuffix (const char * lpszPath)
+miktex_find_suffix (const char * lpszPath)
 {
   const char * lpszExt = 0;
   for (; *lpszPath != 0; ++ lpszPath)
@@ -1044,52 +804,56 @@ KPSE::FindSuffix (const char * lpszPath)
 
 /* _________________________________________________________________________
 
-   KPSE::VarValue
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(char *)
-KPSE::VarValue (/*[in]*/ const char * lpszVarName)
-{
-  PathName path;
-  std::string val;
-  const char * lpszRet = 0;
-  if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
-    {
-      path = SessionWrapper(true)->GetMyLocation();
-      lpszRet = path.Get();
-    }
-  else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, val))
-    {
-      lpszRet = val.c_str();
-    }
-  return (lpszRet == 0 ? 0 : MIKTEX_STRDUP(lpszRet));
-}
-
-/* _________________________________________________________________________
-
    miktex_kpse_var_value
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
 miktex_kpse_var_value (/*[in]*/ const char * lpszVarName)
 {
-  C_FUNC_BEGIN ();
-  return (KPSE::VarValue(lpszVarName));
-  C_FUNC_END ();
+  PathName path;
+  std::string val;
+  const char * lpszRet = 0;
+  if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
+  {
+    path = SessionWrapper(true)->GetMyLocation();
+    lpszRet = path.Get();
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTODIR") == 0)
+  {
+    UNIMPLEMENTED ("SELFAUTODIR");
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTOPARENT") == 0)
+  {
+    UNIMPLEMENTED ("SELFAUTOPARENT");
+  }
+  else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, val))
+  {
+    lpszRet = val.c_str();
+  }
+  return (lpszRet == 0 ? 0 : xstrdup(lpszRet));
 }
 
 /* _________________________________________________________________________
 
-   miktex_putenv
+   miktex_kpse_var_expand
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpse_var_expand (/*[in]*/ const char * lpszSource)
+{
+  UNIMPLEMENTED ("miktex_kpse_var_expand");
+}
+
+/* _________________________________________________________________________
+
+   miktex_xputenv
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(void)
-miktex_putenv (/*[in]*/ const char * lpszVarName,
-	       /*[in]*/ const char * lpszValue)
+miktex_xputenv (/*[in]*/ const char * lpszVarName,
+		/*[in]*/ const char * lpszValue)
 {
-  C_FUNC_BEGIN ();
   Utils::SetEnvironmentString (lpszVarName, lpszValue);
-  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -1100,9 +864,7 @@ miktex_putenv (/*[in]*/ const char * lpszVarName,
 MIKTEXKPSCEEAPI(int)
 miktex_kpse_in_name_ok (/*[in]*/ const char *lpszFileName)
 {
-  C_FUNC_BEGIN ();
   return (Utils::IsSafeFileName(lpszFileName, true) ? 1 : 0);
-  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________
@@ -1113,7 +875,18 @@ miktex_kpse_in_name_ok (/*[in]*/ const char *lpszFileName)
 MIKTEXKPSCEEAPI(int)
 miktex_kpse_out_name_ok (/*[in]*/ const char *lpszFileName)
 {
-  C_FUNC_BEGIN ();
   return (Utils::IsSafeFileName(lpszFileName, false) ? 1 : 0);
-  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpse_absolute_p
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(boolean)
+miktex_kpse_absolute_p (/*[in]*/ const char * lpszFileName,
+			/*[in]*/ boolean      relativeOk)
+{
+  MIKTEX_ASSERT (relativeOk == 0);
+  return (Utils::IsAbsolutePath(lpszFileName));
 }
