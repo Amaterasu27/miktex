@@ -1,12 +1,13 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%BoundingBox: -5 -5 33 25 
 %%HiResBoundingBox: -5 -5 33 25 
-%%Creator: MetaPost 0.901
-%%CreationDate: 2005.05.08:1448
+%%Creator: MetaPost 1.203
+%%CreationDate: 2009.06.02:2235
 %%Pages: 1
 %%BeginProlog
 %%EndProlog
 %%Page: 1 1
+ 0 0 0 setrgbcolor
 newpath 7.5 4.5 moveto
 7.5 4.5 lineto
  closepath fill
@@ -22,17 +23,12 @@ newpath 2.5 9.5 moveto
 2.5 17 lineto
 2.5 14.5 lineto
  closepath fill
-newpath -2.5 -0.5 moveto
--2.5 -0.5 lineto
--2.5 -0.5 lineto
--2.5 -0.5 lineto
- closepath fill
 newpath 0 5 moveto
 0 5 lineto
 0 -5 lineto
 0 -5 lineto
 10 5 10 5 10 5 curveto
-10 5 lineto
+15 10 lineto
 10 15 lineto
 0 25 lineto
 0 15 lineto

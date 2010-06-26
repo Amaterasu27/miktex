@@ -178,7 +178,6 @@ charcode:=149; shipout e5;  addto 3; addto p~8 contour p~7;
 e5:=nullpicture; linecap:=2; linejoin:=0; miterlimit:=10;
 addto e5 contour (10,5)..cycle withpen qq;
 addto e5 doublepath (5,10)..(5,15) withpen qq;
-addto e5 doublepath (0,0)..(0,0)..(0,0)..cycle withpen qq ;
 addto e5 doublepath (0,0)..controls(10,10)..(10,10)..(0,20){curl1}..(30,10)
 withpen makepen((0,-5)..(0,5)..cycle); charcode:=150; prologues:=1; shipout e5;
 for @=angle(sqrt$,mlog$):charext:=uniformdeviate$;charht:=2048;
@@ -214,3 +213,4 @@ tracingonline:=1; f xx[1); showdependencies; qq:=q; showstats; bye endtext
 % unusual cases of fixed-point arithmetic
 % certain other unusual cases, especially when something similar is tested
 % most events that trigger string pool compaction
+% features that have entered the language after 0.632
