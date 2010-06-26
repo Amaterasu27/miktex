@@ -1189,6 +1189,9 @@ options->job_name = job_name;
 @ Now this is really it: \MP\ starts and ends here.
 
 @c 
+#if defined(MIKTEX)
+#  define main MIKTEXCEECALL Main
+#endif
 int main (int argc, char **argv) { /* |start_here| */
   int k; /* index into buffer */
   int history; /* the exit status */

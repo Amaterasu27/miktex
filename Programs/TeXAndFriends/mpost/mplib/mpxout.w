@@ -47,6 +47,9 @@ in order to prevent name clashes.
 
 @c
 #include <w2c/config.h>
+#if defined(MIKTEX)
+#  include <miktex/unxemu.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
