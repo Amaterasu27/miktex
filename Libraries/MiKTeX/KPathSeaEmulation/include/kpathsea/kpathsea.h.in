@@ -1,3 +1,4 @@
 #pragma once
 #include <miktex/Core/First>
 #include <miktex/KPSE/Emulation>
+#include <getopt.h>

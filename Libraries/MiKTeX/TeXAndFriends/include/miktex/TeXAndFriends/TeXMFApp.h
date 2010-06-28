@@ -42,16 +42,11 @@
 #  define MIKTEX_TEXMF_UNICODE 1
 #endif
 
-#if defined(MIKTEX_METAFONT) || defined(MIKTEX_METAPOST)
+#if defined(MIKTEX_METAFONT)
 #  define MIKTEX_META_COMPILER 1
 #  define ENABLE_8BIT_CHARS 1
 #  define HAVE_MAIN_MEMORY 1
 #  define IMPLEMENT_TCX 1
-#  if defined(MIKTEX_METAPOST)
-#    define HAVE_POOL_FREE 1
-#    define HAVE_EXTRA_MEM_TOP 1
-#    define HAVE_MAIN_MEMORY 1
-#  endif
 #endif
 
 #if defined(MIKTEX_TEX_COMPILER)

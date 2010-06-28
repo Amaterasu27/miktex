@@ -19,6 +19,11 @@ You should have received a copy of the GNU Library General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
+#if defined(MIKTEX)
+#define P1H(x1) (x1)
+#define P1C(t1, v1) (t1 v1)
+#define P2C(t1, v1, t2, v2) (t1 v1, t2 v2)
+#endif
 
 #if defined(MIKTEX)
 #define NO_C4P

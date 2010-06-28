@@ -1,6 +1,6 @@
 /* webapp.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -250,7 +250,7 @@ WebApp::AddOptions ()
   AddOption (T_("alias\0\
 Pretend to be APP.  This affects both the format used and the search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_ALIAS,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     T_("APP"));
 
   AddOption (T_("disable-installer\0\
@@ -268,24 +268,24 @@ Show this help screen and exit."),
   AddOption (T_("include-directory\0\
 Prefix DIR to the input search path."),
 	     FIRST_OPTION_VAL + optBase + OPT_INCLUDE_DIRECTORY,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     T_("DIR"));
 
   AddOption (T_("kpathsea-debug\0"),
 	     OPT_UNSUPPORTED,
-	     required_argument);
+	     POPT_ARG_STRING);
 
   AddOption (T_("record-package-usages\0\
 Enable the package usage recorder.  Output is written to FILE."),
 	     FIRST_OPTION_VAL + optBase + OPT_RECORD_PACKAGE_USAGES,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     T_("FILE"));
 
   AddOption (T_("trace\0\
 Turn tracing on.  OPTIONS must be a comma-separated list of trace options. \
   See the manual, for more information."),
 	     FIRST_OPTION_VAL + optBase + OPT_TRACE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     T_("OPTIONS"));
 
   AddOption ("verbose\0", OPT_UNSUPPORTED);

@@ -1,6 +1,6 @@
 /* dvitype-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2009 Christian Schenk
+   Copyright (C) 1991-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -51,20 +51,20 @@ public:
   AddOptions ()
   {
     AddOption (MIKTEXTEXT("out-mode\0Set output mode."),
-	       OPT_OUT_MODE, required_argument,
+	       OPT_OUT_MODE, POPT_ARG_STRING,
 	       "MODE");
     AddOption (MIKTEXTEXT("start-there\0Set starting page."),
-	       OPT_START_THERE, required_argument,
+	       OPT_START_THERE, POPT_ARG_STRING,
 	       "PAGESPEC");
     AddOption (MIKTEXTEXT("max-pages\0Set maximum number of pages."),
-	       OPT_MAX_PAGES, required_argument,
+	       OPT_MAX_PAGES, POPT_ARG_STRING,
 	       "N");
     AddOption (MIKTEXTEXT("resolution\0Set desired resolution."),
-	       OPT_RESOLUTION, required_argument,
+	       OPT_RESOLUTION, POPT_ARG_STRING,
 	       MIKTEXTEXT("NUM/DEN"));
     AddOption (MIKTEXTEXT("new-mag\0Set new magnification."),
 	       OPT_NEW_MAG,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "MAG");
     WebApp::AddOptions ();
   }

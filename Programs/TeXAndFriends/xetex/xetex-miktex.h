@@ -83,13 +83,13 @@ no-pdf\0Generate XDV (extended DVI) output rather than PDF."),
     AddOption (MIKTEXTEXT("\
 output-driver\0Use CMD as the XDV-to-PDF driver instead of xdvipdfmx."),
 	       OPT_OUTPUT_DRIVER,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "CMD");
 
     AddOption (MIKTEXTEXT("\
 papersize\0Set PDF media size to STRING"),
 	       OPT_PAPERSIZE,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "STRING");
   }
 

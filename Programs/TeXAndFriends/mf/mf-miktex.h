@@ -111,11 +111,11 @@ public:
     AddOption ("base", "undump");
     AddOption (MIKTEXTEXT("max-wiggle\0Set max_wiggle to N."),
 	       OPT_MAX_WIGGLE,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "N");
     AddOption (MIKTEXTEXT("move-size\0Set move_size to N."),
 	       OPT_MOVE_SIZE,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "N");
     AddOption (MIKTEXTEXT("screen\0Enable screen output."),
 	       OPT_SCREEN);

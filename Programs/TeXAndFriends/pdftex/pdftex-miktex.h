@@ -106,7 +106,7 @@ Switch on draft mode (generates no output)."),
 
     AddOption (MIKTEXTEXT("output-format\0Set the output format."),
 	       OPT_OUTPUT_FORMAT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FORMAT");
   }
 

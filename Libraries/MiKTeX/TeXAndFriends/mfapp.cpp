@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -70,19 +70,19 @@ MetafontApp::AddOptions ()
   AddOption (T_("bistack-size\0\
 Set bistack_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_BISTACK_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("lig-table-size\0\
 Set lig_table_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_LIG_TABLE_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("path-size\0\
 Set path_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_PATH_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 }
 

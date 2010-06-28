@@ -1,6 +1,6 @@
 /* bibtex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -140,9 +140,9 @@ public:
     WebAppInputLine::AddOptions ();
     AddOption (MIKTEXTEXT("min-crossrefs\0\
 Include item after N cross-refs; default 2."),
-	       OPT_MIN_CROSSREFS,  required_argument, "N");
+	       OPT_MIN_CROSSREFS,  POPT_ARG_STRING, "N");
     AddOption (MIKTEXTEXT("quiet\0Suppress all output (except errors)."),
-	       OPT_QUIET, no_argument);
+	       OPT_QUIET, POPT_ARG_NONE);
     AddOption ("silent", "quiet");
     AddOption ("terse", "quiet");
   }

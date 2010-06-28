@@ -29,6 +29,7 @@
 #if defined(_MSC_VER)
 #  include <io.h>
 #  include <fcntl.h>
+#  include <sys/types.h>
 #endif
 
 #include <ctype.h>
@@ -39,6 +40,7 @@
 
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>
+#include <miktex/Core/IntegerTypes>
 
 // DLL import/export switch
 #if ! defined(D0A4167033297F40884B97769F47801C)
@@ -290,7 +292,7 @@
 
 #define kpse_find_tfm(name) kpse_find_file(name, kpse_tfm_format, 1)
 
-#define kpse_open_file miktex_kpse_open_file(name, format)
+#define kpse_open_file(name, format) miktex_kpse_open_file(name, format)
 
 #define kpse_in_name_ok(fname) miktex_kpse_in_name_ok(fname)
 
@@ -300,6 +302,8 @@
 
    types.h
    _________________________________________________________________________ */
+
+#define kpse_program_name miktex_kpse_program_name
 
 #define kpse_bug_address miktex_kpse_bug_address
 
@@ -600,11 +604,11 @@ miktex_xfseeko64 (/*[in]*/ FILE *		pfile,
 
 MIKTEXKPSCEEAPI(long)
 miktex_xftell (/*[in]*/ FILE *		pfile,
-	      /*[in]*/ const char *	lpszFileName);
+	       /*[in]*/ const char *	lpszFileName);
 
 MIKTEXKPSCEEAPI(off_t)
 miktex_xftello (/*[in]*/ FILE *		pfile,
-	       /*[in]*/ const char *	lpszFileName);
+	        /*[in]*/ const char *	lpszFileName);
 
 MIKTEXKPSCEEAPI(MIKTEX_INT64)
 miktex_xftello64 (/*[in]*/ FILE *	pfile,
@@ -646,6 +650,10 @@ miktex_kpathsea_version_string;
 extern
 MIKTEXKPSDATA(unsigned)
 miktex_kpathsea_debug;
+
+extern
+MIKTEXKPSDATA(char *)
+miktex_kpse_program_name;
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK

@@ -1101,10 +1101,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_mpware_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mp_dir})
 endif(BUILDING_MIKTEX)
 

@@ -1,6 +1,6 @@
 /* gftodvi-miktex.h:					-*- C++ -*-
 
-   Copyright (C) 1991-2009 Christian Schenk
+   Copyright (C) 1991-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -60,27 +60,27 @@ Specifies the distance from the right edge of the character bounding \
 box at which the overflow equations (if any) are typeset. \
 The value is given in TeX points."),
 	       OPT_OVERFLOW_LABEL_OFFSET,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "REAL");
     AddOption (MIKTEXTEXT("title-font\0Font for titles."),
 	       OPT_TITLEFONT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FONT");
     AddOption (MIKTEXTEXT("label-font\0Font for labels."),
 	       OPT_LABELFONT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FONT");
     AddOption (MIKTEXTEXT("gray-font\0Font for pixels."),
 	       OPT_GRAYFONT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FONT");
     AddOption (MIKTEXTEXT("slant-font\0Font for slants."),
 	       OPT_SLANTFONT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FONT");
     AddOption (MIKTEXTEXT("logo-font\0Font for METAFONT logo."),
 	       OPT_LOGOFONT,
-	       required_argument,
+	       POPT_ARG_STRING,
 	       "FONT");
     WebApp::AddOptions ();
   }

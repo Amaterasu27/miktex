@@ -280,13 +280,13 @@ Make only 7-bit characters printable by."),
   AddOption (T_("aux-directory\0\
 Use DIR as the directory to write auxiliary files to."),
 	     FIRST_OPTION_VAL + optBase + OPT_AUX_DIRECTORY,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "DIR");
 
   AddOption (T_("buf-size\0\
 Set buf_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_BUF_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("c-style-errors\0\
@@ -301,7 +301,7 @@ Do not parse the first line of the input line to look for a dump name and/or\
   AddOption (T_("error-line\0\
 Set error_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_ERROR_LINE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   if (isTeXProgram)
@@ -309,23 +309,23 @@ Set error_line to N."),
       AddOption (T_("extra-mem-bot\0\
 Set extra_mem_bot to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_BOT,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
-  if (isTeXProgram || AmI("mpost"))
+  if (isTeXProgram)
     {
       AddOption (T_("extra-mem-top\0\
 Set extra_mem_top to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_EXTRA_MEM_TOP,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
   AddOption (T_("half-error-line\0\
 Set half_error_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_HALF_ERROR_LINE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("halt-on-error\0\
@@ -343,37 +343,37 @@ Be the INI variant of the program."),
 Set the interaction mode; MODE must be one of:\
  batchmode, nonstopmode, scrollmode, errorstopmode."),
 	     FIRST_OPTION_VAL + optBase + OPT_INTERACTION,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "MODE");
 
   AddOption (T_("job-name\0\
 Set the job name and hence the name(s) of the output file(s)."),
 	     FIRST_OPTION_VAL + optBase + OPT_JOB_NAME,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "NAME");
 
   AddOption (T_("job-time\0\
 Set the job time.  Take FILE's timestamp as the reference."),
 	     FIRST_OPTION_VAL + optBase + OPT_JOB_TIME,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "FILE");
 
   AddOption (T_("main-memory\0\
 Set main_memory to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAIN_MEMORY,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("max-print-line\0\
 Set max_print_line to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_PRINT_LINE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("max-strings\0\
 Set max_strings to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_STRINGS,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("no-c-style-errors\0\
@@ -383,34 +383,34 @@ Disable file:line:error style messages."),
   AddOption (T_("output-directory\0\
 Use DIR as the directory to write output files to."),
 	     FIRST_OPTION_VAL + optBase + OPT_OUTPUT_DIRECTORY,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "DIR");
 
   AddOption (T_("param-size\0\
 Set param_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_PARAM_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("parse-first-line\0\
 Parse the first line of the input line to look for a dump name and/or\
  extra command-line options."),
 	     FIRST_OPTION_VAL + optBase + OPT_PARSE_FIRST_LINE,
-	     no_argument);
+	     POPT_ARG_NONE);
 
   if (isTeXProgram)
     {
       AddOption (T_("pool-free\0\
 Set pool_free to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_POOL_FREE,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
   AddOption (T_("pool-size\0\
 Set pool_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_POOL_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("quiet\0\
@@ -425,27 +425,27 @@ Turn on the file name recorder to leave a trace of the files\
   AddOption (T_("stack-size\0\
 Set stack_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_STACK_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("strict\0\
 Disable MiKTeX extensions."),
 	     FIRST_OPTION_VAL + optBase + OPT_STRICT,
-	     no_argument | POPT_ARGFLAG_DOC_HIDDEN);
+	     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN);
 
   if (isTeXProgram)
     {
       AddOption (T_("strings-free\0\
 Set strings_free to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_STRINGS_FREE,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
   AddOption (T_("string-vacancies\0\
 Set string_vacancies to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_STRING_VACANCIES,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("time-statistics\0\
@@ -455,7 +455,7 @@ Show processing time statistics."),
   AddOption (T_("undump\0\
 Use NAME instead of program name when loading internal tables."),
 	     FIRST_OPTION_VAL + optBase + OPT_UNDUMP,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "NAME");
 
   if (IsFeatureEnabled(Feature::TCX))
@@ -464,7 +464,7 @@ Use NAME instead of program name when loading internal tables."),
 Use the TCXNAME translation table to set the mapping of input\
 characters and re-mapping of output characters."),
 		 FIRST_OPTION_VAL + optBase + OPT_TCX,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "TCXNAME");
     }
 
@@ -492,11 +492,11 @@ characters and re-mapping of output characters."),
   AddOption ("progname", "alias");
 
   // unsupported Web2C options
-  AddOption ("default-translate-file", OPT_UNSUPPORTED, required_argument);
-  AddOption ("maketex\0", OPT_UNSUPPORTED, required_argument);
-  AddOption ("mktex\0", OPT_UNSUPPORTED, required_argument);
-  AddOption ("no-maketex\0", OPT_UNSUPPORTED, required_argument);
-  AddOption ("no-mktex\0", OPT_UNSUPPORTED, required_argument);
+  AddOption ("default-translate-file", OPT_UNSUPPORTED, POPT_ARG_STRING);
+  AddOption ("maketex\0", OPT_UNSUPPORTED, POPT_ARG_STRING);
+  AddOption ("mktex\0", OPT_UNSUPPORTED, POPT_ARG_STRING);
+  AddOption ("no-maketex\0", OPT_UNSUPPORTED, POPT_ARG_STRING);
+  AddOption ("no-mktex\0", OPT_UNSUPPORTED, POPT_ARG_STRING);
 }
 
 /* _________________________________________________________________________

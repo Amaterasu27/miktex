@@ -160,25 +160,25 @@ Enable the \\write18{COMMAND} construct."),
   AddOption (T_("hash-extra\0\
 Set hash_extra to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_HASH_EXTRA,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("max-in-open\0\
 Set max_in_open to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_MAX_IN_OPEN,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("mem-bot\0\
 Set mem_bot to 0 or 1."),
 	     FIRST_OPTION_VAL + optBase + OPT_MEM_BOT,
-	     required_argument | POPT_ARGFLAG_DOC_HIDDEN,
+	     POPT_ARG_STRING | POPT_ARGFLAG_DOC_HIDDEN,
 	     "N");
 
   AddOption (T_("nest-size\0\
 Set nest_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_NEST_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   AddOption (T_("restrict-write18\0\
@@ -188,7 +188,7 @@ Partially enable the \\write18{COMMAND} construct."),
   AddOption (T_("save-size\0\
 Set save_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_SAVE_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
 #if WITH_SYNCTEX
@@ -197,7 +197,7 @@ Set save_size to N."),
       AddOption (T_("synctex\0\
 Generate SyncTeX data for previewers if nonzero."),
 	     FIRST_OPTION_VAL + optBase + OPT_SYNCTEX,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
     }
@@ -206,7 +206,7 @@ Generate SyncTeX data for previewers if nonzero."),
   AddOption (T_("trie-size\0\
 Set trie_size to N."),
 	     FIRST_OPTION_VAL + optBase + OPT_TRIE_SIZE,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "N");
 
   if (! AmI("omega"))
@@ -214,12 +214,12 @@ Set trie_size to N."),
       AddOption (T_("font-max\0\
 Set font_max to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_FONT_MAX,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
       AddOption (T_("font-mem-size\0\
 Set font_mem_size to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_FONT_MEM_SIZE,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
@@ -229,7 +229,7 @@ Set font_mem_size to N."),
       AddOption (T_("trie-op-size\0\
 Set trie_op_size to N."),
 		 FIRST_OPTION_VAL + optBase + OPT_TRIE_OP_SIZE,
-		 required_argument,
+		 POPT_ARG_STRING,
 		 "N");
     }
 
@@ -239,7 +239,7 @@ Insert source specials in certain places of the DVI file.\
   WHERE is a comma-separated value list of:\
  cr display hbox math par parend vbox.")),
 	     FIRST_OPTION_VAL + optBase + OPT_SRC_SPECIALS,
-	     optional_argument,
+	     POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
 	     "WHERE");
 #else
   AddOption ((T_("src-specials\0\
@@ -266,7 +266,7 @@ Insert source specials in certain places of the DVI file.")),
   AddOption ("ipc-start", OPT_UNSUPPORTED);
   AddOption ("output-comment",
 	     OPT_UNSUPPORTED,
-	     required_argument,
+	     POPT_ARG_STRING,
 	     "comment");
 }
 

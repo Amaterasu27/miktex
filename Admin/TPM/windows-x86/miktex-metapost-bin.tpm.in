@@ -11,14 +11,9 @@
       This package includes the MetaPost executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/${dvitomp_dll_name}.dll
-texmf/miktex/bin/${mp_dll_name}.dll
-texmf/miktex/bin/dvitomp.exe
-texmf/miktex/bin/makempx.exe
-texmf/miktex/bin/mp.exe
-texmf/miktex/bin/${miktex_prefix}mpost.exe
-texmf/miktex/bin/mpost.exe
-texmf/miktex/bin/mpto.exe
+texmf/${rel_miktex_bin_dir}/${miktex_prefix}mpost.exe
+texmf/${rel_miktex_bin_dir}/dvitomp.exe
+texmf/${rel_miktex_bin_dir}/mpost.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

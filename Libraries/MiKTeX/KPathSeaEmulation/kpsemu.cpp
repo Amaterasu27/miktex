@@ -33,6 +33,9 @@ namespace {
   std::string kpse_mode;
 }
 
+MIKTEXKPSDATA(char *)
+miktex_kpse_program_name = 0;
+
 /* _________________________________________________________________________
 
    magstep
@@ -753,6 +756,11 @@ miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
   miktex_program_invocation_name = xstrdup(lpszArgv0);
   if (lpszProgramName != 0)
     {
+      if (miktex_kpse_program_name != 0)
+      {
+	MIKTEX_FREE (miktex_kpse_program_name);
+      }
+      miktex_kpse_program_name = xstrdup(lpszProgramName);
       SessionWrapper(true)->PushAppName (lpszProgramName);
     }
 }

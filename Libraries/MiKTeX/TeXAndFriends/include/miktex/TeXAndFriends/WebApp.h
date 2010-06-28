@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebApp.h:			       	-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -290,12 +290,6 @@ public:
      _______________________________________________________________________ */
   
 protected:
-
-  enum {
-    no_argument = POPT_ARG_NONE,
-    required_argument = POPT_ARG_STRING,
-    optional_argument = POPT_ARG_STRING | POPT_ARGFLAG_OPTIONAL,
-  };
 
   enum {
     OPT_UNSUPPORTED = INT_MAX - 100,
