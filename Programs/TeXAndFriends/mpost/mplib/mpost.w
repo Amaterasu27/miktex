@@ -685,7 +685,11 @@ static struct option mpost_options[]
       { "debug",                     0, &debug, 1 },
       { "no-kpathsea",               0, &nokpse, 1 },
       { "dvitomp",                   0, &dvitomp_only, 1 },
+#if defined(MIKTEX)
+      { "initialize",                0, &ini_version_test, 1 },
+#else
       { "ini",                       0, &ini_version_test, 1 },
+#endif
       { "interaction",               1, 0, 0 },
       { "halt-on-error",             0, 0, 0 },
       { "kpathsea-debug",            1, 0, 0 },
@@ -794,6 +798,8 @@ static struct option mpost_options[]
                ARGUMENT_IS("no-parse-first-line")) {
       fprintf(stdout,"warning: %s: unimplemented option %s\n", argv[0], argv[optind]);
     } 
+#if defined(MIKTEX)
+#endif
   } 
   options->ini_version = (int)ini_version_test;
 }
@@ -862,7 +868,11 @@ fprintf(stdout,
 "  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n"
 "  Call MetaPost with --dvitomp --help for option explanations.\n\n");
 fprintf(stdout,
+#if defined(MIKTEX)
+"  -initialize               be inimpost, for dumping mem files\n"
+#else
 "  -ini                      be inimpost, for dumping mem files\n"
+#endif
 "  -interaction=STRING       set interaction mode (STRING=batchmode/nonstopmode/\n"
 "                            scrollmode/errorstopmode)\n"
 "  -jobname=STRING           set the job name to STRING\n"

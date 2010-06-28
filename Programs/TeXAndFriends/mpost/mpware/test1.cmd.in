@@ -1,4 +1,0 @@
-@echo off
-setlocal
-@makempx_exe@ @CMAKE_CURRENT_SOURCE_DIR@/label.mp xlabel.mpx
-endlocal
