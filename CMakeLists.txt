@@ -300,6 +300,7 @@ endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
 set(required_programs
   bison
   cat
+  cp
   date
   diff
   flex
