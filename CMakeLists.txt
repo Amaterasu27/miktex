@@ -698,6 +698,8 @@ else(USE_SYSTEM_ZLIB)
   include_directories(${CMAKE_SOURCE_DIR}/${rel_zlib_dir})
 endif(USE_SYSTEM_ZLIB)
 
+include_directories(${CMAKE_BINARY_DIR}/${rel_zzip_dir}/include)
+
 if(MSVC)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_msinttypes_dir}/include
@@ -914,6 +916,8 @@ if(NOT USE_SYSTEM_ZLIB)
     add_subdirectory(${rel_zlib_dir})
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_ZLIB)
+
+add_subdirectory(${rel_zzip_dir})
 
 add_subdirectory(${rel_lua_dir}-static)
 if(NOT LINK_EVERYTHING_STATICALLY)

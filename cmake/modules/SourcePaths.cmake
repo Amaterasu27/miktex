@@ -135,6 +135,7 @@ set(rel_xpdf_goo_dir	"Programs/TeXAndFriends/pdftex/xpdf/goo")
 set(rel_xpdf_xpdf_dir	"Programs/TeXAndFriends/pdftex/xpdf/xpdf")
 set(rel_yap_mfc_dir	"Programs/MiKTeX/Yap/MFC")
 set(rel_zlib_dir	"Libraries/3rd/zlib")
+set(rel_zzip_dir	"Libraries/3rd/zzip")
 
 set(rel_css_dir		"${rel_doc_dir}/Styles")
 set(rel_doc_api_dir     "${rel_doc_dir}/API")

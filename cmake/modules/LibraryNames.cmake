@@ -126,6 +126,7 @@ set(xetex_dll_name	"${miktex_dll_prefix}-xetex")
 if(NOT USE_SYSTEM_ZLIB)
   set(zlib_dll_name	"${miktex_dll_prefix}-zlib")
 endif(NOT USE_SYSTEM_ZLIB)
+set(zzip_dll_name	"${miktex_dll_prefix}-zzip")
 
 set(session_tlb_name    "${miktex_dll_prefix}-session")
 set(mpm_tlb_name        "${miktex_dll_prefix}-packageManager")
