@@ -22,6 +22,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/lua51
   ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/fontforge
+  ${CMAKE_CURRENT_BINARY_DIR}/luafontloader
 )
 
 add_definitions(
@@ -170,6 +172,11 @@ add_library(luatex-luamisc-static STATIC ${luamisc_sources})
 ###############################################################################
 ## LUAFONTFORGE
 ###############################################################################
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/ff-config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/luafontloader/ff-config.h
+)
 
 set(luafontforge_sources
   luafontloader/fontforge/Unicode/ArabicForms.c

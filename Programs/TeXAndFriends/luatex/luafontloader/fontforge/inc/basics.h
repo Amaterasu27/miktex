@@ -35,6 +35,9 @@
 #ifdef __MINGW32__
 #define _CTYPE_H_
 #endif
+#if defined(MIKTEX)
+#  define _INC_CTYPE 1
+#endif
 # include <w2c/config.h>
 #endif
 #define gfree ff_gfree

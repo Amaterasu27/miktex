@@ -34,7 +34,9 @@
 #include <dirent.h>
 #include <locale.h>
 #include <time.h>
+#if ! defined(MIKTEX)
 #include <sys/time.h>
+#endif
 #include <stdlib.h>
 
 #include "ttf.h"
