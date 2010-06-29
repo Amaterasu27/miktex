@@ -20,6 +20,7 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/lua51
 )
 
 add_definitions(
@@ -88,3 +89,39 @@ set(lua51_sources
 
 add_library(luatex-lua51-static STATIC ${lua51_sources})
 
+###############################################################################
+## LUASOCKET
+###############################################################################
+
+set(luasocket_sources
+  luasocket/src/auxiliar.c
+  luasocket/src/auxiliar.h
+  luasocket/src/buffer.c
+  luasocket/src/buffer.h
+  luasocket/src/except.c
+  luasocket/src/except.h
+  luasocket/src/inet.c
+  luasocket/src/inet.h
+  luasocket/src/io.c
+  luasocket/src/io.h
+  luasocket/src/lua_preload.c
+  luasocket/src/luasocket.c
+  luasocket/src/luasocket.h
+  luasocket/src/mime.c
+  luasocket/src/mime.h
+  luasocket/src/options.c
+  luasocket/src/options.h
+  luasocket/src/select.c
+  luasocket/src/select.h
+  luasocket/src/socket.c
+  luasocket/src/socket.h
+  luasocket/src/tcp.c
+  luasocket/src/tcp.h
+  luasocket/src/timeout.c
+  luasocket/src/timeout.h
+  luasocket/src/udp.c
+  luasocket/src/udp.h
+  luasocket/src/usocket.h
+)
+
+add_library(luatex-luasocket-static STATIC ${luasocket_sources})
