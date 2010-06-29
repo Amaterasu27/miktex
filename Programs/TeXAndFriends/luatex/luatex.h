@@ -104,7 +104,11 @@ extern void ipcpage(int);
 
 extern boolean input_line(FILE *);
 
+#if defined(MIKTEX)
+#  include <ptexlib.h>
+#else
 #  include <luatexdir/ptexlib.h>
+#endif
 
 #  define COPYRIGHT_HOLDER "Taco Hoekwater"
 #  define AUTHOR NULL

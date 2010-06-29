@@ -286,6 +286,9 @@ add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
 ###############################################################################
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dvi)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/font)
+
+##
 
 add_custom_command(
   OUTPUT
@@ -306,8 +309,28 @@ set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
   ${CMAKE_CURRENT_BINARY_DIR}/dvi/dvigen.c
 )
 
+##
 
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/font/dofont.c
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/font/dofont.w
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/font
+  MAIN_DEPENDENCY
+    font/dofont.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/font/dofont.w
+  VERBATIM
+)
 
+set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
+  ${CMAKE_CURRENT_BINARY_DIR}/font/dofont.c
+)
+
+##
 set_source_files_properties(
   ${luatexlib_cweb_sources}
   PROPERTIES GENERATED TRUE

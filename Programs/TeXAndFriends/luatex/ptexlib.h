@@ -23,11 +23,18 @@
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
 
+#if defined(MIKTEX) && defined(_MSC_VER)
+#  define __attribute__(x)
+#endif
+
 /* WEB2C macros and prototypes */
 #  define EXTERN extern
 #  include "luatex.h"
 
+#if defined(MIKTEX)
+#else
 #   include "lib/lib.h"
+#endif
 
 #  ifdef MSVC
 extern double rint(double x);
@@ -172,7 +179,10 @@ size_t          T##_limit
 #  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"
 #  include "image/writeimg.h"
+#if defined(MIKTEX)
+#else
 #  include "openbsd-compat.h"
+#endif
 #  include "dvi/dvigen.h"
 #  include "pdf/pagetree.h"
 #  include "pdf/pdfgen.h"
