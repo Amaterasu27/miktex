@@ -21,13 +21,15 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/lua51
-  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/inc
-  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/fontforge
   ${CMAKE_CURRENT_BINARY_DIR}/luafontloader
+  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/fontforge
+  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/inc
 )
 
 add_definitions(
   -DUSE_MIKTEX_EXIT
+
+  -DpdfTeX
 
   -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1
   -DLUA_FF_LIB=1
@@ -285,57 +287,56 @@ add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
 ## LUATEXLIB
 ###############################################################################
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dvi)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/font)
-
-##
-
-add_custom_command(
-  OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/dvi/dvigen.c
-  COMMAND
-    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/dvi/dvigen.w
-  WORKING_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/dvi
-  MAIN_DEPENDENCY
-    dvi/dvigen.w
-  DEPENDS
-    ${ctangle_exe}
-    ${CMAKE_CURRENT_SOURCE_DIR}/dvi/dvigen.w
-  VERBATIM
+set(luatexlib_cwebs
+  dvi/dvigen.w
+  font/dofont.w
+  font/luafont.w
+  font/mapfile.w
+  font/pkin.w
+  font/sfnt.w
+  font/subfont.w
+  font/texfont.w
+  font/tfmofm.w
+  font/tounicode.w
+  font/tt_glyf.w
+  font/tt_table.w
+  font/vfovf.w
+  font/vfpacket.w
+  font/writecff.w
+  font/writeenc.w
+  font/writefont.w
+  font/writet1.w
+  font/writet3.w
+  font/writettf.w
+  font/writetype0.w
+  font/writetype2.w
 )
 
-set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
-  ${CMAKE_CURRENT_BINARY_DIR}/dvi/dvigen.c
-)
+foreach(cweb ${luatexlib_cwebs})
+  get_filename_component(fn ${cweb} NAME_WE)
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
+    COMMAND
+      ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${cweb}
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+    MAIN_DEPENDENCY
+      ${cweb}
+    DEPENDS
+      ${ctangle_exe}
+      ${CMAKE_CURRENT_SOURCE_DIR}/${cweb}
+    VERBATIM
+  )
+  set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
+  )
+endforeach(cweb)
 
-##
-
-add_custom_command(
-  OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/font/dofont.c
-  COMMAND
-    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/font/dofont.w
-  WORKING_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}/font
-  MAIN_DEPENDENCY
-    font/dofont.w
-  DEPENDS
-    ${ctangle_exe}
-    ${CMAKE_CURRENT_SOURCE_DIR}/font/dofont.w
-  VERBATIM
-)
-
-set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
-  ${CMAKE_CURRENT_BINARY_DIR}/font/dofont.c
-)
-
-##
 set_source_files_properties(
   ${luatexlib_cweb_sources}
   PROPERTIES GENERATED TRUE
 )
-
 
 set(luatexlib_sources
   ${luatexlib_cweb_sources}
