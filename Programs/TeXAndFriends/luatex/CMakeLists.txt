@@ -125,3 +125,34 @@ set(luasocket_sources
 )
 
 add_library(luatex-luasocket-static STATIC ${luasocket_sources})
+
+###############################################################################
+## LUAMISC
+###############################################################################
+
+set(luamisc_sources
+  luafilesystem/src/lfs.c
+  luafilesystem/src/lfs.h
+  luamd5/luamd5.h
+  luamd5/md5.c
+  luamd5/md5_lua.c
+  luamd5/md5lib.c
+  luapeg/lpeg.c
+  luaprofiler/clocks.c
+  luaprofiler/clocks.h
+  luaprofiler/core_profiler.c
+  luaprofiler/core_profiler.h
+  luaprofiler/function_meter.c
+  luaprofiler/function_meter.h
+  luaprofiler/lua50_profiler.c
+  luaprofiler/luaprofiler.h
+  luaprofiler/stack.c
+  luaprofiler/stack.h
+  luazip/src/luazip.c
+  luazip/src/luazip.h
+  luazlib/lgzip.c
+  luazlib/lzlib.c
+  slnunicode/slnunico.c
+)
+
+add_library(luatex-luamisc-static STATIC ${luamisc_sources})
