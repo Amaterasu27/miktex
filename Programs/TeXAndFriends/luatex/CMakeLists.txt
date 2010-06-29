@@ -280,3 +280,151 @@ set(luafontforge_sources
 )
 
 add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
+
+###############################################################################
+## LUATEXLIB
+###############################################################################
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dvi)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/dvi/dvigen.c
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/dvi/dvigen.w
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}/dvi
+  MAIN_DEPENDENCY
+    dvi/dvigen.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/dvi/dvigen.w
+  VERBATIM
+)
+
+set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
+  ${CMAKE_CURRENT_BINARY_DIR}/dvi/dvigen.c
+)
+
+
+
+set_source_files_properties(
+  ${luatexlib_cweb_sources}
+  PROPERTIES GENERATED TRUE
+)
+
+
+set(luatexlib_sources
+  ${luatexlib_cweb_sources}
+)
+
+set (todo_luatexlib_sources
+  dvi/dvigen.h
+  font/luatexfont.h
+  font/mapfile.h
+  font/sfnt.h
+  font/texfont.h
+  font/tt_glyf.h
+  font/tt_table.h
+  font/writecff.h
+  font/writettf.h
+  image/epdf.h
+  image/image.h
+  image/pdftoepdf.cc
+  image/pdftoepdf.h
+  image/writeimg.h
+  image/writejbig2.h
+  image/writejpg.h
+  image/writepng.h
+  lang/hnjalloc.h
+  lang/hyphen.h
+  lang/texlang.h
+  lua/lcallbacklib.c
+  lua/lepdflib.cc
+  lua/lfontlib.c
+  lua/limglib.c
+  lua/liolib.c
+  lua/lkpselib.c
+  lua/llanglib.c
+  lua/llualib.c
+  lua/lnodelib.c
+  lua/loslibext.c
+  lua/lpdflib.c
+  lua/lstatslib.c
+  lua/ltexiolib.c
+  lua/ltexlib.c
+  lua/ltokenlib.c
+  lua/luagen.h
+  lua/luatex-api.h
+  luatex.h
+  ocp/ocp.h
+  ocp/ocplist.h
+  ocp/readocp.h
+  ocp/runocp.h
+  pdf/pagetree.h
+  pdf/pdfaction.h
+  pdf/pdfannot.h
+  pdf/pdfcolorstack.h
+  pdf/pdfdest.h
+  pdf/pdffont.h
+  pdf/pdfgen.h
+  pdf/pdfglyph.h
+  pdf/pdfimage.h
+  pdf/pdflink.h
+  pdf/pdflistout.h
+  pdf/pdfliteral.h
+  pdf/pdfobj.h
+  pdf/pdfoutline.h
+  pdf/pdfpage.h
+  pdf/pdfrule.h
+  pdf/pdfsaverestore.h
+  pdf/pdfsetmatrix.h
+  pdf/pdfshipout.h
+  pdf/pdftables.h
+  pdf/pdfthread.h
+  pdf/pdftypes.h
+  pdf/pdfxform.h
+  tex/align.h
+  tex/arithmetic.h
+  tex/buildpage.h
+  tex/commands.h
+  tex/conditional.h
+  tex/directions.h
+  tex/dumpdata.h
+  tex/equivalents.h
+  tex/errors.h
+  tex/expand.h
+  tex/extensions.h
+  tex/filename.h
+  tex/inputstack.h
+  tex/linebreak.h
+  tex/mainbody.h
+  tex/maincontrol.h
+  tex/mathcodes.h
+  tex/memoryword.h
+  tex/mlist.h
+  tex/nesting.h
+  tex/packaging.h
+  tex/postlinebreak.h
+  tex/primitive.h
+  tex/printing.h
+  tex/scanning.h
+  tex/stringpool.h
+  tex/texdeffont.h
+  tex/texfileio.h
+  tex/texmath.h
+  tex/texnodes.h
+  tex/textcodes.h
+  tex/textoken.h
+  utils/avl.c
+  utils/avl.h
+  utils/avlstuff.h
+  utils/managed-sa.h
+  utils/synctex-common.h
+  utils/synctex-luatex.h
+  utils/synctex.c
+  utils/synctex.h
+  utils/utils.h
+)
+
+add_library(luatex-static STATIC ${luatexlib_sources})
