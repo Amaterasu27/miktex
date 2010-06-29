@@ -1106,6 +1106,10 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_luatex_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_makeindex_dir})
 endif(BUILDING_MIKTEX)
 
