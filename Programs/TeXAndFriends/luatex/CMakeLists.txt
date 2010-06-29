@@ -21,10 +21,20 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/lua51
+  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/inc
 )
 
 add_definitions(
   -DUSE_MIKTEX_EXIT
+
+  -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1
+  -DLUA_FF_LIB=1
+  -DNODYNAMIC=1
+  -DX_DISPLAY_MISSING=1
+  -D_NO_FREETYPE=1
+  -D_NO_LIBUNINAMESLIST=1
+  -D_NO_PYTHON=1
+  -UHAVE_LIBINTL_H
 )
 
 ###############################################################################
@@ -156,3 +166,110 @@ set(luamisc_sources
 )
 
 add_library(luatex-luamisc-static STATIC ${luamisc_sources})
+
+###############################################################################
+## LUAFONTFORGE
+###############################################################################
+
+set(luafontforge_sources
+  luafontloader/fontforge/Unicode/ArabicForms.c
+  luafontloader/fontforge/Unicode/alphabet.c
+  luafontloader/fontforge/Unicode/char.c
+  luafontloader/fontforge/Unicode/cjk.c
+  luafontloader/fontforge/Unicode/combiners.h
+  luafontloader/fontforge/Unicode/gwwiconv.c
+  luafontloader/fontforge/Unicode/memory.c
+  luafontloader/fontforge/Unicode/ucharmap.c
+  luafontloader/fontforge/Unicode/ustring.c
+  luafontloader/fontforge/Unicode/utype.c
+  luafontloader/fontforge/fontforge/PfEd.h
+  luafontloader/fontforge/fontforge/autohint.c
+  luafontloader/fontforge/fontforge/baseviews.h
+  luafontloader/fontforge/fontforge/clipnoui.c
+  luafontloader/fontforge/fontforge/configure-pfaedit.h
+  luafontloader/fontforge/fontforge/cvundoes.c
+  luafontloader/fontforge/fontforge/dumppfa.c
+  luafontloader/fontforge/fontforge/edgelist.h
+  luafontloader/fontforge/fontforge/edgelist2.h
+  luafontloader/fontforge/fontforge/encoding.c
+  luafontloader/fontforge/fontforge/encoding.h
+  luafontloader/fontforge/fontforge/featurefile.c
+  luafontloader/fontforge/fontforge/fontforgevw.h
+  luafontloader/fontforge/fontforge/fontviewbase.c
+  luafontloader/fontforge/fontforge/fvcomposit.c
+  luafontloader/fontforge/fontforge/fvfonts.c
+  luafontloader/fontforge/fontforge/libffstamp.h
+  luafontloader/fontforge/fontforge/libstamp.pre
+  luafontloader/fontforge/fontforge/lookups.c
+  luafontloader/fontforge/fontforge/lookups.h
+  luafontloader/fontforge/fontforge/macbinary.c
+  luafontloader/fontforge/fontforge/macenc.c
+  luafontloader/fontforge/fontforge/mathconstants.c
+  luafontloader/fontforge/fontforge/mm.c
+  luafontloader/fontforge/fontforge/mm.h
+  luafontloader/fontforge/fontforge/namelist.c
+  luafontloader/fontforge/fontforge/noprefs.c
+  luafontloader/fontforge/fontforge/nouiutil.c
+  luafontloader/fontforge/fontforge/parsepfa.c
+  luafontloader/fontforge/fontforge/parsettf.c
+  luafontloader/fontforge/fontforge/parsettfatt.c
+  luafontloader/fontforge/fontforge/parsettfvar.c
+  luafontloader/fontforge/fontforge/pfaedit.h
+  luafontloader/fontforge/fontforge/plugins.h
+  luafontloader/fontforge/fontforge/psfont.h
+  luafontloader/fontforge/fontforge/psread.c
+  luafontloader/fontforge/fontforge/pua.c
+  luafontloader/fontforge/fontforge/python.c
+  luafontloader/fontforge/fontforge/scripting.h
+  luafontloader/fontforge/fontforge/sd.h
+  luafontloader/fontforge/fontforge/sfd1.c
+  luafontloader/fontforge/fontforge/sfd1.h
+  luafontloader/fontforge/fontforge/splinechar.c
+  luafontloader/fontforge/fontforge/splinefill.c
+  luafontloader/fontforge/fontforge/splinefont.c
+  luafontloader/fontforge/fontforge/splinefont.h
+  luafontloader/fontforge/fontforge/splineorder2.c
+  luafontloader/fontforge/fontforge/splineoverlap.c
+  luafontloader/fontforge/fontforge/splinerefigure.c
+  luafontloader/fontforge/fontforge/splinesave.c
+  luafontloader/fontforge/fontforge/splinesaveafm.c
+  luafontloader/fontforge/fontforge/splinestroke.c
+  luafontloader/fontforge/fontforge/splineutil.c
+  luafontloader/fontforge/fontforge/splineutil2.c
+  luafontloader/fontforge/fontforge/start.c
+  luafontloader/fontforge/fontforge/stemdb.c
+  luafontloader/fontforge/fontforge/stemdb.h
+  luafontloader/fontforge/fontforge/tottf.c
+  luafontloader/fontforge/fontforge/tottfaat.c
+  luafontloader/fontforge/fontforge/tottfgpos.c
+  luafontloader/fontforge/fontforge/ttf.h
+  luafontloader/fontforge/fontforge/ttfspecial.c
+  luafontloader/fontforge/fontforge/uiinterface.h
+  luafontloader/fontforge/fontforge/unicoderange.h
+  luafontloader/fontforge/fontforge/views.h
+  luafontloader/fontforge/gutils/fsys.c
+  luafontloader/fontforge/gutils/gwwintl.c
+  luafontloader/fontforge/inc/basics.h
+  luafontloader/fontforge/inc/chardata.h
+  luafontloader/fontforge/inc/charset.h
+  luafontloader/fontforge/inc/dynamic.h
+  luafontloader/fontforge/inc/fileutil.h
+  luafontloader/fontforge/inc/gdraw.h
+  luafontloader/fontforge/inc/gfile.h
+  luafontloader/fontforge/inc/ggadget.h
+  luafontloader/fontforge/inc/gicons.h
+  luafontloader/fontforge/inc/gimage.h
+  luafontloader/fontforge/inc/gio.h
+  luafontloader/fontforge/inc/gkeysym.h
+  luafontloader/fontforge/inc/gprogress.h
+  luafontloader/fontforge/inc/gresource.h
+  luafontloader/fontforge/inc/gwidget.h
+  luafontloader/fontforge/inc/gwwiconv.h
+  luafontloader/fontforge/inc/intl.h
+  luafontloader/fontforge/inc/ustring.h
+  luafontloader/fontforge/inc/utype.h
+  luafontloader/src/ffdummies.c
+  luafontloader/src/luafflib.c
+)
+
+add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
