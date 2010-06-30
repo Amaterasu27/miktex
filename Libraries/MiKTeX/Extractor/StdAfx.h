@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -70,7 +70,6 @@ using stdext::hash_set;
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>
 #include <miktex/Core/Environment>
-#include <miktex/Core/MD5>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
 #include <miktex/Core/Trace>
