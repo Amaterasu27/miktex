@@ -23,8 +23,13 @@
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
 
-#if defined(MIKTEX) && defined(_MSC_VER)
-#  define __attribute__(x)
+#if defined(MIKTEX)
+#  if defined(_MSC_VER)
+#    define __attribute__(x)
+#  endif
+#  if ! defined(PATH_MAX)
+#    define PATH_MAX 260
+#  endif
 #endif
 
 /* WEB2C macros and prototypes */

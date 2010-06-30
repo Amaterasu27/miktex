@@ -310,6 +310,46 @@ set(luatexlib_cwebs
   font/writettf.w
   font/writetype0.w
   font/writetype2.w
+  image/epdf.w
+  image/writeimg.w
+  image/writejbig2.w
+  image/writejpg.w
+  image/writepng.w
+  lua/luagen.w
+  lua/luainit.w
+  lua/luanode.w
+  lua/luastuff.w
+  lua/luatoken.w
+  lua/texluac.w
+  ocp/ocp.w
+  ocp/runocp.w
+  ocp/readocp.w
+  ocp/ocplist.w
+  lang/hnjalloc.w
+  lang/hyphen.w
+  lang/texlang.w
+  pdf/pagetree.w
+  pdf/pdfaction.w
+  pdf/pdfannot.w
+  pdf/pdfcolorstack.w
+  pdf/pdfdest.w
+  pdf/pdffont.w
+  pdf/pdfgen.w
+  pdf/pdfglyph.w
+  pdf/pdfimage.w
+  pdf/pdflink.w
+  pdf/pdflistout.w
+  pdf/pdfliteral.w
+  pdf/pdfobj.w
+  pdf/pdfoutline.w
+  pdf/pdfpage.w
+  pdf/pdfrule.w
+  pdf/pdfsaverestore.w
+  pdf/pdfsetmatrix.w
+  pdf/pdfshipout.w
+  pdf/pdftables.w
+  pdf/pdfthread.w
+  pdf/pdfxform.w
 )
 
 foreach(cweb ${luatexlib_cwebs})

@@ -187,7 +187,11 @@ static struct option long_options[]
 {"progname", 1, 0, 0},
 {"version", 0, 0, 0},
 {"credits", 0, 0, 0},
+#if defined(MIKTEX)
+{"recorder", 1, 0, 1},
+#else
 {"recorder", 0, &recorder_enabled, 1},
+#endif
 {"etex", 0, 0, 0},
 {"output-comment", 1, 0, 0},
 {"output-directory", 1, 0, 0},
@@ -243,6 +247,10 @@ static void parse_options(int argc, char **argv)
             lua_only = 1;
             lua_offset = optind;
             luainit = 1;
+#if defined(MIKTEX)
+	} else if (ARGUMENT_IS("recorder")) {
+	  recorder_enabled = 1;
+#endif
         } else if (ARGUMENT_IS("lua")) {
             startup_filename = optarg;
             lua_offset = (optind - 1);
