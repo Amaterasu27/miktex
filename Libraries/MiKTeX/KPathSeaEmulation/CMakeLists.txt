@@ -31,6 +31,7 @@ set(kpathsea_includes
   absolute.h
   c-auto.h
   c-ctype.h
+  c-dir.h
   c-errno.h
   c-fopen.h
   c-limits.h

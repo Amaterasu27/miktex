@@ -64,15 +64,23 @@
    web2c/lib.h
    _________________________________________________________________________ */
 
+#if defined(__cplusplus)
 #define open_input(f_ptr, filefmt, fopen_mode) \
   MiKTeX::Web2C::OpenInput(nameoffile + 1, f_ptr, filefmt, fopen_mode)
+#else
+#define open_input(f_ptr, filefmt, fopen_mode) \
+  UNIMPLEMENTED_miktex_web2c_open_input(f_ptr, filefmt, fopen_mode)
+#endif
 
-#define versionstring \
-  miktex_web2c_version_string
+#define versionstring miktex_web2c_version_string
 
 #define recorder_record_input(fname)
 
 #define recorder_record_output(fname)
+
+#define recorder_enabled miktex_web2c_recorder_enabled
+
+#define output_directory miktex_web2c_output_directory
 
 /* _________________________________________________________________________
 
@@ -141,7 +149,15 @@ MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
 extern
-MIKTEXW2CDATA(const char *)
+MIKTEXW2CDATA(const_string)
+miktex_web2c_output_directory;
+
+extern
+MIKTEXW2CDATA(boolean)
+miktex_web2c_recorder_enabled;
+
+extern
+MIKTEXW2CDATA(const_string)
 miktex_web2c_version_string;
 
 #if defined(__cplusplus)

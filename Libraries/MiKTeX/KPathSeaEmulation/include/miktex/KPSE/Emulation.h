@@ -126,8 +126,10 @@
    _________________________________________________________________________ */
 
 #if defined(MIKTEX_WINDOWS)
+#  define DIR_SEP '\\'
 #  define DIR_SEP_STRING "\\"
 #else
+#  define DIR_SEP '/'
 #  define DIR_SEP_STRING "/"
 #endif
 
@@ -314,8 +316,10 @@
 
 #define kpse_make_tex_discard_errors miktex_kpse_make_tex_discard_errors
 
-#undef program_invocation_name
-#define program_invocation_name miktex_get_program_invocation_name()
+#if defined(program_invocation_name)
+#  undef program_invocation_name
+#endif
+#define program_invocation_name miktex_kpse_program_invocation_name
 
 #if defined(__cplusplus)
 MIKTEX_BEGIN_EXTERN_C_BLOCK
@@ -344,25 +348,25 @@ typedef enum
 {
   kpse_gf_format,
   kpse_pk_format,
-  kpse_any_glyph_format,
-  kpse_tfm_format, 
-  kpse_afm_format, 
-  kpse_base_format, 
-  kpse_bib_format, 
-  kpse_bst_format, 
+  kpse_any_glyph_format,        /* ``any'' meaning gf or pk */
+  kpse_tfm_format,
+  kpse_afm_format,
+  kpse_base_format,
+  kpse_bib_format,
+  kpse_bst_format,
   kpse_cnf_format,
   kpse_db_format,
   kpse_fmt_format,
   kpse_fontmap_format,
   kpse_mem_format,
-  kpse_mf_format, 
-  kpse_mfpool_format, 
-  kpse_mft_format, 
-  kpse_mp_format, 
-  kpse_mppool_format, 
+  kpse_mf_format,
+  kpse_mfpool_format,
+  kpse_mft_format,
+  kpse_mp_format,
+  kpse_mppool_format,
   kpse_mpsupport_format,
   kpse_ocp_format,
-  kpse_ofm_format, 
+  kpse_ofm_format,
   kpse_opl_format,
   kpse_otp_format,
   kpse_ovf_format,
@@ -374,7 +378,7 @@ typedef enum
   kpse_texsource_format,
   kpse_tex_ps_header_format,
   kpse_troff_font_format,
-  kpse_type1_format, 
+  kpse_type1_format,
   kpse_vf_format,
   kpse_dvips_config_format,
   kpse_ist_format,
@@ -393,7 +397,13 @@ typedef enum
   kpse_pdftex_config_format,
   kpse_lig_format,
   kpse_texmfscripts_format,
-  kpse_last_format
+  kpse_lua_format,
+  kpse_fea_format,
+  kpse_cid_format,
+  kpse_mlbib_format,
+  kpse_mlbst_format,
+  kpse_clua_format,
+  kpse_last_format /* one past last index */
 } kpse_file_format_type;
 
 
@@ -515,9 +525,6 @@ miktex_concatn (/*[in]*/ const char * lpsz1, ...);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_find_suffix (const char * lpszPath);
-
-MIKTEXKPSCEEAPI(const char *)
-miktex_get_program_invocation_name ();
 
 MIKTEXKPSCEEAPI(int)
 miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
@@ -642,6 +649,10 @@ miktex_kpse_fallback_resolutions_string;
 extern
 MIKTEXKPSDATA(int)
 miktex_kpse_make_tex_discard_errors;
+
+extern
+MIKTEXKPSDATA(string)
+miktex_kpse_program_invocation_name;
 
 extern
 MIKTEXKPSDATA(char *)

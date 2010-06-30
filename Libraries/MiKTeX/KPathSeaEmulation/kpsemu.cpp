@@ -600,15 +600,6 @@ miktex_xfopen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   miktex_program_invocation_name
-   _________________________________________________________________________ */
-
-namespace {
-  char * miktex_program_invocation_name = 0;
-}
-
-/* _________________________________________________________________________
-
    miktex_kpse_bug_address
    _________________________________________________________________________ */
 
@@ -622,6 +613,14 @@ miktex_kpse_bug_address = 0;
 
 MIKTEXKPSDATA(int)
 miktex_kpse_make_tex_discard_errors = 0;
+
+/* _________________________________________________________________________
+
+   miktex_kpse_program_invocation_name
+   _________________________________________________________________________ */
+
+MIKTEXKPSDATA(char *)
+miktex_kpse_program_invocation_name = 0;
 
 /* _________________________________________________________________________
 
@@ -749,11 +748,11 @@ MIKTEXKPSCEEAPI(void)
 miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
 			      /*[in]*/ const char *	lpszProgramName)
 {
-  if (miktex_program_invocation_name != 0)
+  if (miktex_kpse_program_invocation_name != 0)
     {
-      MIKTEX_FREE (miktex_program_invocation_name);
+      MIKTEX_FREE (miktex_kpse_program_invocation_name);
     }
-  miktex_program_invocation_name = xstrdup(lpszArgv0);
+  miktex_kpse_program_invocation_name = xstrdup(lpszArgv0);
   if (lpszProgramName != 0)
     {
       if (miktex_kpse_program_name != 0)
@@ -763,22 +762,6 @@ miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
       miktex_kpse_program_name = xstrdup(lpszProgramName);
       SessionWrapper(true)->PushAppName (lpszProgramName);
     }
-}
-
-/* _________________________________________________________________________
-
-   miktex_get_program_invocation_name
-   _________________________________________________________________________ */
-
-MIKTEXKPSCEEAPI(const char *)
-miktex_get_program_invocation_name ()
-{
-  if (miktex_program_invocation_name == 0)
-    {
-      miktex_program_invocation_name =
-	xstrdup(Utils::GetExeName().c_str());
-    }
-  return (miktex_program_invocation_name);
 }
 
 /* _________________________________________________________________________
