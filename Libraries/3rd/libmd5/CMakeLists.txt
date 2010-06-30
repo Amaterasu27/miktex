@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,11 +23,9 @@ include_directories(
 )
 
 set(${md5_dll_name}_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/miktex/Core/md5.h
-  global.h
-  internal.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/md5.h
   md5-version.h
-  md5c.cpp
+  md5.c
 )
 
 if(NATIVE_WINDOWS)
@@ -58,8 +56,7 @@ install(TARGETS ${md5_dll_name}
 
 install(
   FILES
-    include/miktex/Core/MD5
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/miktex/Core/md5.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/md5.h
   DESTINATION
-    ${incdir}/miktex/Core
+    ${incdir}
 )

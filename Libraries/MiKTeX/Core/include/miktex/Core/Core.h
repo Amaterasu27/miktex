@@ -48,7 +48,7 @@
 #endif
 
 #include <miktex/Core/Text>
-#include <miktex/Core/MD5>
+#include <md5.h>
 
 #if defined(__cplusplus)
 #  include <cstdarg>
@@ -1991,7 +1991,7 @@ public:
   void
   Init ()
   {
-    MD5Init (&ctx);
+    md5_init (&ctx);
   }
 
   /// Updates the state of this MD5Builder object.
@@ -2002,7 +2002,7 @@ public:
   Update (/*[in]*/ const void *	ptr,
 	  /*[in]*/ size_t	size)
   {
-    MD5Update (&ctx, ptr, static_cast<unsigned int>(size));
+    md5_append (&ctx, reinterpret_cast<const md5_byte_t *>(ptr), static_cast<int>(size));
   }
 
   /// Calculates the final MD5 value.
@@ -2011,7 +2011,7 @@ public:
   MD5
   Final ()
   {
-    MD5Final (md5.GetBuffer(), &ctx);
+    md5_finish (&ctx, md5.GetBuffer());
     return (md5);
   }
 
@@ -2026,7 +2026,7 @@ public:
   }
 
 private:
-  MD5_CTX ctx;
+  md5_state_t ctx;
 
 private:
   MD5 md5;
