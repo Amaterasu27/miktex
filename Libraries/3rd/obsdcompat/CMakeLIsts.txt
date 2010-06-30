@@ -19,6 +19,10 @@
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(HAVE_INTXX_T 1)
+set(HAVE_UINTXX_T 1)
+set(HAVE_SNPRINTF 1)
+
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/obsdcompat/config.h.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/obsdcompat/config.h

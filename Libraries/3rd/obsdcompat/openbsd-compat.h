@@ -39,6 +39,16 @@
 #define OBSDLIB_VERSION "4.3.1.1"
 #define OBSDLIB_VERNUM 0x4310
 
+#if defined(MIKTEX) && ! defined(MIKTEXOBSDCOMPATAPI)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#    define MIKTEXOBSDCOMPATAPI(type) __declspec(dllimport) type __cdecl
+#  elif defined(_MSC_VER)
+#    define MIKTEXOBSDCOMPATAPI(type) type __cdecl
+#  else
+#    define MIKTEXOBSDCOMPATAPI(type) type
+#  endif
+#endif
+
 /* OpenBSD function replacements */
 #ifndef HAVE_STRLCPY
 /* #include <sys/types.h> XXX Still needed? */
@@ -61,7 +71,11 @@ char *strsep(char **stringp, const char *delim);
 
 #ifndef HAVE_ASPRINTF
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=asprintf */
+#if defined(MIKTEX)
+MIKTEXOBSDCOMPATAPI(int) asprintf(char **, const char *, ...);
+#else
 int asprintf(char **, const char *, ...);
+#endif
 #endif 
 
 /* #include <sys/types.h> XXX needed? For size_t */

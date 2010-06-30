@@ -39,6 +39,16 @@
 
 #define INIT_SZ	128
 
+#if defined(MIKTEX)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#    define MIKTEXOBSDCOMPATAPI(type) __declspec(dllexport) type __cdecl
+#  elif defined(_MSC_VER)
+#    define MIKTEXOBSDCOMPATAPI(type) type __cdecl
+#  else
+#    define MIKTEXOBSDCOMPATAPI(type) type
+#  endif
+#endif
+
 int
 vasprintf(char **str, const char *fmt, va_list ap)
 {
@@ -86,7 +96,11 @@ fail:
 #endif
 
 #ifndef HAVE_ASPRINTF
+#if defined(MIKTEX)
+MIKTEXOBSDCOMPATAPI(int) asprintf(char **str, const char *fmt, ...)
+#else
 int asprintf(char **str, const char *fmt, ...)
+#endif
 {
 	va_list ap;
 	int ret;

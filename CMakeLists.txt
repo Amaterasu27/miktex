@@ -633,6 +633,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_md5_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
+  ${CMAKE_BINARY_DIR}/${rel_obsdcompat_dir}
   ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
@@ -660,6 +661,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
+  ${CMAKE_SOURCE_DIR}/${rel_obsdcompat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
   ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
   ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
@@ -896,6 +898,8 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_mspack_dir})
 endif(NOT LINK_EVERYTHING_STATICALLY)
 add_subdirectory(${rel_mspack_dir}-static)
+
+add_subdirectory(${rel_obsdcompat_dir})
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_popt_dir})
