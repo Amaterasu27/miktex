@@ -142,7 +142,9 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
  *  and *tex.web for details, the synctex_ prefix prevents name conflicts, it
  *  is some kind of namespace
 */
+#if ! defined(MIKTEX)
 #   warning These structures MUST be kept in synchronization with the main program
+#endif
 /*  synctexoption is a global integer variable defined in *tex.web
  *  it is set to 1 by texmfmp.c if the command line has the '-synctex=1'
  *  option.  */

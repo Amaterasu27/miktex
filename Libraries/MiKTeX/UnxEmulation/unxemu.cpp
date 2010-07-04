@@ -175,3 +175,41 @@ wreaddir (/*[in]*/ WDIR * pDir)
   return (&pDir->direntry);
   C_FUNC_END ();
 }
+
+/* _________________________________________________________________________
+
+   miktex_strncasecmp
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(int)
+miktex_strncasecmp (/*[in]*/ const char * lpsz1,
+		    /*[in]*/ const char * lpsz2,
+		    /*[in]*/ size_t	  n)
+{
+  return (MiKTeX::Core::StringCompare(lpsz1, lpsz2, n, true));
+}
+
+/* _________________________________________________________________________
+
+   miktex_gettimeofday
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(int)
+miktex_gettimeofday(/*[in]*/ struct timeval * ptv, void * pNull)
+{
+  MIKTEX_ASSERT (pNull == 0);
+  MIKTEX_ASSERT (ptv != 0);
+  SYSTEMTIME systemTime;
+  GetSystemTime (&systemTime);
+  struct tm tm;
+  memset (&tm, 0, sizeof(tm));
+  tm.tm_year = systemTime.wYear;
+  tm.tm_mon = systemTime.wMonth - 1;
+  tm.tm_mday = systemTime.wDay;
+  tm.tm_hour = systemTime.wHour;
+  tm.tm_min = systemTime.wMinute;
+  tm.tm_sec = systemTime.wSecond;
+  ptv->tv_sec = static_cast<long>(mktime(&tm));
+  ptv->tv_usec = systemTime.wMilliseconds;
+  return (0);
+}

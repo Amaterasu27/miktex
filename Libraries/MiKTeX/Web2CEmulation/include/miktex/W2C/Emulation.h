@@ -27,6 +27,7 @@
 #define AA9CDF05506A4A07827B1144C4755C06
 
 #include <miktex/Core/Core>
+#include <miktex/Core/Definitions>
 #include <miktex/Core/Debug>
 #include <miktex/Core/IntegerTypes>
 #include <miktex/KPSE/Emulation>
@@ -61,6 +62,34 @@
 
 /* _________________________________________________________________________
 
+   w2c/config.h
+   _________________________________________________________________________ */
+
+#if defined(__cplusplus)
+MIKTEX_BEGIN_EXTERN_C_BLOCK
+#endif
+
+typedef int integer;
+
+typedef MIKTEX_INT64 longinteger;
+
+MIKTEXW2CEXPORT MIKTEXNORETURN void MIKTEXCEECALL
+miktex_uexit (int status);
+
+#define uexit miktex_uexit
+
+MIKTEXW2CEXPORT MIKTEXNORETURN void MIKTEXCEECALL
+miktex_usagehelp (/*[in]*/ const char **	lpszLines,
+		  /*[in]*/ const char *		lpszBugEmail);
+
+#define usagehelp miktex_usagehelp
+
+#if defined(__cplusplus)
+MIKTEX_END_EXTERN_C_BLOCK
+#endif
+
+/* _________________________________________________________________________
+
    web2c/lib.h
    _________________________________________________________________________ */
 
@@ -72,7 +101,11 @@
   UNIMPLEMENTED_miktex_web2c_open_input(f_ptr, filefmt, fopen_mode)
 #endif
 
+#define close_file(f) ((f) != 0 ? (void)fclose(f) : (void)0)
+
 #define versionstring miktex_web2c_version_string
+
+#define recorder_change_filename(new_name)
 
 #define recorder_record_input(fname)
 
@@ -81,6 +114,11 @@
 #define recorder_enabled miktex_web2c_recorder_enabled
 
 #define output_directory miktex_web2c_output_directory
+
+#define fullnameoffile miktex_web2c_fullnameoffile
+
+#define setupboundvariable(var, var_name, dflt) \
+  miktex_setupboundvariable(var, var_name, dflt)
 
 /* _________________________________________________________________________
 
@@ -95,28 +133,45 @@
    cpascal.h
    _________________________________________________________________________ */
 
+#define addressof(x) (&(x))
+
+#define decr(x) --(x)
+
+#define incr(x) ++(x)
+
+#define halfp(i) ((i) >> 1)
+
+#define ISDIRSEP IS_DIR_SEP
+
+#define libcfree free
+
+#define odd(x) ((x) & 1)
+
+#define round(x) miktex_zround((double) (x))
+
 #define xmallocarray(type, size) \
   ((type*)xmalloc(((size) + 1) * sizeof(type)))
 
 #define xreallocarray(ptr, type, size) \
   ((type*)xrealloc(ptr, ((size) + 1) * sizeof(type)))
 
-/* _________________________________________________________________________
+#define nil ((void*)0)
 
-   w2c/config.h
-   _________________________________________________________________________ */
+#define kpsevarvalue kpse_var_value
 
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
-#endif
+#define kpseinitprog kpse_init_prog
 
-typedef int integer;
+#define kpsesetprogramenabled kpse_set_program_enabled
 
-typedef MIKTEX_INT64 longinteger;
+#define kpsepkformat kpse_pk_format
 
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
+#define kpsesrccmdline kpse_src_cmdline
+
+#define kpsemaketexdiscarderrors kpse_make_tex_discard_errors
+
+typedef double real;
+
+#define intcast(x) ((integer)(x))
 
 /* _________________________________________________________________________
 
@@ -139,6 +194,22 @@ OpenInput (/*[in,out]*/ char *			lpszFileName,
 MIKTEXWEB2C_END_NAMESPACE;
 #endif
 
+#if defined(__cplusplus)
+MIKTEX_BEGIN_EXTERN_C_BLOCK
+#endif
+
+MIKTEXW2CCEEAPI(integer)
+miktex_zround (/*[in]*/ double r);
+
+MIKTEXW2CCEEAPI(void)
+miktex_setupboundvariable (/*[in]*/ integer *      pVar,
+			   /*[in]*/ const char *   lpszVarName,
+			   /*[in]*/ integer	      dflt);
+
+#if defined(__cplusplus)
+MIKTEX_END_EXTERN_C_BLOCK
+#endif
+
 /* _________________________________________________________________________
 
    Variables
@@ -147,6 +218,10 @@ MIKTEXWEB2C_END_NAMESPACE;
 #if defined(__cplusplus)
 MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
+
+extern
+MIKTEXW2CDATA(string)
+miktex_web2c_fullnameoffile;
 
 extern
 MIKTEXW2CDATA(const_string)

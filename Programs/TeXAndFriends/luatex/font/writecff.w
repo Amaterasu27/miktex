@@ -23,6 +23,10 @@
 
 #include "font/writecff.h"
 
+#if defined(MIKTEX)
+#  include <math.h>
+#endif
+
 static const char _svn_version[] =
     "$Id: writecff.w 3584 2010-04-02 17:45:55Z hhenkel $ "
 "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writecff.w $";

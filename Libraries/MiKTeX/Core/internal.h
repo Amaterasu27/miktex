@@ -1394,6 +1394,12 @@ public:
   MIKTEXTHISCALL
   ConfigureFile (/*[in]*/ const PathName & path);
 
+public:
+  virtual
+  FileTypeInfo
+  MIKTEXTHISCALL
+  GetFileTypeInfo (/*[in]*/ FileType fileType);
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -1995,11 +2001,15 @@ private:
     
 private:
   void
+  RegisterFileType (/*[in]*/ FileType		fileType);
+
+private:
+  void
   RegisterFileTypes ();
 
 private:
   InternalFileTypeInfo *
-  GetFileTypeInfo (/*[in]*/ FileType		fileType);
+  GetInternalFileTypeInfo (/*[in]*/ FileType		fileType);
   
 private:
   void

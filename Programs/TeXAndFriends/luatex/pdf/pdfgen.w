@@ -24,6 +24,10 @@ static const char _svn_version[] =
 
 #include "ptexlib.h"
 
+#if defined(MIKTEX)
+#  include <math.h> /* floor.h */
+#endif
+
 @ @c
 #include <kpathsea/c-dir.h>
 #include <kpathsea/c-ctype.h>

@@ -34,7 +34,11 @@
 #include <unistd.h>
 
 #ifdef _WIN32
+#if defined(MIKTEX)
+#define MKDIR(A,B) _mkdir(A)
+#else
 #define MKDIR(A,B) mkdir(A)
+#endif
 #else
 #define MKDIR(A,B) mkdir(A,B)
 #endif

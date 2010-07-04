@@ -223,7 +223,7 @@ SessionImpl::TraceSearchVector (/*[in]*/ const char *		lpszKey,
 PathNameArray
 SessionImpl::ConstructSearchVector (/*[in]*/ FileType fileType)
 {
-  InternalFileTypeInfo * pfti = GetFileTypeInfo(fileType);
+  InternalFileTypeInfo * pfti = GetInternalFileTypeInfo(fileType);
 
   if (pfti->searchVec.size() == 0)
     {

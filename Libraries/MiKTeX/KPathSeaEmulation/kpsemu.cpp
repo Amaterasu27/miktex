@@ -1,4 +1,4 @@
-/* kpsemu.cpp: texk compatibility functions
+/* kpsemu.cpp: kpathsea emulation
 
    Copyright (C) 1994, 95 Karl Berry
    Copyright (C) 2000-2010 Christian Schenk
@@ -33,8 +33,37 @@ namespace {
   std::string kpse_mode;
 }
 
+/* _________________________________________________________________________
+
+   miktex_kpathsea_version_string
+   _________________________________________________________________________ */
+
 MIKTEXKPSDATA(char *)
-miktex_kpse_program_name = 0;
+miktex_kpathsea_version_string = KPSEVERSION;
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_bug_address
+   _________________________________________________________________________ */
+
+MIKTEXKPSDATA(char *)
+miktex_kpathsea_bug_address = T_("Visit miktex.org for bug reports.");
+
+/* _________________________________________________________________________
+
+   kpse_def
+   kpse_def_inst
+   _________________________________________________________________________ */
+
+#if defined(KPSE_COMPAT_API)
+
+MIKTEXKPSDATA(kpathsea_instance)
+miktex_kpse_def_inst;
+
+MIKTEXKPSDATA(kpathsea)
+miktex_kpse_def = &miktex_kpse_def_inst;
+
+#endif
 
 /* _________________________________________________________________________
 
@@ -85,14 +114,15 @@ magstep (/*[in]*/ int	n,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_find_glyph
+   miktex_kpathsea_find_glyph
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
-			/*[in]*/ unsigned			dpi,
-			/*[in]*/ kpse_file_format_type		format,
-			/*[out]*/ kpse_glyph_file_type *	glyph_file)
+miktex_kpathsea_find_glyph (/*[in]*/ kpathsea *		      pKpseInstance,
+			    /*[in]*/ const char *	      lpszFontName,
+			    /*[in]*/ unsigned		      dpi,
+			    /*[in]*/ kpse_file_format_type    format,
+			    /*[out]*/ kpse_glyph_file_type *  glyph_file)
 {
   if (format != kpse_pk_format)
     {
@@ -141,121 +171,221 @@ miktex_kpse_find_glyph (/*[in]*/ const char *			lpszFontName,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_find_file
+   ToStringList
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(const char **)
+ToStringList (/*[in]*/ const vector<std::string> & vec)
+{
+  const char ** pStringList = XTALLOC(vec.size() + 1, const char *);
+  for (int idx = 0; idx < vec.size(); ++ idx)
+  {
+    pStringList[idx] = xstrdup(vec[idx].c_str());
+  }
+  pStringList[vec.size()] = 0;
+  return (pStringList);
+}
+
+/* _________________________________________________________________________
+
+   ToStringList
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+const char PATH_DELIMITER = ';';
+#else
+const char PATH_DELIMITER = ':';
+#endif
+
+MIKTEXSTATICFUNC(const char **)
+ToStringList (/*[in]*/ const std::string & str)
+{
+  vector<std::string> vec;
+  for (CSVList s (str.c_str(), PATH_DELIMITER);
+    s.GetCurrent() != 0;
+    ++ s)
+  {
+    vec.push_back (s.GetCurrent());
+  }
+  return (ToStringList(vec));
+}
+
+/* _________________________________________________________________________
+
+   ToFileType
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(FileType)
+ToFileType (/*[in]*/ kpse_file_format_type format)
+{
+  FileType ft (FileType::None);
+  switch (format)
+  {
+  case kpse_afm_format: ft = FileType::AFM; break;
+  case kpse_any_glyph_format: ft = FileType::GLYPHFONT; break;
+  case kpse_base_format: ft = FileType::BASE; break;
+  case kpse_bib_format: ft = FileType::BIB; break;
+  case kpse_bst_format: ft = FileType::BST; break;
+  case kpse_cid_format: ft = FileType::CID; break;
+  case kpse_clua_format: ft = FileType::CLUA; break;
+  case kpse_cmap_format: ft = FileType::CMAP; break;
+  case kpse_cnf_format: ft = FileType::CNF; break;
+  case kpse_cweb_format: ft = FileType::CWEB; break;
+  case kpse_db_format: ft = FileType::DB; break;
+  case kpse_dvips_config_format: ft = FileType::DVIPSCONFIG; break;
+  case kpse_enc_format: ft = FileType::ENC; break;
+  case kpse_fea_format: ft = FileType::FEA; break;
+  case kpse_fontmap_format: ft = FileType::MAP; break;
+  case kpse_fmt_format: ft = FileType::FMT; break;
+  case kpse_gf_format: ft = FileType::GF; break;
+  case kpse_ist_format: ft = FileType::IST; break;
+  case kpse_lig_format: ft = FileType::LIG; break;
+  case kpse_lua_format: ft = FileType::LUA; break;
+  case kpse_mem_format: ft = FileType::MEM; break;
+  case kpse_mf_format: ft = FileType::MF; break;
+  case kpse_mfpool_format: ft = FileType::MFPOOL; break;
+  case kpse_mft_format: ft = FileType::MFT; break;
+  case kpse_mlbib_format: ft = FileType::MLBIB; break;
+  case kpse_mlbst_format: ft = FileType::MLBST; break;
+  case kpse_miscfonts_format: ft = FileType::MISCFONT; break;
+  case kpse_mp_format: ft = FileType::MP; break;
+  case kpse_mppool_format: ft = FileType::MPPOOL; break;
+  case kpse_mpsupport_format: ft = FileType::MPSUPPORT; break;
+  case kpse_ocp_format: ft = FileType::OCP; break;
+  case kpse_ofm_format: ft = FileType::OFM; break;
+  case kpse_opentype_format: ft = FileType::OTF; break;
+  case kpse_opl_format: ft = FileType::OPL; break;
+  case kpse_otp_format: ft = FileType::OTP; break;
+  case kpse_ovf_format: ft = FileType::OVF; break;
+  case kpse_ovp_format: ft = FileType::OVP; break;
+  case kpse_pdftex_config_format: ft = FileType::PDFTEXCONFIG; break;
+  case kpse_pict_format: ft = FileType::GRAPHICS; break;
+  case kpse_pk_format: ft = FileType::PK; break;
+  case kpse_program_binary_format: ft = FileType::PROGRAMBINFILE; break;
+  case kpse_program_text_format: ft = FileType::PROGRAMTEXTFILE; break;
+  case kpse_sfd_format: ft = FileType::SFD; break;
+  case kpse_tex_format: ft = FileType::TEX; break;
+  case kpse_tex_ps_header_format: ft = FileType::PSHEADER; break;
+  case kpse_texpool_format: ft = FileType::TEXPOOL; break;
+  case kpse_texsource_format: ft = FileType::TEXSOURCE; break;
+  case kpse_texdoc_format: ft = FileType::TEXSYSDOC; break;
+  case kpse_texmfscripts_format: ft = FileType::SCRIPT; break;
+  case kpse_tfm_format: ft = FileType::TFM; break;
+  case kpse_troff_font_format: ft = FileType::TROFF; break;
+  case kpse_truetype_format: ft = FileType::TTF; break;
+  case kpse_type1_format: ft = FileType::TYPE1; break;
+  case kpse_type42_format: ft = FileType::TYPE42; break;
+  case kpse_vf_format: ft = FileType::VF; break;
+  case kpse_web2c_format: ft = FileType::WEB2C; break;
+  case kpse_web_format: ft = FileType::WEB; break;
+
+  default:
+    Session::FatalMiKTeXError
+      ("ToFileType",
+      (std::string(T_("Unsupported kpse file format: "))
+      + NUMTOSTR(format)).c_str(),
+      0,
+      __FILE__,
+      __LINE__);
+  }
+  return (ft);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_init_format
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(const char *)
+miktex_kpathsea_init_format (/*[in]*/ kpathsea pKpseInstance,
+			     /*[in]*/ kpse_file_format_type format)
+{
+  MIKTEX_ASSERT (pKpseInstance != 0);
+  MIKTEX_ASSERT (format < kpse_last_format);
+  kpse_format_info_type & formatInfo = pKpseInstance->format_info[format];
+  if (formatInfo.path == 0)
+  {
+    Session * pSession = Session::Get();
+    FileType ft = ToFileType(format);
+    FileTypeInfo fti = pSession->GetFileTypeInfo(ft);
+    formatInfo.path = xstrdup(fti.searchPath.c_str());
+    formatInfo.type = xstrdup(fti.fileTypeString.c_str());
+    formatInfo.suffix = ToStringList(fti.fileNameExtensions);
+  }
+  return (formatInfo.path);
+}
+
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_find_file
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_find_file (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ kpse_file_format_type	format,
-		       /*[in]*/ int			mustExist)
+miktex_kpathsea_find_file (/*[in]*/ kpathsea			pKpseInstance,
+			   /*[in]*/ const char *		lpszFileName,
+			   /*[in]*/ kpse_file_format_type	format,
+			   /*[in]*/ int				mustExist)
 {
+  MIKTEX_ASSERT (pKpseInstance != 0);
   MIKTEX_ASSERT (lpszFileName != 0);
   bool found = false;
   PathName result;
   Session * pSession = Session::Get();
-  switch (format)
-    {
-    case kpse_bib_format:
-      found = pSession->FindFile(lpszFileName, FileType::BIB, result);
-      break;
-    case kpse_bst_format:
-      found = pSession->FindFile(lpszFileName, FileType::BST, result);
-      break;
-    case kpse_dvips_config_format:
-      found = pSession->FindFile(lpszFileName, FileType::DVIPSCONFIG, result);
-      break;
-    case kpse_enc_format:
-      found = pSession->FindFile(lpszFileName, FileType::ENC, result);
-      break;
-    case kpse_fontmap_format:
-      found = pSession->FindFile(lpszFileName, FileType::MAP, result);
-      break;
-    case kpse_ist_format:
-      found = pSession->FindFile(lpszFileName, FileType::IST, result);
-      break;
-    case kpse_program_binary_format:
-      found = pSession->FindFile(lpszFileName,
-				 FileType::PROGRAMBINFILE,
-				 result);
-      break;
-    case kpse_program_text_format:
-      found = pSession->FindFile(lpszFileName,
-				 FileType::PROGRAMTEXTFILE,
-				 result);
-      break;
-    case kpse_tex_format:
-      found = pSession->FindFile(lpszFileName, FileType::TEX, result);
-      break;
-    case kpse_ofm_format:
-      found = pSession->FindFile(lpszFileName, FileType::OFM, result);
-      break;
-    case kpse_tfm_format:
-      found =
-	pSession->FindTfmFile(lpszFileName, result, mustExist ? true : false);
-      break;
-    case kpse_miscfonts_format:
-      found = pSession->FindFile(lpszFileName, "%R/fonts/misc//", result);
-      break;
-    case kpse_afm_format:
-      found = pSession->FindFile(lpszFileName, FileType::AFM, result);
-      break;
-    case kpse_pict_format:
-      found = pSession->FindFile(lpszFileName, FileType::GRAPHICS, result);
-      break;
-    case kpse_type1_format:
-      found = pSession->FindFile(lpszFileName, FileType::TYPE1, result);
-      break;
-    case kpse_tex_ps_header_format:
-      found = pSession->FindFile(lpszFileName, FileType::PSHEADER, result);
-      break;
-    case kpse_vf_format:
-      found = pSession->FindFile(lpszFileName, FileType::VF, result);
-      break;
-    case kpse_ovf_format:
-      found = pSession->FindFile(lpszFileName, FileType::OVF, result);
-      break;
-    case kpse_otp_format:
-      found = pSession->FindFile(lpszFileName, FileType::OTP, result);
-      break;
-    case kpse_ocp_format:
-      found = pSession->FindFile(lpszFileName, FileType::OCP, result);
-      break;
-    case kpse_truetype_format:
-      found = pSession->FindFile(lpszFileName, FileType::TTF, result);
-      break;
-    case kpse_opentype_format:
-      found = pSession->FindFile(lpszFileName, FileType::OTF, result);
-      break;
-    case kpse_ovp_format:
-      found = pSession->FindFile(lpszFileName, FileType::OVP, result);
-      break;
-    case kpse_sfd_format:
-      found = pSession->FindFile(lpszFileName, FileType::SFD, result);
-      break;
-    case kpse_cmap_format:
-      found = pSession->FindFile(lpszFileName, FileType::CMAP, result);
-      break;
-    case kpse_cweb_format:
-      found = pSession->FindFile(lpszFileName, FileType::CWEB, result);
-      break;
-    default:
-      found = false;
-      Session::FatalMiKTeXError
-	("KPSE::FindFile",
-	 ((std::string(T_("Unsupported file format type: "))
-	   + NUMTOSTR(format))
-	  .c_str()),
-	 0,
-	 __FILE__,
-	 __LINE__);
-      break;
-    }
+  FileType ft = ToFileType(format);
+  switch (ft.Get())
+  {
+  case FileType::TFM:
+    found = pSession->FindTfmFile(lpszFileName, result, mustExist ? true : false);
+    break;
+  default:
+    found = pSession->FindFile(lpszFileName, ft, result);
+    break;
+  }
   if (! found)
-    {
-      return (0);
-    }
+  {
+    return (0);
+  }
   result.ToUnix ();
   return (xstrdup(result.Get()));
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_find_file_generic
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char **)
+miktex_kpathsea_find_file_generic (/*in*/ kpathsea			pKpseInstance,
+				   /*[in]*/ const char *		lpszFileName,
+				   /*[in]*/ kpse_file_format_type	format,
+				   /*[in]*/ boolean			mustExist,
+				   /*[in]*/ boolean			all)
+{
+  // <todo/>
+  MIKTEX_ASSERT (pKpseInstance != 0);
+  MIKTEX_ASSERT (lpszFileName != 0);
+  bool found = false;
+  PathName result;
+  Session * pSession = Session::Get();
+  FileType ft = ToFileType(format);
+  switch (ft.Get())
+  {
+  case FileType::TFM:
+    found = pSession->FindTfmFile(lpszFileName, result, mustExist ? true : false);
+    break;
+  default:
+    found = pSession->FindFile(lpszFileName, ft, result);
+    break;
+  }
+  if (! found)
+  {
+    return (0);
+  }
+  result.ToUnix ();
+  char ** pStringList = XTALLOC(2, char *);
+  pStringList[0] = xstrdup(result.Get());
+  pStringList[1] = 0;
 }
 
 /* _________________________________________________________________________
@@ -368,7 +498,11 @@ miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
   char * lpszPath = kpse_find_file(lpszFileName, format, 1);
   if (lpszPath == 0)
     {
-      return (0);
+      Session::FatalMiKTeXError ("miktex_kpse_open_file",
+				 T_("File not found."),
+				 lpszFileName,
+				 __FILE__,
+				 __LINE__);
     }
   FILE * pfile;
   try
@@ -424,6 +558,17 @@ miktex_xbasename (/*[in]*/ const char * lpszFileName)
 	}
     }
   return (lpszFileName);
+}
+
+/* _________________________________________________________________________
+
+   miktex_xdirname
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_xdirname (/*[in]*/ const char * lpszFileName)
+{
+  return (xstrdup(PathName(lpszFileName).RemoveFileSpec().Get()));
 }
 
 /* _________________________________________________________________________
@@ -600,54 +745,6 @@ miktex_xfopen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_bug_address
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(char *)
-miktex_kpse_bug_address = 0;
-
-/* _________________________________________________________________________
-
-   miktex_kpse_make_tex_discard_errors
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(int)
-miktex_kpse_make_tex_discard_errors = 0;
-
-/* _________________________________________________________________________
-
-   miktex_kpse_program_invocation_name
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(char *)
-miktex_kpse_program_invocation_name = 0;
-
-/* _________________________________________________________________________
-
-   miktex_kpathsea_debug
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(unsigned)
-miktex_kpathsea_debug = 0;
-
-/* _________________________________________________________________________
-
-   miktex_kpse_fallback_resolutions_string
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(const char *)
-miktex_kpse_fallback_resolutions_string = 0;
-
-/* _________________________________________________________________________
-
-   miktex_kpathsea_version_string
-   _________________________________________________________________________ */
-
-MIKTEXKPSDATA(char *)
-miktex_kpathsea_version_string = KPSEVERSION;
-
-/* _________________________________________________________________________
-
    miktex_kpse_bitmap_tolerance
 
    [KB] The tolerances change whether we base things on DPI1 or DPI2.
@@ -721,47 +818,47 @@ miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
 
 /* _________________________________________________________________________
 
-   miktex_kpse_init_prog
+   miktex_kpathsea_init_prog
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(void)
-miktex_kpse_init_prog (/*[in]*/ const char *	prefix,
-		       /*[in]*/ unsigned	dpi,
-		       /*[in]*/ const char *	mode,
-		       /*[in]*/ const char *	fallback)
+miktex_kpathsea_init_prog (/*in*/ kpathsea		pKpathseaInstance,
+			   /*[in]*/ const char *	lpszPrefix,
+			   /*[in]*/ unsigned		dpi,
+			   /*[in]*/ const char *	lpszMode,
+			   /*[in]*/ const char *	lpszFallback)
 {
-  prefix;
-  fallback;
   kpse_baseResolution = dpi;
-  if (mode != 0)
-    {
-      kpse_mode = mode;
-    }
+  if (lpszMode != 0)
+  {
+    kpse_mode = lpszMode;
+  }
 }
 
 /* _________________________________________________________________________
 
-   miktex_kpse_set_program_name
+   miktex_kpathsea_set_program_name
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(void)
-miktex_kpse_set_program_name (/*[in]*/ const char *	lpszArgv0,
-			      /*[in]*/ const char *	lpszProgramName)
+miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
+				  /*[in]*/ const char *	lpszArgv0,
+				  /*[in]*/ const char *	lpszProgramName)
 {
-  if (miktex_kpse_program_invocation_name != 0)
-    {
-      MIKTEX_FREE (miktex_kpse_program_invocation_name);
-    }
-  miktex_kpse_program_invocation_name = xstrdup(lpszArgv0);
+  if (kpse->invocation_name != 0)
+  {
+    MIKTEX_FREE (kpse->invocation_name);
+  }
+  kpse->invocation_name = xstrdup(lpszArgv0);
   if (lpszProgramName != 0)
+  {
+    if (kpse->program_name != 0)
     {
-      if (miktex_kpse_program_name != 0)
-      {
-	MIKTEX_FREE (miktex_kpse_program_name);
-      }
-      miktex_kpse_program_name = xstrdup(lpszProgramName);
-      SessionWrapper(true)->PushAppName (lpszProgramName);
+      MIKTEX_FREE (kpse->program_name);
     }
+    kpse->program_name = xstrdup(lpszProgramName);
+    SessionWrapper(true)->PushAppName (lpszProgramName);
+  }
 }
 
 /* _________________________________________________________________________
@@ -795,11 +892,38 @@ miktex_find_suffix (const char * lpszPath)
 
 /* _________________________________________________________________________
 
-   miktex_kpse_var_value
+   miktex_remove_suffix
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_var_value (/*[in]*/ const char * lpszVarName)
+miktex_remove_suffix (const char * lpszPath)
+{
+  char * lpszRet;
+  char * lpszExt = find_suffix(lpszPath);
+  if (lpszExt == 0)
+  {
+    lpszRet = const_cast<char*>(lpszPath);
+  }
+  else
+  {
+    MIKTEX_ASSERT (*lpszExt == '.');
+    MIKTEX_ASSERT (lpszExt > lpszPath);
+    size_t n = (lpszExt - lpszPath);
+    lpszRet = reinterpret_cast<char*>(xmalloc((n + 1) * sizeof(*lpszRet)));
+    strncpy (lpszRet, lpszPath, n);
+    lpszRet[n] = 0;
+  }
+  return (lpszRet);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_var_value
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_var_value (/*in*/ kpathsea	  kpse,
+			   /*[in]*/ const char *  lpszVarName)
 {
   PathName path;
   std::string val;
@@ -811,11 +935,11 @@ miktex_kpse_var_value (/*[in]*/ const char * lpszVarName)
   }
   else if (StringCompare(lpszVarName, "SELFAUTODIR") == 0)
   {
-    UNIMPLEMENTED ("SELFAUTODIR");
+    return (0);
   }
   else if (StringCompare(lpszVarName, "SELFAUTOPARENT") == 0)
   {
-    UNIMPLEMENTED ("SELFAUTOPARENT");
+    return (0);
   }
   else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, val))
   {
@@ -826,13 +950,15 @@ miktex_kpse_var_value (/*[in]*/ const char * lpszVarName)
 
 /* _________________________________________________________________________
 
-   miktex_kpse_var_expand
+   miktex_kpathsea_var_expand
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpse_var_expand (/*[in]*/ const char * lpszSource)
+miktex_kpathsea_var_expand (/*in*/ kpathsea	  kpse,
+			    /*[in]*/ const char * lpszSource)
 {
-  UNIMPLEMENTED ("miktex_kpse_var_expand");
+  // <todo/>
+  return (xstrdup(lpszSource));
 }
 
 /* _________________________________________________________________________
@@ -880,4 +1006,188 @@ miktex_kpse_absolute_p (/*[in]*/ const char * lpszFileName,
 {
   MIKTEX_ASSERT (relativeOk == 0);
   return (Utils::IsAbsolutePath(lpszFileName));
+}
+
+/* _________________________________________________________________________
+
+   miktex_str_list_add
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+miktex_str_list_add (/*[in]*/ str_list_type * pStringList,
+		     /*[in]*/ char *	      lpsz)
+{
+  ++ pStringList->length;
+  pStringList->list = reinterpret_cast<char**>(
+    xrealloc(pStringList->list, sizeof(char*) * pStringList->length));
+  pStringList->list[pStringList->length - 1] = lpsz;
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_new
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(kpathsea)
+miktex_kpathsea_new ()
+{
+  kpathsea pKpseInstance = reinterpret_cast<kpathsea>(xmalloc(sizeof(kpathsea_instance)));
+  memset (pKpseInstance, 0, sizeof(*pKpseInstance));
+  return (pKpseInstance);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_finish
+   _________________________________________________________________________ */
+
+#if 1
+#  define DOIT(x)
+#else
+#  define DOIT(x) (x)
+#endif
+
+MIKTEXSTATICFUNC(void)
+Free (/*[in]*/ char ** pStringList)
+{
+  if (pStringList != 0)
+  {
+    for (char ** p = pStringList; *p != 0; ++ p)
+    {
+      MIKTEX_FREE (p);
+    }
+    MIKTEX_FREE (pStringList);
+  }
+}
+
+MIKTEXSTATICFUNC(void)
+Reset (/*[in]*/ kpse_format_info_type * pFormatInfoTable,
+       /*[in]*/ size_t			size)
+{
+  for (int idx = 0; idx < size; ++ idx)
+  {
+    kpse_format_info_type & formatInfo = pFormatInfoTable[idx];
+    MIKTEX_FREE (const_cast<char*>(formatInfo.path));
+    MIKTEX_FREE (const_cast<char*>(formatInfo.type));
+    Free (const_cast<char **>(formatInfo.suffix));
+    Free (const_cast<char **>(formatInfo.alt_suffix));
+    memset (&formatInfo, 0, sizeof(FormatInfo));
+  }
+}
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpathsea_finish (/*in*/ kpathsea pKpseInstance)
+{
+  DOIT (MIKTEX_FREE(const_cast<char*>(pKpseInstance->fallback_resolutions_string)));
+  DOIT (MIKTEX_FREE(const_cast<char*>(pKpseInstance->program_name)));
+  DOIT (MIKTEX_FREE(const_cast<char*>(pKpseInstance->invocation_name)));
+  DOIT (Reset(pKpseInstance->format_info,
+	      sizeof(pKpseInstance->format_info) / sizeof(pKpseInstance->format_info[0])));
+  if (pKpseInstance != &miktex_kpse_def_inst)
+  {
+    MIKTEX_FREE (pKpseInstance);
+  }
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_brace_expand
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_brace_expand (/*in*/ kpathsea			kpse,
+			      /*[in]*/ const char *		lpszPath)
+{
+  // <todo/>
+  return (xstrdup(lpszPath));
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_path_expand
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_path_expand (/*in*/ kpathsea			kpse,
+			     /*[in]*/ const char *		lpszPath)
+{
+  // <todo/>
+  return (xstrdup(lpszPath));
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_readable_file
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_readable_file (/*in*/ kpathsea		kpse,
+			       /*[in]*/ const char *	lpszName)
+{
+  if (File::Exists(lpszName))
+  {
+    return (const_cast<char*>(lpszName));
+  }
+  else
+  {
+    return (0);
+  }
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_path_search
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_path_search (/*in*/ kpathsea			kpse,
+			     /*[in]*/ const char *		lpszPath,
+			     /*[in]*/ const char *		lpszName,
+			     /*[in]*/ boolean			mustExist)
+{
+  Session * pSession = Session::Get();
+  PathName result;
+  if (! pSession->FindFile(lpszName, lpszPath, result))
+  {
+    return (0);
+  }
+  result.ToUnix ();
+  return (xstrdup(result.Get()));
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_all_path_search
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char **)
+miktex_kpathsea_all_path_search (/*in*/ kpathsea		kpse,
+				 /*[in]*/ const char *		lpszPath,
+				 /*[in]*/ const char *		lpszName)
+{
+  // <todo/>
+  Session * pSession = Session::Get();
+  PathName result;
+  if (! pSession->FindFile(lpszName, lpszPath, result))
+  {
+    return (0);
+  }
+  result.ToUnix ();
+  char ** pStringList = XTALLOC(2, char *);
+  pStringList[0] = xstrdup(result.Get());
+  pStringList[1] = 0;
+  return (pStringList);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_maketex_option
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(void)
+miktex_kpathsea_maketex_option (/*in*/ kpathsea		kpse,
+			        /*[in]*/ const char *	lpszFmtName,
+			        /*[in]*/ boolean		value)
+{
+  // <todo/>
 }

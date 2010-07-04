@@ -31,6 +31,14 @@ static const char _svn_version[] =
 #  include <stdio.h>
 #endif
 
+#if defined(MIKTEX)
+#  include <math.h> /* floor.h */
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+#  include <miktex/unxemu.h> /* snprintf */
+#endif
+
 #include "sys/types.h"
 #ifndef __MINGW32__
 #  include "sysexits.h"

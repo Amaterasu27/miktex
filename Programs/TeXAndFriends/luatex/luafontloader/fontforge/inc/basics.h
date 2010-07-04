@@ -36,9 +36,16 @@
 #define _CTYPE_H_
 #endif
 #if defined(MIKTEX)
-#  define _INC_CTYPE 1
+#  if ! defined(_INC_CTYPE)
+/* prevent inclusion of ctype.h */
+#    define _INC_CTYPE 1
+#  endif
 #endif
 # include <w2c/config.h>
+#endif
+#if defined(MIKTEX)
+#  include <miktex/unxemu.h>
+#  include <assert.h>
 #endif
 #define gfree ff_gfree
 #define grealloc ff_grealloc

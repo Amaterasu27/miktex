@@ -3693,55 +3693,74 @@ public:
     BIB,
     /// BibTeX style files (*.bst).
     BST,
+    CID,
+    CLUA,
+    CMAP,
+    CNF,
     CWEB,
+    DB,
     DVI,
     DVIPSCONFIG,
     ENC,
     /// Executable files (*.exe).
     EXE,
+    FEA,
     /// TeX format files (*.fmt).
     FMT,
     HBF,
+    GLYPHFONT,
     GRAPHICS,
     GF,
     IST,
+    LIG,
+    LUA,
     MAP,
     /// MetaPost memory files (*.mem).
     MEM,
     MF,
+    MFPOOL,
     MFT,
     MISCFONT,
+    MLBIB,
+    MLBST,
     MP,
+    MPPOOL,
+    MPSUPPORT,
     OCP,
     OFM,
     OPL,
-    PROGRAMBINFILE,
-    PROGRAMTEXTFILE,
+    OTF,
     OTP,
     OVF,
     OVP,
+    PDFTEXCONFIG,
     PERLSCRIPT,
     PK,
+    PROGRAMBINFILE,
+    PROGRAMTEXTFILE,
     PSHEADER,
+    SCRIPT,
+    SFD,
     TCX,
     /// TeX input files (*.tex).
     TEX,
+    TEXPOOL,
+    TEXSOURCE,
     /// TeX documentation files (*.dvi;*.pdf).
     TEXSYSDOC,
     /// TeX font metric files (*.tfm).
     TFM,
+    TROFF,
     TTF,
     TYPE1,
+    TYPE42,
     VF,
     WEB,
     WEB2C,
-    SCRIPT,
 #if defined(MIKTEX_WINDOWS)
     WindowsCommandScriptFile,
 #endif
-    OTF,
-    SFD,
-    CMAP
+    E_N_D
   };
 };
 
@@ -6391,6 +6410,13 @@ public:
     = 0;
 
 public:
+  virtual
+  FileTypeInfo
+  MIKTEXTHISCALL
+  GetFileTypeInfo (/*[in]*/ FileType fileType)
+    = 0;
+
+public:
   static
   MIKTEXCOREEXPORT
   MIKTEXNORETURN
@@ -7843,6 +7869,23 @@ public:
 };
 
 typedef AutoResource<void *, free_> AutoMemoryPointer;
+
+/* _________________________________________________________________________
+
+   AutoMemoryPointer2
+   _________________________________________________________________________ */
+
+class free2_
+{
+public:
+  void
+  operator() (/*[in]*/ void * p)
+  {
+    MiKTeX::Debug::Free (p, __FILE__, __LINE__);
+  }
+};
+
+typedef AutoResource<void *, free2_> AutoMemoryPointer2;
 
 /* _________________________________________________________________________ */
 

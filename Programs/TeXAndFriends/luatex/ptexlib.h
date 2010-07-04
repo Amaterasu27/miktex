@@ -37,6 +37,7 @@
 #  include "luatex.h"
 
 #if defined(MIKTEX)
+#  include <assert.h>
 #else
 #   include "lib/lib.h"
 #endif

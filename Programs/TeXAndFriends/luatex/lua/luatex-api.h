@@ -196,7 +196,9 @@ extern char *FindResourceTtfFont(char *filename, char *fontname);       /* luafo
 
 extern char charsetstr[];       /* from mpdir/psout.w */
 
+#if ! defined(MIKTEX_WINDOWS)
 extern char **environ;
+#endif
 
 extern int luac_main(int argc, char *argv[]); /* texluac.w */
 

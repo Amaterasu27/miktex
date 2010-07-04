@@ -58,6 +58,7 @@ set(kpathsea_includes
   proginit.h
   progname.h
   readable.h
+  str-list.h
   systypes.h
   tex-file.h
   tex-glyph.h

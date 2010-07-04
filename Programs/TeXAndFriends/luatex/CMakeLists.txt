@@ -21,28 +21,21 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/lua51
-  ${CMAKE_CURRENT_BINARY_DIR}/luafontloader
-  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/fontforge
-  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/fontforge/inc
 )
 
 add_definitions(
   -DUSE_MIKTEX_EXIT
 
+  -DPDF_PARSER_ONLY
   -DpdfTeX
-
-  -DFONTFORGE_CONFIG_NO_WINDOWING_UI=1
-  -DLUA_FF_LIB=1
-  -DNODYNAMIC=1
-  -DX_DISPLAY_MISSING=1
-  -D_NO_FREETYPE=1
-  -D_NO_LIBUNINAMESLIST=1
-  -D_NO_PYTHON=1
-  -UHAVE_LIBINTL_H
 )
 
+if(MSVC)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+endif(MSVC)
+
 ###############################################################################
-## LUA51
+## luatex-lua51-static
 ###############################################################################
 
 set(lua51_sources
@@ -104,7 +97,7 @@ set(lua51_sources
 add_library(luatex-lua51-static STATIC ${lua51_sources})
 
 ###############################################################################
-## LUASOCKET
+## luatex-luasocket-static
 ###############################################################################
 
 set(luasocket_sources
@@ -141,7 +134,7 @@ set(luasocket_sources
 add_library(luatex-luasocket-static STATIC ${luasocket_sources})
 
 ###############################################################################
-## LUAMISC
+## luatex-luamisc-static
 ###############################################################################
 
 set(luamisc_sources
@@ -172,323 +165,13 @@ set(luamisc_sources
 add_library(luatex-luamisc-static STATIC ${luamisc_sources})
 
 ###############################################################################
-## LUAFONTFORGE
+## luatex-luafontforge-static
 ###############################################################################
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/luafontloader/ff-config.h.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/luafontloader/ff-config.h
-)
-
-set(luafontforge_sources
-  luafontloader/fontforge/Unicode/ArabicForms.c
-  luafontloader/fontforge/Unicode/alphabet.c
-  luafontloader/fontforge/Unicode/char.c
-  luafontloader/fontforge/Unicode/cjk.c
-  luafontloader/fontforge/Unicode/combiners.h
-  luafontloader/fontforge/Unicode/gwwiconv.c
-  luafontloader/fontforge/Unicode/memory.c
-  luafontloader/fontforge/Unicode/ucharmap.c
-  luafontloader/fontforge/Unicode/ustring.c
-  luafontloader/fontforge/Unicode/utype.c
-  luafontloader/fontforge/fontforge/PfEd.h
-  luafontloader/fontforge/fontforge/autohint.c
-  luafontloader/fontforge/fontforge/baseviews.h
-  luafontloader/fontforge/fontforge/clipnoui.c
-  luafontloader/fontforge/fontforge/configure-pfaedit.h
-  luafontloader/fontforge/fontforge/cvundoes.c
-  luafontloader/fontforge/fontforge/dumppfa.c
-  luafontloader/fontforge/fontforge/edgelist.h
-  luafontloader/fontforge/fontforge/edgelist2.h
-  luafontloader/fontforge/fontforge/encoding.c
-  luafontloader/fontforge/fontforge/encoding.h
-  luafontloader/fontforge/fontforge/featurefile.c
-  luafontloader/fontforge/fontforge/fontforgevw.h
-  luafontloader/fontforge/fontforge/fontviewbase.c
-  luafontloader/fontforge/fontforge/fvcomposit.c
-  luafontloader/fontforge/fontforge/fvfonts.c
-  luafontloader/fontforge/fontforge/libffstamp.h
-  luafontloader/fontforge/fontforge/libstamp.pre
-  luafontloader/fontforge/fontforge/lookups.c
-  luafontloader/fontforge/fontforge/lookups.h
-  luafontloader/fontforge/fontforge/macbinary.c
-  luafontloader/fontforge/fontforge/macenc.c
-  luafontloader/fontforge/fontforge/mathconstants.c
-  luafontloader/fontforge/fontforge/mm.c
-  luafontloader/fontforge/fontforge/mm.h
-  luafontloader/fontforge/fontforge/namelist.c
-  luafontloader/fontforge/fontforge/noprefs.c
-  luafontloader/fontforge/fontforge/nouiutil.c
-  luafontloader/fontforge/fontforge/parsepfa.c
-  luafontloader/fontforge/fontforge/parsettf.c
-  luafontloader/fontforge/fontforge/parsettfatt.c
-  luafontloader/fontforge/fontforge/parsettfvar.c
-  luafontloader/fontforge/fontforge/pfaedit.h
-  luafontloader/fontforge/fontforge/plugins.h
-  luafontloader/fontforge/fontforge/psfont.h
-  luafontloader/fontforge/fontforge/psread.c
-  luafontloader/fontforge/fontforge/pua.c
-  luafontloader/fontforge/fontforge/python.c
-  luafontloader/fontforge/fontforge/scripting.h
-  luafontloader/fontforge/fontforge/sd.h
-  luafontloader/fontforge/fontforge/sfd1.c
-  luafontloader/fontforge/fontforge/sfd1.h
-  luafontloader/fontforge/fontforge/splinechar.c
-  luafontloader/fontforge/fontforge/splinefill.c
-  luafontloader/fontforge/fontforge/splinefont.c
-  luafontloader/fontforge/fontforge/splinefont.h
-  luafontloader/fontforge/fontforge/splineorder2.c
-  luafontloader/fontforge/fontforge/splineoverlap.c
-  luafontloader/fontforge/fontforge/splinerefigure.c
-  luafontloader/fontforge/fontforge/splinesave.c
-  luafontloader/fontforge/fontforge/splinesaveafm.c
-  luafontloader/fontforge/fontforge/splinestroke.c
-  luafontloader/fontforge/fontforge/splineutil.c
-  luafontloader/fontforge/fontforge/splineutil2.c
-  luafontloader/fontforge/fontforge/start.c
-  luafontloader/fontforge/fontforge/stemdb.c
-  luafontloader/fontforge/fontforge/stemdb.h
-  luafontloader/fontforge/fontforge/tottf.c
-  luafontloader/fontforge/fontforge/tottfaat.c
-  luafontloader/fontforge/fontforge/tottfgpos.c
-  luafontloader/fontforge/fontforge/ttf.h
-  luafontloader/fontforge/fontforge/ttfspecial.c
-  luafontloader/fontforge/fontforge/uiinterface.h
-  luafontloader/fontforge/fontforge/unicoderange.h
-  luafontloader/fontforge/fontforge/views.h
-  luafontloader/fontforge/gutils/fsys.c
-  luafontloader/fontforge/gutils/gwwintl.c
-  luafontloader/fontforge/inc/basics.h
-  luafontloader/fontforge/inc/chardata.h
-  luafontloader/fontforge/inc/charset.h
-  luafontloader/fontforge/inc/dynamic.h
-  luafontloader/fontforge/inc/fileutil.h
-  luafontloader/fontforge/inc/gdraw.h
-  luafontloader/fontforge/inc/gfile.h
-  luafontloader/fontforge/inc/ggadget.h
-  luafontloader/fontforge/inc/gicons.h
-  luafontloader/fontforge/inc/gimage.h
-  luafontloader/fontforge/inc/gio.h
-  luafontloader/fontforge/inc/gkeysym.h
-  luafontloader/fontforge/inc/gprogress.h
-  luafontloader/fontforge/inc/gresource.h
-  luafontloader/fontforge/inc/gwidget.h
-  luafontloader/fontforge/inc/gwwiconv.h
-  luafontloader/fontforge/inc/intl.h
-  luafontloader/fontforge/inc/ustring.h
-  luafontloader/fontforge/inc/utype.h
-  luafontloader/src/ffdummies.c
-  luafontloader/src/luafflib.c
-)
-
-add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
+add_subdirectory(luafontloader)
 
 ###############################################################################
-## LUATEXLIB
+## luatex-static
 ###############################################################################
 
-set(luatexlib_cwebs
-  dvi/dvigen.w
-  font/dofont.w
-  font/luafont.w
-  font/mapfile.w
-  font/pkin.w
-  font/sfnt.w
-  font/subfont.w
-  font/texfont.w
-  font/tfmofm.w
-  font/tounicode.w
-  font/tt_glyf.w
-  font/tt_table.w
-  font/vfovf.w
-  font/vfpacket.w
-  font/writecff.w
-  font/writeenc.w
-  font/writefont.w
-  font/writet1.w
-  font/writet3.w
-  font/writettf.w
-  font/writetype0.w
-  font/writetype2.w
-  image/epdf.w
-  image/writeimg.w
-  image/writejbig2.w
-  image/writejpg.w
-  image/writepng.w
-  lua/luagen.w
-  lua/luainit.w
-  lua/luanode.w
-  lua/luastuff.w
-  lua/luatoken.w
-  lua/texluac.w
-  ocp/ocp.w
-  ocp/runocp.w
-  ocp/readocp.w
-  ocp/ocplist.w
-  lang/hnjalloc.w
-  lang/hyphen.w
-  lang/texlang.w
-  pdf/pagetree.w
-  pdf/pdfaction.w
-  pdf/pdfannot.w
-  pdf/pdfcolorstack.w
-  pdf/pdfdest.w
-  pdf/pdffont.w
-  pdf/pdfgen.w
-  pdf/pdfglyph.w
-  pdf/pdfimage.w
-  pdf/pdflink.w
-  pdf/pdflistout.w
-  pdf/pdfliteral.w
-  pdf/pdfobj.w
-  pdf/pdfoutline.w
-  pdf/pdfpage.w
-  pdf/pdfrule.w
-  pdf/pdfsaverestore.w
-  pdf/pdfsetmatrix.w
-  pdf/pdfshipout.w
-  pdf/pdftables.w
-  pdf/pdfthread.w
-  pdf/pdfxform.w
-)
-
-foreach(cweb ${luatexlib_cwebs})
-  get_filename_component(fn ${cweb} NAME_WE)
-  add_custom_command(
-    OUTPUT
-      ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
-    COMMAND
-      ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${cweb}
-    WORKING_DIRECTORY
-      ${CMAKE_CURRENT_BINARY_DIR}
-    MAIN_DEPENDENCY
-      ${cweb}
-    DEPENDS
-      ${ctangle_exe}
-      ${CMAKE_CURRENT_SOURCE_DIR}/${cweb}
-    VERBATIM
-  )
-  set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
-  )
-endforeach(cweb)
-
-set_source_files_properties(
-  ${luatexlib_cweb_sources}
-  PROPERTIES GENERATED TRUE
-)
-
-set(luatexlib_sources
-  ${luatexlib_cweb_sources}
-)
-
-set (todo_luatexlib_sources
-  dvi/dvigen.h
-  font/luatexfont.h
-  font/mapfile.h
-  font/sfnt.h
-  font/texfont.h
-  font/tt_glyf.h
-  font/tt_table.h
-  font/writecff.h
-  font/writettf.h
-  image/epdf.h
-  image/image.h
-  image/pdftoepdf.cc
-  image/pdftoepdf.h
-  image/writeimg.h
-  image/writejbig2.h
-  image/writejpg.h
-  image/writepng.h
-  lang/hnjalloc.h
-  lang/hyphen.h
-  lang/texlang.h
-  lua/lcallbacklib.c
-  lua/lepdflib.cc
-  lua/lfontlib.c
-  lua/limglib.c
-  lua/liolib.c
-  lua/lkpselib.c
-  lua/llanglib.c
-  lua/llualib.c
-  lua/lnodelib.c
-  lua/loslibext.c
-  lua/lpdflib.c
-  lua/lstatslib.c
-  lua/ltexiolib.c
-  lua/ltexlib.c
-  lua/ltokenlib.c
-  lua/luagen.h
-  lua/luatex-api.h
-  luatex.h
-  ocp/ocp.h
-  ocp/ocplist.h
-  ocp/readocp.h
-  ocp/runocp.h
-  pdf/pagetree.h
-  pdf/pdfaction.h
-  pdf/pdfannot.h
-  pdf/pdfcolorstack.h
-  pdf/pdfdest.h
-  pdf/pdffont.h
-  pdf/pdfgen.h
-  pdf/pdfglyph.h
-  pdf/pdfimage.h
-  pdf/pdflink.h
-  pdf/pdflistout.h
-  pdf/pdfliteral.h
-  pdf/pdfobj.h
-  pdf/pdfoutline.h
-  pdf/pdfpage.h
-  pdf/pdfrule.h
-  pdf/pdfsaverestore.h
-  pdf/pdfsetmatrix.h
-  pdf/pdfshipout.h
-  pdf/pdftables.h
-  pdf/pdfthread.h
-  pdf/pdftypes.h
-  pdf/pdfxform.h
-  tex/align.h
-  tex/arithmetic.h
-  tex/buildpage.h
-  tex/commands.h
-  tex/conditional.h
-  tex/directions.h
-  tex/dumpdata.h
-  tex/equivalents.h
-  tex/errors.h
-  tex/expand.h
-  tex/extensions.h
-  tex/filename.h
-  tex/inputstack.h
-  tex/linebreak.h
-  tex/mainbody.h
-  tex/maincontrol.h
-  tex/mathcodes.h
-  tex/memoryword.h
-  tex/mlist.h
-  tex/nesting.h
-  tex/packaging.h
-  tex/postlinebreak.h
-  tex/primitive.h
-  tex/printing.h
-  tex/scanning.h
-  tex/stringpool.h
-  tex/texdeffont.h
-  tex/texfileio.h
-  tex/texmath.h
-  tex/texnodes.h
-  tex/textcodes.h
-  tex/textoken.h
-  utils/avl.c
-  utils/avl.h
-  utils/avlstuff.h
-  utils/managed-sa.h
-  utils/synctex-common.h
-  utils/synctex-luatex.h
-  utils/synctex.c
-  utils/synctex.h
-  utils/utils.h
-)
-
-add_library(luatex-static STATIC ${luatexlib_sources})
+add_subdirectory(tex)

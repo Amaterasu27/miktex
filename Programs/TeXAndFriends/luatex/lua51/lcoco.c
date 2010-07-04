@@ -78,7 +78,9 @@
 /* Use Windows Fibers. */
 #if defined(COCO_USE_FIBERS)
 
+#if ! defined(MIKTEX)
 #define _WIN32_WINNT 0x0400
+#endif
 #include <windows.h>
 
 #define COCO_MAIN_DECL		CALLBACK

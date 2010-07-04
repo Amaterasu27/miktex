@@ -28,6 +28,12 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <malloc.h>
+#include <float.h>
+#include <direct.h>
+#include <process.h>
+#if 0
+#include <WinSock2.h> /* timeval */
+#endif
 
 // DLL import/export switch
 #if ! defined(D2A2BA842ACE40C6A8A17A9358F2147E)
@@ -40,6 +46,16 @@
 
 // API decoration for exported functions
 #define MIKTEXUNXCEEAPI(type) MIKTEXUNXEXPORT type MIKTEXCEECALL
+
+/* _________________________________________________________________________
+
+   sys/time.h
+   _________________________________________________________________________ */
+
+#define gettimeofday miktex_gettimeofday
+
+MIKTEXUNXCEEAPI(int)
+miktex_gettimeofday(/*[in]*/ struct timeval * ptv, void * pNull);
 
 /* _________________________________________________________________________
 
@@ -76,6 +92,19 @@
 #  define strncasecmp(s1, s2, n) miktex_strncasecmp(s1, s2, n)
 #endif
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+MIKTEXUNXCEEAPI(int)
+miktex_strncasecmp (/*[in]*/ const char * lpsz1,
+		    /*[in]*/ const char * lpsz2,
+		    /*[in]*/ size_t	  n);
+
+#if defined(__cplusplus)
+}
+#endif
+
 /* _________________________________________________________________________
 
    unistd.h
@@ -86,12 +115,26 @@
 #define R_OK 4
 #define X_OK W_OK
 
+#if ! defined(getcwd)
+#  define getcwd _getcwd
+#endif
+
+#if ! defined(getpid)
+#  define getpid _getpid
+#endif
+
+#if ! defined(rmdir)
+#  define rmdir _rmdir
+#endif
+
 /* _________________________________________________________________________
 
    alloca.h
    _________________________________________________________________________ */
 
-#define alloca _malloca
+#if ! defined(alloca)
+#  define alloca _malloca
+#endif
 
 /* _________________________________________________________________________
 
@@ -99,6 +142,22 @@
    _________________________________________________________________________ */
 
 #define S_ISDIR(m) (((m) & _S_IFDIR) != 0)
+#define S_ISREG(m) (((m) & _S_IFREG) != 0)
+
+/* _________________________________________________________________________
+
+   math.h
+   _________________________________________________________________________ */
+
+#define rint(x) ( (double) ((int)((x) + 0.5)) )
+
+#if ! defined(finite)
+#  define finite _finite
+#endif
+
+#if ! defined(isnan)
+#  define isnan _isnan
+#endif
 
 /* _________________________________________________________________________
 

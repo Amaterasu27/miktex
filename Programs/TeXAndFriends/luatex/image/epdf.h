@@ -62,11 +62,13 @@ extern "C" {
 
 #  include <kpathsea/c-auto.h>
 
+#if ! defined(MIKTEX)
     extern char *xstrdup(const char *);
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
 
     typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
+#endif
 
 #  define KPATHSEA_CONFIG_H     /* avoid including other kpathsea header files */
     /* from web2c/config.h */

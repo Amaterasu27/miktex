@@ -964,6 +964,51 @@ miktex_core_malloc (/*[in]*/ size_t		size,
 
 /* _________________________________________________________________________
 
+   MiKTeX::Debug::Calloc
+   _________________________________________________________________________ */
+
+void *
+MIKTEXCEECALL
+MiKTeX::Debug::Calloc (/*[in]*/ size_t		num,
+		       /*[in]*/ size_t		size,
+		       /*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ int		line)
+{
+#if defined(MIKTEX_DEBUG)
+  Utils::CheckHeap ();
+#endif
+#if defined(_MSC_VER) && defined(_DEBUG)
+  void * ptr = _calloc_dbg(num, size, _NORMAL_BLOCK, lpszFileName, line);
+#else
+  void * ptr = calloc(num, size);
+#endif
+  if (ptr == 0)
+    {
+      OUT_OF_MEMORY ("calloc");
+    }
+  return (ptr);
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_calloc
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(void *)
+miktex_core_malloc (/*[in]*/ size_t		num,
+		    /*[in]*/ size_t		size,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line)
+{
+  C_FUNC_BEGIN ();
+
+  return (MiKTeX::Debug::Calloc(num, size, lpszFileName, line));
+
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
    MiKTeX::Debug::Realloc
    _________________________________________________________________________ */
 

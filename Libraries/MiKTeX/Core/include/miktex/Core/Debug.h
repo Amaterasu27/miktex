@@ -70,6 +70,12 @@ Realloc (/*[in]*/ void *	ptr,
 	 /*[in]*/ const char *	lpszFileName,
 	 /*[in]*/ int		line);
 
+MIKTEXCORECEEAPI(void *)
+Calloc (/*[in]*/ size_t		num,
+	/*[in]*/ size_t		size,
+	/*[in]*/ const char *	lpszFileName,
+	/*[in]*/ int		line);
+
 #if defined(_MSC_VER)
 #  pragma push_macro("StrDup")
 #  undef StrDup
@@ -105,6 +111,12 @@ miktex_core_realloc (/*[in]*/ void *		ptr,
 		     /*[in]*/ const char *	lpszFileName,
 		     /*[in]*/ int		line);
 
+MIKTEXCORECEEAPI(void *)
+miktex_core_calloc (/*[in]*/ size_t		num,
+		    /*[in]*/ size_t		size,
+		    /*[in]*/ const char *	lpszFileName,
+		    /*[in]*/ int		line);
+
 MIKTEXCORECEEAPI(char *)
 miktex_core_strdup (/*[in]*/ const char *	s,
 		    /*[in]*/ const char *	lpszFileName,
@@ -135,6 +147,14 @@ MIKTEX_END_EXTERN_C_BLOCK;
 
 /* _________________________________________________________________________
 
+   MIKTEX_CALLOC
+   _________________________________________________________________________ */
+
+#define MIKTEX_CALLOC(num, size)				\
+  MiKTeX::Debug::Calloc(num, size, __FILE__, __LINE__)
+
+/* _________________________________________________________________________
+
    MIKTEX_STRDUP
    _________________________________________________________________________ */
 
@@ -147,8 +167,7 @@ MIKTEX_END_EXTERN_C_BLOCK;
    _________________________________________________________________________ */
 
 #define MIKTEX_FREE(ptr)				\
-  ( MiKTeX::Debug::Free((ptr), __FILE__, __LINE__),	\
-    static_cast<void>(((ptr) = 0)) )
+  MiKTeX::Debug::Free((ptr), __FILE__, __LINE__)
 
 /* _________________________________________________________________________
 

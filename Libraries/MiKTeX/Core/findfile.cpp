@@ -476,7 +476,7 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
   PathNameArray vec = ConstructSearchVector(fileType);
 
   // get the file type information
-  const FileTypeInfo * pFileTypeInfo = GetFileTypeInfo(fileType);
+  const FileTypeInfo * pFileTypeInfo = GetInternalFileTypeInfo(fileType);
   MIKTEX_ASSERT (pFileTypeInfo != 0);
 
   // check to see whether we have a registered file name extension
