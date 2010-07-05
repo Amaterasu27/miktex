@@ -175,3 +175,49 @@ add_subdirectory(luafontloader)
 ###############################################################################
 
 add_subdirectory(tex)
+
+###############################################################################
+## luatex-program
+###############################################################################
+
+set(luatex_program_sources
+  luatex.c
+  luatex.h
+  luatex_svnversion.h
+  luatex-version.h
+)
+
+if(NATIVE_WINDOWS)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/luatex.rc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/luatex.rc
+    )
+  set(${luatex_program_sources}_sources
+    ${${luatex_program_sources}_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/luatex.rc)
+endif(NATIVE_WINDOWS)
+
+add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
+
+target_link_libraries(${luatex_program_dll_name}
+  ${app_dll_name}
+  ${core_dll_name}
+  ${fofi_lib_name}
+  ${goo_lib_name}
+  ${kpsemu_dll_name}
+  ${md5_dll_name}
+  ${mp_lib_name}
+  ${mp_lib_name}
+  ${obsdcompat_dll_name}
+  ${png_dll_name}
+  ${xpdf_lib_name}
+  ${zlib_dll_name}
+  ${zzip_dll_name}
+  luatex-lua51-static
+  luatex-luafontforge-static
+  luatex-luamisc-static
+  luatex-luasocket-static
+  luatex-static
+)
+
+rebase(${luatex_program_dll_name})
