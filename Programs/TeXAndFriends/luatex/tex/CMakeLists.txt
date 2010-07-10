@@ -18,6 +18,7 @@
 ## USA.
 
 include_directories(
+  ${CMAKE_BINARY_DIR}/${rel_mp_dir}
   ${CMAKE_BINARY_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
   ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
@@ -153,7 +154,7 @@ set_source_files_properties(
 
 set(luatexlib_sources
   ${luatexlib_cweb_sources}
-
+  ${CMAKE_SOURCE_DIR}/${rel_mp_dir}/lmplib.c
   ../dvi/dvigen.h
   ../font/luatexfont.h
   ../font/mapfile.h

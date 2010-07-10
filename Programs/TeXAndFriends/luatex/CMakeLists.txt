@@ -180,6 +180,16 @@ add_subdirectory(tex)
 ## luatex-program
 ###############################################################################
 
+execute_process(
+  COMMAND ${DATE_EXE} +-%Y%m%d%H
+  OUTPUT_VARIABLE extra_version_info
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+add_definitions(
+  -Dextra_version_info=${extra_version_info}
+)
+
 set(luatex_program_sources
   luatex.c
   luatex.h
@@ -200,6 +210,7 @@ endif(NATIVE_WINDOWS)
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
 target_link_libraries(${luatex_program_dll_name}
+  ${zlib_dll_name}
   ${app_dll_name}
   ${core_dll_name}
   ${fofi_lib_name}
@@ -207,12 +218,16 @@ target_link_libraries(${luatex_program_dll_name}
   ${kpsemu_dll_name}
   ${md5_dll_name}
   ${mp_lib_name}
-  ${mp_lib_name}
   ${obsdcompat_dll_name}
   ${png_dll_name}
   ${xpdf_lib_name}
-  ${zlib_dll_name}
   ${zzip_dll_name}
+
+  ${unxemu_dll_name}
+  ${getopt_dll_name}
+  ${w2cemu_dll_name}
+  
+
   luatex-lua51-static
   luatex-luafontforge-static
   luatex-luamisc-static
@@ -221,3 +236,30 @@ target_link_libraries(${luatex_program_dll_name}
 )
 
 rebase(${luatex_program_dll_name})
+
+install(TARGETS ${luatex_program_dll_name} DESTINATION "${bindir}")
+
+###############################################################################
+## executables
+###############################################################################
+
+set(executables
+  ${miktex_prefix}luatex
+  ${miktex_prefix}texlua
+  ${miktex_prefix}texluac
+  luatex
+  texlua
+  texluac
+)
+
+foreach(x ${executables})
+  add_executable(${x} ${wrapper_cpp})
+  target_link_libraries(${x}
+    ${app_dll_name}
+    ${core_dll_name}
+    ${luatex_program_dll_name}
+  )
+  merge_trustinfo_manifest(${x} asInvoker)
+  install(TARGETS ${x} DESTINATION "${bindir}")
+endforeach(x)
+

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/luatex/">
+    <TPM:Name>LuaTeX bin</TPM:Name>
+    <TPM:Title>LuaTeX binaries</TPM:Title>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package includes the LuaTeX executable.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/miktex/bin/${luatex_programm_dll_name}.dll
+texmf/miktex/bin/${miktex_prefix}luatex.exe
+texmf/miktex/bin/${miktex_prefix}texlua.exe
+texmf/miktex/bin/${miktex_prefix}texluac.exe
+texmf/miktex/bin/luatex.exe
+texmf/miktex/bin/texlua.exe
+texmf/miktex/bin/texluac.exe
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>

@@ -54,8 +54,16 @@
 
 #define gettimeofday miktex_gettimeofday
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 MIKTEXUNXCEEAPI(int)
 miktex_gettimeofday(/*[in]*/ struct timeval * ptv, void * pNull);
+
+#if defined(__cplusplus)
+}
+#endif
 
 /* _________________________________________________________________________
 

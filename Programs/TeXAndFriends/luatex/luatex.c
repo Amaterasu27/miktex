@@ -440,11 +440,15 @@ const_string c_job_name;
 
 const char *ptexbanner;
 
-#if !defined(WIN32) || defined(__MINGW32__)
+#if defined(MIKTEX) || !defined(WIN32) || defined(__MINGW32__)
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
+#if defined(MIKTEX)
+__declspec(dllexport) int __cdecl Main (int ac, string * av)
+#else
 int main(int ac, string * av)
+#endif
 {
 #  ifdef __EMX__
     _wildcard(&ac, &av);

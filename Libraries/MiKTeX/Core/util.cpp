@@ -995,7 +995,7 @@ MiKTeX::Debug::Calloc (/*[in]*/ size_t		num,
    _________________________________________________________________________ */
 
 MIKTEXCEEAPI(void *)
-miktex_core_malloc (/*[in]*/ size_t		num,
+miktex_core_calloc (/*[in]*/ size_t		num,
 		    /*[in]*/ size_t		size,
 		    /*[in]*/ const char *	lpszFileName,
 		    /*[in]*/ int		line)
