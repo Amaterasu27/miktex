@@ -290,6 +290,19 @@ eight_bits cur_char;
 out_char (eight_bits cur_char)
 @z
 
+@x
+    C_printf("\n#line %d \"",a);
+@y
+#if defined(MIKTEX)
+    if (flags['l'] == 0)
+      {
+        C_printf("\n//#line %d \"", a);
+      }
+    else
+#endif
+    C_printf("\n#line %d \"",a);
+@z
+
 Section 58.
 
 @x l.814
