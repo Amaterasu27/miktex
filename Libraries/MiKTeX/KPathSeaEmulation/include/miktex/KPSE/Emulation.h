@@ -225,8 +225,8 @@
 
 #define XTALLOC1(t) XTALLOC(1, t)
 
-#define concat(s1, s2) concatn(s1, s2)
-#define concat3(s1, s2, s3) concatn(s1, s2, s3)
+#define concat(s1, s2) concatn(s1, s2, 0)
+#define concat3(s1, s2, s3) concatn(s1, s2, s3, 0)
 
 #define find_suffix(name) miktex_find_suffix(name)
 

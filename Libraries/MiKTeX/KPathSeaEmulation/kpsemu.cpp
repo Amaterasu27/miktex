@@ -118,7 +118,7 @@ magstep (/*[in]*/ int	n,
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(char *)
-miktex_kpathsea_find_glyph (/*[in]*/ kpathsea *		      pKpseInstance,
+miktex_kpathsea_find_glyph (/*[in]*/ kpathsea		      pKpseInstance,
 			    /*[in]*/ const char *	      lpszFontName,
 			    /*[in]*/ unsigned		      dpi,
 			    /*[in]*/ kpse_file_format_type    format,
@@ -531,7 +531,7 @@ miktex_concatn (/*[in]*/ const char * lpsz1, ...)
   CharBuffer<char> buf;
   for (const char * lpsz = lpsz1;
        lpsz != 0;
-       va_arg(marker, const char *))
+       lpsz = va_arg(marker, const char *))
   {
     buf.Append (lpsz);
   }
