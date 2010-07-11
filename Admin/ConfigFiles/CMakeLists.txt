@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,8 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/cont-uk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cslatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/dvilualatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/dviluatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvipdfmx.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvips.ini
@@ -43,6 +45,8 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/jadetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/lambda.ini
   ${CMAKE_CURRENT_BINARY_DIR}/latex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/lualatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/luatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mllatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mltex.ini

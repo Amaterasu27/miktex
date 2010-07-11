@@ -34,6 +34,20 @@ compiler=pdftex
 description=CSPlain
 input=csplain.ini
 
+[dvilualatex]
+
+attributes=exclude
+compiler=luatex
+description=DVI LuaLaTeX
+input=dvilualatex.ini
+
+[dviluatex]
+
+attributes=exclude
+compiler=luatex
+description=DVI LuaTeX
+input=dviluatex.ini
+
 [etex]
 
 arguments=-tcx=cp227.tcx
@@ -62,6 +76,20 @@ arguments=-tcx=cp227.tcx
 compiler=pdftex
 description=LaTeX2e
 input=latex.ini
+
+[lualatex]
+
+attributes=exclude
+compiler=luatex
+description=LuaLaTeX
+input=lualatex.ini
+
+[luatex]
+
+attributes=exclude
+compiler=luatex
+description=LuaTeX
+input=luatex.ini
 
 [metafun]
 

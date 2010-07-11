@@ -1,6 +1,6 @@
 /* makefmt.cpp: make TeX format files
 
-   Copyright (C) 1998-2009 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -45,6 +45,7 @@ class EngineEnum
 {
 public:
   enum EnumType {
+    LuaTeX,
     TeX,
     pdfTeX,
     XeTeX,
@@ -98,7 +99,11 @@ private:
   void
   SetEngine (/*[in]*/ const char * lpszEngine)
   {
-    if (StringCompare(lpszEngine, "tex", true) == 0)
+    if (StringCompare(lpszEngine, "luatex", true) == 0)
+      {
+	engine = Engine::LuaTeX;
+      }
+    else if (StringCompare(lpszEngine, "tex", true) == 0)
       {
 	engine = Engine::TeX;
       }
@@ -132,16 +137,18 @@ private:
   GetEngineName ()
   {
     switch (engine.Get())
-      {
-      case Engine::TeX:
-	return ("tex");
-      case Engine::pdfTeX:
-	return ("pdftex");
-      case Engine::XeTeX:
-	return ("xetex");
-      case Engine::Omega:
-	return ("omega");
-      }
+    {
+    case Engine::LuaTeX:
+      return ("luatex");
+    case Engine::TeX:
+      return ("tex");
+    case Engine::pdfTeX:
+      return ("pdftex");
+    case Engine::XeTeX:
+      return ("xetex");
+    case Engine::Omega:
+      return ("omega");
+    }
     throw (1);
   }
 
@@ -150,16 +157,18 @@ private:
   GetEngineExeName ()
   {
     switch (engine.Get())
-      {
-      case Engine::TeX:
-	return (MIKTEX_TEX_EXE);
-      case Engine::pdfTeX:
-	return (MIKTEX_PDFTEX_EXE);
-      case Engine::XeTeX:
-	return (MIKTEX_XETEX_EXE);
-      case Engine::Omega:
-	return (MIKTEX_OMEGA_EXE);
-      }
+    {
+    case Engine::LuaTeX:
+      return (MIKTEX_LUATEX_EXE);
+    case Engine::TeX:
+      return (MIKTEX_TEX_EXE);
+    case Engine::pdfTeX:
+      return (MIKTEX_PDFTEX_EXE);
+    case Engine::XeTeX:
+      return (MIKTEX_XETEX_EXE);
+    case Engine::Omega:
+      return (MIKTEX_OMEGA_EXE);
+    }
     throw (1);
   }
 
@@ -173,7 +182,7 @@ private:
   IsPdf ()
     const
   {
-    return (engine == Engine::pdfTeX);
+    return (engine == Engine::LuaTeX || engine == Engine::pdfTeX);
   }
 
 private:
@@ -181,7 +190,7 @@ private:
   IsExtended ()
     const
   {
-    return (engine == Engine::pdfTeX || engine == Engine::XeTeX);
+    return (engine == Engine::LuaTeX || engine == Engine::pdfTeX || engine == Engine::XeTeX);
   }
 
 private:
@@ -550,7 +559,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
     {
       arguments.AppendArgument (string("&") + preloadedFormat);
     }
-  if (IsExtended() && preloadedFormat.empty())
+  if (engine != Engine::LuaTeX && IsExtended() && preloadedFormat.empty())
     {
       arguments.AppendOption ("--enable-etex");
     }
