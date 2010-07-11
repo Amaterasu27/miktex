@@ -12,7 +12,6 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/dvips.exe
-texmf/miktex/config/dvips.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

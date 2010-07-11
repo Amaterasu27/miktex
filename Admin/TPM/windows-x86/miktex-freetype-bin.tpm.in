@@ -16,8 +16,6 @@ texmf/miktex/bin/${freetype_dll_name}.dll
 texmf/miktex/bin/ttf2pfb.exe
 texmf/miktex/bin/ttf2pk.exe
 texmf/miktex/bin/ttf2tfm.exe
-texmf/miktex/config/ttf2pk.ini
-texmf/miktex/config/ttf2tfm.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

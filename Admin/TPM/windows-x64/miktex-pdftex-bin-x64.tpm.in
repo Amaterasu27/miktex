@@ -14,7 +14,6 @@
 texmf/miktex/bin/x64/${miktex_prefix}pdftex.exe
 texmf/miktex/bin/x64/${pdftex_dll_name}.dll
 texmf/miktex/bin/x64/pdftex.exe
-texmf/miktex/config/pdftex.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

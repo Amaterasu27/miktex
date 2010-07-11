@@ -18,9 +18,6 @@ texmf/miktex/bin/dvipdft.exe
 texmf/miktex/bin/ebb.exe
 texmf/miktex/bin/extractbb.exe
 texmf/miktex/bin/xbb.exe
-texmf/miktex/config/dvipdfm-common.ini
-texmf/miktex/config/dvipdfm.ini
-texmf/miktex/config/dvipdfmx.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

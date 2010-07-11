@@ -8,7 +8,13 @@
     <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
-      This package includes the LuaTeX executable.
+    LuaTeX is a Unicode-aware re-implementation of (pdf)TeX, which can
+    use modern (Open Type) fonts, and whose operation is supported by
+    the ability to call up a built-in Lua interpreter.
+
+    While the present release is believed to represent the final
+    functionality of LuaTeX, this cannot be guaranteed, and users
+    should assume that it is unstable.
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/${luatex_programm_dll_name}.dll

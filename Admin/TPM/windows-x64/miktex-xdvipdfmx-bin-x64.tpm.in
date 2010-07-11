@@ -12,7 +12,6 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/x64/xdvipdfmx.exe
-texmf/miktex/config/xdvipdfmx.ini
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
