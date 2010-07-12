@@ -946,22 +946,33 @@ CfgImpl::Expand (/*[in]*/ const char *	lpszKeyName,
 	      lpsz += 2;
 	      expansion += '$';
 	    }
-	  else if (lpsz[1] == '(')
+	  else if (lpsz[1] == '(' || lpsz[1] == '{' || isalpha(lpsz[1]) || lpsz[1] == '_')
 	    {
+	      char endChar = (lpsz[1] == '(' ? ')' : (lpsz[1] == '{' ? '}' : 0));
 	      macroName = "";
-	      for (lpsz += 2; *lpsz != 0 && *lpsz != ')'; ++ lpsz)
+	      if (endChar == 0)
+	      {
+		for (lpsz += 1; *lpsz != 0 && (isalpha(*lpsz) || *lpsz == '_'); ++ lpsz)
 		{
 		  macroName += *lpsz;
 		}
-	      if (*lpsz != ')')
+		-- lpsz;
+	      }
+	      else
+	      {
+		for (lpsz += 2; *lpsz != 0 && *lpsz != endChar; ++ lpsz)
 		{
-		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing `)'"));
+		  macroName += *lpsz;
 		}
-	      if (macroName.empty())
+		if (*lpsz != endChar)
 		{
-		  FATAL_CFG_ERROR ("CfgImpl::Expand",
-				   T_("missing macro name"));
+		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing name delimiter"));
 		}
+		if (macroName.empty())
+		{
+		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing macro name"));
+		}
+	      }
 	      string expandedMacro;
 	      ExpandMacro (lpszKeyName,
 			   macroName.c_str(),
