@@ -519,7 +519,12 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define kpathsea_maketex_option(kpse, fmtname, value) \
   miktex_kpathsea_maketex_option(kpse, fmtname, value)
 
+#define kpathsea_selfdir(kpse, argv0) \
+  miktex_kpathsea_selfdir(kpse, argv0)
+
 #if defined(KPSE_COMPAT_API)
+
+#define kpse_selfdir(argv0) kpathsea_selfdir(kpse_def, argv0)
 
 #define kpse_set_program_enabled(fmt, value, level)
 
@@ -766,6 +771,10 @@ miktex_kpathsea_path_search (/*in*/ kpathsea			kpse,
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_readable_file (/*in*/ kpathsea		kpse,
 			       /*[in]*/ const char *	lpszName);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_selfdir (/*in*/ kpathsea	kpse,
+			 /*[in]*/ const char *	lpszArgv0);
 
 MIKTEXKPSCEEAPI(void)
 miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,

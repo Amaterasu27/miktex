@@ -30,6 +30,7 @@
 #include <miktex/Core/Definitions>
 #include <miktex/Core/Debug>
 #include <miktex/Core/IntegerTypes>
+#include <miktex/Core/Version>
 #include <miktex/KPSE/Emulation>
 
 // DLL import/export switch
@@ -58,7 +59,7 @@
    c-auto.h
    _________________________________________________________________________ */
 
-#define WEB2CVERSION " MIKTEXW2C"
+#define WEB2CVERSION " (" MIKTEX_BANNER_STR ")"
 
 /* _________________________________________________________________________
 

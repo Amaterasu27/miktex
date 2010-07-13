@@ -137,7 +137,7 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXW2CDATA(const char *)
-miktex_web2c_version_string = " (" MIKTEX_BANNER_STR ")";
+miktex_web2c_version_string = WEB2CVERSION;
 
 /* _________________________________________________________________________
 

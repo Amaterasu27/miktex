@@ -1191,3 +1191,15 @@ miktex_kpathsea_maketex_option (/*in*/ kpathsea		kpse,
 {
   // <todo/>
 }
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_selfdir
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_selfdir (/*in*/ kpathsea	kpse,
+			 /*[in]*/ const char *	lpszArgv0)
+{
+  return (xstrdup(SessionWrapper(true)->GetMyLocation().Get()));
+}
