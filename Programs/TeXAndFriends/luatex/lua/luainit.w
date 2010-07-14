@@ -27,6 +27,10 @@
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
 
+#if defined(MIKTEX)
+#  include <miktex/Core/Paths.h> // MIKTEX_PREFIX
+#endif
+
 static const char _svn_version[] =
     "$Id: luainit.w 3621 2010-04-15 16:08:22Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luainit.w $";
 
@@ -114,7 +118,7 @@ const_string LUATEX_IHELP[] = {
 @c
 static char *ex_selfdir(char *argv0)
 {
-#if defined(WIN32)
+#if defined(WIN32) && ! defined(MIKTEX)
     char path[PATH_MAX], *fp;
 
     /* SearchPath() always gives back an absolute directory */
@@ -756,6 +760,9 @@ void lua_initialize(int ac, char **av)
     /* be 'luac' */
     if (argc > 1 &&
         (STREQ(program_invocation_name, "texluac") ||
+#if defined(MIKTEX)
+		 STREQ(program_invocation_name, MIKTEX_PREFIX "texluac") ||
+#endif
          STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac"))) {
         exit(luac_main(ac, av));
     }
