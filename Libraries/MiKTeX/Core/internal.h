@@ -2114,14 +2114,28 @@ private:
   string applicationNames;
 
 private:
-  string theNameOfTheGame;
-
-private:
   const string &
   get_ApplicationNames ()
     const
   {
     return (applicationNames);
+  }
+
+private:
+  string theNameOfTheGame;
+
+public:
+  string GetEngine ()
+  {
+    if (theNameOfTheGame.empty())
+    {
+      const char * lpszEngine = GetEnvironmentString("engine");
+      return (lpszEngine == 0 ? "" : lpszEngine);
+    }
+    else
+    {
+      return (theNameOfTheGame);
+    }
   }
 
   // registered root directories

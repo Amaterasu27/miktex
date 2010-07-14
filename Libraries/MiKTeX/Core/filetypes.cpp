@@ -554,7 +554,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 
     case FileType::FMT:
       {
-	Tokenizer engine (theNameOfTheGame.c_str(), ",;:");
+	Tokenizer engine (GetEngine().c_str(), ",;:");
 	if (engine.GetCurrent() != 0)
 	  {
 	    PathName engineDir (MIKTEX_PATH_FMT_DIR);
