@@ -17,13 +17,14 @@
     should assume that it is unstable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/${luatex_programm_dll_name}.dll
-texmf/miktex/bin/${miktex_prefix}luatex.exe
-texmf/miktex/bin/${miktex_prefix}texlua.exe
-texmf/miktex/bin/${miktex_prefix}texluac.exe
-texmf/miktex/bin/luatex.exe
-texmf/miktex/bin/texlua.exe
-texmf/miktex/bin/texluac.exe
+texmf/${rel_miktex_bin_dir}/${luatex_programm_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${miktex_prefix}luatex.exe
+texmf/${rel_miktex_bin_dir}/${miktex_prefix}texlua.exe
+texmf/${rel_miktex_bin_dir}/${miktex_prefix}texluac.exe
+texmf/${rel_miktex_bin_dir}/luatex.exe
+texmf/${rel_miktex_bin_dir}/texlua.exe
+texmf/${rel_miktex_bin_dir}/texluac.exe
+texmf/${rel_miktex_internal_bin_dir}/runtexlua.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

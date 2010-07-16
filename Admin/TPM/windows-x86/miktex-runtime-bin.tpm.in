@@ -36,8 +36,8 @@ texmf/${rel_miktex_bin_dir}/${uriparser_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${w2cemu_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${zlib_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${zzip_dll_name}.dll
-texmf/${rel_miktex_bin_dir}/runbat.exe
-texmf/${rel_miktex_bin_dir}/runperl.exe
+texmf/${rel_miktex_internal_bin_dir}/runbat.exe
+texmf/${rel_miktex_internal_bin_dir}/runperl.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

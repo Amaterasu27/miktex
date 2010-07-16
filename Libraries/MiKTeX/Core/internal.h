@@ -1678,18 +1678,6 @@ private:
 
 private:
   bool
-  FindPerlScript (/*[in]*/ const char *	lpszName,
-		  /*[out]*/ PathName &	path);
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  bool
-  FindBatchFile (/*[in]*/ const char *	lpszName,
-		 /*[in]*/ PathName &		path);
-#endif
-
-private:
-  bool
   GetWorkingDirectory (/*[in]*/ unsigned	n,
 		       /*[out]*/ PathName &	path);
 

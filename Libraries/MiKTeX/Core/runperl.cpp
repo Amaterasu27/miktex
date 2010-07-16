@@ -1,6 +1,6 @@
 /* runperl.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -47,20 +47,6 @@ SessionImpl::FindPerl (/*[out]*/ PathName & perl)
 
 /* _________________________________________________________________________
 
-   SessionImpl::FindPerlScript
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::FindPerlScript (/*[in]*/ const char *	lpszName,
-			     /*[out]*/ PathName &	path)
-{
-  return (FindFile(PathName(0, lpszName, ".pl").Get(),
-		   FileType::PERLSCRIPT,
-		   path));
-}
-
-/* _________________________________________________________________________
-
    SessionImpl::RunPerl
    _________________________________________________________________________ */
 
@@ -86,13 +72,26 @@ SessionImpl::RunPerl (/*[in]*/ int		argc,
 		   szName, BufferSizes::MaxPath,
 		   0, 0);
 
+  // get relative script path
+  PathName scriptsIni = GetSpecialPath(SpecialPath::InstallRoot);
+  scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
+  SmartPointer<Cfg> pConfig (Cfg::Create());
+  string relScriptPath;
+  if (! pConfig->TryGetValue("perl", szName, relScriptPath))
+  {
+    FATAL_MIKTEX_ERROR ("",
+      MIKTEXTEXT("The Perl script is not registered."),
+      szName);
+  }
+  pConfig->Release ();
+
   // find Perl script
   PathName scriptPath;
-  if (! FindPerlScript(szName, scriptPath))
+  if (! FindFile(relScriptPath.c_str(), MIKTEX_PATH_TEXMF_PLACEHOLDER, scriptPath))
     {
       FATAL_MIKTEX_ERROR ("SessionImpl::RunPerl",
 			  T_("The Perl script could not be found."),
-			  szName);
+			  relScriptPath.c_str());
     }
   
   // build command-line

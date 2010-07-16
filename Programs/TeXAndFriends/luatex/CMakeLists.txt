@@ -263,3 +263,19 @@ foreach(x ${executables})
   install(TARGETS ${x} DESTINATION "${bindir}")
 endforeach(x)
 
+###############################################################################
+## runtexlua
+###############################################################################
+
+add_executable(runtexlua runtexlua.cpp)
+
+target_link_libraries(runtexlua
+  ${app_dll_name}
+  ${core_dll_name}
+  ${luatex_program_dll_name}
+)
+
+merge_trustinfo_manifest(runtexlua asInvoker)
+
+install(TARGETS runtexlua DESTINATION "${miktex_internal_bindir}")
+

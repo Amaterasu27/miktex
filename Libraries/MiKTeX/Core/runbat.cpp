@@ -1,6 +1,6 @@
 /* runbat.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -27,26 +27,12 @@ using namespace MiKTeX::Core;
 
 /* _________________________________________________________________________
 
-   SessionImpl::FindBatchFile
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-bool
-SessionImpl::FindBatchFile (/*[in]*/ const char *	lpszName,
-			    /*[out]*/ PathName &	path)
-{
-  return (FindFile(lpszName, FileType::WindowsCommandScriptFile, path));
-}
-#endif
-
-/* _________________________________________________________________________
-
    SessionImpl::RunBatch
    _________________________________________________________________________ */
 
 #if defined(MIKTEX_WINDOWS)
 int
-SessionImpl::RunBatch (/*[in]*/ int			argc,
+SessionImpl::RunBatch (/*[in]*/ int		argc,
 		       /*[in]*/ const char **	argv)
 {
   MIKTEX_ASSERT (argc > 0);
@@ -58,14 +44,27 @@ SessionImpl::RunBatch (/*[in]*/ int			argc,
 		   szName, BufferSizes::MaxPath,
 		   0, 0);
 
+  // get relative script path
+  PathName scriptsIni = GetSpecialPath(SpecialPath::InstallRoot);
+  scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
+  SmartPointer<Cfg> pConfig (Cfg::Create());
+  string relScriptPath;
+  if (! pConfig->TryGetValue("bat", szName, relScriptPath))
+  {
+    FATAL_MIKTEX_ERROR ("",
+      MIKTEXTEXT("The Windows command script is not registered."),
+      szName);
+  }
+  pConfig->Release ();
+
   // find batch file
   PathName scriptPath;
-  if (! FindBatchFile(szName, scriptPath))
+  if (! FindFile(relScriptPath.c_str(), MIKTEX_PATH_TEXMF_PLACEHOLDER, scriptPath))
     {
       FATAL_MIKTEX_ERROR
 	("",
 	 T_("The Windows command script file could not be found."),
-	 szName);
+	 relScriptPath.c_str());
     }
   
   // we cannot quote the command => remove all blanks from the script path
@@ -97,14 +96,27 @@ int
 SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
 		       /*[in]*/ const char *	lpszArguments)
 {
+  // get relative script path
+  PathName scriptsIni = GetSpecialPath(SpecialPath::InstallRoot);
+  scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
+  SmartPointer<Cfg> pConfig (Cfg::Create());
+  string relScriptPath;
+  if (! pConfig->TryGetValue("bat", lpszName, relScriptPath))
+  {
+    FATAL_MIKTEX_ERROR ("",
+      MIKTEXTEXT("The Windows command script is not registered."),
+      lpszName);
+  }
+  pConfig->Release ();
+
   // find batch file
   PathName scriptPath;
-  if (! FindBatchFile(lpszName, scriptPath))
+  if (! FindFile(relScriptPath.c_str(), MIKTEX_PATH_TEXMF_PLACEHOLDER, scriptPath))
     {
       FATAL_MIKTEX_ERROR
 	("SessionImpl::RunBatch",
 	 T_("The Windows command script file could not be found."),
-	 lpszName);
+	 relScriptPath.c_str());
     }
   
   // we cannot quote the command => remove all blanks from the script path

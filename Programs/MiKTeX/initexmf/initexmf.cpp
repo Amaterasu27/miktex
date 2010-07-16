@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -2398,75 +2398,40 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 	}
     }
 
-  Verbose (T_("Making Perl links..."));
+  Verbose (T_("Making script links..."));
 
-  PathName runperl;
+  PathName scriptsIni = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
 
-  if (pSession->FindFile("runperl", FileType::EXE, runperl))
+  SmartPointer<Cfg> pConfig (Cfg::Create());
+
+  pConfig->Read (scriptsIni);
+
+  char szScriptEngine[BufferSizes::MaxCfgName];
+  for (const char * lpszScriptEngine = pConfig->FirstKey(szScriptEngine, BufferSizes::MaxCfgName);
+    lpszScriptEngine != 0;
+    lpszScriptEngine = pConfig->NextKey(szScriptEngine, BufferSizes::MaxCfgName))
+  {
+    PathName wrapper = pSession->GetSpecialPath(SpecialPath::InternalBinDirectory);
+    wrapper.AppendAltDirectoryDelimiter ();
+    wrapper.Append ("run", false);
+    wrapper.Append (lpszScriptEngine, false);
+    wrapper.Append (MIKTEX_EXE_FILE_SUFFIX, false);
+    if (! File::Exists(wrapper))
     {
-      PackageInfo pi;
-      auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
-      while (pIter->GetNext(pi))
-	{
-	  for (vector<string>::const_iterator it
-		 = pi.runFiles.begin();
-	       it != pi.runFiles.end();
-	       ++ it)
-	    {
-	      char szFileName[BufferSizes::MaxPath];
-	      char szExt[BufferSizes::MaxPath];
-	      PathName::Split (it->c_str(),
-			       0, 0,
-			       szFileName, BufferSizes::MaxPath,
-			       szExt, BufferSizes::MaxPath);
-	      if (PathName::Compare(szExt, ".pl") != 0)
-		{
-		  continue;
-		}
-	      PathName pathExe
-		(pathBinDir, szFileName, MIKTEX_EXE_FILE_SUFFIX);
-	      Verbose ("  %s", pathExe.Get());
-	      MakeLink (runperl, pathExe, overwrite);
-	    }
-	}
-      pIter->Dispose ();
+      continue;
     }
+    char szScript[BufferSizes::MaxCfgName];
+    for (const char * lpszScript = pConfig->FirstValue(lpszScriptEngine, szScript, BufferSizes::MaxCfgName);
+      lpszScript != 0;
+      lpszScript = pConfig->NextValue(szScript, BufferSizes::MaxCfgName))
+    {
+      PathName pathExe (pathBinDir, szScript, MIKTEX_EXE_FILE_SUFFIX);
+      MakeLink (wrapper, pathExe, overwrite);
+    }
+  }
 
 #if defined(MIKTEX_WINDOWS)
-  Verbose(T_("Making batch file links...\n"));
-
-  PathName runbat;
-
-  if (pSession->FindFile("runbat", FileType::EXE, runbat))
-    {
-      PackageInfo pi;
-      auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
-      while (pIter->GetNext(pi))
-	{
-	  for (vector<string>::const_iterator it
-		 = pi.runFiles.begin();
-	       it != pi.runFiles.end();
-	       ++ it)
-	    {
-	      char szFileName[BufferSizes::MaxPath];
-	      char szExt[BufferSizes::MaxPath];
-	      PathName::Split (it->c_str(),
-			       0, 0,
-			       szFileName, BufferSizes::MaxPath,
-			       szExt, BufferSizes::MaxPath);
-	      if (PathName::Compare(szExt, ".bat") != 0
-		  && PathName::Compare(szExt, ".cmd") != 0)
-		{
-		  continue;
-		}
-	      PathName pathExe (pathBinDir, szFileName, ".exe");
-	      Verbose ("  %s", pathExe.Get());
-	      MakeLink (runbat, pathExe, overwrite);
-	    }
-	}
-      pIter->Dispose ();
-    }
-
   static const char * const copystarters[] = {
     MIKTEX_PATH_INTERNAL_TASKBAR_ICON_EXE,
     MIKTEX_PATH_INTERNAL_UPDATE_EXE,
