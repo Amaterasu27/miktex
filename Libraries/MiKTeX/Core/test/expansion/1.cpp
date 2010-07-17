@@ -21,6 +21,39 @@
 
 #include <miktex/Core/Test>
 
+class VarExpand : public MiKTeX::Core::IExpandCallback
+{
+public:
+  VarExpand (Session * pSession)
+    : pSession (pSession)
+  {
+  }
+private:
+  Session * pSession;
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetValue (/*[in]*/ const char *   lpszValueName,
+	    /*[out]*/ std::string & varValue)
+  {
+    if (strcmp(lpszValueName, "jkl") == 0)
+    {
+      varValue = "mno";
+      return (true);
+    }
+    else if (strcmp(lpszValueName, "rst") == 0)
+    {
+      varValue = pSession->Expand("x${abc}x");
+      return (true);
+    }
+    else
+    {
+      return (false);
+    }
+  }
+};
+
 BEGIN_TEST_SCRIPT();
 
 BEGIN_TEST_FUNCTION(1);
@@ -32,6 +65,9 @@ BEGIN_TEST_FUNCTION(1);
   TEST (pSession->Expand("${abc}") == "def");
   putenv ("xyz=x$(abc)x");
   TEST (pSession->Expand("$xyz") == "xdefx");
+  TEST (pSession->Expand("$xyz", &VarExpand(pSession.GetSession())) == "xdefx");
+  TEST (pSession->Expand("$jkl", &VarExpand(pSession.GetSession())) == "mno");
+  TEST (pSession->Expand("$rst", &VarExpand(pSession.GetSession())) == "xdefx");
 }
 END_TEST_FUNCTION();
 
