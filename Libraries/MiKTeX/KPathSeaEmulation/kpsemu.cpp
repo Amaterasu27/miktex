@@ -918,7 +918,7 @@ miktex_remove_suffix (const char * lpszPath)
 
 /* _________________________________________________________________________
 
-   
+   VarValue
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(bool)
@@ -927,11 +927,8 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
 {
   PathName path;
   bool result = false;
-  if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, varValue))
-  {
-    result = true;
-  }
-  else if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
+  // read-only values
+  if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
   {
     path = SessionWrapper(true)->GetMyLocation();
     varValue = path.Get();
@@ -957,6 +954,22 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
     varValue = path.Get();
     result = true;
   }
+  // configuration files and environment
+  else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, varValue))
+  {
+    result = true;
+  }
+#if defined (MIKTEX_WINDOWS)
+  else if (StringCompare(lpszVarName, "OSFONTDIR") == 0)
+  {
+    if (GetWindowsDirectoryA(path.GetBuffer(), static_cast<UINT>(path.GetCapacity())) > 0)
+    {
+      path += "Fonts";
+      varValue = path.Get();
+      result = true;
+    }
+  }
+#endif
   return (result);
 }
 /* _________________________________________________________________________
@@ -988,7 +1001,6 @@ public:
   {
     return (VarValue(lpszValueName, varValue));
   }
-
 };
 
 MIKTEXKPSCEEAPI(char *)
