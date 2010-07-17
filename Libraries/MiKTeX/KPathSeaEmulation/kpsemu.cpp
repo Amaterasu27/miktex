@@ -918,6 +918,49 @@ miktex_remove_suffix (const char * lpszPath)
 
 /* _________________________________________________________________________
 
+   
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(bool)
+VarValue (/*[in]*/ const char *	  lpszVarName,
+	  /*[in]*/ std::string &  varValue)
+{
+  PathName path;
+  bool result = false;
+  if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, varValue))
+  {
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
+  {
+    path = SessionWrapper(true)->GetMyLocation();
+    varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTODIR") == 0)
+  {
+    result = false;
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTOPARENT") == 0)
+  {
+    result = false;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFSYSVAR") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);
+    varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFVAR") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserDataRoot);
+    varValue = path.Get();
+    result = true;
+  }
+  return (result);
+}
+/* _________________________________________________________________________
+
    miktex_kpathsea_var_value
    _________________________________________________________________________ */
 
@@ -925,27 +968,8 @@ MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_var_value (/*in*/ kpathsea	  kpse,
 			   /*[in]*/ const char *  lpszVarName)
 {
-  PathName path;
-  std::string val;
-  const char * lpszRet = 0;
-  if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
-  {
-    path = SessionWrapper(true)->GetMyLocation();
-    lpszRet = path.Get();
-  }
-  else if (StringCompare(lpszVarName, "SELFAUTODIR") == 0)
-  {
-    return (0);
-  }
-  else if (StringCompare(lpszVarName, "SELFAUTOPARENT") == 0)
-  {
-    return (0);
-  }
-  else if (SessionWrapper(true)->TryGetConfigValue(0, lpszVarName, val))
-  {
-    lpszRet = val.c_str();
-  }
-  return (lpszRet == 0 ? 0 : xstrdup(lpszRet));
+  std::string varValue;
+  return (VarValue(lpszVarName, varValue) ? xstrdup(varValue.c_str()) : 0);
 }
 
 /* _________________________________________________________________________
@@ -953,12 +977,26 @@ miktex_kpathsea_var_value (/*in*/ kpathsea	  kpse,
    miktex_kpathsea_var_expand
    _________________________________________________________________________ */
 
+class VarExpand : public IExpandCallback
+{
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetValue (/*[in]*/ const char *   lpszValueName,
+	    /*[out]*/ std::string & varValue)
+  {
+    return (VarValue(lpszValueName, varValue));
+  }
+
+};
+
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_var_expand (/*in*/ kpathsea	  kpse,
 			    /*[in]*/ const char * lpszSource)
 {
-  // <todo/>
-  return (xstrdup(lpszSource));
+  Session * pSession = Session::Get();  
+  return (xstrdup(pSession->Expand(lpszSource , &VarExpand()).c_str()));
 }
 
 /* _________________________________________________________________________
