@@ -3674,6 +3674,19 @@ public:
     = 0;
 };
 
+class
+MIKTEXNOVTABLE
+IExpandCallback
+{
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetValue (/*[in]*/ const char *   lpszValueName,
+	    /*[out]*/ std::string & value)
+    = 0;
+};
+
 /* _________________________________________________________________________
 
    FileType
@@ -6414,6 +6427,19 @@ public:
   FileTypeInfo
   MIKTEXTHISCALL
   GetFileTypeInfo (/*[in]*/ FileType fileType)
+    = 0;
+
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char * lpszToBeExpanded)
+    = 0;
+
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char * lpszToBeExpanded,
+          /*[in]*/ IExpandCallback * pCallback)
     = 0;
 
 public:

@@ -852,7 +852,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 {
   bool haveValue = false;
 
-  // iterate over application names, e.g.: miktex;latex;tex
+  // iterate over application tags, e.g.: miktex;latex;tex
   for (CSVList app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
        ++ app)
@@ -978,12 +978,74 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
     }
   }
   
-  // return the default value
+  // try special values
+  if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_BINDIR, true) == 0)
+  {
+    value =
+      SessionImpl::GetSession()
+      ->GetSpecialPath(SpecialPath::BinDirectory).ToString();
+    haveValue = true;
+  }
+#if defined(MIKTEX_WINDOWS)
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_WINDIR, true) == 0)
+  {
+    PathName path;
+    if (GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetCapacity()) == 0))
+    {
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+    }
+    value = path.ToString();
+    haveValue = true;
+  }
+#endif
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_LOCALFONTDIRS, true) == 0)
+  {
+    value = SessionImpl::GetSession()->GetLocalFontDirectories();
+    haveValue = true;
+  }
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_PSFONTDIRS, true) == 0)
+  {
+    string psFontDirs;
+    if (SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
+    {
+      value = psFontDirs;
+      haveValue = true;
+    }
+  }
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_TTFDIRS, true) == 0)
+  {
+    string ttfDirs;
+    if (SessionImpl::GetSession()->GetTTFDirs(ttfDirs))
+    {
+      value = ttfDirs;
+      haveValue = true;
+    }
+  }
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_OTFDIRS, true) == 0)
+  {
+    string otfDirs;
+    if (SessionImpl::GetSession()->GetOTFDirs(otfDirs))
+    {
+      value = otfDirs;
+      haveValue = true;
+    }
+  }
+
+  // if we have found nothing, then we return the default value
   if (! haveValue && lpszDefaultValue != 0)
     {
       value = lpszDefaultValue;
       haveValue = true;
     }
+
+#if 1
+  // expand the value
+  if (haveValue)
+  {
+    string expandedValue = Expand(value.c_str(), 0);
+    value = expandedValue;
+  }
+#endif
   
   if (trace_values->IsEnabled())
     {
@@ -1466,6 +1528,102 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
     }
 }
   
+/* _________________________________________________________________________
+
+   SessionImpl::Expand
+   _________________________________________________________________________ */
+
+std::string
+SessionImpl::Expand (/*[in]*/ const char * lpszToBeExpanded)
+{
+  return (Expand(lpszToBeExpanded, 0));
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::Expand
+   _________________________________________________________________________ */
+
+std::string
+SessionImpl::Expand (/*[in]*/ const char *	lpszToBeExpanded,
+		     /*[in]*/ IExpandCallback * pCallback)
+{
+  const char * lpsz = lpszToBeExpanded;
+  string valueName;
+  string expansion;
+  expansion.reserve (strlen(lpsz));
+  for (; *lpsz != 0; ++ lpsz)
+    {
+      if (lpsz[0] == '$')
+	{
+	  if (lpsz[1] == '$')
+	    {
+	      lpsz += 2;
+	      expansion += '$';
+	    }
+	  else if (lpsz[1] == '(' || lpsz[1] == '{' || isalpha(lpsz[1]) || lpsz[1] == '_')
+	    {
+	      char endChar = (lpsz[1] == '(' ? ')' : (lpsz[1] == '{' ? '}' : 0));
+	      valueName = "";
+	      if (endChar == 0)
+	      {
+		for (lpsz += 1; *lpsz != 0 && (isalpha(*lpsz) || *lpsz == '_'); ++ lpsz)
+		{
+		  valueName += *lpsz;
+		}
+		-- lpsz;
+	      }
+	      else
+	      {
+		for (lpsz += 2; *lpsz != 0 && *lpsz != endChar; ++ lpsz)
+		{
+		  valueName += *lpsz;
+		}
+		if (*lpsz != endChar)
+		{
+		  FATAL_MIKTEX_ERROR ("SessionImpl::Expand", T_("Missing value name delimiter."), 0);
+		}
+		if (valueName.empty())
+		{
+		  FATAL_MIKTEX_ERROR ("SessionImpl::Expand", T_("Missing value name."), 0);
+		}
+	      }
+	      if (valuesBeingExpanded.find(valueName) != valuesBeingExpanded.end())
+	      {
+		FATAL_MIKTEX_ERROR ("SessionImpl::Expand", T_("Self referencing value."), valueName.c_str());
+	      }
+	      set<string>::iterator it = valuesBeingExpanded.insert(valueName).first;
+	      string value;
+	      bool haveValue = false;
+	      if (pCallback != 0)
+	      {
+		haveValue = pCallback->GetValue(valueName.c_str(), value);
+	      }
+	      if (! haveValue)
+	      {
+		haveValue = TryGetConfigValue(0, valueName.c_str(), value);
+	      }
+	      if (haveValue)
+	      {
+		expansion += value;
+	      }
+	      valuesBeingExpanded.erase (it);
+	    }
+	  else
+	    {
+	      FATAL_MIKTEX_ERROR ("SessionImpl::Expand",
+				  T_("Invalid control sequence."),
+				  0);
+	    }
+	}
+      else
+	{
+	  expansion += *lpsz;
+	}
+    }
+  return (expansion);
+}
+
 /* _________________________________________________________________________
 
    miktex_get_config_value

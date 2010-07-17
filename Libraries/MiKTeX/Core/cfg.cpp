@@ -1,6 +1,6 @@
 /* cfg.cpp: configuration files
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -83,16 +83,10 @@ Trim (/*[in,out]*/ string & str)
 struct CfgValue
 {
 public:
-  bool expanded;
-
-public:
   string documentation;
 
 public:
   bool commentedOut;
-
-public:
-  string expandedValue;
 
 public:
   string name;
@@ -105,17 +99,14 @@ private:
 
 public:
   CfgValue ()
-    : expanded (false),
-      commentedOut (false)
+    : commentedOut (false)
   {
     value.reserve (INITIAL_VALUE_SIZE);
   }
 
 public:
   CfgValue (/*[in]*/ const CfgValue & other)
-    : expanded (other.expanded),
-      expandedValue (other.expandedValue),
-      name (other.name),
+    : name (other.name),
       value (other.value),
       documentation (other.documentation),
       commentedOut (other.commentedOut)
@@ -564,18 +555,6 @@ private:
 
 private:
   void
-  Expand (/*[in]*/ const char *	lpszKeyName,
-	  /*[in]*/ const char *	lpszIn,
-	  /*[out]*/ string &	expansion);
-
-private:
-  void
-  ExpandMacro (/*[in]*/ const char *	lpszKeyName,
-	       /*[in]*/ const char *	lpszMacroName,
-	       /*[out]*/ string &	expansion);
-
-private:
-  void
   PutValue (/*[in]*/ const char *	lpszKey,
 	    /*[in]*/ const char *	lpszValueName,
 	    /*[in]*/ const char *	lpszValue,
@@ -847,153 +826,6 @@ Cfg::Create ()
 
 /* _________________________________________________________________________
 
-   CfgImpl::ExpandMacro
-
-   <fixme>This should be a callback function.</fixme>
-   _________________________________________________________________________ */
-
-void
-CfgImpl::ExpandMacro (/*[in]*/ const char *	lpszKeyName,
-		      /*[in]*/ const char *	lpszMacroName,
-		      /*[out]*/ string &	expansion)
-{
-  UNUSED_ALWAYS (lpszKeyName);
-  if (StringCompare(lpszMacroName, CFG_MACRO_NAME_BINDIR, true) == 0)
-    {
-      expansion =
-	SessionImpl::GetSession()
-	->GetSpecialPath(SpecialPath::BinDirectory).ToString();
-    }
-#if defined(MIKTEX_WINDOWS)
-  else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_WINDIR, true) == 0)
-    {
-      PathName path;
-      if (GetWindowsDirectory(path.GetBuffer(),
-			      static_cast<UINT>(path.GetCapacity()) == 0))
-	{
-	  FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
-	}
-      expansion = path.ToString();
-    }
-#endif
-  else if (StringCompare(lpszMacroName,
-			 CFG_MACRO_NAME_LOCALFONTDIRS, true)
-	   == 0)
-    {
-      expansion = SessionImpl::GetSession()->GetLocalFontDirectories();
-    }
-  else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_PSFONTDIRS, true) == 0)
-    {
-      string psFontDirs;
-      if (SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
-	{
-	  expansion = psFontDirs;
-	}
-      else
-	{
-	  expansion = "";
-	}
-    }
-  else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_TTFDIRS, true) == 0)
-    {
-      string ttfDirs;
-      if (SessionImpl::GetSession()->GetTTFDirs(ttfDirs))
-	{
-	  expansion = ttfDirs;
-	}
-      else
-	{
-	  expansion = "";
-	}
-    }
-  else if (StringCompare(lpszMacroName, CFG_MACRO_NAME_OTFDIRS, true) == 0)
-    {
-      string otfDirs;
-      if (SessionImpl::GetSession()->GetOTFDirs(otfDirs))
-	{
-	  expansion = otfDirs;
-	}
-      else
-	{
-	  expansion = "";
-	}
-    }
-  else
-    {
-      FATAL_CFG_ERROR ("CfgImpl::ExpandMacro", T_("unknown macro name"));
-    }
-}
-
-/* _________________________________________________________________________
-
-   CfgImpl::Expand
-   _________________________________________________________________________ */
-
-void
-CfgImpl::Expand (/*[in]*/ const char *	lpszKeyName,
-		 /*[in]*/ const char *	lpszIn,
-		 /*[out]*/ string &	expansion)
-{
-  const char * lpsz = lpszIn;
-  string macroName;
-  expansion.reserve (strlen(lpsz));
-  for (; *lpsz != 0; ++ lpsz)
-    {
-      if (lpsz[0] == '$')
-	{
-	  if (lpsz[1] == '$')
-	    {
-	      lpsz += 2;
-	      expansion += '$';
-	    }
-	  else if (lpsz[1] == '(' || lpsz[1] == '{' || isalpha(lpsz[1]) || lpsz[1] == '_')
-	    {
-	      char endChar = (lpsz[1] == '(' ? ')' : (lpsz[1] == '{' ? '}' : 0));
-	      macroName = "";
-	      if (endChar == 0)
-	      {
-		for (lpsz += 1; *lpsz != 0 && (isalpha(*lpsz) || *lpsz == '_'); ++ lpsz)
-		{
-		  macroName += *lpsz;
-		}
-		-- lpsz;
-	      }
-	      else
-	      {
-		for (lpsz += 2; *lpsz != 0 && *lpsz != endChar; ++ lpsz)
-		{
-		  macroName += *lpsz;
-		}
-		if (*lpsz != endChar)
-		{
-		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing name delimiter"));
-		}
-		if (macroName.empty())
-		{
-		  FATAL_CFG_ERROR ("CfgImpl::Expand", T_("missing macro name"));
-		}
-	      }
-	      string expandedMacro;
-	      ExpandMacro (lpszKeyName,
-			   macroName.c_str(),
-			   expandedMacro);
-	      expansion += expandedMacro;
-	    }
-	  else
-	    {
-	      FATAL_CFG_ERROR ("CfgImpl::Expand",
-			       T_("invalid control sequence"));
-	    }
-	}
-      else
-	{
-	  expansion += *lpsz;
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
    CfgImpl::GetValue
    _________________________________________________________________________ */
 
@@ -1054,28 +886,20 @@ CfgImpl::TryGetValue (/*[in]*/ const char *	lpszKey,
       return (false);
     }
 
-  if (! pcfgvalue->expanded)
-    {
-      Expand (lpszKey,
-	      pcfgvalue->value.c_str(),
-	      pcfgvalue->expandedValue);
-      pcfgvalue->expanded = true;
-    }
-  
   if (bufSize == 0)
     {
       MIKTEX_ASSERT (lpszValue == 0);
-      bufSize = pcfgvalue->expandedValue.length() + 1;
+      bufSize = pcfgvalue->value.length() + 1;
       return (true);
     }
 
   MIKTEX_ASSERT_CHAR_BUFFER (lpszValue, bufSize);
 
-  bufSize = pcfgvalue->expandedValue.length() + 1;
+  bufSize = pcfgvalue->value.length() + 1;
 
   Utils::CopyString (lpszValue,
 		     bufSize,
-		     pcfgvalue->expandedValue.c_str());
+		     pcfgvalue->value.c_str());
 
   return (true);
 }
@@ -1177,8 +1001,6 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
     {
       // modify existing value
       ValueMap::iterator itstrval = pair2.first;
-      itstrval->second.expanded = false;
-      itstrval->second.expandedValue = "";
       if (lpszDocumentation != 0 && itstrval->second.documentation.empty())
 	{
 	  itstrval->second.documentation = lpszDocumentation;

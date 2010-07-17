@@ -1,6 +1,6 @@
 /* 1.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -40,7 +40,7 @@ BEGIN_TEST_FUNCTION(1);
 		   szDir, BufferSizes::MaxPath,
 		   szName, BufferSizes::MaxPath,
 		   szExt, BufferSizes::MaxPath);
-  TEST (PathName::Compare(szDir, "/abc/def") != 0);
+  TEST (PathName::Compare(szDir, "/abc/def") == 0);
   TEST (PathName::Compare(szDir, "/abc/def/") == 0);
   TEST (PathName::Compare(szName, "ghi") == 0);
   TEST (PathName::Compare(szExt, ".jkl") == 0);
@@ -52,9 +52,7 @@ BEGIN_TEST_FUNCTION(2);
 {
 #if defined(MIKTEX_WINDOWS)
   PathNameParser component ("C:/abc/def/ghi.jkl");
-  TEST (PathName::Compare(component.GetCurrent(), "C:") == 0);
-  ++ component;
-  TEST (PathName::Compare(component.GetCurrent(), "abc") == 0);
+  TEST (PathName::Compare(component.GetCurrent(), "C:/abc") == 0);
   ++ component;
   TEST (PathName::Compare(component.GetCurrent(), "def") == 0);
   ++ component;

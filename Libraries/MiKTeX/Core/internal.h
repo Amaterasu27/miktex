@@ -1400,6 +1400,17 @@ public:
   MIKTEXTHISCALL
   GetFileTypeInfo (/*[in]*/ FileType fileType);
 
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char * lpszToBeExpanded);
+
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char * lpszToBeExpanded,
+          /*[in]*/ IExpandCallback * pCallback);
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -2187,6 +2198,9 @@ private:
 
 private:
   vector<DvipsPaperSizeInfo> dvipsPaperSizes;
+
+private:
+  set<string> valuesBeingExpanded;
 
   // the MiKTeXDirect flag:
   // TriState::True if running from a MiKTeXDirect medium
