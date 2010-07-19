@@ -39,13 +39,15 @@ BEGIN_TEST_FUNCTION(1);
 
   TEST (Directory::Exists(localRoot));
 
-  PathName fndb0 = pSession->GetFilenameDatabasePathName(0);
-  TEST (Fndb::Create(fndb0.Get(), localRoot.Get(), 0));
-  TEST (File::Exists(fndb0));
+  unsigned localRootIdx = pSession->DeriveTEXMFRoot(localRoot);
+  PathName fndbLocal = pSession->GetFilenameDatabasePathName(localRootIdx);
+  TEST (Fndb::Create(fndbLocal.Get(), localRoot.Get(), 0));
+  TEST (File::Exists(fndbLocal));
 
-  PathName fndb1 = pSession->GetFilenameDatabasePathName (1);
-  TEST (Fndb::Create(fndb1.Get(), installRoot.Get(), 0));
-  TEST (File::Exists(fndb1));
+  unsigned installRootIdx = pSession->DeriveTEXMFRoot(installRoot);
+  PathName fndbInstall = pSession->GetFilenameDatabasePathName(installRootIdx);
+  TEST (Fndb::Create(fndbInstall.Get(), installRoot.Get(), 0));
+  TEST (File::Exists(fndbInstall));
 }
 END_TEST_FUNCTION();
 
