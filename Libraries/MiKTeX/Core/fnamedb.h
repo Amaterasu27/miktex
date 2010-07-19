@@ -1,6 +1,6 @@
 /* fnamedb.h: file name database				-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -87,6 +87,12 @@ public:
 public:
   bool
   FileExists (/*[in]*/ const PathName &	path);
+
+public:
+#if 1 // experimental
+  Core::DirectoryLister *
+  OpenDirectory (/*[in]*/ const char * lpszPath);
+#endif
 
 private:
   FileNameDatabase ();

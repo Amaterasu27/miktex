@@ -1512,3 +1512,147 @@ FileNameDatabase::FileExists (/*[in]*/ const PathName &	path)
     }
   return (pDir != 0);
 }
+
+#if 1 // experimental
+
+/* _________________________________________________________________________
+
+   FndbDirectoryLister
+   _________________________________________________________________________ */
+
+class FndbDirectoryLister : public DirectoryLister
+{
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Close ();
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetNext (/*[out]*/ DirectoryEntry & direntry);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetNext (/*[out]*/ DirectoryEntry2 & direntry2);
+
+public:
+  FndbDirectoryLister (/*[in]*/ const PathName &	directory);
+
+public:
+  virtual
+  MIKTEXTHISCALL
+  ~FndbDirectoryLister ();
+
+private:
+  PathName directory;
+
+private:
+  string pattern;
+
+private:
+  HANDLE handle;
+
+private:
+  friend class DirectoryLister;
+};
+
+/* _________________________________________________________________________
+
+   FileNameDatabase::OpenDirectory
+   _________________________________________________________________________ */
+
+DirectoryLister *
+FileNameDatabase::OpenDirectory (/*[in]*/ const char *	lpszPath)
+{
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszPath);
+
+  if (lpszPath != 0 && Utils::IsAbsolutePath(lpszPath))
+    {
+      if (PathName::Compare(lpszPath, rootDirectory.Get()) == 0)
+	{
+	  lpszPath = 0;
+	}
+      else
+	{
+	  const char * lpsz =
+	    Utils::GetRelativizedPath(lpszPath, rootDirectory.Get());
+	  if (lpsz == 0)
+	    {
+	      FATAL_MIKTEX_ERROR ("FileNameDatabase::Enumerate",
+				  (T_("Path is not covered by file name")
+				   T_(" database.")),
+				  lpszPath);
+	    }
+	  lpszPath = lpsz;
+	}
+    }
+
+  const FileNameDatabaseDirectory * pDir
+    = (lpszPath == 0 || *lpszPath == 0
+       ? GetTopDirectory()
+       : FindSubDirectory(GetTopDirectory(), lpszPath));
+
+  if (pDir == 0)
+    {
+      FATAL_MIKTEX_ERROR ("FileNameDatabase::Enumerate",
+			  T_("Directory not found in file name database."),
+			  lpszPath);
+    }
+  
+  PathName path (rootDirectory, lpszPath);
+
+#if 0
+  for (const FileNameDatabaseDirectory * pDirIter = pDir;
+       pDirIter != 0;
+       pDirIter = GetDirectoryAt(pDirIter->foExtension))
+    {
+      for (U32 i = 0; i < pDirIter->numSubDirs; ++ i)
+	{
+	  if (! pCallback->OnFndbItem(path.Get(),
+				      GetString(pDirIter->GetSubDirName(i)),
+				      0,
+				      true))
+	    {
+	      return (false);
+	    }
+	}
+      
+    }
+
+  for (const FileNameDatabaseDirectory * pDirIter = pDir;
+       pDirIter != 0;
+       pDirIter = GetDirectoryAt(pDirIter->foExtension))
+    {
+      for (U32 i = 0; i < pDirIter->numFiles; ++ i)
+	{
+	  const char * lpszFileNameInfo = 0;
+	  if (HasFileNameInfo())
+	    {
+	      FileNameDatabaseHeader::FndbOffset fo =
+		pDirIter->GetFileNameInfo(i);
+	      if (fo != 0)
+		{
+		  lpszFileNameInfo = GetString(fo);
+		}
+	    }
+	  if (! pCallback->OnFndbItem(path.Get(),
+				      GetString(pDirIter->GetFileName(i)),
+				      lpszFileNameInfo,
+				      false))
+	    {
+	      return (false);
+	    }
+	}
+    }
+#endif
+
+
+  return (0);
+}
+
+#endif // experimental
