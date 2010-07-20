@@ -33,6 +33,7 @@
    directory part.
    _________________________________________________________________________ */
 
+#if ! USE_HASH_TABLE
 MIKTEXSTATICFUNC(char *)
 ChopPath (/*[in,out]*/ PathName & path)
 {
@@ -55,6 +56,7 @@ ChopPath (/*[in,out]*/ PathName & path)
       return (&path[0]);
     }
 }
+#endif
 
 /* _________________________________________________________________________
      
@@ -456,6 +458,10 @@ FileNameDatabase::Initialize (/*[in]*/ const char *	lpszFndbPath,
     {
       isInvariable = true;
     }
+
+#if USE_HASH_TABLE
+  ReadFileNames ();
+#endif
 }
 
 /* _________________________________________________________________________
@@ -581,6 +587,7 @@ FileNameDatabase::SearchFileName
    FileNameDatabase::SearchInDirectory
    _________________________________________________________________________ */
 
+#if ! USE_HASH_TABLE
 bool
 FileNameDatabase::SearchInDirectory
 (/*[in]*/ const FileNameDatabaseDirectory *		pDir,
@@ -610,7 +617,8 @@ FileNameDatabase::SearchInDirectory
     }
   return (true);
 }
-  
+#endif
+
 /* _________________________________________________________________________
 
    FileNameDatabase::MakePathName
@@ -947,6 +955,7 @@ FileNameDatabase::Flush ()
    Search
    _________________________________________________________________________ */
 
+#if ! USE_HASH_TABLE
 bool
 FileNameDatabase::Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
 			  /*[in]*/ const char *		lpszPath,
@@ -993,12 +1002,14 @@ FileNameDatabase::Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
 
   return (true);
 }
+#endif
 
 /* _________________________________________________________________________
 
    FileNameDatabase::RecursiveSearch
    _________________________________________________________________________ */
 
+#if ! USE_HASH_TABLE
 bool
 FileNameDatabase::RecursiveSearch
 (/*[in]*/ FileNameDatabaseHeader::FndbOffset	foDir,
@@ -1104,6 +1115,51 @@ FileNameDatabase::RecursiveSearch
     }
   return (false);
 }
+#endif
+
+/* _________________________________________________________________________
+
+   Match
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(bool)
+Match (/*[in]*/ const char * lpszPathPattern,
+       /*[in]*/ const char * lpszPath)
+{
+  int lastch = 0;
+  for (; *lpszPathPattern != 0 && *lpszPath != 0; ++ lpszPathPattern, ++ lpszPath)
+  {
+    if (CompareFileNameChars(*lpszPathPattern, *lpszPath) == 0)
+    {
+      lastch = *lpszPath;
+      continue;
+    }
+    MIKTEX_ASSERT (RECURSION_INDICATOR_LENGTH == 2);
+    MIKTEX_ASSERT (IsDirectoryDelimiter(RECURSION_INDICATOR[0]));
+    if (*lpszPathPattern == RECURSION_INDICATOR[1] && IsDirectoryDelimiter(lastch))
+    {
+      MIKTEX_ASSERT (IsDirectoryDelimiter(lastch));
+      lpszPathPattern += 1;
+      if (*lpszPathPattern == 0)
+      {
+	return (true);
+      }
+      for (; *lpszPath != 0; ++ lpszPath)
+      {
+	if (IsDirectoryDelimiter(lastch))
+	{
+	  if (Match(lpszPathPattern, lpszPath))
+	  {
+	    return (true);
+	  }
+	}
+	lastch = *lpszPath;
+      }
+    }
+    return (false);
+  }
+  return (*lpszPathPattern == 0 && *lpszPath == 0);
+}
 
 /* _________________________________________________________________________
 
@@ -1112,14 +1168,93 @@ FileNameDatabase::RecursiveSearch
 
 bool
 FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
-			  /*[in]*/ const char *		lpszDirPath,
+			  /*[in]*/ const char *		lpszPathPattern,
 			  /*[out]*/ PathName &		result,
 			  /*[out]*/ char *		lpszFileNameInfo,
 			  /*[in]*/ size_t		sizeFileNameInfo)
-
 {
+#if USE_HASH_TABLE
+  traceStream->WriteFormattedLine
+    ("core",
+     T_("fndb search: rootDirectory=%s, filename=%s, pathpattern=%s"),
+     Q_(rootDirectory),
+     Q_(lpszFileName),
+     Q_(lpszPathPattern));
+
+  // check to see whether we have this file name
+  pair<FileNameHashTable::const_iterator, FileNameHashTable::const_iterator> range =
+    fileNames.equal_range(lpszFileName);
+
+  if (range.first == range.second)
+  {
+    return (false);
+  }
+
+  // path pattern must be relative to root directory
+  if (Utils::IsAbsolutePath(lpszPathPattern))
+  {
+    const char * lpsz =
+      Utils::GetRelativizedPath(lpszPathPattern, rootDirectory.Get());
+    if (lpsz == 0)
+    {
+      FATAL_MIKTEX_ERROR ("fndb_search",
+	T_("Path pattern is not covered by file name database."),
+	lpszPathPattern);
+    }
+    lpszPathPattern = lpsz;
+  }
+
+  for (FileNameHashTable::const_iterator it = range.first; it != range.second; ++ it)
+  {
+    PathName path;
+    MakePathName (it->second, path);
+    if (Match(lpszPathPattern, path.Get()))
+    {
+      result = rootDirectory;
+      result += path;
+      result += lpszFileName;
+      if (lpszFileNameInfo != 0)
+      {
+	if (! HasFileNameInfo())
+	{
+	  *lpszFileNameInfo = 0;
+	}
+	else
+	{
+	  U32 idx;
+	  const FileNameDatabaseDirectory * pDir = SearchFileName(it->second, lpszFileName, idx);
+	  if (pDir == 0)
+	  {
+	    UNEXPECTED_CONDITION ("FileNameDatabase::Search");
+	  }
+	  CopyString2 (
+	    lpszFileNameInfo,
+	    sizeFileNameInfo,
+	    GetString(pDir->GetFileNameInfo(idx)),
+	    sizeFileNameInfo);
+	}
+      }
+      if (lpszFileNameInfo != 0 && *lpszFileNameInfo != 0)
+      {
+	traceStream->WriteFormattedLine ("core",
+	  T_("found: %s (%s)"),
+	  Q_(result),
+	  lpszFileNameInfo);
+      }
+      else
+      {
+	traceStream->WriteFormattedLine ("core",
+	  T_("found: %s"),
+	  Q_(result));
+      }
+      return (true);
+    }
+  }
+
+  return (false);
+#else
   CharBuffer<char, BufferSizes::MaxPath + 10> searchSpec;
-  searchSpec = lpszDirPath;
+  searchSpec = lpszPathPattern;
   AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetCapacity());
   searchSpec += lpszFileName;
 
@@ -1197,6 +1332,7 @@ FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
     }
 
   return (found);
+#endif
 }
 
 /* _________________________________________________________________________
@@ -1514,6 +1650,43 @@ FileNameDatabase::FileExists (/*[in]*/ const PathName &	path)
 }
 
 #if 1 // experimental
+
+/* _________________________________________________________________________
+
+   FileNameDatabase::ReadFileNames
+   _________________________________________________________________________ */
+
+void
+FileNameDatabase::ReadFileNames ()
+{
+  fileNames.clear ();
+  ReadFileNames (GetTopDirectory());
+}
+
+/* _________________________________________________________________________
+
+   FileNameDatabase::ReadFileNames
+   _________________________________________________________________________ */
+
+void
+FileNameDatabase::ReadFileNames (/*[in]*/ const FileNameDatabaseDirectory * pDir)
+{
+  for (const FileNameDatabaseDirectory * pDirIter = pDir;
+       pDirIter != 0;
+       pDirIter = GetDirectoryAt(pDirIter->foExtension))
+  {
+    for (U32 i = 0; i < pDirIter->numSubDirs; ++ i)
+    {
+      ReadFileNames (GetDirectoryAt(pDirIter->GetSubDir(i)));
+    }
+    for (U32 i = 0; i < pDirIter->numFiles; ++ i)
+    {
+      fileNames.insert (pair<string, const FileNameDatabaseDirectory *>(
+	GetString(pDirIter->GetFileName(i)),
+	pDir));
+    }
+  }
+}
 
 /* _________________________________________________________________________
 

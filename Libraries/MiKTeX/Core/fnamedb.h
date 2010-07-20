@@ -26,6 +26,10 @@
 #if ! defined(MIKTEX__BA15DC03_8D45_4985_9111_D4B075360D81__)
 #define MIKTEX__BA15DC03_8D45_4985_9111_D4B075360D81__
 
+#if 1 // experimental
+#define USE_HASH_TABLE 1
+#endif
+
 #include "fndbmem.h"
 
 BEGIN_INTERNAL_NAMESPACE;
@@ -51,7 +55,7 @@ public:
 public:
   bool
   Search (/*[in]*/ const char *	lpszFileName,
-	  /*[in]*/ const char *	lpszDirPath,
+	  /*[in]*/ const char *	lpszPathPattern,
 	  /*[out]*/ PathName &	result,
 	  /*[out]*/ char *	lpszFileNameInfo,
 	  /*[in]*/ size_t	sizeFileNameInfo);
@@ -88,8 +92,18 @@ public:
   bool
   FileExists (/*[in]*/ const PathName &	path);
 
+#if USE_HASH_TABLE
 public:
+  void
+  ReadFileNames ();
+
+private:
+  void
+  ReadFileNames (/*[in]*/ const FileNameDatabaseDirectory * pDir);
+#endif
+
 #if 1 // experimental
+public:
   Core::DirectoryLister *
   OpenDirectory (/*[in]*/ const char * lpszPath);
 #endif
@@ -254,6 +268,7 @@ private:
 		  /*[out]*/ U32 &				index)
     const;
 
+#if ! USE_HASH_TABLE
 private:
   bool
   SearchInDirectory
@@ -278,8 +293,7 @@ private:
 	  /*[out]*/ PathName &			result,
 	  /*[out]*/ char *			lpszFileNameInfo,
 	  /*[in]*/ size_t			sizeFileNameInfo);
-
-
+#endif
 
   // true, if the FNDB is read-only
 private:			// <fixme/>
@@ -307,6 +321,12 @@ private:
   // file-system path to root directory
 private:
   PathName rootDirectory;
+
+#if USE_HASH_TABLE
+private:
+  typedef hash_multimap<string, const FileNameDatabaseDirectory *, hash_compare_icase> FileNameHashTable;
+  FileNameHashTable fileNames;
+#endif
 
 private:
   auto_ptr<TraceStream> traceStream;
