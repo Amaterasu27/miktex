@@ -61,10 +61,7 @@ BEGIN_TEST_FUNCTION(2);
     }
   TEST (! pSession->FindFile("./test.tex", "%R/tex//", path));
   Touch ("./test.tex");
-#if 0
-  // fixme: this test fails
-  TEST (! pSession->FindFile("./test.tex", "%R/tex//", path));
-#endif
+  TEST (pSession->FindFile("./test.tex", "%R/tex//", path));
   TEST (pSession->FindFile("./test.tex", ".;%R/tex//", path));
   path.MakeAbsolute ();
   PathName path2;
@@ -73,6 +70,7 @@ BEGIN_TEST_FUNCTION(2);
   TEST (path == path2);
   File::Delete ("./test.tex");
   TEST (pSession->FindFile("test.tex", "%R/tex//base", path));
+  TEST (pSession->FindFile("base/test.tex", "%R/tex//", path));
 }
 END_TEST_FUNCTION();
 

@@ -1181,6 +1181,29 @@ FileNameDatabase::Search (/*[in]*/ const char *		lpszFileName,
      Q_(lpszFileName),
      Q_(lpszPathPattern));
 
+  MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszFileName));
+  MIKTEX_ASSERT (! IsExplicitlyRelativePath(lpszFileName));
+
+  char szDir[BufferSizes::MaxPath];
+
+  PathName scratch1;
+
+  PathName::Split (lpszFileName, szDir, BufferSizes::MaxPath, 0, 0, 0, 0);
+
+  if (szDir[0] != 0)
+  {
+    size_t l = strlen(szDir);
+    if (IsDirectoryDelimiter(szDir[l - 1]))
+    {
+      szDir[l - 1] = 0;
+      -- l;
+    }
+    scratch1 = lpszPathPattern;
+    scratch1 += szDir;
+    lpszPathPattern = scratch1.Get();
+    lpszFileName += l + 1;
+  }
+
   // check to see whether we have this file name
   pair<FileNameHashTable::const_iterator, FileNameHashTable::const_iterator> range =
     fileNames.equal_range(lpszFileName);
