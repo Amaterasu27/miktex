@@ -1148,8 +1148,11 @@ MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_brace_expand (/*in*/ kpathsea			kpse,
 			      /*[in]*/ const char *		lpszPath)
 {
-  // <todo/>
-  return (xstrdup(lpszPath));
+  Session * pSession = Session::Get();
+  std::string result = pSession->Expand(lpszPath,
+    ExpandFlags::Values | ExpandFlags::Braces,
+    &VarExpand());
+  return (xstrdup(result.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -1161,8 +1164,11 @@ MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_path_expand (/*in*/ kpathsea			kpse,
 			     /*[in]*/ const char *		lpszPath)
 {
-  // <todo/>
-  return (xstrdup(lpszPath));
+  Session * pSession = Session::Get();
+  std::string result = pSession->Expand(lpszPath,
+    ExpandFlags::Values | ExpandFlags::Braces | ExpandFlags::PathPatterns,
+    &VarExpand());
+  return (xstrdup(result.c_str()));
 }
 
 /* _________________________________________________________________________
