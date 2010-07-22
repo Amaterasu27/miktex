@@ -383,6 +383,9 @@ IsExplicitlyRelativePath (/*[in]*/ const char * lpszPath);
 bool
 IsMpmFile (/*[in]*/ const char * lpszPath);
   
+string
+MakeSearchPath (/*[in]*/ const PathNameArray &	vec);
+
 void
 RemoveDirectoryDelimiter (/*[in,out]*/ char * lpszPath);
   
@@ -1411,6 +1414,13 @@ public:
   Expand (/*[in]*/ const char * lpszToBeExpanded,
           /*[in]*/ IExpandCallback * pCallback);
 
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char *	      lpszToBeExpanded,
+	  /*[in]*/ unsigned	      flags,
+          /*[in]*/ IExpandCallback *  pCallback);
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -1761,11 +1771,11 @@ private:
 
 
 private:
-bool
-SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
-		  /*[in]*/ const char *	lpszSubDir,
-		  /*[in]*/ const char *	lpszSearchSpec,
-		  /*[out]*/ PathName &		result);
+  bool
+  SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
+		    /*[in]*/ const char *	lpszSubDir,
+		    /*[in]*/ const char *	lpszSearchSpec,
+		    /*[out]*/ PathName &		result);
 
 
 private:
@@ -1990,6 +2000,36 @@ private:
   WritePackageHistory ();
 
 private:
+  std::string
+  ExpandValues (/*[in]*/ const char * lpszToBeExpanded,
+		/*[in]*/ IExpandCallback * pCallback);
+
+private:
+  void
+  DirectoryWalk (/*[in]*/ const PathName &	directory,
+		 /*[in]*/ const PathName &	pathPattern,
+		 /*[in,out]*/ PathNameArray &	paths);
+
+private:
+  void
+  ExpandBraces (/*[in]*/ const char * lpszToBeExpanded,
+		/*[in,out]*/ PathNameArray & paths);
+
+private:
+  PathNameArray
+  ExpandBraces (/*[in]*/ const char * lpszToBeExpanded);
+
+private:
+  void
+  ExpandPathPattern (/*[in]*/ const PathName &	    directory,				
+		     /*[in]*/ const PathName &	    pathPattern,
+		     /*[in,out]*/ PathNameArray &   paths);
+
+private:
+  PathNameArray
+  ExpandPathPatterns (/*[in]*/ const char * lpszToBeExpanded);
+
+private:
   void
   RegisterFileType (/*[in]*/ FileType		fileType,
 		    /*[in]*/ const char *	lpszFileType,
@@ -2048,6 +2088,17 @@ private:
   // caching open files
 private:
   map<const FILE *, OpenFileInfo> openFilesMap;
+
+  // caching path patterns
+private:
+#if defined(USE_HASH_MAP)
+  typedef
+  hash_map<string, PathNameArray, hash_compare_icase> SearchPathDictionary;
+#else
+  typedef
+  map<string, PathNameArray> SearchPathDictionary;
+#endif
+  SearchPathDictionary expandedPathPatterns;
 
   // file access history
 private:

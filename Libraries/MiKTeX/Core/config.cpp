@@ -1536,7 +1536,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 std::string
 SessionImpl::Expand (/*[in]*/ const char * lpszToBeExpanded)
 {
-  return (Expand(lpszToBeExpanded, 0));
+  return (Expand(lpszToBeExpanded, ExpandFlags::Values, 0));
 }
 
 /* _________________________________________________________________________
@@ -1547,6 +1547,55 @@ SessionImpl::Expand (/*[in]*/ const char * lpszToBeExpanded)
 std::string
 SessionImpl::Expand (/*[in]*/ const char *	lpszToBeExpanded,
 		     /*[in]*/ IExpandCallback * pCallback)
+{
+  vector<string> result;
+  result.reserve (1);
+  result.push_back (Expand(lpszToBeExpanded, ExpandFlags::Values, pCallback));
+  return (result[0]);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::Expand
+   _________________________________________________________________________ */
+
+std::string
+SessionImpl::Expand (/*[in]*/ const char *		lpszToBeExpanded,
+		     /*[in]*/ unsigned			flags,
+		     /*[in]*/ IExpandCallback *		pCallback)
+{
+  string expansion;
+  if ((flags & ExpandFlags::Braces) != 0)
+  {
+    expansion = MakeSearchPath(ExpandBraces(lpszToBeExpanded));
+    lpszToBeExpanded = expansion.c_str();
+  }
+  if ((flags & ExpandFlags::Values) != 0)
+  {
+    expansion = ExpandValues(lpszToBeExpanded, pCallback);
+    lpszToBeExpanded = expansion.c_str();
+  }
+  if ((flags & ExpandFlags::Braces) != 0)
+  {
+    expansion = MakeSearchPath(ExpandBraces(lpszToBeExpanded));
+    lpszToBeExpanded = expansion.c_str();
+  }
+  if ((flags & ExpandFlags::PathPatterns) != 0)
+  {
+    expansion = MakeSearchPath(ExpandPathPatterns(lpszToBeExpanded));
+    lpszToBeExpanded = expansion.c_str();
+  }
+  return (expansion);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandValues
+   _________________________________________________________________________ */
+
+std::string
+SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
+			   /*[in]*/ IExpandCallback *	pCallback)
 {
   const char * lpsz = lpszToBeExpanded;
   string valueName;

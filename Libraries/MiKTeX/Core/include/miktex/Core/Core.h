@@ -836,6 +836,24 @@ public:
 
 /* _________________________________________________________________________
 
+   ExpandFlags
+   _________________________________________________________________________ */
+
+class ExpandFlagsEnum
+{
+public:
+  enum EnumType {
+    None = 0,
+    Values = 1,
+    Braces = 2,
+    PathPatterns = 4
+  };
+};
+
+typedef EnumWrapper<ExpandFlagsEnum> ExpandFlags;
+
+/* _________________________________________________________________________
+
    ConvertPathNameFlags
    _________________________________________________________________________ */
 
@@ -6441,6 +6459,15 @@ public:
   Expand (/*[in]*/ const char * lpszToBeExpanded,
           /*[in]*/ IExpandCallback * pCallback)
     = 0;
+
+public:
+  virtual
+  std::string
+  Expand (/*[in]*/ const char *			lpszToBeExpanded,
+	  /*[in]*/ unsigned			flags,
+          /*[in]*/ IExpandCallback *		pCallback)
+    = 0;
+
 
 public:
   static

@@ -1,6 +1,6 @@
 /* searchpath.cpp: managing search paths
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -147,7 +147,7 @@ SessionImpl::SplitSearchPath (/*[in]*/ const char *	lpszSearchPath)
    MakeSearchPath
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(string)
+MIKTEXINTERNALFUNC(string)
 MakeSearchPath (/*[in]*/ const PathNameArray &	vec)
 {
   string searchPath;
@@ -257,4 +257,250 @@ SessionImpl::GetExpandedSearchPath (/*[in]*/ FileType	fileType)
 {
   MIKTEX_ASSERT (fileType != FileType::None);
   return (MakeSearchPath(ConstructSearchVector(fileType)));
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::DirectoryWalk
+   _________________________________________________________________________ */
+
+void
+SessionImpl::DirectoryWalk (/*[in]*/ const PathName &	  directory,
+			    /*[in]*/ const PathName &	  pathPattern,
+			    /*[in,out]*/ PathNameArray &  paths)
+{
+  if (pathPattern.Empty())
+  {
+    paths.push_back (directory);
+  }
+  else
+  {
+    ExpandPathPattern (directory, pathPattern, paths);
+  }
+  auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(directory));
+  DirectoryEntry entry;
+  while (pLister->GetNext(entry))
+  {
+    if (! entry.isDirectory)
+    {
+      continue;
+    }
+    PathName subdir (directory);
+    subdir += entry.name;
+    if (! pathPattern.Empty())
+    {
+      ExpandPathPattern (subdir, pathPattern, paths);
+    }
+    DirectoryWalk (subdir, pathPattern, paths);
+  }
+  pLister->Close ();
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandPathPattern
+
+   Collect all directories matching a path pattern relative to a root
+   directory.
+   _________________________________________________________________________ */
+
+void
+SessionImpl::ExpandPathPattern (/*[in]*/ const PathName &     rootDirectory,
+				/*[in]*/ const PathName &     pathPattern,
+				/*[in,out]*/ PathNameArray &  paths)
+{
+  MIKTEX_ASSERT (! pathPattern.Empty());
+  const char * lpszRecursionIndicator = strstr(pathPattern.Get(), RECURSION_INDICATOR);
+  if (lpszRecursionIndicator == 0)
+  {
+    // no recursion; check to see whether the path pattern specifies an
+    // existing sub directory
+    PathName directory (rootDirectory);
+    directory += pathPattern;
+    if (Directory::Exists(directory))
+    {
+      paths.push_back (directory);
+    }
+  }
+  else
+  {
+    // recursion; decompose the path pattern into two parts:
+    // (1) sub directory (2) smaller (possibly empty) path pattern
+    string subDir (pathPattern.Get(), lpszRecursionIndicator - pathPattern.Get());
+    const char * lpszSmallerPathPattern = lpszRecursionIndicator + RECURSION_INDICATOR_LENGTH;
+    PathName directory (rootDirectory);
+    directory += subDir;
+    // check to see whether the sub directory exists
+    if (Directory::Exists(directory))
+    {
+      DirectoryWalk (directory, lpszSmallerPathPattern, paths);
+    }
+  }
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandPathPatterns
+   _________________________________________________________________________ */
+
+PathNameArray
+SessionImpl::ExpandPathPatterns (/*[in]*/ const char * lpszToBeExpanded)
+{
+  PathNameArray pathPatterns = SplitSearchPath(lpszToBeExpanded);
+  PathNameArray paths;
+  for (PathNameArray::const_iterator it = pathPatterns.begin();
+       it != pathPatterns.end();
+       ++ it)
+  {
+    SearchPathDictionary::const_iterator it2 =
+      expandedPathPatterns.find(it->Get());
+    if (it2 == expandedPathPatterns.end())
+    {
+      PathNameArray paths2;
+      ExpandPathPattern ("", *it, paths2);
+      expandedPathPatterns[it->Get()] = paths2;
+      paths.insert (paths.end(), paths2.begin(), paths2.end());
+    }
+    else
+    {
+      paths.insert (paths.end(), it2->second.begin(), it2->second.end());
+    }
+  }
+  return (paths);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandBraces
+   _________________________________________________________________________ */
+
+inline
+void
+Combine (/*[in,out]*/ PathNameArray &	  paths,
+         /*[in]*/ const PathNameArray &	  toBeAppended)
+{
+  if (toBeAppended.empty())
+  {
+    return;
+  }
+  if (paths.empty())
+  {
+    paths = toBeAppended;
+    return;
+  }
+  PathNameArray result;
+  result.reserve (paths.size() * toBeAppended.size());
+  for (PathNameArray::const_iterator it = paths.begin();
+    it != paths.end();
+    ++ it)
+  {
+    for (PathNameArray::const_iterator it2 = toBeAppended.begin();
+      it2 != toBeAppended.end();
+      ++ it2)
+    {
+      PathName path (*it);
+      path.Append (it2->Get(), false);
+      result.push_back (path);
+    }
+  }
+  paths = result;
+}
+
+inline
+void
+Combine (/*[in,out]*/ PathNameArray &	  paths,
+         /*[in]*/ const string &	  path)
+{
+  PathNameArray toBeAppended;
+  toBeAppended.push_back (path);
+  Combine (paths, toBeAppended);
+}
+
+inline
+PathNameArray
+ExpandBracesHelper (/*[in]*/ const char * & lpszToBeExpanded)
+{
+  MIKTEX_ASSERT (*lpszToBeExpanded == '{');
+  ++ lpszToBeExpanded;
+  string str;
+  PathNameArray result;
+  PathNameArray subtotal;
+  for (; *lpszToBeExpanded != 0 && *lpszToBeExpanded != '}'; ++ lpszToBeExpanded)
+  {
+    if (*lpszToBeExpanded == '{')
+    {
+      Combine (subtotal, str);
+      str = "";
+      Combine (subtotal, ExpandBracesHelper(lpszToBeExpanded));
+      if (*lpszToBeExpanded != '}')
+      {
+	// todo
+      }
+    }
+    else if (*lpszToBeExpanded == ',')
+    {
+      Combine (subtotal, str);
+      str = "";
+      result.insert (result.end(), subtotal.begin(), subtotal.end());
+      subtotal.clear ();
+    }
+    else
+    {
+      str += *lpszToBeExpanded;
+    }
+  }
+  Combine (subtotal, str);
+  result.insert (result.end(), subtotal.begin(), subtotal.end());
+  return (result);
+}
+
+// ab{cd,ef}gh{ij,kl}mn =>
+// abcdghijmn
+// abcdghklmn
+// abefghijmn
+// abefghklmn
+
+void
+SessionImpl::ExpandBraces (/*[in]*/ const char * lpszToBeExpanded,
+			   /*[in,out]*/ PathNameArray & paths)
+{
+  string str;
+  PathNameArray result;
+  for (; *lpszToBeExpanded != 0; ++ lpszToBeExpanded)
+  {
+    if (*lpszToBeExpanded == '{')
+    {
+      Combine (result, str);
+      str = "";
+      Combine (result, ExpandBracesHelper(lpszToBeExpanded));
+      if (*lpszToBeExpanded != '}')
+      {
+	// todo
+      }
+    }
+    else
+    {
+      str += *lpszToBeExpanded;
+    }
+  }
+  Combine (result, str);
+  paths.insert (paths.end(), result.begin(), result.end());
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandBraces
+   _________________________________________________________________________ */
+
+PathNameArray
+SessionImpl::ExpandBraces (/*[in]*/ const char * lpszToBeExpanded)
+{
+  PathNameArray result;
+  for (CSVList path (lpszToBeExpanded, PATH_DELIMITER);
+       path.GetCurrent() != 0;
+       ++ path)
+  {
+    ExpandBraces (path.GetCurrent(), result);
+  }
+  return (result);
 }

@@ -17,6 +17,17 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+set(sandbox "${CMAKE_CURRENT_BINARY_DIR}/sandbox")
+set(installroot "${sandbox}/texmf")
+set(dataroot "${sandbox}/localtexmf")
+
+make_directory(${installroot}/tex/latex/base)
+make_directory(${installroot}/tex/test/base)
+make_directory(${dataroot})
+
+file(WRITE ${installroot}/tex/latex/base/test.cls ".")
+file(WRITE ${installroot}/tex/test/base/test.tex ".")
+
 add_subdirectory(pathname)
 add_subdirectory(compression)
 add_subdirectory(thread)

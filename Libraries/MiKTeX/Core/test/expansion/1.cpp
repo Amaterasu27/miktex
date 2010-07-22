@@ -71,9 +71,26 @@ BEGIN_TEST_FUNCTION(1);
 }
 END_TEST_FUNCTION();
 
+BEGIN_TEST_FUNCTION(2);
+{
+  std::string str1 = pSession->Expand("%R/tex//", ExpandFlags::PathPatterns, 0);
+  std::string str2 = pSession->Expand("%R/tex//base", ExpandFlags::PathPatterns, 0);
+  std::string str3 = pSession->Expand("ab{cd,ef}gh{ij,kl}mn", ExpandFlags::Braces, 0);
+  TEST (str3 == "abcdghijmn;abcdghklmn;abefghijmn;abefghklmn");
+  std::string str4 = pSession->Expand("x{a,b{c,d}e}y", ExpandFlags::Braces, 0);
+  TEST (str4 == "xay;xbcey;xbdey");
+  std::string str5 = pSession->Expand("/texmf/tex/{plain,generic,}//", ExpandFlags::Braces, 0);
+  TEST (str5 == "/texmf/tex/plain//;/texmf/tex/generic//;/texmf/tex///", 0);
+  putenv ("abc={d,e}");
+  std::string str6 = pSession->Expand("a{b,c}$abc", ExpandFlags::Braces | ExpandFlags::Values, 0);
+  TEST (str6 == "abd;abe;acd;ace");
+}
+END_TEST_FUNCTION();
+
 BEGIN_TEST_PROGRAM();
 {
   CALL_TEST_FUNCTION (1);
+  CALL_TEST_FUNCTION (2);
 }
 END_TEST_PROGRAM();
 

@@ -29,4 +29,8 @@ target_link_libraries(core_expansion_test1
 
 get_target_property(core_expansion_test1_exe test1 LOCATION)
 
-add_test(core_expansion_test1 ${core_expansion_test1_exe})
+add_test(core_expansion_test1
+  ${core_expansion_test1_exe}
+  --data-root=${dataroot}
+  --install-root=${installroot}
+)
