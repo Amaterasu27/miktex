@@ -757,15 +757,16 @@ private:
   std::auto_ptr<MiKTeX::Core::TraceStream> trace_mpm;
 
 private:
-#if defined(USE_HASH_MAP)
-  typedef stdext::hash_map<std::string,
-			   PackageInfo,
-			   MiKTeX::Core::hash_compare_icase>
+#if defined(HAVE_UNORDERED_MAP)
+  typedef std::tr1::unordered_map<std::string,
+				  PackageInfo,
+				  MiKTeX::Core::hash_icase,
+				  MiKTeX::Core::equal_icase>
   PackageDefinitionTable;
 #else
   typedef std::map<std::string,
 		   PackageInfo,
-		   MiKTeX::Core::hash_compare_icase>
+		   MiKTeX::Core::less_icase>
   PackageDefinitionTable;
 #endif
 
@@ -773,15 +774,16 @@ private:
   PackageDefinitionTable packageTable;
 
 private:
-#if defined(USE_HASH_MAP)
-  typedef stdext::hash_map<std::string,
-			   InstalledFileInfo,
-			   MiKTeX::Core::hash_compare_path>
+#if defined(HAVE_UNORDERED_MAP)
+  typedef std::tr1::unordered_map<std::string,
+				  InstalledFileInfo,
+				  MiKTeX::Core::hash_path,
+				  MiKTeX::Core::equal_path>
   InstalledFileInfoTable;
 #else
   typedef std::map<std::string,
 		   InstalledFileInfo,
-		   MiKTeX::Core::hash_compare_path>
+		   MiKTeX::Core::less_path>
   InstalledFileInfoTable;
 #endif
 

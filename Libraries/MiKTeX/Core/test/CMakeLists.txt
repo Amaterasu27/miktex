@@ -23,8 +23,12 @@ set(dataroot "${sandbox}/localtexmf")
 
 make_directory(${installroot}/tex/latex/base)
 make_directory(${installroot}/tex/test/base)
+make_directory(${installroot}/ab/cd/ef/xxx)
+make_directory(${installroot}/jk/lm/no/xxx)
 make_directory(${dataroot})
 
+file(WRITE ${installroot}/ab/cd/ef/xxx/xyz.txt ".")
+file(WRITE ${installroot}/jk/lm/no/xxx/xyz.txt ".")
 file(WRITE ${installroot}/tex/latex/base/test.cls ".")
 file(WRITE ${installroot}/tex/test/base/test.tex ".")
 

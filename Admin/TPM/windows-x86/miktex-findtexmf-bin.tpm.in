@@ -11,9 +11,8 @@
       This package includes the FindTeXMF executable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/findtexmf.exe
-texmf/miktex/bin/kpsewhich.exe
-texmf/miktex/bin/${findtexmf_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${findtexmf_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/findtexmf.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

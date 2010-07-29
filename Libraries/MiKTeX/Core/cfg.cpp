@@ -135,14 +135,15 @@ operator< (/*[in]*/ const CfgValue & lhs,
    CfgKey
    _________________________________________________________________________ */
 
-#if defined(USE_HASH_MAP)
-typedef hash_map<string,
-		 CfgValue,
-		 hash_compare_icase> ValueMap;
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<string,
+			   CfgValue,
+			   hash_icase,
+			   equal_icase> ValueMap;
 #else
 typedef map<string,
 	    CfgValue,
-	    hash_compare_icase> ValueMap;
+	    less_icase> ValueMap;
 #endif
 
 struct CfgKey
@@ -304,14 +305,15 @@ CfgKey::WriteValues (/*[in]*/ StreamWriter &		writer)
    CfgImpl
    _________________________________________________________________________ */
 
-#if defined(USE_HASH_MAP)
-typedef hash_map<string,
-		 CfgKey,
-		 hash_compare_icase> KeyMap;
+#if defined(HAVE_UNORDERED_MAP)
+typedef unordered_map<string,
+		      CfgKey,
+		      hash_icase,
+		      equal_icase> KeyMap;
 #else
 typedef map<string,
 	    CfgKey,
-	    hash_compare_icase> KeyMap;
+	    less_icase> KeyMap;
 #endif
 
 class CfgImpl : public Cfg

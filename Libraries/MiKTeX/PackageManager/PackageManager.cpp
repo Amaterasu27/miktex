@@ -1562,10 +1562,10 @@ PackageManagerImpl::TraceError (/*[in]*/ const char *	lpszFormat,
 
 namespace {
 
-#if defined(USE_HASH_SET)
-  typedef hash_set<string, hash_compare_path> SubDirectoryTable;
+#if defined(HAVE_UNORDERED_SET)
+  typedef tr1::unordered_set<string, hash_path, equal_path> SubDirectoryTable;
 #else
-  typedef set<string, hash_compare_path> SubDirectoryTable;
+  typedef set<string, less_path> SubDirectoryTable;
 #endif
   
   struct DirectoryInfo
@@ -1576,13 +1576,13 @@ namespace {
   };
 
   
-#if defined(USE_HASH_MAP)
+#if defined(HAVE_UNORDERED_MAP)
   typedef
-  hash_map<string, DirectoryInfo, hash_compare_path>
+  tr1::unordered_map<string, DirectoryInfo, hash_path, equal_path>
   DirectoryInfoTable;
 #else
   typedef
-  map<string, DirectoryInfo, hash_compare_path>
+  map<string, DirectoryInfo, less_path>
   DirectoryInfoTable;
 #endif  
 

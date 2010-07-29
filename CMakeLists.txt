@@ -420,6 +420,11 @@ check_function_exists(vfork HAVE_VFORK)
 check_include_file_cxx(afxwin.h HAVE_AFXWIN_H "-D_AFXDLL")
 check_include_file_cxx(atlbase.h HAVE_ATLBASE_H)
 
+check_include_file_cxx(hash_map HAVE_HASH_MAP)
+check_include_file_cxx(hash_set HAVE_HASH_SET)
+check_include_file_cxx(unordered_map HAVE_UNORDERED_MAP)
+check_include_file_cxx(unordered_set HAVE_UNORDERED_SET)
+
 check_include_files(alloca.h HAVE_ALLOCA_H)
 check_include_files(dirent.h HAVE_DIRENT_H)
 check_include_files(errno.h HAVE_ERRNO_H)
@@ -1051,6 +1056,10 @@ add_subdirectory(${rel_config_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_findtexmf_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_kpsewhich_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)

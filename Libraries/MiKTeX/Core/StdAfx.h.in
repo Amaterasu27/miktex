@@ -125,44 +125,13 @@ using namespace ATL;
 
 #include <iostream>
 
-#if defined(_MSC_VER)
-#  include <hash_map>
-using stdext::hash_map;
-#  define USE_HASH_MAP
-#  include <hash_set>
-using stdext::hash_set;
-#  define USE_HASH_SET
+#if defined(HAVE_UNORDERED_MAP)
+#  include <unordered_map>
 #endif
 
-// <todo>
-#if 0
-#if HAVE_STD_EXT_HASH_SET
-#  include <ext/hash_set>
-using std::hash_set;
-#  define USE_HASH_SET
-#elif HAVE_GNU_EXT_HASH_SET
-#  include <ext/hash_set>
-using __gnu_cxx::hash_set;
-#  define USE_HASH_SET
-#elif HAVE_GLOBAL_HASH_SET
-#  include <hash_set>
-#  define USE_HASH_SET
+#if defined(HAVE_UNORDERED_SET)
+#  include <unordered_set>
 #endif
-
-#if HAVE_STD_EXT_HASH_MAP
-#  include <ext/hash_map>
-using std::hash_map;
-#  define USE_HASH_MAP
-#elif HAVE_GNU_EXT_HASH_MAP
-#  include <ext/hash_map>
-using __gnu_cxx::hash_map;
-#  define USE_HASH_MAP
-#elif HAVE_GLOBAL_HASH_MAP
-#  include <hash_map>
-#  define USE_HASH_MAP
-#endif
-#endif
-// </todo>
 
 #include <algorithm>
 #include <bitset>

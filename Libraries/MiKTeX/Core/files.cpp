@@ -1,6 +1,6 @@
 /* files.cpp: file system operations
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -218,15 +218,16 @@ SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
 	  if (pFndb != 0)
 	    {
 	      AutoFndbRelease autoRelease (pFndb);
-	      PathName path;
+	      PathNameArray paths;
+	      vector<string> packageNames;
 	      char szPackageName[BufferSizes::MaxPackageName];
 	      if (pFndb->Search(pathRelPath.Get(),
 				MPM_ROOT_PATH,
-				path,
-				szPackageName,
-				BufferSizes::MaxPackageName))
+				true,
+				paths,
+				packageNames))
 		{
-		  fir.packageName = szPackageName;
+		  fir.packageName = packageNames[0];
 		}
 	    }
 	}

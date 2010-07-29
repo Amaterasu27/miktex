@@ -320,7 +320,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
       
     case FileType::CNF:
       RegisterFileType
-	(FileType::CLUA,
+	(FileType::CNF,
 	 "cnf",
 	 0,
 	 ListBuilder(

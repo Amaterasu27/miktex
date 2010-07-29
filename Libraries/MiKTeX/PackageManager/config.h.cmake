@@ -18,3 +18,9 @@
    USA. */
 
 #cmakedefine HAVE_ATLBASE_H
+
+#cmakedefine HAVE_HASH_MAP
+#cmakedefine HAVE_HASH_SET
+#cmakedefine HAVE_UNORDERED_MAP
+#cmakedefine HAVE_UNORDERED_SET
+

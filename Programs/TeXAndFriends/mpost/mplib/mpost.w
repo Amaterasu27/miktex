@@ -61,6 +61,9 @@ static int nokpse = 0;
 #else
 #define GETCWD getcwd
 #endif
+#if defined(MIKTEX) && defined(recorder_enabled)
+#  undef recorder_enabled
+#endif
 static boolean recorder_enabled = false;
 static string recorder_name = NULL;
 static FILE *recorder_file = NULL;

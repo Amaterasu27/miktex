@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,3 +21,5 @@
 
 #cmakedefine HAVE_INTTYPES_H 1
 #cmakedefine HAVE_STDINT_H 1
+#cmakedefine HAVE_UNORDERED_MAP 1
+#cmakedefine HAVE_UNORDERED_SET 1

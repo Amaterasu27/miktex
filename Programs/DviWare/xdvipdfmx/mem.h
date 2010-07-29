@@ -60,7 +60,7 @@ extern void *mem_remove (void *ptr);
 
 /* wrappers for functions from kpathsea */
 #if defined(MIKTEX)
-#define kpse_find_file(x,y,z)     (char *) MEM_ADD(miktex_kpse_find_file(x,y,z))
+#define kpse_find_file(x,y,z)     (char *) MEM_ADD(miktex_kpathsea_find_file(kpse_def,x,y,z))
 #else
 #define kpse_path_search(x,y,z)   (char *) MEM_ADD(kpse_path_search(x,y,z))
 #define kpse_find_file(x,y,z)     (char *) MEM_ADD(kpse_find_file(x,y,z))

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,40 +17,41 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
+#add_definitions(
+#)
 
-set(${findtexmf_dll_name}_sources
-  findtexmf-version.h
-  findtexmf.cpp
+set (kpsewhich_sources
+  kpsewhich.c
+  ${wrapper_cpp}
+  kpsewhich-version.h
 )
 
 if(NATIVE_WINDOWS)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/findtexmf.rc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/findtexmf.rc
-  )
-  set(${findtexmf_dll_name}_sources ${${findtexmf_dll_name}_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/findtexmf.rc)
+  set(kpsewhich_sources ${kpsewhich_sources} kpsewhich.rc)
 endif(NATIVE_WINDOWS)
 
-add_library(${findtexmf_dll_name} SHARED ${${findtexmf_dll_name}_sources})
+add_executable(${miktex_prefix}kpsewhich ${kpsewhich_sources})
 
-target_link_libraries(${findtexmf_dll_name}
+merge_trustinfo_manifest(${miktex_prefix}kpsewhich asInvoker)
+
+target_link_libraries(${miktex_prefix}kpsewhich
   ${app_dll_name}
   ${core_dll_name}
-  ${mpm_dll_name}
-  ${popt_dll_name}
+  ${getopt_dll_name}
+  ${kpsemu_dll_name}
 )
 
-rebase(${findtexmf_dll_name})
-  
-set(exes findtexmf)
+install(TARGETS ${miktex_prefix}kpsewhich DESTINATION ${bindir})
 
-foreach(t ${exes})
-  create_dll_wrapper(${t} ${findtexmf_dll_name} findtexmf)
-endforeach(t)
+add_executable(kpsewhich ${kpsewhich_sources})
 
-install(TARGETS ${findtexmf_dll_name} ${exes} DESTINATION ${bindir})
+merge_trustinfo_manifest(kpsewhich asInvoker)
+
+target_link_libraries(kpsewhich
+  ${app_dll_name}
+  ${core_dll_name}
+  ${getopt_dll_name}
+  ${kpsemu_dll_name}
+)
+
+install(TARGETS kpsewhich DESTINATION ${bindir})

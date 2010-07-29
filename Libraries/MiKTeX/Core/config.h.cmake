@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -38,6 +38,11 @@
 #cmakedefine HAVE_STATVFS 1
 #cmakedefine HAVE_UNAME_SYSCALL 1
 #cmakedefine HAVE_VFORK 1
+
+#cmakedefine HAVE_HASH_MAP
+#cmakedefine HAVE_HASH_SET
+#cmakedefine HAVE_UNORDERED_MAP
+#cmakedefine HAVE_UNORDERED_SET
 
 #cmakedefine HAVE_STRUCT_DIRENT_D_TYPE 1
 

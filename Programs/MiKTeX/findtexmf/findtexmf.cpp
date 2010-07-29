@@ -1,6 +1,6 @@
 /* findtexmf.cpp: finding TeXMF related files
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of FindTeXMF.
 
@@ -85,9 +85,6 @@ public:
        /*[in]*/ const char **	argv);
   
 private:
-  bool kpseMode;
-  
-private:
   bool mustExist;
   
 private:
@@ -98,9 +95,6 @@ private:
 
 private:
   static const struct poptOption aoption[];
-
-private:
-  static const struct poptOption aoptionKpse[];
 };
 
 /* _________________________________________________________________________
@@ -209,145 +203,11 @@ Print version information and exit."),
 
 /* _________________________________________________________________________
 
-   FindTeXMF::aoptionKpse
-   _________________________________________________________________________ */
-
-enum KpseOption
-{
-  OPT_AAAA = 1024,
-};
-
-const struct poptOption FindTeXMF::aoptionKpse[] =
-{
-  {
-    T_("alias"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_ALIAS,
-    T_("\
-Pretend to be APP, i.e., use APP's configuration settings\
- when searching for files."),
-    T_("APP"),
-  },
-
-  {
-    T_("expand-path"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_EXPAND_PATH,
-    T_("\
-Deprecated."),
-    T_("PATH"),
-  },
-
-  {
-    T_("expand-var"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_EXPAND_VAR,
-    T_("\
-Deprecated."),
-    T_("VAR"),
-  },
-
-  {
-    T_("engine"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_THE_NAME_OF_THE_GAME,
-    T_("\
-Deprecated (Use -the-name-of-the-game instead)."), T_("ENGINE"),
-  },
-
-  {
-    T_("file-type"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_FILE_TYPE,
-    T_("\
-The type of the file to search for."),
-    T_("FILETYPE"),
-  },
-
-  {
-    T_("format"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_FILE_TYPE,
-    T_("\
-Deprecated (use -file-type instead)."),
-    T_("FORMAT"),
-  },
-
-  {
-    T_("list-file-types"), 0,
-    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_LIST_FILE_TYPES,
-    T_("\
-List known file types."),
-    0,
-  },
-
-  {
-    T_("must-exist"), 0,
-    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_MUST_EXIST,
-    T_("\
-Run the package installer, if necessary."),
-    0,
-  },
-
-  {
-    T_("progname"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_ALIAS,
-    T_("\
-Deprecated (use -alias instead)."),
-    T_("PROGNAME"),
-  },
-
-  {
-    T_("show-path"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_SHOW_PATH,
-    T_("\
-Show the search path for a certain file type."),
-    T_("FILETYPE"),
-  },
-
-  {
-    T_("start"), 0,
-    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_START,
-    T_("\
-Start the program which is associated with the file name extension."),
-    0,
-  },
-
-  {
-    T_("the-name-of-the-game"), 0,
-    POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_THE_NAME_OF_THE_GAME,
-    T_("\
-Set the name of the program. Relevant when searching for format files."),
-    T_("NAME"),
-  },
-
-  {
-    T_("version"), 0,
-    POPT_ARG_NONE | POPT_ARGFLAG_ONEDASH, 0,
-    OPT_VERSION,
-    T_("\
-Print version information and exit."),
-    0
-  },
-
-  POPT_AUTOHELP
-  POPT_TABLEEND
-};
-
-/* _________________________________________________________________________
-
    FindTeXMF::FindTeXMF
    _________________________________________________________________________ */
 
 FindTeXMF::FindTeXMF ()
-  : kpseMode (false),
-    mustExist (false),
+  : mustExist (false),
     start (false),
     fileType (FileType::None)
 {
@@ -364,15 +224,10 @@ FindTeXMF::ShowVersion ()
   cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
 					  MIKTEX_COMPONENT_VERSION_STR)
 	<< "\n"
-	<< T_("Copyright (C) 2001-2008 Christian Schenk\n\
+	<< T_("Copyright (C) 2001-2010 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	<< endl;
-  if (kpseMode)
-    {
-      cout << T_("warning: running in deprecated kpathsea emulation mode")
-	    << endl;
-    }
 }
 
 /* _________________________________________________________________________
@@ -383,7 +238,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 MIKTEXNORETURN
 void
 FindTeXMF::FatalError (/*[in]*/ const char *	lpszFormat,
-			 /*[in]*/			...)
+			 /*[in]*/		...)
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
@@ -423,14 +278,7 @@ FindTeXMF::ListFileTypes ()
 void
 FindTeXMF::PrintPath (/*[in]*/ const PathName & path)
 {
-  if (kpseMode)
-    {
-      puts (PathName(path).ToUnix().Get());
-    }
-  else
-    {
-      puts (path.Get());
-    }
+  puts (path.Get());
 }
 
 /* _________________________________________________________________________
@@ -463,14 +311,7 @@ FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 	{
 	  putchar (';');
 	}
-      if (kpseMode)
-	{
-	  printf ("%s", PathName(lpszPath).ToUnix().Get());
-	}
-      else
-	{
-	  printf ("%s", lpszPath);
-	}
+      printf ("%s", lpszPath);
     }
   putchar ('\n');
 }
@@ -484,11 +325,9 @@ void
 FindTeXMF::Run (/*[in]*/ int			argc,
 		/*[in]*/ const char **		argv)
 {
-  kpseMode = (PathName::Compare(Utils::GetExeName(), T_("kpsewhich")) == 0);
-
   bool needArg = true;
   
-  Cpopt popt (argc, argv, (kpseMode ? aoptionKpse : aoption));
+  Cpopt popt (argc, argv, aoption);
 
   int option;
   while ((option = popt.GetNextOpt()) >= 0)
@@ -504,49 +343,13 @@ FindTeXMF::Run (/*[in]*/ int			argc,
 	  
 	case OPT_EXPAND_VAR:
 
-	  if (StringCompare(lpszOptArg, T_("$TEXFORMATS")) == 0)
-	    {
-	      PrintPath
-		(PathName(pSession->GetSpecialPath(SpecialPath::DataRoot),
-			  MIKTEX_PATH_FMT_DIR,
-			  0));
-	    }
-	  else if (StringCompare(lpszOptArg, T_("$TEXMFMAIN")) == 0)
-	    {
-	      PrintPath (pSession->GetSpecialPath(SpecialPath::InstallRoot));
-	    }
-	  else if (StringCompare(lpszOptArg, T_("$VARTEXMF")) == 0)
-	    {
-	      PrintPath (pSession->GetSpecialPath(SpecialPath::UserDataRoot));
-	    }
-	  else
-	    {
-#if 0
-	      FatalError (T_("Unsupported kpathsea feature: %s."),
-			  lpszOptArg);
-#endif
-	    }
+	  puts (pSession->Expand(lpszOptArg, ExpandFlags::Values, 0).c_str());
 	  needArg = false;
 	  break;
 
 	case OPT_EXPAND_PATH:
 
-	  if (StringCompare(lpszOptArg, T_("$TEXMFLOCAL")) == 0
-	      || StringCompare(lpszOptArg, T_("$TEXMFFONTS")) == 0)
-	    {
-	      PrintPath (pSession->GetSpecialPath(SpecialPath::DataRoot));
-	    }
-	  else if (StringCompare(lpszOptArg, T_("$TEXMFMAIN")) == 0)
-	    {
-	      PrintPath (pSession->GetSpecialPath(SpecialPath::InstallRoot));
-	    }
-	  else
-	    {
-#if 0
-	      FatalError (T_("Unsupported kpathsea feature: %s."),
-			  lpszOptArg);
-#endif
-	    }
+	  puts (pSession->Expand(lpszOptArg, ExpandFlags::Values | ExpandFlags::Braces | ExpandFlags::PathPatterns, 0).c_str());
 	  needArg = false;
 	  break;
 
@@ -621,12 +424,6 @@ FindTeXMF::Run (/*[in]*/ int			argc,
       if (! needArg)
 	{
 	  return;
-	}
-      else if (kpseMode)
-	{
-	  cout << T_("warning: running in deprecated kpathsea emulation mode")
-	       << endl;
-	  throw (1);
 	}
       else
 	{

@@ -1,6 +1,6 @@
 /* md5walk.cpp: calculate the MD5 of a file tree
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2010 Christian Schenk
 
    This file is part of MD5Walk.
 
@@ -22,7 +22,12 @@
 #include <cstdio>
 #include <cstdlib>
 
+#if defined(HAVE_CONFIG_H)
+#  include <config.h>
+#endif
+
 #include <miktex/Core/Core>
+#include <miktex/Core/IntegerTypes>
 #include <popt-miktex.h>
 #include "md5walk-version.h"
 
@@ -38,16 +43,16 @@
 #  pragma warning (disable: 4702)
 #endif
 
-#if defined(_MSC_VER)
-#  include <hash_map>
-#endif
-
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
+
+#if defined(HAVE_UNORDERED_MAP)
+#  include <unordered_map>
+#endif
 
 #if defined(_MSC_VER)
   #pragma warning (pop)
@@ -104,21 +109,23 @@ MakeWord (/*[in]*/ unsigned char a,
 class hash_compare_md5sum
 {
 public:
-  enum
-    {
-      bucket_size = 4,
-      min_buckets = 8
-    };
-  
-public:
   size_t
   operator() (/*[in]*/ const MD5 & md5)
     const
   {
-    return (MakeLong(MakeWord(md5.GetBits()[0],
-			      md5.GetBits()[1]),
-		     MakeWord(md5.GetBits()[2],
-			      md5.GetBits()[3])));
+    long b03 = MakeLong(MakeWord(md5.GetBits()[0],
+				 md5.GetBits()[1]),
+		        MakeWord(md5.GetBits()[2],
+			         md5.GetBits()[3]));
+#if SIZE_MAX == 0xffffffff
+    return (b03);
+#else
+    long b47 = MakeLong(MakeWord(md5.GetBits()[4],
+				 md5.GetBits()[5]),
+		        MakeWord(md5.GetBits()[6],
+			         md5.GetBits()[7]));
+    return ((static_cast<uint64_t>(b47) << 32) | b03);
+#endif
   }
   
 public:
@@ -153,10 +160,10 @@ const int NOT_OF_INTEGRITY = 3;
    Global Variables
    _________________________________________________________________________ */
 
-typedef map<string, MD5, hash_compare_icase> FileNameToMD5;
+typedef map<string, MD5, less_icase> FileNameToMD5;
 typedef multimap<size_t, string> SizeToFileName;
-#if defined(_MSC_VER)
-typedef stdext::hash_multimap<MD5, string, hash_compare_md5sum> MD5ToFileName;
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_multimap<MD5, string, hash_compare_md5sum, hash_compare_md5sum> MD5ToFileName;
 #else
 typedef multimap<MD5, string, hash_compare_md5sum> MD5ToFileName;
 #endif

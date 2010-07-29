@@ -71,6 +71,9 @@ BEGIN_TEST_FUNCTION(2);
   File::Delete ("./test.tex");
   TEST (pSession->FindFile("test.tex", "%R/tex//base", path));
   TEST (pSession->FindFile("base/test.tex", "%R/tex//", path));
+  PathNameArray paths;
+  TEST (pSession->FindFile("xyz.txt", "%R/ab//;%R/jk//", paths));
+  TEST (paths.size() == 2);
 }
 END_TEST_FUNCTION();
 

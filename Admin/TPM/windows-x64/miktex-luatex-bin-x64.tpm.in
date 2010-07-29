@@ -17,7 +17,7 @@
     should assume that it is unstable.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/${rel_miktex_bin_dir}/${luatex_programm_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${luatex_program_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${miktex_prefix}luatex.exe
 texmf/${rel_miktex_bin_dir}/${miktex_prefix}texlua.exe
 texmf/${rel_miktex_bin_dir}/${miktex_prefix}texluac.exe

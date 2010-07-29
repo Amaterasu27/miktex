@@ -333,6 +333,9 @@ static int test_eof (lua_State *L, ZZIP_FILE *f) {
   return 1;
 }
 
+#if defined(MIKTEX) && defined(read_line)
+#  undef read_line
+#endif
 static int read_line (lua_State *L, ZZIP_FILE *f) {
   luaL_Buffer b;
   luaL_buffinit(L, &b);

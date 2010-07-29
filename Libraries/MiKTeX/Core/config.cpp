@@ -970,7 +970,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 
   // try environment variable
   // <VALUENAME>
-  if (! haveValue)
+  if (! haveValue && lpszSectionName == 0)
   {
     if (Utils::GetEnvironmentString(lpszValueName, value))
     {

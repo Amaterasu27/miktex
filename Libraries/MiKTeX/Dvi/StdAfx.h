@@ -32,9 +32,6 @@
 #include <ctime>
 
 #include <algorithm>
-#if defined(_MSC_VER)
-#  include <hash_map>
-#endif
 #include <map>
 #include <memory>
 #include <stack>

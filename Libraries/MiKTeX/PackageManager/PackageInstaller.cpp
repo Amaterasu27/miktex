@@ -693,10 +693,17 @@ PackageInstallerImpl::FindUpdates ()
 #if defined(MIKTEX_WINDOWS)
 	  // package not known/installed => must be installed if it is
 	  // an essential MiKTeX package in the current series; but only
-	  // if we are running in admin mode
+	  // if we are running in admin mode; the target system must
+	  // match
+#if IGNORE_OTHER_SYSTEMS
+	  string targetSystem = dbLight.GetPackageTargetSystem(szPackage);
+#endif
 	  if ((dbLight.GetPackageLevel(lpszPackage).Get()
 	       <= PackageLevel::Essential)
 	      && IsMiKTeXPackage(lpszPackage)
+#if IGNORE_OTHER_SYSTEMS
+	      && (targetSystem.empty() || targetSystem == MIKTEX_SYSTEM_TAG)
+#endif
 	      && pSession->IsAdminMode())
 	    {
 	      string version = dbLight.GetPackageVersion(lpszPackage);
@@ -1357,8 +1364,8 @@ PackageInstallerImpl::CopyPackage (/*[in]*/ const PathName & pathSourceRoot,
    GetFiles
    _________________________________________________________________________ */
 
-#if defined(USE_HASH_SET)
-typedef hash_set<string> StringSet;
+#if defined(HAVE_UNORDERED_SET)
+typedef tr1::unordered_set<string> StringSet;
 #else
 typedef set<string> StringSet;
 #endif

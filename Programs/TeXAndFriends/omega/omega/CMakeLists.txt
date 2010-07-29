@@ -130,6 +130,7 @@ create_web_app(Omega)
 
 target_link_libraries(${omega_dll_name}
   ${kpsemu_dll_name}
+  ${w2cemu_dll_name}
   ${getopt_dll_name}
 )
 

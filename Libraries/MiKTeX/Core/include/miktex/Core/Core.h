@@ -3155,6 +3155,13 @@ operator!= (/*[in]*/ const PathName & lhs,
 
 /* _________________________________________________________________________
 
+   PathNameArray
+   _________________________________________________________________________ */
+
+typedef std::vector<PathName> PathNameArray;
+
+/* _________________________________________________________________________
+
    Argv
    _________________________________________________________________________ */
 
@@ -6072,6 +6079,15 @@ public:
   DeriveFileType (/*[in]*/ const char * lpszPath)
     = 0;
 
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[out]*/ PathNameArray &	result)
+    = 0;
+
   /// Finds a file.
   /// @param lpszFileName Name of the file to be found.
   /// @param lpszPathList Search path. See the MiKTeX manual.
@@ -6082,17 +6098,26 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
-	    /*[out]*/ PathName &	path)
+	    /*[out]*/ PathName &	result)
     = 0;
 
 public:
   bool
   FindFile (/*[in]*/ const PathName &	fileName,
 	    /*[in]*/ const char *	lpszPathList,
-	    /*[out]*/ PathName &	path)
+	    /*[out]*/ PathName &	result)
   {
-    return (FindFile(fileName.Get(), lpszPathList, path));
+    return (FindFile(fileName.Get(), lpszPathList, result));
   }
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
+	    /*[out]*/ PathNameArray &	result)
+    = 0;
 
   /// Finds a file.
   /// @param lpszFileName Name of the file to be found.
@@ -6104,16 +6129,16 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
-	    /*[out]*/ PathName &	path)
+	    /*[out]*/ PathName &	result)
     = 0;
 
 public:
   bool
   FindFile (/*[in]*/ const PathName &	fileName,
 	    /*[in]*/ FileType		fileType,
-	    /*[out]*/ PathName &	path)
+	    /*[out]*/ PathName &	result)
   {
-    return (FindFile(fileName.Get(), fileType, path));
+    return (FindFile(fileName.Get(), fileType, result));
   }
 
 public:
@@ -6123,7 +6148,7 @@ public:
   FindPkFile (/*[in]*/ const char *	lpszFontName,
 	      /*[in]*/ const char *	lpszMode,
 	      /*[in]*/ int		dpi,
-	      /*[out]*/ PathName &	path)
+	      /*[out]*/ PathName &	result)
     = 0;
 
 public:
@@ -6131,7 +6156,7 @@ public:
   bool
   MIKTEXTHISCALL
   FindTfmFile (/*[in]*/ const char *	lpszFontName,
-	       /*[out]*/ PathName &	path,
+	       /*[out]*/ PathName &	result,
 	       /*[in]*/ bool		create)
     = 0;
 
@@ -7082,19 +7107,11 @@ private:
 
 /* _________________________________________________________________________
 
-   hash_compare_icase
+   hash_icase
    _________________________________________________________________________ */
 
-class hash_compare_icase
+class hash_icase
 {
-#if defined(_MSC_VER)
-public:
-  enum {
-    bucket_size = 4,
-    min_buckets = 8
-  };
-#endif
-
 public:
   // hash algorithm taken from SGI's STL
   size_t
@@ -7113,7 +7130,32 @@ public:
       }
     return (h);
   }
+};
 
+/* _________________________________________________________________________
+
+   equal_icase
+   _________________________________________________________________________ */
+
+class equal_icase
+{
+public:
+  bool
+  operator() (/*[in]*/ const std::string & str1,
+	      /*[in]*/ const std::string & str2)
+    const
+  {
+    return (StringCompare(str1.c_str(), str2.c_str(), true) == 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   less_icase
+   _________________________________________________________________________ */
+
+class less_icase
+{
 public:
   bool
   operator() (/*[in]*/ const std::string & str1,
@@ -7126,19 +7168,11 @@ public:
 
 /* _________________________________________________________________________
 
-   hash_compare_path
+   hash_path
    _________________________________________________________________________ */
 
-class hash_compare_path
+class hash_path
 {
-#if defined(_MSC_VER)
-public:
-  enum {
-    bucket_size = 4,
-    min_buckets = 8
-  };
-#endif
-
 public:
   size_t
   operator() (/*[in]*/ const std::string & str)
@@ -7146,7 +7180,32 @@ public:
   {
     return (PathName(str).GetHash());
   }
-  
+};
+
+/* _________________________________________________________________________
+
+   equal_path
+   _________________________________________________________________________ */
+
+class equal_path
+{
+public:
+  bool
+  operator() (/*[in]*/ const std::string & str1,
+	      /*[in]*/ const std::string & str2)
+    const
+  {
+    return (PathName::Compare(str1.c_str(), str2.c_str()) == 0);
+  }
+};
+
+/* _________________________________________________________________________
+
+   less_path
+   _________________________________________________________________________ */
+
+class less_path
+{
 public:
   bool
   operator() (/*[in]*/ const std::string & str1,

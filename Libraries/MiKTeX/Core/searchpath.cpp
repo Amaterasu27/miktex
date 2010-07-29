@@ -25,17 +25,16 @@
 
 /* _________________________________________________________________________
 
-   SessionImpl::PushBackPath
+   SessionImpl::ExpandRootDirectories
    _________________________________________________________________________ */
 
 void
-SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
-			   /*[in]*/ const PathName &	path)
+SessionImpl::ExpandRootDirectories (/*[in]*/ const char * lpszToBeExpanded,
+                                    /*[in,out*/ PathNameArray & paths)
 {
-  // expand root directories
-  if (path[0] == '%' && (path[1] == 'R' || path[1] == 'r'))
+  if (lpszToBeExpanded[0] == '%' && (lpszToBeExpanded[1] == 'R' || lpszToBeExpanded[1] == 'r'))
   {
-    const char * lpszSuffix = path.Get() + 2;
+    const char * lpszSuffix = lpszToBeExpanded + 2;
     if (IsDirectoryDelimiter(*lpszSuffix))
     {
       ++ lpszSuffix;
@@ -45,69 +44,101 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
       PathName path2 = GetRootDirectory(idx);
       path2.AppendDirectoryDelimiter ();
       path2.Append (lpszSuffix, false);
-      // <recursivecall>
-      PushBackPath (vec, path2);
-      // </recursivecall>
+      paths.push_back (path2);
     }
-    if (path[1] == 'R')
+    if (lpszToBeExpanded[1] == 'R')
     {
       PathName path2 = MPM_ROOT_PATH;
       path2.AppendDirectoryDelimiter ();
       path2.Append (lpszSuffix, false);
-      // <recursivecall>
-      PushBackPath (vec, path2);
-      // </recursivecall>
+      paths.push_back (path2);
     }
-    return;
   }
-
-  // expand '~'
-  if (path[0] == '~' && (path[1] == 0 || IsDirectoryDelimiter(path[1])))
+  else
   {
-    PathName pathFQ = GetHomeDirectory();
-    if (! Utils::IsAbsolutePath(pathFQ.Get()))
-    {
-      TraceError (T_("cannot expand ~: %s is not fully qualified"),
-	Q_(pathFQ));
-      return;
-    }
-    if (path[1] != 0 && IsDirectoryDelimiter(path[1]) && path[2] != 0)
-    {
-      pathFQ += &path[2];
-    }
-    if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
-    {
-      vec.push_back (pathFQ);
-    }
-    return;
+    paths.push_back (lpszToBeExpanded);
   }
+}
 
-  // fully qualified path?
-  if (Utils::IsAbsolutePath(path.Get()))
+/* _________________________________________________________________________
+
+   SessionImpl::ExpandRootDirectories
+   _________________________________________________________________________ */
+
+PathNameArray
+SessionImpl::ExpandRootDirectories (/*[in]*/ const char * lpszToBeExpanded)
+{
+  PathNameArray result;
+  for (CSVList path (lpszToBeExpanded, PATH_DELIMITER);
+       path.GetCurrent() != 0;
+       ++ path)
   {
-    if (find(vec.begin(), vec.end(), path) == vec.end())
-    {
-      vec.push_back (path);
-    }
-    return;
+    ExpandRootDirectories (path.GetCurrent(), result);
   }
+  return (result);
+}
 
-  // it is a relative path
-  PathName pathFQ;
-  for (unsigned idx = 0; GetWorkingDirectory(idx, pathFQ); ++ idx)
+/* _________________________________________________________________________
+
+   SessionImpl::PushBackPath
+   _________________________________________________________________________ */
+
+void
+SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
+			   /*[in]*/ const PathName &	path)
+{
+  PathNameArray paths = ExpandRootDirectories(path.Get());
+
+  for (PathNameArray::const_iterator it = paths.begin(); it != paths.end(); ++ it)
   {
-    if (! Utils::IsAbsolutePath(pathFQ.Get()))
+    // expand '~'
+    if ((*it)[0] == '~' && ((*it)[1] == 0 || IsDirectoryDelimiter((*it)[1])))
     {
-      TraceError (T_("%s is not fully qualified"), Q_(pathFQ));
+      PathName pathFQ = GetHomeDirectory();
+      if (! Utils::IsAbsolutePath(pathFQ.Get()))
+      {
+	TraceError (T_("cannot expand ~: %s is not fully qualified"),
+	  Q_(pathFQ));
+	continue;
+      }
+      if ((*it)[1] != 0 && IsDirectoryDelimiter((*it)[1]) && (*it)[2] != 0)
+      {
+	pathFQ += &(*it)[2];
+      }
+      if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
+      {
+	vec.push_back (pathFQ);
+      }
       continue;
     }
-    if (PathName::Compare(path, CURRENT_DIRECTORY) != 0)
+
+    // fully qualified path?
+    if (Utils::IsAbsolutePath((*it).Get()))
     {
-      pathFQ += path.Get();
+      if (find(vec.begin(), vec.end(), (*it)) == vec.end())
+      {
+	vec.push_back ((*it));
+      }
+      continue;
     }
-    if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
+
+    // it is a relative path
+    PathName pathFQ;
+    for (unsigned idx = 0; GetWorkingDirectory(idx, pathFQ); ++ idx)
     {
-      vec.push_back (pathFQ);
+      if (! Utils::IsAbsolutePath(pathFQ.Get()))
+      {
+	TraceError (T_("%s is not fully qualified"), Q_(pathFQ));
+	continue;
+      }
+      if (PathName::Compare((*it), CURRENT_DIRECTORY) != 0)
+      {
+	pathFQ += (*it).Get();
+      }
+      if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
+      {
+	vec.push_back (pathFQ);
+      }
     }
   }
 }
@@ -495,12 +526,11 @@ SessionImpl::ExpandBraces (/*[in]*/ const char * lpszToBeExpanded,
 PathNameArray
 SessionImpl::ExpandBraces (/*[in]*/ const char * lpszToBeExpanded)
 {
+  PathNameArray paths = ExpandRootDirectories(lpszToBeExpanded);
   PathNameArray result;
-  for (CSVList path (lpszToBeExpanded, PATH_DELIMITER);
-       path.GetCurrent() != 0;
-       ++ path)
+  for (PathNameArray::const_iterator it = paths.begin(); it != paths.end(); ++ it)
   {
-    ExpandBraces (path.GetCurrent(), result);
+    ExpandBraces (it->Get(), result);
   }
   return (result);
 }

@@ -42,15 +42,6 @@
 #include <string>
 #include <vector>
 
-#if defined(_MSC_VER)
-#  include <hash_map>
-using stdext::hash_map;
-#  define USE_HASH_MAP
-#  include <hash_set>
-using stdext::hash_set;
-#  define USE_HASH_SET
-#endif
-
 #include <mspack.h>
 
 #if defined(_MSC_VER)

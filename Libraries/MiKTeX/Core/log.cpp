@@ -1,6 +1,6 @@
 /* log.cpp: tracing
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -187,8 +187,8 @@ private:
   friend class TraceStream;
 
 private:
-#if defined(USE_HASH_MAP)
-  typedef hash_map<string, TraceStreamInfo> TraceStreamTable;
+#if defined(HAVE_UNORDERED_MAP)
+  typedef tr1::unordered_map<string, TraceStreamInfo> TraceStreamTable;
 #else
   typedef map<string, TraceStreamInfo> TraceStreamTable;
 #endif

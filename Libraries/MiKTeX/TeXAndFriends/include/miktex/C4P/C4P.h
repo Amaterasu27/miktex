@@ -1,6 +1,6 @@
 /* miktex/C4P/C4P.h: Pascalish run-time support			-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -1110,6 +1110,10 @@ ln (/*[in]*/ double x)
   return (log(x));
 }
 
+#if defined(odd)
+#  undef odd
+#endif
+
 template<class T>
 inline
 C4P_boolean
@@ -1159,6 +1163,9 @@ rewrite (/*[in]*/ T & f)
 }
 
 #if ! defined(HAVE_ROUND)
+#if defined(round)
+#  undef round
+#endif
 inline
 int
 round (/*[in]*/ double r)

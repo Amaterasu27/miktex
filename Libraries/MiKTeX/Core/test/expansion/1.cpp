@@ -74,16 +74,21 @@ END_TEST_FUNCTION();
 BEGIN_TEST_FUNCTION(2);
 {
   std::string str1 = pSession->Expand("%R/tex//", ExpandFlags::PathPatterns, 0);
-  std::string str2 = pSession->Expand("%R/tex//base", ExpandFlags::PathPatterns, 0);
-  std::string str3 = pSession->Expand("ab{cd,ef}gh{ij,kl}mn", ExpandFlags::Braces, 0);
-  TEST (str3 == "abcdghijmn;abcdghklmn;abefghijmn;abefghklmn");
-  std::string str4 = pSession->Expand("x{a,b{c,d}e}y", ExpandFlags::Braces, 0);
-  TEST (str4 == "xay;xbcey;xbdey");
-  std::string str5 = pSession->Expand("/texmf/tex/{plain,generic,}//", ExpandFlags::Braces, 0);
-  TEST (str5 == "/texmf/tex/plain//;/texmf/tex/generic//;/texmf/tex///", 0);
+  str1 = pSession->Expand("%R/tex//base", ExpandFlags::PathPatterns, 0);
+  TEST (pSession->Expand("ab{cd,ef}gh{ij,kl}mn", ExpandFlags::Braces, 0)
+    == "abcdghijmn;abcdghklmn;abefghijmn;abefghklmn");
+  TEST (pSession->Expand("x{a,b{c,d}e}y", ExpandFlags::Braces, 0) == "xay;xbcey;xbdey");
+  TEST (pSession->Expand("/texmf/tex/{plain,generic,}//", ExpandFlags::Braces, 0)
+    == "/texmf/tex/plain//;/texmf/tex/generic//;/texmf/tex///", 0);
   putenv ("abc={d,e}");
-  std::string str6 = pSession->Expand("a{b,c}$abc", ExpandFlags::Braces | ExpandFlags::Values, 0);
-  TEST (str6 == "abd;abe;acd;ace");
+  TEST (pSession->Expand("a{b,c}$abc", ExpandFlags::Braces | ExpandFlags::Values, 0) == "abd;abe;acd;ace");
+  TEST (pSession->Expand("x{A,B{1,2}}y", ExpandFlags::Braces, 0) == "xAy;xB1y;xB2y");
+  TEST (pSession->Expand("x{A,B}{1,2}y", ExpandFlags::Braces, 0) == "xA1y;xA2y;xB1y;xB2y");
+#if 0 // todo: kpathsea (right-to-left) expansion
+  TEST (pSession->Expand("x{A,B}{1,2}y", ExpandFlags::Braces, 0) == "xA1y;xB1y;xA2y;xB2y");
+#endif
+  str1 = pSession->Expand("%R/texmf/tex//", ExpandFlags::Braces, 0);
+  TEST (Utils::IsAbsolutePath(str1.c_str()));
 }
 END_TEST_FUNCTION();
 

@@ -1,6 +1,6 @@
 /* miktex/App/Application.h:					-*- C++ -*-
 
-   Copyright (C) 2005-2009 Christian Schenk
+   Copyright (C) 2005-2010 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -26,18 +26,12 @@
 #if ! defined(F4C0E5199356C44CBA46523020038822)
 #define F4C0E5199356C44CBA46523020038822
 
-#include <memory>
-#include <string>
-
 #include <miktex/Core/Core>
 #include <miktex/PackageManager/PackageManager>
 
-#if defined(_MSC_VER)
-#  include <hash_set>
-#else
-#  include <set>
-#endif
-
+#include <memory>
+#include <set>
+#include <string>
 #include <vector>
 
 // DLL import/export switch
@@ -290,11 +284,7 @@ private:
   std::auto_ptr<MiKTeX::Packages::PackageInstaller> pInstaller;
 
 private:
-#if defined(_MSC_VER)
-  stdext::hash_set<std::string> ignoredPackages;
-#else
   std::set<std::string> ignoredPackages;
-#endif
 
 protected:
   MiKTeX::Core::SessionWrapper pSession;

@@ -70,6 +70,20 @@
 
 /* _________________________________________________________________________
 
+   confdefs.h
+   _________________________________________________________________________ */
+
+#define KPSEVERSION MIKTEX_BANNER_STR
+
+/* _________________________________________________________________________
+
+   paths.h
+   _________________________________________________________________________ */
+
+#define DEFAULT_BIBTEX_CSFILE "88591lat.csf"
+
+/* _________________________________________________________________________
+
    c-fopen.h
    _________________________________________________________________________ */
 
@@ -114,20 +128,6 @@
 
 /* _________________________________________________________________________
 
-   confdefs.h
-   _________________________________________________________________________ */
-
-#define KPSEVERSION MIKTEX_BANNER_STR
-
-/* _________________________________________________________________________
-
-   paths.h
-   _________________________________________________________________________ */
-
-#define DEFAULT_BIBTEX_CSFILE "88591lat.csf"
-
-/* _________________________________________________________________________
-
    c-pathch.h
    _________________________________________________________________________ */
 
@@ -156,6 +156,164 @@
     ((name)[0] != 0 && isascii((name)[0]) && isalpha((name)[0]) && ((name)[1] == ':'))
 #else
 #  define NAME_BEGINS_WITH_DEVICE(name) 0
+#endif
+
+/* _________________________________________________________________________
+
+   types.h
+   _________________________________________________________________________ */
+
+#define KPSE_COMPAT_API 1
+
+#if defined(__cplusplus)
+MIKTEX_BEGIN_EXTERN_C_BLOCK
+#endif
+
+typedef char * string;
+typedef const char * const_string;
+
+#if ! defined(HAVE_BOOLEAN)
+#  define HAVE_BOOLEAN
+#  if defined(MIKTEX_WINDOWS)
+     // shadow definition in rpcndr.h
+#    define boolean int
+#  else
+     typedef int boolean;
+#  endif
+#  if ! defined(__cplusplus)
+#    if ! defined(true)
+#      define true 1
+#      define false 0
+#    endif
+#  endif
+#endif
+
+typedef enum
+{
+  kpse_afm_format,
+  kpse_any_glyph_format,
+  kpse_base_format,
+  kpse_bib_format,
+  kpse_bst_format,
+  kpse_cid_format,
+  kpse_clua_format,
+  kpse_cmap_format,
+  kpse_cnf_format,
+  kpse_cweb_format,
+  kpse_db_format,
+  kpse_dvips_config_format,
+  kpse_enc_format,
+  kpse_fea_format,
+  kpse_fmt_format,
+  kpse_fontmap_format,
+  kpse_gf_format,
+  kpse_ist_format,
+  kpse_lig_format,
+  kpse_lua_format,
+  kpse_mem_format,
+  kpse_mf_format,
+  kpse_mft_format,
+  kpse_miscfonts_format,
+  kpse_mfpool_format,
+  kpse_mlbib_format,
+  kpse_mlbst_format,
+  kpse_mp_format,
+  kpse_mppool_format,
+  kpse_mpsupport_format,
+  kpse_ocp_format,
+  kpse_ofm_format,
+  kpse_opentype_format,
+  kpse_opl_format,
+  kpse_otp_format,
+  kpse_ovf_format,
+  kpse_ovp_format,
+  kpse_pdftex_config_format,
+  kpse_pict_format,
+  kpse_pk_format,
+  kpse_program_binary_format,
+  kpse_program_text_format,
+  kpse_sfd_format,
+  kpse_tex_format,
+  kpse_tex_ps_header_format,
+  kpse_texpool_format,
+  kpse_texsource_format,
+  kpse_texdoc_format,
+  kpse_texmfscripts_format,
+  kpse_tfm_format,
+  kpse_troff_font_format,
+  kpse_truetype_format,
+  kpse_type1_format,
+  kpse_type42_format,
+  kpse_vf_format,
+  kpse_web2c_format,
+  kpse_web_format,
+
+  kpse_last_format
+} kpse_file_format_type;
+
+typedef struct
+{
+  const_string path;
+  const_string type;
+  const_string * suffix;
+  const_string * alt_suffix;
+  boolean program_enabled_p;
+} kpse_format_info_type;
+
+typedef enum
+{
+  kpse_src_implicit,
+  kpse_src_compile,
+  kpse_src_texmf_cnf,
+  kpse_src_client_cnf,
+  kpse_src_env,
+  kpse_src_x,
+  kpse_src_cmdline
+} kpse_src_type;
+
+typedef struct kpathsea_instance * kpathsea;
+
+typedef struct kpathsea_instance
+{
+  char * program_name;
+  const_string fallback_resolutions_string;
+  unsigned debug;
+  boolean make_tex_discard_errors;
+  char * invocation_name;
+  kpse_format_info_type format_info[kpse_last_format];
+} kpathsea_instance;
+
+#define kpathsea_new() miktex_kpathsea_new()
+
+#define kpathsea_finish(kpse) miktex_kpathsea_finish(kpse)
+
+#if defined(KPSE_COMPAT_API)
+
+#define kpse_def_inst miktex_kpse_def_inst
+
+#define kpse_def miktex_kpse_def
+
+#define kpse_bug_address miktex_kpathsea_bug_address
+
+#define kpse_program_name kpse_def_inst.program_name
+
+#define kpse_fallback_resolutions_string \
+  kpse_def_inst.fallback_resolutions_string
+
+#define kpse_format_info kpse_def_inst.format_info
+
+#define kpathsea_debug kpse_def_inst.debug
+
+#define kpse_make_tex_discard_errors kpse_def_inst.make_tex_discard_errors
+
+#if defined(program_invocation_name)
+#  undef program_invocation_name
+#endif
+#define program_invocation_name kpse_def_inst.invocation_name
+#endif
+
+#if defined(__cplusplus)
+MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
 /* _________________________________________________________________________
@@ -262,7 +420,14 @@
 
 #define xstrdup(str) miktex_core_strdup(str, __FILE__, __LINE__)
 
-#define xputenv(var, value) miktex_xputenv(var, value)
+#define uppercasify(s) miktex_uppercasify(s)
+
+#define kpathsea_xputenv(kpse, var, value)	\
+  miktex_kpathsea_xputenv(kpse, var, value)
+
+#if defined(KPSE_COMPAT_API)
+#  define xputenv(var, value) kpathsea_xputenv(kpse_def, var, value)
+#endif
 
 /* _________________________________________________________________________
 
@@ -308,6 +473,7 @@
    _________________________________________________________________________ */
 
 #define MAKE_TEX_PK_BY_DEFAULT 1
+#define MAKE_TEX_FMT_BY_DEFAULT 1
 
 /* _________________________________________________________________________
 
@@ -325,156 +491,6 @@ typedef struct
 #define STR_LIST_ELT(l, n) ((l).list[(n)])
 
 #define str_list_add(l, s) miktex_str_list_add(l, s)
-
-/* _________________________________________________________________________
-
-   types.h
-   _________________________________________________________________________ */
-
-#define KPSE_COMPAT_API 1
-
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
-#endif
-
-typedef char * string;
-typedef const char * const_string;
-
-#if ! defined(HAVE_BOOLEAN)
-#  define HAVE_BOOLEAN
-#  if defined(MIKTEX_WINDOWS)
-     // shadow definition in rpcndr.h
-#    define boolean int
-#  else
-     typedef int boolean;
-#  endif
-#  if ! defined(__cplusplus)
-#    if ! defined(true)
-#      define true 1
-#      define false 0
-#    endif
-#  endif
-#endif
-
-typedef enum
-{
-  kpse_afm_format,
-  kpse_any_glyph_format,
-  kpse_base_format,
-  kpse_bib_format,
-  kpse_bst_format,
-  kpse_cid_format,
-  kpse_clua_format,
-  kpse_cmap_format,
-  kpse_cnf_format,
-  kpse_cweb_format,
-  kpse_db_format,
-  kpse_dvips_config_format,
-  kpse_enc_format,
-  kpse_fea_format,
-  kpse_fmt_format,
-  kpse_fontmap_format,
-  kpse_gf_format,
-  kpse_ist_format,
-  kpse_lig_format,
-  kpse_lua_format,
-  kpse_mem_format,
-  kpse_mf_format,
-  kpse_mft_format,
-  kpse_miscfonts_format,
-  kpse_mfpool_format,
-  kpse_mlbib_format,
-  kpse_mlbst_format,
-  kpse_mp_format,
-  kpse_mppool_format,
-  kpse_mpsupport_format,
-  kpse_ocp_format,
-  kpse_ofm_format,
-  kpse_opentype_format,
-  kpse_opl_format,
-  kpse_otp_format,
-  kpse_ovf_format,
-  kpse_ovp_format,
-  kpse_pdftex_config_format,
-  kpse_pict_format,
-  kpse_pk_format,
-  kpse_program_binary_format,
-  kpse_program_text_format,
-  kpse_sfd_format,
-  kpse_tex_format,
-  kpse_tex_ps_header_format,
-  kpse_texpool_format,
-  kpse_texsource_format,
-  kpse_texdoc_format,
-  kpse_texmfscripts_format,
-  kpse_tfm_format,
-  kpse_troff_font_format,
-  kpse_truetype_format,
-  kpse_type1_format,
-  kpse_type42_format,
-  kpse_vf_format,
-  kpse_web2c_format,
-  kpse_web_format,
-
-#if 0
-#endif
-
-  kpse_last_format
-} kpse_file_format_type;
-
-typedef struct
-{
-  const_string path;
-  const_string type;
-  const_string * suffix;
-  const_string * alt_suffix;
-  boolean program_enabled_p;
-} kpse_format_info_type;
-
-typedef struct kpathsea_instance * kpathsea;
-
-typedef struct kpathsea_instance
-{
-  char * program_name;
-  const_string fallback_resolutions_string;
-  unsigned debug;
-  boolean make_tex_discard_errors;
-  char * invocation_name;
-  kpse_format_info_type format_info[kpse_last_format];
-} kpathsea_instance;
-
-#define kpathsea_new() miktex_kpathsea_new()
-
-#define kpathsea_finish(kpse) miktex_kpathsea_finish(kpse)
-
-#if defined(KPSE_COMPAT_API)
-
-#define kpse_def_inst miktex_kpse_def_inst
-
-#define kpse_def miktex_kpse_def
-
-#define kpse_bug_address miktex_kpathsea_bug_address
-
-#define kpse_program_name kpse_def_inst.program_name
-
-#define kpse_fallback_resolutions_string \
-  kpse_def_inst.fallback_resolutions_string
-
-#define kpse_format_info kpse_def_inst.format_info
-
-#define kpathsea_debug kpse_def_inst.debug
-
-#define kpse_make_tex_discard_errors kpse_def_inst.make_tex_discard_errors
-
-#if defined(program_invocation_name)
-#  undef program_invocation_name
-#endif
-#define program_invocation_name kpse_def_inst.invocation_name
-#endif
-
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
 
 /* _________________________________________________________________________
 
@@ -513,20 +529,32 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define kpathsea_find_file_generic(kpse, name, format, must_exist, all) \
       miktex_kpathsea_find_file_generic(kpse, name, format, must_exist, all)
 
+#define kpathsea_in_name_ok(kpse, fname) miktex_kpathsea_in_name_ok(kpse, fname)
+#define kpathsea_in_name_ok_silent(kpse, fname) miktex_kpathsea_in_name_ok(kpse, fname)
+
+#define kpathsea_out_name_ok(kpse, fname) miktex_kpathsea_out_name_ok(kpse, fname)
+#define kpathsea_out_name_ok_silent(kpse, fname) miktex_kpathsea_out_name_ok(kpse, fname)
+
 #define kpathsea_init_format(kpse, format) \
       miktex_kpathsea_init_format(kpse, format)
 
 #define kpathsea_maketex_option(kpse, fmtname, value) \
   miktex_kpathsea_maketex_option(kpse, fmtname, value)
 
+#define kpathsea_open_file(kpse, name, format) miktex_kpathsea_open_file(kpse, name, format)
+
 #define kpathsea_selfdir(kpse, argv0) \
   miktex_kpathsea_selfdir(kpse, argv0)
+
+#define kpathsea_set_program_enabled(kpse, fmt, value, level) \
+  miktex_kpathsea_set_program_enabled(kpse, fmt, value, level)
 
 #if defined(KPSE_COMPAT_API)
 
 #define kpse_selfdir(argv0) kpathsea_selfdir(kpse_def, argv0)
 
-#define kpse_set_program_enabled(fmt, value, level)
+#define kpse_set_program_enabled(fmt, value, level) \
+  kpathsea_set_program_enabled(kpse_def, fmt, value, level)
 
 #define kpse_reset_program_name(progname)
 
@@ -544,11 +572,12 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define kpse_maketex_option(fmtname, value) \
   kpathsea_maketex_option(kpse_def, fmtname, value)
 
-#define kpse_open_file(name, format) miktex_kpse_open_file(name, format)
+#define kpse_open_file(name, format) \
+  kpathsea_open_file(kpse_def, name, format)
 
-#define kpse_in_name_ok(fname) miktex_kpse_in_name_ok(fname)
+#define kpse_in_name_ok(fname) kpathsea_in_name_ok(kpse_def, fname)
 
-#define kpse_out_name_ok(fname) miktex_kpse_out_name_ok(fname)
+#define kpse_out_name_ok(fname) kpathsea_out_name_ok(kpse_def, fname)
 
 #define kpse_init_format(format) \
       kpathsea_init_format(kpse_def, format)
@@ -560,8 +589,13 @@ MIKTEX_END_EXTERN_C_BLOCK
    absolute.h
    _________________________________________________________________________ */
 
-#define kpse_absolute_p(filename, relative_ok)	  \
-      miktex_kpse_absolute_p(filename, relative_ok)
+#define kpathsea_absolute_p(kpse, filename, relative_ok)	\
+  miktex_kpathsea_absolute_p(kpse, filename, relative_ok)
+
+#if defined(KPSE_COMPAT_API)
+#  define kpse_absolute_p(filename, relative_ok)	  \
+  kpathsea_absolute_p(kpse_def, filename, relative_ok)
+#endif
 
 /* _________________________________________________________________________
 
@@ -576,9 +610,9 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #if defined(KPSE_COMPAT_API)
 
-  #define kpse_var_expand(src) kpathsea_var_expand(kpse_def, src)
+#  define kpse_var_expand(src) kpathsea_var_expand(kpse_def, src)
 
-  #define kpse_var_value(var) kpathsea_var_value(kpse_def, var)
+#  define kpse_var_value(var) kpathsea_var_value(kpse_def, var)
 
 #endif
 
@@ -639,9 +673,13 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define kpathsea_find_glyph(kpse, font_name, dpi, format, glyph_file) \
   miktex_kpathsea_find_glyph(kpse, font_name, dpi, format, glyph_file)
 
+#define kpathsea_bitmap_tolerance(kpse, dpi1, dpi2) \
+  miktex_kpathsea_bitmap_tolerance(kpse, dpi1, dpi2)
+
 #if defined(KPSE_COMPAT_API)
 
-#define kpse_bitmap_tolerance(dpi1, dpi2) miktex_kpse_bitmap_tolerance(dpi1, dpi2)
+#define kpse_bitmap_tolerance(dpi1, dpi2) \
+  kpathsea_bitmap_tolerance(kpse_def, dpi1, dpi2)
 
 #define kpse_find_glyph(font_name, dpi, format, glyph_file) \
       kpathsea_find_glyph(kpse_def, font_name, dpi, format, glyph_file)
@@ -658,7 +696,9 @@ MIKTEX_END_EXTERN_C_BLOCK
    tex-hush.h
    _________________________________________________________________________ */
 
-#define kpse_tex_hush(what) 0
+#if defined(KPSE_COMPAT_API)
+#  define kpse_tex_hush(what) 0
+#endif
 
 /* _________________________________________________________________________
 
@@ -680,8 +720,13 @@ MIKTEX_END_EXTERN_C_BLOCK
    magstep.h
    _________________________________________________________________________ */
 
-#define kpse_magstep_fix(dpi, bdpi, m_ret) \
-      miktex_kpse_magstep_fix(dpi, bdpi, m_ret)
+#define kpathsea_magstep_fix(kpse, dpi, bdpi, m_ret)	\
+  miktex_kpathsea_magstep_fix(kpse, dpi, bdpi, m_ret)
+
+#if defined(KPSE_COMPAT_API)
+#  define kpse_magstep_fix(dpi, bdpi, m_ret) \
+  kpathsea_magstep_fix(kpse_def, dpi, bdpi, m_ret)
+#endif
 
 /* _________________________________________________________________________
 
@@ -702,6 +747,13 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 /* _________________________________________________________________________
 
+   line.h
+   _________________________________________________________________________ */
+
+#define read_line(f) miktex_read_line(f)
+
+/* _________________________________________________________________________
+
    C Wrappers
    _________________________________________________________________________ */
 
@@ -709,11 +761,20 @@ MIKTEX_END_EXTERN_C_BLOCK
 MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
+MIKTEXKPSCEEAPI(boolean)
+miktex_kpathsea_absolute_p (/*in*/ kpathsea		kpse,
+			    /*[in]*/ const char *	lpszFileName,
+			    /*[in]*/ boolean		relativeOk);
+
 MIKTEXKPSCEEAPI(char **)
 miktex_kpathsea_all_path_search (/*in*/ kpathsea		kpse,
 				 /*[in]*/ const char *		lpszPath,
 				 /*[in]*/ const char *		lpszName);
 
+MIKTEXKPSCEEAPI(int)
+miktex_kpathsea_bitmap_tolerance (/*in*/ kpathsea	kpse,
+				  /*[in]*/ double	dpi1,
+				  /*[in]*/ double	dpi2);
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_brace_expand (/*in*/ kpathsea			kpse,
 			      /*[in]*/ const char *		lpszPath);
@@ -740,6 +801,10 @@ miktex_kpathsea_find_glyph (/*in*/ kpathsea			kpse,
 MIKTEXKPSCEEAPI(void)
 miktex_kpathsea_finish (/*in*/ kpathsea kpse);
 
+MIKTEXKPSCEEAPI(int)
+miktex_kpathsea_in_name_ok (/*in*/ kpathsea		kpse,
+			    /*[in]*/ const char *	lpszFileName);
+
 MIKTEXKPSCEEAPI(const char *)
 miktex_kpathsea_init_format (/*[in]*/ kpathsea kpse,
 			     /*[in]*/ kpse_file_format_type format);
@@ -751,12 +816,27 @@ miktex_kpathsea_init_prog (/*in*/ kpathsea		kpse,
 			   /*[in]*/ const char *	lpszMode,
 			   /*[in]*/ const char *	lpszFallback);
 
+MIKTEXKPSCEEAPI(unsigned)
+miktex_kpathsea_magstep_fix (/*in*/ kpathsea	kpse,
+			     /*[in]*/ unsigned	dpi,
+			     /*[in]*/ unsigned	bdpi,
+			     /*[out]*/ int *	pRet);
+
 MIKTEXKPSCEEAPI(void)
 miktex_kpathsea_maketex_option (/*in*/ kpathsea		kpse,
 			        /*[in]*/ const char *	lpszFmtName,
 			        /*[in]*/ boolean		value);
 MIKTEXKPSCEEAPI(kpathsea)
 miktex_kpathsea_new ();
+
+MIKTEXKPSCEEAPI(FILE *)
+miktex_kpathsea_open_file (/*in*/ kpathsea			kpse,
+			   /*[in]*/ const char *		lpszFileName,
+			   /*[in]*/ kpse_file_format_type	format);
+
+MIKTEXKPSCEEAPI(int)
+miktex_kpathsea_out_name_ok (/*in*/ kpathsea		kpse,
+			     /*[in]*/ const char *	lpszFileName);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_path_expand (/*in*/ kpathsea			kpse,
@@ -781,6 +861,12 @@ miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
 				  /*[in]*/ const char *	lpszArgv0,
 				  /*[in]*/ const char *	lpszProgramName);
 
+MIKTEXKPSCEEAPI(void)
+miktex_kpathsea_set_program_enabled (/*in*/ kpathsea	kpse,
+				     /*in*/ kpse_file_format_type fmt,
+				     /*in*/ boolean value,
+				     /*in*/ kpse_src_type level);
+
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_var_expand (/*in*/ kpathsea	  kpse,
 			    /*[in]*/ const char * lpszSource);
@@ -789,9 +875,10 @@ MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_var_value (/*in*/ kpathsea	  kpse,
 			   /*[in]*/ const char * lpszVarName);
 
-MIKTEXKPSCEEAPI(boolean)
-miktex_kpse_absolute_p (/*[in]*/ const char * lpszFileName,
-			/*[in]*/ boolean      relativeOk);
+MIKTEXKPSCEEAPI(void)
+miktex_kpathsea_xputenv (/*in*/ kpathsea	kpse,
+			 /*[in]*/ const char *	lpszVarName,
+			 /*[in]*/ const char *	lpszValue);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_concatn (/*[in]*/ const char * lpsz1, ...);
@@ -799,28 +886,8 @@ miktex_concatn (/*[in]*/ const char * lpsz1, ...);
 MIKTEXKPSCEEAPI(char *)
 miktex_find_suffix (const char * lpszPath);
 
-MIKTEXKPSCEEAPI(int)
-miktex_kpse_bitmap_tolerance (/*[in]*/ double	dpi1,
-			      /*[in]*/ double	dpi2);
-
-MIKTEXKPSCEEAPI(int)
-miktex_kpse_in_name_ok (/*[in]*/ const char *lpszFileName);
-
-MIKTEXKPSCEEAPI(unsigned)
-miktex_kpse_magstep_fix (/*[in]*/ unsigned	dpi,
-			 /*[in]*/ unsigned	bdpi,
-			 /*[out]*/ int *	pRet);
-
-MIKTEXKPSCEEAPI(FILE *)
-miktex_kpse_open_file (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ kpse_file_format_type	format);
-
-MIKTEXKPSCEEAPI(int)
-miktex_kpse_out_name_ok (/*[in]*/ const char *lpszFileName);
-
-MIKTEXKPSCEEAPI(void)
-miktex_putenv (/*[in]*/ const char * lpszVarName,
-	       /*[in]*/ const char * lpszValue);
+MIKTEXKPSCEEAPI(char *)
+miktex_read_line (/*[in]*/ FILE * pFile);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_remove_suffix (const char * lpszPath);
@@ -832,6 +899,9 @@ miktex_str_list_add (/*[in]*/ str_list_type * pStringList,
 MIKTEXKPSCEEAPI(int)
 miktex_strcasecmp (/*[in]*/ const char * lpsz1,
 		   /*[in]*/ const char * lpsz2);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_uppercasify (const char * lpsz);
 
 MIKTEXKPSCEEAPI(const char *)
 miktex_xbasename (/*[in]*/ const char * lpszFileName);
@@ -877,10 +947,6 @@ MIKTEXKPSCEEAPI(MIKTEX_INT64)
 miktex_xftello64 (/*[in]*/ FILE *	pfile,
 	          /*[in]*/ const char *	lpszFileName);
 
-MIKTEXKPSCEEAPI(void)
-miktex_xputenv (/*[in]*/ const char * lpszVarName,
-		/*[in]*/ const char * lpszValue);
-
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK
 #endif
@@ -903,7 +969,6 @@ miktex_kpathsea_version_string;
 extern
 MIKTEXKPSDATA(char *)
 miktex_kpathsea_bug_address;
-
 
 extern
 MIKTEXKPSDATA(kpathsea)

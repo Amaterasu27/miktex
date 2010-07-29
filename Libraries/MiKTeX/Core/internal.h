@@ -315,13 +315,6 @@ typedef basic_ostringstream<char> tostringstream;
 
 /* _________________________________________________________________________
 
-   PathNameArray
-   _________________________________________________________________________ */
-
-typedef std::vector<PathName> PathNameArray;
-
-/* _________________________________________________________________________
-
    Functions
    _________________________________________________________________________ */
 
@@ -1109,7 +1102,15 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
-	    /*[out]*/ PathName &	path);
+	    /*[out]*/ PathNameArray &	result);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[out]*/ PathName &	result);
 
 public:
   virtual
@@ -1117,7 +1118,15 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
-	    /*[out]*/ PathName &	path);
+	    /*[out]*/ PathNameArray &	result);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
+	    /*[out]*/ PathName &	result);
 
 public:
   virtual
@@ -1125,16 +1134,16 @@ public:
   MIKTEXTHISCALL
   FindPkFile (/*[in]*/ const char *	lpszFontName,
 	      /*[in]*/ const char *	lpszMode,
-	      /*[in]*/ int			dpi,
-	      /*[out]*/ PathName &		path);
+	      /*[in]*/ int		dpi,
+	      /*[out]*/ PathName &	result);
 
 public:
   virtual
   bool
   MIKTEXTHISCALL
   FindTfmFile (/*[in]*/ const char *	lpszFontName,
-	       /*[out]*/ PathName &		path,
-	       /*[in]*/ bool			create);
+	       /*[out]*/ PathName &	result,
+	       /*[in]*/ bool		create);
 
 public:
   virtual
@@ -1544,7 +1553,7 @@ public:
   locale defaultLocale;
 
 private:
-  std::vector<PathName> scratchDirectories;
+  PathNameArray scratchDirectories;
 
 public:
   size_t
@@ -1750,33 +1759,26 @@ private:
 		  /*[in]*/ const char *	lpszFontName,
 		  /*[in]*/ int			dpi);
 
+private:
+  bool
+  FindFile (/*[in]*/ const char *	    lpszFileName,
+	    /*[in]*/ FileType		    fileType,
+	    /*[out]*/ PathNameArray &	    result,
+	    /*[in]*/ bool		    firstMatchOnly);
 
 private:
   bool
-  FindFileAlongVec (/*[in]*/ const char *		lpszFileName,
+  FindFile (/*[in]*/ const char *		lpszFileName,
 		    /*[in]*/ const PathNameArray &	vec,
-		    /*[out]*/ PathName &		path);
-
-private:
-  bool
-  SlowFindFile (/*[in]*/ const char *	lpszFileName,
-		/*[in]*/ const char *	lpszPathList,
-		/*[in]*/ PathName &		path);
+		    /*[out]*/ PathNameArray &		result,
+		    /*[in]*/ bool			firstMatchOnly);
 
 private:
   bool
   SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
 		    /*[in]*/ const char *	lpszDirPath,
-		    /*[out]*/ PathName &	result);
-
-
-private:
-  bool
-  SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
-		    /*[in]*/ const char *	lpszSubDir,
-		    /*[in]*/ const char *	lpszSearchSpec,
-		    /*[out]*/ PathName &		result);
-
+		    /*[out]*/ PathNameArray &	result,
+		    /*[in]*/ bool		firstMatchOnly);
 
 private:
   bool
@@ -1803,7 +1805,7 @@ public:
   SetEnvironmentVariables ();
 
 private:
-  std::vector<PathName>
+  PathNameArray
   GetFilenameDatabasePathNames (/*[in]*/ unsigned r);
 
 private:
@@ -2021,6 +2023,15 @@ private:
 
 private:
   void
+  ExpandRootDirectories (/*[in]*/ const char * lpszToBeExpanded,
+			 /*[in,out]*/ PathNameArray & paths);
+
+private:
+  PathNameArray
+  ExpandRootDirectories (/*[in]*/ const char * lpszToBeExpanded);
+
+private:
+  void
   ExpandPathPattern (/*[in]*/ const PathName &	    directory,				
 		     /*[in]*/ const PathName &	    pathPattern,
 		     /*[in,out]*/ PathNameArray &   paths);
@@ -2091,12 +2102,12 @@ private:
 
   // caching path patterns
 private:
-#if defined(USE_HASH_MAP)
+#if defined(HAVE_UNORDERED_MAP)
   typedef
-  hash_map<string, PathNameArray, hash_compare_icase> SearchPathDictionary;
+  tr1::unordered_map<string, PathNameArray, hash_path, equal_path> SearchPathDictionary;
 #else
   typedef
-  map<string, PathNameArray> SearchPathDictionary;
+  map<string, PathNameArray, less_icase> SearchPathDictionary;
 #endif
   SearchPathDictionary expandedPathPatterns;
 
@@ -2120,13 +2131,13 @@ private:
   bool makeFonts;
 
 private:
-#if defined(USE_HASH_MAP)
+#if defined(HAVE_UNORDERED_MAP)
   typedef
-  hash_map<string, SmartPointer<Cfg>, hash_compare_icase>
+  unordered_map<string, SmartPointer<Cfg>, hash_icase, equal_icase>
   ConfigurationSettings;
 #else
   typedef
-  map<string, SmartPointer<Cfg>, hash_compare_icase> ConfigurationSettings;
+  map<string, SmartPointer<Cfg>, less_icase> ConfigurationSettings;
 #endif
  
 private:

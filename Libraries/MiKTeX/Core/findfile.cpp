@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -75,359 +75,174 @@ SessionImpl::CheckCandidate (/*[in,out]*/ PathName &	path,
 /* _________________________________________________________________________
 
    SessionImpl::SearchFileSystem
-
-   Do a recursive file search using the file system API.
-   
-   CURDIR is the path to the current directory,
-   e.g. "\\server\texmf\fonts\pk\ljfour".
-
-   SUBDIR is a sub-directory we are looking for, if any.
-
-   SEARCHSPEC is a search specification, e.g. "dpi300\cmr10.pk".
    _________________________________________________________________________ */
 
 bool
-SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszCurDir,
-			       /*[in]*/ const char *	lpszSubDir,
-			       /*[in]*/ const char *	lpszSearchSpec,
-			       /*[out]*/ PathName &	result)
+SessionImpl::SearchFileSystem (/*[in]*/ const char *		lpszFileName,
+			       /*[in]*/ const char *		lpszDirectoryPattern,
+			       /*[out]*/ PathNameArray &	result,
+			       /*[in]*/ bool			firstMatchOnly)
 {
-  MIKTEX_ASSERT (lpszCurDir != 0);
-  MIKTEX_ASSERT (*lpszCurDir != 0);
-  MIKTEX_ASSERT (lpszSearchSpec != 0);
-  MIKTEX_ASSERT (*lpszSearchSpec != 0);
-  MIKTEX_ASSERT (lpszSubDir == 0 || *lpszSubDir != 0);
+  MIKTEX_ASSERT (result.empty());
 
-  // if we have a sub directory...
-  if (lpszSubDir != 0 && *lpszSubDir != 0)
-    {
-      // ...then make a new sub-directory path by appending the
-      // sub-directory name to the current directory name
-      PathName pathCurDirNew (lpszCurDir);
-      pathCurDirNew += lpszSubDir;
-
-      // if the new sub-directory exists...
-      if (Directory::Exists(pathCurDirNew))
-	{
-	  // ...then do a recursive search here
-	  // <recursivecall>
-	  if (SearchFileSystem(pathCurDirNew.Get(), 0, lpszSearchSpec, result))
-	    {
-	      return (true);
-	    }
-	  // </recursivecall>
-	}
-
-      // do a recursive search in each sub-directory of the current
-      // sub-directory
-      auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(lpszCurDir));
-      DirectoryEntry entry;
-      while (pLister->GetNext(entry))
-	{
-	  if (entry.isDirectory)
-	    {
-	      // append sub directory name to current directory name
-	      pathCurDirNew = lpszCurDir;
-	      pathCurDirNew += entry.name.c_str();
-		  
-	      // and do a recursive search
-	      // <recursivecall>
-	      if (SearchFileSystem(pathCurDirNew.Get(),
-				   lpszSubDir,
-				   lpszSearchSpec,
-				   result))
-		{
-		  pLister->Close ();
-		  return (true);
-		}
-	      // </recursivecall>
-	    }
-	}
-      pLister->Close ();
-      return (false);
-    }
-  else
-    {
-      // no sub-directory is given
-      const char * lpszRecInd;
-      lpszRecInd = strstr(lpszSearchSpec, RECURSION_INDICATOR);
-      if (lpszRecInd != 0)
-	{
-	  // decompose the SEARCHSPEC into a sub-directory and a
-	  // smaller search spec
-	  ptrdiff_t cch =  lpszRecInd - lpszSearchSpec;
-
-	  // do a recursive search with the new sub-directory and
-	  // search spec
-	  // <recursivecall>
-	  return (SearchFileSystem(lpszCurDir,
-			     STRDUP(lpszSearchSpec, cch).Get(),
-			     lpszRecInd + RECURSION_INDICATOR_LENGTH,
-			     result));
-	  // <recursivecall/>
-	}
-      else
-	{
-	  // the search spec is rather simple: it is a relative
-	  // filename path
-
-	  // (I) append the path to the current directory; return, if
-	  // the resulting file name is accessible
-	  PathName temp (lpszCurDir);
-	  temp += lpszSearchSpec;
-	  trace_filesearch->WriteFormattedLine ("core",
-						T_("trying %s..."),
-						Q_(temp));
-	  if (CheckCandidate(temp, 0))
-	    {
-	      result = temp;
-	      return (true);
-	    }
-
-	  // (II) do a recursive search in each subdirectory of the
-	  // current directory
-	  auto_ptr<DirectoryLister>
-	    pLister (DirectoryLister::Open(lpszCurDir));
-	  DirectoryEntry entry;
-	  while (pLister->GetNext(entry))
-	    {
-	      if (entry.isDirectory)
-		{
-		  PathName temp (lpszCurDir);
-		  temp += entry.name.c_str();
-		  // <recursivecall>
-		  if (SearchFileSystem(temp.Get(), 0, lpszSearchSpec, result))
-		    {
-		      pLister->Close ();
-		      return (true);
-		    }
-		  // </recursivecall>
-		}
-	      
-	    }
-	  pLister->Close ();
-	  return (false);
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::SearchFileSystem
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
-			       /*[in]*/ const char *	lpszDirPath,
-			       /*[out]*/ PathName &	result)
-{
   if ((PathName::Compare(MPM_ROOT_PATH,
-			 lpszDirPath,
+			 lpszDirectoryPattern,
 			 static_cast<unsigned long>(MPM_ROOT_PATH_LEN))
        == 0)
-      && (lpszDirPath[MPM_ROOT_PATH_LEN] == 0
-	  || IsDirectoryDelimiter(lpszDirPath[MPM_ROOT_PATH_LEN])))
-    {
-      return (false);
-    }
+      && (lpszDirectoryPattern[MPM_ROOT_PATH_LEN] == 0
+	  || IsDirectoryDelimiter(lpszDirectoryPattern[MPM_ROOT_PATH_LEN])))
+  {
+    return (false);
+  }
 
   trace_filesearch->WriteFormattedLine
     ("core",
-     T_("slow file search: relPath=%s, dirPath=%s"),
-     Q_(lpszRelPath),
-     Q_(lpszDirPath));
+     T_("file system search: filename=%s, directory=%s"),
+     Q_(lpszFileName),
+     Q_(lpszDirectoryPattern));
 
-  // make a search spec: "DIRPATH\RELPATH"
-  CharBuffer<char> searchSpec;
-  searchSpec = lpszDirPath;
-  AppendDirectoryDelimiter (searchSpec.GetBuffer(), searchSpec.GetCapacity());
-  searchSpec += lpszRelPath;
+  PathNameArray directories;
 
-  // if search spec doesn't contain "//"...
-  const char * lpszRecInd = strstr(searchSpec.Get(), RECURSION_INDICATOR);
-  if (lpszRecInd == 0)
-    {
-      // ...then try to access the file
-      result = searchSpec.Get();
-      return (CheckCandidate(result, 0));
-    }
+  SearchPathDictionary::const_iterator it =
+    expandedPathPatterns.find(lpszDirectoryPattern);
+
+  if (it == expandedPathPatterns.end())
+  {
+    ExpandPathPattern ("", lpszDirectoryPattern, directories);
+    expandedPathPatterns[lpszDirectoryPattern] = directories;
+  }
   else
-    {
-      // otherwise, do a recursive search
-      PathName pathCurDir;
-      CopyString2 (pathCurDir.GetBuffer(),
-		   pathCurDir.GetCapacity(),
-		   searchSpec.Get(),
-		   lpszRecInd - searchSpec.Get());
-      if (Directory::Exists(pathCurDir))
-	{
-	  return (SearchFileSystem(pathCurDir.Get(),
-				   0,
-				   (lpszRecInd + RECURSION_INDICATOR_LENGTH),
-				   result));
-	}
-      else
-	{
-	  return (false);
-	}
-    }
-}
+  {
+    directories = it->second;
+  }
 
-/* _________________________________________________________________________
-
-   SessionImpl::SlowFindFile
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::SlowFindFile (/*[in]*/ const char *	lpszFileName,
-			   /*[in]*/ const char *	lpszPathList,
-			   /*[out]*/ PathName &		result)
-{
-  // if a fully qualified path name is given, then don't look out any
-  // further
-  if (Utils::IsAbsolutePath(lpszFileName))
-    {
-      result = lpszFileName;
-      return (CheckCandidate(result, 0));
-    }
-
-  // if an explicitly relative path name is given, then don't look out
-  // any further
-  if (IsExplicitlyRelativePath(lpszFileName))
-    {
-      PathName pathWD;
-      for (unsigned idx = 0; GetWorkingDirectory(idx, pathWD); ++ idx)
-	{
-	  result = pathWD;
-	  result += lpszFileName;
-	  result.MakeAbsolute ();
-	  if (CheckCandidate(result, 0))
-	    {
-	      return (true);
-	    }
-	}
-      return (false);
-    }
-
-  PathNameArray vec = SplitSearchPath(lpszPathList);
-
-  // search along search path
   bool found = false;
-  for (PathNameArray::const_iterator it = vec.begin();
-       ! found && it != vec.end();
+
+  for (PathNameArray::const_iterator it = directories.begin();
+       ! (found && firstMatchOnly) && it != directories.end();
        ++ it)
+  {
+    PathName path (*it, lpszFileName);
+    if (CheckCandidate(path, 0))
     {
-      found = SearchFileSystem(lpszFileName, it->Get(), result);
+      found = true;
+      result.push_back (path);
     }
+  }
 
   return (found);
 }
 
 /* _________________________________________________________________________
 
-   SessionImpl::FindFileAlongVec
+   SessionImpl::FindFile
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFileAlongVec (/*[in]*/ const char *	lpszFileName,
-			       /*[in]*/ const PathNameArray &	vec,
-			       /*[out]*/ PathName &		result)
+SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
+		       /*[in]*/ const PathNameArray &	directoryPatterns,
+		       /*[out]*/ vector<PathName> &	result,
+		       /*[in]*/ bool			firstMatchOnly)
      
 {
+  MIKTEX_ASSERT (result.size() == 0);
+
+  AutoTraceTime att ("find file", lpszFileName);
+
   // if a fully qualified path name is given, then don't look out any
   // further
   if (Utils::IsAbsolutePath(lpszFileName))
+  {
+    PathName path (lpszFileName);
+    bool found = CheckCandidate(path, 0);
+    if (found)
     {
-      result = lpszFileName;
-      return (CheckCandidate(result, 0));
+      result.push_back (path);
     }
+    return (found);
+  }
 
   // if an explicitly relative path name is given, then don't look out
   // any further
   if (IsExplicitlyRelativePath(lpszFileName))
+  {
+    PathName pathWD;
+    bool found = false;
+    for (unsigned idx = 0; ! (found && firstMatchOnly) && GetWorkingDirectory(idx, pathWD); ++ idx)
     {
-      PathName pathWD;
-      for (unsigned idx = 0; GetWorkingDirectory(idx, pathWD); ++ idx)
-	{
-	  result = pathWD;
-	  result += lpszFileName;
-	  result.MakeAbsolute ();
-	  if (CheckCandidate(result, 0))
-	    {
-	      return (true);
-	    }
-	}
-      return (false);
+      PathName path (pathWD);
+      path += lpszFileName;
+      path.MakeAbsolute ();
+      if (CheckCandidate(path, 0))
+      {
+	found = true;
+	result.push_back (path);
+      }
     }
+    return (found);
+  }
 
-#if 0
-  // get the current directory
-  PathName pathCWD;
-  pathCWD.SetToCurrentDirectory ();
-#endif
-
-  // search along vector
   bool found = false;
-  for (PathNameArray::const_iterator it = vec.begin();
-       ! found && it != vec.end();
+  for (PathNameArray::const_iterator it = directoryPatterns.begin();
+       ! (found && firstMatchOnly) && it != directoryPatterns.end();
        ++ it)
+  {
+    FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
+    if (pFndb != 0)
     {
-#if 0
-      if (PathName::Compare(*it, pathCWD) == 0)
+      // search fndb
+      AutoFndbRelease autoRelease (pFndb);
+      vector<PathName> paths;
+      vector<string> fileNameInfo;
+      if (pFndb->Search(lpszFileName,
+			it->Get(),
+			firstMatchOnly,
+			paths,
+			fileNameInfo))
+      {
+	for (int idx = 0; idx < paths.size(); ++ idx)
 	{
-	  // special case: path is the current working directory
-	  MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszFileName));
-	  result = lpszFileName;
-	  if (CheckCandidate(result, 0))
-	    {
-	      return (true);
-	    }
+	  if (CheckCandidate(paths[idx], fileNameInfo[idx].c_str()))
+	  {
+	    found = true;
+	    result.push_back (paths[idx]);
+	  }
 	}
-#endif
-
-#if 0
-      PathName pathWD;
-      for (unsigned idx = 1; GetWorkingDirectory(idx, pathWD); ++ idx)
-	{
-	  if (PathName::Compare(*it, pathWD) == 0)
-	    {
-	      // special case: path is one of the include directories
-	      MIKTEX_ASSERT (! Utils::IsAbsolutePath(lpszFileName));
-	      result = pathWD;
-	      result += lpszFileName;
-	      if (CheckCandidate(result, 0))
-		{
-		  return (true);
-		}
-	    }
-	}
-#endif
-
-      FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
-      if (pFndb != 0)
-	{
-	  // search fndb
-	  AutoFndbRelease autoRelease (pFndb);
-	  PathName pathFileNameInfo;
-	  found =
-	    pFndb->Search(lpszFileName,
-			  it->Get(),
-			  result,
-			  pathFileNameInfo.GetBuffer(),
-			  pathFileNameInfo.GetCapacity());
-	  if (found)
-	    {
-	      found = CheckCandidate(result, pathFileNameInfo.Get());
-	    }
-	}
-      else
-	{
-	  // search disk
-	  found = SearchFileSystem(lpszFileName, it->Get(), result);
-	}
+      }
     }
+    else
+    {
+      // search disk
+      vector<PathName> paths;
+      if (SearchFileSystem(lpszFileName, it->Get(), paths, firstMatchOnly))
+      {
+	found = true;
+	result.insert (result.end(), paths.begin(), paths.end());
+      }
+    }
+  }
 
   return (found);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::FindFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
+		       /*[in]*/ const char *	  lpszPathList,
+		       /*[out]*/ PathNameArray &  result)
+{
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT_STRING (lpszPathList);
+
+  return (FindFile(
+    lpszFileName,
+    SplitSearchPath(lpszPathList),
+    result,
+    FALSE));
 }
 
 /* _________________________________________________________________________
@@ -440,14 +255,21 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ const char *	lpszPathList,
 		       /*[out]*/ PathName &	result)
 {
-  AutoTraceTime att ("SessionImpl::FindFile", lpszFileName);
-
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING (lpszPathList);
 
   PathNameArray vec = SplitSearchPath(lpszPathList);
 
-  return (FindFileAlongVec(lpszFileName, vec, result));
+  PathNameArray paths;
+
+  bool found = FindFile(lpszFileName, vec, paths, true);
+
+  if (found)
+  {
+    result = paths[0];
+  }
+
+  return (found);
 }
 
 /* _________________________________________________________________________
@@ -456,21 +278,22 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
-		       /*[in]*/ FileType	fileType,
-		       /*[out]*/ PathName &	result)
+SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
+		       /*[in]*/ FileType		fileType,
+		       /*[out]*/ vector<PathName> &	result,
+		       /*[in]*/ bool			firstMatchOnly)
 {
-  AutoTraceTime att ("SessionImpl::FindFile", lpszFileName);
+  MIKTEX_ASSERT (result.empty());
 
   // try to derive the file type
   if (fileType == FileType::None)
+  {
+    fileType = DeriveFileType(lpszFileName);
+    if (fileType == FileType::None)
     {
-      fileType = DeriveFileType(lpszFileName);
-      if (fileType == FileType::None)
-	{
-	  return (false);
-	}
+      return (false);
     }
+  }
 
   // construct the search vector
   PathNameArray vec = ConstructSearchVector(fileType);
@@ -483,44 +306,72 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
   const char * lpszExtension = GetFileNameExtension(lpszFileName);
   bool hasRegisteredExtension = false;
   if (lpszExtension != 0)
+  {
+    for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
+		      PATH_DELIMITER);
+	 ext.GetCurrent() != 0;
+	 ++ ext)
     {
-      for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
-			PATH_DELIMITER);
-	   ext.GetCurrent() != 0;
-	   ++ ext)
-	{
-	  if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
-	    {
-	      hasRegisteredExtension = true;
-	      break;
-	    }
-	}
-    }      
+      if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
+      {
+	hasRegisteredExtension = true;
+	break;
+      }
+    }
+  }      
 
   // try each registered file name extension, if none was specified
   if (! hasRegisteredExtension)
+  {
+    for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
+		      PATH_DELIMITER);
+	 ext.GetCurrent() != 0;
+	 ++ ext)
     {
-      for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
-			PATH_DELIMITER);
-	   ext.GetCurrent() != 0;
-	   ++ ext)
-	{
-	  PathName fileName (lpszFileName);
-	  fileName.AppendExtension (ext.GetCurrent());
-	  if (FindFileAlongVec(fileName.Get(), vec, result))
-	    {
-	      return (true);
-	    }
-	}
+      PathName fileName (lpszFileName);
+      fileName.AppendExtension (ext.GetCurrent());
+      if (FindFile(fileName.Get(), vec, result, firstMatchOnly) && firstMatchOnly)
+      {
+	return (true);
+      }
     }
+  }
 
-  // try the given file name
-  if (FindFileAlongVec(lpszFileName, vec, result))
-    {
-      return (true);
-    }
+  FindFile (lpszFileName, vec, result, firstMatchOnly);
 
-  return (false);
+  return (! result.empty());
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::FindFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
+		       /*[in]*/ FileType	  fileType,
+		       /*[out]*/ PathNameArray &  result)
+{
+  return (FindFile(lpszFileName, fileType, result, false));
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::FindFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ FileType	fileType,
+		       /*[out]*/ PathName &	result)
+{
+  vector<PathName> paths;
+  bool found = FindFile(lpszFileName, fileType, paths, true);
+  if (found)
+  {
+    result = paths[0];
+  }
+  return (found);
 }
 
 /* _________________________________________________________________________

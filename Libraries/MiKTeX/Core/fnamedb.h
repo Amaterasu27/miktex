@@ -26,10 +26,6 @@
 #if ! defined(MIKTEX__BA15DC03_8D45_4985_9111_D4B075360D81__)
 #define MIKTEX__BA15DC03_8D45_4985_9111_D4B075360D81__
 
-#if 1 // experimental
-#define USE_HASH_TABLE 1
-#endif
-
 #include "fndbmem.h"
 
 BEGIN_INTERNAL_NAMESPACE;
@@ -54,11 +50,11 @@ public:
 
 public:
   bool
-  Search (/*[in]*/ const char *	lpszFileName,
-	  /*[in]*/ const char *	lpszPathPattern,
-	  /*[out]*/ PathName &	result,
-	  /*[out]*/ char *	lpszFileNameInfo,
-	  /*[in]*/ size_t	sizeFileNameInfo);
+  Search (/*[in]*/ const char *		lpszFileName,
+	  /*[in]*/ const char *		lpszPathPattern,
+	  /*[in]*/ bool			firstMatchOnly,
+	  /*[out]*/ PathNameArray &	result,
+	  /*[out]*/ vector<string> &	fileNameInfo);
 
 public:
   void
@@ -92,7 +88,6 @@ public:
   bool
   FileExists (/*[in]*/ const PathName &	path);
 
-#if USE_HASH_TABLE
 public:
   void
   ReadFileNames ();
@@ -100,7 +95,6 @@ public:
 private:
   void
   ReadFileNames (/*[in]*/ const FileNameDatabaseDirectory * pDir);
-#endif
 
 #if 1 // experimental
 public:
@@ -268,33 +262,6 @@ private:
 		  /*[out]*/ U32 &				index)
     const;
 
-#if ! USE_HASH_TABLE
-private:
-  bool
-  SearchInDirectory
-  (/*[in]*/ const FileNameDatabaseDirectory *		pDir,
-   /*[out]*/ PathName &					path,
-   /*[out]*/ FileNameDatabaseHeader::FndbOffset &	foFileNameInfo)
-    const;
-
-private:
-  bool
-  RecursiveSearch (/*[in]*/ FileNameDatabaseHeader::FndbOffset		foDir,
-		   /*[in]*/ const char *	lpszSubDir,
-		   /*[in]*/ const char *	lpszSearchSpec,
-		   /*[out]*/ PathName &		result,
-		   /*[out]*/ char *		lpszFileNameInfo,
-		   /*[in]*/ size_t		sizeFileNameInfo);
-
-private:
-  bool
-  Search (/*[in]*/ FileNameDatabaseHeader::FndbOffset			foDir,
-	  /*[in]*/ const char *			lpszPath,
-	  /*[out]*/ PathName &			result,
-	  /*[out]*/ char *			lpszFileNameInfo,
-	  /*[in]*/ size_t			sizeFileNameInfo);
-#endif
-
   // true, if the FNDB is read-only
 private:			// <fixme/>
   bool isInvariable;
@@ -322,10 +289,20 @@ private:
 private:
   PathName rootDirectory;
 
-#if USE_HASH_TABLE
 private:
-  typedef hash_multimap<string, const FileNameDatabaseDirectory *, hash_compare_icase> FileNameHashTable;
+#if defined(HAVE_UNORDERED_MAP)
+#if defined(MIKTEX_WINDOWS)
+  typedef tr1::unordered_multimap<string, const FileNameDatabaseDirectory *, hash_icase, equal_icase> FileNameHashTable;
+#else
+  typedef tr1::unordered_multimap<string, const FileNameDatabaseDirectory *> FileNameHashTable;
+#endif
   FileNameHashTable fileNames;
+#else
+#if defined(MIKTEX_WINDOWS)
+  typedef multimap<string, const FileNameDatabaseDirectory *, less_icase> FileNameHashTable;
+#else
+  typedef multimap<string, const FileNameDatabaseDirectory *> FileNameHashTable;
+#endif
 #endif
 
 private:

@@ -20,6 +20,10 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #include "openbsd-compat.h"
 
+#if defined(MIKTEX)
+#include "pdftex-version.h"
+#endif
+
 #include <sys/types.h>
 #ifdef WIN32
 #define EX_SOFTWARE EXIT_FAILURE
@@ -64,7 +68,6 @@ static char print_buf[PRINTF_BUF_SIZE];
 static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
 #if defined(MIKTEX)
-#include "pdftex-version.h"
 const char * ptexbanner = "This is MiKTeX-pdfTeX " MIKTEX_COMPONENT_VERSION_STR;
 #else
 extern string ptexbanner;       /* from web2c/lib/texmfmp.c */

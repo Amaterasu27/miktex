@@ -175,8 +175,8 @@ private:
   ICreateFndbCallback * pCallback;
 
 private:
-#if defined(USE_HASH_MAP)
-  typedef hash_map<string, FileNameDatabaseHeader::FndbOffset> StringMap;
+#if defined(HAVE_UNORDERED_MAP)
+  typedef tr1::unordered_map<string, FileNameDatabaseHeader::FndbOffset> StringMap;
 #else
   typedef map<string, FileNameDatabaseHeader::FndbOffset> StringMap;
 #endif

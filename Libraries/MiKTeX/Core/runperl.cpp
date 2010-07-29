@@ -42,7 +42,7 @@ SessionImpl::FindPerl (/*[out]*/ PathName & perl)
     {
       return (false);
     }
-  return (SlowFindFile(PERL_EXE, path.c_str(), perl));
+  return (FindFile(PERL_EXE, path.c_str(), perl));
 }
 
 /* _________________________________________________________________________
