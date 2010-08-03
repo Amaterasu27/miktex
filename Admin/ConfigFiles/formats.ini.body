@@ -93,7 +93,6 @@ input=luatex.ini
 
 [metafun]
 
-arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=mpost
 description=
@@ -116,7 +115,6 @@ input=mf.ini
 
 [mfmp]
 
-arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=mpost
 description=METAFONT compatible mem file
@@ -140,7 +138,6 @@ input=mltex.ini
 
 [mpost]
 
-arguments=-tcx=cp227.tcx
 compiler=mpost
 description=MetaPost default mem file
 input=mpost.ini

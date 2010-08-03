@@ -85,7 +85,11 @@ const_string LUATEX_IHELP[] = {
     "   --fmt=FORMAT                  load the format file FORMAT",
     "   --halt-on-error               stop processing at the first error",
     "   --help                        display help and exit",
+#if defined(MIKTEX)
+    "   --initialize                  be iniluatex, for dumping formats",
+#else
     "   --ini                         be iniluatex, for dumping formats",
+#endif
     "   --interaction=STRING          set interaction mode (STRING=batchmode/nonstopmode/scrollmode/errorstopmode)",
     "   --jobname=STRING              set the job name to STRING",
     "   --kpathsea-debug=NUMBER       set path searching debugging flags according to the bits of NUMBER",
@@ -184,10 +188,17 @@ static struct option long_options[]
 {"safer", 0, &safer_option, 1},
 {"nosocket", 0, &nosocket_option, 1},
 {"help", 0, 0, 0},
+#if defined(MIKTEX)
+{"initialize", 0, &ini_version, 1},
+#else
 {"ini", 0, &ini_version, 1},
+#endif
 {"interaction", 1, 0, 0},
 {"halt-on-error", 0, &haltonerrorp, 1},
 {"kpathsea-debug", 1, 0, 0},
+#if defined(MIKTEX)
+{"alias", 1, 0, 0},
+#endif
 {"progname", 1, 0, 0},
 {"version", 0, 0, 0},
 {"credits", 0, 0, 0},
@@ -207,11 +218,18 @@ static struct option long_options[]
 {"disable-write18", 0, &shellenabledp, -1},
 {"shell-restricted", 0, 0, 0},
 {"debug-format", 0, &debug_format_file, 1},
+#if defined(MIKTEX)
+{ "c-style-errors", 0, &filelineerrorstylep, 1},
+{ "no-c-style-errors", 0, &filelineerrorstylep, -1},
+#endif
 {"file-line-error-style", 0, &filelineerrorstylep, 1},
 {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
       /* Shorter option names for the above. */
 {"file-line-error", 0, &filelineerrorstylep, 1},
 {"no-file-line-error", 0, &filelineerrorstylep, -1},
+#if defined(MIKTEX)
+{"job-name", 1, 0, 0},
+#endif
 {"jobname", 1, 0, 0},
 {"parse-first-line", 0, &parsefirstlinep, 1},
 {"no-parse-first-line", 0, &parsefirstlinep, -1},
@@ -263,10 +281,18 @@ static void parse_options(int argc, char **argv)
         } else if (ARGUMENT_IS("kpathsea-debug")) {
             kpathsea_debug |= atoi(optarg);
 
+#if defined(MIKTEX)
+	} else if (ARGUMENT_IS("alias") || ARGUMENT_IS("progname")) {
+#else
         } else if (ARGUMENT_IS("progname")) {
+#endif
             user_progname = optarg;
 
+#if defined(MIKTEX)
+        } else if (ARGUMENT_IS("job-name") || ARGUMENT_IS("jobname")) {
+#else
         } else if (ARGUMENT_IS("jobname")) {
+#endif
             c_job_name = optarg;
 
         } else if (ARGUMENT_IS("fmt")) {

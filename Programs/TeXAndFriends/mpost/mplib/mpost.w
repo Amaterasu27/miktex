@@ -696,13 +696,23 @@ static struct option mpost_options[]
       { "interaction",               1, 0, 0 },
       { "halt-on-error",             0, 0, 0 },
       { "kpathsea-debug",            1, 0, 0 },
+#if defined(MIKTEX)
+      { "alias",                     1, 0, 0 },
+#endif
       { "progname",                  1, 0, 0 },
       { "version",                   0, 0, 0 },
       { "recorder",                  0, &recorder_enabled, 1 },
+#if defined(MIKTEX)
+      { "c-style-errors",            0, 0, 0 },
+      { "no-c-style-errors",         0, 0, 0 },
+#endif
       { "file-line-error-style",     0, 0, 0 },
       { "no-file-line-error-style",  0, 0, 0 },
       { "file-line-error",           0, 0, 0 },
       { "no-file-line-error",        0, 0, 0 },
+#if defined(MIKTEX)
+      { "job-name",                  1, 0, 0 },
+#endif
       { "jobname",                   1, 0, 0 },
       { "output-directory",          1, 0, 0 },
       { "s",                         1, 0, 0 },
@@ -736,13 +746,21 @@ static struct option mpost_options[]
     if (ARGUMENT_IS ("kpathsea-debug")) {
       kpathsea_debug |= atoi (optarg);
 
+#if defined(MIKTEX)
+    } else if (ARGUMENT_IS("job-name") || ARGUMENT_IS("jobname")) {
+#else
     } else if (ARGUMENT_IS("jobname")) {
+#endif
       if (optarg!=NULL) {
         mpost_xfree(options->job_name);
         options->job_name = mpost_xstrdup(optarg);
       }
 
+#if defined(MIKTEX)
+    } else if (ARGUMENT_IS ("alias") || ARGUMENT_IS ("progname")) {
+#else
     } else if (ARGUMENT_IS ("progname")) {
+#endif
       user_progname = optarg;
 
     } else if (ARGUMENT_IS ("mem")) {
@@ -771,9 +789,15 @@ static struct option mpost_options[]
     } else if (ARGUMENT_IS ("tex")) {
       mpost_tex_program = optarg;
     } else if (ARGUMENT_IS("file-line-error") || 
+#if defined(MIKTEX)
+	       ARGUMENT_IS("c-style-errors") ||
+#endif
                ARGUMENT_IS("file-line-error-style")) {
       options->file_line_error_style=true;
     } else if (ARGUMENT_IS("no-file-line-error") || 
+#if defined(MIKTEX)
+	       ARGUMENT_IS("no-c-style-errors") ||
+#endif
                ARGUMENT_IS("no-file-line-error-style")) {
       options->file_line_error_style=false;
     } else if (ARGUMENT_IS("help")) {
@@ -794,6 +818,7 @@ static struct option mpost_options[]
     } else if (ARGUMENT_IS("halt-on-error")) {
       options->halt_on_error = true;
     } else if (ARGUMENT_IS("8bit") ||
+
                ARGUMENT_IS("parse-first-line")) {
       /* do nothing, these are always on */
     } else if (ARGUMENT_IS("translate-file") ||
@@ -801,8 +826,6 @@ static struct option mpost_options[]
                ARGUMENT_IS("no-parse-first-line")) {
       fprintf(stdout,"warning: %s: unimplemented option %s\n", argv[0], argv[optind]);
     } 
-#if defined(MIKTEX)
-#endif
   } 
   options->ini_version = (int)ini_version_test;
 }

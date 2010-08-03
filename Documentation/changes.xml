@@ -4,7 +4,7 @@
 
 <itemizedlist>
 <listitem>
-<para>...</para>
+<para>&LuaTeX;</para>
 </listitem>
 </itemizedlist>
 
@@ -76,14 +76,6 @@ pack&nbsp;2 installed.</para>
 <listitem><para>&TeXworks; 0.3</para></listitem>
 <listitem><para>&XeTeX; 0.9997.4</para></listitem>
 </itemizedlist>
-
-</section>
-
-<section>
-
-<title>Bugfixes</title>
-
-<para></para>
 
 </section>
 
