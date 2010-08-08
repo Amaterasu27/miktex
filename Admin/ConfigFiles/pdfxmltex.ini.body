@@ -1,7 +1,7 @@
 [ft.tex]
 
 path=.
-path;=%R/tex/context//
-path;=%R/tex/plain//
+path;=%R/tex/xmltex//
+path;=%R/tex/latex//
 path;=%R/tex/generic//
 path;=%R/tex//

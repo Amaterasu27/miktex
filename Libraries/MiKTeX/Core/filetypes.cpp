@@ -25,49 +25,27 @@
 
 #include "miktex/Core/Environment"
 
-/* _________________________________________________________________________
+#if defined(MIKTEX_WINDOWS)
+#  define DELIM ";"
+#else
+#  define DELIM ":"
+#endif
 
-   SearchSpecBuilder
-   _________________________________________________________________________ */
+#define R_(x) S_(x) "//"
+#define r_(x) s_(x) "//"
+#define S_(x) "%R" x
+#define s_(x) "%r" x
 
-class SearchSpecBuilder
-  : protected CharBuffer<char, 512>
-{
-private:
-  void
-  Build (/*[in]*/ bool		recursive,
-	 /*[in]*/ const char *	lpszDir)
-  {
-    Set (TEXMF_PLACEHOLDER);
-    Append (PathName::DirectoryDelimiter);
-    Append (lpszDir);
-    if (recursive)
-      {
-	Append (RECURSION_INDICATOR);
-      }
-  }
+#define P2_(a, b) a DELIM b
+#define P3_(a, b, c) a DELIM b DELIM c
+#define P4_(a, b, c, d) a DELIM b DELIM c DELIM d
+#define P5_(a, b, c, d, e) a DELIM b DELIM c DELIM d DELIM e
+#define P6_(a, b, c, d, e, f) a DELIM b DELIM c DELIM d DELIM e DELIM f
+#define P7_(a, b, c, d, e, f, g) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g
+#define P8_(a, b, c, d, e, f, g, h) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g DELIM h
+#define P9_(a, b, c, d, e, f, g, h, i) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g DELIM h DELIM i
 
-public:
-  operator
-  const char * ()
-    const
-  {
-    return (Get());
-  }
-
-public:
-  SearchSpecBuilder (/*[in]*/ const char * lpszDir)
-  {
-    Build (true, lpszDir);
-  }
-
-public:
-  SearchSpecBuilder (/*[in]*/ bool		recursive,
-		     /*[in]*/ const char *	lpszDir)
-  {
-    Build (recursive, lpszDir);
-  }
-};
+#define P_ ListBuilder
 
 /* _________________________________________________________________________
 
@@ -112,37 +90,37 @@ public:
 	     + 1
 	     );
     Set (lpszElement1);
-    if (lpszElement2 != 0)
+    if (lpszElement2 != 0 && *lpszElement2 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement2);
       }
-    if (lpszElement3 != 0)
+    if (lpszElement3 != 0 && *lpszElement3 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement3);
       }
-    if (lpszElement4 != 0)
+    if (lpszElement4 != 0 && *lpszElement4 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement4);
       }
-    if (lpszElement5 != 0)
+    if (lpszElement5 != 0 && *lpszElement5 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement5);
       }
-    if (lpszElement6 != 0)
+    if (lpszElement6 != 0 && *lpszElement6 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement6);
       }
-    if (lpszElement7 != 0)
+    if (lpszElement7 != 0 && *lpszElement7 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement7);
       }
-    if (lpszElement8 != 0)
+    if (lpszElement8 != 0 && *lpszElement8 != 0)
       {
 	Append (PATH_DELIMITER);
 	Append (lpszElement8);
@@ -206,6 +184,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 
   if (fileTypes[fileType.Get()].fileType == fileType.Get())
   {
+    // already registered
     return;
   }
 
@@ -213,223 +192,138 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
     {
 
     case FileType::AFM:
-      RegisterFileType
-	(FileType::AFM,
-	 "afm",
-	 0,
-	 ListBuilder(
-		     ".afm"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_AFM_DIR)
-		     ),
-	 ListBuilder(
-		     "AFMFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::AFM,
+	"afm",
+	0,
+	".afm",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_AFM_DIR)),
+	P2_("AFMFONTS", "TEXFONTS"));
       break;
 
     case FileType::BASE:
-      RegisterFileType
-	(FileType::BASE,
-	 "base",
-	 "METAFONT",
-	 ListBuilder(
-		     ".base"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_BASE_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::BASE,
+	"base",
+	"METAFONT",
+	".base",
+	P2_(CURRENT_DIRECTORY, s_(MIKTEX_PATH_BASE_DIR)),
+	"");
       break;
 
     case FileType::BIB:
-      RegisterFileType
-	(FileType::BIB,
-	 "bib",
-	 "BibTeX",
-	 ListBuilder(
-		     ".bib"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
-		     ),
-	 ListBuilder(
-		     "BIBINPUTS",
-		     "TEXBIB"
-		     ));
+      RegisterFileType (
+	FileType::BIB,
+	"bib",
+	"BibTeX",
+	".bib",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_BIBTEX_DIR "/bib")),
+	P2_("BIBINPUTS", "TEXBIB"));
       break;
 
     case FileType::BST:
-      RegisterFileType
-	(FileType::BST,
-	 "bst",
-	 "BibTeX",
-	 ListBuilder(
-		     ".bst"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
-		     ),
-	 ListBuilder(
-		     "BSTINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::BST,
+	"bst",
+	"BibTeX",
+	".bst",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_BIBTEX_DIR "/{bst,csf}")),
+	"BSTINPUTS");
       break;
 
     case FileType::CID:
-      RegisterFileType
-	(FileType::CID,
-	 "cid maps",
-	 0,
-	 ListBuilder(
-		     ".cid",
-		     ".cidmap"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_CIDMAP_DIR)
-		     ),
-	 ListBuilder(
-		     "FONTCIDMAPS"
-		     ));
+      RegisterFileType (
+	FileType::CID,
+	"cid maps",
+	0,
+	P2_(".cid", ".cidmap"),
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_CIDMAP_DIR)),
+	"FONTCIDMAPS");
       break;
-
       
     case FileType::CLUA:
-      RegisterFileType
-	(FileType::CLUA,
-	 "clua",
-	 0,
-	 ListBuilder(
-		     ".dll",
-		     ".so"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR)
-		     ),
-	 ListBuilder(
-		     "CLUAINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::CLUA,
+	"clua",
+	0,
+	P2_(".dll", ".so"),
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_SCRIPT_DIR "/{$progname,$engine,}/lua")),
+	"CLUAINPUTS");
       break;
       
     case FileType::CNF:
-      RegisterFileType
-	(FileType::CNF,
-	 "cnf",
-	 0,
-	 ListBuilder(
-		     ".cnf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_WEB2C_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXMFCNF"
-		     ));
+      RegisterFileType (
+	FileType::CNF,
+	"cnf",
+	0,
+	".cnf",
+	S_(MIKTEX_PATH_WEB2C_DIR),
+	"TEXMFCNF");
       break;
       
     case FileType::CMAP:
-      RegisterFileType
-	(FileType::CMAP,
-	 "cmap files",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_CMAP_DIR)
-		     ),
-	 ListBuilder(
-		     "CMAPFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::CMAP,
+	"cmap files",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_CMAP_DIR)),
+	P2_("CMAPFONTS", "TEXFONTS"));
       break;
       
     case FileType::CWEB:
-      RegisterFileType
-	(FileType::CWEB,
-	 "cweb",
-	 "CWeb",
-	 ListBuilder(
-		     ".w"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_CWEB_DIR)
-		     ),
-	 ListBuilder(
-		     "CWEBINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::CWEB,
+	"cweb",
+	"CWeb",
+	".w",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_CWEB_DIR)),
+	"CWEBINPUTS");
       break;
  
     case FileType::DB:
-      RegisterFileType
-	(FileType::DB,
-	 "ls-R",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(),
-	 ListBuilder(
-		     "TEXMFDBS"
-		     ));
+      RegisterFileType (
+	FileType::DB,
+	"ls-R",
+	0,
+	"",
+	"",
+	"TEXMFDBS");
       break;
-
       
     case FileType::DVI:
-      RegisterFileType
-	(FileType::DVI,
-	 "dvi",
-	 0,
-	 ListBuilder(
-		     ".dvi"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_DOC_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::DVI,
+	"dvi",
+	0,
+	".dvi",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_DOC_DIR)),
+	"");
       break;
       
     case FileType::DVIPSCONFIG:
-      RegisterFileType
-	(FileType::DVIPSCONFIG,
-	 "dvips config",
-	 "Dvips",
-	 ListBuilder(),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXCONFIG"
-		     ));
+      RegisterFileType (
+	FileType::DVIPSCONFIG,
+	"dvips config",
+	"Dvips",
+	"",
+	R_(MIKTEX_PATH_DVIPS_DIR),
+	"TEXCONFIG");
       break;
       
     case FileType::ENC:
-      RegisterFileType
-	(FileType::ENC,
-	 "enc",
-	 0,
-	 ListBuilder(
-		     ".enc"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_ENC_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPDFM_DIR)
-		     ),
-	 ListBuilder(
-		     "ENCFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::ENC,
+	"enc",
+	0,
+	".enc",
+	P6_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_ENC_DIR),
+	    R_(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
+	    R_(MIKTEX_PATH_DVIPS_DIR),
+	    R_(MIKTEX_PATH_PDFTEX_DIR),
+	    R_(MIKTEX_PATH_DVIPDFM_DIR)),
+	    P2_("ENCFONTS", "TEXFONTS"));
       break;
 
     case FileType::EXE:
@@ -442,11 +336,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 	if (! Utils::GetEnvironmentString("PATHEXT", extensions)
 	    || extensions.empty())
 	  {
-	    extensions = ListBuilder(
-				     ".com",
-				     ".exe",
-				     ".bat"
-				     );
+	    extensions = P3_(".com",".exe", ".bat");
 	  }
 #elif defined(MIKTEX_EXE_FILE_SUFFIX)
 	extensions = MIKTEX_EXE_FILE_SUFFIX;
@@ -508,937 +398,562 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 	  }
 	if (fileType.Get() == FileType::EXE)
 	  {
-	    RegisterFileType
-	      (FileType::EXE,
-	       "exe",
-	       0,
-	       extensions.c_str(),
-	       exePath.c_str(),
-	       ListBuilder());
+	    RegisterFileType (
+	      FileType::EXE,
+	      "exe",
+	      0,
+	      extensions.c_str(),
+	      exePath.c_str(),
+	      "");
 	  }
 #if defined(MIKTEX_WINDOWS)
 	else if (fileType.Get() == FileType::WindowsCommandScriptFile)
 	  {
-	    RegisterFileType
-	      (FileType::WindowsCommandScriptFile,
-	       "Windows command script file",
-	       0,
-	       ListBuilder(".bat",
-			   ".cmd"),
-	       ListBuilder(
-			   SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
-			   exePath.c_str()
-			   ),
-	       ListBuilder());
+	    RegisterFileType (
+	      FileType::WindowsCommandScriptFile,
+	      "Windows command script file",
+	      0,
+	      P2_(".bat", ".cmd"),
+	      P_(R_(MIKTEX_PATH_SCRIPT_DIR), exePath.c_str()),
+	      "");
 	  }
 #endif
 	break;
       }
 
     case FileType::FEA:
-      RegisterFileType
-	(FileType::FEA,
-	 "font feature files",
-	 0,
-	 ListBuilder(
-		     ".fea"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     MIKTEX_PATH_FONT_FEATURE_DIR
-		     ),
-	 ListBuilder(
-		     "FONTFEATURES"
-		     ));
+      RegisterFileType (
+	FileType::FEA,
+	"font feature files",
+	0,
+	".fea",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_FONT_FEATURE_DIR)),
+	"FONTFEATURES");
       break;
 
     case FileType::FMT:
-      {
-	Tokenizer engine (GetEngine().c_str(), ",;:");
-	if (engine.GetCurrent() != 0)
-	  {
-	    PathName engineDir (MIKTEX_PATH_FMT_DIR);
-	    engineDir += engine.GetCurrent();
-	    RegisterFileType
-	      (FileType::FMT,
-	       "fmt",
-	       "TeX",
-	       ListBuilder(
-			   ".fmt"
-			   ),
-	       ListBuilder(
-			   CURRENT_DIRECTORY,
-			   SearchSpecBuilder(engineDir.Get()),
-			   SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
-			   ),
-	       ListBuilder());
-	  }
-	else
-	  {
-	    RegisterFileType
-	      (FileType::FMT,
-	       "fmt",
-	       "TeX",
-	       ListBuilder(
-			   ".fmt"
-			   ),
-	       ListBuilder(
-			   CURRENT_DIRECTORY,
-			   SearchSpecBuilder(MIKTEX_PATH_FMT_DIR)
-			   ),
-	       ListBuilder());
-	  }
-	break;
-      }
+      RegisterFileType (
+	FileType::FMT,
+	"fmt",
+	"TeX",
+	".fmt",
+	P2_(CURRENT_DIRECTORY, s_(MIKTEX_PATH_FMT_DIR "/{$engine,}")),
+	"");
+      break;
 
     case FileType::GF:
-      RegisterFileType
-	(FileType::GF,
-	 "gf",
-	 0,
-	 ListBuilder(
-		     ".gf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_FONT_DIR)
-		     ),
-	 ListBuilder("GFFONTS",
-		     "GLYPHFONTS",
-		     "TEXFONTS"));
+      RegisterFileType (
+	FileType::GF,
+	"gf",
+	0,
+	".gf",
+	// <todo>
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_FONT_DIR)),
+	// <todo/>
+	P3_("GFFONTS", "GLYPHFONTS", "TEXFONTS"));
       break;
 
     case FileType::GLYPHFONT:
-      RegisterFileType
-	(FileType::GLYPHFONT,
-	 "bitmap font",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_FONT_DIR)
-		     ),
-	 ListBuilder("GLYPHFONTS",
-		     "TEXFONTS"));
+      RegisterFileType (
+	FileType::GLYPHFONT,
+	"bitmap font",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_FONT_DIR)),
+	P2_("GLYPHFONTS", "TEXFONTS"));
       break;
       
     case FileType::GRAPHICS:
-      RegisterFileType
-	(FileType::GRAPHICS,
-	 "graphic/figure",
-	 0,
-	 ListBuilder(
-		     ".eps",
-		     ".epsi",
-		     ".png"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
-		     ),
-	 ListBuilder("TEXPICTS",
-		     "TEXINPUTS"));
+      RegisterFileType (
+	FileType::GRAPHICS,
+	"graphic/figure",
+	0,
+	P3_(".eps", ".epsi",".png"),
+	P4_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_DVIPS_DIR),
+	    R_(MIKTEX_PATH_PDFTEX_DIR),
+	    R_(MIKTEX_PATH_TEX_DIR)),
+	P2_("TEXPICTS", "TEXINPUTS"));
       break;
       
     case FileType::HBF:
-      RegisterFileType
-	(FileType::HBF,
-	 "hbf",
-	 0,
-	 ListBuilder(
-		     ".hbf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_HBF_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_TYPE1_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::HBF,
+	"hbf",
+	0,
+	".hbf",
+	P3_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_HBF_DIR),
+	    R_(MIKTEX_PATH_TYPE1_DIR)),
+	"");
       break;
   
     case FileType::IST:
-      RegisterFileType
-	(FileType::IST,
-	 "ist",
-	 "MakeIndex",
-	 ListBuilder(
-		     ".ist"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MAKEINDEX_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXINDEXSTYLE",
-		     "INDEXSTYLE"
-		     ));
+      RegisterFileType (
+	FileType::IST,
+	"ist",
+	"MakeIndex",
+	".ist",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_MAKEINDEX_DIR)),
+	P2_("TEXINDEXSTYLE", "INDEXSTYLE"));
       break;
   
     case FileType::LIG:
-      RegisterFileType
-	(FileType::LIG,
-	 "lig files",
-	 0,
-	 ListBuilder(
-		     ".lig"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_LIG_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::LIG,
+	"lig files",
+	0,
+	".lig",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_LIG_DIR)),
+	"TEXFONTS");
       break;
 
     case FileType::LUA:
-      RegisterFileType
-	(FileType::LUA,
-	 "lua",
-	 0,
-	 ListBuilder(
-		     ".luc",
-		     ".luctex",
-		     ".texluc",
-		     ".lua",
-		     ".luatex",
-		     ".texlua"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR)
-		     ),
-	 ListBuilder(
-		     "LUAINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::LUA,
+	"lua",
+	0,
+	P6_(".luc", ".luctex", ".texluc", ".lua", ".luatex", ".texlua"),
+	P_(CURRENT_DIRECTORY,
+	   R_(MIKTEX_PATH_SCRIPT_DIR "/{$progname,$engine,}/{lua,}"),
+	   GetFileTypeInfo(FileType::TEX).searchPath.c_str()),
+	"LUAINPUTS");
       break;
 
-      // <todo>FileType::LUA</todo>
-
     case FileType::MAP:
-      RegisterFileType
-	(FileType::MAP,
-	 "map",
-	 0,
-	 ListBuilder(
-		     ".map"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MAP_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_DVIPDFM_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXFONTMAPS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::MAP,
+	"map",
+	0,
+	".map",
+	P6_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_MAP_DIR "/{$progname,pdftex,dvips,}"),
+	    R_(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
+	    R_(MIKTEX_PATH_DVIPS_DIR),
+	    R_(MIKTEX_PATH_PDFTEX_DIR),
+	    R_(MIKTEX_PATH_DVIPDFM_DIR)),
+	P2_("TEXFONTMAPS", "TEXFONTS"));
       break;
 
     case FileType::MEM:
-      RegisterFileType
-	(FileType::MEM,
-	 "mem",
-	 "MetaPost",
-	 ListBuilder(
-		     ".mem"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MEM_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::MEM,
+	"mem",
+	"MetaPost",
+	".mem",
+	P2_(CURRENT_DIRECTORY, s_(MIKTEX_PATH_MEM_DIR)),
+	"");
       break;
   
     case FileType::MF:
-      RegisterFileType
-	(FileType::MF,
-	 "mf",
-	 "METAFONT",
-	 ListBuilder(
-		     ".mf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_METAFONT_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_FONT_SOURCE_DIR)
-		     ),
-	 ListBuilder(
-		     "MFINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::MF,
+	"mf",
+	"METAFONT",
+	".mf",
+	P3_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_METAFONT_DIR),
+	    R_(MIKTEX_PATH_FONT_SOURCE_DIR)),
+	"MFINPUTS");
       break;
 
     case FileType::MFPOOL:
-      RegisterFileType
-	(FileType::MFPOOL,
-	 "mfpool",
-	 0,
-	 ListBuilder(
-		     ".pool"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY
-		     ),
-	 ListBuilder(
-		     "MFPOOL",
-		     "TEXMFINI"
-		     ));
+      RegisterFileType (
+	FileType::MFPOOL,
+	"mfpool",
+	0,
+	".pool",
+	CURRENT_DIRECTORY,
+	P2_("MFPOOL", "TEXMFINI"));
       break;
 
     case FileType::MFT:
-      RegisterFileType
-	(FileType::MFT,
-	 "mft",
-	 0,
-	 ListBuilder(
-		     ".mft"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MFT_DIR)
-		     ),
-	 ListBuilder(
-		     "MFTINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::MFT,
+	"mft",
+	0,
+	".mft",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_MFT_DIR)),
+	"MFTINPUTS");
       break;
 
     case FileType::MISCFONT:
-      RegisterFileType
-	(FileType::MISCFONT,
-	 "misc fonts",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MISCFONTS_DIR)
-		     ),
-	 ListBuilder(
-		     "MISCFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::MISCFONT,
+	"misc fonts",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_MISCFONTS_DIR)),
+	P2_("MISCFONTS","TEXFONTS"));
       break;
 
     case FileType::MLBIB:
-      RegisterFileType
-	(FileType::MLBIB,
-	 "mlbib",
-	 0,
-	 ListBuilder(
-		     ".mlbib"
-		     ".bib"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
-		     ),
-	 ListBuilder(
-		     "MLBIBINPUTS",
-		     "BIBINPUTS",
-		     "TEXBIB"
-		     ));
+      RegisterFileType (
+	FileType::MLBIB,
+	"mlbib",
+	0,
+	P2_(".mlbib", ".bib"),
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_BIBTEX_DIR "/bib/{mlbib,}")),
+	P3_("MLBIBINPUTS", "BIBINPUTS", "TEXBIB"));
       break;
 
     case FileType::MLBST:
-      RegisterFileType
-	(FileType::MLBST,
-	 "mlbst",
-	 0,
-	 ListBuilder(
-		     ".bst"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_BIBTEX_DIR)
-		     ),
-	 ListBuilder(
-		     "MLBSTINPUTS"
-		     "BSTINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::MLBST,
+	"mlbst",
+	0,
+	".bst",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_BIBTEX_DIR "/{mlbst,bst}")),
+	P2_( "MLBSTINPUTS", "BSTINPUTS"));
       break;
 
     case FileType::MP:
-      RegisterFileType
-	(FileType::MP,
-	 "mp",
-	 "MetaPost",
-	 ListBuilder(
-		     ".mp"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_METAPOST_DIR)
-		     ),
-	 ListBuilder(
-		     "MPINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::MP,
+	"mp",
+	"MetaPost",
+	".mp",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_METAPOST_DIR)),
+	"MPINPUTS");
       break;
 
     case FileType::MPPOOL:
-      RegisterFileType
-	(FileType::MPPOOL,
-	 "mppool",
-	 0,
-	 ListBuilder(
-		     ".pool"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY
-		     ),
-	 ListBuilder(
-		     "MPPOOL",
-		     "TEXMFINI"
-		     ));
+      RegisterFileType (
+	FileType::MPPOOL,
+	"mppool",
+	0,
+	".pool",
+	CURRENT_DIRECTORY,
+	P2_("MPPOOL", "TEXMFINI"));
       break;
 
     case FileType::MPSUPPORT:
-      RegisterFileType
-	(FileType::MPSUPPORT,
-	 "MetaPost support",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_MPSUPPORT_DIR)
-		     ),
-	 ListBuilder(
-		     "MPSUPPORT"
-		     ));
+      RegisterFileType (
+	FileType::MPSUPPORT,
+	"MetaPost support",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_MPSUPPORT_DIR)),
+	"MPSUPPORT");
       break;
 
     case FileType::OCP:
-      RegisterFileType
-	(FileType::OCP,
-	 "ocp",
-	 "Omega",
-	 ListBuilder(
-		     ".ocp"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OCP_DIR)
-		     ),
-	 ListBuilder(
-		     "OCPINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::OCP,
+	"ocp",
+	"Omega",
+	".ocp",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_OCP_DIR)),
+	"OCPINPUTS");
       break;
 
     case FileType::OFM:
-      RegisterFileType
-	(FileType::OFM,
-	 "ofm",
-	 "Omega",
-	 ListBuilder(
-		     ".ofm",
-		     ".tfm"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OFM_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_TFM_DIR)
-		     ),
-	 ListBuilder(
-		     "OFMFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::OFM,
+	"ofm",
+	"Omega",
+	P2_(".ofm", ".tfm"),
+	P3_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_OFM_DIR),
+	    R_(MIKTEX_PATH_TFM_DIR)),
+	P2_("OFMFONTS", "TEXFONTS"));
       break;
 
     case FileType::OPL:
-      RegisterFileType
-	(FileType::OPL,
-	 "opl",
-	 0,
-	 ListBuilder(
-		     ".opl"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OPL_DIR)
-		     ),
-	 ListBuilder(
-		     "OPLFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::OPL,
+	"opl",
+	0,
+	".opl",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_OPL_DIR)),
+	P2_("OPLFONTS", "TEXFONTS"));
       break;
 
-
     case FileType::OTP:
-      RegisterFileType
-	(FileType::OTP,
-	 "otp",
-	 "otp2ocp",
-	 ListBuilder(
-		     ".otp"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OTP_DIR)
-		     ),
-	 ListBuilder(
-		     "OTPINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::OTP,
+	"otp",
+	"otp2ocp",
+	".otp",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_OTP_DIR)),
+	"OTPINPUTS");
       break;
 
     case FileType::OTF:
-      {
-	string otfFontDirs;
-	if (! SessionImpl::GetSession()->GetOTFDirs(otfFontDirs))
-	{
-	  otfFontDirs = "";
-	}
-	RegisterFileType
-	  (FileType::OTF,
-	  "opentype fonts",
-	  0,
-	  ListBuilder(
-	  ".otf"
-	  ),
-	  ListBuilder(
-	  CURRENT_DIRECTORY,
-	  SearchSpecBuilder(MIKTEX_PATH_OPENTYPE_DIR),
-	  (otfFontDirs.empty() ? 0 : otfFontDirs.c_str())
-	  ),
-	  ListBuilder(
-	  "OPENTYPEFONTS",
-	  "TEXFONTS"
-	  ));
-	break;
-      }
+      RegisterFileType (
+	FileType::OTF,
+	"opentype fonts",
+	0,
+	".otf",
+	P_(CURRENT_DIRECTORY,
+	   R_(MIKTEX_PATH_OPENTYPE_DIR),
+	   GetLocalFontDirectories().c_str()),
+	P2_("OPENTYPEFONTS", "TEXFONTS"));
+      break;
 
     case FileType::OVF:
-      RegisterFileType
-	(FileType::OVF,
-	 "ovf",
-	 0,
-	 ListBuilder(
-		     ".ovf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OVF_DIR)
-		     ),
-	 ListBuilder(
-		     "OVFFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::OVF,
+	"ovf",
+	0,
+	".ovf",
+	P3_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_OVF_DIR),
+	    R_(MIKTEX_PATH_VF_DIR)),
+	P2_("OVFFONTS", "TEXFONTS"));
       break;
   
     case FileType::OVP:
-      RegisterFileType
-	(FileType::OVP,
-	 "ovp",
-	 0,
-	 ListBuilder(
-		     ".ovp"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_OVP_DIR)
-		     ),
-	 ListBuilder(
-		     "OVPFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::OVP,
+	"ovp",
+	0,
+	".ovp",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_OVP_DIR)),
+	P2_("OVPFONTS", "TEXFONTS"));
       break;
 
     case FileType::PDFTEXCONFIG:
-      RegisterFileType
-	(FileType::PDFTEXCONFIG,
-	 "pdftex config",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR)
-		     ),
-	 ListBuilder(
-		     "PDFTEXCONFIG"
-		     ));
+      RegisterFileType (
+	FileType::PDFTEXCONFIG,
+	"pdftex config",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_PDFTEX_DIR "/{$progname,}")),
+	"PDFTEXCONFIG");
       break;
 
     case FileType::PERLSCRIPT:
-      RegisterFileType
-	(FileType::PERLSCRIPT,
-	 "perlscript",
-	 0,
-	 ListBuilder(
-		     ".pl"
-		     ),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_CONTEXT_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_MIKTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_NTS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PSUTILS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_SOURCE_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::PERLSCRIPT,
+	"perlscript",
+	0,
+	".pl",
+	P8_(R_(MIKTEX_PATH_SCRIPT_DIR),
+	    R_(MIKTEX_PATH_CONTEXT_DIR),
+	    R_(MIKTEX_PATH_MIKTEX_DIR),
+	    R_(MIKTEX_PATH_NTS_DIR),
+	    R_(MIKTEX_PATH_PDFTEX_DIR),
+	    R_(MIKTEX_PATH_PSUTILS_DIR),
+	    R_(MIKTEX_PATH_SOURCE_DIR),
+	    R_(MIKTEX_PATH_TEX_DIR)),
+	"");
       break;
 
     case FileType::PK:
-      RegisterFileType
-	(FileType::PK,
-	 "pk",
-	 0,
-	 ListBuilder(
-		     ".pk"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     // <todo/>
-		     SearchSpecBuilder(MIKTEX_PATH_FONT_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::PK,
+	"pk",
+	0,
+	".pk",
+	// <todo>
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_FONT_DIR)),
+	// </todo>
+	"");
       break;
 
     case FileType::PROGRAMBINFILE:
+      RegisterFileType (
+	FileType::PROGRAMBINFILE,
+	"other binary files",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_("/$progname")),
+	"");
+      break;
+
     case FileType::PROGRAMTEXTFILE:
-      {
-	CSVList app (applicationNames.c_str(), PATH_DELIMITER);
-	MIKTEX_ASSERT (app.GetCurrent() != 0);
-	string applicationName = app.GetCurrent();
-	string applicationSearchPath = CURRENT_DIRECTORY;
-	applicationSearchPath += PATH_DELIMITER;
-	applicationSearchPath += TEXMF_PLACEHOLDER;
-	applicationSearchPath += MIKTEX_PATH_DIRECTORY_DELIMITER_STRING;
-	applicationSearchPath += applicationName;
-	applicationSearchPath += RECURSION_INDICATOR;
-	if (fileType.Get() == FileType::PROGRAMBINFILE)
-	{
-	  RegisterFileType (FileType::PROGRAMBINFILE,
-	    "other binary files",
-	    0,
-	    ListBuilder(),
-	    applicationSearchPath.c_str(),
-	    ListBuilder());
-	}
-	else
-	{
-	  RegisterFileType (FileType::PROGRAMTEXTFILE,
-	    "other text files",
-	    0,
-	    ListBuilder(),
-	    applicationSearchPath.c_str(),
-	    ListBuilder());
-	}
-	break;
-      }
+      RegisterFileType (
+	FileType::PROGRAMTEXTFILE,
+	"other text files",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_("/$progname")),
+	"");
+      break;
   
     case FileType::PSHEADER:
-      {
-	string psFontDirs;
-	if (! SessionImpl::GetSession()->GetPsFontDirs(psFontDirs))
-	{
-	  psFontDirs = "";
-	}
-	RegisterFileType
-	  (FileType::PSHEADER,
-	  "PostScript header",
-	  0,
-	  ListBuilder(
-	  ".pro",
-	  ".enc"
-	  ),
-	  ListBuilder(
-	  CURRENT_DIRECTORY,
-	  SearchSpecBuilder(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
-	  SearchSpecBuilder(MIKTEX_PATH_DVIPS_DIR),
-	  SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-	  SearchSpecBuilder(MIKTEX_PATH_DVIPDFM_DIR),
-	  SearchSpecBuilder(MIKTEX_PATH_TYPE1_DIR),
-	  (psFontDirs.empty() ? 0 : psFontDirs.c_str())
-	  ),
-	  ListBuilder(
-	  "TEXPSHEADERS",
-	  "PSHEADERS"
-	  ));
-	break;
-      }
+      RegisterFileType (
+	FileType::PSHEADER,
+	"PostScript header",
+	0,
+	P2_(".pro", ".enc"),
+	P9_(CURRENT_DIRECTORY,
+	    R_(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
+	    R_(MIKTEX_PATH_DVIPS_DIR),
+	    R_(MIKTEX_PATH_PDFTEX_DIR),
+	    R_(MIKTEX_PATH_DVIPDFM_DIR),
+	    R_(MIKTEX_PATH_ENC_DIR),
+	    R_(MIKTEX_PATH_TYPE1_DIR),
+	    R_(MIKTEX_PATH_TYPE42_DIR),
+	    R_(MIKTEX_PATH_TYPE3_DIR),
+	    "$psfontdirs"),
+	P2_("TEXPSHEADERS", "PSHEADERS"));
+      break;
 
     case FileType::SCRIPT:
-      RegisterFileType
-	(FileType::SCRIPT,
-	 "texmfscripts",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_SCRIPT_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_CONTEXT_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_MIKTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_NTS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PDFTEX_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_PSUTILS_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_SOURCE_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXMFSCRIPTS"
-		     ));
+      RegisterFileType (
+	FileType::SCRIPT,
+	"texmfscripts",
+	0,
+	"",
+	R_(MIKTEX_PATH_SCRIPT_DIR "/{$progname,$engine,}"),
+	"TEXMFSCRIPTS");
       break;
 
     case FileType::SFD:
-      RegisterFileType
-	(FileType::SFD,
-	 "subfont definition files",
-	 0,
-	 ListBuilder(
-		     ".sfd"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_SFD_DIR)
-		     ),
-	 ListBuilder(
-		     "SFDFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::SFD,
+	"subfont definition files",
+	0,
+	".sfd",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_SFD_DIR)),
+	P2_("SFDFONTS", "TEXFONTS"));
       break;
 
     case FileType::TCX:
-      RegisterFileType
-	(FileType::TCX,
-	 "tcx",
-	 0,
-	 ListBuilder(
-		     ".tcx"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(false,
-				       MIKTEX_PATH_MIKTEX_CONFIG_DIR),
-		     SearchSpecBuilder(false,
-				       MIKTEX_PATH_WEB2C_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::TCX,
+	"tcx",
+	0,
+	".tcx",
+	P3_(CURRENT_DIRECTORY,
+	    S_(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
+            S_(MIKTEX_PATH_WEB2C_DIR)),
+	"");
       break;
   
     case FileType::TEX:
-      RegisterFileType
-	(FileType::TEX,
-	 "tex",
-	 "TeX",
-	 ListBuilder(
-		     ".tex"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_TEX_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::TEX,
+	"tex",
+	"TeX",
+	".tex",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_TEX_DIR "/{$progname,generic,}")),
+	"TEXINPUTS");
       break;
 
     case FileType::TEXPOOL:
-      RegisterFileType
-	(FileType::TEXPOOL,
-	 "texpool",
-	 0,
-	 ListBuilder(
-		     ".pool"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY
-		     ),
-	 ListBuilder(
-		     "TEXPOOL",
-		     "TEXMFINI"
-		     ));
+      RegisterFileType (
+	FileType::TEXPOOL,
+	"texpool",
+	0,
+	".pool",
+	CURRENT_DIRECTORY,
+	P2_("TEXPOOL", "TEXMFINI"));
       break;
 
     case FileType::TEXSOURCE:
-      RegisterFileType
-	(FileType::TEXSOURCE,
-	 "TeX system sources",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_SOURCE_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXSOURCES"
-		     ));
+      RegisterFileType (
+	FileType::TEXSOURCE,
+	"TeX system sources",
+	0,
+	"",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_SOURCE_DIR)),
+	"TEXSOURCES");
       break;
 
     case FileType::TEXSYSDOC:
-      RegisterFileType
-	(FileType::TEXSYSDOC,
-	 "TeX system documentation",
-	 0,
-	 ListBuilder(
+      RegisterFileType (
+	FileType::TEXSYSDOC,
+	"TeX system documentation",
+	0,
 #if defined(MIKTEX_WINDOWS)
-		     ".chm",
+	P6_(".chm", ".dvi", ".html", ".txt", ".pdf", ".ps"),
+#else
+	P5_(".dvi", ".html", ".txt", ".pdf", ".ps"),
 #endif
-		     ".dvi",
-		     ".html"
-		     ".txt",
-		     ".pdf",
-		     ".ps"
-		     ),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_MIKTEX_DOC_DIR),
-		     SearchSpecBuilder(MIKTEX_PATH_DOC_DIR)
-		     ),
-	 ListBuilder(
-		     "TEXDOCS"
-		     ));
+	P2_(R_(MIKTEX_PATH_MIKTEX_DOC_DIR),
+	    R_(MIKTEX_PATH_DOC_DIR)),
+	"TEXDOCS");
       break;
 
     case FileType::TFM:
-      RegisterFileType
-	(FileType::TFM,
-	 "tfm",
-	 0,
-	 ListBuilder(
-		     ".tfm"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_TFM_DIR)
-		     ),
-	 ListBuilder(
-		     "TFMFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::TFM,
+	"tfm",
+	0,
+	".tfm",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_TFM_DIR)),
+	P2_("TFMFONTS", "TEXFONTS"));
       break;
 
     case FileType::TROFF:
-      RegisterFileType
-	(FileType::TROFF,
-	 "troff fonts",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(),
-	 ListBuilder(
-		     "TRFONTS"
-		     ));
+      RegisterFileType (
+	FileType::TROFF,
+	"troff fonts",
+	0,
+	"",
+	"",
+	"TRFONTS");
       break;
 
     case FileType::TTF:
-      {
-	string ttfFontDirs;
-	if (! SessionImpl::GetSession()->GetTTFDirs(ttfFontDirs))
-	  {
-	    ttfFontDirs = "";
-	  }
-	RegisterFileType
-	  (FileType::TTF,
-	   "truetype fonts",
-	   0,
-	   ListBuilder(
-		       ".ttf",
-		       ".ttc"
-		       ),
-	   ListBuilder(
-		       CURRENT_DIRECTORY,
-		       SearchSpecBuilder(MIKTEX_PATH_TRUETYPE_DIR),
-		       (ttfFontDirs.empty() ? 0 : ttfFontDirs.c_str())
-		       ),
-	   ListBuilder(
-		       "TTFONTS",
-		       "TEXFONTS"
-		       ));
-      }
+      RegisterFileType (
+	FileType::TTF,
+	"truetype fonts",
+	0,
+	P2_(".ttf", ".ttc"),
+	P_(CURRENT_DIRECTORY,
+	   R_(MIKTEX_PATH_TRUETYPE_DIR),
+	   GetLocalFontDirectories().c_str()),
+	P2_("TTFONTS", "TEXFONTS"));
+      break;
 
     case FileType::TYPE1:
-      RegisterFileType
-	(FileType::TYPE1,
-	 "type1 fonts",
-	 0,
-	 ListBuilder(
-		     ".pfb",
-		     ".pfa"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_TYPE1_DIR),
-		     (psFontDirs.empty() ? 0 : psFontDirs.c_str())
-		     ),
-	 ListBuilder(
-		     "T1FONTS",
-		     "T1INPUTS",
-		     "TEXFONTS",
-		     "TEXPSHEADERS",
-		     "PSHEADERS"
-		     ));
+      RegisterFileType (
+	FileType::TYPE1,
+	"type1 fonts",
+	0,
+	P2_(".pfb", ".pfa"),
+	P_(CURRENT_DIRECTORY,
+	   R_(MIKTEX_PATH_TYPE1_DIR),
+	   GetLocalFontDirectories().c_str()),
+	P5_("T1FONTS", "T1INPUTS", "TEXFONTS", "TEXPSHEADERS", "PSHEADERS"));
       break;
 
     case FileType::TYPE42:
-      RegisterFileType
-	(FileType::TYPE42,
-	 "type42 fonts",
-	 0,
-	 ListBuilder(
-		     ".t42"
-#if ! defined(MIKTEX_WINDOWS)
-		     , ".T42"
+      RegisterFileType (
+	FileType::TYPE42,
+	"type42 fonts",
+	0,
+#if defined(MIKTEX_WINDOWS)
+	".t42",
+#else
+	P2_(".t42", ".T42"),
 #endif
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_TYPE42_DIR)
-		     ),
-	 ListBuilder(
-		     "T42FONTS",
-		     "TEXFONTS"
-		     ));
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_TYPE42_DIR)),
+	P2_("T42FONTS", "TEXFONTS"));
       break;
 
     case FileType::VF:
-      RegisterFileType
-	(FileType::VF,
-	 "vf",
-	 0,
-	 ListBuilder(
-		     ".vf"
-		     ),
-	 ListBuilder(
-		     CURRENT_DIRECTORY,
-		     SearchSpecBuilder(MIKTEX_PATH_VF_DIR)
-		     ),
-	 ListBuilder(
-		     "VFFONTS",
-		     "TEXFONTS"
-		     ));
+      RegisterFileType (
+	FileType::VF,
+	"vf",
+	0,
+	".vf",
+	P2_(CURRENT_DIRECTORY, R_(MIKTEX_PATH_VF_DIR)),
+	P2_("VFFONTS", "TEXFONTS"));
       break;
 
     case FileType::WEB:
-      RegisterFileType
-	(FileType::WEB,
-	 "web",
-	 0,
-	 ListBuilder(
-		     ".web"
-		     ),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_WEB_DIR)
-		     ),
-	 ListBuilder(
-		     "WEBINPUTS"
-		     ));
+      RegisterFileType (
+	FileType::WEB,
+	"web",
+	0,
+	".web",
+	R_(MIKTEX_PATH_WEB_DIR),
+	"WEBINPUTS");
       break;
 
     case FileType::WEB2C:
-      RegisterFileType
-	(FileType::WEB2C,
-	 "web2c files",
-	 0,
-	 ListBuilder(),
-	 ListBuilder(
-		     SearchSpecBuilder(MIKTEX_PATH_WEB2C_DIR)
-		     ),
-	 ListBuilder());
+      RegisterFileType (
+	FileType::WEB2C,
+	"web2c files",
+	0,
+	"",
+	R_(MIKTEX_PATH_WEB2C_DIR),
+	"");
       break;
 
     default:

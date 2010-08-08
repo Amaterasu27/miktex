@@ -852,7 +852,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 {
   bool haveValue = false;
 
-  // iterate over application tags, e.g.: miktex;latex;tex
+  // iterate over application tags, e.g.: latex;tex;miktex
   for (CSVList app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
        ++ app)
@@ -984,6 +984,17 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
     value =
       SessionImpl::GetSession()
       ->GetSpecialPath(SpecialPath::BinDirectory).ToString();
+    haveValue = true;
+  }
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_ENGINE, true) == 0)
+  {
+    value = SessionImpl::GetSession()->GetEngine();
+    haveValue = true;
+  }
+  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_PROGNAME, true) == 0)
+  {
+    MIKTEX_ASSERT (! applicationNames.empty());
+    value = CSVList(applicationNames.c_str(), PATH_DELIMITER).GetCurrent();
     haveValue = true;
   }
 #if defined(MIKTEX_WINDOWS)

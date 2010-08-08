@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -41,8 +41,6 @@ add_definitions(
 set(mo_mfc_sources
   FormatDefinitionDialog.cpp
   FormatDefinitionDialog.h
-  LanguageDefinitionDialog.cpp
-  LanguageDefinitionDialog.h
   PropPageFormats.cpp
   PropPageFormats.h
   PropPageGeneral.cpp

@@ -80,10 +80,10 @@ and click <guibutton>OK</guibutton>.</para>
 
 <section id="hyphenation">
 
-<title>Selecting Hyphenation Tables</title>
+<title>Selecting Languages</title>
 
 <indexterm>
-<primary>hyphenation tables</primary>
+<primary>hyphenation patterns</primary>
 <secondary>selecting</secondary>
 </indexterm>
 
@@ -92,8 +92,8 @@ and click <guibutton>OK</guibutton>.</para>
 <secondary>selecting</secondary>
 </indexterm>
 
-<para>You can control the loading of hyphenation tables with the help of
-&MiKTeXOptions;.</para>
+<para>You can control the loading of hyphenation patterns with the
+help of &MiKTeXOptions;.</para>
 
 <para>Click
 <menuchoice>
@@ -106,10 +106,9 @@ and click <guibutton>OK</guibutton>.</para>
 (see <xref linkend="mo-general"/>).</para>
 
 <para>Click on the <guilabel>Languages</guilabel> tab.  You will
-presented with the list of available languages and corresponding
-hyphenation tables (<xref linkend="mo-languages"/>).  Mark the
-languages, whose hyphenation tables shall be loaded by
-&TeX;/&LaTeX;.</para>
+presented with the list of available languages (<xref
+linkend="mo-languages"/>).  Mark the languages, whose hyphenation
+patterns are to be loaded by the &TeX; engines.</para>
 
 <figure id="mo-languages">
 <title>&MiKTeXOptions;: Languages</title>
@@ -123,11 +122,6 @@ languages, whose hyphenation tables shall be loaded by
 </figure>
 
 </section>
-
-
-
-
-
 
 <section id="updating">
 

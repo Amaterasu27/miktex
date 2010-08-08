@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual update process
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2010 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -669,6 +669,7 @@ FileCopyPage::ConfigureMiKTeX ()
   cmdLine.AppendOption ("--force");
 #endif
   cmdLine.AppendOption ("--mkmaps");
+  cmdLine.AppendOption ("--mklangs");
   RunIniTeXMF (cmdLine);
 }
 

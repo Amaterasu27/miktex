@@ -355,6 +355,28 @@ struct FormatInfo
 };
 
 /* _________________________________________________________________________
+   
+   LanguageInfo
+   _________________________________________________________________________ */
+
+struct LanguageInfo
+{
+  std::string key;
+  std::string synonyms;
+  std::string loader;
+  std::string patterns;
+  std::string hyphenation;
+  std::string luaspecial;
+  int lefthyphenmin;
+  int righthyphenmin;
+  LanguageInfo ()
+    : lefthyphenmin (-1),
+      righthyphenmin (-1)
+  {
+  }
+};
+
+/* _________________________________________________________________________
 
    FontMapEntry
    _________________________________________________________________________ */
@@ -4824,6 +4846,15 @@ public:
   static
   MIKTEXCORECEEAPI(bool)
   FileExists (/*[in]*/ const PathName &	path);
+
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  Search (/*[in]*/ const char *		lpszFileName,
+	  /*[in]*/ const char *		lpszPathPattern,
+	  /*[in]*/ bool			firstMatchOnly,
+	  /*[out]*/ PathNameArray &	result,
+	  /*[out]*/ std::vector<std::string> &	fileNameInfo);
 };
 
 /* _________________________________________________________________________
@@ -6331,6 +6362,14 @@ public:
   void
   MIKTEXTHISCALL
   SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetLanguageInfo (/*[in]*/ unsigned		index,
+		   /*[out]*/ LanguageInfo &	languageInfo)
     = 0;
 
 public:

@@ -1,6 +1,6 @@
 /* PropPageLanguages.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -25,29 +25,14 @@
 
 class PropPageLanguages : public CPropertyPage
 {
-private:
-  DECLARE_DYNCREATE(PropPageLanguages);
-
 public:
-  PropPageLanguages ();
+  PropPageLanguages (/*[in]*/ PackageManager * pManager);
 
 public:
   ~PropPageLanguages ();
 
 private:
   enum { IDD = IDD_PROPPAGE_LANG };
-
-private:
-  CButton downButton;
-
-private:
-  CButton editButton;
-
-private:
-  CButton removeButton;
-
-private:
-  CButton upButton;
 
 private:
   CListCtrl listControl;
@@ -87,39 +72,35 @@ protected:
 protected:
   afx_msg
   void
-  OnEdit ();
+  OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
+		 /*[in]*/ LRESULT *	pResult);
 
 protected:
   afx_msg
   void
-  OnItemchangedList (/*[in]*/ NMHDR *	pNMHDR,
-		     /*[in]*/ LRESULT *	pResult);
-
-protected:
-  afx_msg
-  void
-  OnMoveDown ();
-
-protected:
-  afx_msg
-  void
-  OnMoveUp ();
-
-protected:
-  afx_msg
-  void
-  OnNew ();
-
-protected:
-  afx_msg
-  void
-  OnRemove ();
+  OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
+		  /*[in]*/ LRESULT *	pResult);
 
 protected:
   DECLARE_MESSAGE_MAP ();
 
 private:
-  vector<LANGUAGE> languages;
+  struct MyLanguageInfo : public LanguageInfo
+  {
+    MyLanguageInfo (const LanguageInfo & languageInfo)
+      : active(false),
+        newActive(false),
+	LanguageInfo (languageInfo)
+    {
+    }
+    bool active;
+    PathName loaderPath;
+    bool newActive;
+    vector<string> packageNames;
+  };
+
+private:
+  vector<MyLanguageInfo> languages;
 
 private:
   void
@@ -143,21 +124,32 @@ private:
 
 private:
   void
-  SetModified ();
-
-private:
-  void
   InsertLanguage (/*[in]*/ int idx);
 
 private:
   void
-  InsertColumn (/*[in]*/ int			colIdx,
+  InsertColumn (/*[in]*/ int		colIdx,
 		/*[in]*/ const char *	lpszLabel,
 		/*[in]*/ const char *	lpszLongest);
+
+private:
+  void
+  SetElevationRequired (/*[in]*/ bool f);
+
+private:
+  void
+  SetChanged (/*[in]*/ bool f);
+
+private:
+  vector<string>
+  WhichPackage (/*[in]*/ const char * lpszTeXInputFile);
 
 private:
   bool inserting;
 
 private:
   PathName languageDat;
+
+private:
+  PackageManagerPtr pManager;
 };

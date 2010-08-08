@@ -1,10 +1,5 @@
 [ft.tex]
 
-extensions=
-extensions;=.tex
-extensions;=.src
-extensions;=.ltx
-
 path=.
 path;=%R/tex/xelatex//
 path;=%R/tex/latex//

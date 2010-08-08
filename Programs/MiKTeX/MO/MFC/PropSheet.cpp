@@ -1,6 +1,6 @@
 /* PropSheet.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -37,7 +37,8 @@ PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
     pSession (true),
     pManager (pManager),
     generalPage (pManager),
-    packagesPage (pManager)
+    packagesPage (pManager),
+    languagesPage (pManager)
 {
   m_psh.dwFlags &= ~(PSH_HASHELP);
   AddPage (&generalPage);
@@ -196,6 +197,8 @@ PropSheet::BuildFormats ()
   auto_ptr<ProgressDialog> pProgDlg (ProgressDialog::Create());
   pProgDlg->StartProgressDialog (GetSafeHwnd());
   pProgDlg->SetTitle (T_("MiKTeX Maintenance"));
+  pProgDlg->SetLine (1, T_("Creating language.dat, ..."));
+  RunIniTeXMF ("language.dat", "--mklangs", pProgDlg.get());
   pProgDlg->SetLine (1, T_("Creating format file for:"));
   FormatInfo formatInfo;
   for (unsigned idx = 0;

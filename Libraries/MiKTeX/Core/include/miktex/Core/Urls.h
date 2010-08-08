@@ -1,6 +1,6 @@
 /* miktex/Core/urls.h: hard-coded urls				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(BCD264408F6CC94AB371F96954CBDA98_)
-#define BCD264408F6CC94AB371F96954CBDA98_
+#if ! defined(BCD264408F6CC94AB371F96954CBDA98)
+#define BCD264408F6CC94AB371F96954CBDA98
 
 #include <miktex/Core/Version>
 

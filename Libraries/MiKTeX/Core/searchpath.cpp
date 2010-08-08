@@ -87,7 +87,7 @@ void
 SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 			   /*[in]*/ const PathName &	path)
 {
-  PathNameArray paths = ExpandRootDirectories(path.Get());
+  PathNameArray paths = ExpandBraces(path.Get());
 
   for (PathNameArray::const_iterator it = paths.begin(); it != paths.end(); ++ it)
   {
@@ -359,6 +359,7 @@ SessionImpl::ExpandPathPattern (/*[in]*/ const PathName &     rootDirectory,
     // (1) sub directory (2) smaller (possibly empty) path pattern
     string subDir (pathPattern.Get(), lpszRecursionIndicator - pathPattern.Get());
     const char * lpszSmallerPathPattern = lpszRecursionIndicator + RECURSION_INDICATOR_LENGTH;
+    for (; IsDirectoryDelimiter(*lpszSmallerPathPattern); ++ lpszSmallerPathPattern) {};
     PathName directory (rootDirectory);
     directory += subDir;
     // check to see whether the sub directory exists

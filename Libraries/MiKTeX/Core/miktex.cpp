@@ -602,6 +602,33 @@ Fndb::FileExists (/*[in]*/ const PathName &	path)
 
 /* _________________________________________________________________________
 
+   Fndb::Search
+   _________________________________________________________________________ */
+
+bool
+Fndb::Search (/*[in]*/ const char *		lpszFileName,
+	      /*[in]*/ const char *		lpszPathPattern,
+	      /*[in]*/ bool			firstMatchOnly,
+	      /*[out]*/ PathNameArray &		result,
+	      /*[out]*/ vector<string> &	fileNameInfo)
+{
+  unsigned root = SessionImpl::GetSession()->DeriveTEXMFRoot(lpszPathPattern);
+
+  FileNameDatabase * pFndb =
+    SessionImpl::GetSession()->GetFileNameDatabase(root, TriState::True);
+
+  if (pFndb == 0)
+  {
+    return (false);
+  }
+  
+  AutoFndbRelease autoRelease (pFndb);
+
+  return (pFndb->Search(lpszFileName, lpszPathPattern, firstMatchOnly, result, fileNameInfo));
+}
+
+/* _________________________________________________________________________
+
    GetEnvironmentString
 
    Fast but insecure.
@@ -817,26 +844,36 @@ void
 SessionImpl::SetEnvironmentVariables ()
 {
 #if MIKTEX_WINDOWS
-  Utils::SetEnvironmentString ("GSC", MIKTEX_GS_EXE);
-  Utils::SetEnvironmentString ("TEXSYSTEM", "miktex");
-  Utils::SetEnvironmentString ("TEXMFLOCAL",
-			       GetSpecialPath(SpecialPath::DataRoot).Get());
-  Utils::SetEnvironmentString ("TEXMFMAIN",
-			       GetSpecialPath(SpecialPath::InstallRoot).Get());
-
   string str;
-  str = "%r";
-  str += PathName::DirectoryDelimiter;
-  str += "ghostscript";
-  str += PathName::DirectoryDelimiter;
-  str += "base";
-  string searchPath;
-  AppendToSearchPath (searchPath, str);
-  str = "%r";
-  str += PathName::DirectoryDelimiter;
-  str +=  "fonts";
-  AppendToSearchPath (searchPath, str);
-  Utils::SetEnvironmentString ("MIKTEX_GS_LIB", searchPath.c_str());
+
+  // Ghostscript
+  Utils::SetEnvironmentString ("GSC", MIKTEX_GS_EXE);
+  PathName root1 = GetSpecialPath(SpecialPath::CommonInstallRoot);
+  PathName root2 = GetSpecialPath(SpecialPath::UserInstallRoot);
+  PathName gsbase1 = root1;
+  gsbase1 += "ghostscript";
+  gsbase1 += "base";
+  PathName gsbase2 = root2;
+  gsbase2 += "ghostscript";
+  gsbase2 += "base";
+  str = gsbase1.Get();
+  if (gsbase1 != gsbase2)
+  {
+    str += PATH_DELIMITER;
+    str += gsbase2.Get();
+  }
+  PathName fonts1 = root1;
+  fonts1 += "fonts";
+  PathName fonts2 = root2;
+  fonts2 += "fonts";
+  str += PATH_DELIMITER;
+  str += fonts1.Get();
+  if (fonts1 != fonts2)
+  {
+    str += PATH_DELIMITER;
+    str += fonts2.Get();
+  }
+  Utils::SetEnvironmentString ("MIKTEX_GS_LIB", str.c_str());
 #endif
 
   PathName path = GetTempDirectory();
@@ -1071,7 +1108,6 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
   Utils::GetEnvironmentString (MIKTEX_ENV_PACKAGE_LIST_FILE,
 			       packageHistoryFile);
 
-  PushAppName ("miktex");
   PushAppName (Utils::GetExeName().c_str());
   
   // the process start directory is the initial scratch directory

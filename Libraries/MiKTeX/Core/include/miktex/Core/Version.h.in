@@ -21,8 +21,8 @@
 #  pragma once
 #endif
 
-#if ! defined(F511789F_2C69_425D_8D91_1A40E33E9A82)
-#define F511789F_2C69_425D_8D91_1A40E33E9A82
+#if ! defined(F511789F2C69425D8D911A40E33E9A82)
+#define F511789F2C69425D8D911A40E33E9A82
 
 #include <miktex/Core/First>
 #include <miktex/Core/Definitions>

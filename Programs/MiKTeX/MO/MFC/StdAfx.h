@@ -61,6 +61,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include <miktex/UI/MFC/ErrorDialog>
 #include <miktex/UI/MFC/PackageTreeCtrl>

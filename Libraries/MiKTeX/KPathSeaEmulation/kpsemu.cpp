@@ -894,6 +894,7 @@ miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
   {
     SessionWrapper(true)->PushAppName (lpszProgramName);
   }
+  Utils::SetEnvironmentString ("progname", lpszProgramName);
 }
 
 /* _________________________________________________________________________
@@ -991,6 +992,58 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
   {
     result = false;
   }
+  else if (StringCompare(lpszVarName, "TEXMF") == 0)
+  {
+    varValue = "{";
+    for (unsigned r = 0; r < SessionWrapper(true)->GetNumberOfTEXMFRoots(); ++ r)
+      {
+	if (r > 0)
+	  {
+	    varValue += ',';
+	  }
+	varValue += SessionWrapper(true)->GetRootDirectory(r).Get();
+      }
+    varValue += '}';
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFCONFIG") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserConfigRoot);
+    varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFDIST") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
+    varValue = path.Get();
+    result = true;
+  }
+#if 0 // <todo>
+  else if (StringCompare(lpszVarName, "TEXMFHOME") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserHomeRoot);
+    varValue = path.Get();
+    result = true;
+  }
+#endif // </todo>
+  else if (StringCompare(lpszVarName, "TEXMFLOCAL") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserInstallRoot);
+    varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFMAIN") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
+    varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXMFSYSCONFIG") == 0)
+  {
+    path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonConfigRoot);
+    varValue = path.Get();
+    result = true;
+  }
   else if (StringCompare(lpszVarName, "TEXMFSYSVAR") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);
@@ -1001,6 +1054,11 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserDataRoot);
     varValue = path.Get();
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TEXSYSTEM") == 0)
+  {
+    varValue = "miktex";
     result = true;
   }
   // configuration files and environment

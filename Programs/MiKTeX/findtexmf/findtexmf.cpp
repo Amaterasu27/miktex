@@ -135,6 +135,15 @@ Pretend to be APP, i.e., use APP's configuration settings\
   },
 
   {
+    T_("engine"), 0,
+      POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_THE_NAME_OF_THE_GAME,
+    T_("\
+Set the name of the engine. Relevant when searching for format files."),
+    T_("NAME"),
+  },
+
+  {
     T_("file-type"), 0,
     POPT_ARG_STRING | POPT_ARGFLAG_ONEDASH, 0,
     OPT_FILE_TYPE,
@@ -311,7 +320,7 @@ FindTeXMF::PrintSearchPath (/*[in]*/ const char * lpszSearchPath)
 	{
 	  putchar (';');
 	}
-      printf ("%s", lpszPath);
+      printf ("%s", pSession->Expand(lpszPath, ExpandFlags::Braces, 0).c_str());
     }
   putchar ('\n');
 }

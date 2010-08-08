@@ -444,6 +444,10 @@ private:
   void
   MakeLinks (/*[in]*/ bool force);
 
+private:
+  void
+  MakeLanguageDat (/*[in]*/ bool force);
+
 #if defined(MIKTEX_WINDOWS)
 private:
   void
@@ -664,6 +668,7 @@ enum Option
   OPT_COMMON_DATA,		// <internal/>
   OPT_COMMON_INSTALL,		// <internal/>
   OPT_COMMON_ROOTS,		// <internal/>
+  OPT_MKLANGS,			// <internal/>
   OPT_LOG_FILE,			// <internal/>
   OPT_DEFAULT_PAPER_SIZE,	// <internal/>
 #if defined(MIKTEX_WINDOWS)
@@ -792,6 +797,14 @@ Open the specified configuration file in an editor.\
     0
   },
   
+  {
+    "mklangs", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MKLANGS,
+    T_("Create language.dat, language.dat.lua and language.def."),
+    0
+  },
+
   {
     "mklinks", 0,
     POPT_ARG_NONE, 0,
@@ -1120,6 +1133,14 @@ Open the specified configuration file in an editor.\
     T_("FILE")
   },
   
+  {
+    "mklangs", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MKLANGS,
+    T_("Create language.dat, language.dat.lua and language.def."),
+    0
+  },
+
   {
     "mklinks", 0,
     POPT_ARG_NONE, 0,
@@ -1462,6 +1483,14 @@ Open the specified configuration file in an editor.\
     T_("FILE")
   },
   
+  {
+    "mklangs", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MKLANGS,
+    T_("Create language.dat, language.dat.lua and language.def."),
+    0
+  },
+
   {
     "mklinks", 0,
     POPT_ARG_NONE, 0,
@@ -2400,8 +2429,14 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 
   Verbose (T_("Making script links..."));
 
-  PathName scriptsIni = pSession->GetSpecialPath(SpecialPath::InstallRoot);
+  PathName scriptsIni = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
+
+  if (! File::Exists(scriptsIni))
+  {
+    scriptsIni = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+    scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
+  }
 
   SmartPointer<Cfg> pConfig (Cfg::Create());
 
@@ -2470,11 +2505,108 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 	  PathName pathExe (pathBinDir);
 	  char szFileName[BufferSizes::MaxPath];
 	  pathExe += PathName(copystarters_admin[idx]).GetFileName(szFileName);
-	  Verbose ("  %s", pathExe.Get());
 	  MakeLink (copystart_admin, pathExe, overwrite);
 	}
     }
 #endif
+}
+
+/* _________________________________________________________________________
+     
+   IniTeXMFApp::MakeLanguageDat
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::MakeLanguageDat (/*[in]*/ bool force)
+{
+  Verbose (T_("Creating language.dat, language.dat.lua and language.def..."));
+
+  if (printOnly)
+  {
+    return;
+  }
+
+  PathName dir;
+
+  PathName languageDatPath = pSession->GetSpecialPath(SpecialPath::ConfigRoot);
+  languageDatPath += MIKTEX_PATH_LANGUAGE_DAT;
+  dir = languageDatPath;
+  dir.RemoveFileSpec ();
+  Directory::Create (dir);
+  StreamWriter languageDat (languageDatPath);
+
+  PathName languageDatLuaPath = pSession->GetSpecialPath(SpecialPath::ConfigRoot);
+  languageDatLuaPath += MIKTEX_PATH_LANGUAGE_DAT_LUA;
+  dir = languageDatLuaPath;
+  dir.RemoveFileSpec ();
+  Directory::Create (dir);
+  StreamWriter languageDatLua (languageDatLuaPath);
+
+  PathName languageDefPath = pSession->GetSpecialPath(SpecialPath::ConfigRoot);
+  languageDefPath += MIKTEX_PATH_LANGUAGE_DEF;
+  dir = languageDefPath;
+  dir.RemoveFileSpec ();
+  Directory::Create (dir);
+  StreamWriter languageDef (languageDefPath);
+
+  languageDatLua.WriteLine ("return {");
+  languageDef.WriteLine ("%% e-TeX V2.2");
+
+  LanguageInfo languageInfo;
+  for (int idx = 0; pSession->GetLanguageInfo(idx, languageInfo); ++ idx)
+  {
+    PathName loaderPath;
+    if (! pSession->FindFile(languageInfo.loader, "%r/tex//", loaderPath))
+    {
+      continue;
+    }
+
+    // language.dat
+    languageDat.WriteFormattedLine ("%s %s", languageInfo.key.c_str(), languageInfo.loader.c_str());
+    for (CSVList synonym (languageInfo.synonyms.c_str(), ','); synonym.GetCurrent() != 0; ++ synonym)
+    {
+      languageDat.WriteFormattedLine ("=%s", synonym.GetCurrent());
+    }
+
+    // language.def
+    languageDef.WriteFormattedLine ("\\addlanguage{%s}{%s}{}{%d}{%d}",
+      languageInfo.key.c_str(),
+      languageInfo.loader.c_str(),
+      languageInfo.lefthyphenmin,
+      languageInfo.righthyphenmin);
+
+    // language.dat.lua
+    languageDatLua.WriteFormattedLine ("\t['%s'] = {", languageInfo.key.c_str());
+    languageDatLua.WriteFormattedLine ("\t\tloader='%s',", languageInfo.loader.c_str());
+    languageDatLua.WriteFormattedLine ("\t\tlefthyphenmin=%d,", languageInfo.lefthyphenmin);
+    languageDatLua.WriteFormattedLine ("\t\trighthyphenmin=%d,", languageInfo.righthyphenmin);
+    languageDatLua.Write ("\t\tsynonyms={ ");
+    int nSyn = 0;
+    for (CSVList synonym (languageInfo.synonyms.c_str(), ','); synonym.GetCurrent() != 0; ++ synonym)
+    {
+      languageDatLua.WriteFormatted ("%s'%s'", nSyn > 0 ? "," : "", synonym.GetCurrent());
+      nSyn++;
+    }
+    languageDatLua.WriteLine (" },");
+    languageDatLua.WriteFormattedLine ("\t\tpatterns='%s',", languageInfo.patterns.c_str());
+    languageDatLua.WriteFormattedLine ("\t\thyphenation='%s',", languageInfo.hyphenation.c_str());
+    if (! languageInfo.luaspecial.empty())
+    {
+      languageDatLua.WriteFormattedLine ("\t\tspecial='%s',", languageInfo.luaspecial.c_str());
+    }
+    languageDatLua.WriteLine ("\t},");
+  }
+
+  languageDatLua.WriteLine ("}");
+
+  languageDatLua.Close ();
+  Fndb::Add (languageDatLuaPath);
+
+  languageDef.Close ();
+  Fndb::Add (languageDefPath);
+
+  languageDat.Close ();
+  Fndb::Add (languageDatPath);
 }
 
 /* _________________________________________________________________________
@@ -3224,6 +3356,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   bool optDump = false;
   bool optDumpByName = false;
   bool optForce = false;
+  bool optMakeLanguageDat = false;
   bool optMakeMaps = false;
   bool optListFormats = false;
   bool optListModes = false;
@@ -3356,6 +3489,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	case OPT_LOG_FILE:
 
 	  logFile = lpszOptArg;
+	  break;
+
+	case OPT_MKLANGS:
+
+	  optMakeLanguageDat = true;
 	  break;
 
 	case OPT_MKLINKS:
@@ -3577,6 +3715,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     RegisterShellFileTypes (false);
   }
 #endif
+
+  if (optMakeLinks)
+  {
+    MakeLanguageDat (optForce);
+  }
 
   if (optMakeLinks)
     {

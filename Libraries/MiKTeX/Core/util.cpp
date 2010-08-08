@@ -193,20 +193,14 @@ GenericCopyString (/*[out]*/ CharType *		lpszBuf,
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
 
-  size_t length;
+  size_t length = StrLen(lpszSource);
 
-  for (length = 0; length < bufSize; ++ length)
-    {
-      if ((lpszBuf[length] = lpszSource[length]) == 0)
-	{
-	  break;
-	}
-    }
-
-  if (length == bufSize)
+  if (length >= bufSize)
     {
       BUF_TOO_SMALL ("Utils::CopyString");
     }
+
+  memcpy (lpszBuf, lpszSource, sizeof(CharType) * (length + 1));
 
   return (length);
 }

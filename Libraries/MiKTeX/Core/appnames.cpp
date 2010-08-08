@@ -23,6 +23,18 @@
 
 #include "internal.h"
 
+inline
+void
+Append (/*[in,out]*/ string & str,
+	/*[in]*/ const char * lpszTag)
+{
+  if (! str.empty())
+  {
+    str += PATH_DELIMITER;
+  }
+  str += lpszTag;
+}
+
 /* _________________________________________________________________________
 
    SessionImpl::PushAppName
@@ -32,10 +44,7 @@ void
 SessionImpl::PushAppName (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);
-
-  fileTypes.clear ();
-
-  applicationNames.reserve (100);
+  MIKTEX_ASSERT (strchr(lpszName, PATH_DELIMITER) == 0);
 
   string newApplicationNames;
 
@@ -43,11 +52,32 @@ SessionImpl::PushAppName (/*[in]*/ const char * lpszName)
 
   newApplicationNames = lpszName;
 
-  if (! applicationNames.empty())
+  for (CSVList tag (applicationNames.c_str(), PATH_DELIMITER); tag.GetCurrent() != 0; ++ tag)
+  {
+    // stop at the miktex application tag; this is always the last tag
+    if (StringCompare(tag.GetCurrent(), "miktex", true) == 0)
     {
-      newApplicationNames += PATH_DELIMITER;
-      newApplicationNames += applicationNames;
+#if defined(MIKTEX_DEBUG)
+      ++tag;
+      MIKTEX_ASSERT (tag.GetCurrent() == 0);
+#endif
+      break;
     }
+    if (StringCompare(tag.GetCurrent(), lpszName, true) == 0)
+    {
+      continue;
+    }
+    Append (newApplicationNames, tag.GetCurrent());
+  }
+
+  Append (newApplicationNames, "miktex");
+
+  if (StringCompare(newApplicationNames.c_str(), applicationNames.c_str(), true) == 0)
+  {
+    return;
+  }
+
+  fileTypes.clear ();
 
   applicationNames = newApplicationNames;
 
@@ -65,17 +95,40 @@ void
 SessionImpl::PushBackAppName (/*[in]*/ const char * lpszName)
 {
   MIKTEX_ASSERT_STRING (lpszName);
+  MIKTEX_ASSERT (strchr(lpszName, PATH_DELIMITER) == 0);
 
   fileTypes.clear ();
 
-  applicationNames.reserve (100);
+  string newApplicationNames;
 
-  if (! applicationNames.empty())
+  for (CSVList tag (applicationNames.c_str(), PATH_DELIMITER); tag.GetCurrent() != 0; ++ tag)
+  {
+    // stop at the miktex application tag; this is always the last tag
+    if (StringCompare(tag.GetCurrent(), "miktex", true) == 0)
     {
-      applicationNames += PATH_DELIMITER;
+#if defined(MIKTEX_DEBUG)
+      ++tag;
+      MIKTEX_ASSERT (tag.GetCurrent() == 0);
+#endif
+      break;
     }
+    if (StringCompare(tag.GetCurrent(), lpszName, true) == 0)
+    {
+      continue;
+    }
+    Append (newApplicationNames, tag.GetCurrent());
+  }
 
-  applicationNames += lpszName;
+  Append (newApplicationNames, lpszName);
+
+  Append (newApplicationNames, "miktex");
+
+  if (StringCompare(newApplicationNames.c_str(), applicationNames.c_str(), true) == 0)
+  {
+    return;
+  }
+
+  applicationNames = newApplicationNames;
 
   trace_config->WriteFormattedLine ("core",
 				    T_("application tags: %s"),

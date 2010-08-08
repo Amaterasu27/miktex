@@ -1,9 +1,5 @@
 [ft.tex]
 
-extensions=
-extensions;=.tex
-extensions;=.src
-
 path=.
 path;=%R/tex/xetex//
 path;=%R/tex/plain//

@@ -1,6 +1,6 @@
 /* wrapper.cpp: wrap a main function
 
-   Copyright (C) 2004-2009 Christian Schenk
+   Copyright (C) 2004-2010 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -32,6 +32,15 @@
 
 #include <vector>
 
+#if ! defined(stringify_)
+#  define stringify__(x) #x
+#  define stringify_(x) stringify__(x)
+#endif
+
+#if defined(APPTAG)
+#  define APPTAGSTR stringify_(APPTAG)
+#endif
+
 #if ! defined(MAINFUNC)
 #  define MAINFUNC Main
 #endif
@@ -59,10 +68,6 @@ main (/*[in]*/ int	argc,
 {
   try
     {
-#if defined(APPNAMEx) // <fixme/>
-      MiKTeX::Core::PushAppName (APPNAME);
-#endif
-
       std::vector<char *> args;
       args.reserve (argc);
       for (int idx = 0; idx < argc; ++ idx)
@@ -72,6 +77,10 @@ main (/*[in]*/ int	argc,
       args.push_back (0);
 
       app.Init (args);
+
+#if defined(APPTAGSTR)
+      app.GetSession()->PushBackAppName (APPTAGSTR);
+#endif
       
 #if defined(DISABLE_INSTALLER)
       app.EnableInstaller (MiKTeX::Core::TriState::False);

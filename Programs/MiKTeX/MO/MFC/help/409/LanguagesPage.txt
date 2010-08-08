@@ -1,18 +1,2 @@
 .topic HIDC_LIST
 Displays a list of all languages known by TeX.
-
-.topic HIDC_NEW
-Click this to create a new language definition.
-
-.topic HIDC_REMOVE
-Click this to remove the selected language definitions.
-
-.topic HIDC_EDIT
-Click this to display or change the selected language
-definition.
-
-.topic HIDC_MOVEUP
-Click this to move the selected list entry up.
-
-.topic HIDC_MOVEDOWN
-Click this to move the selected list entry down.

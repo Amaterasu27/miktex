@@ -1,6 +1,6 @@
 /* miktex/Core/IntegerTypes.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(B8790D0F8ECA42169AD3373FC845E5D7_)
-#define B8790D0F8ECA42169AD3373FC845E5D7_
+#if ! defined(B8790D0F8ECA42169AD3373FC845E5D7)
+#define B8790D0F8ECA42169AD3373FC845E5D7
 
 #if ! defined(HAVE_INTTYPES_H)
 #cmakedefine HAVE_INTTYPES_H

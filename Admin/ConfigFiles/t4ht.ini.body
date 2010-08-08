@@ -1,9 +1,4 @@
 [t4ht]
 
 T4HTINPUTS=.
-T4HTINPUTS;=%R/tex4ht/base//
-
-[ft.other text files]
-
-path=.
-path;=%R/tex4ht/base//
+T4HTINPUTS;=%R/tex4ht//

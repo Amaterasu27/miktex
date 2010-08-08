@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2010 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -1058,8 +1058,8 @@ FileCopyPage::ConfigureMiKTeX ()
 	  return;
 	}
       
-      // [5] create font map files
-      RunIniTeXMF ("--mkmaps");
+      // [5] create font map files and language.dat
+      RunIniTeXMF (CommandLineBuilder("--mkmaps", "--mklangs"));
       if (pSheet->GetCancelFlag())
 	{
 	  return;

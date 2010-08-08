@@ -67,5 +67,10 @@ set(basedir "${texmfdir}/${rel_miktex_base_dir}")
 set(formatdir "${texmfdir}/${rel_miktex_fmt_dir}")
 set(memdir "${texmfdir}/${rel_miktex_mem_dir}")
 
-set(configdir "${texmfdir}/miktex/config")
-set(docdir "${texmfdir}/doc/miktex")
+set(rel_miktex_doc_dir "doc/miktex")
+
+set(docdir "${texmfdir}/${rel_miktex_doc_dir}")
+
+set(rel_miktex_config_dir "miktex/config")
+
+set(configdir "${texmfdir}/${rel_miktex_config_dir}")

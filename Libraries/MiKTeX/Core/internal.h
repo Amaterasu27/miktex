@@ -223,9 +223,11 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
   dir
 
 #define CFG_MACRO_NAME_BINDIR "bindir"
+#define CFG_MACRO_NAME_ENGINE "engine"
 #define CFG_MACRO_NAME_LOCALFONTDIRS "localfontdirs"
 #define CFG_MACRO_NAME_PSFONTDIRS "psfontdirs"
 #define CFG_MACRO_NAME_OTFDIRS "otfdirs"
+#define CFG_MACRO_NAME_PROGNAME "progname"
 #define CFG_MACRO_NAME_TTFDIRS "ttfdirs"
 #define CFG_MACRO_NAME_WINDIR "windir"
 
@@ -325,10 +327,6 @@ void
 AppendDirectoryDelimiter (/*[in,out]*/ char *	lpszPath,
 			  /*[in]*/ size_t		size);
 
-int
-CompareFileNameChars (/*[in]*/ char	ch1,
-		      /*[in]*/ char	ch2);
-  
 void
 CopyString2 (/*[out]*/ char *		lpszBuf,
 	     /*[in]*/ size_t			bufSize,
@@ -751,6 +749,28 @@ public:
 public:
   FormatInfo_ (/*[in]*/ const FormatInfo & other)
     : FormatInfo (other)
+  {
+  }
+
+public:
+  PathName cfgFile;
+};
+
+/* _________________________________________________________________________
+
+   LanguageInfo_
+   _________________________________________________________________________ */
+
+struct LanguageInfo_ : public LanguageInfo
+{
+public:
+  LanguageInfo_ ()
+  {
+  }
+
+public:
+  LanguageInfo_ (/*[in]*/ const LanguageInfo & other)
+    : LanguageInfo (other)
   {
   }
 
@@ -1297,6 +1317,13 @@ public:
   void
   MIKTEXTHISCALL
   SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  GetLanguageInfo (/*[in]*/ unsigned		index,
+		   /*[out]*/ LanguageInfo &	languageInfo);
 
 public:
   virtual
@@ -1968,6 +1995,14 @@ private:
 
 private:
   void
+  ReadLanguagesIni ();
+
+private:
+  void
+  ReadLanguagesIni (/*[in]*/ const PathName & cfgFile);
+
+private:
+  void
   WriteFormatsIni ();
 
 private:
@@ -2147,6 +2182,9 @@ private:
   vector<FormatInfo_> formats;
 
 private:
+  vector<LanguageInfo_> languages;
+
+private:
   StartupConfig startupConfig;
 
 private:
@@ -2191,7 +2229,7 @@ public:
     if (theNameOfTheGame.empty())
     {
       const char * lpszEngine = GetEnvironmentString("engine");
-      return (lpszEngine == 0 ? "" : lpszEngine);
+      return (lpszEngine == 0 ? "engine-not-set" : lpszEngine);
     }
     else
     {
@@ -2399,6 +2437,30 @@ ToUpper (/*[in]*/ CharType ch)
       ch = CTYPE_FACET.toupper(ch);
     }
   return (ch);
+}
+
+/* _________________________________________________________________________
+
+   CompareFileNameChars
+   _________________________________________________________________________ */
+
+inline
+int
+CompareFileNameChars (/*[in]*/ char	ch1,
+		      /*[in]*/ char	ch2)
+{
+  if (IsDirectoryDelimiter(ch1) && IsDirectoryDelimiter(ch2))
+  {
+    return (0);
+  }
+#if defined(MIKTEX_WINDOWS)
+  int norm1 = ToLower(ch1);
+  int norm2 = ToLower(ch2);
+#else
+  int norm1 = ch1;
+  int norm2 = ch2;
+#endif
+  return (norm1 - norm2);
 }
 
 /* _________________________________________________________________________

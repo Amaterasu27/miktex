@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2010 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,6 +31,7 @@ set(${core_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/CommandLine.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FileStream.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/FormatInfo.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/LanguageInfo.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/LzmaStream.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/MemoryMappedFile.cpp
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/Process.cpp

@@ -897,10 +897,10 @@ Match (/*[in]*/ const char * lpszPathPattern,
     }
     MIKTEX_ASSERT (RECURSION_INDICATOR_LENGTH == 2);
     MIKTEX_ASSERT (IsDirectoryDelimiter(RECURSION_INDICATOR[0]));
+    MIKTEX_ASSERT (IsDirectoryDelimiter(RECURSION_INDICATOR[1]));
     if (*lpszPathPattern == RECURSION_INDICATOR[1] && IsDirectoryDelimiter(lastch))
     {
-      MIKTEX_ASSERT (IsDirectoryDelimiter(lastch));
-      lpszPathPattern += 1;
+      for (; IsDirectoryDelimiter(*lpszPathPattern); ++ lpszPathPattern) {};
       if (*lpszPathPattern == 0)
       {
 	return (true);
@@ -909,10 +909,12 @@ Match (/*[in]*/ const char * lpszPathPattern,
       {
 	if (IsDirectoryDelimiter(lastch))
 	{
+	  // <recursivecall/>
 	  if (Match(lpszPathPattern, lpszPath))
 	  {
 	    return (true);
 	  }
+	  // </recursivecall>
 	}
 	lastch = *lpszPath;
       }

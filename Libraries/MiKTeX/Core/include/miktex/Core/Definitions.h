@@ -1,6 +1,6 @@
 /* miktex/Core/Definitions.h: MiKTeX core API			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(A7BDA959_B7AC_45AC_A451_7ED3DFBECC1A_)
-#define A7BDA959_B7AC_45AC_A451_7ED3DFBECC1A_
+#if ! defined(A7BDA959B7AC45ACA4517ED3DFBECC1A)
+#define A7BDA959B7AC45ACA4517ED3DFBECC1A
 
 #if ! defined(MIKTEX)
 #  define MIKTEX 1

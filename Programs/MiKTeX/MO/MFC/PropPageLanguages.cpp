@@ -1,6 +1,6 @@
 /* PropPageLanguages.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -22,21 +22,19 @@
 #include "StdAfx.h"
 #include "mo.h"
 
-#include "LanguageDefinitionDialog.h"
 #include "PropPageLanguages.h"
 #include "PropSheet.h"
 #include "resource.hm"
-
-IMPLEMENT_DYNCREATE(PropPageLanguages, CPropertyPage);
 
 /* _________________________________________________________________________
 
    PropPageLanguages::PropPageLanguages
    _________________________________________________________________________ */
 
-PropPageLanguages::PropPageLanguages ()
+PropPageLanguages::PropPageLanguages (/*[in]*/ PackageManager * pManager)
   : CPropertyPage (PropPageLanguages::IDD),
-    inserting (false)
+    inserting (false),
+    pManager (pManager)
 {
   m_psp.dwFlags &= ~(PSP_HASHELP);
 }
@@ -59,11 +57,7 @@ void
 PropPageLanguages::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange(pDX);
-  DDX_Control (pDX, IDC_EDIT, editButton);
   DDX_Control (pDX, IDC_LIST, listControl);
-  DDX_Control (pDX, IDC_MOVEDOWN, downButton);
-  DDX_Control (pDX, IDC_MOVEUP, upButton);
-  DDX_Control (pDX, IDC_REMOVE, removeButton);
 }
 
 /* _________________________________________________________________________
@@ -72,12 +66,8 @@ PropPageLanguages::DoDataExchange (/*[in]*/ CDataExchange * pDX)
    _________________________________________________________________________ */
 
 BEGIN_MESSAGE_MAP (PropPageLanguages, CPropertyPage)
-  ON_BN_CLICKED (IDC_EDIT, OnEdit)
-  ON_BN_CLICKED (IDC_MOVEDOWN, OnMoveDown)
-  ON_BN_CLICKED (IDC_MOVEUP, OnMoveUp)
-  ON_BN_CLICKED (IDC_NEW, OnNew)
-  ON_BN_CLICKED (IDC_REMOVE, OnRemove)
-  ON_NOTIFY (LVN_ITEMCHANGED, IDC_LIST, OnItemchangedList)
+  ON_NOTIFY (LVN_ITEMCHANGED, IDC_LIST, OnItemChanged)
+  ON_NOTIFY(LVN_ITEMCHANGING, IDC_LIST, OnItemChanging)
   ON_NOTIFY (NM_DBLCLK, IDC_LIST, OnDblclkList)
   ON_WM_CONTEXTMENU ()
   ON_WM_HELPINFO ()
@@ -89,7 +79,7 @@ END_MESSAGE_MAP ()
    _________________________________________________________________________ */
 
 void
-PropPageLanguages::InsertColumn (/*[in]*/ int			colIdx,
+PropPageLanguages::InsertColumn (/*[in]*/ int		colIdx,
 				 /*[in]*/ const char *	lpszLabel,
 				 /*[in]*/ const char *	lpszLongest)
 {
@@ -118,23 +108,17 @@ PropPageLanguages::OnInitDialog ()
     {
       
       listControl.SetExtendedStyle (listControl.GetExtendedStyle()
-				    | LVS_EX_FULLROWSELECT
-				    | (HasIE3() ? LVS_EX_CHECKBOXES : 0));
+				    | LVS_EX_CHECKBOXES);
 
       int colIdx = 0;
 
       InsertColumn (colIdx++, T_("Language"), T_("xxxx portuguese"));
 
-      if (! HasIE3())
-	{
-	  InsertColumn (colIdx++, T_("State"), T_("xxxx Active"));
-	}
+      InsertColumn (colIdx++, T_("Synonyms"), T_("xxxx patois, francais"));
 
       InsertColumn (colIdx++,
-		    T_("Hyphenation Table"),
+		    T_("Package"),
 		    T_("xxxx nehyph96.tex"));
-
-      InsertColumn (colIdx++, T_("Synonyms"), T_("xxxx patois, francais"));
 
       ReadLanguageDat ();
       Refresh ();
@@ -153,6 +137,25 @@ PropPageLanguages::OnInitDialog ()
 
 /* _________________________________________________________________________
 
+   PropPageLanguages::WhichPackage
+   _________________________________________________________________________ */
+
+vector<string>
+PropPageLanguages::WhichPackage (/*[in]*/ const char * lpszTeXInputFile)
+{
+  PathName directoryPattern (SessionWrapper(true)->GetMpmRootPath());
+  directoryPattern += "tex//";
+  PathNameArray paths;
+  vector<string> result;
+  if (! Fndb::Search(lpszTeXInputFile, directoryPattern.Get(), false, paths, result))
+  {
+    result.clear ();
+  }
+  return (result);
+}
+
+/* _________________________________________________________________________
+
    PropPageLanguages::OnApply
    _________________________________________________________________________ */
 
@@ -160,63 +163,126 @@ BOOL
 PropPageLanguages::OnApply ()
 {
   try
+  {
+    vector<string> toBeRemoved;
+    vector<string> toBeInstalled;
+    for (vector<MyLanguageInfo>::iterator it = languages.begin(); it != languages.end(); ++ it)
     {
-      PathName root;
-      PathName relative;
-      if (SessionWrapper(true)->SplitTEXMFPath(languageDat, root, relative)
-	  == INVALID_ROOT_INDEX)
+      if (it->active == it->newActive)
+      {
+	continue;
+      }
+      if (it->packageNames.size() > 0)
+      {
+	PackageInfo packageInfo = pManager->GetPackageInfo(it->packageNames[0].c_str());
+	if (it->newActive)
 	{
-	  UNEXPECTED_CONDITION ("PropPageLanguages::OnApply");
+	  if (! packageInfo.IsInstalled()
+	      && find(toBeInstalled.begin(), toBeInstalled.end(), it->packageNames[0]) == toBeInstalled.end())
+	  {
+	    toBeInstalled.push_back (it->packageNames[0]);
+	  }
 	}
-      PathName localRoot =
-	SessionWrapper(true)->GetSpecialPath(SpecialPath::ConfigRoot);
-      if (PathName::Compare(root, localRoot) != 0)
+      }
+      for (vector<string>::const_iterator it2 = it->packageNames.begin(); it2 != it->packageNames.end(); ++ it2)
+      {
+	PackageInfo packageInfo = pManager->GetPackageInfo(it2->c_str());
+	if (! it->newActive)
 	{
-	  languageDat.Set (localRoot, relative);
-	  PathName dir (languageDat);
-	  dir.RemoveFileSpec ();
-	  if (! Directory::Exists(dir))
-	    {
-	      Directory::Create (dir);
-	    }
+	  if (packageInfo.IsInstalled()
+	      && find(toBeInstalled.begin(), toBeInstalled.end(), *it2) == toBeInstalled.end()
+	      && find(toBeRemoved.begin(), toBeRemoved.end(), *it2) == toBeRemoved.end())
+	  {
+	    toBeRemoved.push_back (*it2);
+	  }
 	}
-      StreamWriter writer (languageDat);
-      writer.WriteLine (T_("%%% Created by MiKTeX Options---do not edit!"));
-      for (vector<LANGUAGE>::const_iterator it = languages.begin();
-	   it != languages.end();
-	   ++it)
+      }
+    }
+    if (toBeInstalled.size() == 0 && toBeRemoved.size() == 0)
+    {
+      ReadLanguageDat ();
+      Refresh ();
+      return (CPropertyPage::OnApply());
+    }
+    CString str1;
+    str1.Format (_T("%u"), toBeInstalled.size());
+    CString str2;
+    str2.Format (_T("%u"), toBeRemoved.size());
+    CString str;
+    AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
+    if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
+    {
+      DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
+	taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
+      TASKDIALOGCONFIG taskDialogConfig;
+      memset (&taskDialogConfig, 0, sizeof(taskDialogConfig));
+      taskDialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
+      taskDialogConfig.hwndParent = 0;
+      taskDialogConfig.hInstance = 0;
+      taskDialogConfig.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
+      taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
+      taskDialogConfig.pszWindowTitle =
+	MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
+      taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+      CStringW strContent (str);
+      taskDialogConfig.pszContent = strContent;
+      taskDialogConfig.cButtons = 2;
+      TASKDIALOG_BUTTON const buttons[] = {
+	{IDOK, L"Proceed"},
+	{IDCANCEL, L"Cancel"}
+      };
+      taskDialogConfig.pButtons = buttons;
+      taskDialogConfig.nDefaultButton = IDOK;
+      int result = 0;
+      if(SUCCEEDED(taskDialogIndirect(&taskDialogConfig, &result, 0, 0)))
+      {
+	if (IDOK != result)
 	{
-	  writer.WriteFormattedLine
-	    ("%s%s %s",
-	     it->active ? "" : "%",
-	     static_cast<const char *>(it->languageName),
-	     static_cast<const char *>(it->fileName));
-	  for (vector<CString>::const_iterator it2 = it->synonyms.begin();
-	       it2 != it->synonyms.end();
-	       ++it2)
-	    {
-	      writer.WriteFormattedLine
-		("=%s",
-		 static_cast<const char *>(*it2));
-	    }
+	  return (FALSE);
 	}
-      writer.Close ();
-      if (! Fndb::FileExists(languageDat))
-	{
-	  Fndb::Add (languageDat);
-	}
+      }
+      else
+      {
+	UNEXPECTED_CONDITION ("PropPagePackages::OnApply");
+      }
+    }
+    else
+    {
+      if (AfxMessageBox(str, MB_OKCANCEL | MB_ICONINFORMATION) == IDCANCEL)
+      {
+	return (FALSE);
+      }
+    }
+    if (UpdateDialog::DoModal(this,
+			      pManager.Get(),
+			      toBeInstalled,
+			      toBeRemoved)
+        == IDOK)
+    {
+      ReadLanguageDat ();
+      Refresh ();
+      SetElevationRequired (false);
+      
       return (TRUE);
     }
+    else
+    {
+      ReadLanguageDat ();
+      Refresh ();
+      SetElevationRequired (true);
+      return (FALSE);
+    }
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (FALSE);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+    return (FALSE);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-      return (FALSE);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+    return (FALSE);
+  }
 }
 
 /* _________________________________________________________________________
@@ -229,9 +295,6 @@ PropPageLanguages::OnApply ()
 namespace
 {
   const DWORD aHelpIDs[] = {
-    MAKE_ID_HID_PAIR(IDC_NEW),
-    MAKE_ID_HID_PAIR(IDC_REMOVE),
-    MAKE_ID_HID_PAIR(IDC_EDIT),
     MAKE_ID_HID_PAIR(IDC_LIST),
     0, 0,
   };
@@ -255,7 +318,7 @@ PropPageLanguages::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo)
 
 void
 PropPageLanguages::OnContextMenu (/*[in]*/ CWnd *	pWnd,
-				   /*[in]*/ CPoint	point) 
+				  /*[in]*/ CPoint	point) 
 {
   try
     {
@@ -279,64 +342,17 @@ PropPageLanguages::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 void
 PropPageLanguages::ReadLanguageDat ()
 {
-  if (! SessionWrapper(true)->FindFile(T_("language.dat"),
-				       FileType::TEX,
-				       languageDat))
-    {
-      FATAL_MIKTEX_ERROR ("PropPageLanguages::ReadLanguageDat",
-			  T_("\
-The language definition file (languages.dat) could not be found."),
-			  0);
-      return;
-    }
-  StreamReader reader (languageDat);
-  string line;
-  size_t idx = 0;
-  while (reader.ReadLine(line))
-    {
-      if (line.empty())
-	{
-	  continue;
-	}
-      bool active = true;
-      if (line[0] == '%')
-	{
-	  line.erase (0, 1);
-	  active = false;
-	}
-      if (line[0] == '=')
-	{
-	  if (idx > 0)
-	    {
-	      Tokenizer tok (line.c_str() + 1, " \t\n");
-	      if (tok.GetCurrent() != 0)
-		{
-		  LANGUAGE & lang = languages[idx - 1];
-		  lang.synonyms.push_back (tok.GetCurrent());
-		}
-	    }
-	}
-      else
-	{
-	  Tokenizer tok (line.c_str(), " \t\n");
-	  const char * lpsz = tok.GetCurrent();
-	  if (lpsz != 0 && *lpsz != '%')
-	    {
-	      ++ tok;
-	      const char * lpsz2 = tok.GetCurrent();
-	      if (lpsz2 != 0)
-		{
-		  LANGUAGE lang;
-		  lang.languageName = lpsz;
-		  lang.fileName = lpsz2;
-		  lang.active = active;
-		  languages.push_back (lang);
-		  ++ idx;
-		}
-	    }
-	}
-    }
-  reader.Close ();
+  languages.clear ();
+  LanguageInfo languageInfo;
+  for (int idx = 0; SessionWrapper(true)->GetLanguageInfo(idx, languageInfo); ++ idx)
+  {
+    MyLanguageInfo myLanguageInfo (languageInfo);
+    myLanguageInfo.active =
+      SessionWrapper(true)->FindFile(myLanguageInfo.loader, "%r/tex//", myLanguageInfo.loaderPath);
+    myLanguageInfo.newActive = myLanguageInfo.active;
+    myLanguageInfo.packageNames = WhichPackage(myLanguageInfo.loader.c_str());
+    languages.push_back (myLanguageInfo);
+  }
 }
 
 /* _________________________________________________________________________
@@ -359,9 +375,8 @@ PropPageLanguages::InsertLanguage (/*[in]*/ int idx)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
-  inserting = false;
-
   RefreshRow (idx);
+  inserting = false;
 }
 
 /* _________________________________________________________________________
@@ -379,7 +394,7 @@ PropPageLanguages::Refresh ()
     
   int idx = 0;
 
-  for (vector<LANGUAGE>::const_iterator it = languages.begin();
+  for (vector<MyLanguageInfo>::const_iterator it = languages.begin();
        it != languages.end();
        ++it, ++idx)
     {
@@ -387,98 +402,6 @@ PropPageLanguages::Refresh ()
     }
 
   EnableButtons ();
-}
-
-/* _________________________________________________________________________
-
-   PropPageLanguages::OnEdit
-   _________________________________________________________________________ */
-
-void
-PropPageLanguages::OnEdit ()
-{
-  try
-    {
-      int idx = GetSelectedItem();
-      LanguageDefinitionDialog dlg (this, languages[idx]);
-      if (dlg.DoModal() == IDOK)
-	{
-	  languages[idx] = dlg.GetLanguage();
-	  RefreshRow (idx);
-	  SetModified ();
-	}
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-}
-
-/* _________________________________________________________________________
-
-   PropPageLanguages::OnRemove
-   _________________________________________________________________________ */
-
-void
-PropPageLanguages::OnRemove ()
-{
-  try
-    {
-      UINT n = listControl.GetSelectedCount();
-      for (UINT i = 0; i < n; ++i)
-	{
-	  int idx = GetSelectedItem();
-	  if (! listControl.DeleteItem(idx))
-	    {
-	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
-	    }
-	  languages.erase (languages.begin() + idx);
-	}
-      EnableButtons ();
-      SetModified ();
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-}
-
-/* _________________________________________________________________________
-
-   PropPageLanguages::OnNew
-   _________________________________________________________________________ */
-
-void
-PropPageLanguages::OnNew ()
-{
-  try
-    {
-      LANGUAGE lang;
-      LanguageDefinitionDialog dlg (this, lang);
-      if (dlg.DoModal() == IDOK)
-	{
-	  lang = dlg.GetLanguage();
-	  languages.push_back (lang);
-	  InsertLanguage (static_cast<int>(languages.size() - 1));
-	  SetModified ();
-	}
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
 }
 
 /* _________________________________________________________________________
@@ -512,40 +435,100 @@ PropPageLanguages::GetSelectedItem ()
 
 /* _________________________________________________________________________
 
-   PropPageLanguages::OnItemchangedList
+   PropPageLanguages::OnItemChanging
    _________________________________________________________________________ */
 
+inline bool IsChecked (/*[in]*/ UINT state)
+{
+  return (((state & LVIS_STATEIMAGEMASK) >> 12) == 2 ? true : false);
+}
+
 void
-PropPageLanguages::OnItemchangedList (/*[in]*/ NMHDR *		pNMHDR,
-				      /*[in]*/ LRESULT *	pResult)
+PropPageLanguages::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
+				   /*[in]*/ LRESULT *	pResult)
 {
   *pResult = 0;
   if (inserting)
-    {
-      return;
-    }
+  {
+    return;
+  }
   try
+  {
+    LPNMLISTVIEW pnmv = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+    if (pnmv->iItem >= 0 && (pnmv->uChanged & LVIF_STATE))
     {
-      LPNMLISTVIEW pnmv = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-      if (HasIE3() && pnmv->iItem >= 0 && (pnmv->uChanged & LVIF_STATE))
+      if (! IsChecked(pnmv->uOldState) && IsChecked(pnmv->uNewState))
+      {
+	if (languages[pnmv->iItem].packageNames.size() == 0)
 	{
-	  bool b = (listControl.GetCheck(pnmv->iItem) ? true : false);
-	  if (languages[pnmv->iItem].active != b)
-	    {
-	      languages[pnmv->iItem].active = b;
-	      SetModified ();
-	    }
+	  AfxMessageBox (T_("This language package is not yet available."),
+			 MB_OK | MB_ICONEXCLAMATION);
+	  *pResult = TRUE;
 	}
-      EnableButtons ();
+      }
+      else if (IsChecked(pnmv->uOldState) && ! IsChecked(pnmv->uNewState))
+      {
+	MIKTEX_ASSERT (languages[pnmv->iItem].packageNames.size() > 0);
+	// is it possible to remove the language package?
+	for (vector<string>::const_iterator it = languages[pnmv->iItem].packageNames.begin(); it != languages[pnmv->iItem].packageNames.end(); ++ it)
+	{
+	  PackageInfo packageInfo = pManager->GetPackageInfo(*it);
+	  if (! packageInfo.isRemovable)
+	  {
+	    AfxMessageBox (T_("This language package is installed for all users. Only the admin variant can remove this language package."),
+			   MB_OK | MB_ICONEXCLAMATION);
+	    *pResult = TRUE;
+	  }
+	}
+      }
     }
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
+  {
+    ErrorDialog::DoModal (this, e);
+  }
+}
+
+/* _________________________________________________________________________
+
+   PropPageLanguages::OnItemChanged
+   _________________________________________________________________________ */
+
+void
+PropPageLanguages::OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
+				  /*[in]*/ LRESULT *	pResult)
+{
+  *pResult = 0;
+  if (inserting)
+  {
+    return;
+  }
+  try
+  {
+    LPNMLISTVIEW pnmv = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+    if (pnmv->iItem >= 0 && (pnmv->uChanged & LVIF_STATE))
     {
-      ErrorDialog::DoModal (this, e);
+      bool b = (listControl.GetCheck(pnmv->iItem) ? true : false);
+      languages[pnmv->iItem].newActive = b;
+      if (languages[pnmv->iItem].active != b)
+      {	      
+	SetChanged (true);
+      }
     }
+    EnableButtons ();
+  }
+  catch (const MiKTeXException & e)
+  {
+    ErrorDialog::DoModal (this, e);
+  }
+  catch (const exception & e)
+  {
+    ErrorDialog::DoModal (this, e);
+  }
 }
 
 /* _________________________________________________________________________
@@ -556,188 +539,44 @@ PropPageLanguages::OnItemchangedList (/*[in]*/ NMHDR *		pNMHDR,
 void
 PropPageLanguages::RefreshRow (/*[in]*/ int idx)
 {
-  const LANGUAGE lang = languages[idx];
+  const MyLanguageInfo & lang = languages[idx];
 
   int colIdx = 0;
 
-  if (! listControl.SetItemText(idx, colIdx++, lang.languageName))
+  if (! listControl.SetItemText(idx, colIdx++, lang.key.c_str()))
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
+  }
+
+  if (! listControl.SetItemText(idx, colIdx++, lang.synonyms.c_str()))
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
+  }
+
+  CString packageNames;
+
+  if (lang.packageNames.size() == 0)
+  {
+    packageNames = T_("not available");
+  }
+  else
+  {
+    for (int idx = 0; idx < lang.packageNames.size(); ++ idx)
     {
-      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
+      if (idx > 0)
+      {
+	packageNames += ", ";
+      }
+      packageNames += lang.packageNames[idx].c_str();
     }
-  
-  if (! HasIE3())
-    {
-      if (! listControl.SetItemText(idx,
-				    colIdx++,
-				    lang.active ? T_("Active") : ""))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
-	}
-    }
+  }
 
-  if (! listControl.SetItemText(idx, colIdx++, lang.fileName))
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
-    }
+  if (! listControl.SetItemText(idx, colIdx++, packageNames))
+  {
+    FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
+  }
 
-  CString synonyms;
-
-  for (vector<CString>::const_iterator it = lang.synonyms.begin();
-       it != lang.synonyms.end();
-       ++it)
-    {
-      if (synonyms.GetLength() > 0)
-	{
-	  synonyms += ",";
-	}
-      synonyms += *it;
-    }
-
-  if (! listControl.SetItemText(idx, colIdx++, synonyms))
-    {
-      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
-    }
-
-  if (HasIE3())
-    {
-      listControl.SetCheck (idx, lang.active ? TRUE : FALSE);
-    }
-}
-
-/* _________________________________________________________________________
-
-   CompareItems
-   _________________________________________________________________________ */
-
-static
-int
-CALLBACK 
-CompareItems (/*[in]*/ LPARAM	lParam1,
-	      /*[in]*/ LPARAM	lParam2,
-	      /*[in]*/ LPARAM	lParamSort)
-{
-  UNUSED_ALWAYS (lParamSort);
-  return (static_cast<int>(lParam1 - lParam2));
-}
-
-/* _________________________________________________________________________
-
-   PropPageLanguages::OnMoveDown
-   _________________________________________________________________________ */
-
-void
-PropPageLanguages::OnMoveDown ()
-{
-  try
-    {
-      int idx = GetSelectedItem();
-
-      MIKTEX_ASSERT (idx + 1 < listControl.GetItemCount());
-
-      swap (languages[idx], languages[idx+1]);
-
-      LVITEM lvitem;
-      lvitem.mask = LVIF_PARAM;
-      lvitem.iSubItem = 0;
-
-      lvitem.iItem = idx;
-      if (! listControl.GetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
-	}
-      lvitem.lParam = idx + 1;
-      if (! listControl.SetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
-	}
-
-      lvitem.iItem = idx + 1;
-      if (! listControl.GetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
-	}
-      lvitem.lParam = idx;
-      if (! listControl.SetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
-	}
-
-      if (! listControl.SortItems(CompareItems, 0))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItems", 0);
-	}
-
-      EnableButtons ();
-      SetModified ();
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-}
-
-/* _________________________________________________________________________
-
-   PropPageLanguages::OnMoveUp
-   _________________________________________________________________________ */
-
-void
-PropPageLanguages::OnMoveUp ()
-{
-  try
-    {
-      int idx = GetSelectedItem();
-      
-      MIKTEX_ASSERT (idx > 0);
-
-      swap (languages[idx - 1], languages[idx]);
-
-      LVITEM lvitem;
-      lvitem.mask = LVIF_PARAM;
-      lvitem.iSubItem = 0;
-      
-      lvitem.iItem = idx - 1;
-      if (! listControl.GetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
-	}
-      lvitem.lParam = idx;
-      if (! listControl.SetItem(&lvitem))
-  	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
-	}
-    
-      lvitem.iItem = idx;
-      if (! listControl.GetItem(&lvitem))
-	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
-	}
-      lvitem.lParam = idx - 1;
-      if (! listControl.SetItem(&lvitem))
-  	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
-	}
-      
-      if (! listControl.SortItems(CompareItems, 0))
-        	{
-	  FATAL_WINDOWS_ERROR ("CListCtrl::SortItems", 0);
-	}
-
-      EnableButtons ();
-      SetModified ();
-    }
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+    listControl.SetCheck (idx, lang.active ? TRUE : FALSE);
 }
 
 /* _________________________________________________________________________
@@ -760,23 +599,44 @@ PropPageLanguages::EnableButtons ()
 	}
       firstSelected = listControl.GetNextSelectedItem(pos);
     }
-  upButton.EnableWindow (selectedCount == 1 && firstSelected > 0);
-  downButton.EnableWindow (selectedCount == 1
-			   && firstSelected + 1 < itemCount);
-  removeButton.EnableWindow (selectedCount > 0);
-  editButton.EnableWindow (selectedCount == 1);
 }
 
 /* _________________________________________________________________________
 
-   PropPageLanguages::SetModified
+   PropPageLanguages::SetElevationRequired
    _________________________________________________________________________ */
 
 void
-PropPageLanguages::SetModified ()
+PropPageLanguages::SetElevationRequired (/*[in]*/ bool f)
 {
+  if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
+  {
+    HWND hwnd = ::GetDlgItem(::GetParent(m_hWnd), IDOK);
+    if (hwnd == 0)
+    {
+      UNEXPECTED_CONDITION ("PropPageLanguages::SetElevationRequired");
+    }
+    Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+    hwnd = ::GetDlgItem(::GetParent(m_hWnd), ID_APPLY_NOW);
+    if (hwnd == 0)
+    {
+      UNEXPECTED_CONDITION ("PropPageLanguages::SetElevationRequired");
+    }
+    Button_SetElevationRequiredState (hwnd, f ? TRUE : FALSE);
+  }
+}
+
+/* _________________________________________________________________________
+
+   PropPageLanguages::SetChanged
+   _________________________________________________________________________ */
+
+void
+PropPageLanguages::SetChanged (/*[in]*/ bool f)
+{
+  SetElevationRequired (f);
   PropSheet * pSheet =
     reinterpret_cast<PropSheet*>(GetParent());
   pSheet->ScheduleBuildFormats ();
-  CPropertyPage::SetModified (TRUE);
+  SetModified (f ? TRUE : FALSE);
 }

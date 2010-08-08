@@ -1,6 +1,6 @@
 /* mo.h:							-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -58,24 +58,6 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
 
 bool
 HasIE3 ();
-
-struct LANGUAGE
-{
-  LANGUAGE ()
-  {
-  }
-  LANGUAGE (/*[in]*/ const LANGUAGE & rhs)
-    : languageName (rhs.languageName),
-      fileName (rhs.fileName),
-      synonyms (rhs.synonyms),
-      active (rhs.active)
-  {
-  }
-  CString languageName;
-  CString fileName;
-  vector<CString> synonyms;
-  bool active;
-};
 
 /* _________________________________________________________________________
 

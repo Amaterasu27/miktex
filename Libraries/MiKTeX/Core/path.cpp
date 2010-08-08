@@ -202,29 +202,6 @@ Utils::IsSafeFileName (/*[in]*/ const char *	lpszPath,
 
 /* _________________________________________________________________________
 
-   CompareFileNameChars
-   _________________________________________________________________________ */
-
-MIKTEXINTERNALFUNC(int)
-CompareFileNameChars (/*[in]*/ char	ch1,
-		      /*[in]*/ char	ch2)
-{
-  if (IsDirectoryDelimiter(ch1) && IsDirectoryDelimiter(ch2))
-    {
-      return (0);
-    }
-#if defined(MIKTEX_WINDOWS)
-  int norm1 = ToLower(ch1);
-  int norm2 = ToLower(ch2);
-#else
-  int norm1 = ch1;
-  int norm2 = ch2;
-#endif
-  return (norm1 - norm2);
-}
-
-/* _________________________________________________________________________
-
    PathName::Compare
    _________________________________________________________________________ */
 

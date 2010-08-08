@@ -19,7 +19,6 @@
 
 set(inc_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/context.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm-common.ini
   ${CMAKE_CURRENT_BINARY_DIR}/formats-context.ini
 )
 
@@ -38,25 +37,39 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvilualatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dviluatex.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/dvipdfmx.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/dvips.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/elatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/eplain.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/etex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/fontinst.ini
   ${CMAKE_CURRENT_BINARY_DIR}/formats.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/frlatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/frtex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/ftex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/jadetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/lambda.ini
   ${CMAKE_CURRENT_BINARY_DIR}/latex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/latex209.ini
   ${CMAKE_CURRENT_BINARY_DIR}/lualatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/luatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mllatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/mltex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/olatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/omega.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfamstex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfcslatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfcsplain.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfelatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfjadetex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdflatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfmex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdfplatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/pdftexinfo.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfxlatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfxmex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfxmltex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/pdfxtex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/platex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/t4ht.ini
   ${CMAKE_CURRENT_BINARY_DIR}/tex.ini
@@ -64,9 +77,11 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/texinfo.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2pk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2tfm.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/xdvipdfmx.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/utf8mex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xelatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xeplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xetex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xmltex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/yap.ini
 )
 

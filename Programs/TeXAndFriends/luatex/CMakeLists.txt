@@ -24,7 +24,11 @@ include_directories(
 )
 
 add_definitions(
+  -DAPPTAG=luatex
+
   -DUSE_MIKTEX_EXIT
+
+  -DNO_DUMP_SHARE
 
   -DPDF_PARSER_ONLY
   -DpdfTeX

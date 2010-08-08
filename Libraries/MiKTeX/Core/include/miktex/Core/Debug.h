@@ -1,6 +1,6 @@
 /* miktex/Core/Debug.h: MiKTeX debug macros			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -23,8 +23,8 @@
 #  pragma once
 #endif
 
-#if ! defined(ADD61B45737D4F4ABCD5725E989A2EDA_)
-#define ADD61B45737D4F4ABCD5725E989A2EDA_
+#if ! defined(ADD61B45737D4F4ABCD5725E989A2EDA)
+#define ADD61B45737D4F4ABCD5725E989A2EDA
 
 #if ! defined(MIKTEXCOREEXPORT)
 #  error Core must be included before Debug
