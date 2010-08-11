@@ -1138,6 +1138,7 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
+	    /*[in]*/ FindFileFlags	flags,
 	    /*[out]*/ PathNameArray &	result);
 
 public:
@@ -1146,7 +1147,30 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
+	    /*[out]*/ PathNameArray &	result)
+  {
+    return (FindFile(lpszFileName, fileType, FindFileFlags::None, result));
+  }
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
+	    /*[in]*/ FindFileFlags	flags,
 	    /*[out]*/ PathName &	result);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
+	    /*[out]*/ PathName &	result)
+  {
+    return (FindFile(lpszFileName, fileType, FindFileFlags::None, result));
+  }
 
 public:
   virtual
@@ -1735,6 +1759,11 @@ private:
 
 private:
   bool
+  TryCreateFile (/*[in]*/ const char * lpszFileName,
+		 /*[in]*/ FileType	fileType);
+
+private:
+  bool
   GetWorkingDirectory (/*[in]*/ unsigned	n,
 		       /*[out]*/ PathName &	path);
 
@@ -1783,22 +1812,23 @@ private:
 private:
   bool
   MakePkFileName (/*[out]*/ PathName &		pkFileName,
-		  /*[in]*/ const char *	lpszFontName,
+		  /*[in]*/ const char *		lpszFontName,
 		  /*[in]*/ int			dpi);
 
 private:
   bool
   FindFile (/*[in]*/ const char *	    lpszFileName,
 	    /*[in]*/ FileType		    fileType,
+	    /*[in]*/ FindFileFlags	    flags,
 	    /*[out]*/ PathNameArray &	    result,
 	    /*[in]*/ bool		    firstMatchOnly);
 
 private:
   bool
   FindFile (/*[in]*/ const char *		lpszFileName,
-		    /*[in]*/ const PathNameArray &	vec,
-		    /*[out]*/ PathNameArray &		result,
-		    /*[in]*/ bool			firstMatchOnly);
+	    /*[in]*/ const PathNameArray &	vec,
+	    /*[out]*/ PathNameArray &		result,
+	    /*[in]*/ bool			firstMatchOnly);
 
 private:
   bool

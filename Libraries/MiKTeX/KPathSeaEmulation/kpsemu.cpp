@@ -349,15 +349,11 @@ miktex_kpathsea_find_file (/*[in]*/ kpathsea			pKpseInstance,
   PathName result;
   Session * pSession = Session::Get();
   FileType ft = ToFileType(format);
-  switch (ft.Get())
-  {
-  case FileType::TFM:
-    found = pSession->FindTfmFile(lpszFileName, result, mustExist ? true : false);
-    break;
-  default:
-    found = pSession->FindFile(lpszFileName, ft, result);
-    break;
-  }
+  found = pSession->FindFile(
+    lpszFileName,
+    ft,
+    mustExist ? Session::FindFileFlags::Create : Session::FindFileFlags::None,
+    result);
   if (! found)
   {
     return (0);
@@ -384,22 +380,11 @@ miktex_kpathsea_find_file_generic (/*in*/ kpathsea			pKpseInstance,
   PathNameArray result;
   Session * pSession = Session::Get();
   FileType ft = ToFileType(format);
-  switch (ft.Get())
-  {
-  case FileType::TFM:
-    {
-      PathName path;
-      found = pSession->FindTfmFile(lpszFileName, path, mustExist ? true : false);
-      if (found)
-      {
-	result.push_back (path);
-      }
-    }
-    break;
-  default:
-    found = pSession->FindFile(lpszFileName, ft, result);
-    break;
-  }
+  found = pSession->FindFile(
+    lpszFileName,
+    ft,
+    mustExist ? Session::FindFileFlags::Create : Session::FindFileFlags::None,
+    result);
   if (! found)
   {
     return (0);

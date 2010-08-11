@@ -280,6 +280,7 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 bool
 SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 		       /*[in]*/ FileType		fileType,
+		       /*[in]*/ FindFileFlags		flags,
 		       /*[out]*/ vector<PathName> &	result,
 		       /*[in]*/ bool			firstMatchOnly)
 {
@@ -290,6 +291,14 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
   {
     fileType = DeriveFileType(lpszFileName);
     if (fileType == FileType::None)
+    {
+      return (false);
+    }
+  }
+
+  if ((flags & FindFileFlags::Renew) != 0)
+  {
+    if (! TryCreateFile(lpszFileName, fileType))
     {
       return (false);
     }
@@ -339,6 +348,36 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 
   FindFile (lpszFileName, vec, result, firstMatchOnly);
 
+  if ((flags & FindFileFlags::Create) != 0)
+  {
+    if (result.empty())
+    {
+      if (TryCreateFile(lpszFileName, fileType))
+      {
+	FindFile (lpszFileName, vec, result, firstMatchOnly);
+      }
+    }
+    else if ((fileType == FileType::BASE || fileType == FileType::FMT || fileType == FileType::MEM)
+	     && GetConfigValue(MIKTEX_REGKEY_TEXMF,
+			       MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE,
+			       true))
+    {
+      PathName pathPackagesIni (
+	GetSpecialPath(SpecialPath::InstallRoot),
+	MIKTEX_PATH_PACKAGES_INI,
+	0);
+      if (File::Exists(pathPackagesIni)
+	  && File::GetLastWriteTime(pathPackagesIni) > File::GetLastWriteTime(result[0]))
+      {
+	if (TryCreateFile(lpszFileName, fileType))
+	{
+	  result.clear ();
+	  FindFile (lpszFileName, vec, result, firstMatchOnly);
+	}
+      }
+    }
+  }
+
   return (! result.empty());
 }
 
@@ -350,9 +389,10 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 bool
 SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
 		       /*[in]*/ FileType	  fileType,
+		       /*[in]*/ FindFileFlags	flags,
 		       /*[out]*/ PathNameArray &  result)
 {
-  return (FindFile(lpszFileName, fileType, result, false));
+  return (FindFile(lpszFileName, fileType, flags, result, false));
 }
 
 /* _________________________________________________________________________
@@ -363,10 +403,11 @@ SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
 bool
 SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ FileType	fileType,
+		       /*[in]*/ FindFileFlags	flags,
 		       /*[out]*/ PathName &	result)
 {
   vector<PathName> paths;
-  bool found = FindFile(lpszFileName, fileType, paths, true);
+  bool found = FindFile(lpszFileName, fileType, flags, paths, true);
   if (found)
   {
     result = paths[0];
@@ -549,51 +590,11 @@ SessionImpl::FindTfmFile (/*[in]*/ const char *	lpszFontName,
 			  /*[in]*/ bool		create)
 {
   MIKTEX_ASSERT_STRING (lpszFontName);
-  bool exists = SessionImpl::FindFile(lpszFontName, FileType::TFM, path);
-  if (exists || ! create)
-    {
-      return (exists);
-    }
-  PathName makeTFM;
-  if (! SessionImpl::FindFile(MIKTEX_MAKETFM_EXE, FileType::EXE, makeTFM))
-    {
-      FATAL_MIKTEX_ERROR ("SessionImpl::FindTfmFile",
-			  T_("The MakeTFM utility could not be found."),
-			  0);
-    }
-  char szBasename[BufferSizes::MaxPath];
-  PathName::Split (lpszFontName,
-		   0, 0,
-		   szBasename, BufferSizes::MaxPath,
-		   0, 0);
-  CommandLineBuilder commandLine;
-  commandLine.AppendOption ("-v");
-  commandLine.AppendArgument (szBasename);
-  char szBuf[4096];
-  size_t size = 4096;
-  int exitCode;
-  if (! Process::Run(makeTFM,
-		     commandLine.Get(),
-		     szBuf,
-		     &size,
-		     &exitCode))
-    {
-      return (false);
-    }
-  if (exitCode != 0)
-    {
-      TraceError (T_("MakeTFM failed; output follows"));
-      TraceError ("%.*s", static_cast<int>(size), szBuf);
-      return (false);
-    }
-  if (! SessionImpl::FindFile(lpszFontName, FileType::TFM, path))
-    {
-      FATAL_MIKTEX_ERROR
-	("SessionImpl::FindTfmFile",
-	 T_("MakeTFM succeeded but the TFM file could not be found."),
-	 szBasename);
-    }
-  return (true);
+  return (FindFile(
+    lpszFontName,
+    FileType::TFM,
+    (create ? FindFileFlags::Create : FindFileFlags::None),
+    path));
 }
 
 /* _________________________________________________________________________

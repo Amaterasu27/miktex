@@ -5583,6 +5583,19 @@ MIKTEXNOVTABLE
 Session
 {
 public:
+  class FindFileFlagsEnum
+  {
+  public:
+    enum EnumType {
+      None,
+      Create = 1,
+      Renew = 2
+    };
+  };
+
+  typedef EnumWrapper<FindFileFlagsEnum> FindFileFlags;
+
+public:
   /// Init flags enum class.
   class InitFlagsEnum
   {
@@ -6147,6 +6160,16 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ FileType		fileType,
+	    /*[in]*/ FindFileFlags	flags,
+	    /*[out]*/ PathNameArray &	result)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathNameArray &	result)
     = 0;
 
@@ -6154,6 +6177,16 @@ public:
   /// @param lpszFileName Name of the file to be found.
   /// @param lpszPathList Type of the file.
   /// @param[out] path The path name to be filled with the result.
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ FileType		fileType,
+	    /*[in]*/ FindFileFlags	flags,
+	    /*[out]*/ PathName &	result)
+    = 0;
+
 public:
   virtual
   bool

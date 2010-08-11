@@ -1077,3 +1077,66 @@ SessionImpl::ClearSearchVectors ()
       it->searchVec.clear ();
     }
 }
+
+/* _________________________________________________________________________
+
+   SessionImpl::TryCreateFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::TryCreateFile (/*[in]*/ const char * lpszFileName,
+			    /*[in]*/ FileType	  fileType)
+{
+  CommandLineBuilder commandLine;
+  PathName makeUtility;
+  char szBasename[BufferSizes::MaxPath];
+  PathName::Split (lpszFileName, 0, 0, szBasename, BufferSizes::MaxPath, 0, 0);
+  switch (fileType.Get())
+  {
+  case FileType::BASE:
+  case FileType::FMT:
+  case FileType::MEM:
+    if (! FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, makeUtility))
+    {
+      FATAL_MIKTEX_ERROR ("SessionImpl::TryCreateFile",
+			  T_("The MiKTeX configuration utility could not be found."),
+			  0);
+    }
+    commandLine.AppendOption ("--dump-by-name=", szBasename);
+    if (fileType == FileType::FMT)
+    {
+      commandLine.AppendOption ("--engine=", GetEngine());
+    }
+    break;
+  case FileType::TFM:
+    if (! FindFile(MIKTEX_MAKETFM_EXE, FileType::EXE, makeUtility))
+    {
+      FATAL_MIKTEX_ERROR ("SessionImpl::TryCreateFile",
+	T_("The MakeTFM utility could not be found."),
+	0);
+    }
+    commandLine.AppendOption ("-v");
+    commandLine.AppendArgument (szBasename);
+    break;
+  default:
+    return (false);
+  }
+  char szBuf[4096];
+  size_t size = 4096;
+  int exitCode;
+  if (! Process::Run(makeUtility,
+		     commandLine.Get(),
+		     szBuf,
+		     &size,
+		     &exitCode))
+    {
+      return (false);
+    }
+  if (exitCode != 0)
+    {
+      TraceError (T_("Make failed; output follows"));
+      TraceError ("%.*s", static_cast<int>(size), szBuf);
+      return (false);
+    }
+  return (true);
+}

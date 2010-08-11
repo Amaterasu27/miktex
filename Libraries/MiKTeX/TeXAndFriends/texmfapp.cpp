@@ -852,67 +852,19 @@ TeXMFApp::OpenMemoryDumpFile (/*[in]*/ const PathName &	fileName_,
 		     ConvertPathNameFlags::MakeLower);
 #endif
 
-  bool haveIt = false;
+  Session::FindFileFlags findFileFlags (Session::FindFileFlags::Create);
 
-  if (! renew)
-    {
-      haveIt = pSession->FindFile(fileName, GetMemoryDumpFileType(), path);
-      if (! haveIt)
-	{
-	  renew = true;
-	}
-      else if (pSession->GetConfigValue(MIKTEX_REGKEY_TEXMF,
-					MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE,
-					true))
-	{
-	  PathName pathPackagesIni
-	    (pSession->GetSpecialPath(SpecialPath::InstallRoot),
-	     MIKTEX_PATH_PACKAGES_INI,
-	     0);
-	  if (File::Exists(pathPackagesIni))
-	    {
-	      renew = (File::GetLastWriteTime(pathPackagesIni)
-		       > File::GetLastWriteTime(path));
-	    }
-	}
-    }
-  
   if (renew)
-    {
-      PathName exe;
-      if (! pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, exe))
-	{
-	  FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
-			      (T_("\
-The MiKTeX configuration utility could not be found.")),
-			      0);
-	}
-      CommandLineBuilder arguments;
-      arguments.AppendOption ("--dump-by-name=", szDumpName);
-      if (isTeXProgram)
-	{
-	  arguments.AppendOption ("--engine=",
-				  GetProgramName());
-	}
-      int exitCode;
-      if (! (Process::Run(exe, arguments.Get(), 0, &exitCode, 0)
-	     && exitCode == 0))
-	{
-	  return (false);
-	}
-    }
+  {
+    findFileFlags |= Session::FindFileFlags::Renew;
+  }
 
-  if (! haveIt)
-    {
-      haveIt = pSession->FindFile(fileName, GetMemoryDumpFileType(), path);
-    }
-
-  if (! haveIt)
-    {
-      FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
-			  T_("The memory dump file could not be found."),
-			  fileName.Get());
-    }
+  if (! pSession->FindFile(fileName.Get(), GetMemoryDumpFileType(), findFileFlags, path))
+  {
+    FATAL_MIKTEX_ERROR ("TeXMFApp::OpenMemoryDumpFile",
+			T_("The memory dump file could not be found."),
+			fileName.Get());
+  }
 
   FileStream stream (pSession->OpenFile(path.Get(),
 					FileMode::Open,
