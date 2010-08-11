@@ -189,7 +189,13 @@ void TWUtils::insertHelpMenuItems(QMenu* helpMenu)
 	for (i = 0; i < actions.count(); ++i) {
 		if (actions[i]->isSeparator() && !firstSeparator)
 			firstSeparator = i;
+#if defined(MIKTEX) and defined(_MSC_VER)
+		// enum bitfield treated incorrectly as integer
+		// see http://connect.microsoft.com/VisualStudio/feedback/details/100849
+		if (actions[i]->menuRole() == -4) {
+#else
 		if (actions[i]->menuRole() == QAction::AboutRole) {
+#endif
 			before = actions[i];
 			break;
 		}
