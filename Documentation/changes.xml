@@ -83,7 +83,7 @@ pack&nbsp;2 installed.</para>
 
 <title>Hyphenation Patterns</title>
 
-<para></para>
+<para>The &TeX; engines now load all known hyphenation patterns.</para>
 
 </section>
 
