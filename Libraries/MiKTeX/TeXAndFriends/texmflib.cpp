@@ -360,7 +360,7 @@ OpenAlphaFile (/*[in]*/ void *		p,
       fileName.SetExtension (lpszExtension);
     }
   PathName path;
-  if (! SessionWrapper(true)->FindFile(fileName, fileType, path))
+  if (! SessionWrapper(true)->FindFile(fileName.Get(), fileType, path))
     {
       return (false);
     }

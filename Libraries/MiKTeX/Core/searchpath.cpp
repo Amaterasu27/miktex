@@ -308,23 +308,25 @@ SessionImpl::DirectoryWalk (/*[in]*/ const PathName &	  directory,
   {
     ExpandPathPattern (directory, pathPattern, paths);
   }
-  auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(directory));
+  auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(directory, 0, DirectoryLister::Options::DirectoriesOnly));
   DirectoryEntry entry;
+  PathNameArray subdirs;
   while (pLister->GetNext(entry))
   {
-    if (! entry.isDirectory)
-    {
-      continue;
-    }
+    MIKTEX_ASSERT (entry.isDirectory);
     PathName subdir (directory);
     subdir += entry.name;
-    if (! pathPattern.Empty())
-    {
-      ExpandPathPattern (subdir, pathPattern, paths);
-    }
-    DirectoryWalk (subdir, pathPattern, paths);
+    subdirs.push_back (subdir);
   }
   pLister->Close ();
+  for (PathNameArray::const_iterator it = subdirs.begin(); it != subdirs.end(); ++ it)
+  {
+    if (! pathPattern.Empty())
+    {
+      ExpandPathPattern (*it, pathPattern, paths);
+    }
+    DirectoryWalk (*it, pathPattern, paths);
+  }
 }
 
 /* _________________________________________________________________________

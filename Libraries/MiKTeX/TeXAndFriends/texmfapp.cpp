@@ -756,7 +756,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 
   PathName path;
 
-  if (! pSession->FindFile(fileName, GetInputFileType(), path))
+  if (! pSession->FindFile(fileName.Get(), GetInputFileType(), path))
     {
       return;
     }
@@ -782,7 +782,7 @@ TeXMFApp::ParseFirstLine (/*[in]*/ const PathName &	fileName)
 	      fileName.SetExtension (GetMemoryDumpFileExtension());
 	    }
 	  PathName path;
-	  if (pSession->FindFile(fileName, GetMemoryDumpFileType(), path))
+	  if (pSession->FindFile(fileName.Get(), GetMemoryDumpFileType(), path))
 	    {
 	      this->memoryDumpFileName = memoryDumpFileName;
 	    }
@@ -1193,7 +1193,7 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 	      {
 		PathName unmangled = UnmangleNameOfFile(editFileName.Get());
 		PathName path;
-		if (pSession->FindFile(unmangled,
+		if (pSession->FindFile(unmangled.Get(),
 				       GetInputFileType(),
 				       path))
 		  {

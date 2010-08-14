@@ -2406,7 +2406,7 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
   for (unsigned i = 0; pSession->GetFormatInfo(i, formatInfo); ++ i)
     {
       PathName compilerPath;
-      if (! pSession->FindFile(formatInfo.compiler,
+      if (! pSession->FindFile(formatInfo.compiler.c_str(),
 			       FileType::EXE,
 			       compilerPath))
 	{
@@ -2416,7 +2416,7 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 	}
       PathName tmp;
       if (overwrite
-	  || ! pSession->FindFile(formatInfo.name, FileType::EXE, tmp))
+	  || ! pSession->FindFile(formatInfo.name.c_str(), FileType::EXE, tmp))
 	{
 	  PathName exePath
 	    (pathBinDir, formatInfo.name, MIKTEX_EXE_FILE_SUFFIX);
@@ -2556,7 +2556,7 @@ IniTeXMFApp::MakeLanguageDat (/*[in]*/ bool force)
   for (int idx = 0; pSession->GetLanguageInfo(idx, languageInfo); ++ idx)
   {
     PathName loaderPath;
-    if (! pSession->FindFile(languageInfo.loader, "%r/tex//", loaderPath))
+    if (! pSession->FindFile(languageInfo.loader.c_str(), "%r/tex//", loaderPath))
     {
       continue;
     }

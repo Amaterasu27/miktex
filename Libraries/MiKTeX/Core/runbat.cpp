@@ -45,9 +45,10 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
 		   0, 0);
 
   // get relative script path
-  PathName scriptsIni = GetSpecialPath(SpecialPath::InstallRoot);
+  PathName scriptsIni = GetSpecialPath(SpecialPath::CommonInstallRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
+  pConfig->Read (scriptsIni);
   string relScriptPath;
   if (! pConfig->TryGetValue("bat", szName, relScriptPath))
   {
@@ -55,7 +56,7 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
       MIKTEXTEXT("The Windows command script is not registered."),
       szName);
   }
-  pConfig->Release ();
+  pConfig.Release ();
 
   // find batch file
   PathName scriptPath;

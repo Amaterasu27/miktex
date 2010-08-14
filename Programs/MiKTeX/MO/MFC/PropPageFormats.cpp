@@ -1,6 +1,6 @@
 /* PropPageFormats.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -169,7 +169,7 @@ PropPageFormats::MakeAlias (/*[in]*/ const FormatInfo & formatInfo)
 			  formatInfo.compiler.c_str());
     }
   PathName compilerPath;
-  if (! SessionWrapper(true)->FindFile(formatInfo.compiler,
+  if (! SessionWrapper(true)->FindFile(formatInfo.compiler.c_str(),
 				       FileType::EXE,
 				       compilerPath))
     {

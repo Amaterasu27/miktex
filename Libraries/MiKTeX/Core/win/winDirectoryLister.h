@@ -1,6 +1,6 @@
 /* winDirectoryLister.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -50,7 +50,8 @@ public:
 
 public:
   winDirectoryLister (/*[in]*/ const PathName &		directory,
-		      /*[in]*/ const char *		lpszPattern);
+		      /*[in]*/ const char *		lpszPattern,
+		      /*[in]*/ Options			options);
 
 public:
   virtual
@@ -62,6 +63,9 @@ private:
 
 private:
   string pattern;
+
+private:
+  Options options;
 
 private:
   HANDLE handle;

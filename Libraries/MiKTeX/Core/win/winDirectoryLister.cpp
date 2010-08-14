@@ -1,6 +1,6 @@
 /* winDirectoryLister.cpp: directory lister (Windows)
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -33,7 +33,7 @@
 DirectoryLister *
 DirectoryLister::Open (/*[in]*/ const PathName & directory)
 {
-  return (new winDirectoryLister (directory, 0));
+  return (new winDirectoryLister (directory, 0, Options::None));
 }
 
 /* _________________________________________________________________________
@@ -45,7 +45,20 @@ DirectoryLister *
 DirectoryLister::Open (/*[in]*/ const PathName &	directory,
 		       /*[in]*/ const char *		lpszPattern)
 {
-  return (new winDirectoryLister (directory, lpszPattern));
+  return (new winDirectoryLister (directory, lpszPattern, Options::None));
+}
+
+/* _________________________________________________________________________
+
+   DirectoryLister::Open
+   _________________________________________________________________________ */
+
+DirectoryLister *
+DirectoryLister::Open (/*[in]*/ const PathName &	directory,
+		       /*[in]*/ const char *		lpszPattern,
+		       /*[in]*/ Options			options)
+{
+  return (new winDirectoryLister (directory, lpszPattern, options));
 }
 
 /* _________________________________________________________________________
@@ -53,11 +66,12 @@ DirectoryLister::Open (/*[in]*/ const PathName &	directory,
    winDirectoryLister::winDirectoryLister
    _________________________________________________________________________ */
 
-winDirectoryLister::winDirectoryLister
-(/*[in]*/ const PathName &	directory,
- /*[in]*/ const char *		lpszPattern)
+winDirectoryLister::winDirectoryLister (/*[in]*/ const PathName &	directory,
+					/*[in]*/ const char *		lpszPattern,
+					/*[in]*/ Options		options)
   : directory (directory),
     pattern (lpszPattern == 0 ? "" : lpszPattern),
+    options (options),
     handle (INVALID_HANDLE_VALUE)
 {
 }
@@ -159,12 +173,18 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      pathPattern += pattern.c_str();
 	    }
-	  handle = FindFirstFileW(Utils::AnsiToWideChar(pathPattern.Get()).c_str(), &ffdat);
+	  handle = FindFirstFileExW(
+	    Utils::AnsiToWideChar(pathPattern.Get()).c_str(),
+	    IsWindows7() ? FindExInfoBasic : FindExInfoStandard,
+	    &ffdat,
+	    (options & Options::DirectoriesOnly) != 0 ? FindExSearchLimitToDirectories : FindExSearchNameMatch,
+	    0,
+	    IsWindows7() ? FIND_FIRST_EX_LARGE_FETCH : 0);
 	  if (handle == INVALID_HANDLE_VALUE)
 	    {
 	      if (::GetLastError() != ERROR_FILE_NOT_FOUND)
 		{
-		  FATAL_WINDOWS_ERROR ("FindFirstFileW", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindFirstFileExW", directory.Get());
 		}
 	      return (false);
 	    }
@@ -175,14 +195,18 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	    {
 	      if (::GetLastError() != ERROR_NO_MORE_FILES)
 		{
-		  FATAL_WINDOWS_ERROR ("FindNextFileW", directory.Get());
+		  FATAL_WINDOWS_ERROR ("FindNextFileExW", directory.Get());
 		}
 	      return (false);
 	    }
 	}
     }
-  while (((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-    && IsDotDirectory(ffdat.cFileName));
+  while ((((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+          && IsDotDirectory(ffdat.cFileName))
+	 || (((options & Options::DirectoriesOnly) != 0)
+	     && ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0))
+	 || (((options & Options::FilesOnly) != 0)
+	     && ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)));
   direntry2.wname = ffdat.cFileName;
   direntry2.name = Utils::WideCharToAnsi(ffdat.cFileName);
   direntry2.isDirectory =

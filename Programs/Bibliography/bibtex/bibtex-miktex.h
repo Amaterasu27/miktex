@@ -222,7 +222,7 @@ public:
 	bstFileName.SetExtension (MIKTEXTEXT(".bst"));
       }
     PathName path;
-    if (! pSession->FindFile(bstFileName, FileType::BST, path))
+    if (! pSession->FindFile(bstFileName.Get(), FileType::BST, path))
       {
 	return (false);
       }

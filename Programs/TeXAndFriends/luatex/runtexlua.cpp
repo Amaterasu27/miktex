@@ -37,6 +37,10 @@ MIKTEXCEECALL
 Main (/*[in]*/ int	argc,
       /*[in]*/ char **	argv);
 
+// Keep the application object in the global scope (C functions might
+// call exit())
+MiKTeX::App::Application app;
+
 /* _________________________________________________________________________
 
    main
@@ -48,7 +52,6 @@ main (/*[in]*/ int	argc,
 {
   try
     {
-      Application app;
       app.Init (argv[0]);
 
       MIKTEX_ASSERT (argc > 0);
@@ -61,9 +64,10 @@ main (/*[in]*/ int	argc,
 		       0, 0);
 
       // get relative script path
-      PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::InstallRoot);
+      PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::CommonInstallRoot);
       scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
       SmartPointer<Cfg> pConfig (Cfg::Create());
+      pConfig->Read (scriptsIni);
       string relScriptPath;
       if (! pConfig->TryGetValue("texlua", szName, relScriptPath))
       {
@@ -71,11 +75,11 @@ main (/*[in]*/ int	argc,
 	  MIKTEXTEXT("The Lua script is not registered."),
 	  szName);
       }
-      pConfig->Release ();
+      pConfig.Release ();
       
       // find script
       PathName scriptPath;
-      if (! app.GetSession()->FindFile(relScriptPath, MIKTEX_PATH_TEXMF_PLACEHOLDER, scriptPath))
+      if (! app.GetSession()->FindFile(relScriptPath.c_str(), MIKTEX_PATH_TEXMF_PLACEHOLDER, scriptPath))
       {
 	FATAL_MIKTEX_ERROR ("runtexlua",
 	  MIKTEXTEXT("The Lua script could not be found."),
@@ -110,5 +114,9 @@ main (/*[in]*/ int	argc,
     {
       Utils::PrintException (e);
       return (1);
+    }
+  catch (int exitCode)
+    {
+      return (exitCode);
     }
 }

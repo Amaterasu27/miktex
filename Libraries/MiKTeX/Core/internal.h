@@ -1122,6 +1122,7 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
+	    /*[in]*/ FindFileFlags	flags,
 	    /*[out]*/ PathNameArray &	result);
 
 public:
@@ -1130,7 +1131,30 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
+	    /*[out]*/ PathNameArray &	result)
+  {
+    return (FindFile(lpszFileName, lpszPathList, FindFileFlags::All, result));
+  }
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[in]*/ FindFileFlags	flags,
 	    /*[out]*/ PathName &	result);
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[out]*/ PathName &	result)
+  {
+    return (FindFile(lpszFileName, lpszPathList, FindFileFlags::None, result));
+  }
 
 public:
   virtual
@@ -1149,7 +1173,7 @@ public:
 	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathNameArray &	result)
   {
-    return (FindFile(lpszFileName, fileType, FindFileFlags::None, result));
+    return (FindFile(lpszFileName, fileType, FindFileFlags::All, result));
   }
 
 public:
@@ -1187,7 +1211,14 @@ public:
   MIKTEXTHISCALL
   FindTfmFile (/*[in]*/ const char *	lpszFontName,
 	       /*[out]*/ PathName &	result,
-	       /*[in]*/ bool		create);
+	       /*[in]*/ bool		create)
+  {
+    return (FindFile(
+      lpszFontName,
+      FileType::TFM,
+      (create ? FindFileFlags::Create : FindFileFlags::None),
+      result));
+  }
 
 public:
   virtual
@@ -1817,25 +1848,28 @@ private:
 
 private:
   bool
-  FindFile (/*[in]*/ const char *	    lpszFileName,
-	    /*[in]*/ FileType		    fileType,
-	    /*[in]*/ FindFileFlags	    flags,
-	    /*[out]*/ PathNameArray &	    result,
-	    /*[in]*/ bool		    firstMatchOnly);
+  FindFileInternal (/*[in]*/ const char *		lpszFileName,
+		    /*[in]*/ const PathNameArray &	vec,
+		    /*[in]*/ bool			firstMatchOnly,
+		    /*[in]*/ bool			tryHard,
+		    /*[out]*/ PathNameArray &		result);
 
 private:
   bool
-  FindFile (/*[in]*/ const char *		lpszFileName,
-	    /*[in]*/ const PathNameArray &	vec,
-	    /*[out]*/ PathNameArray &		result,
-	    /*[in]*/ bool			firstMatchOnly);
+  FindFileInternal (/*[in]*/ const char *	  lpszFileName,
+		    /*[in]*/ FileType		  fileType,
+		    /*[in]*/ bool		  firstMatchOnly,
+		    /*[in]*/ bool		  tryHard,
+		    /*[in]*/ bool		  create,
+		    /*[in]*/ bool		  renew,
+		    /*[out]*/ vector<PathName> &  result);
 
 private:
   bool
   SearchFileSystem (/*[in]*/ const char *	lpszRelPath,
 		    /*[in]*/ const char *	lpszDirPath,
-		    /*[out]*/ PathNameArray &	result,
-		    /*[in]*/ bool		firstMatchOnly);
+		    /*[in]*/ bool		firstMatchOnly,
+		    /*[out]*/ PathNameArray &	result);
 
 private:
   bool
@@ -1847,12 +1881,12 @@ private:
   GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 		   /*[in]*/ const char *	lpszValueName,
 		   /*[out]*/ string &		value,
-		   /*[in]*/const char *	lpszDefaultValue);
+		   /*[in]*/const char *		lpszDefaultValue);
 
 private:
   void
   ReadAllConfigFiles (/*[in]*/ const char *	lpszBaseName,
-		      /*[in,out]*/ Cfg *		pCfg);
+		      /*[in,out]*/ Cfg *	pCfg);
 
 private:
   std::deque<PathName> inputDirectories;

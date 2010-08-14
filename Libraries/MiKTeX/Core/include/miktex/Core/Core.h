@@ -296,6 +296,23 @@ IsWindowsVista ()
 
 /* _________________________________________________________________________
 
+   IsWindows7
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindows7 ()
+{
+  DWORD windowsVersion = GetVersion();
+  unsigned major = LOBYTE(LOWORD(windowsVersion));
+  unsigned minor = HIBYTE(LOWORD(windowsVersion));
+  return (major > 6 || major == 6 && minor >= 1);
+}
+#endif
+
+/* _________________________________________________________________________
+
    StructChecker
    _________________________________________________________________________ */
 
@@ -1620,8 +1637,8 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(std::string)
-  MakeProgramVersionString (/*[in]*/ const char *	lpszProgramName,
-			    /*[in]*/ const VersionNumber &	versionNumber);
+  MakeProgramVersionString (/*[in]*/ const char *	    lpszProgramName,
+			    /*[in]*/ const VersionNumber &  versionNumber);
 
 public:
   static
@@ -3507,11 +3524,6 @@ typedef EnumWrapper<PolicyFlagsEnum> PolicyFlags;
    StartupConfig
    _________________________________________________________________________ */
 
-/* _________________________________________________________________________
-
-   CommandLineBuilder
-   _________________________________________________________________________ */
-
 class MiKTeXConfigurationEnum
 {
 public:
@@ -4897,6 +4909,20 @@ class
 MIKTEXNOVTABLE
 DirectoryLister
 {
+public:
+  class OptionsEnum
+  {
+  public:
+    enum EnumType {
+      None,
+      DirectoriesOnly = 1,
+      FilesOnly = 2
+    };
+  };
+
+public:
+  typedef EnumWrapper<OptionsEnum> Options;
+
   /// Destructor.
 public:
   virtual
@@ -4953,6 +4979,19 @@ public:
   MIKTEXCORECEEAPI(DirectoryLister *)
   Open (/*[in]*/ const PathName &	directory,
 	/*[in]*/ const char *		lpszPattern);
+
+  /// Creates a DirectoryLister object. The caller is responsible for deleting
+  /// the object.
+  /// @param directory Path to the directory.
+  /// @param lpszPattern A filter pattern (e.g. "*.txt").
+  /// @param options Options.
+  /// @return Returns the DirectoryLister object.
+public:
+  static
+  MIKTEXCORECEEAPI(DirectoryLister *)
+  Open (/*[in]*/ const PathName &	directory,
+	/*[in]*/ const char *		lpszPattern,
+	/*[in]*/ Options		options);
 };
 
 /* _________________________________________________________________________
@@ -5589,7 +5628,9 @@ public:
     enum EnumType {
       None,
       Create = 1,
-      Renew = 2
+      Renew = 2,
+      All = 4,
+      TryHard = 8
     };
   };
 
@@ -6129,13 +6170,29 @@ public:
   MIKTEXTHISCALL
   FindFile (/*[in]*/ const char *	lpszFileName,
 	    /*[in]*/ const char *	lpszPathList,
+	    /*[in]*/ FindFileFlags	flags,
 	    /*[out]*/ PathNameArray &	result)
     = 0;
 
-  /// Finds a file.
-  /// @param lpszFileName Name of the file to be found.
-  /// @param lpszPathList Search path. See the MiKTeX manual.
-  /// @param[out] path The path name to be filled with the result.
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[out]*/ PathNameArray &	result)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  FindFile (/*[in]*/ const char *	lpszFileName,
+	    /*[in]*/ const char *	lpszPathList,
+	    /*[in]*/ FindFileFlags	flags,
+	    /*[out]*/ PathName &	result)
+    = 0;
+
 public:
   virtual
   bool
@@ -6144,15 +6201,6 @@ public:
 	    /*[in]*/ const char *	lpszPathList,
 	    /*[out]*/ PathName &	result)
     = 0;
-
-public:
-  bool
-  FindFile (/*[in]*/ const PathName &	fileName,
-	    /*[in]*/ const char *	lpszPathList,
-	    /*[out]*/ PathName &	result)
-  {
-    return (FindFile(fileName.Get(), lpszPathList, result));
-  }
 
 public:
   virtual
@@ -6173,10 +6221,6 @@ public:
 	    /*[out]*/ PathNameArray &	result)
     = 0;
 
-  /// Finds a file.
-  /// @param lpszFileName Name of the file to be found.
-  /// @param lpszPathList Type of the file.
-  /// @param[out] path The path name to be filled with the result.
 public:
   virtual
   bool
@@ -6195,15 +6239,6 @@ public:
 	    /*[in]*/ FileType		fileType,
 	    /*[out]*/ PathName &	result)
     = 0;
-
-public:
-  bool
-  FindFile (/*[in]*/ const PathName &	fileName,
-	    /*[in]*/ FileType		fileType,
-	    /*[out]*/ PathName &	result)
-  {
-    return (FindFile(fileName.Get(), fileType, result));
-  }
 
 public:
   virtual
@@ -6553,8 +6588,8 @@ public:
 public:
   virtual
   std::string
-  Expand (/*[in]*/ const char * lpszToBeExpanded,
-          /*[in]*/ IExpandCallback * pCallback)
+  Expand (/*[in]*/ const char *	      lpszToBeExpanded,
+          /*[in]*/ IExpandCallback *  pCallback)
     = 0;
 
 public:
@@ -6757,7 +6792,7 @@ public:
 
 public:
   const CharType *
-  operator++ ()
+  operator ++ ()
   {
     if (lpszNext != 0 && *lpszNext != 0)
       {

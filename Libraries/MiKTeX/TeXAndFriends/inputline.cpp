@@ -360,7 +360,7 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
     }
   else
     {
-      if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName),
+      if (! pSession->FindFile(UnmangleNameOfFile(lpszFileName).Get(),
 			       GetInputFileType(),
 			       fqNameOfFile))
 	{

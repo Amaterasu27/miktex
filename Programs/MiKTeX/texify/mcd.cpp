@@ -1,6 +1,6 @@
 /* mcd.cpp: MiKTeX compiler driver
 
-   Copyright (C) 1998-2009 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,
    2002, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -328,7 +328,7 @@ public:
     TeX,
     pdfTeX,
     XeTeX,
-    Omega,
+    LuaTeX,
   };
 };
 
@@ -438,6 +438,9 @@ public:
   string xelatexProgram;
 
 public:
+  string lualatexProgram;
+
+public:
   string makeindexProgram;
 
 public:
@@ -451,6 +454,9 @@ public:
 
 public:
   string xetexProgram;
+
+public:
+  string luatexProgram;
 
 public:
   string texindexProgram;
@@ -497,6 +503,10 @@ public:
     else if (StringCompare(lpszEngine, "xetex", true) == 0)
       {
 	engine = Engine::XeTeX;
+      }
+    else if (StringCompare(lpszEngine, "luatex", true) == 0)
+      {
+	engine = Engine::LuaTeX;
       }
     else
       {
@@ -596,7 +606,9 @@ Options::Options ()
   SetProgramName (texProgram, "TEX", "tex");
   SetProgramName (texindexProgram, "TEXINDEX", "texindex");
   SetProgramName (xelatexProgram, "XELATEX", "xelatex");
+  SetProgramName (lualatexProgram, "LUALATEX", "lualatex");
   SetProgramName (xetexProgram, "XETEX", "xetex");
+  SetProgramName (luatexProgram, "LUATEX", "luatex");
 }
 
 /* _________________________________________________________________________
@@ -1262,7 +1274,7 @@ Driver::Check_texinfo_tex ()
 {
   PathName pathExe;
 
-  if (! pSession->FindFile(pOptions->texProgram, FileType::EXE, pathExe))
+  if (! pSession->FindFile(pOptions->texProgram.c_str(), FileType::EXE, pathExe))
     {
       FatalError (T_("%s could not be found."), Q_(pOptions->texProgram));
     }
@@ -1446,7 +1458,7 @@ Driver::RunBibTeX ()
 {
   PathName pathExe;
 
-  if (! pSession->FindFile(pOptions->bibtexProgram, FileType::EXE, pathExe))
+  if (! pSession->FindFile(pOptions->bibtexProgram.c_str(), FileType::EXE, pathExe))
     {
       FatalError (T_("%s could not be found."), Q_(pOptions->bibtexProgram));
     }
@@ -1661,6 +1673,10 @@ Driver::GetTeXEnginePath (/*[out]*/ string & exeName)
 	    {
 	      exeName = pOptions->xetexProgram;
 	    }
+	  else if (pOptions->engine == Engine::LuaTeX)
+	    {
+	      exeName = pOptions->luatexProgram;
+	    }
 	  else
 	    {
 	      exeName = pOptions->pdftexProgram;
@@ -1686,6 +1702,10 @@ Driver::GetTeXEnginePath (/*[out]*/ string & exeName)
 	  if (pOptions->engine == Engine::XeTeX)
 	    {
 	      exeName = pOptions->xelatexProgram;
+	    }
+	  else if (pOptions->engine == Engine::LuaTeX)
+	    {
+	      exeName = pOptions->lualatexProgram;
 	    }
 	  else
 	    {

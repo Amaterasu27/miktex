@@ -308,7 +308,7 @@ void
 MakeFmt::FindInputFile (/*[in]*/  const PathName &	inputName,
 			/*[out]*/ PathName &		inputFile)
 {
-  if (! pSession->FindFile(inputName, FileType::TEX, inputFile))
+  if (! pSession->FindFile(inputName.Get(), FileType::TEX, inputFile))
     {
       FatalError (T_("The input file could not be found."));
     }

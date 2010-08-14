@@ -73,9 +73,10 @@ SessionImpl::RunPerl (/*[in]*/ int		argc,
 		   0, 0);
 
   // get relative script path
-  PathName scriptsIni = GetSpecialPath(SpecialPath::InstallRoot);
+  PathName scriptsIni = GetSpecialPath(SpecialPath::CommonInstallRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
+  pConfig->Read (scriptsIni);
   string relScriptPath;
   if (! pConfig->TryGetValue("perl", szName, relScriptPath))
   {
@@ -83,7 +84,7 @@ SessionImpl::RunPerl (/*[in]*/ int		argc,
       MIKTEXTEXT("The Perl script is not registered."),
       szName);
   }
-  pConfig->Release ();
+  pConfig.Release ();
 
   // find Perl script
   PathName scriptPath;

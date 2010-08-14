@@ -349,10 +349,16 @@ miktex_kpathsea_find_file (/*[in]*/ kpathsea			pKpseInstance,
   PathName result;
   Session * pSession = Session::Get();
   FileType ft = ToFileType(format);
+  Session::FindFileFlags flags = Session::FindFileFlags::None;
+  if (mustExist)
+  {
+    flags |= Session::FindFileFlags::Create;
+    flags |= Session::FindFileFlags::TryHard;
+  }
   found = pSession->FindFile(
     lpszFileName,
     ft,
-    mustExist ? Session::FindFileFlags::Create : Session::FindFileFlags::None,
+    flags,
     result);
   if (! found)
   {
@@ -379,11 +385,21 @@ miktex_kpathsea_find_file_generic (/*in*/ kpathsea			pKpseInstance,
   bool found = false;
   PathNameArray result;
   Session * pSession = Session::Get();
-  FileType ft = ToFileType(format);
+  FileType fileType = ToFileType(format);
+  Session::FindFileFlags flags = Session::FindFileFlags::None;
+  if (all)
+  {
+    flags |= Session::FindFileFlags::All;
+  }
+  if (mustExist)
+  {
+    flags |= Session::FindFileFlags::Create;
+    flags |= Session::FindFileFlags::TryHard;
+  }
   found = pSession->FindFile(
     lpszFileName,
-    ft,
-    mustExist ? Session::FindFileFlags::Create : Session::FindFileFlags::None,
+    fileType,
+    flags,
     result);
   if (! found)
   {
@@ -407,7 +423,7 @@ miktex_kpathsea_find_file_generic (/*in*/ kpathsea			pKpseInstance,
 MIKTEXSTATICFUNC(bool)
 IsBinary (/*[in]*/ kpse_file_format_type	format)
 {
-  bool bBin = false;
+  bool ret = false;
   switch (format)
     {
     case kpse_tfm_format:
@@ -419,10 +435,10 @@ IsBinary (/*[in]*/ kpse_file_format_type	format)
     case kpse_ocp_format:
     case kpse_truetype_format:
     case kpse_opentype_format:
-      bBin = true;
+      ret = true;
       break;
     }
-  return (bBin);
+  return (ret);
 }
 
 /* _________________________________________________________________________
@@ -502,7 +518,7 @@ TryFOpen (/*[in]*/ const char *	lpszFileName,
    _________________________________________________________________________ */
 
 MIKTEXKPSCEEAPI(FILE *)
-miktex_kpathsea_open_file (/*in*/ kpathsea	pKpathseaInstance,
+miktex_kpathsea_open_file (/*in*/ kpathsea			pKpathseaInstance,
 			   /*[in]*/ const char *		lpszFileName,
 			   /*[in]*/ kpse_file_format_type	format)
 {
@@ -963,7 +979,19 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
   PathName path;
   bool result = false;
   // read-only values
-  if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
+  if (StringCompare(lpszVarName, "OPENTYPEFONTS") == 0)
+  {
+    FileTypeInfo fti = SessionWrapper(true)->GetFileTypeInfo(FileType::OTF);
+    varValue = fti.searchPath;
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "TTFONTS") == 0)
+  {
+    FileTypeInfo fti = SessionWrapper(true)->GetFileTypeInfo(FileType::TTF);
+    varValue = fti.searchPath;
+    result = true;
+  }
+  else if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
   {
     path = SessionWrapper(true)->GetMyLocation();
     varValue = path.Get();
@@ -1299,7 +1327,13 @@ miktex_kpathsea_path_search (/*in*/ kpathsea			kpse,
 {
   Session * pSession = Session::Get();
   PathName result;
-  if (! pSession->FindFile(lpszName, lpszPath, result))
+  Session::FindFileFlags flags = Session::FindFileFlags::None;
+  if (mustExist)
+  {
+    flags |= Session::FindFileFlags::Create;
+    flags |= Session::FindFileFlags::TryHard;
+  }
+  if (! pSession->FindFile(lpszName, lpszPath, flags, result))
   {
     return (0);
   }
@@ -1319,7 +1353,10 @@ miktex_kpathsea_all_path_search (/*in*/ kpathsea		kpse,
 {
   Session * pSession = Session::Get();
   vector<PathName> result;
-  if (! pSession->FindFile(lpszName, lpszPath, result))
+  Session::FindFileFlags flags = Session::FindFileFlags::All;
+  flags |= Session::FindFileFlags::Create;
+  flags |= Session::FindFileFlags::TryHard;
+  if (! pSession->FindFile(lpszName, lpszPath, flags, result))
   {
     return (0);
   }
@@ -1341,7 +1378,7 @@ miktex_kpathsea_all_path_search (/*in*/ kpathsea		kpse,
 MIKTEXKPSCEEAPI(void)
 miktex_kpathsea_maketex_option (/*in*/ kpathsea		kpse,
 			        /*[in]*/ const char *	lpszFmtName,
-			        /*[in]*/ boolean		value)
+			        /*[in]*/ boolean	value)
 {
   // <todo/>
 }

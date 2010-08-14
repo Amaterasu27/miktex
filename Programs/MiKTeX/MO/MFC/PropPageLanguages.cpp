@@ -348,7 +348,7 @@ PropPageLanguages::ReadLanguageDat ()
   {
     MyLanguageInfo myLanguageInfo (languageInfo);
     myLanguageInfo.active =
-      SessionWrapper(true)->FindFile(myLanguageInfo.loader, "%r/tex//", myLanguageInfo.loaderPath);
+      SessionWrapper(true)->FindFile(myLanguageInfo.loader.c_str(), "%r/tex//", myLanguageInfo.loaderPath);
     myLanguageInfo.newActive = myLanguageInfo.active;
     myLanguageInfo.packageNames = WhichPackage(myLanguageInfo.loader.c_str());
     languages.push_back (myLanguageInfo);

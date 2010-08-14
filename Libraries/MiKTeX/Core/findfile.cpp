@@ -79,18 +79,13 @@ SessionImpl::CheckCandidate (/*[in,out]*/ PathName &	path,
 
 bool
 SessionImpl::SearchFileSystem (/*[in]*/ const char *		lpszFileName,
-			       /*[in]*/ const char *		lpszDirectoryPattern,
-			       /*[out]*/ PathNameArray &	result,
-			       /*[in]*/ bool			firstMatchOnly)
+			       /*[in]*/ const char *		lpszDirectoryPattern,			       
+			       /*[in]*/ bool			firstMatchOnly,
+			       /*[out]*/ PathNameArray &	result)
 {
   MIKTEX_ASSERT (result.empty());
 
-  if ((PathName::Compare(MPM_ROOT_PATH,
-			 lpszDirectoryPattern,
-			 static_cast<unsigned long>(MPM_ROOT_PATH_LEN))
-       == 0)
-      && (lpszDirectoryPattern[MPM_ROOT_PATH_LEN] == 0
-	  || IsDirectoryDelimiter(lpszDirectoryPattern[MPM_ROOT_PATH_LEN])))
+  if (IsMpmFile(lpszDirectoryPattern))
   {
     return (false);
   }
@@ -135,18 +130,17 @@ SessionImpl::SearchFileSystem (/*[in]*/ const char *		lpszFileName,
 
 /* _________________________________________________________________________
 
-   SessionImpl::FindFile
+   SessionImpl::FindFileInternal
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ const PathNameArray &	directoryPatterns,
-		       /*[out]*/ vector<PathName> &	result,
-		       /*[in]*/ bool			firstMatchOnly)
+SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
+			       /*[in]*/ const PathNameArray &	directoryPatterns,			       
+			       /*[in]*/ bool			firstMatchOnly,
+			       /*[in]*/ bool			tryHard,
+			       /*[out]*/ vector<PathName> &	result)
      
 {
-  MIKTEX_ASSERT (result.size() == 0);
-
   AutoTraceTime att ("find file", lpszFileName);
 
   // if a fully qualified path name is given, then don't look out any
@@ -182,11 +176,17 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
     return (found);
   }
 
+  // first round: make use of the file name database
   bool found = false;
   for (PathNameArray::const_iterator it = directoryPatterns.begin();
        ! (found && firstMatchOnly) && it != directoryPatterns.end();
        ++ it)
   {
+    if (found && ! firstMatchOnly && IsMpmFile(it->Get()))
+    {
+      // don't trigger the package installer
+      continue;
+    }
     FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
     if (pFndb != 0)
     {
@@ -214,11 +214,43 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
     {
       // search disk
       vector<PathName> paths;
-      if (SearchFileSystem(lpszFileName, it->Get(), paths, firstMatchOnly))
+      if (SearchFileSystem(lpszFileName, it->Get(), firstMatchOnly, paths))
       {
 	found = true;
 	result.insert (result.end(), paths.begin(), paths.end());
       }
+    }
+  }
+
+  if (found || ! tryHard)
+  {
+    return (found);
+  }
+
+  // we must try hard to find the file, so:
+  // second round: ignore the file name database
+  for (PathNameArray::const_iterator it = directoryPatterns.begin();
+       ! (found && firstMatchOnly) && it != directoryPatterns.end();
+       ++ it)
+  {
+    if (found && ! firstMatchOnly && IsMpmFile(it->Get()))
+    {
+      // don't search the virtual MPM directory tree
+      continue;
+    }
+    FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
+    if (pFndb == 0)
+    {
+      // fndb does not exist => we already searched the file system
+      continue;
+    }
+    pFndb->Release ();
+    // search the file system
+    vector<PathName> paths;
+    if (SearchFileSystem(lpszFileName, it->Get(), firstMatchOnly, paths))
+    {
+      found = true;
+      result.insert (result.end(), paths.begin(), paths.end());
     }
   }
 
@@ -227,62 +259,17 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 
 /* _________________________________________________________________________
 
-   SessionImpl::FindFile
+   SessionImpl::FindFileInternal
    _________________________________________________________________________ */
 
 bool
-SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
-		       /*[in]*/ const char *	  lpszPathList,
-		       /*[out]*/ PathNameArray &  result)
-{
-  MIKTEX_ASSERT_STRING (lpszFileName);
-  MIKTEX_ASSERT_STRING (lpszPathList);
-
-  return (FindFile(
-    lpszFileName,
-    SplitSearchPath(lpszPathList),
-    result,
-    FALSE));
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::FindFile
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
-		       /*[in]*/ const char *	lpszPathList,
-		       /*[out]*/ PathName &	result)
-{
-  MIKTEX_ASSERT_STRING (lpszFileName);
-  MIKTEX_ASSERT_STRING (lpszPathList);
-
-  PathNameArray vec = SplitSearchPath(lpszPathList);
-
-  PathNameArray paths;
-
-  bool found = FindFile(lpszFileName, vec, paths, true);
-
-  if (found)
-  {
-    result = paths[0];
-  }
-
-  return (found);
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::FindFile
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
-		       /*[in]*/ FileType		fileType,
-		       /*[in]*/ FindFileFlags		flags,
-		       /*[out]*/ vector<PathName> &	result,
-		       /*[in]*/ bool			firstMatchOnly)
+SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
+			       /*[in]*/ FileType	      fileType,
+			       /*[in]*/ bool		      firstMatchOnly,
+			       /*[in]*/ bool		      tryHard,
+			       /*[in]*/ bool		      create,
+			       /*[in]*/ bool		      renew,
+			       /*[out]*/ vector<PathName> &   result)
 {
   MIKTEX_ASSERT (result.empty());
 
@@ -292,11 +279,15 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
     fileType = DeriveFileType(lpszFileName);
     if (fileType == FileType::None)
     {
+      trace_filesearch->WriteFormattedLine (
+	"core",
+	T_("cannot derive file type from %s"),
+	Q_(lpszFileName));
       return (false);
     }
   }
 
-  if ((flags & FindFileFlags::Renew) != 0)
+  if (renew)
   {
     if (! TryCreateFile(lpszFileName, fileType))
     {
@@ -311,7 +302,7 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
   const FileTypeInfo * pFileTypeInfo = GetInternalFileTypeInfo(fileType);
   MIKTEX_ASSERT (pFileTypeInfo != 0);
 
-  // check to see whether we have a registered file name extension
+  // check to see whether the file name has a registered file name extension
   const char * lpszExtension = GetFileNameExtension(lpszFileName);
   bool hasRegisteredExtension = false;
   if (lpszExtension != 0)
@@ -339,22 +330,23 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
     {
       PathName fileName (lpszFileName);
       fileName.AppendExtension (ext.GetCurrent());
-      if (FindFile(fileName.Get(), vec, result, firstMatchOnly) && firstMatchOnly)
+      if (FindFileInternal(fileName.Get(), vec, firstMatchOnly, tryHard, result) && firstMatchOnly)
       {
 	return (true);
       }
     }
   }
 
-  FindFile (lpszFileName, vec, result, firstMatchOnly);
+  // try it with the given file name
+  FindFileInternal (lpszFileName, vec, firstMatchOnly, tryHard, result);
 
-  if ((flags & FindFileFlags::Create) != 0)
+  if (create)
   {
     if (result.empty())
     {
       if (TryCreateFile(lpszFileName, fileType))
       {
-	FindFile (lpszFileName, vec, result, firstMatchOnly);
+	FindFileInternal (lpszFileName, vec, firstMatchOnly, false, result);
       }
     }
     else if ((fileType == FileType::BASE || fileType == FileType::FMT || fileType == FileType::MEM)
@@ -372,7 +364,7 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 	if (TryCreateFile(lpszFileName, fileType))
 	{
 	  result.clear ();
-	  FindFile (lpszFileName, vec, result, firstMatchOnly);
+	  FindFileInternal (lpszFileName, vec, firstMatchOnly, false, result);
 	}
       }
     }
@@ -388,11 +380,67 @@ SessionImpl::FindFile (/*[in]*/ const char *		lpszFileName,
 
 bool
 SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
-		       /*[in]*/ FileType	  fileType,
-		       /*[in]*/ FindFileFlags	flags,
+		       /*[in]*/ const char *	  lpszPathList,
+		       /*[in]*/ FindFileFlags	  flags,
 		       /*[out]*/ PathNameArray &  result)
 {
-  return (FindFile(lpszFileName, fileType, flags, result, false));
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT_STRING (lpszPathList);
+
+  return (FindFileInternal(
+    lpszFileName,
+    SplitSearchPath(lpszPathList),
+    (flags & FindFileFlags::All) == 0,
+    (flags & FindFileFlags::TryHard) != 0,
+    result));
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::FindFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
+		       /*[in]*/ const char *	lpszPathList,
+		       /*[in]*/ FindFileFlags	flags,
+		       /*[out]*/ PathName &	result)
+{
+  MIKTEX_ASSERT_STRING (lpszFileName);
+  MIKTEX_ASSERT_STRING (lpszPathList);
+  MIKTEX_ASSERT ((flags & FindFileFlags::All) == 0);
+
+  PathNameArray paths;
+
+  bool found = FindFile(lpszFileName, lpszPathList, flags, paths);
+
+  if (found)
+  {
+    result = paths[0];
+  }
+
+  return (found);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::FindFile
+   _________________________________________________________________________ */
+
+bool
+SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
+		       /*[in]*/ FileType	  fileType,
+		       /*[in]*/ FindFileFlags	  flags,
+		       /*[out]*/ PathNameArray &  result)
+{
+  return (FindFileInternal(
+    lpszFileName,
+    fileType,
+    (flags & FindFileFlags::All) == 0,
+    (flags & FindFileFlags::TryHard) != 0,
+    (flags & FindFileFlags::Create) != 0,
+    (flags & FindFileFlags::Renew) != 0,
+    result));
 }
 
 /* _________________________________________________________________________
@@ -406,8 +454,9 @@ SessionImpl::FindFile (/*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ FindFileFlags	flags,
 		       /*[out]*/ PathName &	result)
 {
+  MIKTEX_ASSERT ((flags & FindFileFlags::All) == 0);
   vector<PathName> paths;
-  bool found = FindFile(lpszFileName, fileType, flags, paths, true);
+  bool found = FindFile(lpszFileName, fileType, flags, paths);
   if (found)
   {
     result = paths[0];
@@ -577,24 +626,6 @@ SessionImpl::FindPkFile (/*[in]*/ const char *	lpszFontName,
     }
 
   return (found);
-}
-
-/* _________________________________________________________________________
-
-   SessionImpl::FindTfmFile
-   _________________________________________________________________________ */
-
-bool
-SessionImpl::FindTfmFile (/*[in]*/ const char *	lpszFontName,
-			  /*[out]*/ PathName &	path,
-			  /*[in]*/ bool		create)
-{
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  return (FindFile(
-    lpszFontName,
-    FileType::TFM,
-    (create ? FindFileFlags::Create : FindFileFlags::None),
-    path));
 }
 
 /* _________________________________________________________________________

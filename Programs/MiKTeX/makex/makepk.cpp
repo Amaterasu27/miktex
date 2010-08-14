@@ -1,6 +1,6 @@
 /* makepk.c:
 
-   Copyright (C) 1998-2008 Christian Schenk
+   Copyright (C) 1998-2010 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -573,7 +573,7 @@ MakePk::IsHbf (/*[in]*/	const char *	lpszName)
     }
   hbfcfg.SetExtension (".cfg", false);
   PathName path;
-  return (pSession->FindFile(hbfcfg, "%R/HBF2GF//", path));
+  return (pSession->FindFile(hbfcfg.Get(), "%R/HBF2GF//", path));
 }
 
 /* _________________________________________________________________________
