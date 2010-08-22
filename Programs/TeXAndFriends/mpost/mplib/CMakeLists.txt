@@ -25,6 +25,8 @@ include_directories(
 add_definitions(
   -DAPPTAG=mpost
   -DUSE_MIKTEX_EXIT
+
+  -DHAVE_SYS_STAT_H=1
 )
 
 set(mplib_cweb_sources
