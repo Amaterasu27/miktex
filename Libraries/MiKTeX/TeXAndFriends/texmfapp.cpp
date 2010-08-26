@@ -207,7 +207,7 @@ TeXMFApp::OnTeXMFFinishJob ()
 	}
       writer.Close ();
     }
-  if (timeStatistics && trace_time->IsEnabled())
+  if (timeStatistics)
     {
       TraceExecutionTime (trace_time.get(), clockStart);
     }
