@@ -1,6 +1,6 @@
 /* mkfntmap.cpp:
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2010 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -1115,7 +1115,7 @@ MakeFontMapApp::WriteDvipsMapFile (/*[in]*/ const PathName &	fileName,
   path += fileName;
   Verbose (T_("Writing %s..."), Q_(path));
   // <todo>backup old file</todo>
-  StreamWriter writer (path);
+  StreamWriter writer (File::Open(path, FileMode::Create, FileAccess::Write, false));
   WriteHeader (writer, path);
   set<FontMapEntry> setAll = set1;
   setAll.insert (set2.begin(), set2.end());
@@ -1143,7 +1143,7 @@ MakeFontMapApp::WriteDvipdfmMapFile (/*[in]*/ const PathName &	fileName,
   path += fileName;
   Verbose (T_("Writing %s..."), Q_(path));
   // <todo>backup old file</todo>
-  StreamWriter writer (path);
+  StreamWriter writer (File::Open(path, FileMode::Create, FileAccess::Write, false));
   WriteHeader (writer, path);
   set<FontMapEntry> setAll = set1;
   setAll.insert (set2.begin(), set2.end());
@@ -1171,7 +1171,7 @@ MakeFontMapApp::WritePdfTeXMapFile (/*[in]*/ const PathName &	fileName,
   path += fileName;
   Verbose (T_("Writing %s..."), Q_(path));
   // <todo>backup old file</todo>
-  StreamWriter writer (path);
+  StreamWriter writer (File::Open(path, FileMode::Create, FileAccess::Write, false));
   WriteHeader (writer, path);
   set<FontMapEntry> setAll = set1;
   setAll.insert (set2.begin(), set2.end());
