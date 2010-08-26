@@ -86,6 +86,7 @@
 <!ENTITY WindowsMe "<application>Windows&nbsp;Millennium Edition</application>">
 <!ENTITY Windows95 "<application>Windows&nbsp;95</application>">
 <!ENTITY Windows9xMeNT "<application>Windows&nbsp;9x/Me/NT</application>">
+<!ENTITY Windows9xMeNT2000 "<application>Windows&nbsp;9x/Me/NT/2000</application>">
 <!ENTITY Windows98 "<application>Windows&nbsp;98</application>">
 <!ENTITY Windows98SE "<application>Windows&nbsp;98 Second Edition</application>">
 <!ENTITY WindowsNT "<application>Windows&nbsp;NT</application>">

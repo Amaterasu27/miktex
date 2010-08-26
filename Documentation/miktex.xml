@@ -6,9 +6,9 @@
 %version.ent;
 %entities.ent;
 
-<!ENTITY revj2000 "386">
+<!ENTITY revj2000 "3888">
 <!ENTITY month "August 2010">
-<!ENTITY date "August 04, 2010">
+<!ENTITY date "August 24, 2010">
 
 <!ENTITY rev "&MIKTEX_SERIES_STR;.&revj2000;">
 
@@ -205,7 +205,7 @@ and <filename>updmap.cfg</filename>.</para></listitem>
 -->
 
 <copyright>
-<year>2009</year>
+<year>2010</year>
 <holder>Christian Schenk</holder>
 </copyright>
 
