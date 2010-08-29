@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -3582,19 +3582,34 @@ Utils::RegisterShellFileAssoc (/*[in]*/ const char * lpszExtension,
 {
   MIKTEX_ASSERT_STRING (lpszExtension);
   MIKTEX_ASSERT_STRING (lpszProgId);
-  HKEY hkeyRoot =
-    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
   PathName regPath ("Software\\Classes");
   regPath += lpszExtension;
   string otherProgId;
-  bool haveOtherProgId = winRegistry::TryGetRegistryValue(
-    hkeyRoot,
-    regPath.Get(),
-    "",
-    otherProgId,
-    0);
-  haveOtherProgId =
-    (haveOtherProgId && StringCompare(lpszProgId, otherProgId.c_str(), true) != 0);
+  bool haveOtherProgId = false;
+  if (! SessionWrapper(true)->IsAdminMode())
+  {
+    haveOtherProgId = winRegistry::TryGetRegistryValue(
+      HKEY_CURRENT_USER,
+      regPath.Get(),
+      "",
+      otherProgId,
+      0);
+    haveOtherProgId =
+      (haveOtherProgId && StringCompare(lpszProgId, otherProgId.c_str(), true) != 0);
+  }
+  if (! haveOtherProgId)
+  {
+    haveOtherProgId = winRegistry::TryGetRegistryValue(
+      HKEY_LOCAL_MACHINE,
+      regPath.Get(),
+      "",
+      otherProgId,
+      0);
+    haveOtherProgId =
+      (haveOtherProgId && StringCompare(lpszProgId, otherProgId.c_str(), true) != 0);
+  }
+  HKEY hkeyRoot =
+    (SessionWrapper(true)->IsAdminMode() ? HKEY_LOCAL_MACHINE : HKEY_CURRENT_USER);
   PathName openWithProgIds (regPath);
   openWithProgIds += "OpenWithProgIds";
   if (haveOtherProgId)
