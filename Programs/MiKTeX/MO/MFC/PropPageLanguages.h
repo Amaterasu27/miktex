@@ -88,13 +88,15 @@ private:
   struct MyLanguageInfo : public LanguageInfo
   {
     MyLanguageInfo (const LanguageInfo & languageInfo)
-      : active(false),
-        newActive(false),
-	LanguageInfo (languageInfo)
+      : LanguageInfo (languageInfo),
+	active(false),
+	newActive(false),
+	loaderExists(false)
     {
     }
-    bool active;
+    bool loaderExists;
     PathName loaderPath;
+    bool active;
     bool newActive;
     vector<string> packageNames;
   };
@@ -143,6 +145,10 @@ private:
 private:
   vector<string>
   WhichPackage (/*[in]*/ const char * lpszTeXInputFile);
+
+private:
+  bool
+  InstallLanguagePackages (/*[in]*/ const vector<string> toBeInstalled);
 
 private:
   bool inserting;

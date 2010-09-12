@@ -156,6 +156,10 @@ bool
 Utils::IsSafeFileName (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ bool		forInput)
 {
+  if (forInput)
+  {
+    return (true);
+  }
   if (IsAbsolutePath(lpszPath))
     {
       return (false);
@@ -942,6 +946,9 @@ SessionImpl::GetSpecialPath (/*[in]*/ SpecialPath	specialPath)
       break;
     case SpecialPath::InstallRoot:
       path = GetRootDirectory(GetInstallRoot());
+      break;
+    case SpecialPath::DistRoot:
+      path = GetRootDirectory(GetDistRoot());
       break;
     case SpecialPath::CommonDataRoot:
       path = GetRootDirectory(GetCommonDataRoot());

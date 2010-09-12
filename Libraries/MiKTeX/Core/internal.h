@@ -776,6 +776,21 @@ public:
 
 public:
   PathName cfgFile;
+
+public:
+  bool operator < (/*[in]*/ const LanguageInfo_ & rhs)
+  {
+    if (this->key == "english")
+    {
+      return (true);
+    }
+    if (rhs.key == "english")
+    {
+      return (false);
+    }
+    return (this->key < rhs.key);
+  }
+
 };
 
 /* _________________________________________________________________________
@@ -1512,6 +1527,11 @@ public:
 	  /*[in]*/ unsigned	      flags,
           /*[in]*/ IExpandCallback *  pCallback);
 
+public:
+  virtual
+  void
+  SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo);
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -1943,6 +1963,10 @@ public:
   unsigned
   GetUserInstallRoot ();
 
+public:
+  unsigned
+  GetDistRoot ();
+
 private:
   bool
   IsManagedRoot (/*[in]*/ unsigned root);
@@ -2064,6 +2088,10 @@ private:
 private:
   void
   ReadLanguagesIni (/*[in]*/ const PathName & cfgFile);
+
+private:
+  void
+  WriteLanguagesIni ();
 
 private:
   void

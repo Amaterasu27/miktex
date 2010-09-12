@@ -64,7 +64,7 @@ main (/*[in]*/ int	argc,
 		       0, 0);
 
       // get relative script path
-      PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::CommonInstallRoot);
+      PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::DistRoot);
       scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
       SmartPointer<Cfg> pConfig (Cfg::Create());
       pConfig->Read (scriptsIni);

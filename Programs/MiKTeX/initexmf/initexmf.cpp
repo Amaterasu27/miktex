@@ -2555,6 +2555,11 @@ IniTeXMFApp::MakeLanguageDat (/*[in]*/ bool force)
   LanguageInfo languageInfo;
   for (int idx = 0; pSession->GetLanguageInfo(idx, languageInfo); ++ idx)
   {
+    if (languageInfo.exclude)
+    {
+      continue;
+    }
+
     PathName loaderPath;
     if (! pSession->FindFile(languageInfo.loader.c_str(), "%r/tex//", loaderPath))
     {
@@ -3716,7 +3721,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
   }
 #endif
 
-  if (optMakeLinks)
+  if (optMakeLanguageDat)
   {
     MakeLanguageDat (optForce);
   }

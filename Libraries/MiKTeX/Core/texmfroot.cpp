@@ -513,6 +513,32 @@ SessionImpl::GetUserInstallRoot ()
 
 /* _________________________________________________________________________
 
+   SessionImpl::GetDistRoot
+   _________________________________________________________________________ */
+
+unsigned
+SessionImpl::GetDistRoot ()
+{
+  PathName myloc = GetMyLocation(true);
+  RemoveDirectoryDelimiter (myloc.GetBuffer());
+  PathName internalBindir (MIKTEX_PATH_INTERNAL_BIN_DIR);
+  RemoveDirectoryDelimiter (internalBindir.GetBuffer());
+  PathName prefix;
+  if (Utils::GetPathNamePrefix(myloc, internalBindir, prefix))
+  {
+    return (TryDeriveTEXMFRoot(prefix));
+  }
+  PathName bindir (MIKTEX_PATH_BIN_DIR);
+  RemoveDirectoryDelimiter (bindir.GetBuffer());
+  if (Utils::GetPathNamePrefix(myloc, bindir, prefix))
+  {
+    return (TryDeriveTEXMFRoot(prefix));
+  }
+  return (INVALID_ROOT_INDEX);
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::SaveRootDirectories
 
    Save the root directory list.

@@ -366,7 +366,7 @@ struct FormatInfo
 
   FormatInfo ()
     : exclude (false),
-      custom (true)
+      custom (false)
   {
   }
 };
@@ -386,9 +386,13 @@ struct LanguageInfo
   std::string luaspecial;
   int lefthyphenmin;
   int righthyphenmin;
+  bool exclude;
+  bool custom;
   LanguageInfo ()
     : lefthyphenmin (-1),
-      righthyphenmin (-1)
+      righthyphenmin (-1),
+      exclude (false),
+      custom (false)
   {
   }
 };
@@ -3630,6 +3634,8 @@ public:
 
     /// The portable mount directory.
     PortableMount,
+
+    DistRoot,
   };
 };
 
@@ -6600,6 +6606,12 @@ public:
           /*[in]*/ IExpandCallback *		pCallback)
     = 0;
 
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo)
+    = 0;
 
 public:
   static

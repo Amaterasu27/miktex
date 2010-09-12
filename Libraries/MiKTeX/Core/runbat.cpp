@@ -45,7 +45,7 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
 		   0, 0);
 
   // get relative script path
-  PathName scriptsIni = GetSpecialPath(SpecialPath::CommonInstallRoot);
+  PathName scriptsIni = GetSpecialPath(SpecialPath::DistRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
   pConfig->Read (scriptsIni);
@@ -98,7 +98,7 @@ SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
 		       /*[in]*/ const char *	lpszArguments)
 {
   // get relative script path
-  PathName scriptsIni = GetSpecialPath(SpecialPath::CommonInstallRoot);
+  PathName scriptsIni = GetSpecialPath(SpecialPath::DistRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
   pConfig->Read (scriptsIni);

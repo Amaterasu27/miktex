@@ -1,6 +1,6 @@
 /* FormatInfo.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -94,9 +94,9 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 {
   SmartPointer<Cfg> pFormats (Cfg::Create());
   pFormats->Read (cfgFile);
-  char szKey[BufferSizes::MaxPath];
   bool custom =
-    (TryDeriveTEXMFRoot(cfgFile.Get()) != GetInstallRoot());
+    (TryDeriveTEXMFRoot(cfgFile.Get()) != GetDistRoot());
+  char szKey[BufferSizes::MaxPath];
   for (char * lpszKey
 	 = pFormats->FirstKey(szKey, BufferSizes::MaxPath);
        lpszKey != 0;
@@ -353,7 +353,8 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
     {
       if (PathName::Compare(it->key, formatInfo.key) == 0)
 	{
-	  if (! it->custom)
+	  bool custom = it->custom;
+	  if (! custom)
 	    {
 	      bool cannotChange = false;
 	      if (formatInfo.custom)
@@ -393,6 +394,7 @@ SessionImpl::SetFormatInfo (/*[in]*/ const FormatInfo &	formatInfo)
 		}
 	    }
 	  *it = formatInfo;
+	  it->custom = custom;
 	  break;
 	}
     }

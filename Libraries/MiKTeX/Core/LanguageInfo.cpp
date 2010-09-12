@@ -45,7 +45,6 @@ SessionImpl::GetLanguageInfo (/*[in]*/ unsigned		index,
   return (true);
 }
 
-
 /* _________________________________________________________________________
 
    SessionImpl::ReadLanguagesIni
@@ -56,6 +55,8 @@ SessionImpl::ReadLanguagesIni (/*[in]*/ const PathName & cfgFile)
 {
   SmartPointer<Cfg> pLanguages (Cfg::Create());
   pLanguages->Read (cfgFile);
+  bool custom =
+    (TryDeriveTEXMFRoot(cfgFile.Get()) != GetDistRoot());
   char szKey[BufferSizes::MaxPath];
   for (char * lpszKey
 	 = pLanguages->FirstKey(szKey, BufferSizes::MaxPath);
@@ -63,15 +64,15 @@ SessionImpl::ReadLanguagesIni (/*[in]*/ const PathName & cfgFile)
        lpszKey = pLanguages->NextKey(szKey, BufferSizes::MaxPath))
     {
       LanguageInfo_ languageInfo;
-      vector<LanguageInfo_>::iterator it;
-      for (it = languages.begin(); it != languages.end(); ++ it)
+      vector<LanguageInfo_>::iterator itExisting;
+      for (itExisting = languages.begin(); itExisting != languages.end(); ++ itExisting)
+      {
+	if (itExisting->key == lpszKey)
 	{
-	  if (PathName::Compare(it->key, lpszKey) == 0)
-	    {
-	      languageInfo = *it;
-	      break;
-	    }
+	  languageInfo = *itExisting;
+	  break;
 	}
+      }
       string val;
       languageInfo.cfgFile = cfgFile;
       languageInfo.key = lpszKey;
@@ -91,7 +92,7 @@ SessionImpl::ReadLanguagesIni (/*[in]*/ const PathName & cfgFile)
 	{
 	  languageInfo.hyphenation = val;
 	}
-      if (pLanguages->TryGetValue(lpszKey, "luaspcial", val))
+      if (pLanguages->TryGetValue(lpszKey, "luaspecial", val))
 	{
 	  languageInfo.luaspecial = val;
 	}
@@ -103,8 +104,13 @@ SessionImpl::ReadLanguagesIni (/*[in]*/ const PathName & cfgFile)
 	{
 	  languageInfo.righthyphenmin = atoi(val.c_str());
 	}
-      if (it == languages.end())
+      if (pLanguages->TryGetValue(lpszKey, "attributes", val))
+      {
+	languageInfo.exclude = (val == "exclude");
+      }
+      if (itExisting == languages.end())
 	{
+	  languageInfo.custom = custom;
 	  if (StringCompare(lpszKey, "english") == 0)
 	    {
 	      languages.insert (languages.begin(), languageInfo);
@@ -116,7 +122,7 @@ SessionImpl::ReadLanguagesIni (/*[in]*/ const PathName & cfgFile)
 	}
       else
 	{
-	  *it = languageInfo;
+	  *itExisting = languageInfo;
 	}
     }
   pLanguages.Release ();
@@ -131,30 +137,177 @@ void
 SessionImpl::ReadLanguagesIni ()
 {
   if (languages.size() > 0)
-    {
-      return;
-    }
+  {
+    return;
+  }
   bool readSomething = false;
   for (unsigned r = GetNumberOfTEXMFRoots(); r > 0; -- r)
-    {
+  {
 #if 0
-      if (! IsManagedRoot(r - 1))
-	{
-	  continue;
-	}
-#endif
-      PathName languagesIni = GetRootDirectory(r - 1);
-      languagesIni += MIKTEX_PATH_LANGUAGES_INI;
-      if (File::Exists(languagesIni))
-	{
-	  ReadLanguagesIni (languagesIni);
-	  readSomething = true;
-	}
-    }
-  if (! readSomething)
+    if (! IsManagedRoot(r - 1))
     {
-      FATAL_MIKTEX_ERROR ("SessionImpl::ReadLanguagesIni",
-			  T_("No languages.ini exists."),
-			  0);
+      continue;
     }
+#endif
+    PathName languagesIni = GetRootDirectory(r - 1);
+    languagesIni += MIKTEX_PATH_LANGUAGES_INI;
+    if (File::Exists(languagesIni))
+    {
+      ReadLanguagesIni (languagesIni);
+      readSomething = true;
+    }
+  }
+  if (! readSomething)
+  {
+    FATAL_MIKTEX_ERROR ("SessionImpl::ReadLanguagesIni", T_("No languages.ini exists."), 0);
+  }
+  sort (languages.begin(), languages.end());
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::WriteLanguagesIni
+   _________________________________________________________________________ */
+
+void
+SessionImpl::WriteLanguagesIni ()
+{
+  SmartPointer<Cfg> pLanguages (Cfg::Create());
+
+  for (vector<LanguageInfo_>::iterator it = languages.begin();
+    it != languages.end();
+    ++ it)
+  {
+    if (it->custom)
+    {
+      if (! it->synonyms.empty())
+      {
+	pLanguages->PutValue (it->key.c_str(), "synonyms", it->synonyms.c_str());
+      }
+      if (! it->loader.empty())
+      {
+	pLanguages->PutValue (it->key.c_str(), "loader", it->loader.c_str());
+      }
+      if (! it->patterns.empty())
+      {
+	pLanguages->PutValue (it->key.c_str(), "patterns", it->patterns.c_str());
+      }
+      if (! it->luaspecial.empty())
+      {
+	pLanguages->PutValue (it->key.c_str(), "luaspecial", it->luaspecial.c_str());
+      }
+      if (it->lefthyphenmin != -1)
+      {
+	pLanguages->PutValue (it->key.c_str(), "lefthyphenmin", NUMTOSTR(it->lefthyphenmin));
+      }
+      if (it->righthyphenmin != -1)
+      {
+	pLanguages->PutValue (it->key.c_str(), "righthyphenmin", NUMTOSTR(it->righthyphenmin));
+      }
+    }
+    if (it->exclude)
+    {
+      pLanguages->PutValue (it->key.c_str(), "attributes", "exclude");
+    }
+    else
+    {
+      pLanguages->PutValue (it->key.c_str(), "attributes", "");
+    }
+  }
+
+  PathName pathLocalLanguagesIni (GetSpecialPath(SpecialPath::ConfigRoot),
+				  MIKTEX_PATH_LANGUAGES_INI);
+
+  Directory::Create (PathName(pathLocalLanguagesIni).RemoveFileSpec());
+
+  pLanguages->Write (pathLocalLanguagesIni);
+
+  pLanguages.Release ();
+
+  if (! Fndb::FileExists(pathLocalLanguagesIni))
+  {
+    Fndb::Add (pathLocalLanguagesIni);
+  }
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::SetLanguageInfo
+   _________________________________________________________________________ */
+
+void
+SessionImpl::SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo)
+{
+  ReadLanguagesIni ();
+  vector<LanguageInfo_>::iterator it;
+  for (it = languages.begin(); it != languages.end(); ++ it)
+  {
+    if (it->key == languageInfo.key)
+    {
+      bool custom = it->custom;
+      if (! custom)
+      {
+	bool cannotChange = false;
+	if (languageInfo.custom)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.synonyms != it->synonyms)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.loader != it->loader)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.patterns != it->patterns)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.hyphenation != it->hyphenation)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.luaspecial != it->luaspecial)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.lefthyphenmin != it->lefthyphenmin)
+	{
+	  cannotChange = true;
+	}
+	if (languageInfo.righthyphenmin != it->righthyphenmin)
+	{
+	  cannotChange = true;
+	}
+	if (cannotChange)
+	{
+	  FATAL_MIKTEX_ERROR (
+	    "",
+	    T_("Built-in language definitions may not be changed."),
+	    languageInfo.key.c_str());
+	}
+      }
+      if (languageInfo.exclude && languageInfo.key == "english")
+      {
+	FATAL_MIKTEX_ERROR (
+	  "",
+	  T_("The English language may not be excluded."),
+	  0);
+
+      }
+      *it = languageInfo;
+      it->custom = custom;
+      break;
+    }
+  }
+  if (it == languages.end())
+  {
+    if (! languageInfo.custom)
+    {
+      INVALID_ARGUMENT ("SessionImpl::SetLanguageInfo", 0);
+    }
+    languages.push_back (languageInfo);
+  }
+  WriteLanguagesIni ();
 }
