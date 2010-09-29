@@ -924,8 +924,10 @@ MiKTeX::Debug::Malloc (/*[in]*/ size_t		size,
 		       /*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ int		line)
 {
+#if 0 // too costly
 #if defined(MIKTEX_DEBUG)
   Utils::CheckHeap ();
+#endif
 #endif
 #if defined(_MSC_VER) && defined(_DEBUG)
   void * ptr = _malloc_dbg(size, _NORMAL_BLOCK, lpszFileName, line);
@@ -968,8 +970,10 @@ MiKTeX::Debug::Calloc (/*[in]*/ size_t		num,
 		       /*[in]*/ const char *	lpszFileName,
 		       /*[in]*/ int		line)
 {
+#if 0 // too costly
 #if defined(MIKTEX_DEBUG)
   Utils::CheckHeap ();
+#endif
 #endif
 #if defined(_MSC_VER) && defined(_DEBUG)
   void * ptr = _calloc_dbg(num, size, _NORMAL_BLOCK, lpszFileName, line);
@@ -1013,8 +1017,10 @@ MiKTeX::Debug::Realloc (/*[in]*/ void *		ptr,
 			/*[in]*/ const char *	lpszFileName,
 			/*[in]*/ int		line)
 {
+#if 0 // too costly
 #if defined(MIKTEX_DEBUG)
   Utils::CheckHeap ();
+#endif
 #endif
 #if defined(_MSC_VER) && defined(_DEBUG)
   ptr = _realloc_dbg(ptr, size, _NORMAL_BLOCK, lpszFileName, line);
@@ -1101,8 +1107,10 @@ MiKTeX::Debug::Free (/*[in]*/ void * 		ptr,
       INVALID_ARGUMENT ("Debug::Free", 0);
     }
 #endif
+#if 0 // too costly
 #if defined(MIKTEX_DEBUG)
   Utils::CheckHeap ();
+#endif
 #endif
 #if defined(_MSC_VER) && defined(_DEBUG)
   _free_dbg (ptr, _NORMAL_BLOCK);
