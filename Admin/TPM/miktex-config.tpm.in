@@ -10,8 +10,6 @@
       This package contains various MiKTeX configuration files.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/${rel_miktex_config_dir}/context.ini
-texmf/${rel_miktex_config_dir}/formats-context.ini
 texmf/${rel_miktex_config_dir}/amstex.ini
 texmf/${rel_miktex_config_dir}/cont-cz.ini
 texmf/${rel_miktex_config_dir}/cont-de.ini
@@ -22,14 +20,18 @@ texmf/${rel_miktex_config_dir}/cont-it.ini
 texmf/${rel_miktex_config_dir}/cont-nl.ini
 texmf/${rel_miktex_config_dir}/cont-ro.ini
 texmf/${rel_miktex_config_dir}/cont-uk.ini
+texmf/${rel_miktex_config_dir}/context.ini
 texmf/${rel_miktex_config_dir}/cslatex.ini
 texmf/${rel_miktex_config_dir}/csplain.ini
 texmf/${rel_miktex_config_dir}/dvilualatex.ini
 texmf/${rel_miktex_config_dir}/dviluatex.ini
+texmf/${rel_miktex_config_dir}/dvipdfm.ini
+texmf/${rel_miktex_config_dir}/dvipdfmx.ini
 texmf/${rel_miktex_config_dir}/elatex.ini
 texmf/${rel_miktex_config_dir}/eplain.ini
 texmf/${rel_miktex_config_dir}/etex.ini
 texmf/${rel_miktex_config_dir}/fontinst.ini
+texmf/${rel_miktex_config_dir}/formats-context.ini
 texmf/${rel_miktex_config_dir}/formats.ini
 texmf/${rel_miktex_config_dir}/frlatex.ini
 texmf/${rel_miktex_config_dir}/frtex.ini
@@ -67,6 +69,7 @@ texmf/${rel_miktex_config_dir}/texinfo.ini
 texmf/${rel_miktex_config_dir}/ttf2pk.ini
 texmf/${rel_miktex_config_dir}/ttf2tfm.ini
 texmf/${rel_miktex_config_dir}/utf8mex.ini
+texmf/${rel_miktex_config_dir}/xdvipdfmx.ini
 texmf/${rel_miktex_config_dir}/xelatex.ini
 texmf/${rel_miktex_config_dir}/xeplain.ini
 texmf/${rel_miktex_config_dir}/xetex.ini

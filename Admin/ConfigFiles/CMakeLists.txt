@@ -37,6 +37,8 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvilualatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dviluatex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/dvipdfm.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/dvipdfmx.ini
   ${CMAKE_CURRENT_BINARY_DIR}/elatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/eplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/etex.ini
@@ -78,6 +80,7 @@ set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2pk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/ttf2tfm.ini
   ${CMAKE_CURRENT_BINARY_DIR}/utf8mex.ini
+  ${CMAKE_CURRENT_BINARY_DIR}/xdvipdfmx.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xelatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xeplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/xetex.ini

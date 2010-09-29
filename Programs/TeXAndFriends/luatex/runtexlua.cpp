@@ -41,6 +41,12 @@ Main (/*[in]*/ int	argc,
 // call exit())
 MiKTeX::App::Application app;
 
+#if MTXRUN
+#  define CFGKEY "mtxrun"
+#else
+#  define CFGKEY "texlua"
+#endif
+
 /* _________________________________________________________________________
 
    main
@@ -57,23 +63,41 @@ main (/*[in]*/ int	argc,
       MIKTEX_ASSERT (argc > 0);
 
       // determine script name
-      char szName[BufferSizes::MaxPath];
+      char szProgramName[BufferSizes::MaxPath];
       PathName::Split (argv[0],
 		       0, 0,
-		       szName, BufferSizes::MaxPath,
+		       szProgramName, BufferSizes::MaxPath,
 		       0, 0);
+
+      std::string scriptName;
+
+#if MTXRUN
+      bool isLuatools = (PathName::Compare(szProgramName, "luatools") == 0);
+      bool isMtxrun = (PathName::Compare(szProgramName, "mtxrun") == 0);
+      bool isTexmfstart = (PathName::Compare(szProgramName, "texmfstart") == 0);
+      if (isLuatools)
+      {
+	scriptName = "luatools";
+      }
+      else
+      {
+	scriptName = "mtxrun";
+      }
+#else
+      scriptName = szProgramName;
+#endif
 
       // get relative script path
       PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::DistRoot);
       scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
       SmartPointer<Cfg> pConfig (Cfg::Create());
       pConfig->Read (scriptsIni);
-      string relScriptPath;
-      if (! pConfig->TryGetValue("texlua", szName, relScriptPath))
+      std::string relScriptPath;
+      if (! pConfig->TryGetValue(CFGKEY, scriptName.c_str(), relScriptPath))
       {
 	FATAL_MIKTEX_ERROR ("runtexlua",
 	  MIKTEXTEXT("The Lua script is not registered."),
-	  szName);
+	  szProgramName);
       }
       pConfig.Release ();
       
@@ -89,9 +113,17 @@ main (/*[in]*/ int	argc,
       // build new argv
       std::vector<char *> args;
       args.reserve (argc + 2);
-      args.push_back (argv[0]);
+      PathName argv0 = argv[0];
+      args.push_back (argv0.GetBuffer());
       args.push_back ("--luaonly");
       args.push_back (scriptPath.GetBuffer());
+#if MTXRUN
+      if (! (isLuatools || isMtxrun || isTexmfstart))
+      {
+	args.push_back ("--script");
+	args.push_back (szProgramName);
+      }
+#endif
       for (int idx = 1; idx < argc; ++ idx)
 	{
 	  args.push_back (argv[idx]);

@@ -450,6 +450,13 @@ __declspec(dllexport) int __cdecl Main (int ac, string * av)
 int main(int ac, string * av)
 #endif
 {
+#if defined(MIKTEX)
+  // the TEXMF variable is examined by ConTeXt
+  char * lpszTexmf = kpse_var_value("TEXMF");
+  xputenv ("TEXMF", lpszTexmf);
+  free (lpszTexmf);
+#endif
+
 #  ifdef __EMX__
     _wildcard(&ac, &av);
     _response(&ac, &av);

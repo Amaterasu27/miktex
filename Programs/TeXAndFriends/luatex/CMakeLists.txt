@@ -283,3 +283,18 @@ merge_trustinfo_manifest(runtexlua asInvoker)
 
 install(TARGETS runtexlua DESTINATION "${miktex_internal_bindir}")
 
+###############################################################################
+## runtexlua
+###############################################################################
+
+add_executable(runmtxrun runmtxrun.cpp)
+
+target_link_libraries(runmtxrun
+  ${app_dll_name}
+  ${core_dll_name}
+  ${luatex_program_dll_name}
+)
+
+merge_trustinfo_manifest(runmtxrun asInvoker)
+
+install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
