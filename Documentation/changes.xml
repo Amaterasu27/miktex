@@ -59,7 +59,8 @@ pack&nbsp;2 installed.</para>
 
 <title>&LuaTeX;</title>
 
-<para>The &MiKTeX; distribution now includes <ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=luatex">&LuaTeX;</ulink>.</para>
+<para>The &MiKTeX; distribution now includes <ulink url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=luatex">&LuaTeX;</ulink>
+(Version beta-0.60.2).</para>
 
 </section>
 
