@@ -335,7 +335,7 @@ FileTimeToUniversalCrtTime (/*[in]*/ FILETIME	fileTime)
   ULARGE_INTEGER uli;
   uli.LowPart = fileTime.dwLowDateTime;
   uli.HighPart = fileTime.dwHighDateTime;
-  return ((uli.QuadPart / 10000000) - EPOCH_BIAS);
+  return ((uli.QuadPart / 10000000) - (EPOCH_BIAS / 10000000));
 }
 
 /* _________________________________________________________________________
