@@ -30,6 +30,8 @@
 
 #include <miktex/TeXAndFriends/Prototypes>
 #include <miktex/Core/Core>
+#include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 #include <miktex/Core/Version>
 
 #include <miktex/C4P/C4P>

@@ -994,7 +994,7 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
   else if (StringCompare(lpszVarName, "SELFAUTOLOC") == 0)
   {
     path = SessionWrapper(true)->GetMyLocation();
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "SELFAUTODIR") == 0)
@@ -1014,7 +1014,7 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
 	  {
 	    varValue += ',';
 	  }
-	varValue += SessionWrapper(true)->GetRootDirectory(r).Get();
+	varValue += SessionWrapper(true)->GetRootDirectory(r).ToUnix().Get();
       }
     varValue += '}';
     result = true;
@@ -1022,51 +1022,51 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
   else if (StringCompare(lpszVarName, "TEXMFCONFIG") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserConfigRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXMFDIST") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
 #if 0 // <todo>
   else if (StringCompare(lpszVarName, "TEXMFHOME") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserHomeRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
 #endif // </todo>
   else if (StringCompare(lpszVarName, "TEXMFLOCAL") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserInstallRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXMFMAIN") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonInstallRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXMFSYSCONFIG") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonConfigRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXMFSYSVAR") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::CommonDataRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXMFVAR") == 0)
   {
     path = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserDataRoot);
-    varValue = path.Get();
+    varValue = path.ToUnix().Get();
     result = true;
   }
   else if (StringCompare(lpszVarName, "TEXSYSTEM") == 0)
@@ -1085,7 +1085,7 @@ VarValue (/*[in]*/ const char *	  lpszVarName,
     if (GetWindowsDirectoryA(path.GetBuffer(), static_cast<UINT>(path.GetCapacity())) > 0)
     {
       path += "Fonts";
-      varValue = path.Get();
+      varValue = path.ToUnix().Get();
       result = true;
     }
   }
@@ -1450,4 +1450,97 @@ miktex_kpathsea_init_format (/*[in]*/ kpathsea pKpseInstance,
     formatInfo.suffix = ToStringList(fti.fileNameExtensions);
   }
   return (formatInfo.path);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpsemu_create_texmf_cnf
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpsemu_create_texmf_cnf ()
+{
+  PathName texmfcnfdir = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserConfigRoot);
+  texmfcnfdir += MIKTEX_PATH_WEB2C_DIR;
+  PathName texmfcnf = texmfcnfdir;
+  texmfcnf += "texmf.cnf";
+  time_t lastMaintenance = static_cast<time_t>(0);
+  std::string value;
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, value))
+  {
+    long long intValue = _atoi64(value.c_str()); // fixme
+    if (static_cast<time_t>(intValue) > lastMaintenance)
+    {
+      lastMaintenance = static_cast<time_t>(intValue);
+    }
+  }
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_USER_MAINTENANCE, value))
+  {
+    long long intValue = _atoi64(value.c_str()); // fixme
+    if (static_cast<time_t>(intValue) > lastMaintenance)
+    {
+      lastMaintenance = static_cast<time_t>(intValue);
+    }
+  }
+  if (! File::Exists(texmfcnf) || lastMaintenance > File::GetLastWriteTime(texmfcnf))
+  {
+    Directory::Create (texmfcnfdir);
+    Core::StreamWriter stream (texmfcnf);
+    static const char * const lpszVars[] = {
+      "TEXMFCONFIG",
+      "TEXMFVAR",
+      "TEXMFHOME",
+      "TEXMFSYSCONFIG",
+      "TEXMFSYSVAR",
+      "TEXMFMAIN",
+      "TEXMFLOCAL",
+      "TEXMF",
+    };
+    for (int idx = 0; idx != sizeof(lpszVars) / sizeof(lpszVars[0]); ++ idx)
+    {
+      std::string val;
+      if (VarValue(lpszVars[idx], val))
+      {
+	stream.WriteFormattedLine ("%s=%s", lpszVars[idx], val);
+      }
+    }
+    PathName texmfDefaults (SessionWrapper(true)->GetSpecialPath(SpecialPath::DistRoot));
+    texmfDefaults += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+    texmfDefaults += "texmf-defaults.ini";
+    SmartPointer<Cfg> pCfg = Cfg::Create();
+    pCfg->Read (texmfDefaults);
+    char szValueName[BufferSizes::MaxCfgName];
+    for (char * lpszValueName = pCfg->FirstValue(0, szValueName, BufferSizes::MaxCfgName);
+         lpszValueName != 0;
+	 lpszValueName = pCfg->NextValue(szValueName, BufferSizes::MaxCfgName))
+    {
+      stream.WriteFormattedLine ("%s=%s", lpszValueName, pCfg->GetValue(0, lpszValueName).c_str());
+    }
+    stream.WriteFormattedLine ("TEXFONTMAPS=%s", ".;$TEXMF/fonts/map/{$progname,pdftex,dvips,}//");
+    stream.Close ();
+    if (! Fndb::FileExists(texmfcnf))
+    {
+      Fndb::Add (texmfcnf);
+    }
+  }
+  PathName texmfcnflua = texmfcnfdir;
+  texmfcnflua += "texmfcnf.lua";
+  if (! File::Exists(texmfcnflua) || lastMaintenance > File::GetLastWriteTime(texmfcnflua))
+  {
+    Directory::Create (texmfcnfdir);
+    Core::StreamWriter stream (texmfcnflua);
+    stream.WriteLine ("return {");
+    std::string val;
+    if (VarValue("TEXMFVAR", val))
+    {
+      stream.WriteFormattedLine ("  TEXMFCACHE=%s", val.c_str());
+    }
+    stream.WriteLine ("}");
+    stream.Close ();
+    if (! Fndb::FileExists(texmfcnf))
+    {
+      Fndb::Add (texmfcnf);
+    }
+  }
+  return (xstrdup(texmfcnfdir.ToUnix().Get()));
 }

@@ -881,6 +881,9 @@ miktex_kpathsea_xputenv (/*in*/ kpathsea	kpse,
 			 /*[in]*/ const char *	lpszValue);
 
 MIKTEXKPSCEEAPI(char *)
+miktex_kpsemu_create_texmf_cnf ();
+
+MIKTEXKPSCEEAPI(char *)
 miktex_concatn (/*[in]*/ const char * lpsz1, ...);
 
 MIKTEXKPSCEEAPI(char *)
