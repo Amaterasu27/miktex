@@ -2405,6 +2405,10 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 
   for (unsigned i = 0; pSession->GetFormatInfo(i, formatInfo); ++ i)
     {
+      if (formatInfo.noExecutable)
+      {
+	continue;
+      }
       PathName compilerPath;
       if (! pSession->FindFile(formatInfo.compiler.c_str(),
 			       FileType::EXE,
