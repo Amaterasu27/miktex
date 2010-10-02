@@ -696,6 +696,16 @@ FndbManager::Create (/*[in]*/ const char *		lpszFndbPath,
       streamFndb.Write (GetMemPointer(), GetMemTop());
       traceStream->WriteFormattedLine ("core",
 				       T_("fndb creation completed"));
+      time_t now = time(0);
+      string nowStr = NUMTOSTR(now);
+      if (SessionImpl::GetSession()->IsAdminMode())
+      {
+	SessionImpl::GetSession()->SetConfigValue (MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, nowStr.c_str());
+      }
+      else
+      {
+	SessionImpl::GetSession()->SetConfigValue (MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_USER_MAINTENANCE, nowStr.c_str());
+      }
       return (true);
     }
   catch (const OperationCancelledException &)

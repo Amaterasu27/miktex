@@ -1,6 +1,6 @@
 /* miktex/Core/Registry.h: MiKTeX settings			-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -89,6 +89,8 @@
 #define MIKTEX_REGVAL_FTP_MODE "FTPMode"
 #define MIKTEX_REGVAL_GUI_FRAMEWORK "GUIFramework"
 #define MIKTEX_REGVAL_INSIST_ON_REPAIR "InsistOnRepair"
+#define MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE "LastAdminMaintenance"
+#define MIKTEX_REGVAL_LAST_USER_MAINTENANCE "LastUserMaintenance"
 #define MIKTEX_REGVAL_LOCAL_REPOSITORY "LocalRepository"
 #define MIKTEX_REGVAL_MAX_REDIRECTS "MaxRedirects"
 #define MIKTEX_REGVAL_MIKTEXDIRECT_ROOT "MiKTeXDirectRoot"

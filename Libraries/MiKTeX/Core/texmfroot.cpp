@@ -662,6 +662,16 @@ SessionImpl::SaveRootDirectories (
 #endif
     }
   }
+  time_t now = time(0);
+  string nowStr = NUMTOSTR(now);
+  if (IsAdminMode())
+  {
+    SetConfigValue (MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, nowStr.c_str());
+  }
+  else
+  {
+    SetConfigValue (MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_USER_MAINTENANCE, nowStr.c_str());
+  }
 }
 
 /* _______________________________________________________________________
