@@ -1358,7 +1358,7 @@ CfgImpl::FirstValue (/*[in]*/ const char *	lpszKey,
 		     /*[out]*/ char *		lpszValueName,
 		     /*[in]*/ size_t		valueNameSize)
 {
-  MIKTEX_ASSERT_STRING (lpszKey);
+  MIKTEX_ASSERT_STRING_OR_NIL (lpszKey);
   MIKTEX_ASSERT_CHAR_BUFFER (lpszValueName, valueNameSize);
 
   CfgKey * pCfgKey = FindKey(lpszKey);

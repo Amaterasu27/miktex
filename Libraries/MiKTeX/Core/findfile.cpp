@@ -262,6 +262,14 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
    SessionImpl::FindFileInternal
    _________________________________________________________________________ */
 
+inline
+ bool
+IsNewer (/*[in]*/ const PathName & path1,
+	 /*[in]*/ const PathName & path2)
+{
+  return (File::Exists(path1) && File::Exists(path2) && File::GetLastWriteTime(path1) > File::GetLastWriteTime(path2));
+}
+
 bool
 SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
 			       /*[in]*/ FileType	      fileType,
@@ -354,12 +362,16 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
 			       MIKTEX_REGVAL_RENEW_FORMATS_ON_UPDATE,
 			       true))
     {
-      PathName pathPackagesIni (
-	GetSpecialPath(SpecialPath::InstallRoot),
+      PathName pathPackagesIniC (
+	GetSpecialPath(SpecialPath::CommonInstallRoot),
 	MIKTEX_PATH_PACKAGES_INI,
 	0);
-      if (File::Exists(pathPackagesIni)
-	  && File::GetLastWriteTime(pathPackagesIni) > File::GetLastWriteTime(result[0]))
+      PathName pathPackagesIniU (
+	GetSpecialPath(SpecialPath::UserInstallRoot),
+	MIKTEX_PATH_PACKAGES_INI,
+	0);
+      if (IsNewer(pathPackagesIniC, result[0])
+	|| (pathPackagesIniU != pathPackagesIniC && IsNewer(pathPackagesIniU, result[0])))
       {
 	if (TryCreateFile(lpszFileName, fileType))
 	{
