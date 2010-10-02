@@ -159,7 +159,17 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 				"attributes",
 				val))
 	{
-	  formatInfo.exclude = (val == "exclude");
+	  for (CSVList flag (val.c_str(), ','); flag.GetCurrent() != 0; ++ flag)
+	  {
+	    if (StringCompare(flag.GetCurrent(), "exclude") == 0)
+	    {
+	      formatInfo.exclude = true;
+	    }
+	    else if (StringCompare(flag.GetCurrent(), "noexe") == 0)
+	    {
+	      formatInfo.noExecutable = true;
+	    }
+	  }
 	}
       if (pFormats->TryGetValue(lpszKey,
 				"arguments",
@@ -278,18 +288,24 @@ SessionImpl::WriteFormatsIni ()
 				  it->arguments.c_str());
 	    }
 	}
+      string attributes;
       if (it->exclude)
+      {
+	if (! attributes.empty())
 	{
-	  pFormats->PutValue (it->key.c_str(),
-			      "attributes",
-			      "exclude");
+	  attributes += ',';
+	  attributes += "exclude";
 	}
-      else
+      }
+      if (it->noExecutable)
+      {
+	if (! attributes.empty())
 	{
-	  pFormats->PutValue (it->key.c_str(),
-			      "attributes",
-			      "");
+	  attributes += ',';
+	  attributes += "noexe";
 	}
+      }
+      pFormats->PutValue (it->key.c_str(), "attributes", attributes.c_str());
     }
 
   PathName pathLocalFormatsIni (GetSpecialPath(SpecialPath::ConfigRoot),

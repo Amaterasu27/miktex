@@ -359,6 +359,8 @@ struct FormatInfo
   std::string preloaded;
   /// Exclusion flag. If set, the format will be ignored by initexmf.
   bool exclude;
+  /// NoExecutable flag. If set, no executable will be created by initexmf.
+  bool noExecutable;
   /// Custom flag. Set, if this format was defined by the user.
   bool custom;
 
@@ -366,6 +368,7 @@ struct FormatInfo
 
   FormatInfo ()
     : exclude (false),
+      noExecutable (false),
       custom (false)
   {
   }
