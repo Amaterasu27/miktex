@@ -1,21 +1,3 @@
-[cont-cz.pdftex]
-
-arguments=-enable-8bit-chars
-attributes=exclude
-compiler=pdftex
-description=Czech ConTeXt (pdfTeX)
-input=cont-cz.ini
-name=cont-cz
-
-[cont-cz.xetex]
-
-arguments=-enable-8bit-chars
-attributes=exclude
-compiler=xetex
-description=Czech ConTeXt (XeTeX)
-input=cont-cz.ini
-name=cont-cz
-
 [cont-de.pdftex]
 
 arguments=-enable-8bit-chars
@@ -28,7 +10,7 @@ name=cont-de
 [cont-de.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=German ConTeXt (XeTeX)
 input=cont-de.ini
@@ -46,29 +28,11 @@ name=cont-en
 [cont-en.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=English ConTeXt (XeTeX)
 input=cont-en.ini
 name=cont-en
-
-#[cont-es.pdftex]
-#
-#arguments=-enable-8bit-chars
-#attributes=exclude
-#compiler=pdftex
-#description=Spanish ConTeXt (pdfTeX)
-#input=cont-es.ini
-#name=cont-es
-
-#[cont-es.xetex]
-#
-#arguments=-enable-8bit-chars
-#attributes=exclude
-#compiler=xetex
-#description=Spanish ConTeXt (XeTeX)
-#input=cont-es.ini
-#name=cont-es
 
 [cont-fr.pdftex]
 
@@ -82,7 +46,7 @@ name=cont-fr
 [cont-fr.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=French ConTeXt (XeTeX)
 input=cont-fr.ini
@@ -100,7 +64,7 @@ name=cont-it
 [cont-it.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=Italian ConTeXt (XeTeX)
 input=cont-it.ini
@@ -118,7 +82,7 @@ name=cont-nl
 [cont-nl.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=Dutch ConTeXt (XeTeX)
 input=cont-nl.ini
@@ -136,26 +100,8 @@ name=cont-ro
 [cont-ro.xetex]
 
 arguments=-enable-8bit-chars
-attributes=exclude
+attributes=exclude,noexe
 compiler=xetex
 description=Romanian ConTeXt (XeTeX)
 input=cont-ro.ini
 name=cont-ro
-
-[cont-uk.pdftex]
-
-arguments=-enable-8bit-chars
-attributes=exclude
-compiler=pdftex
-description=UK English ConTeXt (pdfTeX)
-input=cont-uk.ini
-name=cont-uk
-
-[cont-uk.xetex]
-
-arguments=-enable-8bit-chars
-attributes=exclude
-compiler=xetex
-description=UK English ConTeXt (XeTeX)
-input=cont-uk.ini
-name=cont-uk

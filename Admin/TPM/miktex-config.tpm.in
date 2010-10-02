@@ -11,15 +11,12 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/${rel_miktex_config_dir}/amstex.ini
-texmf/${rel_miktex_config_dir}/cont-cz.ini
 texmf/${rel_miktex_config_dir}/cont-de.ini
 texmf/${rel_miktex_config_dir}/cont-en.ini
-texmf/${rel_miktex_config_dir}/cont-es.ini
 texmf/${rel_miktex_config_dir}/cont-fr.ini
 texmf/${rel_miktex_config_dir}/cont-it.ini
 texmf/${rel_miktex_config_dir}/cont-nl.ini
 texmf/${rel_miktex_config_dir}/cont-ro.ini
-texmf/${rel_miktex_config_dir}/cont-uk.ini
 texmf/${rel_miktex_config_dir}/context.ini
 texmf/${rel_miktex_config_dir}/cslatex.ini
 texmf/${rel_miktex_config_dir}/csplain.ini
@@ -65,6 +62,7 @@ texmf/${rel_miktex_config_dir}/platex.ini
 texmf/${rel_miktex_config_dir}/t4ht.ini
 texmf/${rel_miktex_config_dir}/tex.ini
 texmf/${rel_miktex_config_dir}/tex4ht.ini
+texmf/${rel_miktex_config_dir}/texmf-defaults.ini
 texmf/${rel_miktex_config_dir}/texinfo.ini
 texmf/${rel_miktex_config_dir}/ttf2pk.ini
 texmf/${rel_miktex_config_dir}/ttf2tfm.ini

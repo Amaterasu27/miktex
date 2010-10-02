@@ -1,3 +1,5 @@
+!include texmf-defaults.ini
+
 [ft.tex]
 
 path=.

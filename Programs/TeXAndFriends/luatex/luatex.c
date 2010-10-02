@@ -451,10 +451,14 @@ int main(int ac, string * av)
 #endif
 {
 #if defined(MIKTEX)
-  // the TEXMF variable is examined by ConTeXt
-  char * lpszTexmf = kpse_var_value("TEXMF");
-  xputenv ("TEXMF", lpszTexmf);
-  free (lpszTexmf);
+  // create texmf.cnf for ConTeXt
+  char * lpszPath = miktex_kpsemu_create_texmf_cnf();
+  xputenv ("TEXMFCNF", lpszPath);
+  free (lpszPath);
+  // this is also for ConTeXt
+  lpszPath = kpse_var_value("TEXMFVAR");
+  xputenv ("TEXMFCACHE", lpszPath);
+  free (lpszPath);
 #endif
 
 #  ifdef __EMX__

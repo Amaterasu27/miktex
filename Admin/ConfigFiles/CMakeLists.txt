@@ -24,15 +24,12 @@ set(inc_ini_files
 
 set(main_ini_files
   ${CMAKE_CURRENT_BINARY_DIR}/amstex.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/cont-cz.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-de.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-en.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/cont-es.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-fr.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-it.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-nl.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cont-ro.ini
-  ${CMAKE_CURRENT_BINARY_DIR}/cont-uk.ini
   ${CMAKE_CURRENT_BINARY_DIR}/cslatex.ini
   ${CMAKE_CURRENT_BINARY_DIR}/csplain.ini
   ${CMAKE_CURRENT_BINARY_DIR}/dvilualatex.ini
@@ -112,7 +109,7 @@ endforeach(i)
 foreach(i ${main_ini_files})
   get_filename_component(ininame ${i} NAME)
   add_custom_command(
-    OUTPUT ${i} ${i}.dos
+    OUTPUT ${i} ${i}.dos tmp
     COMMAND ${CAT_EXE} header.txt
 		> ${i}.dos
     COMMAND ${CAT_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/${ininame}.body
@@ -129,13 +126,44 @@ foreach(i ${main_ini_files})
   )
 endforeach(i)
 
+add_custom_command(
+  OUTPUT texmf-defaults.ini texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} header.txt
+	   > texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mf.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mfapp.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mpost.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/omega.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/pdftex.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texapp.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${CAT_EXE} ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults
+           >> texmf-defaults.ini.dos
+  COMMAND ${TR_EXE} -d '\\r' < texmf-defaults.ini.dos > texmf-defaults.ini
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mf.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mfapp.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/mpost.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/omega.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/pdftex.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texapp.defaults
+    ${CMAKE_SOURCE_DIR}/${rel_defaults_dir}/texmfapp.defaults
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  VERBATIM
+)
+
 add_custom_target(
   ini_files
   ALL
-  DEPENDS ${inc_ini_files} ${main_ini_files}
+  DEPENDS ${inc_ini_files} ${CMAKE_CURRENT_BINARY_DIR}/texmf-defaults.ini ${main_ini_files}
 )
 
 install(
-  FILES ${inc_ini_files} ${main_ini_files}
+  FILES ${inc_ini_files} ${CMAKE_CURRENT_BINARY_DIR}/texmf-defaults.ini ${main_ini_files}
   DESTINATION ${configdir}
 )
