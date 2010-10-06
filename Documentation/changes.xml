@@ -66,6 +66,16 @@ pack&nbsp;2 installed.</para>
 
 <section>
 
+<title>&ConTeXt;</title>
+
+<para>MiKTeX&nbsp;2.9 brings back <ulink
+url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=context">&ConTeXt;</ulink>
+to &MiKTeX; users.</para>
+
+</section>
+
+<section>
+
 <title>Upgrades</title>
 
 <itemizedlist>

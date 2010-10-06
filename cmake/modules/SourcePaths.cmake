@@ -196,7 +196,13 @@ set(tex_miktex_web2c_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-web2c.ch"
 set(vadjust_ch "${CMAKE_SOURCE_DIR}/${rel_pdftex_dir}/vadjust.ch")
 
 #
-set(dll_locs "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/dll_locs.txt")
+if(WIN32)
+  if(CMAKE_CL_64)
+    set(dll_locs "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/dll_locs-x64.txt")
+  else(CMAKE_CL_64)
+    set(dll_locs "${CMAKE_SOURCE_DIR}/Libraries/MiKTeX/etc/dll_locs.txt")
+  endif(CMAKE_CL_64)
+endif(WIN32)
 
 # build utilities
 if(WIN32)

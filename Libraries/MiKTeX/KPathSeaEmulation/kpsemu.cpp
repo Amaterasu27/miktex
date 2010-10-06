@@ -1501,7 +1501,7 @@ miktex_kpsemu_create_texmf_cnf ()
       std::string val;
       if (VarValue(lpszVars[idx], val))
       {
-	stream.WriteFormattedLine ("%s=%s", lpszVars[idx], val);
+	stream.WriteFormattedLine ("%s=%s", lpszVars[idx], val.c_str());
       }
     }
     PathName texmfDefaults (SessionWrapper(true)->GetSpecialPath(SpecialPath::DistRoot));
