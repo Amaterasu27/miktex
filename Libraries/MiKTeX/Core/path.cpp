@@ -68,6 +68,16 @@ Utils::GetRelativizedPath (/*[in]*/ const char * lpszPath,
     return (0);
   }
 
+  // special case: both paths are equal
+  if (rootLen == strlen(lpszPath))
+  {
+#if 1
+    return (lpszPath + rootLen);
+#else
+    return (".");
+#endif
+  }
+
   int ch = lpszRoot[rootLen - 1];
 
   if (IsDirectoryDelimiter(ch))
