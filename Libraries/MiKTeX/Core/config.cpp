@@ -852,6 +852,13 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 {
   bool haveValue = false;
 
+  // try special values, part 1
+  if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_ENGINE, true) == 0)
+  {
+    value = SessionImpl::GetSession()->GetEngine();
+    haveValue = true;
+  }
+
   // iterate over application tags, e.g.: latex;tex;miktex
   for (CSVList app (applicationNames.c_str(), PATH_DELIMITER);
        ! haveValue && app.GetCurrent() != 0;
@@ -978,17 +985,12 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
     }
   }
   
-  // try special values
+  // try special values, part 2
   if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_BINDIR, true) == 0)
   {
     value =
       SessionImpl::GetSession()
       ->GetSpecialPath(SpecialPath::BinDirectory).ToString();
-    haveValue = true;
-  }
-  else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_ENGINE, true) == 0)
-  {
-    value = SessionImpl::GetSession()->GetEngine();
     haveValue = true;
   }
   else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_PROGNAME, true) == 0)
