@@ -1,6 +1,6 @@
 /* error.cpp: error handling
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -190,6 +190,29 @@ MiKTeX::Debug::FatalMiKTeXError (/*[in]*/ const char *	lpszMiktexFunction,
 			     lpszInfo,
 			     lpszSourceFile,
 			     sourceLine);
+}
+
+/* _________________________________________________________________________
+
+   miktex_core_fatal_error
+   _________________________________________________________________________ */
+
+MIKTEXCEEAPI(void)
+miktex_core_fatal_error (/*[in]*/ const char *	lpszMiktexFunction,
+			 /*[in]*/ const char *	lpszMessage,
+			 /*[in]*/ const char *	lpszInfo,
+			 /*[in]*/ const char *	lpszSourceFile,
+			 /*[in]*/ int		sourceLine)
+{
+  C_FUNC_BEGIN ();
+
+  Session::FatalMiKTeXError (lpszMiktexFunction,
+			     lpszMessage,
+			     lpszInfo,
+			     lpszSourceFile,
+			     sourceLine);
+
+  C_FUNC_END ();
 }
 
 /* _________________________________________________________________________

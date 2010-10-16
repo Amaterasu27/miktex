@@ -127,6 +127,16 @@ miktex_core_free (/*[in]*/ void * 	ptr,
 		  /*[in]*/ const char *	lpszFileName,
 		  /*[in]*/ int		line);
 
+MIKTEXCOREEXPORT
+void
+MIKTEXNORETURN
+MIKTEXCEECALL
+miktex_core_fatal_error (/*[in]*/ const char *	lpszMiktexFunction,
+			 /*[in]*/ const char *	lpszMessage,
+			 /*[in]*/ const char *	lpszInfo,
+			 /*[in]*/ const char *	lpszSourceFile,
+			 /*[in]*/ int		lpszSourceLine);
+
 MIKTEX_END_EXTERN_C_BLOCK;
 
 /* _________________________________________________________________________
@@ -191,6 +201,31 @@ MIKTEX_END_EXTERN_C_BLOCK;
 #else
 
 #  define MIKTEX_ASSERT(expr) (static_cast<void>(0))
+
+#endif
+
+/* _________________________________________________________________________
+
+   MIKTEX_VERIFY
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_DEBUG)
+
+#  define MIKTEX_VERIFY(expr)			\
+  (void)					\
+   ((expr)					\
+    ? 0						\
+    : (miktex_core_fatal_error			\
+           (0,					\
+            MIKTEXTEXT("Assertion failed."),	\
+            #expr,				\
+            __FILE__,				\
+            __LINE__),				\
+       0))
+
+#else
+
+#  define MIKTEX_VERIFY(expr) ((void)(expr))
 
 #endif
 

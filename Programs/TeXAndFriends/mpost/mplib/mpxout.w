@@ -2797,7 +2797,11 @@ static void mpx_read_fmap(MPX mpx, const char *dbase) {
       strncpy(tmp->name,nam,(unsigned int)(buf-nam));
       tmp->name[(buf-nam)] = '\0';
       tmp->num = (int)mpx->nfonts++;
+#if defined(MIKTEX)
+      MIKTEX_VERIFY(avl_ins (tmp, mpx->trfonts, avl_false) > 0);
+#else
       assert(avl_ins (tmp, mpx->trfonts, avl_false) > 0);
+#endif
       if (*buf) {
         buf++;
 	    while (*buf == '\t') buf++;

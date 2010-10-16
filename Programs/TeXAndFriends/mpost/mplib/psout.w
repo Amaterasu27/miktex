@@ -616,7 +616,11 @@ static enc_entry * mp_add_enc (MP mp, char *s) {
     for (i = 0; i < 256; i++) {
         p->glyph_names[i] = mp_xstrdup(mp, notdef);
     }
+#if defined(MIKTEX)
+    MIKTEX_VERIFY (avl_ins (p, mp->ps->enc_tree, avl_false)>0);
+#else
     assert (avl_ins (p, mp->ps->enc_tree, avl_false)>0);
+#endif
     destroy_enc_entry(p);
     return avl_find (&tmp, mp->ps->enc_tree);
 }
@@ -964,7 +968,11 @@ static int avl_do_entry (MP mp, fm_entry * fp, int mode) {
         }
         if (mode != FM_DELETE) {
             if (p==NULL) {
+#if defined(MIKTEX)
+                MIKTEX_VERIFY (avl_ins(fp, mp->ps->tfm_tree, avl_false)>0);
+#else
                 assert (avl_ins(fp, mp->ps->tfm_tree, avl_false)>0);
+#endif
             }
             set_tfmlink (fp);
         }
@@ -997,7 +1005,11 @@ static int avl_do_entry (MP mp, fm_entry * fp, int mode) {
         }
         if (mode != FM_DELETE) {
             if (p==NULL) {
+#if defined(MIKTEX)
+                MIKTEX_VERIFY (avl_ins(fp, mp->ps->ps_tree, avl_false)>0);
+#else
                 assert (avl_ins(fp, mp->ps->ps_tree, avl_false)>0);
+#endif
             }
             set_pslink (fp);
         }
@@ -1397,7 +1409,11 @@ static ff_entry *check_ff_exist (MP mp, fm_entry * fm) {
         ff = new_ff_entry (mp);
         ff->ff_name = mp_xstrdup (mp,fm->ff_name);
         ff->ff_path = mp_xstrdup (mp,fm->ff_name);
+#if defined(MIKTEX)
+        MIKTEX_VERIFY(avl_ins (ff, mp->ps->ff_tree, avl_false)>0);
+#else
         assert(avl_ins (ff, mp->ps->ff_tree, avl_false)>0);
+#endif
         delete_ff_entry(ff);
         ff = (ff_entry *) avl_find (&tmp, mp->ps->ff_tree);
     }
