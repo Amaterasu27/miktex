@@ -921,7 +921,7 @@ Match (/*[in]*/ const char * lpszPathPattern,
     }
     return (false);
   }
-  return (*lpszPathPattern == 0 && *lpszPath == 0);
+  return ((*lpszPathPattern == 0 || strcmp(lpszPathPattern, RECURSION_INDICATOR) == 0) && *lpszPath == 0);
 }
 
 /* _________________________________________________________________________
