@@ -159,6 +159,8 @@ SessionImpl::ReadFormatsIni (/*[in]*/ const PathName & cfgFile)
 				"attributes",
 				val))
 	{
+	  formatInfo.exclude = false;
+	  formatInfo.noExecutable = false;
 	  for (CSVList flag (val.c_str(), ','); flag.GetCurrent() != 0; ++ flag)
 	  {
 	    if (StringCompare(flag.GetCurrent(), "exclude") == 0)
@@ -294,16 +296,16 @@ SessionImpl::WriteFormatsIni ()
 	if (! attributes.empty())
 	{
 	  attributes += ',';
-	  attributes += "exclude";
 	}
+	attributes += "exclude";
       }
       if (it->noExecutable)
       {
 	if (! attributes.empty())
 	{
 	  attributes += ',';
-	  attributes += "noexe";
 	}
+	attributes += "noexe";
       }
       pFormats->PutValue (it->key.c_str(), "attributes", attributes.c_str());
     }
