@@ -1,6 +1,6 @@
 /* Setup.cpp:
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2010 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -2047,6 +2047,8 @@ RegisterPathNT ()
     {
       pathBinDir.Set (theApp.GetInstallRoot(), MIKTEX_PATH_BIN_DIR);
     }
+
+  pathBinDir.ToDos ();
 
   Log (T_("Registering bin dir: %s\n"), Q_(pathBinDir));
 
