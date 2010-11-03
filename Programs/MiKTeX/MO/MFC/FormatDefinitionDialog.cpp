@@ -1,6 +1,6 @@
 /* FormatDefinitionDialog.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -43,6 +43,7 @@ FormatDefinitionDialog::FormatDefinitionDialog
       formatInfo.key = T_("newformat");
       formatInfo.name = T_("newformat");
       formatInfo.inputFile = T_("newformat.tex");
+      formatInfo.custom = true;
     }
   else
     {
