@@ -42,6 +42,7 @@
 
 #include <miktex/Core/Paths>
 #include <miktex/TeXAndFriends/ETeXApp>
+#include <miktex/KPSE/Emulation>
 
 namespace pdftex {
 #include "pdftex.defaults.h"
@@ -261,6 +262,7 @@ public:
   Init (/*[in]*/ const char * lpszProgramInvocationName)
   {
     ETeXApp::Init (lpszProgramInvocationName);
+    kpse_set_program_name (lpszProgramInvocationName, 0);
 #if defined(IMPLEMENT_TCX)
     EnableFeature (MiKTeX::TeXAndFriends::Feature::EightBitChars);
     EnableFeature (MiKTeX::TeXAndFriends::Feature::TCX);
