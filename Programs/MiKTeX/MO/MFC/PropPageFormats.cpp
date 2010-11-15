@@ -182,6 +182,7 @@ PropPageFormats::MakeAlias (/*[in]*/ const FormatInfo & formatInfo)
   PathName pathAlias (pathBinDir, formatInfo.name, ".exe");
   if (compilerPath != pathAlias && ! File::Exists(pathAlias))
     {
+      Directory::Create (pathBinDir);
       File::Copy (compilerPath, pathAlias);
       if (! Fndb::FileExists(pathAlias))
 	{
