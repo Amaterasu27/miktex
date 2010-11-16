@@ -1465,7 +1465,11 @@ MakeFontMapApp::BuildFontconfigCache ()
        it != paths.end();
        ++ it)
     {
+#if defined(MIKTEX_WINDOWS)
+      writer.WriteFormattedLine ("<dir>%s</dir>", Utils::AnsiToUTF8(it->c_str()).c_str());
+#else
       writer.WriteFormattedLine ("<dir>%s</dir>", it->c_str());
+#endif
     }
   writer.WriteLine ("</fontconfig>");
   writer.Close ();
