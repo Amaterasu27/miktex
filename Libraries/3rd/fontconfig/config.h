@@ -200,6 +200,9 @@
 #undef pid_t
 
 #if defined(MIKTEX) && ! defined(DONT_USE_MIKTEX_EXIT)
+#if defined(MIKTEX_WINDOWS)
+#  define MIKTEX_USE_UTF8_FILE_NAMES 1
+#endif
 #  define USE_MIKTEX_EXIT
 #  undef USE_FCSTAT
 #endif

@@ -28,9 +28,18 @@
 FcBool
 FcFileIsDir (const FcChar8 *file)
 {
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    wchar_t wdirbuf[FC_MAX_FILE_LEN];
+    wchar_t * wdir = miktex_utf8_to_wide_char(file, FC_MAX_FILE_LEN, wdirbuf);
+#endif
+
     struct stat	    statb;
 
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    if (_wstat (wdir, &statb) != 0)
+#else
     if (FcStat ((const char *) file, &statb) != 0)
+#endif
 	return FcFalse;
     return S_ISDIR(statb.st_mode);
 }
@@ -272,10 +281,19 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     FcCache		*cache = NULL;
     struct stat		dir_stat;
 
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+    wchar_t wdirbuf[FC_MAX_FILE_LEN];
+    wchar_t * wdir = miktex_utf8_to_wide_char(dir, FC_MAX_FILE_LEN, wdirbuf);
+#endif
+
     if (FcDebug () & FC_DBG_FONTSET)
 	printf ("cache scan dir %s\n", dir);
 
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+	if (_wstat(wdir, &dir_stat) < 0)
+#else
     if (FcStat ((char *) dir, &dir_stat) < 0)
+#endif
     {
 	if (errno != ENOENT)
 	    ret = FcFalse;

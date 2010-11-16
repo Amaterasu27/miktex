@@ -17,6 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
+#include <config.h>
+
 #include <cstdlib>
 #include <io.h>
 #include <exception>
@@ -158,6 +160,10 @@ miktex_close_cache_file (/*[in]*/ int		fd,
 {
   try
     {
+#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
+      string ansidir = Utils::UTF8ToAnsi(lpszDir);
+      lpszDir = ansidir.c_str();
+#endif
       time_t dirCreationTime, dirAccessTime, dirWriteTime;
       File::GetTimes (lpszDir,
 		      dirCreationTime,
