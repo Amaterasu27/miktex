@@ -1845,7 +1845,7 @@ public:
   std::string
   AnsiToUTF8 (/*[in]*/ const char * lpszAnsi)
   {
-    return (WideCharToAnsi(AnsiToWideChar(lpszAnsi).c_str()));
+    return (WideCharToUTF8(AnsiToWideChar(lpszAnsi).c_str()));
   }
 #endif
 
