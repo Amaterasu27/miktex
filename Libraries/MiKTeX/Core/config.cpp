@@ -1487,8 +1487,15 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
   char chr;
   bool readingName = false;
   string name;
-  while (streamIn.Read(&chr, 1) == 1)
+  const size_t UTF8BOM_LEN = 3;
+  char const utf8bom[UTF8BOM_LEN] = { 0xef, 0xbb, 0xbf };
+  bool isUtf8 = true;
+  for (int count = 0; streamIn.Read(&chr, 1) == 1; ++ count)
     {
+      if (count < UTF8BOM_LEN)
+      {
+	isUtf8 = isUtf8 && chr == utf8bom[count];
+      }
       if (chr == '@')
 	{
 	  if (readingName)
@@ -1513,6 +1520,12 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 				      T_("Unknown variable."),
 				      name.c_str());
 		}
+#if defined(MIKTEX_WINDOWS)
+	      if (isUtf8)
+	      {
+		value = Utils::AnsiToUTF8(value.c_str());
+	      }
+#endif
 	      streamOut.Write (value.c_str(), value.length());
 	    }
 	  else
