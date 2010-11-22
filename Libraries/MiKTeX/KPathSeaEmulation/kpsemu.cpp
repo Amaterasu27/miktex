@@ -1533,7 +1533,7 @@ miktex_kpsemu_create_texmf_cnf ()
     std::string val;
     if (VarValue("TEXMFVAR", val))
     {
-      stream.WriteFormattedLine ("  TEXMFCACHE=%s", val.c_str());
+      stream.WriteFormattedLine ("  TEXMFCACHE=\"%s\"", val.c_str());
     }
     stream.WriteLine ("}");
     stream.Close ();
