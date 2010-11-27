@@ -25,6 +25,7 @@
 #include "PDFDocument.h"
 #include "PrefsDialog.h"
 #include "TemplateDialog.h"
+#include "TWSystemCmd.h"
 
 #include "TWVersion.h"
 #include "SvnRev.h"
@@ -76,13 +77,12 @@ const int kDefaultMaxRecentFiles = 20;
 TWApp *TWApp::theAppInstance = NULL;
 
 TWApp::TWApp(int &argc, char **argv)
-	: QApplication(argc, argv)
+	: ConfigurableApp(argc, argv)
 	, defaultCodec(NULL)
 	, binaryPaths(NULL)
 	, defaultBinPaths(NULL)
 	, engineList(NULL)
 	, defaultEngineIndex(0)
-	, settingsFormat(QSettings::NativeFormat)
 	, scriptManager(NULL)
 #ifdef Q_WS_WIN
 	, messageTargetWindow(NULL)
@@ -343,7 +343,7 @@ void TWApp::goToHomePage()
 /* based on MSDN sample code from http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx */
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 
-QString GetWindowsVersionString()
+QString TWApp::GetWindowsVersionString()
 {
 #if defined(MIKTEX)
   return (MiKTeX::Core::Utils::GetOSVersionString().c_str());
@@ -434,6 +434,19 @@ QString GetWindowsVersionString()
 	
 	return result;
 #endif // MIKTEX
+}
+
+unsigned int TWApp::GetWindowsVersion()
+{
+	OSVERSIONINFOEXA osvi;
+	
+	memset(&osvi, 0, sizeof(OSVERSIONINFOEXA));
+	
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
+	if ( !GetVersionExA ((OSVERSIONINFOA *) &osvi) )
+		return 0;
+	
+	return (osvi.dwMajorVersion << 24) | (osvi.dwMinorVersion << 16) | (osvi.wServicePackMajor << 8) | (osvi.wServicePackMinor << 0);
 }
 #endif
 
@@ -616,17 +629,25 @@ void TWApp::openRecentFile()
 
 QStringList TWApp::getOpenFileNames(QString selectedFilter)
 {
+	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
+#endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
 	QStringList filters = *TWUtils::filterList();
 	if (!selectedFilter.isNull() && !filters.contains(selectedFilter))
 		filters.prepend(selectedFilter);
 	return QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir,
-										 filters.join(";;"), &selectedFilter);
+										 filters.join(";;"), &selectedFilter, options);
 }
 
 QString TWApp::getOpenFileName(QString selectedFilter)
 {
+	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
+#endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
 	QStringList filters = *TWUtils::filterList();
@@ -639,15 +660,14 @@ QString TWApp::getOpenFileName(QString selectedFilter)
 	}
 #endif
 	return QFileDialog::getOpenFileName(NULL, QString(tr("Open File")), lastOpenDir,
-										filters.join(";;"), &selectedFilter);
+										filters.join(";;"), &selectedFilter, options);
 }
 
 QString TWApp::getSaveFileName(const QString& defaultName)
 {
-#ifdef Q_WS_WIN
-	QFileDialog::Options	options = QFileDialog::DontUseNativeDialog;
-#else
 	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QString selectedFilter;
 	if (!TWUtils::filterList()->isEmpty())
@@ -1150,59 +1170,6 @@ void TWApp::showScriptsFolder()
 	QDesktopServices::openUrl(QUrl::fromLocalFile(TWUtils::getLibraryPath("scripts")));
 }
 
-QVariant TWApp::launchFile(const QString& fileName, bool waitForResult)
-{
-	// first check if command execution is permitted
-	QSETTINGS_OBJECT(settings);
-
-	// it's OK to "launch" a directory, as that doesn't normally execute anything
-	QFileInfo finfo(fileName);
-	if (finfo.isDir() || settings.value("allowSystemCommands", false).toBool())
-		return waitForResult ? QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)) : QVariant();
-	else
-		return waitForResult ? QVariant(tr("System command execution is disabled (see Preferences)")) : QVariant();
-}
-
-QVariant TWApp::system(const QString& cmdline, bool waitForResult)
-{
-	// first check if command execution is permitted
-	QSETTINGS_OBJECT(settings);
-	if (settings.value("allowSystemCommands", false).toBool()) {
-		TWSystemCmd *process = new TWSystemCmd(this, waitForResult);
-		if (waitForResult) {
-			process->setProcessChannelMode(QProcess::MergedChannels);
-			process->start(cmdline);			
-			// make sure events (in particular GUI update events that should
-			// inform the user of the progress) are processed before we make a
-			// call that possibly blocks for a considerable amount of time
-			processEvents(QEventLoop::ExcludeUserInputEvents, 100);
-			if (!process->waitForStarted()) {
-				process->deleteLater();
-				return QVariant(tr("Failed to execute system command: %1").arg(cmdline));
-			}
-			processEvents(QEventLoop::ExcludeUserInputEvents, 100);
-			if (!process->waitForFinished()) {
-				process->deleteLater();
-				return QVariant(tr("Error executing system command: %1").arg(cmdline));
-			}
-			return QVariant(process->getResult());
-		}
-		else {
-			process->closeReadChannel(QProcess::StandardOutput);
-			process->closeReadChannel(QProcess::StandardError);
-			process->start(cmdline);
-			return QVariant();
-		}
-	}
-	else {
-		if (waitForResult) {
-			return QVariant(tr("System command execution is disabled (see Preferences)"));
-		}
-		// else result is null
-		return QVariant();
-	}
-}
-
 #ifdef Q_WS_WIN	// support for the Windows single-instance code
 #include <windows.h>
 
@@ -1336,6 +1303,12 @@ void TWApp::globalDestroyed(QObject * obj)
 				break;
 		}
 	}
+}
+
+/*Q_INVOKABLE static*/
+int TWApp::getVersion()
+{
+	return (VER_MAJOR << 16) | (VER_MINOR << 8) | VER_BUGFIX;
 }
 
 #if defined(MIKTEX)

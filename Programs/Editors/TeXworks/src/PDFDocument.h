@@ -259,6 +259,7 @@ public slots:
 	void goToSource();
 	void toggleFullScreen();
 	void syncFromSource(const QString& sourceFile, int lineNo, bool activatePreview);
+	void print();
 	
 private slots:
 	void updateRecentFileActions();
@@ -268,9 +269,6 @@ private slots:
 	void adjustScaleActions(autoScaleOption);
 	void syncClick(int page, const QPointF& pos);
 	void reloadWhenIdle();
-#if defined(MIKTEX)
-	void print ();
-#endif
 
 signals:
 	void reloaded();

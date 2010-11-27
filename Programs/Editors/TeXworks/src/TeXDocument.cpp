@@ -309,6 +309,11 @@ void TeXDocument::init()
 	// kDefault_TabWidth is defined in PrefsDialog.h
 	textEdit->setTabStopWidth(settings.value("tabWidth", kDefault_TabWidth).toInt());
 	
+	// It is VITAL that this connection is queued! Calling showMessage directly
+	// from TeXDocument::contentsChanged would otherwise result in a seg fault
+	// (for whatever reason)
+	connect(this, SIGNAL(asyncFlashStatusBarMessage(QString, int)), statusBar(), SLOT(showMessage(QString, int)), Qt::QueuedConnection);
+	
 	QString indentOption = settings.value("autoIndent").toString();
 	options = CompletingEdit::autoIndentModes();
 	
@@ -493,13 +498,28 @@ void TeXDocument::setSpellcheckLanguage(const QString& lang)
 {
 	// this is called by the %!TEX spellcheck... line, or by scripts;
 	// it searches the menu for the given language code, and triggers it if available
+	
+	// Determine all aliases for the specified lang
+	QList<QString> langAliases;
+	foreach (const QString& dictKey, TWUtils::getDictionaryList()->uniqueKeys()) {
+		if(TWUtils::getDictionaryList()->values(dictKey).contains(lang))
+			langAliases += TWUtils::getDictionaryList()->values(dictKey);
+	}
+	langAliases.removeAll(lang);
+	langAliases.prepend(lang);
+	
+	bool found = false;
 	if (menuSpelling) {
 		QAction *chosen = menuSpelling->actions()[0]; // default is None
 		foreach (QAction *act, menuSpelling->actions()) {
-			if (act->text() == lang || act->text().contains("(" + lang + ")")) {
-				chosen = act;
-				break;
+			foreach(QString alias, langAliases) {
+				if (act->text() == alias || act->text().contains("(" + alias + ")")) {
+					chosen = act;
+					found = true;
+					break;
+				}
 			}
+			if(found) break;
 		}
 		chosen->trigger();
 	}
@@ -559,6 +579,9 @@ void TeXDocument::open()
 		/* use a sheet if we're calling Open from an empty, untitled, untouched window; otherwise use a separate dialog */
 	if (!(isUntitled && textEdit->document()->isEmpty() && !isWindowModified()))
 		options = QFileDialog::DontUseSheet;
+#endif
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
@@ -752,14 +775,9 @@ bool TeXDocument::saveAll()
 
 bool TeXDocument::saveAs()
 {
+	QFileDialog::Options	options = 0;
 #ifdef Q_WS_WIN
-#  if defined(MIKTEX)
-	QFileDialog::Options	options = 0;
-#  else
-	QFileDialog::Options	options = QFileDialog::DontUseNativeDialog;
-#  endif
-#else
-	QFileDialog::Options	options = 0;
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QString selectedFilter;
 
@@ -2482,7 +2500,7 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 		QString pdfName;
 		if (getPreviewFileName(pdfName) && QFileInfo(pdfName).lastModified() != oldPdfTime) {
 			// only open/refresh the PDF if it was changed by the typeset process
-			if (pdfDoc == NULL) {
+			if (pdfDoc == NULL || pdfName != pdfDoc->fileName()) {
 				if (showPdfWhenFinished && openPdfIfAvailable(true))
 					pdfDoc->selectWindow();
 			}
@@ -2644,13 +2662,11 @@ void TeXDocument::contentsChanged(int position, int /*charsRemoved*/, int /*char
 			if (index > -1) {
 				if (index != engine->currentIndex()) {
 					engine->setCurrentIndex(index);
-					statusBar()->showMessage(tr("Set engine to \"%1\"").arg(engine->currentText()), kStatusMessageDuration);
+					emit asyncFlashStatusBarMessage(tr("Set engine to \"%1\"").arg(engine->currentText()), kStatusMessageDuration);
 				}
-				else
-					statusBar()->clearMessage();
 			}
 			else {
-				statusBar()->showMessage(tr("Engine \"%1\" not defined").arg(name), kStatusMessageDuration);
+				emit asyncFlashStatusBarMessage(tr("Engine \"%1\" not defined").arg(name), kStatusMessageDuration);
 			}
 		}
 		
@@ -2827,8 +2843,12 @@ void TeXDocument::dropEvent(QDropEvent *event)
 				QString fileName = url.toLocalFile();
 				switch (action) {
 					case OPEN_FILE_IN_NEW_WINDOW:
-						TWApp::instance()->openFile(fileName);
-						break;
+						if(!TWUtils::isImageFile(fileName)) {
+							TWApp::instance()->openFile(fileName);
+							break;
+						}
+						// for graphic files, fall through (there's no point in
+						// trying to open binary files as text
 
 					case INSERT_DOCUMENT_TEXT:
 						if (!TWUtils::isPDFfile(fileName) && !TWUtils::isImageFile(fileName) && !TWUtils::isPostscriptFile(fileName)) {

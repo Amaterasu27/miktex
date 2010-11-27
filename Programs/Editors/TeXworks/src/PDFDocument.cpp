@@ -1144,6 +1144,7 @@ PDFDocument::init()
 	connect(actionNew, SIGNAL(triggered()), qApp, SLOT(newFile()));
 	connect(actionNew_from_Template, SIGNAL(triggered()), qApp, SLOT(newFromTemplate()));
 	connect(actionOpen, SIGNAL(triggered()), qApp, SLOT(open()));
+	connect(actionPrintPdf, SIGNAL(triggered()), this, SLOT(print()));
 
 	connect(actionQuit_TeXworks, SIGNAL(triggered()), TWApp::instance(), SLOT(maybeQuit()));
 
@@ -1244,16 +1245,6 @@ PDFDocument::init()
 #if 0
 	menuHelp->addAction (actionAbout_MiKTeX);
 #endif
-
-	// see http://code.google.com/p/texworks/issues/detail?id=78#c1
-	actionPrintPDF = new QAction(this);
-	actionPrintPDF->setIcon(QIcon(":/images/tango/document-print.png"));
-	actionPrintPDF->setObjectName(QString::fromUtf8("actionPrintPDF"));
-	actionPrintPDF->setText(QApplication::translate("PDFDocument", "Print...", 0, QApplication::UnicodeUTF8));
-	actionPrintPDF->setShortcut (QKeySequence::Print);
-	connect (actionPrintPDF, SIGNAL(triggered()), this, SLOT(print()));
-	menuFile->insertAction (actionClose, actionPrintPDF);
-	menuFile->insertSeparator (actionClose);
 #endif
 }
 
@@ -1746,10 +1737,10 @@ void PDFDocument::doFindAgain(bool newSearch /*= false*/)
 	}
 }
 
-#if defined(MIKTEX)
-// see http://code.google.com/p/texworks/issues/detail?id=78#c1
 void PDFDocument::print()
 {
+#if defined(MIKTEX)
+// see http://code.google.com/p/texworks/issues/detail?id=78#c1
 	QPrinter printer(QPrinter::HighResolution);
 	QPrintDialog printDlg(&printer, this);
 	QPainter painter;
@@ -1947,5 +1938,19 @@ void PDFDocument::print()
 		
 		progressDlg.reset();
 	}
-}
+#else
+	// Currently, printing is not supported in a reliable, cross-platform way
+	// Instead, offer to open the document in the system's default viewer
+	
+	QString msg = tr("Unfortunately, this version of %1 is unable to print Pdf documents due to various technical reasons.\n").arg(TEXWORKS_NAME);
+	msg += tr("Do you want to open the file in the default viewer for printing instead?");
+	msg += tr(" (remember to close it again to avoid access problems)");
+	
+	if(QMessageBox::information(this,
+		tr("Print Pdf..."), msg,
+		QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes
+	) {
+		QDesktopServices::openUrl(QUrl::fromLocalFile(curFile));
+	}
 #endif
+}

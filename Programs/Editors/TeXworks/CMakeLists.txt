@@ -40,6 +40,7 @@ set(texworks_sources
   src/CommandlineParser.h
   src/CompletingEdit.cpp
   src/CompletingEdit.h
+  src/ConfigurableApp.h
   src/ConfirmDelete.cpp
   src/ConfirmDelete.h
   src/FindDialog.cpp
@@ -63,6 +64,7 @@ set(texworks_sources
   src/TWScriptAPI.h
   src/TWScriptable.cpp
   src/TWScriptable.h
+  src/TWSystemCmd.h
   src/TWUtils.cpp
   src/TWUtils.h
   src/TWVersion.h
@@ -120,6 +122,7 @@ endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
   src/CompletingEdit.h
+  src/ConfigurableApp.h
   src/ConfirmDelete.h
   src/FindDialog.h
   src/HardWrapDialog.h
@@ -131,6 +134,7 @@ set(texworks_moc_sources
   src/TWScript.h
   src/TWScriptAPI.h
   src/TWScriptable.h
+  src/TWSystemCmd.h
   src/TWUtils.h
   src/TeXDocks.h
   src/TeXDocument.h

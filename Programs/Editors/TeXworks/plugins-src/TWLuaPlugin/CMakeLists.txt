@@ -34,10 +34,12 @@ include_directories(
 )
 
 set(twluaplugin_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/ConfigurableApp.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScript.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScript.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScriptAPI.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScriptAPI.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWSystemCmd.h
   TWLuaPlugin.cpp
   TWLuaPlugin.h
   twluaplugin-version.h
@@ -54,8 +56,10 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(twluaplugin_moc_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/ConfigurableApp.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScript.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScriptAPI.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWSystemCmd.h
   TWLuaPlugin.h
 )
 

@@ -189,7 +189,7 @@ void TWUtils::insertHelpMenuItems(QMenu* helpMenu)
 	for (i = 0; i < actions.count(); ++i) {
 		if (actions[i]->isSeparator() && !firstSeparator)
 			firstSeparator = i;
-#if defined(MIKTEX) and defined(_MSC_VER)
+#if defined(MIKTEX) && defined(_MSC_VER)
 		// enum bitfield treated incorrectly as integer
 		// see http://connect.microsoft.com/VisualStudio/feedback/details/100849
 		if (actions[i]->menuRole() == -4) {
@@ -362,11 +362,11 @@ QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /*= f
 
 	dictionaryList = new QHash<QString, QString>();
 	QDir dicDir(TWUtils::getLibraryPath("dictionaries"));
-	foreach (QFileInfo affFileInfo, dicDir.entryInfoList(QStringList("*.aff"),
+	foreach (QFileInfo dicFileInfo, dicDir.entryInfoList(QStringList("*.dic"),
 				QDir::Files | QDir::Readable, QDir::Name | QDir::IgnoreCase)) {
-		QFileInfo dicFileInfo(affFileInfo.dir(), affFileInfo.completeBaseName() + ".dic");
-		if (dicFileInfo.isReadable())
-			dictionaryList->insertMulti(affFileInfo.canonicalFilePath(), affFileInfo.completeBaseName());
+		QFileInfo affFileInfo(dicFileInfo.dir(), dicFileInfo.completeBaseName() + ".aff");
+		if (affFileInfo.isReadable())
+			dictionaryList->insertMulti(dicFileInfo.canonicalFilePath(), dicFileInfo.completeBaseName());
 	}
 
 #if defined(MIKTEX)
