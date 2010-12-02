@@ -125,8 +125,8 @@ DviDraw::~DviDraw ()
    DviDraw::DrawDviBitmaps
    _________________________________________________________________________ */
 
-#define USE_BITBLT		0 // this causes smeared characters under win95
-#define USE_STRETCHDIBITS	1
+#define USE_BITBLT		1 // this causes smeared characters under win95
+#define USE_STRETCHDIBITS	0
 
 void
 DviDraw::DrawDviBitmaps (/*[in]*/ CDC *		pDC,
