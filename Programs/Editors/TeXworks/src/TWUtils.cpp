@@ -24,6 +24,10 @@
 #include "TeXDocument.h"
 #include "PDFDocument.h"
 
+#if defined(MIKTEX)
+#  include "TWVersion.h"
+#endif
+
 #include <QFileDialog>
 #include <QString>
 #include <QMenu>
@@ -107,6 +111,7 @@ const QString TWUtils::getLibraryPath(const QString& subdir)
 		  MiKTeX::Core::PathName dir;
 		  dir = MiKTeX::Core::SessionWrapper(true)->GetSpecialPath(MiKTeX::Core::SpecialPath::UserDataRoot);
 		  dir += TEXWORKS_NAME;
+		  dir += TEXWORKS_VERSION;
 		  dir += subdir.toLocal8Bit().constData();
 		  libPath = dir.Get();
 		}
