@@ -1,6 +1,6 @@
 /* process.cpp: executing secondary processes
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -29,6 +29,15 @@
    _________________________________________________________________________ */
 
 Process::~Process ()
+{
+}
+
+/* _________________________________________________________________________
+
+   Process2::~Process2
+   _________________________________________________________________________ */
+
+Process2::~Process2 ()
 {
 }
 
@@ -318,6 +327,26 @@ Process::ExecuteSystemCommand (/*[in]*/ const char *	lpszCommandLine,
 			       /*[out]*/ int *		pExitCode)
 {
   return (ExecuteSystemCommand(lpszCommandLine, pExitCode, 0, 0));
+}
+
+/* _________________________________________________________________________
+
+   Process2::GetInvokerNames
+   _________________________________________________________________________ */
+
+vector<string>
+Process2::GetInvokerNames ()
+{
+  vector<string> result;
+  auto_ptr<Process2> pProcess (Process2::GetCurrentProcess());
+  auto_ptr<Process2> pParentProcess (pProcess->get_Parent());
+  while (pParentProcess.get() != 0)
+  {
+    result.push_back (pParentProcess->get_ProcessName());
+    pParentProcess.reset (pParentProcess->get_Parent());
+  }
+  reverse (result.begin(), result.end());
+  return (result);
 }
 
 /* _________________________________________________________________________

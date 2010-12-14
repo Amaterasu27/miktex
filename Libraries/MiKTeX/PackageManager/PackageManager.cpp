@@ -62,9 +62,19 @@ template<class Base>
 struct ClientInfo : public Base
 {
   ClientInfo ()
-    : name_ ("MPM"),
-      version_ (MIKTEX_COMPONENT_VERSION_STR)
+    : version_ (MIKTEX_COMPONENT_VERSION_STR)
   {
+#if 1
+    vector<string> invokers = Process2::GetInvokerNames();
+    for (vector<string>::const_iterator it = invokers.begin(); it != invokers.end(); ++ it)
+    {
+      name_ += *it;
+      name_ += "/";
+    }
+    name_ += Utils::GetExeName();
+    name_ += "/";
+#endif
+    name_ += "MPM";
     Base::Name = &name_;
     Base::Version = &version_;
   };

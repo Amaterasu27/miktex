@@ -1,6 +1,6 @@
 /* winProcess.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -406,7 +406,6 @@ winProcess::Create ()
     }
 }
 
-
 /* _________________________________________________________________________
 
    winProcess::winProcess
@@ -422,6 +421,7 @@ winProcess::winProcess (/*[in]*/ const ProcessStartInfo & startinfo)
     pFileStandardError (0),
     processStarted (false)
 {
+  processEntry.dwSize = 0;
   Create ();
 }
 
@@ -777,4 +777,131 @@ Process::StartSystemCommand (/*[in]*/ const char * lpszCommandLine)
   string arguments (lpszCommandLine);
   PathName systemShell = Wrap(arguments);
   Process::Start (systemShell, arguments.c_str());
+}
+
+/* _________________________________________________________________________
+
+   winProcess::winProcess
+   _________________________________________________________________________ */
+
+winProcess::winProcess ()
+  : standardInput (INVALID_HANDLE_VALUE),
+    standardOutput (INVALID_HANDLE_VALUE),
+    standardError (INVALID_HANDLE_VALUE),
+    pFileStandardInput (0),
+    pFileStandardOutput (0),
+    pFileStandardError (0),
+    processStarted (false)
+{
+  processEntry.dwSize = 0;
+}
+
+/* _________________________________________________________________________
+
+   Process::GetCurrentProcess
+   _________________________________________________________________________ */
+
+Process2 *
+Process2::GetCurrentProcess ()
+{
+  HANDLE myHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, GetCurrentProcessId());
+  if (myHandle == 0)
+  {
+    FATAL_WINDOWS_ERROR ("OpenProcess", 0);
+  }
+  winProcess * pCurrentProcess = new winProcess();
+  pCurrentProcess->processStarted = true;
+  pCurrentProcess->processInformation.hProcess = myHandle;
+  pCurrentProcess->processInformation.hThread = GetCurrentThread();
+  pCurrentProcess->processInformation.dwProcessId = GetCurrentProcessId();
+  pCurrentProcess->processInformation.dwThreadId = GetCurrentThreadId();
+  return (pCurrentProcess);
+}
+
+/* _________________________________________________________________________
+
+   winProcess::GetProcessEntry
+   _________________________________________________________________________ */
+
+PROCESSENTRY32
+winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
+{
+  HANDLE snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if (snapshotHandle == INVALID_HANDLE_VALUE)
+  {
+    FATAL_WINDOWS_ERROR ("CreateToolHelp32Snapshot", 0);
+  }
+  AutoHANDLE autoSnapshotHandle (snapshotHandle);
+  PROCESSENTRY32 result;
+  result.dwSize = sizeof(result);
+  if (! Process32First(snapshotHandle, &result))
+  {
+    DWORD lastError = GetLastError();
+    if (lastError == ERROR_NO_MORE_FILES)
+    {
+      UNEXPECTED_CONDITION ("winProcess::GetProcessEntry");
+    }
+    else
+    {
+      FATAL_WINDOWS_ERROR_2 ("Process32First", lastError, 0);
+    }
+  }
+  do
+  {
+    if (result.th32ProcessID == processId)
+    {
+      return (result);
+    }
+  } while (Process32Next(snapshotHandle, &result));
+  DWORD lastError = GetLastError();
+  if (lastError == ERROR_NO_MORE_FILES)
+  {
+    UNEXPECTED_CONDITION ("winProcess::GetProcessEntry");
+  }
+  else
+  {
+    FATAL_WINDOWS_ERROR_2 ("Process32First", lastError, 0);
+  }
+}
+
+/* _________________________________________________________________________
+
+   winProcess::get_Parent
+   _________________________________________________________________________ */
+
+Process2 *
+winProcess::get_Parent ()
+{
+  if (processEntry.dwSize == 0)
+  {
+    processEntry = GetProcessEntry(processInformation.dwProcessId);
+  }
+  HANDLE parentProcessHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processEntry.th32ParentProcessID);
+  if (parentProcessHandle == 0)
+  {
+    return (0);
+  }
+  winProcess * pParentProcess = new winProcess();
+  pParentProcess->processStarted = true;
+  pParentProcess->processInformation.hProcess = parentProcessHandle;
+  pParentProcess->processInformation.dwProcessId = processEntry.th32ParentProcessID;
+  pParentProcess->processInformation.hThread = 0;
+  pParentProcess->processInformation.dwThreadId = 0;
+  return (pParentProcess);
+}
+
+/* _________________________________________________________________________
+
+   winProcess::get_ProcessName
+   _________________________________________________________________________ */
+
+string
+winProcess::get_ProcessName ()
+{
+  if (processEntry.dwSize == 0)
+  {
+    processEntry = GetProcessEntry(processInformation.dwProcessId);
+  }
+  PathName exePath (processEntry.szExeFile);
+  return (exePath.GetFileNameWithoutExtension().Get());
 }

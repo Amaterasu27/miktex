@@ -2818,6 +2818,7 @@ IniTeXMFApp::ShowConfigValue (/*[in]*/ const char *  lpszValueSpec)
 void
 IniTeXMFApp::ReportMiKTeXVersion ()
 {
+  vector<string> invokerNames = Process2::GetInvokerNames();
   if (xml)
     {
       xmlWriter.StartElement ("setup");
@@ -2846,6 +2847,16 @@ IniTeXMFApp::ReportMiKTeXVersion ()
   else
     {
       cout << "MiKTeX: " << Utils::GetMiKTeXVersionString() << endl;
+      cout << "Invokers: ";
+      for (vector<string>::const_iterator it = invokerNames. begin(); it != invokerNames.end(); ++ it)
+      {
+	if (it != invokerNames.begin())
+	{
+	  cout << "/";
+	}
+	cout << *it;
+      }
+      cout << endl;
 #if defined(MIKTEX_WINDOWS)
       if (IsWindowsNT())
 	{

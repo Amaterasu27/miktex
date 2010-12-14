@@ -5444,6 +5444,46 @@ public:
 
 /* _________________________________________________________________________
 
+   Process2
+   _________________________________________________________________________ */
+
+class
+MIKTEXNOVTABLE
+Process2 : public Process
+{
+public:
+  virtual
+  MIKTEXTHISCALL
+  ~Process2 ()
+    = 0;
+
+public:
+  virtual
+  Process2 *
+  MIKTEXTHISCALL
+  get_Parent ()
+    = 0;
+
+public:
+  virtual
+  std::string
+  MIKTEXTHISCALL
+  get_ProcessName ()
+    = 0;
+
+public:
+  static
+  MIKTEXCORECEEAPI(Process2 *)
+  GetCurrentProcess ();
+
+public:
+  static
+  MIKTEXCORECEEAPI(std::vector<std::string>)
+  GetInvokerNames ();
+};
+
+/* _________________________________________________________________________
+
    ScratchDirectory
    _________________________________________________________________________ */
 

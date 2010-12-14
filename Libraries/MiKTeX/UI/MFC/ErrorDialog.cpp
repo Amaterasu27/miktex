@@ -1,6 +1,6 @@
 /* ErrorDialog.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2010 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -283,9 +283,20 @@ ErrorDialogImpl::CreateReport ()
     {
       try
 	{
+	  vector<string> invokerNames = Process2::GetInvokerNames();
 	  s << "MiKTeX: "
 	    << Utils::GetMiKTeXVersionString() << endl
 	    << "OS: " << Utils::GetOSVersionString() << endl;
+	  s << "Invokers: ";
+	  for (vector<string>::const_iterator it = invokerNames. begin(); it != invokerNames.end(); ++ it)
+	  {
+	    if (it != invokerNames.begin())
+	    {
+	      s << "/";
+	    }
+	    s << *it;
+	  }
+	  s << endl;
 	  if (IsWindowsNT())
 	    {
 	      s << "SystemAdmin: " << (pSession->RunningAsAdministrator()

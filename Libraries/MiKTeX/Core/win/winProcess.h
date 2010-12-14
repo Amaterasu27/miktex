@@ -1,6 +1,6 @@
 /* winProcess.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2010 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -19,7 +19,7 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-class winProcess : public Process
+class winProcess : public Process2
 {
 public:
   virtual
@@ -63,6 +63,21 @@ public:
   MIKTEXTHISCALL
   Close ();
 
+public:
+  virtual
+  Process2 *
+  MIKTEXTHISCALL
+  get_Parent ();
+
+public:
+  virtual
+  std::string
+  MIKTEXTHISCALL
+  get_ProcessName ();
+
+private:
+  winProcess ();
+
 private:
   winProcess (/*[in]*/ const ProcessStartInfo & startinfo);
 
@@ -94,5 +109,14 @@ private:
   bool processStarted;
 
 private:
+  PROCESSENTRY32 processEntry;
+
+private:
+  static
+  PROCESSENTRY32
+  GetProcessEntry (/*[in]*/ DWORD processId);
+
+private:
   friend class Process;
+  friend class Process2;
 };
