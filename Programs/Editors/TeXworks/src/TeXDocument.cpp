@@ -427,8 +427,8 @@ void TeXDocument::init()
 	deferTagListChanges = false;
 
 	watcher = new QFileSystemWatcher(this);
-	connect(watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reloadIfChangedOnDisk()));
-	connect(watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(reloadIfChangedOnDisk()));
+	connect(watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reloadIfChangedOnDisk()), Qt::QueuedConnection);
+	connect(watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(reloadIfChangedOnDisk()), Qt::QueuedConnection);
 	
 	docList.append(this);
 	
@@ -779,7 +779,7 @@ bool TeXDocument::saveAs()
 #ifdef Q_WS_WIN
 	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
-	QString selectedFilter;
+	QString selectedFilter = TWUtils::chooseDefaultFilter(curFile, *(TWUtils::filterList()));;
 
 	// for untitled docs, default to the last dir used, or $HOME if no saved value
 	QSETTINGS_OBJECT(settings);
@@ -796,6 +796,9 @@ bool TeXDocument::saveAs()
 													&selectedFilter, options);
 	if (fileName.isEmpty())
 		return false;
+
+	// save the old document in "Recent Files"
+	saveRecentFileInfo();
 
 	// add extension from the selected filter, if unique and not already present
 	QRegExp re("\\(\\*(\\.[^ *]+)\\)");
@@ -1096,6 +1099,7 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 	runHooks("LoadFile");
 }
 
+#define FILE_MODIFICATION_ACCURACY	1000	// in msec
 void TeXDocument::reloadIfChangedOnDisk()
 {
 	if (isUntitled || !lastModified.isValid())
@@ -1149,7 +1153,31 @@ void TeXDocument::reloadIfChangedOnDisk()
 		yPos = textEdit->verticalScrollBar()->value();
 
 	// Reload the file from the disk
-	loadFile(curFile, false, true);
+	// Note that the file may change again before the system watcher is enabled
+	// again, so we should catch that case (this sometimes occurs with version
+	// control systems during commits)
+	unsigned int i;
+	// Limit this to avoid infinite loops
+	for (i = 0; i < 10; ++i) {
+		clearFileWatcher(); // stop watching until next save or reload
+		// Only reload files at full seconds to avoid problems with limited
+		// accuracy of the file system modification timestamps (if the file changes
+		// twice in one second, the modification timestamp is not altered and we may
+		// miss the second change otherwise)
+		while (QDateTime::currentDateTime() <= QFileInfo(curFile).lastModified().addMSecs(FILE_MODIFICATION_ACCURACY))
+			; // do nothing
+		loadFile(curFile, false, true);
+		// one final safety check - if the file has not changed, we can safely end this
+		if (QDateTime::currentDateTime() > QFileInfo(curFile).lastModified().addMSecs(FILE_MODIFICATION_ACCURACY))
+			break;
+	}
+	if (i == 10) { // the file has been changing constantly - give up and inform the user
+		QMessageBox::information(this, tr("File changed on disk"),
+								 tr("%1 is constantly being modified by another program.\n\n"
+									"Please use \"File > Revert to Saved\" manually when the external process has finished.")
+								 .arg(curFile),
+								 QMessageBox::Ok, QMessageBox::Ok);
+	}
 
 	// restore the cursor position
 	cur = textEdit->textCursor();
@@ -1646,7 +1674,11 @@ void TeXDocument::prefixLines(const QString &prefix)
 		selEnd = cursor.position();
 	}
 	if (selEnd == selStart)
-		goto handle_end_of_doc;	// special case
+		goto handle_end_of_doc;	// special case - cursor in blank line at end of doc
+	if (!cursor.atBlockStart()) {
+		cursor.movePosition(QTextCursor::StartOfBlock);
+		goto handle_end_of_doc; // special case - unterminated last line
+	}
 	while (cursor.position() > selStart) {
 		cursor.movePosition(QTextCursor::PreviousBlock);
 	handle_end_of_doc:
@@ -1686,8 +1718,13 @@ void TeXDocument::unPrefixLines(const QString &prefix)
 		cursor.movePosition(QTextCursor::NextBlock);
 		selEnd = cursor.position();
 	}
+	if (!cursor.atBlockStart()) {
+		cursor.movePosition(QTextCursor::StartOfBlock);
+		goto handle_end_of_doc; // special case - unterminated last line
+	}
 	while (cursor.position() > selStart) {
 		cursor.movePosition(QTextCursor::PreviousBlock);
+	handle_end_of_doc:
 		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
 		QString		str = cursor.selectedText();
 		if (str == prefix) {
@@ -2561,7 +2598,9 @@ void TeXDocument::anchorClicked(const QUrl& url)
 		if (url.hasFragment()) {
 			line = url.fragment().toLong();
 		}
-		openDocument(QFileInfo(curFile).absoluteDir().filePath(url.path()), true, true, line);
+		TeXDocument * target = openDocument(QFileInfo(getRootFilePath()).absoluteDir().filePath(url.path()), true, true, line);
+		if (target)
+			target->textEdit->setFocus(Qt::OtherFocusReason);
 	}
 	else {
 		TWApp::instance()->openUrl(url);

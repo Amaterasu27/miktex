@@ -33,6 +33,7 @@
 #include "TWUtils.h"
 #include "TWScriptable.h"
 #include "ConfigurableApp.h"
+#include "TWScriptAPI.h"
 
 #ifdef Q_WS_WIN
 #define PATH_LIST_SEP   ';'
@@ -115,8 +116,6 @@ public:
 
 	TWScriptManager* getScriptManager() { return scriptManager; }
 
-	void updateScriptsMenus();
-
 #ifdef Q_WS_WIN
 	void createMessageTarget(QWidget* aWindow);
 	static QString GetWindowsVersionString();
@@ -125,6 +124,10 @@ public:
 #ifdef Q_WS_X11
 	void bringToFront();
 #endif
+
+	QObject* openFile(const QString& fileName, const int pos = -1);
+	Q_INVOKABLE
+	QMap<QString, QVariant> openFileFromScript(const QString& fileName, TWScriptAPI * scriptApi, const int pos = -1, const bool askUser = false);
 
 	Q_INVOKABLE QList<QVariant> getOpenWindows() const;
 	
@@ -196,8 +199,6 @@ public slots:
 	void open();
 	void stackWindows();
 	void tileWindows();
-
-	QObject* openFile(const QString& fileName, const int pos = -1);
 
 	QString getOpenFileName(QString selectedFilter = QString());
 	QStringList getOpenFileNames(QString selectedFilter = QString());

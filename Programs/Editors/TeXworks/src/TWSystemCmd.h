@@ -30,24 +30,41 @@ class TWSystemCmd : public QProcess {
 	Q_OBJECT
 	
 public:
-	TWSystemCmd(QObject* parent, bool isOutputWanted = true)
-		: QProcess(parent), wantOutput(isOutputWanted)
+	TWSystemCmd(QObject* parent, const bool isOutputWanted = true, const bool runInBackground = false)
+		: QProcess(parent), wantOutput(isOutputWanted), deleteOnFinish(runInBackground)
 	{
 		connect(this, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
 		connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
 		connect(this, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
+		finishedSuccessfully = false;
 	}
 	virtual ~TWSystemCmd() {}
 	
 	QString getResult() { return result; }
 	
+	// replacement of QProcess::waitForStarted()
+	// unlike the QProcess version, this returns true if the process has already
+	// finished when the function is called
+	bool waitForStarted(int msecs = 30000) {
+		return (QProcess::waitForStarted(msecs) || finishedSuccessfully);
+	}
+
+	// replacement of QProcess::waitForFinished()
+	// unlike the QProcess version, this returns true if the process has already
+	// finished when the function is called
+	bool waitForFinished(int msecs = 30000) {
+		return (QProcess::waitForFinished(msecs) || finishedSuccessfully);
+	}
+	
 private slots:
 	void processError(QProcess::ProcessError error) {
 		if (wantOutput)
 			result = tr("ERROR: failure code %1").arg(error);
-		deleteLater();
+		if (deleteOnFinish)
+			deleteLater();
 	}
 	void processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+		finishedSuccessfully = (exitStatus == QProcess::NormalExit);
 		if (wantOutput) {
 			if (exitStatus == QProcess::NormalExit) {
 				if (bytesAvailable() > 0) {
@@ -59,7 +76,8 @@ private slots:
 				result = tr("ERROR: exit code %1").arg(exitCode);
 			}
 		}
-		deleteLater();
+		if (deleteOnFinish)
+			deleteLater();
 	}
 	void processOutput() {
 		if (wantOutput && bytesAvailable() > 0) {
@@ -70,6 +88,8 @@ private slots:
 
 private:
 	bool wantOutput;
+	bool deleteOnFinish;
+	bool finishedSuccessfully;
 	QString result;
 };
 

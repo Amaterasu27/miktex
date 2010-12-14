@@ -148,9 +148,8 @@ void TWScriptManager::loadPlugins()
 	
 	// get any static plugins
 	foreach (QObject *plugin, QPluginLoader::staticInstances()) {
-		TWScriptLanguageInterface *s = qobject_cast<TWScriptLanguageInterface*>(plugin);
-		if (s)
-			scriptLanguages += s;
+		if (qobject_cast<TWScriptLanguageInterface*>(plugin))
+			scriptLanguages += plugin;
 	}
 
 #ifdef TW_PLUGINPATH
@@ -194,15 +193,8 @@ void TWScriptManager::loadPlugins()
 		loader.setLoadHints(QLibrary::ExportExternalSymbolsHint);
 #endif
 		QObject *plugin = loader.instance();
-#if defined(MIKTEX)
-		if (plugin == 0)
-		{
-		  QString str = loader.errorString();
-		}
-#endif
-		TWScriptLanguageInterface *s = qobject_cast<TWScriptLanguageInterface*>(plugin);
-		if (s)
-			scriptLanguages += s;
+		if (qobject_cast<TWScriptLanguageInterface*>(plugin))
+			scriptLanguages += plugin;
 	}
 }
 
@@ -230,10 +222,13 @@ void TWScriptManager::reloadScripts(bool forceAll /*= false*/)
 
 void TWScriptManager::reloadScriptsInList(TWScriptList * list, QStringList & processed)
 {
+	QSETTINGS_OBJECT(settings);
+	bool enableScriptsPlugins = settings.value("enableScriptingPlugins", false).toBool();
+	
 	foreach(QObject * item, list->children()) {
 		if (qobject_cast<TWScriptList*>(item))
 			reloadScriptsInList(qobject_cast<TWScriptList*>(item), processed);
-		else if(qobject_cast<TWScript*>(item)) {
+		else if (qobject_cast<TWScript*>(item)) {
 			TWScript * s = qobject_cast<TWScript*>(item);
 			if (s->hasChanged()) {
 				// File has been removed
@@ -249,6 +244,11 @@ void TWScriptManager::reloadScriptsInList(TWScriptList * list, QStringList & pro
 					delete s;
 					continue;
 				}
+			}
+			if (!enableScriptsPlugins && !qobject_cast<const JSScriptInterface*>(s->getScriptLanguagePlugin())) {
+				// the plugin necessary to execute this scripts has been disabled
+				delete s;
+				continue;
 			}
 			processed << s->getFilename();
 		}
@@ -300,14 +300,17 @@ void TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList,
 											const QStringList& disabled,
 											const QStringList& ignore)
 {
+	QSETTINGS_OBJECT(settings);
+	bool scriptingPluginsEnabled = settings.value("enableScriptingPlugins", false).toBool();
+	
 	foreach (const QFileInfo& info,
 			 dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Readable, QDir::DirsLast)) {
 		if (info.isDir()) {
 			// Only create a new sublist if a matching one doesn't already exist
 			TWScriptList *subScriptList = NULL;
 			// Note: Using children() returns a const list; findChildren does not
-			foreach(TWScriptList * l, scriptList->findChildren<TWScriptList*>()) {
-				if(l->getName() == info.fileName()) {
+			foreach (TWScriptList * l, scriptList->findChildren<TWScriptList*>()) {
+				if (l->getName() == info.fileName()) {
 					subScriptList = l;
 					break;
 				}
@@ -317,13 +320,14 @@ void TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList,
 			// Only create a new sublist if a matching one doesn't already exist
 			TWScriptList *subHookList = NULL;
 			// Note: Using children() returns a const list; findChildren does not
-			foreach(TWScriptList * l, hookList->findChildren<TWScriptList*>()) {
-				if(l->getName() == info.fileName()) {
+			foreach (TWScriptList * l, hookList->findChildren<TWScriptList*>()) {
+				if (l->getName() == info.fileName()) {
 					subHookList = l;
 					break;
 				}
 			}
-			if(!subHookList) subHookList = new TWScriptList(hookList, info.fileName());
+			if (!subHookList)
+				subHookList = new TWScriptList(hookList, info.fileName());
 			
 			addScriptsInDirectory(subScriptList, subHookList, info.absoluteFilePath(), disabled, ignore);
 			if (subScriptList->children().isEmpty())
@@ -336,7 +340,12 @@ void TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList,
 		if (ignore.contains(info.absoluteFilePath()))
 			continue;
 
-		foreach (TWScriptLanguageInterface* i, scriptLanguages) {
+		foreach (QObject * plugin, scriptLanguages) {
+			TWScriptLanguageInterface * i = qobject_cast<TWScriptLanguageInterface*>(plugin);
+			if (!i)
+				continue;
+			if (!scriptingPluginsEnabled && !qobject_cast<JSScriptInterface*>(plugin))
+				continue;
 			if (!i->canHandleFile(info))
 				continue;
 			TWScript *script = i->newScript(info.absoluteFilePath());
@@ -450,13 +459,26 @@ TWScriptable::updateScriptsMenu()
 {
 	TWScriptManager * scriptManager = TWApp::instance()->getScriptManager();
 	
-	QList<QAction*> actions = scriptsMenu->actions();
-	for (int i = staticScriptMenuItemCount; i < actions.count(); ++i) {
-		scriptsMenu->removeAction(actions[i]);
-		delete actions[i];
-	}
-	
+	removeScriptsFromMenu(scriptsMenu, staticScriptMenuItemCount);
 	addScriptsToMenu(scriptsMenu, scriptManager->getScripts());
+}
+
+void
+TWScriptable::removeScriptsFromMenu(QMenu *menu, int startIndex /*= 0*/)
+{
+	if (!menu)
+		return;
+	
+	QList<QAction*> actions = menu->actions();
+	for (int i = startIndex; i < actions.count(); ++i) {
+		// if this is a popup menu, make sure all its children are destroyed
+		// first, or else old QActions may still be floating around somewhere
+		if (actions[i]->menu())
+			removeScriptsFromMenu(actions[i]->menu());
+		scriptMapper->removeMappings(actions[i]);
+		scriptsMenu->removeAction(actions[i]);
+		actions[i]->deleteLater();
+	}
 }
 
 int
@@ -470,6 +492,7 @@ TWScriptable::addScriptsToMenu(QMenu *menu, TWScriptList *scripts)
 				continue;
 			if (script->getContext().isEmpty() || script->getContext() == metaObject()->className()) {
 				QAction *a = menu->addAction(script->getTitle());
+				connect(script, SIGNAL(destroyed(QObject*)), this, SLOT(scriptDeleted(QObject*)));
 				if (!script->getKeySequence().isEmpty())
 					a->setShortcut(script->getKeySequence());
 //				a->setEnabled(script->isEnabled());
@@ -496,9 +519,15 @@ TWScriptable::addScriptsToMenu(QMenu *menu, TWScriptList *scripts)
 void
 TWScriptable::runScript(QObject* script, TWScript::ScriptType scriptType)
 {
+	QSETTINGS_OBJECT(settings);
+	
 	TWScript * s = qobject_cast<TWScript*>(script);
 	if (!s || s->getType() != scriptType)
 		return;
+
+	if (!settings.value("enableScriptingPlugins", false).toBool() &&
+		!qobject_cast<const JSScriptInterface*>(s->getScriptLanguagePlugin())
+	) return;
 
 	if (!s->isEnabled())
 		return;
@@ -540,8 +569,10 @@ TWScriptable::doAboutScripts()
 	aboutText += "</small></p><p>";
 	aboutText += tr("Scripting languages currently available in this copy of %1:").arg(TEXWORKS_NAME);
 	aboutText += "</p><ul>";
-	foreach (const TWScriptLanguageInterface* i,
+	foreach (const QObject * plugin,
 			 TWApp::instance()->getScriptManager()->languages()) {
+		const TWScriptLanguageInterface * i = qobject_cast<TWScriptLanguageInterface*>(plugin);
+		if(!i) continue;
 		aboutText += "<li><a href=\"";
 		aboutText += i->scriptLanguageURL();
 		aboutText += "\">";
@@ -604,3 +635,18 @@ void TWScriptable::selectWindow(bool activate)
 	if (isMinimized())
 		showNormal();
 }
+
+void TWScriptable::scriptDeleted(QObject * obj)
+{
+	if (!obj || !scriptMapper)
+		return;
+	
+	QAction * a = qobject_cast<QAction*>(scriptMapper->mapping(obj));
+	if (!a)
+		return;
+	
+	// a script got deleted that we still have in the menu => remove it
+	scriptMapper->removeMappings(a);
+	scriptsMenu->removeAction(a);
+}
+

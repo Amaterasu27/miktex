@@ -65,11 +65,8 @@ class JSScript : public TWScript
 	Q_INTERFACES(TWScript)
 	
 public:
-#if defined(MIKTEX_WINDOWS) && defined(interface)
-#  undef interface
-#endif
-	JSScript(TWScriptLanguageInterface* interface, const QString& filename)
-		: TWScript(interface, filename) { }
+	JSScript(QObject * plugin, const QString& filename)
+		: TWScript(plugin, filename) { }
 		
 	virtual bool parseHeader() { return doParseHeader("", "", "//"); };
 
@@ -111,7 +108,7 @@ public:
 	TWScriptList* getHookScripts() { return &m_Hooks; }
 	QList<TWScript*> getHookScripts(const QString& hook) const;
 
-	const QList<TWScriptLanguageInterface*>& languages() const { return scriptLanguages; }
+	const QList<QObject*>& languages() const { return scriptLanguages; }
 
 	void reloadScripts(bool forceAll = false);
 	void saveDisabledList();
@@ -129,7 +126,7 @@ private:
 	TWScriptList m_Scripts; // hierarchical list of standalone scripts
 	TWScriptList m_Hooks; // hierarchical list of hook scripts
 
-	QList<TWScriptLanguageInterface*> scriptLanguages;
+	QList<QObject*> scriptLanguages;
 };
 
 // parent class for document windows (i.e. both the source and PDF window types);
@@ -157,6 +154,9 @@ private slots:
 	
 	void hideFloatersUnlessThis(QWidget* currWindow);
 	
+protected slots:
+	void scriptDeleted(QObject * obj);
+	
 protected:
 	void initScriptable(QMenu* scriptsMenu,
 						QAction* aboutScriptsAction,
@@ -165,6 +165,7 @@ protected:
 						QAction* showScriptsFolderAction);
 
 	int addScriptsToMenu(QMenu *menu, TWScriptList *scripts);
+	void removeScriptsFromMenu(QMenu *menu, int startIndex = 0);
 
 	void showFloaters();
 

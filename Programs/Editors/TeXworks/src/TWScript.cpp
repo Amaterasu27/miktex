@@ -28,9 +28,10 @@
 #include <QMetaMethod>
 #include <QApplication>
 #include <QTextCodec>
+#include <QDir>
 
-TWScript::TWScript(TWScriptLanguageInterface *interface, const QString& fileName)
-	: m_Interface(interface), m_Filename(fileName), m_Type(ScriptUnknown), m_Enabled(true), m_FileSize(0)
+TWScript::TWScript(QObject * plugin, const QString& fileName)
+	: m_Plugin(plugin), m_Filename(fileName), m_Type(ScriptUnknown), m_Enabled(true), m_FileSize(0)
 {
 	m_Codec = QTextCodec::codecForName("UTF-8");
 	if (!m_Codec)
@@ -277,7 +278,7 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 			if (arguments[j].canConvert((QVariant::Type)type))
 				continue;
 			// allow invalid===NULL for pointers
-			if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || QMetaType::QWidgetStar))
+			if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar))
 				continue;
 			// QObject* and QWidget* may be convertible
 			if (typeOfArg == QMetaType::QWidgetStar && type == QMetaType::QObjectStar)
@@ -305,7 +306,7 @@ TWScript::MethodResult TWScript::doCallMethod(QObject * obj, const QString& name
 			}
 			if (arguments[j].canConvert((QVariant::Type)type))
 				arguments[j].convert((QVariant::Type)type);
-			else if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || QMetaType::QWidgetStar)) {
+			else if (typeOfArg == QVariant::Invalid && (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar)) {
 				genericArgs.append(QGenericArgument(strTypeName, &myNullPtr));
 				continue;
 			}
@@ -431,7 +432,7 @@ void TWScript::globalDestroyed(QObject * obj)
 }
 
 
-bool TWScript::mayExecute(const QString& cmd, QObject * context)
+bool TWScript::mayExecuteSystemCommand(const QString& cmd, QObject * context) const
 {
 	Q_UNUSED(cmd)
 	Q_UNUSED(context)
@@ -439,5 +440,51 @@ bool TWScript::mayExecute(const QString& cmd, QObject * context)
 	// cmd may be a true command line, or a single file/directory to run or open
 	QSETTINGS_OBJECT(settings);
 	return settings.value("allowSystemCommands", false).toBool();
+}
+
+bool TWScript::mayWriteFile(const QString& filename, QObject * context) const
+{
+	Q_UNUSED(filename)
+	Q_UNUSED(context)
+	
+	QSETTINGS_OBJECT(settings);
+	return settings.value("allowScriptFileWriting", false).toBool();
+}
+
+bool TWScript::mayReadFile(const QString& filename, QObject * context) const
+{
+	QSETTINGS_OBJECT(settings);
+	QDir scriptDir(QFileInfo(m_Filename).absoluteDir());
+	QVariant targetFile;
+	QDir targetDir;
+	
+	if (settings.value("allowScriptFileReading", false).toBool())
+		return true;
+	
+	// even if global reading is disallowed, some exceptions may apply
+	QFileInfo fi(QDir::cleanPath(filename));
+
+	// reading in subdirectories of the script file's directory is always allowed
+	if (!scriptDir.relativeFilePath(fi.absolutePath()).startsWith(".."))
+		return true;
+
+	if (context) {
+		// reading subdirectories of the current file is always allowed
+		targetFile = context->property("fileName");
+		if (targetFile.isValid() && !targetFile.toString().isEmpty()) {
+			targetDir = QFileInfo(targetFile.toString()).absoluteDir();
+			if (!targetDir.relativeFilePath(fi.absolutePath()).startsWith(".."))
+				return true;
+		}
+		// reading subdirectories of the root file is always allowed
+		targetFile = context->property("rootFileName");
+		if (targetFile.isValid() && !targetFile.toString().isEmpty()) {
+			targetDir = QFileInfo(targetFile.toString()).absoluteDir();
+			if (!targetDir.relativeFilePath(fi.absolutePath()).startsWith(".."))
+				return true;
+		}
+	}
+	
+	return false;
 }
 

@@ -144,7 +144,7 @@ public:
 	 */
 	const QKeySequence& getKeySequence() const { return m_KeySequence; }
 	
-	const TWScriptLanguageInterface * getScriptLanguageInterface() const { return m_Interface; }
+	const QObject * getScriptLanguagePlugin() const { return m_Plugin; }
 	
 	/** \brief Run the script (public method called from the TeXworks application).
 	 *
@@ -173,7 +173,9 @@ public:
 	Q_INVOKABLE bool hasGlobal(const QString& key) const { return m_globals.contains(key); }
 	Q_INVOKABLE QVariant getGlobal(const QString& key) const { return m_globals[key]; }
 
-	bool mayExecute(const QString& cmd, QObject * context);
+	bool mayExecuteSystemCommand(const QString& cmd, QObject * context) const;
+	bool mayWriteFile(const QString& filename, QObject * context) const;
+	bool mayReadFile(const QString& filename, QObject * context) const;
 
 protected:
 	/** \brief	Constructor
@@ -181,10 +183,7 @@ protected:
 	 * Initializes a script object from the given file.
 	 * Does not invoke parseHeader(), so the script object may not actually be usable.
 	 */
-#if defined(MIKTEX_WINDOWS) && defined(interface)
-#  undef interface
-#endif
-	TWScript(TWScriptLanguageInterface *interface, const QString& filename);
+	TWScript(QObject * plugin, const QString& filename);
 
 	/** \brief  Execute the actual script
 	 *
@@ -286,7 +285,7 @@ protected:
 	 */
 	static TWScript::MethodResult doCallMethod(QObject * obj, const QString& name, QVariantList & arguments, QVariant & result);
 	
-	TWScriptLanguageInterface * m_Interface; ///< pointer to the language interface for this script
+	QObject * m_Plugin; ///< pointer to the language interface for this script
 	QString m_Filename;	///< the name of the file the script is stored in
 	ScriptType m_Type;	///< the type of the script (ScriptUnknown indicates invalid)
 	QString m_Title;	///< the title (e.g. for display in menus)

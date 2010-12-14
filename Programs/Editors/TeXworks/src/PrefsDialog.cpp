@@ -562,7 +562,13 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 	dlg.autoHideOutput->setChecked(settings.value("autoHideConsole", kDefault_HideConsole).toBool());
 
 	// Scripts
+	dlg.allowScriptFileReading->setChecked(settings.value("allowScriptFileReading", false).toBool());
+	dlg.allowScriptFileWriting->setChecked(settings.value("allowScriptFileWriting", false).toBool());
 	dlg.allowSystemCommands->setChecked(settings.value("allowSystemCommands", false).toBool());
+	dlg.enableScriptingPlugins->setChecked(settings.value("enableScriptingPlugins", false).toBool());
+	// there is always at least JSScriptInterface
+	if (TWApp::instance()->getScriptManager()->languages().size() <= 1)
+		dlg.enableScriptingPlugins->setEnabled(false);
 	dlg.scriptDebugger->setChecked(settings.value("scriptDebugger", false).toBool());
 #if QT_VERSION < 0x040500
 	dlg.scriptDebugger->setEnabled(false);
@@ -713,8 +719,14 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 		settings.setValue("autoHideConsole", dlg.autoHideOutput->isChecked());
 
 		// Scripts
+		settings.setValue("allowScriptFileReading", dlg.allowScriptFileReading->isChecked());
+		settings.setValue("allowScriptFileWriting", dlg.allowScriptFileWriting->isChecked());
 		settings.setValue("allowSystemCommands", dlg.allowSystemCommands->isChecked());
+		settings.setValue("enableScriptingPlugins", dlg.enableScriptingPlugins->isChecked());
 		settings.setValue("scriptDebugger", dlg.scriptDebugger->isChecked());
+		// with changed settings, the availability of scripts may have changed
+		// (e.g., because of enabling/disabling the use of scripting plugins)
+		TWApp::instance()->updateScriptsList();
 	}
 
 	return result;
