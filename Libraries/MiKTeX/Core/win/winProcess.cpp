@@ -804,7 +804,7 @@ winProcess::winProcess ()
 Process2 *
 Process2::GetCurrentProcess ()
 {
-  HANDLE myHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, GetCurrentProcessId());
+  HANDLE myHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId());
   if (myHandle == 0)
   {
     FATAL_WINDOWS_ERROR ("OpenProcess", 0);
