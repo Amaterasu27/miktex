@@ -88,7 +88,7 @@ winProcess::Create ()
 
   const unsigned long PIPE_BUF_SIZE = 0; // use default size
 
-  HANDLE hCurrentProcess = GetCurrentProcess();
+  HANDLE hCurrentProcess = ::GetCurrentProcess();
 
   // inheritable child handles
   HANDLE hChildStdin = INVALID_HANDLE_VALUE;
