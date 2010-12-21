@@ -820,11 +820,12 @@ Process2::GetCurrentProcess ()
 
 /* _________________________________________________________________________
 
-   winProcess::GetProcessEntry
+   winProcess::TryGetProcessEntry
    _________________________________________________________________________ */
 
-PROCESSENTRY32
-winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
+bool
+winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
+			        /*[out]*/ PROCESSENTRY32 & result)
 {
   HANDLE snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (snapshotHandle == INVALID_HANDLE_VALUE)
@@ -832,14 +833,14 @@ winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
     FATAL_WINDOWS_ERROR ("CreateToolHelp32Snapshot", 0);
   }
   AutoHANDLE autoSnapshotHandle (snapshotHandle);
-  PROCESSENTRY32 result;
-  result.dwSize = sizeof(result);
-  if (! Process32First(snapshotHandle, &result))
+  PROCESSENTRY32 processEntry;
+  processEntry.dwSize = sizeof(processEntry);
+  if (! Process32First(snapshotHandle, &processEntry))
   {
     DWORD lastError = GetLastError();
     if (lastError == ERROR_NO_MORE_FILES)
     {
-      UNEXPECTED_CONDITION ("winProcess::GetProcessEntry");
+      return (false);
     }
     else
     {
@@ -848,20 +849,39 @@ winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
   }
   do
   {
-    if (result.th32ProcessID == processId)
+    if (processEntry.th32ProcessID == processId)
     {
-      return (result);
+      result = processEntry;
+      return (true);
     }
-  } while (Process32Next(snapshotHandle, &result));
+  } while (Process32Next(snapshotHandle, &processEntry));
   DWORD lastError = GetLastError();
   if (lastError == ERROR_NO_MORE_FILES)
   {
-    UNEXPECTED_CONDITION ("winProcess::GetProcessEntry");
+    return (false);
   }
   else
   {
     FATAL_WINDOWS_ERROR_2 ("Process32First", lastError, 0);
   }
+}
+
+/* _________________________________________________________________________
+
+   winProcess::GetProcessEntry
+   _________________________________________________________________________ */
+
+PROCESSENTRY32
+winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
+{
+  PROCESSENTRY32 result;
+  if (! TryGetProcessEntry(processId, result))
+  {
+    SessionImpl::GetSession()->trace_error->WriteFormattedLine(
+      "core", "error context: ID=%u", processId);
+    UNEXPECTED_CONDITION ("winProcess::GetProcessEntry");
+  }
+  return (result);
 }
 
 /* _________________________________________________________________________
@@ -874,7 +894,10 @@ winProcess::get_Parent ()
 {
   if (processEntry.dwSize == 0)
   {
-    processEntry = GetProcessEntry(processInformation.dwProcessId);
+    if (! TryGetProcessEntry(processInformation.dwProcessId, processEntry))
+    {
+      return (false);
+    }
   }
   HANDLE parentProcessHandle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processEntry.th32ParentProcessID);
   if (parentProcessHandle == 0)
@@ -900,7 +923,10 @@ winProcess::get_ProcessName ()
 {
   if (processEntry.dwSize == 0)
   {
-    processEntry = GetProcessEntry(processInformation.dwProcessId);
+    if (! TryGetProcessEntry(processInformation.dwProcessId, processEntry))
+    {
+      return ("non-existing");
+    }
   }
   PathName exePath (processEntry.szExeFile);
   return (exePath.GetFileNameWithoutExtension().Get());

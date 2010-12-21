@@ -117,6 +117,12 @@ private:
   GetProcessEntry (/*[in]*/ DWORD processId);
 
 private:
+  static
+  bool
+  TryGetProcessEntry (/*[in]*/ DWORD processId,
+		      /*[out]*/ PROCESSENTRY32 & processEntry);
+
+private:
   friend class Process;
   friend class Process2;
 };
