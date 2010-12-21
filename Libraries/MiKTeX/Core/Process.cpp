@@ -340,10 +340,16 @@ Process2::GetInvokerNames ()
   vector<string> result;
   auto_ptr<Process2> pProcess (Process2::GetCurrentProcess());
   auto_ptr<Process2> pParentProcess (pProcess->get_Parent());
-  while (pParentProcess.get() != 0)
+  const int maxLevels = 3;
+  int level = 0;
+  for (int level = 0; pParentProcess.get() != 0 && level < maxLevels; ++ level)
   {
     result.push_back (pParentProcess->get_ProcessName());
     pParentProcess.reset (pParentProcess->get_Parent());
+  }
+  if (pParentProcess.get() != 0)
+  {
+    result.push_back ("...");
   }
   reverse (result.begin(), result.end());
   return (result);
