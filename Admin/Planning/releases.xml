@@ -2,8 +2,8 @@
 <releases>
   <release version="2.4" state="end-of-life" w98me="Y" w2k="Y" xp="Y" srv2003="Y" releasedate="2003-11-17" availableuntil="2006-12-31" bugfixesuntil="2006-12-31" pdftex="1.30.3" mpost="0.901" defeng="etex"></release>
   <release version="2.5" state="end-of-life" w98me="Y" w2k="Y" xp="Y" srv2003="Y" releasedate="2006-08-03" availableuntil="2008-12-31" bugfixesuntil="2007-12-31" pdftex="1.30.6" mpost="0.901" defeng="pdfetex" />
-  <release version="2.6" state="w9xonly" w98me="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" releasedate="2007-04-30" bugfixesuntil="2008-12-31" availableuntil="2010-12-31" pdftex="1.40.4" mpost="1.000" defeng="pdftex" />
-  <release version="2.7" state="outdated" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.999.7" releasedate="2007-12-17" bugfixesuntil="2009-12-31" availableuntil="2010-12-31" pdftex="1.40.9" mpost="1.005" defeng="pdftex" />
-  <release version="2.8" state="current" portable="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.9995.1" pdftex="1.40.10" mpost="1.005" texworks="0.1" defeng="pdftex" releasedate="2009-09-01" bugfixesuntil="2010-12-31" availableuntil="2012-12-31" />
+  <release version="2.6" state="end-of-life" w98me="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" releasedate="2007-04-30" bugfixesuntil="2008-12-31" availableuntil="2010-12-31" pdftex="1.40.4" mpost="1.000" defeng="pdftex" />
+  <release version="2.7" state="end-of-life" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.999.7" releasedate="2007-12-17" bugfixesuntil="2009-12-31" availableuntil="2010-12-31" pdftex="1.40.9" mpost="1.005" defeng="pdftex" />
+  <release version="2.8" state="outdated" portable="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.9995.1" pdftex="1.40.10" mpost="1.005" texworks="0.1" defeng="pdftex" releasedate="2009-09-01" bugfixesuntil="2010-12-31" availableuntil="2012-12-31" />
   <release version="2.9" state="current" portable="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" releasedate="2010-10-09" availableuntil="2013-12-31" bugfixesuntil="2012-12-31" xetex="0.9997.4" pdftex="1.40.11" mpost="1.211" texworks="0.1" defeng="pdftex" luatex="0.60.2" />
 </releases>
