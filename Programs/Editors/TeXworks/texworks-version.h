@@ -1,6 +1,6 @@
 /* texworks-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 2009-2010 Christian Schenk
+   Copyright (C) 2009-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4007
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.3 (r.726)"
+#define MIKTEX_COMP_J2000_VERSION 4025
+#define MIKTEX_COMP_ORIG_VERSION_STR "0.3 (r.727)"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2007-2010 Jonathan Kew"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2007-2010 Jonathan Kew"
