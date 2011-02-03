@@ -1,6 +1,6 @@
 /* vfont.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -23,6 +23,12 @@
 
 class InputStream;
 class VfChar;
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, class VfChar *> MAPNUMTOVFCHAR;
+#else
+typedef map<int, class VfChar *> MAPNUMTOVFCHAR;
+#endif
 
 class VFont : public DviFont
 {
@@ -95,7 +101,7 @@ private:
   int shrinkFactor;
 
 private:
-  map<int, class VfChar *> characterTable;
+  MAPNUMTOVFCHAR characterTable;
 
 private:
   FontMap fontMap;

@@ -1,6 +1,6 @@
 /* Tfm.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -68,7 +68,7 @@ Tfm::~Tfm ()
 {
   try
     {
-      map<int, DviChar *>::iterator it;
+      MAPNUMTODVICHAR::iterator it;
       for (it = dviChars.begin();
 	   it != dviChars.end();
 	   ++ it)

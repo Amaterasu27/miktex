@@ -1,6 +1,6 @@
 /* DviPage.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -313,7 +313,7 @@ int
 DviPageImpl::GetNumberOfDviBitmaps (/*[in]*/ int shrinkFactor)
 {
   MIKTEX_ASSERT (IsLocked());
-  map<int, bool>::const_iterator it = haveShrinkedRaster.find(shrinkFactor);
+  MAPNUMTOBOOL::const_iterator it = haveShrinkedRaster.find(shrinkFactor);
   if (it == haveShrinkedRaster.end() || ! it->second)
     {
       MakeShrinkedRaster (shrinkFactor);
@@ -330,7 +330,7 @@ int
 DviPageImpl::GetNumberOfDibChunks (/*[in]*/ int shrinkFactor)
 {
   MIKTEX_ASSERT (IsLocked());
-  map<int, bool>::const_iterator it = haveShrinkedRaster.find(shrinkFactor);
+  MAPNUMTOBOOL::const_iterator it = haveShrinkedRaster.find(shrinkFactor);
   if (it == haveShrinkedRaster.end() || ! it->second)
     {
       MakeShrinkedRaster (shrinkFactor);
@@ -627,7 +627,7 @@ DviPageImpl::MakeDviBitmap
 void
 DviPageImpl::DestroyDviBitmaps ()
 {
-  for (map<int, vector<DviBitmap> >::iterator it = shrinkedDviBitmaps.begin();
+  for (MAPNUMTOBITMAPVEC::iterator it = shrinkedDviBitmaps.begin();
        it != shrinkedDviBitmaps.end();
        ++ it)
     {
@@ -655,7 +655,7 @@ DviPageImpl::DestroyDviBitmaps ()
 void
 DviPageImpl::DestroyDibChunks ()
 {
-  for (map<int, vector<SmartPointer<DibChunk> > >::iterator it
+  for (MAPNUMTODIBCHUNKVEC::iterator it
 	 = shrinkedDibChunks.begin();
        it != shrinkedDibChunks.end();
        ++ it)

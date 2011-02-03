@@ -1,6 +1,6 @@
 /* vfont.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -68,7 +68,7 @@ VFont::~VFont ()
 {
   try
     {
-      map<int, VfChar *>::iterator it1;
+      MAPNUMTOVFCHAR::iterator it1;
       for (it1 = characterTable.begin();
 	   it1 != characterTable.end();
 	   ++ it1)

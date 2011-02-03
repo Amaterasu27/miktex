@@ -1,6 +1,6 @@
 /* Tfm.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -23,6 +23,12 @@
 
 class DviChar;
 class DviImpl;
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, DviChar *> MAPNUMTODVICHAR;
+#else
+typedef map<int, DviChar *> MAPNUMTODVICHAR
+#endif
 
 class Tfm : public DviFont
 {
@@ -54,7 +60,7 @@ public:
   Read ();
 
 private:
-  map<int, DviChar *> dviChars;
+  MAPNUMTODVICHAR dviChars;
 
 private:
   auto_ptr<TraceStream> trace_error;

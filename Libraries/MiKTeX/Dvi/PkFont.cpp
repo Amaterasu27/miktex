@@ -1,6 +1,6 @@
 /* pkfont.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -80,7 +80,7 @@ PkFont::~PkFont ()
 {
   try
     {
-      map<int, PkChar *>::iterator it;
+      MAPNUMTOPKCHAR::iterator it;
       for (it = pkChars.begin();
 	   it != pkChars.end();
 	   ++ it)

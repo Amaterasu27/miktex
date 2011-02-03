@@ -1,6 +1,6 @@
 /* pkfont.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -20,6 +20,12 @@
    USA.  */
 
 #pragma once
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, PkChar *> MAPNUMTOPKCHAR;
+#else
+typedef map<int, PkChar *> MAPNUMTOPKCHAR;
+#endif
 
 class PkFont : public DviFont
 {
@@ -87,7 +93,7 @@ private:
   int baseDpi;
 
 private:
-  map<int, PkChar *> pkChars;
+  MAPNUMTOPKCHAR pkChars;
 
 private:
   int existSizes[30];

@@ -1,6 +1,6 @@
 /* pkchar.h:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -703,7 +703,7 @@ PkChar::Shrink (/*[in]*/ int shrinkFactor)
 const void *
 PkChar::GetBitmap (/*[in]*/ int shrinkFactor)
 {
-  map<int, void *>::const_iterator it = bitmaps.find(shrinkFactor);
+  MAPINTTORASTER::const_iterator it = bitmaps.find(shrinkFactor);
   if (it != bitmaps.end())
     {
       return (it->second);

@@ -1,6 +1,6 @@
 /* common.h: internal DVI definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -171,13 +171,6 @@ class DviImpl;
 
 /* _________________________________________________________________________
 
-   FontMap
-   _________________________________________________________________________ */
-
-typedef map<int, DviFont *> FontMap;
-
-/* _________________________________________________________________________
-
    DviPoint
    _________________________________________________________________________ */
 
@@ -198,10 +191,38 @@ public:
 
 /* _________________________________________________________________________
 
-   MAPNUMTOPOINT
+   Dictionary Types
    _________________________________________________________________________ */
 
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, DviFont *> FontMap;
+#else
+typedef map<int, DviFont *> FontMap;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, bool> MAPNUMTOBOOL;
+#else
+typedef map<int, bool> MAPINTTOBOOL;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, DviPoint> MAPNUMTOPOINT;
+#else
 typedef map<int, DviPoint> MAPNUMTOPOINT;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, vector<DviBitmap> > MAPNUMTOBITMAPVEC;
+#else
+typedef map<int, vector<DviBitmap> > MAPNUMTOBITMAPVEC;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
+#else
+typedef map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
+#endif
 
 /* _________________________________________________________________________
 
@@ -1044,7 +1065,7 @@ private:
   vector<DviRuleImpl *> dviRules;
 
 private:
-  map<int, bool> haveShrinkedRaster;
+  MAPNUMTOBOOL haveShrinkedRaster;
 
 private:
   time_t lastVisited;
@@ -1056,10 +1077,10 @@ private:
   bool frozen;
 
 private:
-  map<int, vector<DviBitmap> > shrinkedDviBitmaps;
+  MAPNUMTOBITMAPVEC shrinkedDviBitmaps;
 
 private:
-  map<int, vector<SmartPointer<DibChunk> > > shrinkedDibChunks;
+  MAPNUMTODIBCHUNKVEC shrinkedDibChunks;
 
 private:
   int dibShrinkFactor;

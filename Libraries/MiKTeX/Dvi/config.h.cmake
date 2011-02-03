@@ -1,6 +1,6 @@
-/* StdAfx.h:							-*- C++ -*-
+/* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -19,35 +19,7 @@
    Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
    USA.  */
 
-#pragma once
-
-#include <miktex/Core/First>
-
-#if defined(HAVE_CONFIG_H)
-#  include "config.h"
-#endif
-
-#include <cctype>
-#include <climits>
-#include <cmath>
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-
-#include <algorithm>
-#if ! defined(HAVE_UNORDERED_MAP)
-#  include <map>
-#endif
-#include <memory>
-#include <stack>
-#include <string>
-#if defined(HAVE_UNORDERED_MAP)
-#  include <unordered_map>
-#endif
-
-#include <miktex/Graphics/DibChunker>
-#include <miktex/Core/Core>
-#include <miktex/Core/Debug>
-#include <miktex/Core/Paths>
-#include <miktex/Core/Trace>
+#cmakedefine HAVE_HASH_MAP
+#cmakedefine HAVE_HASH_SET
+#cmakedefine HAVE_UNORDERED_MAP
+#cmakedefine HAVE_UNORDERED_SET
