@@ -451,8 +451,6 @@ static void *synctex_dot_open(void)
        definitely disabled. */
     {
         char *tmp = SYNCTEX_GET_JOB_NAME();
-        size_t len = strlen(tmp);
-        /*  jobname was set by the \jobname command on the *TeX side  */
 #if defined(MIKTEX)
 	MiKTeX::Core::PathName path = THEAPP.GetOutputDirectory();
 	if (! path.Empty())
@@ -461,6 +459,10 @@ static void *synctex_dot_open(void)
 	    tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
 	    strcpy (tmp, path.Get());
 	  }
+#endif
+        size_t len = strlen(tmp);
+        /*  jobname was set by the \jobname command on the *TeX side  */
+#if defined(MIKTEX)
 	/* C++: typecast needed */
         char *the_busy_name = (char*)xmalloc((size_t)
                                       (len + strlen(synctex_suffix)
