@@ -27,6 +27,7 @@ add_definitions(-DHAVE_CONFIG_H)
 include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_bmeps_dir}
 )
 
 add_executable(makebitcounts EXCLUDE_FROM_ALL makebitcounts.cpp)
@@ -101,9 +102,12 @@ set_target_properties(${dvi_dll_name}
 )
 
 target_link_libraries(${dvi_dll_name}
+  ${bmeps_dll_name}
   ${core_dll_name}
   ${dib_dll_name}
 )
+
+delay_load(${dvi_dll_name} ${bmeps_dll_name})
 
 rebase(${dvi_dll_name})
 

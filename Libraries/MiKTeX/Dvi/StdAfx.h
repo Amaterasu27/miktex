@@ -46,6 +46,8 @@
 #  include <unordered_map>
 #endif
 
+#include <bmeps.h>
+
 #include <miktex/Graphics/DibChunker>
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>

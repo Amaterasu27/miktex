@@ -1,26 +1,27 @@
 /* PostScript.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2004 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
-   This file is part of Yap.
+   This file is part of the MiKTeX DVI Library.
 
-   Yap is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-   
-   Yap is distributed in the hope that it will be useful, but WITHOUT
-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-   License for more details.
-   
-   You should have received a copy of the GNU General Public License
-   along with Yap; if not, write to the Free Software Foundation, 59
-   Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
+   The MiKTeX DVI Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2, or (at your option) any later version.
+
+   The MiKTeX DVI Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the MiKTeX DVI Library; if not, write to the
+   Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+   USA.  */
 
 #pragma once
 
-class CDviDoc;
+class DviImpl;
 
 class CPostScript  
 {
@@ -33,7 +34,7 @@ protected:
 public:
   struct BitmapFile
   {
-    _TCHAR szBitmapFileName[_MAX_PATH];
+    char szBitmapFileName[_MAX_PATH];
     int x;
     int y;
     int cx;
@@ -124,7 +125,7 @@ public:
 
 public:
   bool
-  Open (/*[in]*/ CDviDoc * pDviDoc);
+  Open (/*[in]*/ DviImpl * pDviImpl);
 
 public:
   static
@@ -133,11 +134,11 @@ public:
 
 protected:
   void
-  AddHeader (/*[in]*/ LPCSTR lpszFileName);
+  AddHeader (/*[in]*/ const char * lpszFileName);
 
 protected:
   FILE *
-  ConvertToEPS (/*[in]*/ LPCSTR lpszFileName);
+  ConvertToEPS (/*[in]*/ const char * lpszFileName);
 
 private:
   static
@@ -161,17 +162,17 @@ protected:
 protected:
   virtual
   bool
-  Execute (/*[in]*/ LPCSTR	lpszFormat,
+  Execute (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/		...)
     = 0;
 
 protected:
   bool
-  ExecuteBatch (/*[in]*/ LPCSTR lpszFileName);
+  ExecuteBatch (/*[in]*/ const char * lpszFileName);
 
 protected:
   bool
-  ExecuteEncapsulatedPostScript (/*[in]*/ LPCSTR lpszFileName);
+  ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName);
 
 protected:
   virtual
@@ -180,8 +181,8 @@ protected:
 
 protected:
   bool
-  FindGraphicsFile (/*[in]*/ LPCSTR	lpszFileName,
-		    /*[out]*/ LPTSTR	lpszResult);
+  FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+		    /*[out]*/ char *	lpszResult);
 
 protected:
   bool
@@ -189,17 +190,17 @@ protected:
 
 protected:
   bool
-  InternalFindGraphicsFile (/*[in]*/ LPCSTR	lpszFileName,
-			    /*[out]*/ LPTSTR	lpszResult);
+  InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+			    /*[out]*/ char *	lpszResult);
 
 protected:
   bool
-  SendHeader (/*[in]*/ LPCSTR lpszHeaderName);
+  SendHeader (/*[in]*/ const char * lpszHeaderName);
 
 protected:
   bool
-  Uncompress (/*[in]*/ LPCSTR	lpszFileName,
-	      /*[out]*/ LPTSTR	lpszTempFileName);
+  Uncompress (/*[in]*/ const char *	lpszFileName,
+	      /*[out]*/ char *	lpszTempFileName);
 
 protected:
   virtual
@@ -212,7 +213,7 @@ protected:
   FILE * m_pfile;
 
 protected:
-  CDviDoc * m_pDviDoc;
+  DviImpl * pDviImpl;
 
 protected:
   bool m_bOpen;
@@ -231,4 +232,8 @@ protected:
 
 protected:
   std::vector<BitmapFile> m_vecBitmapFiles;
+
+protected:
+private:
+  auto_ptr<TraceStream> tracePS;
 };
