@@ -34,7 +34,7 @@ protected:
 public:
   struct BitmapFile
   {
-    char szBitmapFileName[_MAX_PATH];
+    char szBitmapFileName[BufferSizes::MaxPath];
     int x;
     int y;
     int cx;
@@ -47,14 +47,14 @@ public:
 		 /*[out]*/ BitmapFile &	bmf)
   {
     if (i >= m_vecBitmapFiles.size())
-      {
-	return (false);
-      }
+    {
+      return (false);
+    }
     else
-      {
-	bmf = m_vecBitmapFiles[i];
-	return (true);
-      }
+    {
+      bmf = m_vecBitmapFiles[i];
+      return (true);
+    }
   }
 
 public:
@@ -104,27 +104,27 @@ public:
   AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial);
 
 public:
-  bool
+  void
   BeginPage ();
 
 public:
-  bool
+  void
   Close ();
 
 public:
-  bool
+  void
   DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial);
 
 public:
-  bool
+  void
   DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial);
 
 public:
-  bool
+  void
   EndPage ();
 
 public:
-  bool
+  void
   Open (/*[in]*/ DviImpl * pDviImpl);
 
 public:
@@ -142,41 +142,41 @@ protected:
 
 private:
   static
-  unsigned
-  __stdcall
+  void
+  MIKTEXCALLBACK
   ConvertToEPSThread (/*[in]*/ void * pv);
 
 protected:
-  bool
+  void
   CopyFile (/*[in]*/ FILE *	pfile,
 	    /*[in]*/ unsigned	length);
 
 protected:
-  bool
+  void
   DoDefinitions ();
 
 protected:
-  bool
+  void
   DoProlog ();
 
 protected:
   virtual
-  bool
+  void
   Execute (/*[in]*/ const char *	lpszFormat,
 	   /*[in]*/			...)
     = 0;
 
 protected:
-  bool
+  void
   ExecuteBatch (/*[in]*/ const char * lpszFileName);
 
 protected:
-  bool
+  void
   ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName);
 
 protected:
   virtual
-  bool
+  void
   Finalize ();
 
 protected:
@@ -185,7 +185,7 @@ protected:
 		    /*[out]*/ char *		lpszResult);
 
 protected:
-  bool
+  void
   Initialize ();
 
 protected:
@@ -194,17 +194,17 @@ protected:
 			    /*[out]*/ char *		lpszResult);
 
 protected:
-  bool
+  void
   SendHeader (/*[in]*/ const char * lpszHeaderName);
 
 protected:
-  bool
+  void
   Uncompress (/*[in]*/ const char *	lpszFileName,
 	      /*[out]*/ char *		lpszTempFileName);
 
 protected:
   virtual
-  bool
+  void
   Write (/*[in]*/ const void *	p,
 	 /*[in]*/ unsigned	n)
     = 0;
@@ -234,6 +234,5 @@ protected:
   std::vector<BitmapFile> m_vecBitmapFiles;
 
 protected:
-private:
   auto_ptr<TraceStream> tracePS;
 };

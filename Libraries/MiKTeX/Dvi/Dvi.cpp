@@ -1,6 +1,6 @@
 /* dvi.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -292,6 +292,7 @@ DviImpl::FreeContents (/*[in]*/ bool keepFonts)
       it->second = 0;
     }
   pFontMap->clear ();
+  tempFiles.clear ();
 }
 
 /* _________________________________________________________________________
