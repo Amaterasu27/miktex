@@ -48,6 +48,8 @@ set(${dvi_dll_name}_sources
   PkChar.h
   PkFont.cpp
   PkFont.h
+  PostScript.cpp
+  PostScript.h
   StdAfx.cpp
   StdAfx.h
   Tfm.cpp

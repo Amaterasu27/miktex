@@ -25,6 +25,10 @@
 
 #include "PostScript.h"
 
+#include <io.h> // FIXME: see _pipe()
+#include <fcntl.h> // FIXME: see _pipe()
+#include <process.h> // FIXME: see _beginthreadex()
+
 /* _________________________________________________________________________
 
    CPostScript::CPostScript
@@ -35,7 +39,7 @@ CPostScript::CPostScript ()
     m_bOpen (false),
     m_bPageBegun (false),
     pDviImpl (0),
-    tracePage (TraceStream::Open(MIKTEX_TRACE_DVIPAGE))	 // FIXME
+    tracePS (TraceStream::Open(MIKTEX_TRACE_DVIPAGE))	 // FIXME
 {
 }
 
@@ -73,7 +77,7 @@ CPostScript::Initialize ()
 bool
 CPostScript::IsEnabled ()
 {
-  return (! g_pYapConfig->m_bIgnorePostScriptSpecials);
+  return (true);		// FIXME
 }
 
 /* _________________________________________________________________________
@@ -89,7 +93,7 @@ CPostScript::IsEnabled ()
 bool
 CPostScript::ExecuteBatch (/*[in]*/ const char * lpszFileName)
 {
-  tstring strCommand;
+  string strCommand;
   strCommand.reserve (_MAX_PATH + 10);
   strCommand = '(';
   PathName pathUnx (lpszFileName);
@@ -106,40 +110,9 @@ CPostScript::ExecuteBatch (/*[in]*/ const char * lpszFileName)
    _________________________________________________________________________ */
 
 bool
-AllowShellCommand (/*[in]*/ const CString & strCommand)
+AllowShellCommand (/*[in]*/ const char * lpszCommand)
 {
-  switch (g_pYapConfig->m_nEnableCommands)
-    {
-    default:
-    case CYapConfig::SEC_DISABLE_COMMANDS:
-      return (false);
-    case CYapConfig::SEC_ASK_USER:
-      {
-	CString message;
-	// <fixme>hard-coded string</fixme>
-	message.Format ((T_("The following command is embedded in the ")
-			 T_("DVI file:\n\n%s\n\n")
-			 T_("Do you allow to execute this command?")),
-			static_cast<const char *>(strCommand));
-	return (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) == IDYES);
-      }
-    case CYapConfig::SEC_SECURE_COMMANDS:
-      {
-	CString strName = strCommand.SpanExcluding(" ");
-	for (Tokenizer tok (g_pYapConfig->m_strSecureCommands, " ,;");
-	     tok.GetCurrent() != 0;
-	     ++ tok)
-	  {
-	    if (PathName::Compare(tok.GetCurrent(), strName) == 0)
-	      {
-		return (true);
-	      }
-	  }
-	return (false);
-      }
-    case CYapConfig::SEC_ENABLE_ALL_COMMANDS:
-      return (true);
-    }
+  return (false); // todo
 }
 
 /* _________________________________________________________________________
@@ -200,25 +173,25 @@ CPostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
       if (pfile == 0)
 	{
 	  m_bError = true;
-	  YapError (T_("Cannot convert %1 to EPS."), Q_(lpszFileName));
-	  return (false);
+	  FATAL_MIKTEX_ERROR ("CPostScript::ExecuteEncapsulatedPostScript",
+	    T_("Cannot convert to EPS."), lpszFileName);
 	}	  
     }
   else
     {
 #if _MSC_VER >= 1400
-      if (_tfopen_s(&pfile, lpszFileName, "rb") != 0)
+      if (fopen_s(&pfile, lpszFileName, "rb") != 0)
       {
 	pfile = 0;
       }
 #else
-      pfile = _tfopen(lpszFileName, "rb");
+      pfile = fopen(lpszFileName, "rb");
 #endif
       if (pfile == 0)
 	{
 	  m_bError = true;
-	  YapError (T_("Cannot open PostScript file %1."), Q_(lpszFileName));
-	  return (false);
+	  FATAL_MIKTEX_ERROR ("CPostScript::ExecuteEncapsulatedPostScript",
+	    T_("Cannot open PostScript file."), lpszFileName);
 	}
       struct
       {
@@ -246,12 +219,11 @@ CPostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 	}
     }
 
-  autofclose xxx (pfile);
+  AutoFILE xxx (pfile);
 
   if (fseek(pfile, start, SEEK_SET) != 0)
     {
       tracePS->WriteFormattedLine ("libdvi", T_("fseek() failed for some reason"));
-      fclose (pfile);
     }
 
   return (CopyFile(pfile, length));
@@ -272,14 +244,16 @@ struct ThreadArg
 unsigned __stdcall
 CPostScript::ConvertToEPSThread (/*[in]*/ LPVOID pv)
 {
-  assert (pv != 0);
+  MIKTEX_ASSERT (pv != 0);
   ThreadArg * parg = reinterpret_cast<ThreadArg*>(pv);
-  assert (parg->filein != 0 && parg->fileout != 0);
+  MIKTEX_ASSERT (parg->filein != 0 && parg->fileout != 0);
   bmeps_cfg ("c");
   int rc = bmeps_run(parg->fileout, parg->filein, parg->pathFile.GetBuffer());
   if (rc == 0)
     {
+#if 0 // FIXME
       tracePS->WriteFormattedLine ("libdvi", T_("bmeps_run() failed for some reason"));
+#endif
     }
   fclose (parg->filein);
   fclose (parg->fileout);
@@ -300,13 +274,13 @@ CPostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
     {
       return (0);
     }
-  FILE * pFilePipeRead = _tfdopen(aHandles[0], "rb");
+  FILE * pFilePipeRead = fdopen(aHandles[0], "rb");
   if (pFilePipeRead == 0)
     {
       _close (aHandles[0]);
       return (0);
     }
-  FILE * pFilePipeWrite = _tfdopen(aHandles[1], "wb");
+  FILE * pFilePipeWrite = fdopen(aHandles[1], "wb");
   if (pFilePipeWrite == 0)
     {
       fclose (pFilePipeRead);
@@ -315,12 +289,12 @@ CPostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
     }
   FILE * pFileIn;
 #if _MSC_VER >= 1400
-  if (_tfopen_s(&pFileIn, lpszFileName, "rb") != 0)
+  if (fopen_s(&pFileIn, lpszFileName, "rb") != 0)
   {
     pFileIn = 0;
   }
 #else
-  pFileIn = _tfopen(lpszFileName, "rb");
+  pFileIn = fopen(lpszFileName, "rb");
 #endif
   if (pFileIn == 0)
     {
@@ -365,9 +339,8 @@ CPostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
   if (! SessionWrapper(true)->FindFile(lpszHeaderName, FileType::PSHEADER, fileName))
     {
       m_bError = true;
-      YapError (T_("Cannot find PostScript header file %1."),
-		Q_(lpszHeaderName));
-      return (false);
+      FATAL_MIKTEX_ERROR (T_("CPostScript::SendHeader"),
+	T_("Cannot find PostScript header file."), lpszHeaderName);
     }
   tracePS->WriteFormattedLine ("libdvi", T_("Sending %s..."), Q_(fileName));
   bool bDone = ExecuteBatch(fileName.Get());
@@ -376,8 +349,8 @@ CPostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
       if (! m_bError)
 	{
 	  m_bError = true;
-	  YapError (T_("Cannot send PostScript header file %1."),
-		    Q_(fileName));
+	  FATAL_MIKTEX_ERROR ("CPostScript::SendHeader",
+	    T_("Cannot send PostScript header file."), fileName.Get());
 	}
     }
   return (bDone);
@@ -445,7 +418,7 @@ CPostScript::DoDefinitions ()
    _________________________________________________________________________ */
 
 bool
-CPostScript::DoSpecial (/*[in]*/ const psfilespecial * ppsfilespecial)
+CPostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
 {
   if (m_bError)
     {
@@ -453,88 +426,88 @@ CPostScript::DoSpecial (/*[in]*/ const psfilespecial * ppsfilespecial)
     }
   PathName pathFileName;
   bool bFileExists =
-    FindGraphicsFile(ppsfilespecial->getfilename(), pathFileName.GetBuffer());
+    FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName.GetBuffer());
   if (! bFileExists)
     {
       m_bError = true;
-      YapError (T_("Cannot find file %1."), Q_(ppsfilespecial->getfilename()));
-      return (false);
+      FATAL_MIKTEX_ERROR ("CPostScript::DoSpecial",
+	T_("Cannot find file."), ppsfilespecial->GetFileName());
     }
 
   bool bDone = true;
 
   bDone = Execute("%d %d a\n",
-		  ppsfilespecial->getx() - pDviImpl->GetResolution(),
-		  ppsfilespecial->gety() - pDviImpl->GetResolution());
+    ppsfilespecial->GetX() - pDviImpl->GetResolution(),
+    ppsfilespecial->GetY() - pDviImpl->GetResolution());
   
   bDone = bDone && Execute("@beginspecial\n");
   
-  if (bDone && ppsfilespecial->has_hsize())
+  if (bDone && ppsfilespecial->HasHsize())
     {
-      bDone = Execute("%d @hsize\n", ppsfilespecial->gethsize());
+      bDone = Execute("%d @hsize\n", ppsfilespecial->GetHsize());
     }
   
-  if (bDone && ppsfilespecial->has_vsize())
+  if (bDone && ppsfilespecial->HasVsize())
     {
-      bDone = Execute("%d @vsize\n", ppsfilespecial->getvsize());
+      bDone = Execute("%d @vsize\n", ppsfilespecial->GetVsize());
     }
   
-  if (bDone && ppsfilespecial->has_hoffset())
+  if (bDone && ppsfilespecial->HasHoffset())
     {
-      bDone = Execute("%d @hoffset\n", ppsfilespecial->gethoffset());
+      bDone = Execute("%d @hoffset\n", ppsfilespecial->GetHoffset());
     }
   
-  if (bDone && ppsfilespecial->has_voffset())
+  if (bDone && ppsfilespecial->HasVoffset())
     {
-      bDone = Execute("%d @voffset\n", ppsfilespecial->getvoffset());
+      bDone = Execute("%d @voffset\n", ppsfilespecial->GetVoffset());
     }
   
-  if (bDone && ppsfilespecial->has_hscale())
+  if (bDone && ppsfilespecial->HasHscale())
     {
-      bDone = Execute("%d @hscale\n", ppsfilespecial->gethscale());
+      bDone = Execute("%d @hscale\n", ppsfilespecial->GetHscale());
     }
   
-  if (bDone && ppsfilespecial->has_vscale())
+  if (bDone && ppsfilespecial->HasVscale())
     {
-      bDone = Execute("%d @vscale\n", ppsfilespecial->getvscale());
+      bDone = Execute("%d @vscale\n", ppsfilespecial->GetVscale());
     }
   
-  if (bDone && ppsfilespecial->has_angle ())
+  if (bDone && ppsfilespecial->HasAngle())
     {
-      bDone = Execute("%d @angle\n", ppsfilespecial->getangle());
+      bDone = Execute("%d @angle\n", ppsfilespecial->GetAngke());
     }
   
-  if (bDone && ppsfilespecial->has_llx())
+  if (bDone && ppsfilespecial->HasLlx())
     {
-      bDone = Execute("%d @llx\n", ppsfilespecial->getllx());
+      bDone = Execute("%d @llx\n", ppsfilespecial->GetLlx());
     }
   
-  if (bDone && ppsfilespecial->has_lly())
+  if (bDone && ppsfilespecial->HasLly())
     {
-      bDone = Execute("%d @lly\n", ppsfilespecial->getlly());
+      bDone = Execute("%d @lly\n", ppsfilespecial->GetLly());
     }
   
-  if (bDone && ppsfilespecial->has_urx())
+  if (bDone && ppsfilespecial->HasUrx())
     {
-      bDone = Execute("%d @urx\n", ppsfilespecial->geturx());
+      bDone = Execute("%d @urx\n", ppsfilespecial->GetUrx());
     }
   
-  if (bDone && ppsfilespecial->has_ury())
+  if (bDone && ppsfilespecial->HasUry())
     {
-      bDone = Execute("%d @ury\n", ppsfilespecial->getury());
+      bDone = Execute("%d @ury\n", ppsfilespecial->GetUry());
     }
   
-  if (bDone && ppsfilespecial->has_rwi())
+  if (bDone && ppsfilespecial->HasRwi())
     {
-      bDone = Execute("%d @rwi\n", ppsfilespecial->getrwi());
+      bDone = Execute("%d @rwi\n", ppsfilespecial->GetRwi());
     }
   
-  if (bDone && ppsfilespecial->has_rhi())
+  if (bDone && ppsfilespecial->HasRhi())
     {
-      bDone = Execute("%d @rhi\n", ppsfilespecial->getrhi());
+      bDone = Execute("%d @rhi\n", ppsfilespecial->GetRhi());
     }
   
-  if (bDone && ppsfilespecial->has_clip())
+  if (bDone && ppsfilespecial->HasClipFlag())
     {
       bDone = Execute("@clip\n");
     }
@@ -554,21 +527,20 @@ CPostScript::DoSpecial (/*[in]*/ const psfilespecial * ppsfilespecial)
    _________________________________________________________________________ */
 
 void
-CPostScript::AddDefinition (/*[in]*/
-			    const psdefspecial * ppsdefspecial)
+CPostScript::AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial)
 {
-  if (ppsdefspecial->getdef())
+  if (ppsdefspecial->GetDef())
     {
       if (find(m_setDefinitions.begin(), m_setDefinitions.end(),
-	       ppsdefspecial->getdef())
+	       ppsdefspecial->GetDef())
 	  == m_setDefinitions.end())
 	{
-	  m_setDefinitions.push_back (ppsdefspecial->getdef());
+	  m_setDefinitions.push_back (ppsdefspecial->GetDef());
 	}
     }
-  else if (ppsdefspecial->getfilename())
+  else if (ppsdefspecial->GetFileName())
     {
-      AddHeader (ppsdefspecial->getfilename());
+      AddHeader (ppsdefspecial->GetFileName());
     }
 }
 
@@ -597,7 +569,7 @@ CPostScript::AddHeader (/*[in]*/ const char * lpszFileName)
    _________________________________________________________________________ */
 
 bool
-CPostScript::DoSpecial (/*[in]*/ const dvipsspecial * pdvipsspecial)
+CPostScript::DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial)
 {
   if (m_bError)
     {
@@ -605,33 +577,33 @@ CPostScript::DoSpecial (/*[in]*/ const dvipsspecial * pdvipsspecial)
     }
   bool bDone =
     Execute("%d %d a\n",
-	    pdvipsspecial->getx() - pDviImpl->GetResolution(),
-	    pdvipsspecial->gety() - pDviImpl->GetResolution());
-  if (pdvipsspecial->getprotection())
+	    pdvipsspecial->GetX() - pDviImpl->GetResolution(),
+	    pdvipsspecial->GetY() - pDviImpl->GetResolution());
+  if (pdvipsspecial->GetProtection())
     {
       bDone = bDone && Execute("@beginspecial\n");
       bDone = bDone && Execute("@setspecial\n");
     }
-  if (pdvipsspecial->getstring())
+  if (pdvipsspecial->GetString())
     {
-      bDone = bDone && Execute("%s\n", pdvipsspecial->getstring());
+      bDone = bDone && Execute("%s\n", pdvipsspecial->GetString());
     }
-  else if (pdvipsspecial->getfilename())
+  else if (pdvipsspecial->GetFileName())
     {
       char filename[_MAX_PATH];
-      if (! FindGraphicsFile(pdvipsspecial->getfilename(), filename))
+      if (! FindGraphicsFile(pdvipsspecial->GetFileName(), filename))
 	{
 	  m_bError = true;
 	  bDone = false;
-	  YapError (T_("Cannot find file %1."),
-		    Q_(pdvipsspecial->getfilename()));
+	  FATAL_MIKTEX_ERROR ("CPostScript::DoSpecial",
+	    T_("Cannot find file."), pdvipsspecial->GetFileName());
 	}
       else
 	{
 	  bDone = bDone && ExecuteEncapsulatedPostScript(filename);
 	}
     }
-  if (pdvipsspecial->getprotection())
+  if (pdvipsspecial->GetProtection())
     {
       bDone = bDone && Execute("@endspecial\n");
     }
@@ -666,36 +638,22 @@ pt2sp (/*[in]*/ int pt)
 bool
 CPostScript::Open (/*[in]*/ DviImpl * pDviImpl)
 {
-  pDviImpl = pDviImpl;
+  this->pDviImpl = pDviImpl;
 
   int width, height;
 
   // calculate device dimensions
-  PaperSizeInfo size;
-  if (! Utils::GetPaperSize(-1, g_pYapConfig->m_strPaperSize, &size))
+  PaperSizeInfo size = pDviImpl->GetPaperSizeInfo();
     {
-      if (pDviImpl->IsPortrait())
-	{
-	  width = 39158280;
-	  height = 55380996;
-	}
-      else
-	{
-	  height = 39158280;
-	  width = 55380996;
-	}
-    }
-  else
-    {
-      if (pDviImpl->IsPortrait())
-	{
-	  width = pt2sp(size.width);
-	  height = pt2sp(size.height);
-	}
-      else
+      if (pDviImpl->Landscape())
 	{
 	  height = pt2sp(size.width);
 	  width = pt2sp(size.height);
+	}
+      else
+	{
+	  width = pt2sp(size.width);
+	  height = pt2sp(size.height);
 	}
     }
 
@@ -724,7 +682,7 @@ bool
 CPostScript::Close ()
 
 {
-  ASSERT (! m_bPageBegun);
+  MIKTEX_ASSERT (! m_bPageBegun);
   Execute ("end\n");
   Finalize();
   m_bOpen = false;
@@ -741,7 +699,7 @@ CPostScript::Close ()
 bool
 CPostScript::BeginPage ()
 {
-  ASSERT (! m_bPageBegun);
+  MIKTEX_ASSERT (! m_bPageBegun);
   m_bPageBegun = Execute("1 0 bop\n");
   return (m_bPageBegun);
 }
@@ -756,7 +714,7 @@ CPostScript::BeginPage ()
 bool
 CPostScript::EndPage ()
 {
-  ASSERT (m_bPageBegun);
+  MIKTEX_ASSERT (m_bPageBegun);
   bool ret = Execute("eop\n");
   m_bPageBegun = false;
   return (ret);
@@ -794,12 +752,12 @@ CPostScript::Finalize ()
 
 bool
 CPostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-				       /*[out]*/ char *	lpszResult)
+				       /*[out]*/ char *		lpszResult)
 {
   tracePS->WriteFormattedLine ("libdvi", T_("Searching file %s..."), Q_(lpszFileName));
-  ASSERT (pDviImpl != 0);
-  ASSERT (pDviImpl->GetPathName().GetLength() != 0);
-  PathName path = pDviImpl->GetPathName();
+  MIKTEX_ASSERT (pDviImpl != 0);
+  MIKTEX_ASSERT (pDviImpl->GetDviFileName().GetLength() != 0);
+  PathName path = pDviImpl->GetDviFileName();
   path.RemoveFileSpec ();
   path += lpszFileName;
   bool bFound = File::Exists(path);
@@ -834,13 +792,13 @@ CPostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
   if (! InternalFindGraphicsFile(lpszFileName, szPath))
     {
       m_bError = true;
-      YapError (T_("Cannot find file %1."), Q_(lpszFileName));
-      return (false);
+      FATAL_MIKTEX_ERROR ("CPostScript::Uncompress",
+	T_("Cannot find file."), lpszFileName);
     }
   PathName temp;
   Utils::UncompressFile (szPath, temp);
   Utils::CopyString (lpszTempFileName, _MAX_PATH, temp.Get());
-  pDviImpl->GetTempFiles()[lpszFileName] = lpszTempFileName;
+  pDviImpl->RememberTempFile(lpszFileName, lpszTempFileName);
   return (true);
 }
 
@@ -850,10 +808,9 @@ CPostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
    _________________________________________________________________________ */
 
 bool
-IsZFileName (/*[in]*/ const CString & strFileName)
+IsZFileName (/*[in]*/ const PathName & fileName)
 {
-  return (_tcsicmp(strFileName.Right(3), ".gz") == 0
-	  || _tcsicmp(strFileName.Right(4), ".bz2") == 0);
+  return (fileName.HasExtension(".gz") || fileName.HasExtension(".bz2"));
 }
 
 /* _________________________________________________________________________
@@ -866,22 +823,21 @@ IsZFileName (/*[in]*/ const CString & strFileName)
 
 bool
 CPostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-			       /*[out]*/ char *	lpszResult)
+			       /*[out]*/ char *		lpszResult)
 {
   if (*lpszFileName == '`')
     {
-      map<tstring, TempFile>::const_iterator it =
-	pDviImpl->GetTempFiles().find(lpszFileName + 1);
-      if (it != pDviImpl->GetTempFiles().end())
+      PathName tempFile;
+      if (pDviImpl->TryGetTempFile(lpszFileName, tempFile))
 	{
-	  Utils::CopyString (lpszResult, _MAX_PATH, it->second.Get());
+	  Utils::CopyString (lpszResult, _MAX_PATH, tempFile.Get());
 	  return (true);
 	}
-      else if (_tcsncmp(lpszFileName + 1, "gunzip -c ", 10) == 0)
+      else if (strncmp(lpszFileName + 1, "gunzip -c ", 10) == 0)
 	{
 	  return (Uncompress(lpszFileName + 11, lpszResult));
 	}
-      else if (_tcsncmp(lpszFileName + 1, "bunzip2 -c ", 11) == 0)
+      else if (strncmp(lpszFileName + 1, "bunzip2 -c ", 11) == 0)
 	{
 	  return (Uncompress(lpszFileName + 12, lpszResult));
 	}
@@ -896,37 +852,38 @@ CPostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 	  Utils::CopyString (szTempFileName,
 			     _MAX_PATH,
 			     PathName().SetToTempFile().Get());
-	  CString strCommand;
-	  strCommand.Format ("%s > %s",
-			     Q_(lpszFileName + 1),
-			     szTempFileName);
-	  ASSERT (pDviImpl != 0);
-	  CString strDocDir = pDviImpl->GetDocDir();
-	  StdoutReader reader (0);
+	  string command;
+	  command = lpszFileName + 1;
+	  command += " > ";
+	  command += Q_(szTempFileName);
+	  MIKTEX_ASSERT (pDviImpl != 0);
+	  PathName docDir = pDviImpl->GetDviFileName();
+	  docDir.RemoveFileSpec();
+	  StdoutReader reader;
 	  bool bDone =
-	    Process::ExecuteSystemCommand(static_cast<const char *>(strCommand), 0,
-			   &reader, strDocDir);
+	    Process::ExecuteSystemCommand(command.c_str(), 0,
+			   &reader, docDir.Get());
 	  if (! bDone)
 	    {
 	      // <fixme>hard-coded string</fixme>
 	      m_bError = true;
-	      YapError (T_("Execution of an embedded shell ")
-			T_("command failed for some reason!"));
-	      DeleteFile (szTempFileName);
-	      return (false);
+	      File::Delete (szTempFileName);
+	      FATAL_MIKTEX_ERROR ("CPostScript::FindGraphicsFile",
+		T_("Execution of an embedded shell ")
+		T_("command failed for some reason!"),
+		0);
 	    }
-	  pDviImpl->GetTempFiles()[lpszFileName + 1] = szTempFileName;
+	  pDviImpl->RememberTempFile (lpszFileName + 1, szTempFileName);
 	  Utils::CopyString (lpszResult, _MAX_PATH, szTempFileName);
 	  return (true);
 	}
     }
   else if (IsZFileName(lpszFileName))
     {
-      map<tstring, TempFile>::const_iterator it =
-	pDviImpl->GetTempFiles().find(lpszFileName);
-      if (it != pDviImpl->GetTempFiles().end())
+      PathName tempFile;
+      if (pDviImpl->TryGetTempFile(lpszFileName, tempFile))
 	{
-	  Utils::CopyString (lpszResult, _MAX_PATH, it->second.Get());
+	  Utils::CopyString (lpszResult, _MAX_PATH, tempFile.Get());
 	  return (true);
 	}
       return (Uncompress(lpszFileName, lpszResult));

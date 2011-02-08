@@ -101,7 +101,7 @@ public:
 
 public:
   void
-  AddDefinition (/*[in]*/ const MiKTeX::psdefspecial * ppsdefspecial);
+  AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial);
 
 public:
   bool
@@ -113,11 +113,11 @@ public:
 
 public:
   bool
-  DoSpecial (/*[in]*/ const MiKTeX::psfilespecial * ppsfilespecial);
+  DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial);
 
 public:
   bool
-  DoSpecial (/*[in]*/ const MiKTeX::dvipsspecial * pdvipsspecial);
+  DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial);
 
 public:
   bool
@@ -163,7 +163,7 @@ protected:
   virtual
   bool
   Execute (/*[in]*/ const char *	lpszFormat,
-	   /*[in]*/		...)
+	   /*[in]*/			...)
     = 0;
 
 protected:
@@ -182,7 +182,7 @@ protected:
 protected:
   bool
   FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-		    /*[out]*/ char *	lpszResult);
+		    /*[out]*/ char *		lpszResult);
 
 protected:
   bool
@@ -191,7 +191,7 @@ protected:
 protected:
   bool
   InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-			    /*[out]*/ char *	lpszResult);
+			    /*[out]*/ char *		lpszResult);
 
 protected:
   bool
@@ -200,7 +200,7 @@ protected:
 protected:
   bool
   Uncompress (/*[in]*/ const char *	lpszFileName,
-	      /*[out]*/ char *	lpszTempFileName);
+	      /*[out]*/ char *		lpszTempFileName);
 
 protected:
   virtual

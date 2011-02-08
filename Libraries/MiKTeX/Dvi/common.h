@@ -191,6 +191,94 @@ public:
 
 /* _________________________________________________________________________
 
+   TempFile
+   _________________________________________________________________________ */
+
+class TempFile
+{
+public:
+  TempFile ()
+  {
+  }
+
+public:
+  TempFile (/*[in]*/ const PathName & path)
+    : path (path)
+  {
+  }
+
+public:
+  const char *
+  Get ()
+    const
+  {
+    return (path.Get());
+  }
+
+public:
+  void
+  Delete ()
+  {
+    if (path[0] != 0)
+    {
+      PathName tmp (path);
+      path = "";
+      File::Delete (tmp);
+    }
+  }
+
+public:
+  ~TempFile ()
+  {
+    try
+    {
+      Delete ();
+    }
+    catch (const MiKTeXException &)
+    {
+    }
+  }
+
+private:
+  PathName path;
+};
+
+/* _________________________________________________________________________
+
+   StdoutReader
+   _________________________________________________________________________ */
+
+class
+StdoutReader
+  : public IRunProcessCallback
+{
+public:
+  StdoutReader ()
+  {
+  }
+
+public:
+  ~StdoutReader ()
+  {
+  }
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  OnProcessOutput (/*[in]*/ const void *	pOutput,
+		   /*[in]*/ size_t		n)
+  {
+    output.append (reinterpret_cast<const char *>(pOutput), n);
+    return (true);
+  }
+
+private:
+  string output;
+};
+
+/* _________________________________________________________________________
+
    Dictionary Types
    _________________________________________________________________________ */
 
@@ -222,6 +310,11 @@ typedef map<int, vector<DviBitmap> > MAPNUMTOBITMAPVEC;
 typedef tr1::unordered_map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
 #else
 typedef map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<string, TempFile> TempFileCollection;
+#else
 #endif
 
 /* _________________________________________________________________________
@@ -1421,6 +1514,31 @@ public:
     return (pageMode);
   }
 
+public:
+  void
+  RememberTempFile (/*[in]*/ const string & key,
+		    /*[in]*/ const PathName & path)
+  {
+    tempFiles[key] = path;
+  }
+
+public:
+  bool
+  TryGetTempFile (/*/*[in]*/ const string & key,
+		    /*[out]*/ PathName & path)
+  {
+    TempFileCollection::const_iterator it = tempFiles.find(key);
+    if (it != tempFiles.end())
+    {
+      path = it->second.Get();
+      return (true);
+    }
+    else
+    {
+      return (false);
+    }
+  }
+
 private:
   bool
   InterpretSpecial (/*[in]*/ DviPageImpl *	pPage,
@@ -1739,6 +1857,9 @@ private:
 
 private:
   auto_ptr<TraceStream> trace_search;
+
+private:
+  TempFileCollection tempFiles;
 };
 
 /* _________________________________________________________________________
