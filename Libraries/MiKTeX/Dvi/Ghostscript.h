@@ -81,13 +81,13 @@ private:
   auto_ptr<Thread> pStderrReaderThread;
 
 private:
-  FILE * m_pStdin;
+  FileStream gsIn;
 
 private:
-  FILE * m_pStdout;
+  FileStream gsOut;
 
 private:
-  FILE * m_pStderr;
+  FileStream gsErr;
 
 private:
   auto_ptr<Process> m_pGhostscript;

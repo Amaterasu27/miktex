@@ -39,9 +39,6 @@ namespace {
    _________________________________________________________________________ */
 
 CGhostscript::CGhostscript ()
-  : m_pStderr (0),
-    m_pStdin (0),
-    m_pStdout (0)
 {
 }
 
@@ -53,10 +50,10 @@ CGhostscript::CGhostscript ()
 CGhostscript::~CGhostscript ()
 {
   MIKTEX_ASSERT (pChunkerThread.get() == 0);
-  MIKTEX_ASSERT (m_pStderr == 0);
+  MIKTEX_ASSERT (gsErr.Get() == 0);
   MIKTEX_ASSERT (pStderrReaderThread.get() == 0);
-  MIKTEX_ASSERT (m_pStdin == 0);
-  MIKTEX_ASSERT (m_pStdout == 0);
+  MIKTEX_ASSERT (gsIn.Get() == 0);
+  MIKTEX_ASSERT (gsOut.Get() == 0);
   MIKTEX_ASSERT (m_pGhostscript.get() == 0);
 }
 
@@ -79,18 +76,18 @@ CGhostscript::Start ()
   SessionWrapper(true)->GetGhostscript (szGsExe, &version);
 
   // check to see whether the version number is ok
-  if (HIWORD(version) < 6)
+  if (((version >> 16) & 0xffff) < 6)
   {
     m_bError = true;
     FATAL_MIKTEX_ERROR ("CGhostscript::Start",
-      T_("At least Ghostscript version 6.0 is required."), 0);
+      T_("At least Ghostscript version 6.00 is required."), 0);
   }
 
   // first version that supports .locksafe
-  unsigned long dwVersion_locksafe = MAKELONG(4, 7); // 7.04
+  unsigned long dwVersion_locksafe = 0x00070004; // 7.04
 
   // first version that supports -sstdout=%stderr
-  unsigned long dwVersion_sstdout = MAKELONG(2, 7); // 7.02
+  unsigned long dwVersion_sstdout = 0x00070002; // 7.02
 
   //
   // build the command-line
@@ -149,10 +146,10 @@ CGhostscript::Start ()
 
   try
   {
-    m_pGhostscript = auto_ptr<Process>(Process::Start(startinfo));
-    m_pStdin = m_pGhostscript->get_StandardInput();
-    m_pStdout = m_pGhostscript->get_StandardOutput();
-    m_pStderr = m_pGhostscript->get_StandardError();
+    m_pGhostscript.reset (Process::Start(startinfo));
+    gsIn.Attach (m_pGhostscript->get_StandardInput());
+    gsOut.Attach (m_pGhostscript->get_StandardOutput());
+    gsErr.Attach (m_pGhostscript->get_StandardError());
   }
   catch (exception &)
   {
@@ -182,8 +179,7 @@ size_t
 CGhostscript::Read (/*[out]*/ void *	pBuf,
 		   /*[in]*/ size_t	size)
 {
-  size_t bytesRead = fread(pBuf, 1, size, m_pStdout);
-  return (bytesRead);
+  return (gsOut.Read(pBuf, size));
 }
 
 /* _________________________________________________________________________
@@ -290,8 +286,7 @@ CGhostscript::Chunker (/*[in]*/ void * pParam)
   catch (const exception &)
   {
     This->m_bError = true;
-    fclose (This->m_pStdout);
-    This->m_pStdout = 0;
+    This->gsOut.Close ();
     throw;
   }
   pChunker.reset (0);
@@ -306,28 +301,13 @@ void
 CGhostscript::StderrReader (/*[in]*/ void * pParam)
 {
   CGhostscript * This = reinterpret_cast<CGhostscript*>(pParam);
-#define CHUNK_SIZE 64
-  char buf[ CHUNK_SIZE ];
+  const int chunkSize = 64;
+  char buf[ chunkSize ];
   This->m_strStderr = "";
   size_t n;
-  while ((n = fread(buf, 1, CHUNK_SIZE, This->m_pStderr)) > 0)
+  while ((n = This->gsErr.Read(buf, chunkSize)) > 0)
   {
-    for (size_t i = 0; i < n; ++ i)
-    {
-      if (buf[i] == '\n')
-      {
-	This->m_strStderr += "\r\n";
-      }
-      else
-      {
-	This->m_strStderr += buf[i];
-      }
-    }
-  }
-  int err = ferror(This->m_pStderr);
-  if (err != 0 && err != EPIPE)
-  {
-    This->tracePS->WriteFormattedLine ("libdvi", T_("ReadFile failed on Ghostscript %%stderr"));
+    This->m_strStderr.append (buf, n);
   }
 }
 
@@ -340,14 +320,7 @@ void
 CGhostscript::Write (/*[in]*/ const void *	p,
 		     /*[in]*/ unsigned		n)
 {
-  size_t nwritten = fwrite(p, 1, n, m_pStdin);
-  int err = ferror(m_pStdin);
-  if (n != nwritten || (err != 0 && err != EPIPE))
-  {
-    tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript finished prematurely"));
-    FATAL_MIKTEX_ERROR ("CGhostscript::Write",
-      T_("Ghostscript finished prematurely."), 0);
-  }
+  gsIn.Write (p, n);
 }
 
 /* _________________________________________________________________________
@@ -379,10 +352,9 @@ void
 CGhostscript::Finalize ()
 {
   // close Ghostscript's input stream
-  if (m_pStdin != 0)
+  if (gsIn.Get() != 0)
     {
-      fclose (m_pStdin);
-      m_pStdin = 0;
+      gsIn.Close ();
     }
 
   // wait for Ghostscript to finish
@@ -400,7 +372,7 @@ CGhostscript::Finalize ()
   if (pChunkerThread.get() != 0)
   {
     pChunkerThread->Join ();
-    pChunkerThread.reset (0);
+    pChunkerThread.reset ();
   }
 
   // wait for stderr reader to finish
@@ -412,23 +384,21 @@ CGhostscript::Finalize ()
 
   if (! m_strStderr.empty())
   {
-    tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript transcript follows:\r\n\
-==========================================================================\r\n\
-%s\r\n\
+    tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript transcript follows:\n\
+==========================================================================\n\
+%s\n\
 =========================================================================="),
 	  m_strStderr.c_str());
   }
 
-  if (m_pStdout != 0)
+  if (gsOut.Get() != 0)
   {
-    fclose (m_pStdout);
-    m_pStdout = 0;
+    gsOut.Close ();
   }
 
-  if (m_pStderr != 0)
+  if (gsErr.Get() != 0)
   {
-    fclose (m_pStderr);
-    m_pStderr = 0;
+    gsErr.Close ();
   }
 
   CPostScript::Finalize ();
