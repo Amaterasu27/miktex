@@ -90,11 +90,8 @@ private:
   FileStream gsErr;
 
 private:
-  auto_ptr<Process> m_pGhostscript;
+  auto_ptr<Process> gsProcess;
 
 private:
-  bool m_bGhostscriptRunning;
-
-private:
-  string m_strStderr;
+  string stderrBuffer;
 };

@@ -60,7 +60,7 @@ public:
   IsOpen ()
     const
   {
-    return (m_bOpen);
+    return (openFlag);
   }
 
 public:
@@ -68,7 +68,7 @@ public:
   IsPageEmpty ()
     const
   {
-    return (! m_bPageBegun);
+    return (! pageBegunFlag);
   }
 
 public:
@@ -86,7 +86,7 @@ public:
   bool
   IsError () const
   {
-    return (m_bError);
+    return (errorFlag);
   }
 
 public:
@@ -94,7 +94,7 @@ public:
   Restart ()
   {
     Clear ();
-    m_bError = false;
+    errorFlag = false;
   }
 
 public:
@@ -209,31 +209,28 @@ protected:
     = 0;
 
 protected:
-  FILE * m_pfile;
-
-protected:
   DviImpl * pDviImpl;
 
 protected:
   int shrinkFactor;
 
 protected:
-  bool m_bOpen;
+  bool openFlag;
 
 protected:
-  bool m_bPageBegun;
+  bool pageBegunFlag;
 
 protected:
-  bool m_bError;
+  bool errorFlag;
 
 protected:
-  std::vector<std::string> m_setDefinitions;
+  vector<string> definitions;
 
 protected:
-  std::vector<std::string> m_setHeaders;
+  vector<string> headers;
 
 protected:
-  std::vector<BitmapFile> m_vecBitmapFiles;
+  vector<BitmapFile> m_vecBitmapFiles;
 
 protected:
   auto_ptr<TraceStream> tracePS;
