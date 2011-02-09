@@ -23,16 +23,16 @@
 
 #include "PostScript.h"
 
-class CGhostscript
-  : public CPostScript,
+class Ghostscript
+  : public PostScript,
     public IDibChunkerCallback
 {
 public:
-  CGhostscript ();
+  Ghostscript ();
 
 public:
   virtual
-  ~CGhostscript ();
+  ~Ghostscript ();
 
 public:
   virtual

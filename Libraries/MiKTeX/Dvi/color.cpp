@@ -1,6 +1,6 @@
 /* color.cpp: color specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -154,10 +154,10 @@ LookupColorName (/*[in]*/ const char *	lpszName,
 
 /* _________________________________________________________________________
 
-   Conversion routines (borrowed from GNU Ghostscript)
+   Conversion routines (borrowed from Ghostscript)
    _________________________________________________________________________ */
 
-namespace Ghostscript {
+namespace GhostscriptApi {
 #pragma warning (push, 1)
 typedef double floatp;
 typedef unsigned long ulong;
@@ -308,9 +308,9 @@ color_cmyk_to_rgb(frac c, frac m, frac y, frac k, // const gs_imager_state * pis
 #endif // MIKTEX
 }
 #pragma warning (pop)
-} // namespace Ghostscript
+} // namespace GhostscriptApi
 
-using namespace Ghostscript;
+using namespace GhostscriptApi;
 
 /* _________________________________________________________________________
 
@@ -334,8 +334,8 @@ unsigned long ()
 CmykColor::operator
 unsigned long ()
 {
-  Ghostscript::frac rgb[3];
-  Ghostscript::color_cmyk_to_rgb (float2frac(cyan),
+  GhostscriptApi::frac rgb[3];
+  GhostscriptApi::color_cmyk_to_rgb (float2frac(cyan),
 				  float2frac(magenta),
 				  float2frac(yellow),
 				  float2frac(black),
@@ -356,7 +356,7 @@ HsbColor::operator
 unsigned long ()
 {
   float rgb[3];
-  Ghostscript::color_hsb_to_rgb (hue, saturation, brightness, rgb);
+  GhostscriptApi::color_hsb_to_rgb (hue, saturation, brightness, rgb);
   RgbColor rgbcol;
   rgbcol.red = rgb[0];
   rgbcol.green = rgb[1];

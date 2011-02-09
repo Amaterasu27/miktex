@@ -324,8 +324,10 @@ typedef tr1::unordered_map<string, TempFile> TempFileCollection;
 
 #include "DviChar.h"
 #include "DviFont.h"
+#include "Ghostscript.h"
 #include "PkChar.h"
 #include "PkFont.h"
+#include "PostScript.h"
 #include "Tfm.h"
 #include "VFont.h"
 #include "VfChar.h"

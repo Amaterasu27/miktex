@@ -23,18 +23,16 @@
 
 #include "common.h"
 
-#include "PostScript.h"
-
 #include <io.h> // FIXME: see _pipe()
 #include <fcntl.h> // FIXME: see _pipe()
 #include <process.h> // FIXME: see _beginthreadex()
 
 /* _________________________________________________________________________
 
-   CPostScript::CPostScript
+   PostScript::PostScript
    _________________________________________________________________________ */
 
-CPostScript::CPostScript ()
+PostScript::PostScript ()
   : m_bError (false),
     m_bOpen (false),
     m_bPageBegun (false),
@@ -45,21 +43,21 @@ CPostScript::CPostScript ()
 
 /* _________________________________________________________________________
 
-   CPostScript::~CPostScript
+   PostScript::~PostScript
    _________________________________________________________________________ */
 
-CPostScript::~CPostScript ()
+PostScript::~PostScript ()
 {
   Clear ();
 }
 
 /* _________________________________________________________________________
 
-   CPostScript::Initialize
+   PostScript::Initialize
    _________________________________________________________________________ */
 
 void
-CPostScript::Initialize ()
+PostScript::Initialize ()
 {
   AddHeader ("tex.pro");
 #if 0
@@ -70,18 +68,18 @@ CPostScript::Initialize ()
 
 /* _________________________________________________________________________
 
-   CPostScript::IsEnabled
+   PostScript::IsEnabled
    _________________________________________________________________________ */
 
 bool
-CPostScript::IsEnabled ()
+PostScript::IsEnabled ()
 {
   return (true);		// TODO
 }
 
 /* _________________________________________________________________________
 
-   CPostScript::ExecuteBatch
+   PostScript::ExecuteBatch
 
    Process a PostScript file. This is done with the help of 'run',
    which seems to be a Ghostscript extension.
@@ -90,7 +88,7 @@ CPostScript::IsEnabled ()
    _________________________________________________________________________ */
 
 void
-CPostScript::ExecuteBatch (/*[in]*/ const char * lpszFileName)
+PostScript::ExecuteBatch (/*[in]*/ const char * lpszFileName)
 {
   string command;
   command.reserve (BufferSizes::MaxPath + 10);
@@ -116,11 +114,11 @@ AllowShellCommand (/*[in]*/ const char * lpszCommand)
 
 /* _________________________________________________________________________
 
-   CPostScript::CopyFile
+   PostScript::CopyFile
    _________________________________________________________________________ */
 
 void
-CPostScript::CopyFile (/*[in]*/ FILE *		pfile,
+PostScript::CopyFile (/*[in]*/ FILE *		pfile,
 		       /*[in]*/ unsigned	length)
 {
   size_t n;
@@ -138,13 +136,13 @@ CPostScript::CopyFile (/*[in]*/ FILE *		pfile,
 
 /* _________________________________________________________________________
 
-   CPostScript::ExecuteEncapsulatedPostScript
+   PostScript::ExecuteEncapsulatedPostScript
 
    Load an .eps file.
    _________________________________________________________________________ */
 
 void
-CPostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
+PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 {
   if (m_bError)
   {
@@ -167,7 +165,7 @@ CPostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
     if (pfile == 0)
     {
       m_bError = true;
-      FATAL_MIKTEX_ERROR ("CPostScript::ExecuteEncapsulatedPostScript",
+      FATAL_MIKTEX_ERROR ("PostScript::ExecuteEncapsulatedPostScript",
 	T_("Cannot convert to EPS."), lpszFileName);
     }	  
   }
@@ -184,7 +182,7 @@ CPostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
     if (pfile == 0)
     {
       m_bError = true;
-      FATAL_MIKTEX_ERROR ("CPostScript::ExecuteEncapsulatedPostScript",
+      FATAL_MIKTEX_ERROR ("PostScript::ExecuteEncapsulatedPostScript",
 	T_("Cannot open PostScript file."), lpszFileName);
     }
     struct
@@ -237,7 +235,7 @@ struct ThreadArg
 
 void
 MIKTEXCALLBACK
-CPostScript::ConvertToEPSThread (/*[in]*/ void * pv)
+PostScript::ConvertToEPSThread (/*[in]*/ void * pv)
 {
   MIKTEX_ASSERT (pv != 0);
   ThreadArg * parg = reinterpret_cast<ThreadArg*>(pv);
@@ -261,7 +259,7 @@ CPostScript::ConvertToEPSThread (/*[in]*/ void * pv)
    _________________________________________________________________________ */
 
 FILE *
-CPostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
+PostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
 {
   int aHandles[2];
   if (_pipe(aHandles, 4096, _O_BINARY) != 0)
@@ -317,13 +315,13 @@ CPostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
 
 /* _________________________________________________________________________
 
-   CPostScript::SendHeader
+   PostScript::SendHeader
 
    Send a PostScript header file.
    _________________________________________________________________________ */
 
 void
-CPostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
+PostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
 {
   if (m_bError)
   {
@@ -333,7 +331,7 @@ CPostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
   if (! SessionWrapper(true)->FindFile(lpszHeaderName, FileType::PSHEADER, fileName))
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR (T_("CPostScript::SendHeader"),
+    FATAL_MIKTEX_ERROR (T_("PostScript::SendHeader"),
       T_("Cannot find PostScript header file."), lpszHeaderName);
   }
   tracePS->WriteFormattedLine ("libdvi", T_("Sending %s..."), Q_(fileName));
@@ -342,13 +340,13 @@ CPostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
 
 /* _________________________________________________________________________
 
-   CPostScript::DoProlog
+   PostScript::DoProlog
 
    Initialize the PostScript device: send headers & define macros.
    _________________________________________________________________________ */
 
 void
-CPostScript::DoProlog ()
+PostScript::DoProlog ()
 {
   vector<string>::iterator it;
   for (it = m_setHeaders.begin(); it != m_setHeaders.end(); ++ it)
@@ -360,11 +358,11 @@ CPostScript::DoProlog ()
 
 /* _________________________________________________________________________
 
-   CPostScript::DoDefinitions
+   PostScript::DoDefinitions
    _________________________________________________________________________ */
 
 void
-CPostScript::DoDefinitions ()
+PostScript::DoDefinitions ()
 {
   if (m_setDefinitions.empty())
   {
@@ -382,13 +380,13 @@ CPostScript::DoDefinitions ()
 
 /* _________________________________________________________________________
 
-   CPostScript::DoSpecial
+   PostScript::DoSpecial
 
    Send a psfile special.
    _________________________________________________________________________ */
 
 void
-CPostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
+PostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
 {
   if (m_bError)
   {
@@ -400,7 +398,7 @@ CPostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
   if (! bFileExists)
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR ("CPostScript::DoSpecial",
+    FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
       T_("Cannot find file."), ppsfilespecial->GetFileName());
   }
 
@@ -487,13 +485,13 @@ CPostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
 
 /* _________________________________________________________________________
 
-   CPostScript::AddDefinition
+   PostScript::AddDefinition
 
    Remember a psdef special for later.
    _________________________________________________________________________ */
 
 void
-CPostScript::AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial)
+PostScript::AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial)
 {
   if (ppsdefspecial->GetDef())
   {
@@ -512,13 +510,13 @@ CPostScript::AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial)
 
 /* _________________________________________________________________________
 
-   CPostScript::AddHeader
+   PostScript::AddHeader
 
    Remember a psheader file for later.
    _________________________________________________________________________ */
 
 void
-CPostScript::AddHeader (/*[in]*/ const char * lpszFileName)
+PostScript::AddHeader (/*[in]*/ const char * lpszFileName)
 {
   if (find(m_setHeaders.begin(), m_setHeaders.end(), lpszFileName) == m_setHeaders.end())
   {
@@ -528,13 +526,13 @@ CPostScript::AddHeader (/*[in]*/ const char * lpszFileName)
 
 /* _________________________________________________________________________
 
-   CPostScript::DoSpecial
+   PostScript::DoSpecial
 
    Send a ps special.
    _________________________________________________________________________ */
 
 void
-CPostScript::DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial)
+PostScript::DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial)
 {
   if (m_bError)
   {
@@ -558,7 +556,7 @@ CPostScript::DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial)
     if (! FindGraphicsFile(pdvipsspecial->GetFileName(), filename))
     {
       m_bError = true;
-      FATAL_MIKTEX_ERROR ("CPostScript::DoSpecial",
+      FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
 	T_("Cannot find file."), pdvipsspecial->GetFileName());
     }
     else
@@ -588,13 +586,13 @@ pt2sp (/*[in]*/ int pt)
 
 /* _________________________________________________________________________
 
-   CPostScript::Open
+   PostScript::Open
 
    Open the PostScript device.
    _________________________________________________________________________ */
 
 void
-CPostScript::Open (/*[in]*/ DviImpl * pDviImpl,
+PostScript::Open (/*[in]*/ DviImpl * pDviImpl,
 		   /*[in]*/ int shrinkFactor)
 {
   this->pDviImpl = pDviImpl;
@@ -631,13 +629,13 @@ CPostScript::Open (/*[in]*/ DviImpl * pDviImpl,
 
 /* _________________________________________________________________________
 
-   CPostScript::Close
+   PostScript::Close
 
    Close the PostScript device.
    _________________________________________________________________________ */
 
 void
-CPostScript::Close ()
+PostScript::Close ()
 
 {
   MIKTEX_ASSERT (! m_bPageBegun);
@@ -648,13 +646,13 @@ CPostScript::Close ()
 
 /* _________________________________________________________________________
 
-   CPostScript::BeginPage
+   PostScript::BeginPage
 
    Start a new page.
    _________________________________________________________________________ */
 
 void
-CPostScript::BeginPage ()
+PostScript::BeginPage ()
 {
   MIKTEX_ASSERT (! m_bPageBegun);
   Execute ("1 0 bop\n");
@@ -663,13 +661,13 @@ CPostScript::BeginPage ()
 
 /* _________________________________________________________________________
 
-   CPostScript::EndPage
+   PostScript::EndPage
 
    Close the current page.
    _________________________________________________________________________ */
 
 void
-CPostScript::EndPage ()
+PostScript::EndPage ()
 {
   MIKTEX_ASSERT (m_bPageBegun);
   Execute ("eop\n");
@@ -678,11 +676,11 @@ CPostScript::EndPage ()
 
 /* _________________________________________________________________________
 
-   CPostScript::Clear
+   PostScript::Clear
    _________________________________________________________________________ */
 
 void
-CPostScript::Clear ()
+PostScript::Clear ()
 {
   m_setHeaders.clear ();
   m_setDefinitions.clear ();
@@ -690,23 +688,23 @@ CPostScript::Clear ()
 
 /* _________________________________________________________________________
 
-   CPostScript::Finalize
+   PostScript::Finalize
    _________________________________________________________________________ */
 
 void
-CPostScript::Finalize ()
+PostScript::Finalize ()
 {
 }
 
 /* _________________________________________________________________________
 
-   CPostScript::InternalFindGraphicsFile
+   PostScript::InternalFindGraphicsFile
 
    Find a graphics file.
    _________________________________________________________________________ */
 
 bool
-CPostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+PostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 				       /*[out]*/ char *		lpszResult)
 {
   tracePS->WriteFormattedLine ("libdvi", T_("Searching file %s..."), Q_(lpszFileName));
@@ -730,13 +728,13 @@ CPostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
-   CPostScript::Uncompress
+   PostScript::Uncompress
 
    Uncompress a graphics file.
    _________________________________________________________________________ */
 
 void
-CPostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
+PostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
 			 /*[out]*/  char *	lpszTempFileName)
 {
   if (m_bError)
@@ -747,7 +745,7 @@ CPostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
   if (! InternalFindGraphicsFile(lpszFileName, szPath))
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR ("CPostScript::Uncompress",
+    FATAL_MIKTEX_ERROR ("PostScript::Uncompress",
       T_("Cannot find file."), lpszFileName);
   }
   PathName temp;
@@ -769,14 +767,14 @@ IsZFileName (/*[in]*/ const PathName & fileName)
 
 /* _________________________________________________________________________
 
-   CPostScript::FindGraphicsFile
+   PostScript::FindGraphicsFile
 
    Find a graphics file.  Here we will handle backtics and compressed
    files.
    _________________________________________________________________________ */
 
 bool
-CPostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 			       /*[out]*/ char *		lpszResult)
 {
   if (*lpszFileName == '`')
@@ -824,7 +822,7 @@ CPostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 	// <fixme>hard-coded string</fixme>
 	m_bError = true;
 	File::Delete (szTempFileName);
-	FATAL_MIKTEX_ERROR ("CPostScript::FindGraphicsFile",
+	FATAL_MIKTEX_ERROR ("PostScript::FindGraphicsFile",
 	  T_("Execution of an embedded shell ")
 	  T_("command failed for some reason!"),
 	  0);

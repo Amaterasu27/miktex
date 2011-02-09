@@ -23,8 +23,6 @@
 
 #include "common.h"
 
-#include "Ghostscript.h"
-
 namespace {
   // make file reading 'wide-open'
   const char * const l_szPermitFileReading = "\
@@ -35,19 +33,19 @@ namespace {
 
 /* _________________________________________________________________________
 
-   CGhostscript::CGhostscript
+   Ghostscript::Ghostscript
    _________________________________________________________________________ */
 
-CGhostscript::CGhostscript ()
+Ghostscript::Ghostscript ()
 {
 }
 
 /* _________________________________________________________________________
 
-   CGhostscript::~CGhostscript
+   Ghostscript::~Ghostscript
    _________________________________________________________________________ */
 
-CGhostscript::~CGhostscript ()
+Ghostscript::~Ghostscript ()
 {
   MIKTEX_ASSERT (pChunkerThread.get() == 0);
   MIKTEX_ASSERT (gsErr.Get() == 0);
@@ -59,11 +57,11 @@ CGhostscript::~CGhostscript ()
 
 /* _________________________________________________________________________
 
-   CGhostscript::Start
+   Ghostscript::Start
    _________________________________________________________________________ */
 
 void
-CGhostscript::Start ()
+Ghostscript::Start ()
 {
   if (IsError())
   {
@@ -79,7 +77,7 @@ CGhostscript::Start ()
   if (((version >> 16) & 0xffff) < 6)
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR ("CGhostscript::Start",
+    FATAL_MIKTEX_ERROR ("Ghostscript::Start",
       T_("At least Ghostscript version 6.00 is required."), 0);
   }
 
@@ -154,7 +152,7 @@ CGhostscript::Start ()
   catch (exception &)
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR ("CGhostscript::Start", T_("Cannot start Ghostscript."), 0);
+    FATAL_MIKTEX_ERROR ("Ghostscript::Start", T_("Cannot start Ghostscript."), 0);
   }
 
   // start chunker thread
@@ -172,11 +170,11 @@ CGhostscript::Start ()
 
 /* _________________________________________________________________________
 
-   CGhostscript::Read
+   Ghostscript::Read
    _________________________________________________________________________ */
 
 size_t
-CGhostscript::Read (/*[out]*/ void *	pBuf,
+Ghostscript::Read (/*[out]*/ void *	pBuf,
 		   /*[in]*/ size_t	size)
 {
   return (gsOut.Read(pBuf, size));
@@ -184,13 +182,13 @@ CGhostscript::Read (/*[out]*/ void *	pBuf,
 
 /* _________________________________________________________________________
 
-   CGhostscript::OnNewChunk
+   Ghostscript::OnNewChunk
 
    Process bitmap chunks.
    _________________________________________________________________________ */
 
 void
-CGhostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
+Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 {
   BitmapFile bmf;
 
@@ -267,13 +265,13 @@ CGhostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 
 /* _________________________________________________________________________
 
-   CGhostscript::Chunker
+   Ghostscript::Chunker
    _________________________________________________________________________ */
 
 void
-CGhostscript::Chunker (/*[in]*/ void * pParam)
+Ghostscript::Chunker (/*[in]*/ void * pParam)
 {
-  CGhostscript * This = reinterpret_cast<CGhostscript*>(pParam);
+  Ghostscript * This = reinterpret_cast<Ghostscript*>(pParam);
   auto_ptr<DibChunker> pChunker (DibChunker::Create());
   This->m_vecBitmapFiles.clear ();
   try
@@ -294,13 +292,13 @@ CGhostscript::Chunker (/*[in]*/ void * pParam)
 
 /* _________________________________________________________________________
 
-   CGhostscript::StderrReader
+   Ghostscript::StderrReader
    _________________________________________________________________________ */
 
 void
-CGhostscript::StderrReader (/*[in]*/ void * pParam)
+Ghostscript::StderrReader (/*[in]*/ void * pParam)
 {
-  CGhostscript * This = reinterpret_cast<CGhostscript*>(pParam);
+  Ghostscript * This = reinterpret_cast<Ghostscript*>(pParam);
   const int chunkSize = 64;
   char buf[ chunkSize ];
   This->m_strStderr = "";
@@ -313,11 +311,11 @@ CGhostscript::StderrReader (/*[in]*/ void * pParam)
 
 /* _________________________________________________________________________
 
-   CGhostscript::Write
+   Ghostscript::Write
    _________________________________________________________________________ */
 
 void
-CGhostscript::Write (/*[in]*/ const void *	p,
+Ghostscript::Write (/*[in]*/ const void *	p,
 		     /*[in]*/ unsigned		n)
 {
   gsIn.Write (p, n);
@@ -325,11 +323,11 @@ CGhostscript::Write (/*[in]*/ const void *	p,
 
 /* _________________________________________________________________________
 
-   CGhostscript::Execute
+   Ghostscript::Execute
    _________________________________________________________________________ */
 
 void
-CGhostscript::Execute (/*[in]*/ const char *	lpszFormat,
+Ghostscript::Execute (/*[in]*/ const char *	lpszFormat,
 		       /*[in]*/			...)
 {
   if (m_pGhostscript.get() == 0)
@@ -345,11 +343,11 @@ CGhostscript::Execute (/*[in]*/ const char *	lpszFormat,
 
 /* _________________________________________________________________________
 
-   CGhostscript::Finalize
+   Ghostscript::Finalize
    _________________________________________________________________________ */
 
 void
-CGhostscript::Finalize ()
+Ghostscript::Finalize ()
 {
   // close Ghostscript's input stream
   if (gsIn.Get() != 0)
@@ -401,12 +399,12 @@ CGhostscript::Finalize ()
     gsErr.Close ();
   }
 
-  CPostScript::Finalize ();
+  PostScript::Finalize ();
 
   if (iExitCode != 0)
   {
     m_bError = true;
-    FATAL_MIKTEX_ERROR ("CGhostscript::Finalize",
+    FATAL_MIKTEX_ERROR ("Ghostscript::Finalize",
       T_("Some PostScript specials ")
       T_("could not be rendered.\r\n\r\n")
       T_("Do you want to see the transcript ")

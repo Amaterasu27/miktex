@@ -21,15 +21,13 @@
 
 #pragma once
 
-class DviImpl;
-
-class CPostScript  
+class PostScript  
 {
 protected:
-  CPostScript ();
+  PostScript ();
 
 protected:
-  virtual ~CPostScript ();
+  virtual ~PostScript ();
 
 public:
   struct BitmapFile
@@ -101,7 +99,7 @@ public:
 
 public:
   void
-  AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial);
+  AddDefinition (/*[in]*/ class PsdefSpecialImpl * ppsdefspecial);
 
 public:
   void
@@ -113,11 +111,11 @@ public:
 
 public:
   void
-  DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial);
+  DoSpecial (/*[in]*/ class PsfileSpecialImpl * ppsfilespecial);
 
 public:
   void
-  DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial);
+  DoSpecial (/*[in]*/ class DvipsSpecialImpl * pdvipsspecial);
 
 public:
   void
@@ -125,7 +123,7 @@ public:
 
 public:
   void
-  Open (/*[in]*/ DviImpl * pDviImpl,
+  Open (/*[in]*/ class DviImpl * pDviImpl,
         /*[in]*/ int shrinkFactor);
 
 public:
