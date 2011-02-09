@@ -23,52 +23,62 @@
 
 #include "PostScript.h"
 
-class CGhostscript : public CPostScript
+class CGhostscript
+  : public CPostScript,
+    public IDibChunkerCallback
 {
 public:
   CGhostscript ();
 
 public:
-  virtual ~CGhostscript ();
-
-public:
-  virtual bool Execute (/*[in]*/ LPCTSTR lpszFormat,
-			/*[in]*/ ...);
-
-public:
-  static CString GetGhostscriptDirectory ();
-
-public:
-  static CString GetGhostscriptInclude ();
-
-private:
-  virtual bool Finalize ();
-
-private:
-  bool Start ();
+  virtual
+  ~CGhostscript ();
 
 public:
   virtual
-  bool
+  void
+  Execute (/*[in]*/ const char *	lpszFormat,
+	   /*[in]*/			...);
+
+private:
+  virtual
+  void
+  Finalize ();
+
+private:
+  void
+  Start ();
+
+public:
+  virtual
+  void
   Write (/*[in]*/ const void *	p,
 	 /*[in]*/ unsigned	n);
 
-private:
-  static bool __stdcall
-  OnNewChunk (/*[in]*/ LPVOID				pv,
-	      /*[in]*/ const CDibChunker::CHUNK *	pChunk);
+public:
+  virtual
+  size_t
+  MIKTEXTHISCALL
+  Read (/*[out]*/ void *	pBuf,
+	/*[in]*/ size_t		size);
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  OnNewChunk (/*[in]*/ DibChunk * pChunk);
 
 private:
-  static UINT Chunker (/*[in]*/ LPVOID pParam);
+  static void MIKTEXCALLBACK Chunker (/*[in]*/ void * pParam);
 
 private:
-  static UINT StderrReader (/*[in]*/ LPVOID pParam);
+  static void MIKTEXCALLBACK StderrReader (/*[in]*/ void * pParam);
 
 private:
-  HANDLE m_hChunker;
+  auto_ptr<Thread> pChunkerThread;
 
 private:
-  HANDLE m_hStderrReader;
+  auto_ptr<Thread> pStderrReaderThread;
 
 private:
   FILE * m_pStdin;
@@ -86,5 +96,5 @@ private:
   bool m_bGhostscriptRunning;
 
 private:
-  CString m_strStderr;
+  string m_strStderr;
 };

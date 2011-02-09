@@ -594,9 +594,11 @@ pt2sp (/*[in]*/ int pt)
    _________________________________________________________________________ */
 
 void
-CPostScript::Open (/*[in]*/ DviImpl * pDviImpl)
+CPostScript::Open (/*[in]*/ DviImpl * pDviImpl,
+		   /*[in]*/ int shrinkFactor)
 {
   this->pDviImpl = pDviImpl;
+  this->shrinkFactor = shrinkFactor;
 
   int width, height;
 

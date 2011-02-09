@@ -44,6 +44,8 @@ set(${dvi_dll_name}_sources
   DviFont.cpp
   DviFont.h
   DviPage.cpp
+  Ghostscript.cpp
+  Ghostscript.h
   PkChar.cpp
   PkChar.h
   PkFont.cpp

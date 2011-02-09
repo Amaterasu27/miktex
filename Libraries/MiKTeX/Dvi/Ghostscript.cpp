@@ -21,24 +21,16 @@
 
 #include "StdAfx.h"
 
-#include "yap.h"
+#include "common.h"
 
-#include "DviDoc.h"
 #include "Ghostscript.h"
-#include "yaphelp.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
 
 namespace {
   // make file reading 'wide-open'
-  LPCTSTR const l_szPermitFileReading = _T("\
+  const char * const l_szPermitFileReading = "\
 { << /PermitFileReading [ (*) ] /PermitFileWriting [ ] PermitFileControl [ ]\
  >> setuserparams .locksafe } stopped pop\
-");
+";
 }
 
 /* _________________________________________________________________________
@@ -47,9 +39,7 @@ namespace {
    _________________________________________________________________________ */
 
 CGhostscript::CGhostscript ()
-  : m_hChunker (0),
-    m_pStderr (0),
-    m_hStderrReader (0),
+  : m_pStderr (0),
     m_pStdin (0),
     m_pStdout (0)
 {
@@ -62,12 +52,12 @@ CGhostscript::CGhostscript ()
 
 CGhostscript::~CGhostscript ()
 {
-  ASSERT (m_hChunker == 0);
-  ASSERT (m_pStderr == 0);
-  ASSERT (m_hStderrReader == 0);
-  ASSERT (m_pStdin == 0);
-  ASSERT (m_pStdout == 0);
-  ASSERT (m_pGhostscript.get() == 0);
+  MIKTEX_ASSERT (pChunkerThread.get() == 0);
+  MIKTEX_ASSERT (m_pStderr == 0);
+  MIKTEX_ASSERT (pStderrReaderThread.get() == 0);
+  MIKTEX_ASSERT (m_pStdin == 0);
+  MIKTEX_ASSERT (m_pStdout == 0);
+  MIKTEX_ASSERT (m_pGhostscript.get() == 0);
 }
 
 /* _________________________________________________________________________
@@ -75,91 +65,78 @@ CGhostscript::~CGhostscript ()
    CGhostscript::Start
    _________________________________________________________________________ */
 
-bool
+void
 CGhostscript::Start ()
 {
   if (IsError())
-    {
-      return (false);
-    }
+  {
+    return;
+  }
 
   // find Ghostscript
-  _TCHAR szGsExe[_MAX_PATH];
-  DWORD version;
+  char szGsExe[BufferSizes::MaxPath];
+  unsigned long version;
   SessionWrapper(true)->GetGhostscript (szGsExe, &version);
 
   // check to see whether the version number is ok
   if (HIWORD(version) < 6)
-    {
-      YapErrorHelp (IDP_GS_OUTDATED);
-      m_bError = true;
-      return (false);
-    }
+  {
+    m_bError = true;
+    FATAL_MIKTEX_ERROR ("CGhostscript::Start",
+      T_("At least Ghostscript version 6.0 is required."), 0);
+  }
 
   // first version that supports .locksafe
-  DWORD dwVersion_locksafe = MAKELONG(4, 7); // 7.04
+  unsigned long dwVersion_locksafe = MAKELONG(4, 7); // 7.04
 
   // first version that supports -sstdout=%stderr
-  DWORD dwVersion_sstdout = MAKELONG(2, 7); // 7.02
+  unsigned long dwVersion_sstdout = MAKELONG(2, 7); // 7.02
 
   //
   // build the command-line
   //
-  CString strCommand (_T("gs"));
+  string strCommand ("gs");
   // - set resolution, e.g. '-r600.0x600.0'
-  CString strTmp;
+  char szTmp[200];
   double res =
-    (static_cast<double>(m_pDviDoc->GetResolution())
-     / m_pDviDoc->GetShrinkFactor());
-  strTmp.Format (_T(" -r%fx%f"), res, res);
-  strCommand += strTmp;
+    (static_cast<double>(pDviImpl->GetResolution())
+     / shrinkFactor);
+  sprintf (szTmp, " -r%fx%f", res, res);
+  strCommand += szTmp;
   // - set paper size
-  CSize size = m_pDviDoc->GetPaperSize();
-  strTmp.Format (_T(" -g%dx%d"), size.cx, size.cy);
-  strCommand += strTmp;
-  // - set the output device, e.g. '-sDEVICE=bmp16m'
-  switch (g_pYapConfig->m_nPostScriptQuality)
-    {
-    case CYapConfig::Monochrome:
-      strCommand += _T(" -sDEVICE=bmpmono");
-      break;
-    case CYapConfig::Color256:
-      strCommand += _T(" -sDEVICE=bmp256");
-      break;
-    default:
-    case CYapConfig::Color16M:
-      strCommand += _T(" -sDEVICE=bmp16m");
-      break;
-    }
+  PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
+  int width = paperSizeInfo.width;
+  int height = paperSizeInfo.height;
+  sprintf (szTmp, " -g%dx%d", width, height);
+  strCommand += szTmp;
+  // - set the output device
+  strCommand += " -sDEVICE=bmpmono";
   // - set batch flags
-  strCommand += _T(" -q -dBATCH -dNOPAUSE");
+  strCommand += " -q -dBATCH -dNOPAUSE";
   // - set security options
   if (version < dwVersion_locksafe)
-    {
-      strCommand += _T(" -dSAFER");
-    }
+  {
+    strCommand += " -dSAFER";
+  }
   else
-    {
-      strCommand += _T(" -dDELAYSAFER");
-    }
+  {
+    strCommand += " -dDELAYSAFER";
+  }
   // - redirect PostScript %stdout
   if (version >= dwVersion_sstdout)
-    {
-      strCommand += _T(" -sstdout=%stderr");
-    }
-  if (g_pYapConfig->m_nPostScriptQuality == CYapConfig::Color16M)
-    {
-      // - anti-aliasing
-      strCommand += _T(" -dTextAlphaBits=4");
-      strCommand += _T(" -dGraphicsAlphaBits=4");
-      // - image interpolation
-      strCommand += _T(" -dDOINTERPOLATE");
-    }
+  {
+    strCommand += " -sstdout=%stderr";
+  }
+  // - anti-aliasing
+  strCommand += " -dTextAlphaBits=4";
+  strCommand += " -dGraphicsAlphaBits=4";
+  // - image interpolation
+  strCommand += " -dDOINTERPOLATE";
   // - direct bitmap output to stdout
-  strCommand += _T(" -sOutputFile=-");
+  strCommand += " -sOutputFile=-";
   // - read from stdin
-  strCommand += _T(" -");
-  YapLog (_T("%s"), static_cast<LPCTSTR>(strCommand));
+  strCommand += " -";
+  tracePS->WriteFormattedLine ("libdvi", "%s", strCommand.c_str());
 
   ProcessStartInfo startinfo;
 
@@ -171,64 +148,42 @@ CGhostscript::Start ()
   startinfo.RedirectStandardError = true;
 
   try
-    {
-      m_pGhostscript = auto_ptr<Process>(Process::Start(startinfo));
-      m_pStdin = m_pGhostscript->get_StandardInput();
-      m_pStdout = m_pGhostscript->get_StandardOutput();
-      m_pStderr = m_pGhostscript->get_StandardError();
-    }
-
+  {
+    m_pGhostscript = auto_ptr<Process>(Process::Start(startinfo));
+    m_pStdin = m_pGhostscript->get_StandardInput();
+    m_pStdout = m_pGhostscript->get_StandardOutput();
+    m_pStderr = m_pGhostscript->get_StandardError();
+  }
   catch (exception &)
-    {
-      YapErrorHelp (IDP_CANNOT_START_GHOSTSCRIPT);
-      m_bError = true;
-      return (false);
-    }
+  {
+    m_bError = true;
+    FATAL_MIKTEX_ERROR ("CGhostscript::Start", T_("Cannot start Ghostscript."), 0);
+  }
 
   // start chunker thread
-  CWinThread * pThread =
-    AfxBeginThread(Chunker,
-		   this,
-		   THREAD_PRIORITY_NORMAL,
-		   0,
-		   CREATE_SUSPENDED);
-  ASSERT (pThread != 0);
-  VERIFY (DuplicateHandle(GetCurrentProcess(),
-			  pThread->m_hThread,
-			  GetCurrentProcess(),
-			  &m_hChunker,
-			  0,
-			  FALSE,
-			  DUPLICATE_SAME_ACCESS));
-  pThread->ResumeThread ();
+  pChunkerThread.reset (Thread::Start(Chunker, this));
 
   // start stderr reader
-  pThread =
-    AfxBeginThread(StderrReader,
-		   this,
-		   THREAD_PRIORITY_NORMAL,
-		   0,
-		   CREATE_SUSPENDED);
-  ASSERT (pThread != 0);
-  VERIFY (DuplicateHandle(GetCurrentProcess(),
-			  pThread->m_hThread,
-			  GetCurrentProcess(),
-			  &m_hStderrReader,
-			  0,
-			  FALSE,
-			  DUPLICATE_SAME_ACCESS));
-  pThread->ResumeThread ();
+  pStderrReaderThread.reset (Thread::Start(StderrReader, this));
 
   // enable file reading
   if (version >= dwVersion_locksafe)
-    {
-      if (! Execute(_T("%s"), l_szPermitFileReading))
-	{
-	  return (false);
-	}
-    }
-			  
-  return (true);
+  {
+    Execute ("%s", l_szPermitFileReading);
+  }
+}
+
+/* _________________________________________________________________________
+
+   CGhostscript::Read
+   _________________________________________________________________________ */
+
+size_t
+CGhostscript::Read (/*[out]*/ void *	pBuf,
+		   /*[in]*/ size_t	size)
+{
+  size_t bytesRead = fread(pBuf, 1, size, m_pStdout);
+  return (bytesRead);
 }
 
 /* _________________________________________________________________________
@@ -238,44 +193,43 @@ CGhostscript::Start ()
    Process bitmap chunks.
    _________________________________________________________________________ */
 
-bool __stdcall
-CGhostscript::OnNewChunk (/*[in]*/ LPVOID			pv,
-			  /*[in]*/ const CDibChunker::CHUNK *	pChunk)
+void
+CGhostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 {
-  CGhostscript * This = reinterpret_cast<CGhostscript*>(pv);
-
   BitmapFile bmf;
 
   // create a BMP file
   Utils::CopyString (bmf.szBitmapFileName,
 		     BufferSizes::MaxPath,
 		     PathName().SetToTempFile().Get());
-  YapLog (_T("creating bitmap file %s"), bmf.szBitmapFileName);
+  tracePS->WriteFormattedLine ("libdvi", T_("creating bitmap file %s"), Q_(bmf.szBitmapFileName));
   FILE * pfile;
 #if _MSC_VER >= 1400
-  if (_tfopen_s(&pfile, bmf.szBitmapFileName, _T("wb")) != 0)
+  if (fopen_s(&pfile, bmf.szBitmapFileName, "wb") != 0)
   {
     pfile = 0;
   }
 #else
-  pfile = _tfopen(bmf.szBitmapFileName, _T("wb"));
+  pfile = fopen(bmf.szBitmapFileName, "wb");
 #endif
   if (pfile == 0)
-    {
-      throw (_T("A temporary bitmap file could not be opened"));
-    }
+  {
+    FATAL_CRT_ERROR ("fopen", bmf.szBitmapFileName);
+  }
+
+  const BITMAPINFO * pBitmapInfo = pChunk->GetBitmapInfo();
 
   size_t nBytesPerLine =
-    ((((pChunk->lpBitmapInfoHeader->biWidth
-	* pChunk->lpBitmapInfoHeader->biBitCount)
+    ((((pBitmapInfo->bmiHeader.biWidth
+	* pBitmapInfo->bmiHeader.biBitCount)
        + 31)
       & ~31)
      >> 3);
 
   unsigned uNumColors =
-    (pChunk->lpBitmapInfoHeader->biBitCount == 24
+    (pBitmapInfo->bmiHeader.biBitCount == 24
      ? 0
-     : 1 << pChunk->lpBitmapInfoHeader->biBitCount);
+     : 1 << pBitmapInfo->bmiHeader.biBitCount);
 
   // dump bitmap file header
   BITMAPFILEHEADER header;
@@ -285,7 +239,7 @@ CGhostscript::OnNewChunk (/*[in]*/ LPVOID			pv,
      + sizeof(BITMAPINFOHEADER)
      + uNumColors * sizeof(RGBQUAD)
      + (static_cast<DWORD>(nBytesPerLine)
-	* pChunk->lpBitmapInfoHeader->biHeight));
+	* pBitmapInfo->bmiHeader.biHeight));
   header.bfReserved1 = 0;
   header.bfReserved2 = 0;
   header.bfOffBits =
@@ -295,26 +249,24 @@ CGhostscript::OnNewChunk (/*[in]*/ LPVOID			pv,
   fwrite (&header, 1, sizeof(header), pfile);
 
   // dump bitmap info header
-  fwrite (pChunk->lpBitmapInfoHeader, 1, sizeof(BITMAPINFOHEADER), pfile);
+  fwrite (&pBitmapInfo->bmiHeader, 1, sizeof(BITMAPINFOHEADER), pfile);
 
   // dump color table
-  fwrite (pChunk->lpColors, 1, uNumColors * sizeof(RGBQUAD), pfile);
+  fwrite (pChunk->GetColors(), 1, uNumColors * sizeof(RGBQUAD), pfile);
 
   // dump bits
-  fwrite (pChunk->lpBits, 1,
-	  nBytesPerLine * pChunk->lpBitmapInfoHeader->biHeight,
+  fwrite (pChunk->GetBits(), 1,
+	  nBytesPerLine * pBitmapInfo->bmiHeader.biHeight,
 	  pfile);
 
   fclose (pfile);
 
-  bmf.x = pChunk->x;
-  bmf.y = pChunk->y;
-  bmf.cx = pChunk->lpBitmapInfoHeader->biWidth;
-  bmf.cy = pChunk->lpBitmapInfoHeader->biHeight;
+  bmf.x = pChunk->GetX();
+  bmf.y = pChunk->GetY();
+  bmf.cx = pBitmapInfo->bmiHeader.biWidth;
+  bmf.cy = pBitmapInfo->bmiHeader.biHeight;
 
-  This->m_vecBitmapFiles.push_back (bmf);
-
-  return (true);
+  m_vecBitmapFiles.push_back (bmf);
 }
 
 /* _________________________________________________________________________
@@ -322,32 +274,27 @@ CGhostscript::OnNewChunk (/*[in]*/ LPVOID			pv,
    CGhostscript::Chunker
    _________________________________________________________________________ */
 
-UINT
-CGhostscript::Chunker (/*[in]*/ LPVOID pParam)
+void
+CGhostscript::Chunker (/*[in]*/ void * pParam)
 {
   CGhostscript * This = reinterpret_cast<CGhostscript*>(pParam);
-  CDibChunker * pChunker = CDibChunker::Create();
-  UINT ret = 0;
+  auto_ptr<DibChunker> pChunker (DibChunker::Create());
   This->m_vecBitmapFiles.clear ();
   try
+  {
+    const int chunkSize = 2 * 1024 * 1024;
+    while (pChunker->Process(DibChunker::Default, chunkSize, This))
     {
-      const int CHUNK_SIZE = 2 * 1024 * 1024;
-      pChunker->Process (This->m_pStdout,
-			 CDibChunker::Default,
-			 CHUNK_SIZE,
-			 This,
-			 &OnNewChunk);
     }
-  catch (LPCTSTR	lpszMessage)
-    {
-      YapLog (_T("%s"), lpszMessage);
-      This->m_bError = true;
-      ret = 1;
-      fclose (This->m_pStdout);
-      This->m_pStdout = 0;
-    }
-  CDibChunker::Destroy (pChunker);
-  return (ret);
+  }
+  catch (const exception &)
+  {
+    This->m_bError = true;
+    fclose (This->m_pStdout);
+    This->m_pStdout = 0;
+    throw;
+  }
+  pChunker.reset (0);
 }
 
 /* _________________________________________________________________________
@@ -355,34 +302,33 @@ CGhostscript::Chunker (/*[in]*/ LPVOID pParam)
    CGhostscript::StderrReader
    _________________________________________________________________________ */
 
-UINT
-CGhostscript::StderrReader (/*[in]*/ LPVOID pParam)
+void
+CGhostscript::StderrReader (/*[in]*/ void * pParam)
 {
   CGhostscript * This = reinterpret_cast<CGhostscript*>(pParam);
 #define CHUNK_SIZE 64
-  _TCHAR buf[ CHUNK_SIZE ];
-  This->m_strStderr = _T("");
+  char buf[ CHUNK_SIZE ];
+  This->m_strStderr = "";
   size_t n;
   while ((n = fread(buf, 1, CHUNK_SIZE, This->m_pStderr)) > 0)
+  {
+    for (size_t i = 0; i < n; ++ i)
     {
-      for (size_t i = 0; i < n; ++ i)
-	{
-	  if (buf[i] == _T('\n'))
-	    {
-	      This->m_strStderr += _T("\r\n");
-	    }
-	  else
-	    {
-	      This->m_strStderr += buf[i];
-	    }
-	}
+      if (buf[i] == '\n')
+      {
+	This->m_strStderr += "\r\n";
+      }
+      else
+      {
+	This->m_strStderr += buf[i];
+      }
     }
+  }
   int err = ferror(This->m_pStderr);
   if (err != 0 && err != EPIPE)
-    {
-      YapLog (_T("ReadFile failed on Ghostscript %%stderr"));
-    }
-  return (0);
+  {
+    This->tracePS->WriteFormattedLine ("libdvi", T_("ReadFile failed on Ghostscript %%stderr"));
+  }
 }
 
 /* _________________________________________________________________________
@@ -390,18 +336,18 @@ CGhostscript::StderrReader (/*[in]*/ LPVOID pParam)
    CGhostscript::Write
    _________________________________________________________________________ */
 
-bool
+void
 CGhostscript::Write (/*[in]*/ const void *	p,
 		     /*[in]*/ unsigned		n)
 {
   size_t nwritten = fwrite(p, 1, n, m_pStdin);
   int err = ferror(m_pStdin);
   if (n != nwritten || (err != 0 && err != EPIPE))
-    {
-      YapLog (_T("Ghostscript finished prematurely"));
-      return (false);
-    }
-  return (true);
+  {
+    tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript finished prematurely"));
+    FATAL_MIKTEX_ERROR ("CGhostscript::Write",
+      T_("Ghostscript finished prematurely."), 0);
+  }
 }
 
 /* _________________________________________________________________________
@@ -409,24 +355,19 @@ CGhostscript::Write (/*[in]*/ const void *	p,
    CGhostscript::Execute
    _________________________________________________________________________ */
 
-bool
-CGhostscript::Execute (/*[in]*/ LPCTSTR	lpszFormat,
-		       /*[in]*/		...)
+void
+CGhostscript::Execute (/*[in]*/ const char *	lpszFormat,
+		       /*[in]*/			...)
 {
   if (m_pGhostscript.get() == 0)
-    {
-      Start ();
-    }
-  if (m_pGhostscript.get() == 0)
-    {
-      return (false);
-    }
+  {
+    Start ();
+  }
   va_list argptr;
   va_start (argptr, lpszFormat);
-  CString str;
-  str.FormatV (lpszFormat, argptr);
+  string str = Utils::FormatString(lpszFormat, argptr);
   va_end (argptr);
-  return (Write(static_cast<LPCTSTR>(str), str.GetLength()));
+  Write (str.c_str(), str.length());
 }
 
 /* _________________________________________________________________________
@@ -434,7 +375,7 @@ CGhostscript::Execute (/*[in]*/ LPCTSTR	lpszFormat,
    CGhostscript::Finalize
    _________________________________________________________________________ */
 
-bool
+void
 CGhostscript::Finalize ()
 {
   // close Ghostscript's input stream
@@ -447,79 +388,70 @@ CGhostscript::Finalize ()
   // wait for Ghostscript to finish
   int iExitCode = -1;
   if (m_pGhostscript.get() != 0)
+  {
+    if (m_pGhostscript->WaitForExit(10000))
     {
-      if (m_pGhostscript->WaitForExit(10000))
-	{
-	  iExitCode = m_pGhostscript->get_ExitCode();
-	}
-      m_pGhostscript.reset ();
+      iExitCode = m_pGhostscript->get_ExitCode();
     }
+    m_pGhostscript.reset ();
+  }
 
   // wait for the chunker to finish
-  if (m_hChunker != 0)
-    {
-      WaitForSingleObject (m_hChunker, INFINITE);
-      CloseHandle (m_hChunker);
-      m_hChunker = 0;
-    }
+  if (pChunkerThread.get() != 0)
+  {
+    pChunkerThread->Join ();
+    pChunkerThread.reset (0);
+  }
 
   // wait for stderr reader to finish
-  if (m_hStderrReader != 0)
-    {
-      WaitForSingleObject (m_hStderrReader, INFINITE);
-      CloseHandle (m_hStderrReader);
-      m_hStderrReader = 0;
-    }
+  if (pStderrReaderThread.get() != 0)
+  {
+    pStderrReaderThread->Join ();
+    pStderrReaderThread.reset (0);
+  }
 
-  if (m_strStderr.GetLength() > 0)
-    {
-      YapLog (_T("Ghostscript transcript follows:\r\n\
+  if (! m_strStderr.empty())
+  {
+    tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript transcript follows:\r\n\
 ==========================================================================\r\n\
 %s\r\n\
 =========================================================================="),
-	      static_cast<LPCTSTR>(m_strStderr));
-    }
+	  m_strStderr.c_str());
+  }
 
   if (m_pStdout != 0)
-    {
-      fclose (m_pStdout);
-      m_pStdout = 0;
-    }
+  {
+    fclose (m_pStdout);
+    m_pStdout = 0;
+  }
 
   if (m_pStderr != 0)
-    {
-      fclose (m_pStderr);
-      m_pStderr = 0;
-    }
+  {
+    fclose (m_pStderr);
+    m_pStderr = 0;
+  }
 
   CPostScript::Finalize ();
 
   if (iExitCode != 0)
-    {
-      m_bError = true;
-      if (AfxMessageBox(_T("Some PostScript specials ")
-			_T("could not be rendered.\r\n\r\n")
-			_T("Do you want to see the transcript ")
-			_T("of the PostScript interpreter?"),
-			MB_YESNO | MB_ICONSTOP)
-	  == IDYES)
-	{
-	  TextViewerDialog::DoModal (0,
-				   _T("PostScript Interpreter Transcript"),
-				   m_strStderr);
-	}
-    }
+  {
+    m_bError = true;
+    FATAL_MIKTEX_ERROR ("CGhostscript::Finalize",
+      T_("Some PostScript specials ")
+      T_("could not be rendered.\r\n\r\n")
+      T_("Do you want to see the transcript ")
+      T_("of the PostScript interpreter?"),
+      0);
+  }
 
   if (IsError())
+  {
+    for (vector<BitmapFile>::const_iterator it = m_vecBitmapFiles.begin();
+      it != m_vecBitmapFiles.end();
+      ++ it)
     {
-      for (vector<BitmapFile>::const_iterator it = m_vecBitmapFiles.begin();
-	   it != m_vecBitmapFiles.end();
-	   ++ it)
-	{
-	  DeleteFile (it->szBitmapFileName);
-	}
-      m_vecBitmapFiles.clear ();
+      File::Delete (it->szBitmapFileName);
     }
-
-  return (true);
+    m_vecBitmapFiles.clear ();
+  }
 }

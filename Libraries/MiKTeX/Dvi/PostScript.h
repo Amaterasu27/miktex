@@ -125,7 +125,8 @@ public:
 
 public:
   void
-  Open (/*[in]*/ DviImpl * pDviImpl);
+  Open (/*[in]*/ DviImpl * pDviImpl,
+        /*[in]*/ int shrinkFactor);
 
 public:
   static
@@ -214,6 +215,9 @@ protected:
 
 protected:
   DviImpl * pDviImpl;
+
+protected:
+  int shrinkFactor;
 
 protected:
   bool m_bOpen;
