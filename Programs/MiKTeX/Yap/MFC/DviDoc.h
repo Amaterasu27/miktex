@@ -1,6 +1,6 @@
 /* DviDoc.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -87,14 +87,14 @@ public:
 
 public:
   void
-  RememberGraphicsInclusion (/*[in]*/ int			pageIdx,
-			     /*[in]*/ const GraphicsInclusion &	grinc);
+  RememberGraphicsInclusion (/*[in]*/ int				pageIdx,
+			     /*[in]*/ const ::GraphicsInclusion &	grinc);
 
 public:
   bool
   GetGraphicsInclusion (/*[in]*/ int			pageIdx,
 			/*[in]*/ size_t			idx,
-			/*[out]*/ GraphicsInclusion &	graphicsInclusion);
+			/*[out]*/ ::GraphicsInclusion &	graphicsInclusion);
 
 public:
   void
@@ -330,7 +330,7 @@ private:
   bool landscape;
 
 private:
-  map<int, vector<GraphicsInclusion> > graphicsInclusions;
+  map<int, vector<::GraphicsInclusion> > graphicsInclusions;
 
 private:
   map<int, bool> graphicsDone;
@@ -500,7 +500,7 @@ inline
 void
 DviDoc::RememberGraphicsInclusion
 (/*[in]*/ int				pageIdx,
- /*[in]*/ const GraphicsInclusion &	graphicsInclusion)
+ /*[in]*/ const ::GraphicsInclusion &	graphicsInclusion)
 {
   graphicsInclusions[pageIdx].push_back (graphicsInclusion);
 }
@@ -514,7 +514,7 @@ inline
 bool
 DviDoc::GetGraphicsInclusion (/*[in]*/ int			pageIdx,
 			      /*[in]*/ size_t			idx,
-			      /*[out]*/ GraphicsInclusion & graphicsInclusion)
+			      /*[out]*/ ::GraphicsInclusion &	graphicsInclusion)
 {
 #if 0
   if (static_cast<size_t>(pageIdx) >= graphicsInclusions.size())
@@ -522,7 +522,7 @@ DviDoc::GetGraphicsInclusion (/*[in]*/ int			pageIdx,
       UNEXPECTED_CONDITION ("DviDoc::GetGraphicsInclusion");
     }
 #endif
-  vector<GraphicsInclusion> & vec = graphicsInclusions[pageIdx];
+  vector<::GraphicsInclusion> & vec = graphicsInclusions[pageIdx];
   if (idx == vec.size())
     {
       return (false);

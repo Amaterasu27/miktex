@@ -1,6 +1,6 @@
 /* graphics.cpp: graphics specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -63,31 +63,31 @@ DviView::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
    GetGraphicsType
    _________________________________________________________________________ */
 
-GraphicsInclusion::Type
+::GraphicsInclusion::Type
 GetGraphicsType (/*[in]*/ const PathName & fileName)
 {
   if (fileName.HasExtension(".bmp"))
     {
-      return (GraphicsInclusion::BMP);
+      return (::GraphicsInclusion::BMP);
     }
   else if (fileName.HasExtension(".emf"))
     {
-      return (GraphicsInclusion::EMF);
+      return (::GraphicsInclusion::EMF);
     }
   else if (fileName.HasExtension(".wmf"))
     {
-      return (GraphicsInclusion::WMF);
+      return (::GraphicsInclusion::WMF);
     }
   else if (SessionWrapper(true)->FindGraphicsRule(fileName.GetExtension(),
 						  ".bmp",
 						  0,
 						  0))
     {
-      return (GraphicsInclusion::Other);
+      return (::GraphicsInclusion::Other);
     }
   else
     {
-      return (GraphicsInclusion::Unknown);
+      return (::GraphicsInclusion::Unknown);
     }
 }
 
@@ -286,31 +286,31 @@ DviView::IncludeGraphics (/*[in]*/ int			pageIdx,
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
 
-  GraphicsInclusion
+  ::GraphicsInclusion
     graphicsInclusion (pGraphicsSpecial->GetX(),
 		       pGraphicsSpecial->GetY(),
 		       pGraphicsSpecial->GetWidth(),
 		       pGraphicsSpecial->GetHeight());
 
   switch (GetGraphicsType(fileName))
+  {
+  case ::GraphicsInclusion::BMP:
+    graphicsInclusion.SetDib (new Dib (fileName));
+    break;
+  case ::GraphicsInclusion::EMF:
+  case ::GraphicsInclusion::WMF:
+    graphicsInclusion.SetEnhancedMetafile (LoadEnhMetaFile(fileName.Get()));
+    break;
+  case ::GraphicsInclusion::Other:
     {
-    case GraphicsInclusion::BMP:
-      graphicsInclusion.SetDib (new Dib (fileName));
+      graphicsInclusion.SetDib (new Dib (CreateTempBitmapFile(fileName)));
       break;
-    case GraphicsInclusion::EMF:
-    case GraphicsInclusion::WMF:
-      graphicsInclusion.SetEnhancedMetafile (LoadEnhMetaFile(fileName.Get()));
-      break;
-    case GraphicsInclusion::Other:
-      {
-	graphicsInclusion.SetDib (new Dib (CreateTempBitmapFile(fileName)));
-	break;
-      }
-    case GraphicsInclusion::Unknown:
-      FATAL_MIKTEX_ERROR ("DviView::IncludeGraphics",
-			  T_("Unknown graphics inclusion type."),
-			  fileName.Get());
     }
+  case ::GraphicsInclusion::Unknown:
+    FATAL_MIKTEX_ERROR ("DviView::IncludeGraphics",
+      T_("Unknown graphics inclusion type."),
+      fileName.Get());
+  }
 
   if (graphicsInclusion.GetCx() <= 0 && graphicsInclusion.GetCy() <= 0)
     {
@@ -337,7 +337,7 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
 {
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
-  GraphicsInclusion graphicsInclusion;
+  ::GraphicsInclusion graphicsInclusion;
   for (size_t idx = 0;
        pDoc->GetGraphicsInclusion(pageIdx, idx, graphicsInclusion);
        ++ idx)
@@ -375,7 +375,7 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
       CRect bbox (origin.x, origin.y, origin.x + size.cx, origin.y + size.cy);
       switch (graphicsInclusion.GetType())
 	{
-	case GraphicsInclusion::BMP:
+	case ::GraphicsInclusion::BMP:
 	  MIKTEX_ASSERT (graphicsInclusion.GetDib() != 0);
 	  graphicsInclusion.GetDib()->Draw (pDC,
 					    origin.x,
@@ -383,8 +383,8 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
 					    size.cx,
 					    size.cy);
 	  break;
-	case GraphicsInclusion::EMF:
-	case GraphicsInclusion::WMF:
+	case ::GraphicsInclusion::EMF:
+	case ::GraphicsInclusion::WMF:
 	  if (! pDC->PlayMetaFile(graphicsInclusion.GetEnhancedMetafile(),
 				  bbox))
 	    {

@@ -872,6 +872,85 @@ public:
 
 /* _________________________________________________________________________
 
+   GraphicsInclusion
+   _________________________________________________________________________ */
+
+class
+MIKTEXNOVTABLE
+GraphicsInclusion
+{
+protected:
+  virtual
+  MIKTEXTHISCALL
+  ~GraphicsInclusion () = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  AddRef ()
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Release ()
+    = 0;
+
+public:
+  static
+  MIKTEXDVICEEAPI(GraphicsInclusion *)
+  Create ();
+
+public:
+  static
+  MIKTEXDVICEEAPI(GraphicsInclusion *)
+  Create (/*[in]*/ const MiKTeX::Core::PathName & fileName,
+	  /*[in]*/ bool				  temporary,
+	  /*[in]*/ int				  x,
+	  /*[in]*/ int				  y,
+	  /*[in]*/ int				  cx,
+	  /*[in]*/ int				  cy);
+
+public:
+  virtual
+  MiKTeX::Core::PathName
+  MIKTEXTHISCALL
+  GetFileName ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetX ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetY ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCx ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCy ()
+    = 0;
+};
+
+/* _________________________________________________________________________
+
    DviBitmap
    _________________________________________________________________________ */
 
