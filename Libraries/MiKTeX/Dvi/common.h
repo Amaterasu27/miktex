@@ -1425,6 +1425,10 @@ private:
 	       /*[in]*/ int pxl); // <fixme/>
 
 private:
+  void
+  RenderPostScriptSpecials (/*[in]*/ int shrinkFactor);
+
+private:
   auto_ptr<TraceStream> tracePage;
 
 private:

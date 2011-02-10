@@ -1293,3 +1293,54 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
 
   return (pGhostscript.release());
 }
+
+/* _________________________________________________________________________
+
+   DviPageImpl::RenderPostScriptSpecials
+   _________________________________________________________________________ */
+
+void
+DviPageImpl::RenderPostScriptSpecials (/*[in]*/ int shrinkFactor)
+{
+  Ghostscript gs;
+
+  for (size_t idx = 0; idx < dviSpecials.size(); ++ idx)
+  {
+    DviSpecial * pSpecial = dviSpecials[idx];
+    if (pSpecial->GetType() == DviSpecialType::Psdef)
+    {
+      gs.AddDefinition (reinterpret_cast<PsdefSpecial*>(pSpecial));
+    }
+    else if (pSpecial->GetType() == DviSpecialType::Psfile)
+    {
+      if (! gs.IsOpen())
+      {
+	gs.Open (pDviImpl, shrinkFactor);
+      }
+      if (gs.IsPageEmpty())
+      {
+	gs.BeginPage ();
+      }
+      gs.DoSpecial (reinterpret_cast<PsfileSpecial*>(pSpecial));
+    }
+    else if (pSpecial->GetType() == DviSpecialType::Ps)
+    {
+      if (! gs.IsOpen())
+      {
+	gs.Open (pDviImpl, shrinkFactor);
+      }
+      if (gs.IsPageEmpty())
+      {
+	gs.BeginPage ();
+      }
+      gs.DoSpecial (reinterpret_cast<DvipsSpecial*>(pSpecial));
+    }
+  }
+
+  if (gs.IsOpen())
+  {
+    gs.EndPage ();
+    gs.Close ();
+  }
+
+}

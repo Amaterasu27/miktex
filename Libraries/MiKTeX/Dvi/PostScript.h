@@ -77,7 +77,7 @@ public:
 
 public:
   void
-  AddDefinition (/*[in]*/ class PsdefSpecialImpl * ppsdefspecial);
+  AddDefinition (/*[in]*/ class PsdefSpecial * ppsdefspecial);
 
 public:
   void
@@ -89,11 +89,11 @@ public:
 
 public:
   void
-  DoSpecial (/*[in]*/ class PsfileSpecialImpl * ppsfilespecial);
+  DoSpecial (/*[in]*/ class PsfileSpecial * ppsfilespecial);
 
 public:
   void
-  DoSpecial (/*[in]*/ class DvipsSpecialImpl * pdvipsspecial);
+  DoSpecial (/*[in]*/ class DvipsSpecial * pdvipsspecial);
 
 public:
   void

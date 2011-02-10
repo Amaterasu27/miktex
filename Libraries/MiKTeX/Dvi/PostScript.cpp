@@ -381,7 +381,7 @@ PostScript::DoDefinitions ()
    _________________________________________________________________________ */
 
 void
-PostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
+PostScript::DoSpecial (/*[in]*/ PsfileSpecial * ppsfilespecial)
 {
   if (errorFlag)
   {
@@ -486,7 +486,7 @@ PostScript::DoSpecial (/*[in]*/ PsfileSpecialImpl * ppsfilespecial)
    _________________________________________________________________________ */
 
 void
-PostScript::AddDefinition (/*[in]*/ PsdefSpecialImpl * ppsdefspecial)
+PostScript::AddDefinition (/*[in]*/ PsdefSpecial * ppsdefspecial)
 {
   if (ppsdefspecial->GetDef())
   {
@@ -526,7 +526,7 @@ PostScript::AddHeader (/*[in]*/ const char * lpszFileName)
    _________________________________________________________________________ */
 
 void
-PostScript::DoSpecial (/*[in]*/ DvipsSpecialImpl * pdvipsspecial)
+PostScript::DoSpecial (/*[in]*/ DvipsSpecial * pdvipsspecial)
 {
   if (errorFlag)
   {
