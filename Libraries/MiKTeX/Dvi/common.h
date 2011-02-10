@@ -331,13 +331,214 @@ private:
    GraphicsInclusion
    _________________________________________________________________________ */
 
-struct GraphicsInclusion
+class
+MIKTEXNOVTABLE
+GraphicsInclusion
 {
+protected:
+  virtual
+  MIKTEXTHISCALL
+  ~GraphicsInclusion () = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  AddRef ()
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Release ()
+    = 0;
+
+public:
+  static
+  MIKTEXCORECEEAPI(GraphicsInclusion *)
+  Create ();
+
+public:
+  static
+  MIKTEXCORECEEAPI(GraphicsInclusion *)
+  Create (/*[in]*/ const PathName & fileName,
+	  /*[in]*/ bool		    temporary,
+	  /*[in]*/ int		    x,
+	  /*[in]*/ int		    y,
+	  /*[in]*/ int		    cx,
+	  /*[in]*/ int		    cy);
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetFileName ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetX ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetY ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCx ()
+    = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCy ()
+    = 0;
+};
+
+/* _________________________________________________________________________
+
+   GraphicsInclusionImpl
+   _________________________________________________________________________ */
+
+class GraphicsInclusionImpl : public GraphicsInclusion
+{
+public:
+  GraphicsInclusionImpl ()
+    : refCount (0)
+  {
+  }
+
+public:
+  GraphicsInclusionImpl (/*[in]*/ const PathName &  fileName,
+			 /*[in]*/ bool		    temporary,
+			 /*[in]*/ int		    x,
+			 /*[in]*/ int		    y,
+			 /*[in]*/ int		    cx,
+			 /*[in]*/ int		    cy)
+    : refCount (0),
+      fileName (fileName),
+      temporary (temporary),
+      x (x),
+      y (y),
+      cx (cx),
+      cy (cy)
+  {
+  }
+
+public:
+  virtual
+  MIKTEXTHISCALL
+  ~GraphicsInclusionImpl ()
+  {
+    try
+    {
+      if (temporary && fileName[0] != 0)
+      {
+	File::Delete (fileName, true, true);
+      }
+    }
+    catch (const exception &)
+    {
+    }
+  }
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  AddRef ()
+  {
+    ++ refCount;
+  }
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Release ()
+  {
+    -- refCount;
+    if (refCount == 0)
+    {
+      delete this;
+    }
+  }
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetFileName ()
+  {
+    return (fileName);
+  }
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetX ()
+  {
+    return (x);
+  }
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetY ()
+  {
+    return (y);
+  }
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCx ()
+  {
+    return (cx);
+  }
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetCy ()
+  {
+    return (cy);
+  }
+
+private:
   PathName fileName;
+
+private:
+  bool temporary;
+
+private:
   int x;
+
+private:
   int y;
+
+private:
   int cx;
+
+private:
   int cy;
+
+private:
+  int refCount;
 };
 
 /* _________________________________________________________________________

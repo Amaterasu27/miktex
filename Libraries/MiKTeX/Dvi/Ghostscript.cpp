@@ -192,12 +192,12 @@ Ghostscript::Read (/*[out]*/ void *	pBuf,
 void
 Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 {
-  GraphicsInclusion bmf;
+  PathName fileName;
 
   // create a BMP file
-  bmf.fileName.SetToTempFile();
-  tracePS->WriteFormattedLine ("libdvi", T_("creating bitmap file %s"), Q_(bmf.fileName));
-  FileStream stream (File::Open(bmf.fileName, FileMode::Create, FileAccess::Write, false));
+  fileName.SetToTempFile();
+  tracePS->WriteFormattedLine ("libdvi", T_("creating bitmap file %s"), Q_(fileName));
+  FileStream stream (File::Open(fileName, FileMode::Create, FileAccess::Write, false));
 
   const BITMAPINFO * pBitmapInfo = pChunk->GetBitmapInfo();
 
@@ -241,12 +241,13 @@ Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 
   stream.Close ();
 
-  bmf.x = pChunk->GetX();
-  bmf.y = pChunk->GetY();
-  bmf.cx = pBitmapInfo->bmiHeader.biWidth;
-  bmf.cy = pBitmapInfo->bmiHeader.biHeight;
-
-  graphicsInclusions.push_back (bmf);
+  graphicsInclusions.push_back (GraphicsInclusion::Create(
+    fileName,
+    true,
+    pChunk->GetX(),
+    pChunk->GetY(),
+    pBitmapInfo->bmiHeader.biWidth,
+    pBitmapInfo->bmiHeader.biHeight));
 }
 
 /* _________________________________________________________________________
@@ -401,12 +402,6 @@ Ghostscript::Finalize ()
 
   if (IsError())
   {
-    for (vector<GraphicsInclusion>::const_iterator it = graphicsInclusions.begin();
-      it != graphicsInclusions.end();
-      ++ it)
-    {
-      File::Delete (it->fileName.Get());
-    }
     graphicsInclusions.clear ();
   }
 }

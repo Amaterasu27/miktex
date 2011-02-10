@@ -37,7 +37,7 @@ public:
     {
       INVALID_ARGUMENT ("GetGraphicsInclusion", 0);
     }
-    return (&graphicsInclusions[idx]);
+    return (graphicsInclusions[idx].Get());
   }
 
 public:
@@ -215,7 +215,7 @@ protected:
   vector<string> headers;
 
 protected:
-  vector<GraphicsInclusion> graphicsInclusions;
+  vector<SmartPointer<GraphicsInclusion> > graphicsInclusions;
 
 protected:
   auto_ptr<TraceStream> tracePS;

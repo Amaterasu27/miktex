@@ -360,6 +360,31 @@ FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
 
 /* _________________________________________________________________________
 
+   GraphicsInclusion::~GraphicsInclusion
+   _________________________________________________________________________ */
+
+GraphicsInclusion::~GraphicsInclusion ()
+{
+}
+
+/* _________________________________________________________________________
+
+   GraphicsInclusion::Create
+   _________________________________________________________________________ */
+
+GraphicsInclusion *
+GraphicsInclusion::Create (/*[in]*/ const PathName & fileName,
+			   /*[in]*/ bool	      temporary,
+			   /*[in]*/ int		      x,
+			   /*[in]*/ int		      y,
+			   /*[in]*/ int		      cx,
+			   /*[in]*/ int		      cy)
+{
+  return (new GraphicsInclusionImpl(fileName, temporary, x, y, cx, cy));
+}
+
+/* _________________________________________________________________________
+
    TempFile::~TempFile
    _________________________________________________________________________ */
 
