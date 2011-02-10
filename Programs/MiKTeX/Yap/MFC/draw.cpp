@@ -1,6 +1,6 @@
 /* draw.cpp: DVI drawing routines
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -310,24 +310,29 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
     {
       switch (iteration)
 	{
-	case 1:
-	  switch (pSpecial->GetType().Get())
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
+      case 1:
+	switch (pSpecial->GetType().Get())
+	{
+	case DviSpecialType::Psdef:
+	case DviSpecialType::Psfile:
+	case DviSpecialType::Ps:
+	  if (pDoc->GetDviPageMode() != DviPageMode::Dvips)
+	  {
+	    if (AfxMessageBox(IDS_PS_DISABLED, MB_YESNO) == IDYES)
 	    {
-	    case DviSpecialType::Psdef:
-	    case DviSpecialType::Psfile:
-	    case DviSpecialType::Ps:
-	      if (AfxMessageBox(IDS_PS_DISABLED, MB_YESNO) == IDYES)
-		{
-		  PostMessage (WM_COMMAND, ID_PAGEMODE_DVIPS, 0);
-		  throw DrawingCancelledException ();
-		}
-	      else
-		{
-		  warnPostScript = false;
-		  return;
-		}
-	    }	  
-	  break;
+	      PostMessage (WM_COMMAND, ID_PAGEMODE_DVIPS, 0);
+	      throw DrawingCancelledException ();
+	    }
+	    else
+	    {
+	      warnPostScript = false;
+	      return;
+	    }
+	  }
+	}	  
+	break;
+#endif
 	case 2:
 	  MIKTEX_ASSERT (! pDoc->GraphicsDone(pageIdx));
 	  switch (pSpecial->GetType().Get())

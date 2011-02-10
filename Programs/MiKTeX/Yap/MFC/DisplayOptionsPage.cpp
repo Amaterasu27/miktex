@@ -1,6 +1,6 @@
 /* DisplayOptionsPage.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -87,9 +87,11 @@ DisplayOptionsPage::OnInitDialog ()
       int idx = -1;
       switch (g_pYapConfig->dviPageMode.Get())
 	{
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
 	case DviPageMode::Auto:
 	  idx = 0;
 	  break;
+#endif
 	case DviPageMode::Pk:
 	  idx = 1;
 	  break;
@@ -178,9 +180,11 @@ DisplayOptionsPage::OnApply ()
 	}
       switch (idx)
 	{
-	case 0:
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
+        case 0:
 	  g_pYapConfig->dviPageMode = DviPageMode::Auto;
 	  break;
+#endif
 	case 1:
 	  g_pYapConfig->dviPageMode = DviPageMode::Pk;
 	  break;

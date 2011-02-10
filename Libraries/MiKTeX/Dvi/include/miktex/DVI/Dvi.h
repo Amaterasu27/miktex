@@ -1,6 +1,6 @@
 /* miktex/DVI/Dvi.h: DVI interfaces				-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -898,7 +898,9 @@ class DviPageModeEnum
 public:
   enum EnumType {
     None,
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
     Auto,
+#endif
     Pk,
     Dvips
   };

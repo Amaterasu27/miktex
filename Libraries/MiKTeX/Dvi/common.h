@@ -37,7 +37,7 @@ using namespace std;
 class DviFont;
 class DviImpl;
 
-#if 1
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
 #  define DEFAULT_PAGE_MODE DviPageMode::Auto
 #else
 #  define DEFAULT_PAGE_MODE DviPageMode::Pk

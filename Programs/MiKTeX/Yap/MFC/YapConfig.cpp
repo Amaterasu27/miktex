@@ -1,6 +1,6 @@
 /* YapConfig.cpp: Yap configuration settings
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -24,9 +24,15 @@
 
 auto_ptr<YapConfig> g_pYapConfig;
 
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
 #define DEFAULT_DVIPAGE_MODE DviPageMode::Auto
 #define DEFAULT_DVIPAGE_MODE_STRING \
   EnumToString<DviPageMode>(DviPageMode::Auto, dviPageModes)
+#else
+#define DEFAULT_DVIPAGE_MODE DviPageMode::Pk
+#define DEFAULT_DVIPAGE_MODE_STRING \
+  EnumToString<DviPageMode>(DviPageMode::Pk, dviPageModes)
+#endif
 
 #define DEFAULT_UNIT Units::BigPoints
 #define DEFAULT_UNIT_STRING \
@@ -42,7 +48,11 @@ struct EnumAndString
 namespace
 {
   const EnumAndString<DviPageMode> dviPageModes[] = {
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
     { DviPageMode::Auto, "auto" },
+#elif MIKTEX_SERIES_INT <= 209
+    { DviPageMode::Pk, "auto" },
+#endif
     { DviPageMode::Pk, "pk" },
     { DviPageMode::Dvips, "dvips" },
     { DviPageMode::None, 0 },

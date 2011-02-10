@@ -263,6 +263,7 @@ void
 DviPageImpl::AddSpecial (/*[in]*/ DviSpecial * pSpecial)
 {
   MIKTEX_ASSERT (IsLocked());
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
   if (pSpecial->GetType() == DviSpecialType::Psdef
       || pSpecial->GetType() == DviSpecialType::Psfile
       || pSpecial->GetType() == DviSpecialType::Ps
@@ -278,12 +279,8 @@ DviPageImpl::AddSpecial (/*[in]*/ DviSpecial * pSpecial)
 	  pageMode = DviPageMode::Dvips;
 	  dviRules.clear ();
 	}
-      if (pageMode == DviPageMode::Dvips)
-	{
-	  // ignore this special if we're in Dvips mode
-	  return;
-	}
     }
+#endif
   dviSpecials.reserve (100);
   dviSpecials.push_back (pSpecial);
 }
