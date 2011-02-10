@@ -30,9 +30,9 @@ protected:
   virtual ~PostScript ();
 
 public:
-  struct BitmapFile
+  struct GraphicsInclusion
   {
-    char szBitmapFileName[BufferSizes::MaxPath];
+    PathName fileName;
     int x;
     int y;
     int cx;
@@ -42,15 +42,15 @@ public:
 public:
   bool
   GetBitmapFile (/*[in]*/ size_t	i,
-		 /*[out]*/ BitmapFile &	bmf)
+		 /*[out]*/ GraphicsInclusion &	bmf)
   {
-    if (i >= m_vecBitmapFiles.size())
+    if (i >= graphicsInclusions.size())
     {
       return (false);
     }
     else
     {
-      bmf = m_vecBitmapFiles[i];
+      bmf = graphicsInclusions[i];
       return (true);
     }
   }
@@ -79,7 +79,7 @@ public:
   void
   ClearChunkTable ()
   {
-    m_vecBitmapFiles.clear ();
+    graphicsInclusions.clear ();
   }
 
 public:
@@ -230,7 +230,7 @@ protected:
   vector<string> headers;
 
 protected:
-  vector<BitmapFile> m_vecBitmapFiles;
+  vector<GraphicsInclusion> graphicsInclusions;
 
 protected:
   auto_ptr<TraceStream> tracePS;

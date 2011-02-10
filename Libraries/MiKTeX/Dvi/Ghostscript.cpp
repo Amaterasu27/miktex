@@ -192,26 +192,12 @@ Ghostscript::Read (/*[out]*/ void *	pBuf,
 void
 Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 {
-  BitmapFile bmf;
+  GraphicsInclusion bmf;
 
   // create a BMP file
-  Utils::CopyString (bmf.szBitmapFileName,
-		     BufferSizes::MaxPath,
-		     PathName().SetToTempFile().Get());
-  tracePS->WriteFormattedLine ("libdvi", T_("creating bitmap file %s"), Q_(bmf.szBitmapFileName));
-  FILE * pfile;
-#if _MSC_VER >= 1400
-  if (fopen_s(&pfile, bmf.szBitmapFileName, "wb") != 0)
-  {
-    pfile = 0;
-  }
-#else
-  pfile = fopen(bmf.szBitmapFileName, "wb");
-#endif
-  if (pfile == 0)
-  {
-    FATAL_CRT_ERROR ("fopen", bmf.szBitmapFileName);
-  }
+  bmf.fileName.SetToTempFile();
+  tracePS->WriteFormattedLine ("libdvi", T_("creating bitmap file %s"), Q_(bmf.fileName));
+  FileStream stream (File::Open(bmf.fileName, FileMode::Create, FileAccess::Write, false));
 
   const BITMAPINFO * pBitmapInfo = pChunk->GetBitmapInfo();
 
@@ -242,27 +228,25 @@ Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
     (sizeof(header)
      + sizeof(BITMAPINFOHEADER)
      + uNumColors * sizeof(RGBQUAD));
-  fwrite (&header, 1, sizeof(header), pfile);
+  stream.Write (&header, sizeof(header));
 
   // dump bitmap info header
-  fwrite (&pBitmapInfo->bmiHeader, 1, sizeof(BITMAPINFOHEADER), pfile);
+  stream.Write (&pBitmapInfo->bmiHeader, sizeof(BITMAPINFOHEADER));
 
   // dump color table
-  fwrite (pChunk->GetColors(), 1, uNumColors * sizeof(RGBQUAD), pfile);
+  stream.Write (pChunk->GetColors(), uNumColors * sizeof(RGBQUAD));
 
   // dump bits
-  fwrite (pChunk->GetBits(), 1,
-	  nBytesPerLine * pBitmapInfo->bmiHeader.biHeight,
-	  pfile);
+  stream.Write (pChunk->GetBits(), nBytesPerLine * pBitmapInfo->bmiHeader.biHeight);
 
-  fclose (pfile);
+  stream.Close ();
 
   bmf.x = pChunk->GetX();
   bmf.y = pChunk->GetY();
   bmf.cx = pBitmapInfo->bmiHeader.biWidth;
   bmf.cy = pBitmapInfo->bmiHeader.biHeight;
 
-  m_vecBitmapFiles.push_back (bmf);
+  graphicsInclusions.push_back (bmf);
 }
 
 /* _________________________________________________________________________
@@ -275,7 +259,7 @@ Ghostscript::Chunker (/*[in]*/ void * pParam)
 {
   Ghostscript * This = reinterpret_cast<Ghostscript*>(pParam);
   auto_ptr<DibChunker> pChunker (DibChunker::Create());
-  This->m_vecBitmapFiles.clear ();
+  This->graphicsInclusions.clear ();
   try
   {
     const int chunkSize = 2 * 1024 * 1024;
@@ -417,12 +401,12 @@ Ghostscript::Finalize ()
 
   if (IsError())
   {
-    for (vector<BitmapFile>::const_iterator it = m_vecBitmapFiles.begin();
-      it != m_vecBitmapFiles.end();
+    for (vector<GraphicsInclusion>::const_iterator it = graphicsInclusions.begin();
+      it != graphicsInclusions.end();
       ++ it)
     {
-      File::Delete (it->szBitmapFileName);
+      File::Delete (it->fileName.Get());
     }
-    m_vecBitmapFiles.clear ();
+    graphicsInclusions.clear ();
   }
 }
