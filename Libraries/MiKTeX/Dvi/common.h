@@ -194,53 +194,136 @@ public:
    TempFile
    _________________________________________________________________________ */
 
-class TempFile
+class
+MIKTEXNOVTABLE
+TempFile
+{
+protected:
+  virtual
+  MIKTEXTHISCALL
+  ~TempFile () = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  AddRef ()
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Release ()
+    = 0;
+
+public:
+  static
+  MIKTEXCORECEEAPI(TempFile *)
+  Create ();
+
+public:
+  static
+  MIKTEXCORECEEAPI(TempFile *)
+  Create (/*[in]*/ const PathName & path);
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetPathName (/*[in]*/ const PathName & path)
+    = 0;
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetPathName ()
+    = 0;
+};
+
+/* _________________________________________________________________________
+
+   TempFileImpl
+   _________________________________________________________________________ */
+
+class TempFileImpl : public TempFile
 {
 public:
-  TempFile ()
+  TempFileImpl ()
+    : refCount (0)
   {
   }
 
 public:
-  TempFile (/*[in]*/ const PathName & path)
-    : path (path)
+  TempFileImpl (/*[in]*/ const PathName & path)
+    : refCount (0),
+      path (path)
   {
   }
 
 public:
-  const char *
-  Get ()
-    const
-  {
-    return (path.Get());
-  }
-
-public:
-  void
-  Delete ()
-  {
-    if (path[0] != 0)
-    {
-      PathName tmp (path);
-      path = "";
-      File::Delete (tmp);
-    }
-  }
-
-public:
-  ~TempFile ()
+  virtual
+  MIKTEXTHISCALL
+  ~TempFileImpl ()
   {
     try
     {
-      Delete ();
+      if (path[0] != 0)
+      {
+	File::Delete (path, true, true);
+      }
     }
-    catch (const MiKTeXException &)
+    catch (const exception &)
     {
     }
+  }
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  AddRef ()
+  {
+    ++ refCount;
+  }
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Release ()
+  {
+    -- refCount;
+    if (refCount == 0)
+    {
+      delete this;
+    }
+  }
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetPathName (/*[in]*/ const PathName & path)
+  {
+    this->path = path;
+  }
+
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetPathName ()
+  {
+    return (path);
   }
 
 private:
   PathName path;
+
+private:
+  int refCount;
 };
 
 /* _________________________________________________________________________
@@ -313,7 +396,7 @@ typedef map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
 #endif
 
 #if defined(HAVE_UNORDERED_MAP)
-typedef tr1::unordered_map<string, TempFile> TempFileCollection;
+typedef tr1::unordered_map<string, SmartPointer<TempFile> > TempFileCollection;
 #else
 #endif
 
@@ -1521,18 +1604,18 @@ public:
   RememberTempFile (/*[in]*/ const string & key,
 		    /*[in]*/ const PathName & path)
   {
-    tempFiles[key] = path;
+    tempFiles[key] = TempFile::Create(path);
   }
 
 public:
   bool
   TryGetTempFile (/*/*[in]*/ const string & key,
-		    /*[out]*/ PathName & path)
+		  /*[out]*/ PathName &	    path)
   {
     TempFileCollection::const_iterator it = tempFiles.find(key);
     if (it != tempFiles.end())
     {
-      path = it->second.Get();
+      path = it->second->GetPathName();
       return (true);
     }
     else

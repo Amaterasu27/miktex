@@ -1,6 +1,6 @@
 /* common.cpp: common DVI stuff
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -356,4 +356,35 @@ FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
 		      lpszInfo,
 		      lpszSourceFile,
 		      sourceLine);
+}
+
+/* _________________________________________________________________________
+
+   TempFile::~TempFile
+   _________________________________________________________________________ */
+
+TempFile::~TempFile ()
+{
+}
+
+/* _________________________________________________________________________
+
+   TempFile::Create
+   _________________________________________________________________________ */
+
+TempFile *
+TempFile::Create ()
+{
+  return (new TempFileImpl());
+}
+
+/* _________________________________________________________________________
+
+   TempFile::Create
+   _________________________________________________________________________ */
+
+TempFile *
+TempFile::Create (/*[in]*/ const PathName & path)
+{
+  return (new TempFileImpl(path));
 }
