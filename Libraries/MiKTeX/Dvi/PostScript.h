@@ -30,16 +30,6 @@ protected:
   virtual ~PostScript ();
 
 public:
-  struct GraphicsInclusion
-  {
-    PathName fileName;
-    int x;
-    int y;
-    int cx;
-    int cy;
-  };
-
-public:
   GraphicsInclusion *
   GetGraphicsInclusion (/*[in]*/ int idx)
   {
