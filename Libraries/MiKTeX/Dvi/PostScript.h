@@ -40,19 +40,14 @@ public:
   };
 
 public:
-  bool
-  GetBitmapFile (/*[in]*/ size_t	i,
-		 /*[out]*/ GraphicsInclusion &	bmf)
+  GraphicsInclusion *
+  GetGraphicsInclusion (/*[in]*/ int idx)
   {
-    if (i >= graphicsInclusions.size())
+    if (idx >= graphicsInclusions.size())
     {
-      return (false);
+      INVALID_ARGUMENT ("GetGraphicsInclusion", 0);
     }
-    else
-    {
-      bmf = graphicsInclusions[i];
-      return (true);
-    }
+    return (&graphicsInclusions[idx]);
   }
 
 public:
