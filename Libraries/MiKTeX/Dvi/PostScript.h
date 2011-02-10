@@ -61,13 +61,6 @@ public:
   Clear ();
 
 public:
-  void
-  ClearChunkTable ()
-  {
-    graphicsInclusions.clear ();
-  }
-
-public:
   bool
   IsError () const
   {
