@@ -147,16 +147,16 @@ protected:
 protected:
   bool
   FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-		    /*[out]*/ char *		lpszResult);
+		    /*[out]*/ PathName &	result);
+
+protected:
+  bool
+  InternalFindGraphicsFile (/*[in]*/ const char *     lpszFileName,
+			    /*[out]*/ PathName &      result);
 
 protected:
   void
   Initialize ();
-
-protected:
-  bool
-  InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-			    /*[out]*/ char *		lpszResult);
 
 protected:
   void
@@ -165,7 +165,7 @@ protected:
 protected:
   void
   Uncompress (/*[in]*/ const char *	lpszFileName,
-	      /*[out]*/ char *		lpszTempFileName);
+	      /*[out]*/ PathName &	result);
 
 protected:
   DviImpl * pDviImpl;

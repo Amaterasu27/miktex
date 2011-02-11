@@ -342,7 +342,7 @@ PostScript::DoSpecial (/*[in]*/ PsfileSpecial * ppsfilespecial)
 {
   PathName pathFileName;
   bool bFileExists =
-    FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName.GetBuffer());
+    FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName);
   if (! bFileExists)
   {
     FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
@@ -494,13 +494,13 @@ PostScript::DoSpecial (/*[in]*/ DvipsSpecial * pdvipsspecial)
   }
   else if (pdvipsspecial->GetFileName())
   {
-    char filename[_MAX_PATH];
+    PathName filename;
     if (! FindGraphicsFile(pdvipsspecial->GetFileName(), filename))
     {
       FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
 	T_("Cannot find file."), pdvipsspecial->GetFileName());
     }
-    ExecuteEncapsulatedPostScript (filename);
+    ExecuteEncapsulatedPostScript (filename.Get());
   }
   if (pdvipsspecial->GetProtection())
   {
@@ -631,25 +631,24 @@ PostScript::Finalize ()
 
 bool
 PostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-				      /*[out]*/ char *		lpszResult)
+				      /*[out]*/ PathName &	result)
 {
   tracePS->WriteFormattedLine ("libdvi", T_("Searching file %s..."), Q_(lpszFileName));
   MIKTEX_ASSERT (pDviImpl != 0);
   MIKTEX_ASSERT (pDviImpl->GetDviFileName().GetLength() != 0);
-  PathName path = pDviImpl->GetDviFileName();
-  path.RemoveFileSpec ();
-  path += lpszFileName;
-  bool bFound = File::Exists(path);
-  if (! bFound)
+  result = pDviImpl->GetDviFileName();
+  result.RemoveFileSpec ();
+  result += lpszFileName;
+  bool found = File::Exists(result);
+  if (! found)
   {
-    bFound = SessionWrapper(true)->FindFile(lpszFileName, FileType::GRAPHICS, path);
+    found = SessionWrapper(true)->FindFile(lpszFileName, FileType::GRAPHICS, result);
   }
-  if (bFound)
+  if (found)
   {
-    Utils::CopyString (lpszResult, _MAX_PATH, path.Get());
-    tracePS->WriteFormattedLine ("libdvi", T_("Found %s"), Q_(lpszResult));
+    tracePS->WriteFormattedLine ("libdvi", T_("Found %s"), Q_(result));
   }
-  return (bFound);
+  return (found);
 }
 
 /* _________________________________________________________________________
@@ -661,18 +660,16 @@ PostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 
 void
 PostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
-			/*[out]*/  char *	lpszTempFileName)
+			/*[out]*/ PathName &	result)
 {
-  char szPath[_MAX_PATH];
-  if (! InternalFindGraphicsFile(lpszFileName, szPath))
+  PathName source;
+  if (! InternalFindGraphicsFile(lpszFileName, source))
   {
     FATAL_MIKTEX_ERROR ("PostScript::Uncompress",
       T_("Cannot find file."), lpszFileName);
   }
-  PathName temp;
-  Utils::UncompressFile (szPath, temp);
-  Utils::CopyString (lpszTempFileName, _MAX_PATH, temp.Get());
-  pDviImpl->RememberTempFile(lpszFileName, lpszTempFileName);
+  Utils::UncompressFile (source.Get(), result);
+  pDviImpl->RememberTempFile(lpszFileName, result);
 }
 
 /* _________________________________________________________________________
@@ -696,24 +693,22 @@ IsZFileName (/*[in]*/ const PathName & fileName)
 
 bool
 PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-			      /*[out]*/ char *		lpszResult)
+			      /*[out]*/ PathName &	result)
 {
   if (*lpszFileName == '`')
   {
-    PathName tempFile;
-    if (pDviImpl->TryGetTempFile(lpszFileName, tempFile))
+    if (pDviImpl->TryGetTempFile(lpszFileName, result))
     {
-      Utils::CopyString (lpszResult, _MAX_PATH, tempFile.Get());
       return (true);
     }
     else if (strncmp(lpszFileName + 1, "gunzip -c ", 10) == 0)
     {
-      Uncompress (lpszFileName + 11, lpszResult);
+      Uncompress (lpszFileName + 11, result);
       return (true);
     }
     else if (strncmp(lpszFileName + 1, "bunzip2 -c ", 11) == 0)
     {
-      Uncompress (lpszFileName + 12, lpszResult);
+      Uncompress (lpszFileName + 12, result);
       return (true);
     }
     else if (! AllowShellCommand(lpszFileName + 1))
@@ -748,23 +743,21 @@ PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 	  0);
       }
       pDviImpl->RememberTempFile (lpszFileName + 1, szTempFileName);
-      Utils::CopyString (lpszResult, _MAX_PATH, szTempFileName);
+      result = szTempFileName;
       return (true);
     }
   }
   else if (IsZFileName(lpszFileName))
   {
-    PathName tempFile;
-    if (pDviImpl->TryGetTempFile(lpszFileName, tempFile))
+    if (pDviImpl->TryGetTempFile(lpszFileName, result))
     {
-      Utils::CopyString (lpszResult, _MAX_PATH, tempFile.Get());
       return (true);
     }
-    Uncompress (lpszFileName, lpszResult);
+    Uncompress (lpszFileName, result);
     return (true);
   }
   else
   {
-    return (InternalFindGraphicsFile(lpszFileName, lpszResult));
+    return (InternalFindGraphicsFile(lpszFileName, result));
   }
 }
