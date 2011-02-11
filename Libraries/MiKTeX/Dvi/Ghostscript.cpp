@@ -63,11 +63,6 @@ Ghostscript::~Ghostscript ()
 void
 Ghostscript::Start ()
 {
-  if (IsError())
-  {
-    return;
-  }
-
   // find Ghostscript
   char szGsExe[BufferSizes::MaxPath];
   unsigned long version;
@@ -76,7 +71,6 @@ Ghostscript::Start ()
   // check to see whether the version number is ok
   if (((version >> 16) & 0xffff) < 6)
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR ("Ghostscript::Start",
       T_("At least Ghostscript version 6.00 is required."), 0);
   }
@@ -151,7 +145,6 @@ Ghostscript::Start ()
   }
   catch (exception &)
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR ("Ghostscript::Start", T_("Cannot start Ghostscript."), 0);
   }
 
@@ -270,7 +263,6 @@ Ghostscript::Chunker (/*[in]*/ void * pParam)
   }
   catch (const exception &)
   {
-    This->errorFlag = true;
     This->gsOut.Close ();
     throw;
   }
@@ -371,6 +363,7 @@ Ghostscript::Finalize ()
     pStderrReaderThread.reset (0);
   }
 
+  // write the transcript to the debug stream
   if (! stderrBuffer.empty())
   {
     tracePS->WriteFormattedLine ("libdvi", T_("Ghostscript transcript follows:\n\
@@ -380,11 +373,13 @@ Ghostscript::Finalize ()
 	  stderrBuffer.c_str());
   }
 
+  // close Ghostscript's output stream
   if (gsOut.Get() != 0)
   {
     gsOut.Close ();
   }
 
+  // close Ghostscript's error stream
   if (gsErr.Get() != 0)
   {
     gsErr.Close ();
@@ -392,16 +387,10 @@ Ghostscript::Finalize ()
 
   PostScript::Finalize ();
 
+  // check Ghostscript's exit code
   if (gsExitCode != 0)
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR ("Ghostscript::Finalize",
-      T_("Some PostScript specials could not be rendered."),
-      0);
-  }
-
-  if (IsError())
-  {
-    graphicsInclusions.clear ();
+      T_("Some PostScript specials could not be rendered."), 0);
   }
 }

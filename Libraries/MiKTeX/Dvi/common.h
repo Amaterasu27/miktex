@@ -534,6 +534,13 @@ typedef map<int, vector<SmartPointer<DibChunk> > > MAPNUMTODIBCHUNKVEC;
 #if defined(HAVE_UNORDERED_MAP)
 typedef tr1::unordered_map<string, SmartPointer<TempFile> > TempFileCollection;
 #else
+typedef map<string, SmartPointer<TempFile> > TempFileCollection;
+#endif
+
+#if defined(HAVE_UNORDERED_MAP)
+typedef tr1::unordered_map<int, vector<SmartPointer<GraphicsInclusion> > > MAPNUMTOGRINCVEC;
+#else
+typedef map<int, vector<SmartPointer<GraphicsInclusion> > > MAPNUMTOGRINCVEC;
 #endif
 
 /* _________________________________________________________________________
@@ -1139,7 +1146,6 @@ public:
   MIKTEXTHISCALL
   GetNumberOfDibChunks (/*[in]*/ int shrinkFactor);
 
-
 public:
   virtual
   DviPageMode
@@ -1148,6 +1154,19 @@ public:
   {
     return (pageMode);
   }
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetNumberOfGraphicsInclusions (/*[in]*/ int shrinkFactor);
+
+public:
+  virtual
+  GraphicsInclusion *
+  MIKTEXTHISCALL
+  GetGraphicsInclusion (/*[in]*/ int shrinkFactor,
+			/*[in]*/ int idx);
 
 public:
   DviImpl *
@@ -1384,6 +1403,12 @@ private:
 
 private:
   MAPNUMTOBOOL haveShrinkedRaster;
+
+private:
+  MAPNUMTOBOOL haveGraphicsInclusions;
+
+private:
+  MAPNUMTOGRINCVEC graphicsInclusions;
 
 private:
   time_t lastVisited;

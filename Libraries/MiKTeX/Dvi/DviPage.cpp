@@ -701,6 +701,8 @@ DviPageImpl::FreeContents (/*[in]*/ bool keepSpecials,
   haveShrinkedRaster.clear ();
   DestroyDviBitmaps ();
   DestroyDibChunks ();
+  haveGraphicsInclusions.clear ();
+  graphicsInclusions.clear ();
   frozen = false;
 }
 
@@ -1293,6 +1295,23 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
 
 /* _________________________________________________________________________
 
+   DviPageImpl::GetNumberOfGraphicsInclusions
+   _________________________________________________________________________ */
+
+int
+DviPageImpl::GetNumberOfGraphicsInclusions (/*[in]*/ int shrinkFactor)
+{
+  MIKTEX_ASSERT (IsLocked());
+  MAPNUMTOBOOL::const_iterator it = haveGraphicsInclusions.find(shrinkFactor);
+  if (it == haveGraphicsInclusions.end() || ! it->second)
+    {
+      RenderPostScriptSpecials (shrinkFactor);
+    }
+  return (static_cast<int>(graphicsInclusions[ shrinkFactor ].size()));
+}
+
+/* _________________________________________________________________________
+
    DviPageImpl::RenderPostScriptSpecials
    _________________________________________________________________________ */
 
@@ -1340,4 +1359,32 @@ DviPageImpl::RenderPostScriptSpecials (/*[in]*/ int shrinkFactor)
     gs.Close ();
   }
 
+  GraphicsInclusion * pGrinc;
+  vector<SmartPointer<GraphicsInclusion> > & vec = graphicsInclusions[shrinkFactor];  
+  for (int idx = 0; (pGrinc = gs.GetGraphicsInclusion(idx)) != 0; ++ idx)
+  {
+    vec.push_back (pGrinc);
+  }
+
+  haveGraphicsInclusions[shrinkFactor] = true;
 }
+
+/* _________________________________________________________________________
+
+   DviPageImpl::GetGraphicsInclusion
+   _________________________________________________________________________ */
+
+GraphicsInclusion *
+DviPageImpl::GetGraphicsInclusion (/*[in]*/ int shrinkFactor,
+				   /*[in]*/ int idx)
+{
+  MIKTEX_ASSERT (IsLocked());
+  MIKTEX_ASSERT (IsFrozen());
+  MIKTEX_ASSERT
+    (idx >= 0
+     && (static_cast<unsigned>(idx)
+     < graphicsInclusions[ shrinkFactor ].size()));
+  lastVisited = time(0);
+  return (graphicsInclusions[ shrinkFactor ][idx].Get());
+}
+

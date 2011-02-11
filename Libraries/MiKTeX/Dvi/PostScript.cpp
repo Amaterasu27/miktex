@@ -34,8 +34,7 @@
    _________________________________________________________________________ */
 
 PostScript::PostScript ()
-  : errorFlag (false),
-    openFlag (false),
+  : openFlag (false),
     pageBegunFlag (false),
     pDviImpl (0),
     tracePS (TraceStream::Open(MIKTEX_TRACE_DVIPAGE))	 // FIXME
@@ -49,7 +48,6 @@ PostScript::PostScript ()
 
 PostScript::~PostScript ()
 {
-  Clear ();
 }
 
 /* _________________________________________________________________________
@@ -65,17 +63,6 @@ PostScript::Initialize ()
   AddHeader ("finclude.pro");
 #endif
   AddHeader ("special.pro");
-}
-
-/* _________________________________________________________________________
-
-   PostScript::IsEnabled
-   _________________________________________________________________________ */
-
-bool
-PostScript::IsEnabled ()
-{
-  return (true);		// TODO
 }
 
 /* _________________________________________________________________________
@@ -119,16 +106,16 @@ AllowShellCommand (/*[in]*/ const char * lpszCommand)
    _________________________________________________________________________ */
 
 void
-PostScript::CopyFile (/*[in]*/ FILE *	    pfile,
+PostScript::CopyFile (/*[in]*/ FileStream & stream,
 		      /*[in]*/ unsigned	    length)
 {
-  size_t n;
-  char buf[4096];
   if (length == 0)
   {
     length = UINT_MAX;
   }
-  while ((n = fread(buf, 1, min(4096, length), pfile)) > 0)
+  size_t n;
+  char buf[4096];
+  while ((n = stream.Read(buf, min(4096, length))) > 0)
   {
     Write (buf, static_cast<unsigned>(n));
     length -= static_cast<unsigned>(n);
@@ -145,16 +132,11 @@ PostScript::CopyFile (/*[in]*/ FILE *	    pfile,
 void
 PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 {
-  if (errorFlag)
-  {
-    return;
-  }
-
 #if 0 // TODO
   StatusBarMessage (T_("Loading PostScript file %s..."), Q_(lpszFileName));
 #endif
 
-  FILE * pfile = 0;
+  FileStream epsStream;
 
   unsigned length = 0;
   unsigned start = 0;
@@ -162,23 +144,26 @@ PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
   if (bmeps_can_handle(PathName(lpszFileName).GetBuffer()) != 0)
   {
     tracePS->WriteFormattedLine ("libdvi", T_("Trying to convert %s..."), Q_(lpszFileName));
-    pfile = ConvertToEPS(lpszFileName);
+    epsStream.Attach(ConvertToEPS(lpszFileName));
   }
   else
   {
+    {
+      FILE * pFile;
 #if _MSC_VER >= 1400
-    if (fopen_s(&pfile, lpszFileName, "rb") != 0)
-    {
-      pfile = 0;
-    }
+      if (fopen_s(&pFile, lpszFileName, "rb") != 0)
+      {
+	pFile = 0;
+      }
 #else
-    pfile = fopen(lpszFileName, "rb");
+      pFile = fopen(lpszFileName, "rb");
 #endif
-    if (pfile == 0)
-    {
-      errorFlag = true;
-      FATAL_MIKTEX_ERROR ("PostScript::ExecuteEncapsulatedPostScript",
-	T_("Cannot open PostScript file."), lpszFileName);
+      if (pFile == 0)
+      {
+	FATAL_MIKTEX_ERROR ("PostScript::ExecuteEncapsulatedPostScript",
+	  T_("Cannot open PostScript file."), lpszFileName);
+      }
+      epsStream.Attach (pFile);
     }
     struct
     {
@@ -186,7 +171,7 @@ PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
       unsigned char start[4];
       unsigned char length[4];
     } epsfheader;
-    if (fread(&epsfheader, sizeof(epsfheader), 1, pfile) == 1
+    if (epsStream.Read(&epsfheader, sizeof(epsfheader)) == sizeof(epsfheader)
       && epsfheader.magic[0] == 'E' + 0x80
       && epsfheader.magic[1] == 'P' + 0x80
       && epsfheader.magic[2] == 'S' + 0x80
@@ -206,14 +191,9 @@ PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
     }
   }
 
-  AutoFILE xxx (pfile);
+  epsStream.Seek (start, SeekOrigin::Begin);
 
-  if (fseek(pfile, start, SEEK_SET) != 0)
-  {
-    tracePS->WriteFormattedLine ("libdvi", T_("fseek() failed for some reason"));
-  }
-
-  CopyFile (pfile, length);
+  CopyFile (epsStream, length);
 }
 
 /* _________________________________________________________________________
@@ -264,6 +244,8 @@ PostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
   FILE * pFilePipeRead = fdopen(handles[0], "rb");
   if (pFilePipeRead == 0)
   {
+    _close (handles[0]);
+    _close (handles[1]);
     FATAL_CRT_ERROR ("fdopen", 0);
   }
   FILE * pFilePipeWrite = fdopen(handles[1], "wb");
@@ -318,14 +300,9 @@ PostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
 void
 PostScript::SendHeader (/*[in]*/ const char * lpszHeaderName)
 {
-  if (errorFlag)
-  {
-    return;
-  }
   PathName fileName;
   if (! SessionWrapper(true)->FindFile(lpszHeaderName, FileType::PSHEADER, fileName))
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR (T_("PostScript::SendHeader"),
       T_("Cannot find PostScript header file."), lpszHeaderName);
   }
@@ -383,16 +360,11 @@ PostScript::DoDefinitions ()
 void
 PostScript::DoSpecial (/*[in]*/ PsfileSpecial * ppsfilespecial)
 {
-  if (errorFlag)
-  {
-    return;
-  }
   PathName pathFileName;
   bool bFileExists =
     FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName.GetBuffer());
   if (! bFileExists)
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
       T_("Cannot find file."), ppsfilespecial->GetFileName());
   }
@@ -528,10 +500,6 @@ PostScript::AddHeader (/*[in]*/ const char * lpszFileName)
 void
 PostScript::DoSpecial (/*[in]*/ DvipsSpecial * pdvipsspecial)
 {
-  if (errorFlag)
-  {
-    return;
-  }
   Execute ("%d %d a\n",
     pdvipsspecial->GetX() - pDviImpl->GetResolution(),
     pdvipsspecial->GetY() - pDviImpl->GetResolution());
@@ -549,7 +517,6 @@ PostScript::DoSpecial (/*[in]*/ DvipsSpecial * pdvipsspecial)
     char filename[_MAX_PATH];
     if (! FindGraphicsFile(pdvipsspecial->GetFileName(), filename))
     {
-      errorFlag = true;
       FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
 	T_("Cannot find file."), pdvipsspecial->GetFileName());
     }
@@ -670,18 +637,6 @@ PostScript::EndPage ()
 
 /* _________________________________________________________________________
 
-   PostScript::Clear
-   _________________________________________________________________________ */
-
-void
-PostScript::Clear ()
-{
-  headers.clear ();
-  definitions.clear ();
-}
-
-/* _________________________________________________________________________
-
    PostScript::Finalize
    _________________________________________________________________________ */
 
@@ -731,14 +686,9 @@ void
 PostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
 			/*[out]*/  char *	lpszTempFileName)
 {
-  if (errorFlag)
-  {
-    return;
-  }
   char szPath[_MAX_PATH];
   if (! InternalFindGraphicsFile(lpszFileName, szPath))
   {
-    errorFlag = true;
     FATAL_MIKTEX_ERROR ("PostScript::Uncompress",
       T_("Cannot find file."), lpszFileName);
   }
@@ -814,7 +764,6 @@ PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
       if (! bDone)
       {
 	// <fixme>hard-coded string</fixme>
-	errorFlag = true;
 	File::Delete (szTempFileName);
 	FATAL_MIKTEX_ERROR ("PostScript::FindGraphicsFile",
 	  T_("Execution of an embedded shell ")

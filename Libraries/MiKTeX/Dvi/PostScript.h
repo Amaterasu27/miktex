@@ -33,7 +33,11 @@ public:
   GraphicsInclusion *
   GetGraphicsInclusion (/*[in]*/ int idx)
   {
-    if (idx >= graphicsInclusions.size())
+    if (idx == graphicsInclusions.size())
+    {
+      return (0);
+    }
+    else if (idx > graphicsInclusions.size())
     {
       INVALID_ARGUMENT ("GetGraphicsInclusion", 0);
     }
@@ -54,25 +58,6 @@ public:
     const
   {
     return (! pageBegunFlag);
-  }
-
-public:
-  void
-  Clear ();
-
-public:
-  bool
-  IsError () const
-  {
-    return (errorFlag);
-  }
-
-public:
-  void
-  Restart ()
-  {
-    Clear ();
-    errorFlag = false;
   }
 
 public:
@@ -104,11 +89,6 @@ public:
   Open (/*[in]*/ class DviImpl * pDviImpl,
         /*[in]*/ int shrinkFactor);
 
-public:
-  static
-  bool
-  IsEnabled ();
-
 protected:
   void
   AddHeader (/*[in]*/ const char * lpszFileName);
@@ -125,8 +105,8 @@ private:
 
 protected:
   void
-  CopyFile (/*[in]*/ FILE *	pfile,
-	    /*[in]*/ unsigned	length);
+  CopyFile (/*[in]*/ FileStream & stream,
+	    /*[in]*/ unsigned	  length);
 
 protected:
   void
@@ -197,9 +177,6 @@ protected:
 
 protected:
   bool pageBegunFlag;
-
-protected:
-  bool errorFlag;
 
 protected:
   vector<string> definitions;

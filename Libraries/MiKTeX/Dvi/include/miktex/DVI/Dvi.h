@@ -1088,6 +1088,22 @@ public:
   MIKTEXTHISCALL
   GetDviPageMode ()
     = 0;
+
+public:
+  virtual
+  int
+  MIKTEXTHISCALL
+  GetNumberOfGraphicsInclusions (/*[in]*/ int shrinkFactor)
+    = 0;
+
+public:
+  virtual
+  GraphicsInclusion *
+  MIKTEXTHISCALL
+  GetGraphicsInclusion (/*[in]*/ int shrinkFactor,
+			/*[in]*/ int idx)
+    = 0;
+
 };
 
 /* _________________________________________________________________________
