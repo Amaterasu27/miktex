@@ -24,10 +24,30 @@
 class PostScript  
 {
 protected:
-  PostScript ();
+  virtual
+  ~PostScript ();
 
 protected:
-  virtual ~PostScript ();
+  virtual
+  void
+  Finalize ();
+
+protected:
+  virtual
+  void
+  Write (/*[in]*/ const void *	p,
+	 /*[in]*/ unsigned	n)
+    = 0;
+
+protected:
+  virtual
+  void
+  Execute (/*[in]*/ const char *	lpszFormat,
+	   /*[in]*/			...)
+    = 0;
+
+protected:
+  PostScript ();
 
 public:
   GraphicsInclusion *
@@ -117,24 +137,12 @@ protected:
   DoProlog ();
 
 protected:
-  virtual
-  void
-  Execute (/*[in]*/ const char *	lpszFormat,
-	   /*[in]*/			...)
-    = 0;
-
-protected:
   void
   ExecuteBatch (/*[in]*/ const char * lpszFileName);
 
 protected:
   void
   ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName);
-
-protected:
-  virtual
-  void
-  Finalize ();
 
 protected:
   bool
@@ -158,13 +166,6 @@ protected:
   void
   Uncompress (/*[in]*/ const char *	lpszFileName,
 	      /*[out]*/ char *		lpszTempFileName);
-
-protected:
-  virtual
-  void
-  Write (/*[in]*/ const void *	p,
-	 /*[in]*/ unsigned	n)
-    = 0;
 
 protected:
   DviImpl * pDviImpl;

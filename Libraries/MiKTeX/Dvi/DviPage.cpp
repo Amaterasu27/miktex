@@ -1173,16 +1173,16 @@ DviPageImpl::StartDvips ()
     }
 
   // make Dvips command line
-  CommandLineBuilder commandLine;
-  commandLine.AppendOption ("-D", NUMTOSTR(pDviImpl->GetResolution()));
+  CommandLineBuilder arguments;
+  arguments.AppendOption ("-D", NUMTOSTR(pDviImpl->GetResolution()));
   string metafontMode = pDviImpl->GetMetafontMode();
   if (! metafontMode.empty())
     {
-      commandLine.AppendOption ("-mode ", metafontMode.c_str());
+      arguments.AppendOption ("-mode ", metafontMode.c_str());
     }
-  commandLine.AppendOption ("-f", "1");
-  commandLine.AppendOption ("-p=", NUMTOSTR(pageIdx + 1));
-  commandLine.AppendOption ("-l", NUMTOSTR(pageIdx + 1));
+  arguments.AppendOption ("-f", "1");
+  arguments.AppendOption ("-p=", NUMTOSTR(pageIdx + 1));
+  arguments.AppendOption ("-l", NUMTOSTR(pageIdx + 1));
   if (! pDviImpl->HavePaperSizeSpecial())
     {
       PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
@@ -1192,21 +1192,21 @@ DviPageImpl::StartDvips ()
 	{
 	  swap (width, height);
 	}
-      commandLine.AppendOption ("-T",
+      arguments.AppendOption ("-T",
 				(string(NUMTOSTR(width)) + "bp"
 				 + ','
 				 + NUMTOSTR(height) + "bp"));
     }
-  commandLine.AppendOption ("-Ic");
-  commandLine.AppendOption ("-MiKTeX:nolandscape");
+  arguments.AppendOption ("-Ic");
+  arguments.AppendOption ("-MiKTeX:nolandscape");
   if (SessionWrapper(true)->GetConfigValue("Dvips",
 					   "Pedantic",
 					   false))
     {
-      commandLine.AppendOption ("-MiKTeX:pedantic");
+      arguments.AppendOption ("-MiKTeX:pedantic");
     }
-  commandLine.AppendOption ("-MiKTeX:allowallpaths");
-  commandLine.AppendArgument (pDviImpl->GetDviFileName());
+  arguments.AppendOption ("-MiKTeX:allowallpaths");
+  arguments.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
   dir.MakeAbsolute ();
@@ -1214,7 +1214,7 @@ DviPageImpl::StartDvips ()
 
   ProcessStartInfo processStartInfo;
 
-  processStartInfo.Arguments = commandLine.Get();
+  processStartInfo.Arguments = arguments.Get();
   processStartInfo.FileName = dvipsPath.Get();
   processStartInfo.RedirectStandardError = true;
   processStartInfo.RedirectStandardOutput = true;
@@ -1240,43 +1240,43 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   SessionWrapper(true)->GetGhostscript (gsPath.GetBuffer(), 0);
 
   // make Ghostscript command line
-  CommandLineBuilder commandLine;
+  CommandLineBuilder arguments;
   string res =
     NUMTOSTR(static_cast<double>(pDviImpl->GetResolution())
 	     / shrinkFactor);
-  commandLine.AppendOption ("-r", res + 'x' + res);
+  arguments.AppendOption ("-r", res + 'x' + res);
   PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
   int width = paperSizeInfo.width;
   int height = paperSizeInfo.height;
   if (pDviImpl->Landscape())
-    {
-      swap (width, height);
-    }
+  {
+    swap (width, height);
+  }
   width = 
     static_cast<int>(((pDviImpl->GetResolution() * width) / 72.0)
 		     / shrinkFactor);
   height = 
     static_cast<int>(((pDviImpl->GetResolution() * height) / 72.0)
 		     / shrinkFactor);
-  commandLine.AppendOption ("-g",
+  arguments.AppendOption ("-g",
 			    (string(NUMTOSTR(width))
 			     + 'x'
 			     + NUMTOSTR(height)));
-  commandLine.AppendOption ("-sDEVICE=", "bmp16m");
-  commandLine.AppendOption ("-q");
-  commandLine.AppendOption ("-dBATCH");
-  commandLine.AppendOption ("-dNOPAUSE");
-  commandLine.AppendOption ("-dSAFER");
-  commandLine.AppendOption ("-sstdout=", "%stderr");
-  commandLine.AppendOption ("-dTextAlphaBits=", "4");
-  commandLine.AppendOption ("-dGraphicsAlphaBits=", "4");
-  commandLine.AppendOption ("-dDOINTERPOLATE");
-  commandLine.AppendOption ("-sOutputFile=", "-");
-  commandLine.AppendArgument ("-");
+  arguments.AppendOption ("-sDEVICE=", "bmp16m");
+  arguments.AppendOption ("-q");
+  arguments.AppendOption ("-dBATCH");
+  arguments.AppendOption ("-dNOPAUSE");
+  arguments.AppendOption ("-dSAFER");
+  arguments.AppendOption ("-sstdout=", "%stderr");
+  arguments.AppendOption ("-dTextAlphaBits=", "4");
+  arguments.AppendOption ("-dGraphicsAlphaBits=", "4");
+  arguments.AppendOption ("-dDOINTERPOLATE");
+  arguments.AppendOption ("-sOutputFile=", "-");
+  arguments.AppendArgument ("-");
 
   ProcessStartInfo processStartInfo;
 
-  processStartInfo.Arguments = commandLine.Get();
+  processStartInfo.Arguments = arguments.Get();
   processStartInfo.FileName = gsPath.Get();
   processStartInfo.StandardInput = dvipsOut.Get();
   processStartInfo.RedirectStandardError = true;
@@ -1353,9 +1353,13 @@ DviPageImpl::RenderPostScriptSpecials (/*[in]*/ int shrinkFactor)
     }
   }
 
-  if (gs.IsOpen())
+  if (! gs.IsPageEmpty())
   {
     gs.EndPage ();
+  }
+
+  if (gs.IsOpen())
+  {
     gs.Close ();
   }
 

@@ -132,39 +132,19 @@ PostScript::CopyFile (/*[in]*/ FileStream & stream,
 void
 PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 {
-#if 0 // TODO
-  StatusBarMessage (T_("Loading PostScript file %s..."), Q_(lpszFileName));
-#endif
-
   FileStream epsStream;
 
-  unsigned length = 0;
   unsigned start = 0;
+  unsigned length = 0;
 
   if (bmeps_can_handle(PathName(lpszFileName).GetBuffer()) != 0)
   {
-    tracePS->WriteFormattedLine ("libdvi", T_("Trying to convert %s..."), Q_(lpszFileName));
-    epsStream.Attach(ConvertToEPS(lpszFileName));
+    tracePS->WriteFormattedLine ("libdvi", T_("Convert %s to EPS..."), Q_(lpszFileName));
+    epsStream.Attach (ConvertToEPS(lpszFileName));
   }
   else
   {
-    {
-      FILE * pFile;
-#if _MSC_VER >= 1400
-      if (fopen_s(&pFile, lpszFileName, "rb") != 0)
-      {
-	pFile = 0;
-      }
-#else
-      pFile = fopen(lpszFileName, "rb");
-#endif
-      if (pFile == 0)
-      {
-	FATAL_MIKTEX_ERROR ("PostScript::ExecuteEncapsulatedPostScript",
-	  T_("Cannot open PostScript file."), lpszFileName);
-      }
-      epsStream.Attach (pFile);
-    }
+    epsStream.Attach (File::Open(lpszFileName, FileMode::Open, FileAccess::Read, false));
     struct
     {
       unsigned char magic[4];
@@ -203,8 +183,19 @@ PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 
 struct ThreadArg
 {
-  FILE *	filein;
-  FILE *	fileout;
+  ThreadArg (FILE * pFileIn, FILE * pFileOut, const char * lpszFileName)
+    : pFileIn (pFileIn),
+      pFileOut (pFileOut),
+      pathFile (lpszFileName)
+  {
+  }
+  ~ThreadArg()
+  {
+    fclose (pFileIn);
+    fclose (pFileOut);
+  }
+  FILE *	pFileIn;
+  FILE *	pFileOut;
   PathName	pathFile;
 };
 
@@ -213,19 +204,15 @@ MIKTEXCALLBACK
 PostScript::ConvertToEPSThread (/*[in]*/ void * pv)
 {
   MIKTEX_ASSERT (pv != 0);
-  ThreadArg * parg = reinterpret_cast<ThreadArg*>(pv);
-  MIKTEX_ASSERT (parg->filein != 0 && parg->fileout != 0);
+  ThreadArg * pArg = reinterpret_cast<ThreadArg*>(pv);
+  MIKTEX_ASSERT (pArg->pFileIn != 0 && pArg->pFileOut != 0);
+  auto_ptr<ThreadArg> xxx (pArg);
   bmeps_cfg ("c");
-  int rc = bmeps_run(parg->fileout, parg->filein, parg->pathFile.GetBuffer());
+  int rc = bmeps_run(pArg->pFileOut, pArg->pFileIn, pArg->pathFile.GetBuffer());
   if (rc == 0)
-    {
-#if 0 // FIXME
-      tracePS->WriteFormattedLine ("libdvi", T_("bmeps_run() failed for some reason"));
-#endif
-    }
-  fclose (parg->filein);
-  fclose (parg->fileout);
-  delete parg;
+  {
+    // FIXME
+  }
 }
 
 /* _________________________________________________________________________
@@ -256,34 +243,27 @@ PostScript::ConvertToEPS (/*[in]*/ const char * lpszFileName)
     FATAL_CRT_ERROR ("fdopen", 0);
   }
   FILE * pFileIn;
-#if _MSC_VER >= 1400
-  if (fopen_s(&pFileIn, lpszFileName, "rb") != 0)
+  try
   {
-    pFileIn = 0;
+    pFileIn = File::Open(lpszFileName, FileMode::Open, FileAccess::Read, false);
   }
-#else
-  pFileIn = fopen(lpszFileName, "rb");
-#endif
-  if (pFileIn == 0)
+  catch (const exception &)
   {
     fclose (pFilePipeRead);
     fclose (pFilePipeWrite);
-    FATAL_CRT_ERROR ("fopen", 0);
+    throw;
   }
-  ThreadArg * pthreadarg = new ThreadArg;
-  pthreadarg->filein = pFileIn;
-  pthreadarg->fileout = pFilePipeWrite;
-  pthreadarg->pathFile = lpszFileName;
+  ThreadArg * pthreadarg = new ThreadArg (pFileIn, pFilePipeWrite, lpszFileName);
+  pFileIn = 0;
+  pFilePipeWrite = 0;
   auto_ptr<Thread> pConverterThread;
   try
   {
     pConverterThread.reset (Thread::Start(ConvertToEPSThread, pthreadarg));;
   }
-  catch (const MiKTeXException &)
+  catch (const exception &)
   {
     fclose (pFilePipeRead);
-    fclose (pFilePipeWrite);
-    fclose (pFileIn);
     delete pthreadarg;
     throw;
   }
@@ -520,10 +500,7 @@ PostScript::DoSpecial (/*[in]*/ DvipsSpecial * pdvipsspecial)
       FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
 	T_("Cannot find file."), pdvipsspecial->GetFileName());
     }
-    else
-    {
-      ExecuteEncapsulatedPostScript (filename);
-    }
+    ExecuteEncapsulatedPostScript (filename);
   }
   if (pdvipsspecial->GetProtection())
   {

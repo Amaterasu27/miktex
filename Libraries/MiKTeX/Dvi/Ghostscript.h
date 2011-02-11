@@ -28,32 +28,25 @@ class Ghostscript
     public IDibChunkerCallback
 {
 public:
-  Ghostscript ();
-
-public:
   virtual
   ~Ghostscript ();
-
-public:
-  virtual
-  void
-  Execute (/*[in]*/ const char *	lpszFormat,
-	   /*[in]*/			...);
 
 private:
   virtual
   void
   Finalize ();
 
-private:
-  void
-  Start ();
-
 public:
   virtual
   void
   Write (/*[in]*/ const void *	p,
 	 /*[in]*/ unsigned	n);
+
+public:
+  virtual
+  void
+  Execute (/*[in]*/ const char *	lpszFormat,
+	   /*[in]*/			...);
 
 public:
   virtual
@@ -67,6 +60,13 @@ public:
   void
   MIKTEXTHISCALL
   OnNewChunk (/*[in]*/ DibChunk * pChunk);
+
+public:
+  Ghostscript ();
+
+private:
+  void
+  Start ();
 
 private:
   static void MIKTEXCALLBACK Chunker (/*[in]*/ void * pParam);
@@ -90,7 +90,7 @@ private:
   FileStream gsErr;
 
 private:
-  auto_ptr<Process> gsProcess;
+  auto_ptr<Process> pProcess;
 
 private:
   string stderrBuffer;

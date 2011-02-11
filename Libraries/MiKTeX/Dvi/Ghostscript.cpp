@@ -52,7 +52,7 @@ Ghostscript::~Ghostscript ()
   MIKTEX_ASSERT (pStderrReaderThread.get() == 0);
   MIKTEX_ASSERT (gsIn.Get() == 0);
   MIKTEX_ASSERT (gsOut.Get() == 0);
-  MIKTEX_ASSERT (gsProcess.get() == 0);
+  MIKTEX_ASSERT (pProcess.get() == 0);
 }
 
 /* _________________________________________________________________________
@@ -69,84 +69,63 @@ Ghostscript::Start ()
   SessionWrapper(true)->GetGhostscript (szGsExe, &version);
 
   // check to see whether the version number is ok
-  if (((version >> 16) & 0xffff) < 6)
+  if (((version >> 16) & 0xffff) < 8)
   {
     FATAL_MIKTEX_ERROR ("Ghostscript::Start",
-      T_("At least Ghostscript version 6.00 is required."), 0);
+      T_("At least Ghostscript version 8.00 is required."), 0);
   }
 
-  // first version that supports .locksafe
-  const unsigned long version_locksafe = 0x00070004; // 7.04
-
-  // first version that supports -sstdout=%stderr
-  const unsigned long version_sstdout = 0x00070002; // 7.02
-
-  //
-  // build the command-line
-  //
-  string arguments ("gs");
-  // - set resolution, e.g. '-r600.0x600.0'
-  char szTmp[200];
-  double res =
-    (static_cast<double>(pDviImpl->GetResolution())
-     / shrinkFactor);
-  sprintf (szTmp, " -r%fx%f", res, res);
-  arguments += szTmp;
-  // - set paper size
+  // make Ghostscript command line
+  CommandLineBuilder arguments;
+  string res =
+    NUMTOSTR(static_cast<double>(pDviImpl->GetResolution())
+	     / shrinkFactor);
+  arguments.AppendOption ("-r", res + 'x' + res);
   PaperSizeInfo paperSizeInfo = pDviImpl->GetPaperSizeInfo();
   int width = paperSizeInfo.width;
   int height = paperSizeInfo.height;
-  sprintf (szTmp, " -g%dx%d", width, height);
-  arguments += szTmp;
-  // - set the output device
-  arguments += " -sDEVICE=bmpmono";
-  // - set batch flags
-  arguments += " -q -dBATCH -dNOPAUSE";
-  // - set security options
-  if (version < version_locksafe)
+  if (pDviImpl->Landscape())
   {
-    arguments += " -dSAFER";
+    swap (width, height);
   }
-  else
-  {
-    arguments += " -dDELAYSAFER";
-  }
-  // - redirect PostScript %stdout
-  if (version >= version_sstdout)
-  {
-    arguments += " -sstdout=%stderr";
-  }
-  // - anti-aliasing
-  arguments += " -dTextAlphaBits=4";
-  arguments += " -dGraphicsAlphaBits=4";
-  // - image interpolation
-  arguments += " -dDOINTERPOLATE";
-  // - direct bitmap output to stdout
-  arguments += " -sOutputFile=-";
-  // - read from stdin
-  arguments += " -";
-  tracePS->WriteFormattedLine ("libdvi", "%s", arguments.c_str());
+  width = 
+    static_cast<int>(((pDviImpl->GetResolution() * width) / 72.0)
+		     / shrinkFactor);
+  height = 
+    static_cast<int>(((pDviImpl->GetResolution() * height) / 72.0)
+		     / shrinkFactor);
+  arguments.AppendOption ("-g",
+			    (string(NUMTOSTR(width))
+			     + 'x'
+			     + NUMTOSTR(height)));
+  arguments.AppendOption ("-sDEVICE=", "bmp16m");
+  arguments.AppendOption ("-q");
+  arguments.AppendOption ("-dBATCH");
+  arguments.AppendOption ("-dNOPAUSE");
+  arguments.AppendOption ("-dDELAYSAFER");
+  arguments.AppendOption ("-sstdout=", "%stderr");
+  arguments.AppendOption ("-dTextAlphaBits=", "4");
+  arguments.AppendOption ("-dGraphicsAlphaBits=", "4");
+  arguments.AppendOption ("-dDOINTERPOLATE");
+  arguments.AppendOption ("-sOutputFile=", "-");
+  arguments.AppendArgument ("-");
+
+  tracePS->WriteFormattedLine ("libdvi", "%s", arguments.Get());
 
   ProcessStartInfo startinfo;
 
+  startinfo.Arguments = arguments.Get();
   startinfo.FileName = szGsExe;
-  startinfo.Arguments = arguments;
   startinfo.StandardInput = 0;
   startinfo.RedirectStandardInput = true;
   startinfo.RedirectStandardOutput = true;
   startinfo.RedirectStandardError = true;
 
-  try
-  {
-    gsProcess.reset (Process::Start(startinfo));
-    gsIn.Attach (gsProcess->get_StandardInput());
-    gsOut.Attach (gsProcess->get_StandardOutput());
-    gsErr.Attach (gsProcess->get_StandardError());
-  }
-  catch (exception &)
-  {
-    FATAL_MIKTEX_ERROR ("Ghostscript::Start", T_("Cannot start Ghostscript."), 0);
-  }
+  pProcess.reset (Process::Start(startinfo));
+
+  gsIn.Attach (pProcess->get_StandardInput());
+  gsOut.Attach (pProcess->get_StandardOutput());
+  gsErr.Attach (pProcess->get_StandardError());
 
   // start chunker thread
   pChunkerThread.reset (Thread::Start(Chunker, this));
@@ -155,10 +134,7 @@ Ghostscript::Start ()
   pStderrReaderThread.reset (Thread::Start(StderrReader, this));
 
   // enable file reading
-  if (version >= version_locksafe)
-  {
-    Execute ("%s", l_szPermitFileReading);
-  }
+  Execute ("%s", l_szPermitFileReading);
 }
 
 /* _________________________________________________________________________
@@ -253,7 +229,6 @@ Ghostscript::Chunker (/*[in]*/ void * pParam)
 {
   Ghostscript * This = reinterpret_cast<Ghostscript*>(pParam);
   auto_ptr<DibChunker> pChunker (DibChunker::Create());
-  This->graphicsInclusions.clear ();
   try
   {
     const int chunkSize = 2 * 1024 * 1024;
@@ -282,7 +257,6 @@ Ghostscript::StderrReader (/*[in]*/ void * pParam)
   Ghostscript * This = reinterpret_cast<Ghostscript*>(pParam);
   const int chunkSize = 64;
   char buf[ chunkSize ];
-  This->stderrBuffer = "";
   size_t n;
   while ((n = This->gsErr.Read(buf, chunkSize)) > 0)
   {
@@ -313,7 +287,7 @@ void
 Ghostscript::Execute (/*[in]*/ const char *	lpszFormat,
 		      /*[in]*/			...)
 {
-  if (gsProcess.get() == 0)
+  if (pProcess.get() == 0)
   {
     Start ();
   }
@@ -340,13 +314,13 @@ Ghostscript::Finalize ()
 
   // wait for Ghostscript to finish
   int gsExitCode = -1;
-  if (gsProcess.get() != 0)
+  if (pProcess.get() != 0)
   {
-    if (gsProcess->WaitForExit(10000))
+    if (pProcess->WaitForExit(10000))
     {
-      gsExitCode = gsProcess->get_ExitCode();
+      gsExitCode = pProcess->get_ExitCode();
     }
-    gsProcess.reset ();
+    pProcess.reset ();
   }
 
   // wait for the chunker to finish
