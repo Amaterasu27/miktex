@@ -1424,14 +1424,26 @@ DviPageImpl::DoGraphicsSpecials (/*[in]*/ int shrinkFactor)
 	imageType = ImageType::DIB;
 	fileName = tempFileName;
       }
+      int x = PixelShrink(shrinkFactor, pGraphicsSpecial->GetX());
+      int y = PixelShrink(shrinkFactor, pGraphicsSpecial->GetY());
+      int cx = pGraphicsSpecial->GetWidth();
+      if (cx >= 0)
+      {
+	cx = PixelShrink(shrinkFactor, cx);
+      }
+      int cy = pGraphicsSpecial->GetHeight();
+      if (cy >= 0)
+      {
+	cy = PixelShrink(shrinkFactor, cy);
+      }
       vec.push_back (new GraphicsInclusionImpl(
 	imageType.Get(),
 	fileName,
 	false,
-	PixelShrink(shrinkFactor, pGraphicsSpecial->GetX()),
-	PixelShrink(shrinkFactor, pGraphicsSpecial->GetY()),
-	PixelShrink(shrinkFactor, pGraphicsSpecial->GetWidth()),
-	PixelShrink(shrinkFactor, pGraphicsSpecial->GetHeight())));      
+	x,
+	y,
+	cx,
+	cy));
     }
   }
 }
