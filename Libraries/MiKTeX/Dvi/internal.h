@@ -1,4 +1,4 @@
-/* common.h: internal DVI definitions				-*- C++ -*-
+/* internal.h: internal DVI definitions				-*- C++ -*-
 
    Copyright (C) 1996-2011 Christian Schenk
 
@@ -42,6 +42,8 @@ class DviImpl;
 #else
 #  define DEFAULT_PAGE_MODE DviPageMode::Pk
 #endif
+
+#include "Dib.h"
 
 /* _________________________________________________________________________
 
@@ -328,6 +330,23 @@ private:
 
 /* _________________________________________________________________________
 
+   ImageType
+   _________________________________________________________________________ */
+
+class ImageTypeEnum
+{
+public:
+  enum EnumType {
+    None,
+    DIB,
+    EMF
+  };
+};
+
+typedef MiKTeX::Core::EnumWrapper<ImageTypeEnum> ImageType;
+
+/* _________________________________________________________________________
+
    GraphicsInclusionImpl
    _________________________________________________________________________ */
 
@@ -336,7 +355,13 @@ class GraphicsInclusionImpl : public GraphicsInclusion
 public:
   GraphicsInclusionImpl ()
     : refCount (0),
-      imageType (ImageType::None)
+      imageType (ImageType::None),
+      temporary (false),
+      hEmf (0),
+      x (-1),
+      y (-1),
+      cx (-1),
+      cy (-1)
   {
   }
 
@@ -352,11 +377,24 @@ public:
       imageType (imageType),
       fileName (fileName),
       temporary (temporary),
+      hEmf (0),
       x (x),
       y (y),
       cx (cx),
       cy (cy)
   {
+    switch (imageType.Get())
+    {
+    case ImageType::DIB:
+      pDib.reset (new Dib(fileName));
+      break;
+    case ImageType::EMF:
+      hEmf = LoadEnhMetaFile(fileName);
+      break;
+    default:
+      FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::GraphicsInclusionImpl",
+	T_("Unsupported image type."), 0);
+    }
   }
 
 public:
@@ -366,6 +404,15 @@ public:
   {
     try
     {
+      pDib.reset ();
+      if (hEmf != 0)
+      {
+	if (DeleteEnhMetaFile(hEmf) == 0)
+	{
+	  FATAL_WINDOWS_ERROR ("DeleteEnhMetaFile", 0);
+	}
+	hEmf = 0;
+      }
       if (temporary && fileName[0] != 0)
       {
 	File::Delete (fileName, true, true);
@@ -400,59 +447,46 @@ public:
 
 public:
   virtual
-  ImageType
-  GetImageType ()
-  {
-    return (imageType);
-  }
-
-public:
-  virtual
-  PathName
+  void
   MIKTEXTHISCALL
-  GetFileName ()
+  Render (/*[in]*/ HDC hdc)
   {
-    return (fileName);
-  }
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetX ()
-  {
-    return (x);
-  }
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetY ()
-  {
-    return (y);
-  }
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetCx ()
-  {
-    return (cx);
-  }
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetCy ()
-  {
-    return (cy);
+    switch (imageType.Get())
+    {
+    case ImageType::DIB:
+      pDib->Render (hdc, x, y, cx, cy);
+      break;
+    case ImageType::EMF:
+      {
+	RECT rect;
+	rect.left = x;
+	rect.top = y;
+	rect.right = x + cx;
+	rect.bottom = y + cy;
+	if (! PlayEnhMetaFile(hdc, hEmf, &rect))
+	{
+	  FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::Render",
+	    T_("The metafile could not be rendered."),
+	    0);
+	}
+      }
+    default:
+      UNEXPECTED_CONDITION ("GraphicsInclusionImpl::Render");
+    }
   }
 
 private:
+  HENHMETAFILE
+  LoadEnhMetaFile (/*[in]*/ const PathName & fileName);
+
+private:
   ImageType imageType;
+
+private:
+  auto_ptr<Dib> pDib;
+
+private:
+  HENHMETAFILE hEmf;
 
 private:
   PathName fileName;
@@ -1381,7 +1415,11 @@ private:
 
 private:
   void
-  RenderPostScriptSpecials (/*[in]*/ int shrinkFactor);
+  DoPostScriptSpecials (/*[in]*/ int shrinkFactor);
+
+private:
+  void
+  DoGraphicsSpecials (/*[in]*/ int shrinkFactor);
 
 private:
   auto_ptr<TraceStream> tracePage;
@@ -1803,6 +1841,12 @@ public:
       return (false);
     }
   }
+
+public:
+  bool
+  FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+		    /*[out]*/ PathName &	result);
+
 
 private:
   bool

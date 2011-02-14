@@ -22,7 +22,7 @@
 /* some tricks are borrowed from Dvips, TFtoPL  and other celebrities */
 
 #include "StdAfx.h"
-#include "common.h"
+#include "internal.h"
 
 /* _________________________________________________________________________
 

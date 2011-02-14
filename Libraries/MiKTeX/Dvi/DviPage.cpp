@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 #define SMALLBITMAPS 0
 
@@ -1304,19 +1304,21 @@ DviPageImpl::GetNumberOfGraphicsInclusions (/*[in]*/ int shrinkFactor)
   MIKTEX_ASSERT (IsLocked());
   MAPNUMTOBOOL::const_iterator it = haveGraphicsInclusions.find(shrinkFactor);
   if (it == haveGraphicsInclusions.end() || ! it->second)
-    {
-      RenderPostScriptSpecials (shrinkFactor);
-    }
+  {
+    DoPostScriptSpecials (shrinkFactor);
+    DoGraphicsSpecials (shrinkFactor);
+    haveGraphicsInclusions[shrinkFactor] = true;
+  }
   return (static_cast<int>(graphicsInclusions[ shrinkFactor ].size()));
 }
 
 /* _________________________________________________________________________
 
-   DviPageImpl::RenderPostScriptSpecials
+   DviPageImpl::DoPostScriptSpecials
    _________________________________________________________________________ */
 
 void
-DviPageImpl::RenderPostScriptSpecials (/*[in]*/ int shrinkFactor)
+DviPageImpl::DoPostScriptSpecials (/*[in]*/ int shrinkFactor)
 {
   Ghostscript gs;
 
@@ -1369,8 +1371,69 @@ DviPageImpl::RenderPostScriptSpecials (/*[in]*/ int shrinkFactor)
   {
     vec.push_back (pGrinc);
   }
+}
 
-  haveGraphicsInclusions[shrinkFactor] = true;
+/* _________________________________________________________________________
+
+   DviPageImpl::DoGraphicsSpecials
+   _________________________________________________________________________ */
+
+void
+DviPageImpl::DoGraphicsSpecials (/*[in]*/ int shrinkFactor)
+{
+  vector<SmartPointer<GraphicsInclusion> > & vec = graphicsInclusions[shrinkFactor];  
+  for (size_t idx = 0; idx < dviSpecials.size(); ++ idx)
+  {
+    DviSpecial * pSpecial = dviSpecials[idx];
+    if (pSpecial->GetType() == DviSpecialType::IncludeGraphics)
+    {
+      GraphicsSpecial * pGraphicsSpecial =
+	reinterpret_cast<GraphicsSpecial*>(pSpecial);
+      PathName fileName;
+      if (! pDviImpl->FindGraphicsFile(pGraphicsSpecial->GetFileName(), fileName))
+      {
+	FATAL_MIKTEX_ERROR ("DviPageImpl::DoGraphicsSpecials",
+	  T_("The graphics file could not be found."),
+	  pGraphicsSpecial->GetFileName());
+      }
+      ImageType imageType (ImageType::None);
+      if (fileName.HasExtension(".bmp"))
+      {
+	imageType = ImageType::DIB;
+      }
+      else if (fileName.HasExtension(".emf") || fileName.HasExtension(".wmf"))
+      {
+	imageType = ImageType::EMF;
+      }
+      else
+      {
+	PathName tempFileName;
+	if (! pDviImpl->TryGetTempFile(fileName.Get(), tempFileName))
+	{
+	  if (! SessionWrapper(true)->ConvertToBitmapFile(
+	    fileName.Get(),
+	    tempFileName.GetBuffer(),
+	    0))
+	  {
+	    FATAL_MIKTEX_ERROR ("DviPageImpl::DoGraphicsSpecials",
+	      T_("Could not make bitmap file."),
+	      fileName.Get());
+	  }
+	  pDviImpl->RememberTempFile (fileName.Get(), tempFileName);
+	}
+	imageType = ImageType::DIB;
+	fileName = tempFileName;
+      }
+      vec.push_back (new GraphicsInclusionImpl(
+	imageType.Get(),
+	fileName,
+	false,
+	PixelShrink(shrinkFactor, pGraphicsSpecial->GetX()),
+	PixelShrink(shrinkFactor, pGraphicsSpecial->GetY()),
+	PixelShrink(shrinkFactor, pGraphicsSpecial->GetWidth()),
+	PixelShrink(shrinkFactor, pGraphicsSpecial->GetHeight())));      
+    }
+  }
 }
 
 /* _________________________________________________________________________

@@ -1,6 +1,6 @@
 /* DviView.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -623,10 +623,12 @@ private:
   void
   ClearSearchPosition ();
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   TempFile
   CreateTempBitmapFile (/*[in]*/ const PathName &	origFileName);
-  
+#endif
+
 private:
   void
   DrawPage (/*[in]*/ CDC * pDC,
@@ -706,10 +708,12 @@ private:
   FindDviFile (/*[in]*/ const char *	lpszFileName,
 	       /*[out]*/ PathName &		result);
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   bool
   FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
 		    /*[in]*/ PathName &		result);
+#endif
 
 private:
   void
@@ -742,10 +746,12 @@ private:
   void
   GotoLocation (/*[in]*/ const location & loc);
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   void
   IncludeGraphics (/*[in]*/ int			pageIdx,
 		   /*[in]*/ GraphicsSpecial *	pGraphicsSpecial);
+#endif
 
 private:
   void
@@ -754,7 +760,7 @@ private:
 private:
   void
   RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
-			    /*[in]*/ int	pageIdx);
+			    /*[in]*/ DviPage *	pPage);
   
 private:
   bool
@@ -762,9 +768,11 @@ private:
 		       /*[in]*/ CString &		dviFileName,
 		       /*[in]*/ CString &		hashLabel);
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   HENHMETAFILE
   LoadEnhMetaFile (/*[in]*/ const char * lpszFileName);
+#endif
 
 private:
   void
@@ -854,8 +862,10 @@ private:
 private:
   double tpicConv;
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   map<string, TempFile> tempFiles;
+#endif
 
 private:
   static vector<double> gammaTable;

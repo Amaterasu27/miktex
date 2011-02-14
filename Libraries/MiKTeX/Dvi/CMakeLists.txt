@@ -38,6 +38,8 @@ get_target_property(makebitcounts_exe makebitcounts LOCATION)
 
 set(${dvi_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/bitcounts.h
+  Dib.cpp
+  Dib.h
   Dvi.cpp
   DviChar.cpp
   DviChar.h
@@ -61,13 +63,13 @@ set(${dvi_dll_name}_sources
   VfChar.cpp
   VfChar.h
   color.cpp
-  common.cpp
-  common.h
   dvi-version.h
   graphics.cpp
   hypertex.cpp
   include/miktex/DVI/Dvi.h
   inliners.h
+  internal.h
+  misc.cpp
   ps.cpp
   special.cpp
   src.cpp

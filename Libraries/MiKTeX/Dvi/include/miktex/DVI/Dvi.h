@@ -872,23 +872,6 @@ public:
 
 /* _________________________________________________________________________
 
-   ImageType
-   _________________________________________________________________________ */
-
-class ImageTypeEnum
-{
-public:
-  enum EnumType {
-    None,
-    DIB,
-    EMF
-  };
-};
-
-typedef MiKTeX::Core::EnumWrapper<ImageTypeEnum> ImageType;
-
-/* _________________________________________________________________________
-
    GraphicsInclusion
    _________________________________________________________________________ */
 
@@ -917,43 +900,9 @@ public:
 
 public:
   virtual
-  ImageType
-  GetImageType ()
-    = 0;
-
-public:
-  virtual
-  MiKTeX::Core::PathName
+  void
   MIKTEXTHISCALL
-  GetFileName ()
-    = 0;
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetX ()
-    = 0;
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetY ()
-    = 0;
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetCx ()
-    = 0;
-
-public:
-  virtual
-  int
-  MIKTEXTHISCALL
-  GetCy ()
+  Render (/*[in]*/ HDC hdc)
     = 0;
 };
 

@@ -150,11 +150,6 @@ protected:
 		    /*[out]*/ PathName &	result);
 
 protected:
-  bool
-  InternalFindGraphicsFile (/*[in]*/ const char *     lpszFileName,
-			    /*[out]*/ PathName &      result);
-
-protected:
   void
   Initialize ();
 

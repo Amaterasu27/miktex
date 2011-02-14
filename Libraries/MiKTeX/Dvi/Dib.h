@@ -1,27 +1,25 @@
 /* Dib.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
-   This file is part of Yap.
+   This file is part of the MiKTeX DVI Library.
 
-   Yap is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License as
-   published by the Free Software Foundation; either version 2, or (at
-   your option) any later version.
+   The MiKTeX DVI Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2, or (at your option) any later version.
 
-   Yap is distributed in the hope that it will be
+   The MiKTeX DVI Library is distributed in the hope that it will be
    useful, but WITHOUT ANY WARRANTY; without even the implied warranty
    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with Yap; if not, write to the Free Software
-   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-   USA. */
+   You should have received a copy of the GNU Library General Public
+   License along with the MiKTeX DVI Library; if not, write to the
+   Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+   USA.  */
 
 #pragma once
-
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 
 class Dib
 {
@@ -30,9 +28,6 @@ public:
 
 public:
   Dib (/*[in]*/ const PathName & path);
-
-public:
-  Dib (/*[in]*/ const TempFile & tempFile);
 
 public:
   ~Dib ();
@@ -45,13 +40,13 @@ public:
 
 public:
   void
-  Draw (/*[in]*/ CDC *	pDC,
-	/*[in]*/ int	x,
-	/*[in]*/ int	y,
-	/*[in]*/ int	cx,
-	/*[in]*/ int	cy);
+  Render (/*[in]*/ HDC	    hdc,
+	  /*[in]*/ int	    x,
+	  /*[in]*/ int	    y,
+	  /*[in]*/ int	    cx,
+	  /*[in]*/ int	    cy);
 
-public:
+private:
   void
   AttachFile (/*[in]*/ const char * lpszFileName);
 
@@ -104,8 +99,4 @@ private:
 
 private:
   BITMAPFILEHEADER * pBitmapFileHeader;
-
-private:
-  TempFile tempFile;
 };
-#endif

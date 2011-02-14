@@ -1,6 +1,6 @@
 /* print.cpp: DVI printing
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -327,7 +327,9 @@ DviView::OnPrint (/*[in]*/ CDC *	pDC,
       CMyScrollView::OnPrint (pDC, pInfo);
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
       pDoc->ForgetGraphicsInclusions ();
+#endif
     }
   
   catch (const MiKTeXException & e)

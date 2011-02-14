@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 #if defined(_MSC_VER)
 #include <io.h> // FIXME: see _pipe()
@@ -624,35 +624,6 @@ PostScript::Finalize ()
 
 /* _________________________________________________________________________
 
-   PostScript::InternalFindGraphicsFile
-
-   Find a graphics file.
-   _________________________________________________________________________ */
-
-bool
-PostScript::InternalFindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-				      /*[out]*/ PathName &	result)
-{
-  tracePS->WriteFormattedLine ("libdvi", T_("Searching file %s..."), Q_(lpszFileName));
-  MIKTEX_ASSERT (pDviImpl != 0);
-  MIKTEX_ASSERT (pDviImpl->GetDviFileName().GetLength() != 0);
-  result = pDviImpl->GetDviFileName();
-  result.RemoveFileSpec ();
-  result += lpszFileName;
-  bool found = File::Exists(result);
-  if (! found)
-  {
-    found = SessionWrapper(true)->FindFile(lpszFileName, FileType::GRAPHICS, result);
-  }
-  if (found)
-  {
-    tracePS->WriteFormattedLine ("libdvi", T_("Found %s"), Q_(result));
-  }
-  return (found);
-}
-
-/* _________________________________________________________________________
-
    PostScript::Uncompress
 
    Uncompress a graphics file.
@@ -663,7 +634,7 @@ PostScript::Uncompress (/*[in]*/ const char *	lpszFileName,
 			/*[out]*/ PathName &	result)
 {
   PathName source;
-  if (! InternalFindGraphicsFile(lpszFileName, source))
+  if (! pDviImpl->FindGraphicsFile(lpszFileName, source))
   {
     FATAL_MIKTEX_ERROR ("PostScript::Uncompress",
       T_("Cannot find file."), lpszFileName);
@@ -730,10 +701,10 @@ PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
       PathName docDir = pDviImpl->GetDviFileName();
       docDir.RemoveFileSpec();
       StdoutReader reader;
-      bool bDone =
+      bool done =
 	Process::ExecuteSystemCommand(command.c_str(), 0,
 	&reader, docDir.Get());
-      if (! bDone)
+      if (! done)
       {
 	// <fixme>hard-coded string</fixme>
 	File::Delete (szTempFileName);
@@ -758,6 +729,6 @@ PostScript::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
   }
   else
   {
-    return (InternalFindGraphicsFile(lpszFileName, result));
+    return (pDviImpl->FindGraphicsFile(lpszFileName, result));
   }
 }

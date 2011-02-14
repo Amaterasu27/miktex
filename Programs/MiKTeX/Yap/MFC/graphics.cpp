@@ -20,6 +20,8 @@
 
 #include "StdAfx.h"
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
+
 #include "yap.h"
 
 #include "Dib.h"
@@ -400,3 +402,5 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
 	}
     }
 }
+
+#endif

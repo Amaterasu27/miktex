@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 /* _________________________________________________________________________
 
@@ -2260,6 +2260,37 @@ DviImpl::GetFontTable ()
       return (ret);
     }
   MIKTEX_END_CRITICAL_SECTION();
+}
+
+/* _________________________________________________________________________
+
+   DviImpl::FindGraphicsFile
+   _________________________________________________________________________ */
+
+bool
+DviImpl::FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
+			   /*[out]*/ PathName &		result)
+{
+  if (Utils::IsAbsolutePath(lpszFileName))
+    {
+      result = lpszFileName;
+      return (File::Exists(result));
+    }
+  MIKTEX_ASSERT (dviFileName.GetLength() > 0);
+  result = dviFileName;
+  result.RemoveFileSpec ();
+  result += lpszFileName;
+  if (File::Exists(result))
+  {
+    return (true);
+  }
+  if (! SessionWrapper(true)->FindFile(lpszFileName,
+    FileType::GRAPHICS,
+    result))
+  {
+    return (false);
+  }
+  return (File::Exists(result));
 }
 
 /* _________________________________________________________________________

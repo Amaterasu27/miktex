@@ -1317,8 +1317,10 @@ DviView::Zoom (/*[in]*/ bool zoomIn)
   CPoint oldScrollPosition = GetScrollPosition();
   pDoc->Shrink (d);
   g_pYapConfig->displayShrinkFactor = newShrink;
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
   pDoc->ForgetGraphicsInclusions ();
   tempFiles.clear ();
+#endif
   pDoc->UpdateAllViews (0);
   CPoint pt;
   CSize size = GetTotalSize();

@@ -76,29 +76,39 @@ public:
   IsFlipSide (/*[in]*/ int pageIdx)
     const;
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 public:
   void
   SetGraphicsDone (/*[in]*/ int pageIdx);
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 public:
   bool
   GraphicsDone (/*[in]*/ int pageIdx)
     const;
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 public:
   void
   RememberGraphicsInclusion (/*[in]*/ int				pageIdx,
 			     /*[in]*/ const ::GraphicsInclusion &	grinc);
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 public:
   bool
   GetGraphicsInclusion (/*[in]*/ int			pageIdx,
 			/*[in]*/ size_t			idx,
 			/*[out]*/ ::GraphicsInclusion &	graphicsInclusion);
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 public:
   void
   ForgetGraphicsInclusions ();
+#endif
 
 public:
   int
@@ -329,11 +339,15 @@ private:
 private:
   bool landscape;
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   map<int, vector<::GraphicsInclusion> > graphicsInclusions;
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 private:
   map<int, bool> graphicsDone;
+#endif
 
 private:
   time_t modificationTime;
@@ -461,6 +475,7 @@ DviDoc::IsFlipSide (/*[in]*/ int pageIdx)
   return (pageIdx % 2 != 0);
 }
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 /* _________________________________________________________________________
 
    DviDoc::SetGraphicsDone
@@ -472,7 +487,9 @@ DviDoc::SetGraphicsDone (/*[in]*/ int pageIdx)
 {
   graphicsDone[pageIdx] = true;
 }
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 /* _________________________________________________________________________
 
    DviDoc::GraphicsDone
@@ -490,7 +507,9 @@ DviDoc::GraphicsDone (/*[in]*/ int pageIdx)
     }
   return (it->second);
 }
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 /* _________________________________________________________________________
 
    DviDoc::RememberGraphicsInclusion
@@ -504,7 +523,9 @@ DviDoc::RememberGraphicsInclusion
 {
   graphicsInclusions[pageIdx].push_back (graphicsInclusion);
 }
+#endif
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 /* _________________________________________________________________________
 
    DviDoc::GetGraphicsInclusion
@@ -534,6 +555,7 @@ DviDoc::GetGraphicsInclusion (/*[in]*/ int			pageIdx,
   graphicsInclusion = vec[idx];
   return (true);
 }
+#endif
 
 /* _________________________________________________________________________
 

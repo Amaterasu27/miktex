@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 #define twopwr(n) (((int) 1) << (n))
 

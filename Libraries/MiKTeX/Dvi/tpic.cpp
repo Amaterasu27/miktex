@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 struct TpicContext TpicSpecialRoot::tpicContext;
 

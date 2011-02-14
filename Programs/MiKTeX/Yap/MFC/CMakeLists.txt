@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,28 +42,51 @@ add_definitions(
 set(yap_mfc_sources
   ${CMAKE_CURRENT_BINARY_DIR}/yaphelp.h
   AddChangeEditorDialog.cpp
+  AddChangeEditorDialog.h
   AdvancedOptionsPage.cpp
+  AdvancedOptionsPage.h
   ChildFrame.cpp
+  ChildFrame.h
   Dib.cpp
+  Dib.h
   DisplayOptionsPage.cpp
+  DisplayOptionsPage.h
   DocumentFontsPage.cpp
+  DocumentFontsPage.h
   DviDoc.cpp
+  DviDoc.h
   DviDraw.cpp
+  DviDraw.h
   DviMagnifyingGlass.cpp
+  DviMagnifyingGlass.h
   DviStatusBar.cpp
+  DviStatusBar.h
   DviView.cpp
+  DviView.h
   DvipsDialog.cpp
+  DvipsDialog.h
   GotoPageDialog.cpp
+  GotoPageDialog.h
   InverseSearchOptionsPage.cpp
+  InverseSearchOptionsPage.h
   MagnifyingGlassOptionsPage.cpp
+  MagnifyingGlassOptionsPage.h
   MainFrame.cpp
+  MainFrame.h
   PrintOptionsPage.cpp
+  PrintOptionsPage.h
   ProgressIndicatorDialog.cpp
+  ProgressIndicatorDialog.h
   Ruler.cpp
+  Ruler.h
   SecurityOptionsPage.cpp
+  SecurityOptionsPage.h
   SourceSpecialsDialog.cpp
+  SourceSpecialsDialog.h
   StdAfx.cpp
+  StdAfx.h
   UIOptionsPage.cpp
+  UIOptionsPage.h
   YapConfig.cpp
   draw.cpp
   graphics.cpp
@@ -73,7 +96,9 @@ set(yap_mfc_sources
   source.cpp
   tpic.cpp
   winplace.cpp
+  winplace.h
   yap.cpp
+  yap.h
 )
 
 if(NATIVE_WINDOWS)

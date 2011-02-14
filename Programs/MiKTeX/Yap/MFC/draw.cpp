@@ -205,7 +205,9 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
   if (pageStatus == PageStatus::Changed)
     {
       YapLog (T_("DVI document has been changed"));
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
       pDoc->ForgetGraphicsInclusions ();
+#endif
     }
 
   bool pageLoaded = (pageStatus == PageStatus::Loaded);
@@ -235,6 +237,7 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
     }
   AutoUnlockPage autoUnlockPage (pPage);
 
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
   // interpret graphics specials
   if (! pDoc->GraphicsDone(pageIdx))
     {
@@ -247,11 +250,12 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
       DrawSpecials (pDC, 2, pPage, pageIdx);
       pDoc->SetGraphicsDone (pageIdx);
     }
+#endif
 
   // render graphics
   if (g_pYapConfig->renderGraphicsInBackground)
     {
-      RenderGraphicsInclusions (pDC, pageIdx);
+      RenderGraphicsInclusions (pDC, pPage);
     }
 
   // draw background rules
@@ -271,7 +275,7 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
 
   if (! g_pYapConfig->renderGraphicsInBackground)
     {
-      RenderGraphicsInclusions (pDC, pageIdx);
+      RenderGraphicsInclusions (pDC, pPage);
     }
 
   // draw search marker
@@ -333,6 +337,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 	}	  
 	break;
 #endif
+#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
 	case 2:
 	  MIKTEX_ASSERT (! pDoc->GraphicsDone(pageIdx));
 	  switch (pSpecial->GetType().Get())
@@ -344,6 +349,7 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 	      break;
 	    }
 	  break;
+#endif
 	case 3:
 	  switch (pSpecial->GetType().Get())
 	    {
@@ -810,3 +816,20 @@ DviView::OnEraseBkgnd (/*[in]*/ CDC * pDC)
     }
 }
 
+/* _________________________________________________________________________
+
+   DviView::RenderGraphicsInclusions
+   _________________________________________________________________________ */
+
+void
+DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
+				   /*[in]*/ DviPage *	pPage)
+{
+  DviDoc * pDoc = GetDocument();
+  ASSERT_VALID (pDoc);
+  int nGraphicsInclusions = pPage->GetNumberOfGraphicsInclusions(pDoc->GetShrinkFactor());
+  for (int idx = 0; idx < nGraphicsInclusions; ++ idx)
+  {
+    pPage->GetGraphicsInclusion(pDoc->GetShrinkFactor(), idx)->Render (pDC->GetSafeHdc());
+  }
+}

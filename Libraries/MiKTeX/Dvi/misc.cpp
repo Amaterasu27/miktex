@@ -1,4 +1,4 @@
-/* common.cpp: common DVI stuff
+/* misc.cpp: common DVI stuff
 
    Copyright (C) 1996-2011 Christian Schenk
 
@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#include "common.h"
+#include "internal.h"
 
 /* _________________________________________________________________________
 
@@ -365,6 +365,148 @@ FatalDviError (/*[in]*/ const char *	lpszMiktexFunction,
 
 GraphicsInclusion::~GraphicsInclusion ()
 {
+}
+
+/* _________________________________________________________________________
+
+   GraphicsInclusionImpl::LoadEnhMetaFile
+
+   Borrowed from the mfedit sample.
+   _________________________________________________________________________ */
+
+HENHMETAFILE
+GraphicsInclusionImpl::LoadEnhMetaFile (/*[in]*/ const PathName & fileName)
+{
+  HENHMETAFILE hEmf = 0;
+
+  const DWORD META32_SIGNATURE = 0x464D4520;      // ' EMF'
+  const DWORD ALDUS_ID = 0x9AC6CDD7;
+  const size_t APMSIZE = 22;
+
+  HANDLE hFile = CreateFile(fileName.Get(),
+    GENERIC_READ,
+    FILE_SHARE_READ,
+    0,
+    OPEN_EXISTING,
+    FILE_ATTRIBUTE_READONLY,
+    0);
+
+  if (hFile == INVALID_HANDLE_VALUE)
+  {
+    FATAL_WINDOWS_ERROR ("CreateFile", fileName.Get());
+  }
+
+  AutoHANDLE autoCloseFile (hFile);
+
+  HANDLE hMapFile = CreateFileMapping(hFile,
+    0,
+    PAGE_READONLY,
+    0,
+    0,
+    "MIKEMF");
+
+  if (hMapFile == 0)
+  {
+    FATAL_WINDOWS_ERROR ("CreateFileMapping", fileName.Get());
+  }
+
+  AutoHANDLE autoCloseFileMapping (hMapFile);
+
+  void * pMapFile = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 0);
+
+  if (pMapFile == 0)
+  {
+    FATAL_WINDOWS_ERROR ("MapViewOfFile", fileName.Get());
+  }
+
+  AutoUnmapViewOfFile autoUnmap (pMapFile);
+
+  LPENHMETAHEADER pEmh = reinterpret_cast<LPENHMETAHEADER>(pMapFile);
+
+  if (pEmh->dSignature == META32_SIGNATURE)
+  {
+    hEmf = GetEnhMetaFile(fileName.Get());
+    if (hEmf == 0)
+    {
+      FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+	T_("The metafile could not be loaded."),
+	fileName.Get());
+    }
+    return (hEmf);
+  }
+    
+  if (*reinterpret_cast<LPDWORD>(pEmh) == ALDUS_ID)
+  {
+    DWORD size = *reinterpret_cast<LPDWORD>(reinterpret_cast<PBYTE>(pMapFile)
+      + APMSIZE
+      + 6);
+    // <fixme>use device context</fixme>
+    hEmf = SetWinMetaFileBits(size * 2,
+      reinterpret_cast<PBYTE>(pMapFile) + APMSIZE,
+      0,
+      0);
+    if (hEmf == 0)
+    {
+      FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+	T_("The metafile could not be loaded."),
+	fileName.Get());
+    }
+    return (hEmf);
+  }
+
+  HMETAFILE hMf = GetMetaFile(fileName.Get());
+
+  if (hMf == 0)
+  {
+    FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+      T_("The metafile could not be loaded."),
+      fileName.Get());
+  }
+
+  AutoDeleteMetaFile autoDeleteMetaFile (hMf);
+    
+  UINT size = GetMetaFileBitsEx(hMf, 0, 0);
+
+  if (size == 0)
+  {
+    FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+      T_("The metafile could not be loaded."),
+      fileName.Get());
+  }
+    
+  void * pvData = malloc(size);
+
+  if (pvData == 0)
+  {
+    OUT_OF_MEMORY ("GraphicsInclusionImpl::LoadEnhMetaFile");
+  }
+
+  AutoMemoryPointer autoFree (pvData);
+      
+  size = GetMetaFileBitsEx(hMf, size, pvData);
+
+  if (size == 0)
+  {
+    FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+      T_("The metafile could not be loaded."),
+      fileName.Get());
+  }
+    
+  hEmf =
+    SetWinMetaFileBits
+    (size,
+     const_cast<const PBYTE>(reinterpret_cast<PBYTE>(pvData)),
+     0,
+     0);
+
+  if (hEmf == 0)
+  {
+    FATAL_MIKTEX_ERROR ("GraphicsInclusionImpl::LoadEnhMetaFile",
+      T_("The metafile could not be loaded."),
+      fileName.Get());
+  }
+
+  return (hEmf);
 }
 
 /* _________________________________________________________________________
