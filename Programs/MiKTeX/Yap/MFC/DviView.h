@@ -24,12 +24,6 @@
 #include "DviDraw.h"
 #include "DviMagnifyingGlass.h"
 
-#if USEMYSCROLLVIEW
-#include "MyScrollView.h"
-#else
-#define CMyScrollView CScrollView
-#endif
-
 class DrawingCancelledException : public MiKTeXException
 {
 public:
@@ -48,7 +42,7 @@ class SourceSpecialsDialog;
 class DviMagnifyingGlass;
 
 class DviView
-  : public CMyScrollView,
+  : public CScrollView,
     public DviDraw
 {
 protected:

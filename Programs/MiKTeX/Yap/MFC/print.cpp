@@ -91,7 +91,7 @@ DviView::OnBeginPrinting (/*[in]*/ CDC *	pDC,
 {
   try
     {
-      CMyScrollView::OnBeginPrinting (pDC, pInfo);
+      CScrollView::OnBeginPrinting (pDC, pInfo);
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
       pDoc->BeginDviPrinting (pDC);
@@ -119,7 +119,7 @@ DviView::OnEndPrinting (/*[in]*/ CDC *		pDC,
 {
   try
     {
-      CMyScrollView::OnEndPrinting (pDC, pInfo);
+      CScrollView::OnEndPrinting (pDC, pInfo);
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
       pDoc->EndDviPrinting ();
@@ -324,7 +324,7 @@ DviView::OnPrint (/*[in]*/ CDC *	pDC,
   try
     {
       pPrintInfo = pInfo;
-      CMyScrollView::OnPrint (pDC, pInfo);
+      CScrollView::OnPrint (pDC, pInfo);
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
 #if DVI_DONT_RENDER_GRAPHICS_SPECIALS

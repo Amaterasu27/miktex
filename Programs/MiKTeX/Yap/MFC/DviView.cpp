@@ -31,7 +31,7 @@
 #include "Ruler.h"
 #include "SourceSpecialsDialog.h"
 
-IMPLEMENT_DYNCREATE(DviView, CMyScrollView);
+IMPLEMENT_DYNCREATE(DviView, CScrollView);
 
 vector<double> DviView::gammaTable;
 
@@ -40,7 +40,7 @@ vector<double> DviView::gammaTable;
    DviView Message Map
    _________________________________________________________________________ */
 
-BEGIN_MESSAGE_MAP(DviView, CMyScrollView)
+BEGIN_MESSAGE_MAP(DviView, CScrollView)
   ON_COMMAND(ID_BACK, &DviView::OnBack)
   ON_COMMAND(ID_DARKER_TEXT, &DviView::OnDarkerText)
   ON_COMMAND(ID_DOCUMENT_DOWN, &DviView::OnDocumentDown)
@@ -247,7 +247,7 @@ DviView::OnActivateView (/*[in]*/ BOOL		activate,
     {
       ErrorDialog::DoModal (this, e);
     }
-  CMyScrollView::OnActivateView (activate, pActivateView, pDeactiveView);
+  CScrollView::OnActivateView (activate, pActivateView, pDeactiveView);
 }
 
 /* _________________________________________________________________________
@@ -258,7 +258,7 @@ DviView::OnActivateView (/*[in]*/ BOOL		activate,
 void
 DviView::OnInitialUpdate ()
 {
-  CMyScrollView::OnInitialUpdate ();
+  CScrollView::OnInitialUpdate ();
   curPageIdx = 0;
   try
     {
@@ -340,7 +340,7 @@ DviView::OnUpdate (/*[in]*/ CView *	pSender,
 	  SetScrollSizes (MM_TEXT, sizeTotal, DeterminePageSize());
 	}
 
-      CMyScrollView::OnUpdate (pSender, lHint, pHint);
+      CScrollView::OnUpdate (pSender, lHint, pHint);
     }
   catch (const MiKTeXException & e)
     {
@@ -399,7 +399,7 @@ DviView::OnScroll (/*[in]*/ UINT	scrollCode,
       ErrorDialog::DoModal (this, e);
      }
 
-  return (CMyScrollView::OnScroll(scrollCode, pos, doScroll));
+  return (CScrollView::OnScroll(scrollCode, pos, doScroll));
 }
 
 /* _________________________________________________________________________
@@ -411,7 +411,7 @@ BOOL
 DviView::OnScrollBy (/*[in]*/ CSize	sizeScroll,
 		     /*[in]*/ BOOL	doScroll)
 {
-  return (CMyScrollView::OnScrollBy(sizeScroll, doScroll));
+  return (CScrollView::OnScrollBy(sizeScroll, doScroll));
 }
 
 /* _________________________________________________________________________
@@ -1552,7 +1552,7 @@ DviView::OnLButtonDown (/*[in]*/ UINT	flags,
       ErrorDialog::DoModal (this, e);
      }
 
-  CMyScrollView::OnLButtonDown (flags, point);
+  CScrollView::OnLButtonDown (flags, point);
 }
 
 /* _________________________________________________________________________
@@ -1609,7 +1609,7 @@ DviView::OnLButtonUp (/*[in]*/ UINT	flags,
       ErrorDialog::DoModal (this, e);
     }
 
-  CMyScrollView::OnLButtonUp (flags, point);
+  CScrollView::OnLButtonUp (flags, point);
 }
 
 /* _________________________________________________________________________
@@ -1711,7 +1711,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
       ErrorDialog::DoModal (this, e);
     }
 
-  CMyScrollView::OnMouseMove (flags, point);
+  CScrollView::OnMouseMove (flags, point);
 }
 
 /* _________________________________________________________________________
@@ -1726,7 +1726,7 @@ DviView::OnSetCursor (/*[in]*/ CWnd *	pWnd,
 {
   if (hitTest != HTCLIENT)
     {
-      return (CMyScrollView::OnSetCursor(pWnd, hitTest, message));
+      return (CScrollView::OnSetCursor(pWnd, hitTest, message));
     }
 
   try
@@ -1737,7 +1737,7 @@ DviView::OnSetCursor (/*[in]*/ CWnd *	pWnd,
       int x, y;
       if (! GetPageUnderCursor(pageIdx, x, y))
 	{
-	  return (CMyScrollView::OnSetCursor(pWnd, hitTest, message));
+	  return (CScrollView::OnSetCursor(pWnd, hitTest, message));
 	}
       if (pageIdx < 0)
 	{
@@ -1973,7 +1973,7 @@ DviView::OnChar (/*[in]*/ UINT	ch,
     {
       if (! AddCommandPrefixChar(static_cast<char>(ch)))
 	{
-	  CMyScrollView::OnChar(ch, repeatCount, flags);
+	  CScrollView::OnChar(ch, repeatCount, flags);
 	}
     }
   catch (const MiKTeXException & e)

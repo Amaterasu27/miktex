@@ -201,11 +201,11 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
   // get the status of the DVI page
   PageStatus pageStatus = pDoc->GetPageStatus(pageIdx);
 
-  // cleanup if the page has been changed
   if (pageStatus == PageStatus::Changed)
     {
       YapLog (T_("DVI document has been changed"));
 #if DVI_DONT_RENDER_GRAPHICS_SPECIALS
+      // cleanup if the page has been changed
       pDoc->ForgetGraphicsInclusions ();
 #endif
     }
@@ -303,12 +303,14 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 
   DviSpecial * pSpecial;
 
+#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
   if (iteration == 1
       && pDoc->GetDviPageMode() != DviPageMode::Dvips
       && ! warnPostScript)
     {
       return;
     }
+#endif
 
   for (int idx = 0; (pSpecial = pPage->GetSpecial(idx)) != 0; ++ idx)
     {
@@ -827,9 +829,10 @@ DviView::RenderGraphicsInclusions (/*[in]*/ CDC *	pDC,
 {
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
-  int nGraphicsInclusions = pPage->GetNumberOfGraphicsInclusions(pDoc->GetShrinkFactor());
+  int shrinkFactor = pDoc->GetShrinkFactor();
+  int nGraphicsInclusions = pPage->GetNumberOfGraphicsInclusions(shrinkFactor);
   for (int idx = 0; idx < nGraphicsInclusions; ++ idx)
   {
-    pPage->GetGraphicsInclusion(pDoc->GetShrinkFactor(), idx)->Render (pDC->GetSafeHdc());
+    pPage->GetGraphicsInclusion(shrinkFactor, idx)->Render (pDC->GetSafeHdc());
   }
 }
