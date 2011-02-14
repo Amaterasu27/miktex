@@ -210,7 +210,8 @@ Ghostscript::OnNewChunk (/*[in]*/ DibChunk *	pChunk)
 
   stream.Close ();
 
-  graphicsInclusions.push_back (GraphicsInclusion::Create(
+  graphicsInclusions.push_back (new GraphicsInclusionImpl(
+    ImageType::DIB,
     fileName,
     true,
     pChunk->GetX(),

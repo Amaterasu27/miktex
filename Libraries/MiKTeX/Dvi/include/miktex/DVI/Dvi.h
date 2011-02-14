@@ -872,6 +872,23 @@ public:
 
 /* _________________________________________________________________________
 
+   ImageType
+   _________________________________________________________________________ */
+
+class ImageTypeEnum
+{
+public:
+  enum EnumType {
+    None,
+    DIB,
+    EMF
+  };
+};
+
+typedef MiKTeX::Core::EnumWrapper<ImageTypeEnum> ImageType;
+
+/* _________________________________________________________________________
+
    GraphicsInclusion
    _________________________________________________________________________ */
 
@@ -899,19 +916,10 @@ public:
     = 0;
 
 public:
-  static
-  MIKTEXDVICEEAPI(GraphicsInclusion *)
-  Create ();
-
-public:
-  static
-  MIKTEXDVICEEAPI(GraphicsInclusion *)
-  Create (/*[in]*/ const MiKTeX::Core::PathName & fileName,
-	  /*[in]*/ bool				  temporary,
-	  /*[in]*/ int				  x,
-	  /*[in]*/ int				  y,
-	  /*[in]*/ int				  cx,
-	  /*[in]*/ int				  cy);
+  virtual
+  ImageType
+  GetImageType ()
+    = 0;
 
 public:
   virtual

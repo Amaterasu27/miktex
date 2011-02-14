@@ -335,18 +335,21 @@ class GraphicsInclusionImpl : public GraphicsInclusion
 {
 public:
   GraphicsInclusionImpl ()
-    : refCount (0)
+    : refCount (0),
+      imageType (ImageType::None)
   {
   }
 
 public:
-  GraphicsInclusionImpl (/*[in]*/ const PathName &  fileName,
+  GraphicsInclusionImpl (/*[in]*/ ImageType	    imageType,
+			 /*[in]*/ const PathName &  fileName,
 			 /*[in]*/ bool		    temporary,
 			 /*[in]*/ int		    x,
 			 /*[in]*/ int		    y,
 			 /*[in]*/ int		    cx,
 			 /*[in]*/ int		    cy)
     : refCount (0),
+      imageType (imageType),
       fileName (fileName),
       temporary (temporary),
       x (x),
@@ -397,6 +400,14 @@ public:
 
 public:
   virtual
+  ImageType
+  GetImageType ()
+  {
+    return (imageType);
+  }
+
+public:
+  virtual
   PathName
   MIKTEXTHISCALL
   GetFileName ()
@@ -439,6 +450,9 @@ public:
   {
     return (cy);
   }
+
+private:
+  ImageType imageType;
 
 private:
   PathName fileName;
@@ -548,6 +562,7 @@ typedef map<int, vector<SmartPointer<GraphicsInclusion> > > MAPNUMTOGRINCVEC;
    Includes
    _________________________________________________________________________ */
 
+#include "Dib.h"
 #include "DviChar.h"
 #include "DviFont.h"
 #include "Ghostscript.h"
