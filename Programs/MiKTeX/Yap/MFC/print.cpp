@@ -327,9 +327,6 @@ DviView::OnPrint (/*[in]*/ CDC *	pDC,
       CScrollView::OnPrint (pDC, pInfo);
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-      pDoc->ForgetGraphicsInclusions ();
-#endif
     }
   
   catch (const MiKTeXException & e)

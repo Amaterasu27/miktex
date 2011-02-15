@@ -934,9 +934,6 @@ class DviPageModeEnum
 public:
   enum EnumType {
     None,
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-    Auto,
-#endif
     Pk,
     Dvips
   };

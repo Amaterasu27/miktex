@@ -22,7 +22,6 @@
 
 #include "yap.h"
 
-#include "Dib.h"
 #include "DviDoc.h"
 #include "DviView.h"
 #include "MainFrame.h"
@@ -85,9 +84,6 @@ DviDoc::~DviDoc ()
 	  pDvi = 0;
 	  fileStatus = DVIFILE_NOT_LOADED;
 	}
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-      ForgetGraphicsInclusions ();
-#endif
       if (pLastDoc == this)
 	{
 	  pLastDoc = 0;
@@ -196,9 +192,6 @@ DviDoc::CreateDocument (/*[in]*/ const char * lpszPathName)
 {
   fileStatus = DVIFILE_NOT_LOADED;
   modificationTime = File::GetLastWriteTime(lpszPathName);
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-  ForgetGraphicsInclusions ();
-#endif
   MIKTEXMFMODE mfmode;
   if (! pSession->GetMETAFONTMode(GetMetafontMode(), &mfmode))
     {
@@ -490,20 +483,6 @@ DviDoc::FindPage (/*[in]*/ int pageNum)
     }
   return (-1);
 }
-
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-/* _________________________________________________________________________
-   
-   DviDoc::ForgetGraphicsInclusions
-   _________________________________________________________________________ */
-
-void
-DviDoc::ForgetGraphicsInclusions ()
-{
-  graphicsInclusions.clear ();
-  graphicsDone.clear ();
-}
-#endif
 
 /* _________________________________________________________________________
    

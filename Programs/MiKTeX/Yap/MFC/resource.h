@@ -138,7 +138,6 @@
 #define ID_CONTINUOUS_DOUBLE            32816
 #define ID_FILE_SAVEAS                  32817
 #define ID_DOCUMENT_UP                  32818
-#define ID_PAGEMODE_AUTO                32819
 #define ID_PAGEMODE_PK                  32820
 #define ID_PAGEMODE_DVIPS               32821
 #define ID_VIEW_CENTIMETERS             32822

@@ -1054,7 +1054,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_CONTINUOUS_DOUBLE    "Displays pages in two vertical columns.\nContinuous/Double Layout"
-    ID_PAGEMODE_AUTO        "If possible, uses Pk fonts to render the DVI file."
     ID_PAGEMODE_PK          "Uses Pk fonts to render the DVI file."
     ID_PAGEMODE_DVIPS       "Uses Dvips to render the DVI file."
 END

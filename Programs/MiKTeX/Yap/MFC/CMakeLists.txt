@@ -47,8 +47,6 @@ set(yap_mfc_sources
   AdvancedOptionsPage.h
   ChildFrame.cpp
   ChildFrame.h
-  Dib.cpp
-  Dib.h
   DisplayOptionsPage.cpp
   DisplayOptionsPage.h
   DocumentFontsPage.cpp
@@ -89,7 +87,6 @@ set(yap_mfc_sources
   UIOptionsPage.h
   YapConfig.cpp
   draw.cpp
-  graphics.cpp
   hypertex.cpp
   msdnutil.cpp
   print.cpp

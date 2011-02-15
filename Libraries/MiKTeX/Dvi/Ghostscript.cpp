@@ -368,6 +368,7 @@ Ghostscript::Finalize ()
   if (gsExitCode != 0)
   {
     FATAL_MIKTEX_ERROR ("Ghostscript::Finalize",
-      T_("Some PostScript specials could not be rendered."), 0);
+      T_("Some PostScript specials could not be rendered."),
+      stderrBuffer.c_str());
   }
 }

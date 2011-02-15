@@ -22,7 +22,6 @@
 
 #include "yap.h"
 
-#include "Dib.h"
 #include "DviView.h"
 #include "MainFrame.h"
 
@@ -204,10 +203,6 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
   if (pageStatus == PageStatus::Changed)
     {
       YapLog (T_("DVI document has been changed"));
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-      // cleanup if the page has been changed
-      pDoc->ForgetGraphicsInclusions ();
-#endif
     }
 
   bool pageLoaded = (pageStatus == PageStatus::Loaded);
@@ -236,21 +231,6 @@ DviView::DrawPage (/*[in]*/ CDC *	pDC,
       UNEXPECTED_CONDITION ("DviView::DrawPage");
     }
   AutoUnlockPage autoUnlockPage (pPage);
-
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-  // interpret graphics specials
-  if (! pDoc->GraphicsDone(pageIdx))
-    {
-      // render PostScript specials
-      if (pDoc->GetDviPageMode() != DviPageMode::Dvips)
-	{
-	  DrawSpecials (pDC, 1, pPage, pageIdx);
-	}
-      // include graphics
-      DrawSpecials (pDC, 2, pPage, pageIdx);
-      pDoc->SetGraphicsDone (pageIdx);
-    }
-#endif
 
   // render graphics
   if (g_pYapConfig->renderGraphicsInBackground)
@@ -303,55 +283,10 @@ DviView::DrawSpecials (/*[in]*/ CDC *			pDC,
 
   DviSpecial * pSpecial;
 
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-  if (iteration == 1
-      && pDoc->GetDviPageMode() != DviPageMode::Dvips
-      && ! warnPostScript)
-    {
-      return;
-    }
-#endif
-
   for (int idx = 0; (pSpecial = pPage->GetSpecial(idx)) != 0; ++ idx)
     {
       switch (iteration)
 	{
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-      case 1:
-	switch (pSpecial->GetType().Get())
-	{
-	case DviSpecialType::Psdef:
-	case DviSpecialType::Psfile:
-	case DviSpecialType::Ps:
-	  if (pDoc->GetDviPageMode() != DviPageMode::Dvips)
-	  {
-	    if (AfxMessageBox(IDS_PS_DISABLED, MB_YESNO) == IDYES)
-	    {
-	      PostMessage (WM_COMMAND, ID_PAGEMODE_DVIPS, 0);
-	      throw DrawingCancelledException ();
-	    }
-	    else
-	    {
-	      warnPostScript = false;
-	      return;
-	    }
-	  }
-	}	  
-	break;
-#endif
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-	case 2:
-	  MIKTEX_ASSERT (! pDoc->GraphicsDone(pageIdx));
-	  switch (pSpecial->GetType().Get())
-	    {
-	    case DviSpecialType::IncludeGraphics:
-	      IncludeGraphics
-		(pageIdx,
-		 reinterpret_cast<GraphicsSpecial*>(pSpecial));
-	      break;
-	    }
-	  break;
-#endif
 	case 3:
 	  switch (pSpecial->GetType().Get())
 	    {

@@ -37,7 +37,7 @@ PostScript::PostScript ()
   : openFlag (false),
     pageBegunFlag (false),
     pDviImpl (0),
-    tracePS (TraceStream::Open(MIKTEX_TRACE_DVIPAGE))	 // FIXME
+    tracePS (TraceStream::Open(MIKTEX_TRACE_DVIPOSTSCRIPT))
 {
 }
 

@@ -617,12 +617,6 @@ private:
   void
   ClearSearchPosition ();
 
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-private:
-  TempFile
-  CreateTempBitmapFile (/*[in]*/ const PathName &	origFileName);
-#endif
-
 private:
   void
   DrawPage (/*[in]*/ CDC * pDC,
@@ -702,13 +696,6 @@ private:
   FindDviFile (/*[in]*/ const char *	lpszFileName,
 	       /*[out]*/ PathName &		result);
 
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-private:
-  bool
-  FindGraphicsFile (/*[in]*/ const char *	lpszFileName,
-		    /*[in]*/ PathName &		result);
-#endif
-
 private:
   void
   FlushTpicPath (/*[in]*/ CDC *				pDC,
@@ -740,13 +727,6 @@ private:
   void
   GotoLocation (/*[in]*/ const location & loc);
 
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-private:
-  void
-  IncludeGraphics (/*[in]*/ int			pageIdx,
-		   /*[in]*/ GraphicsSpecial *	pGraphicsSpecial);
-#endif
-
 private:
   void
   InitPostScript ();
@@ -761,12 +741,6 @@ private:
   IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
 		       /*[in]*/ CString &		dviFileName,
 		       /*[in]*/ CString &		hashLabel);
-
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-private:
-  HENHMETAFILE
-  LoadEnhMetaFile (/*[in]*/ const char * lpszFileName);
-#endif
 
 private:
   void
@@ -855,11 +829,6 @@ private:
 
 private:
   double tpicConv;
-
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-private:
-  map<string, TempFile> tempFiles;
-#endif
 
 private:
   static vector<double> gammaTable;

@@ -263,24 +263,6 @@ void
 DviPageImpl::AddSpecial (/*[in]*/ DviSpecial * pSpecial)
 {
   MIKTEX_ASSERT (IsLocked());
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-  if (pSpecial->GetType() == DviSpecialType::Psdef
-      || pSpecial->GetType() == DviSpecialType::Psfile
-      || pSpecial->GetType() == DviSpecialType::Ps
-      || pSpecial->GetType() == DviSpecialType::IncludeGraphics
-      || pSpecial->GetType() == DviSpecialType::Tpic)
-    {
-      if (pageMode == DviPageMode::Auto)
-	{
-	  tracePage->WriteFormattedLine
-	    ("libdvi",
-	     T_("switching to Dvips mode on page '%s'"),
-	     pageName.c_str());
-	  pageMode = DviPageMode::Dvips;
-	  dviRules.clear ();
-	}
-    }
-#endif
   dviSpecials.reserve (100);
   dviSpecials.push_back (pSpecial);
 }
@@ -1305,9 +1287,12 @@ DviPageImpl::GetNumberOfGraphicsInclusions (/*[in]*/ int shrinkFactor)
   MAPNUMTOBOOL::const_iterator it = haveGraphicsInclusions.find(shrinkFactor);
   if (it == haveGraphicsInclusions.end() || ! it->second)
   {
-    DoPostScriptSpecials (shrinkFactor);
-    DoGraphicsSpecials (shrinkFactor);
     haveGraphicsInclusions[shrinkFactor] = true;
+    if (pageMode != DviPageMode::Dvips)
+    {
+      DoPostScriptSpecials (shrinkFactor);
+      DoGraphicsSpecials (shrinkFactor);
+    }
   }
   return (static_cast<int>(graphicsInclusions[ shrinkFactor ].size()));
 }

@@ -1,6 +1,6 @@
 /* miktex/Core/Trace.h						-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -40,6 +40,7 @@
 #define MIKTEX_TRACE_DVIPKBITMAP "dvipkbitmap"
 #define MIKTEX_TRACE_DVIPKCHAR "dvipkchar"
 #define MIKTEX_TRACE_DVIPKFONT "dvipkfont"
+#define MIKTEX_TRACE_DVIPOSTSCRIPT "dvipostscript"
 #define MIKTEX_TRACE_DVISEARCH "dvisearch"
 #define MIKTEX_TRACE_DVITFM "dvitfm"
 #define MIKTEX_TRACE_DVIVFCHAR "dvivfchar"

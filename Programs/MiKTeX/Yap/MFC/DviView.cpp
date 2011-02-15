@@ -57,9 +57,6 @@ BEGIN_MESSAGE_MAP(DviView, CScrollView)
   ON_COMMAND(ID_LAST_PAGE, &DviView::OnLastPage)
   ON_COMMAND(ID_LIGHTER_TEXT, &DviView::OnLighterText)
   ON_COMMAND(ID_NEXT_PAGE, &DviView::OnNextPage)
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-  ON_COMMAND(ID_PAGEMODE_AUTO, &DviView::OnDviPageModeAuto)
-#endif
   ON_COMMAND(ID_PAGEMODE_DVIPS, &DviView::OnDviPageModeDvips)
   ON_COMMAND(ID_PAGEMODE_PK, &DviView::OnDviPageModePk)
   ON_COMMAND(ID_PAGE_EDITOR, &DviView::OnPageEditor)
@@ -88,9 +85,6 @@ BEGIN_MESSAGE_MAP(DviView, CScrollView)
   ON_UPDATE_COMMAND_UI(ID_LAST_PAGE, &DviView::OnUpdateLastPage)
   ON_UPDATE_COMMAND_UI(ID_LIGHTER_TEXT, &DviView::OnUpdateLighterText)
   ON_UPDATE_COMMAND_UI(ID_NEXT_PAGE, &DviView::OnUpdateNextPage)
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-  ON_UPDATE_COMMAND_UI(ID_PAGEMODE_AUTO, &DviView::OnUpdateDviPageModeAuto)
-#endif
   ON_UPDATE_COMMAND_UI(ID_PAGEMODE_DVIPS, &DviView::OnUpdateDviPageModeDvips)
   ON_UPDATE_COMMAND_UI(ID_PAGEMODE_PK, &DviView::OnUpdateDviPageModePk)
   ON_UPDATE_COMMAND_UI(ID_PREV_PAGE, &DviView::OnUpdatePrevPage)
@@ -1317,10 +1311,6 @@ DviView::Zoom (/*[in]*/ bool zoomIn)
   CPoint oldScrollPosition = GetScrollPosition();
   pDoc->Shrink (d);
   g_pYapConfig->displayShrinkFactor = newShrink;
-#if DVI_DONT_RENDER_GRAPHICS_SPECIALS
-  pDoc->ForgetGraphicsInclusions ();
-  tempFiles.clear ();
-#endif
   pDoc->UpdateAllViews (0);
   CPoint pt;
   CSize size = GetTotalSize();
@@ -2540,51 +2530,6 @@ DviView::InitializeGammaTable ()
     }
   sort (gammaTable.begin(), gammaTable.end());
 }
-
-/* _________________________________________________________________________
-
-   DviView::OnDviPageModeAuto
-   _________________________________________________________________________ */
-
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-void
-DviView::OnDviPageModeAuto ()
-{
-  try
-    {
-      DviDoc * pDoc = GetDocument();
-      ASSERT_VALID (pDoc);
-      pDoc->SetDviPageMode (DviPageMode::Auto);
-      pDoc->Reread ();
-      pDoc->UpdateAllViews (0);
-    }
-
-  catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-
-  catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
-}
-#endif
-
-/* _________________________________________________________________________
-
-   DviView::OnUpdateDviPageModeAuto
-   _________________________________________________________________________ */
-
-#if DVI_DONT_RENDER_POSTSCRIPT_SPECIALS
-void
-DviView::OnUpdateDviPageModeAuto (/*[in]*/ CCmdUI * pCmdUI)
-{
-  DviDoc * pDoc = GetDocument();
-  ASSERT_VALID (pDoc);
-  pCmdUI->SetCheck (pDoc->GetDviPageMode() == DviPageMode::Auto);
-}
-#endif
 
 /* _________________________________________________________________________
 
