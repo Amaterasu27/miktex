@@ -109,6 +109,7 @@ void
 PostScript::CopyFile (/*[in]*/ FileStream & stream,
 		      /*[in]*/ unsigned	    length)
 {
+  MIKTEX_ASSERT (IsOpen());
   if (length == 0)
   {
     length = UINT_MAX;
@@ -139,7 +140,7 @@ PostScript::ExecuteEncapsulatedPostScript (/*[in]*/ const char * lpszFileName)
 
   if (bmeps_can_handle(PathName(lpszFileName).GetBuffer()) != 0)
   {
-    tracePS->WriteFormattedLine ("libdvi", T_("Convert %s to EPS..."), Q_(lpszFileName));
+    tracePS->WriteFormattedLine ("libdvi", T_("Converting %s to EPS..."), Q_(lpszFileName));
     epsStream.Attach (ConvertToEPS(lpszFileName));
   }
   else
@@ -341,9 +342,7 @@ void
 PostScript::DoSpecial (/*[in]*/ PsfileSpecial * ppsfilespecial)
 {
   PathName pathFileName;
-  bool bFileExists =
-    FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName);
-  if (! bFileExists)
+  if (! FindGraphicsFile(ppsfilespecial->GetFileName(), pathFileName))
   {
     FATAL_MIKTEX_ERROR ("PostScript::DoSpecial",
       T_("Cannot find file."), ppsfilespecial->GetFileName());

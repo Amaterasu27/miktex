@@ -215,7 +215,6 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Render Method"
         BEGIN
-            MENUITEM "Auto",                        ID_PAGEMODE_AUTO
             MENUITEM "Pk",                          ID_PAGEMODE_PK
             MENUITEM "Dvips",                       ID_PAGEMODE_DVIPS
         END
@@ -289,7 +288,6 @@ BEGIN
         MENUITEM SEPARATOR
         POPUP "Render Mode"
         BEGIN
-            MENUITEM "Auto",                        ID_PAGEMODE_AUTO
             MENUITEM "Pk",                          ID_PAGEMODE_PK
             MENUITEM "Dvips",                       ID_PAGEMODE_DVIPS
         END
@@ -800,8 +798,6 @@ BEGIN
 0x6950, 0x6163, 0x0073, 
     IDC_COMBO_UNIT, 0x403, 7, 0
 0x6f50, 0x6e69, 0x7374, "\000" 
-    IDC_COMBO_PAGE_MODE, 0x403, 5, 0
-0x7541, 0x6f74, "\000" 
     IDC_COMBO_PAGE_MODE, 0x403, 3, 0
 0x6b50, "\000" 
     IDC_COMBO_PAGE_MODE, 0x403, 6, 0

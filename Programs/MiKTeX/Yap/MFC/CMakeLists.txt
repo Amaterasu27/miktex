@@ -99,6 +99,7 @@ set(yap_mfc_sources
   winplace.h
   yap.cpp
   yap.h
+  yap-version.h
 )
 
 if(NATIVE_WINDOWS)

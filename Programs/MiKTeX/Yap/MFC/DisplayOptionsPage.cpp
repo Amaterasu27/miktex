@@ -91,13 +91,20 @@ DisplayOptionsPage::OnInitDialog ()
 	case DviPageMode::Auto:
 	  idx = 0;
 	  break;
-#endif
 	case DviPageMode::Pk:
 	  idx = 1;
 	  break;
 	case DviPageMode::Dvips:
 	  idx = 2;
 	  break;
+#else
+	case DviPageMode::Pk:
+	  idx = 0;
+	  break;
+	case DviPageMode::Dvips:
+	  idx = 1;
+	  break;
+#endif
 	}
       if (comboPageMode.SetCurSel(idx) < 0)
 	{
@@ -184,13 +191,20 @@ DisplayOptionsPage::OnApply ()
         case 0:
 	  g_pYapConfig->dviPageMode = DviPageMode::Auto;
 	  break;
-#endif
 	case 1:
 	  g_pYapConfig->dviPageMode = DviPageMode::Pk;
 	  break;
 	case 2:
 	  g_pYapConfig->dviPageMode = DviPageMode::Dvips;
 	  break;
+#else
+	case 0:
+	  g_pYapConfig->dviPageMode = DviPageMode::Pk;
+	  break;
+	case 1:
+	  g_pYapConfig->dviPageMode = DviPageMode::Dvips;
+	  break;
+#endif
 	}
       idx = unitComboBox.GetCurSel();
       if (idx < 0)

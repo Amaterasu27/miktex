@@ -23,6 +23,8 @@
 
 #include "internal.h"
 
+#include "Ghostscript.h"
+
 namespace {
   // make file reading 'wide-open'
   const char * const l_szPermitFileReading = "\
@@ -47,12 +49,12 @@ Ghostscript::Ghostscript ()
 
 Ghostscript::~Ghostscript ()
 {
+  MIKTEX_ASSERT (pProcess.get() == 0);
   MIKTEX_ASSERT (pChunkerThread.get() == 0);
-  MIKTEX_ASSERT (gsErr.Get() == 0);
   MIKTEX_ASSERT (pStderrReaderThread.get() == 0);
   MIKTEX_ASSERT (gsIn.Get() == 0);
   MIKTEX_ASSERT (gsOut.Get() == 0);
-  MIKTEX_ASSERT (pProcess.get() == 0);
+  MIKTEX_ASSERT (gsErr.Get() == 0);
 }
 
 /* _________________________________________________________________________
