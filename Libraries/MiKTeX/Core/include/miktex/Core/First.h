@@ -1,6 +1,6 @@
 /* miktex/Core/First.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -32,8 +32,10 @@
 
 #if defined(_MSC_VER) && defined(__cplusplus)
 
+#if _MSC_VER < 1600
 #undef _SECURE_SCL_THROWS
 #define _SECURE_SCL_THROWS 1
+#endif
 
 namespace MiKTeX {
   namespace Debug {
