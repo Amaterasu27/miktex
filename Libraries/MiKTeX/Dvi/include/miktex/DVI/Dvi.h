@@ -880,9 +880,10 @@ MIKTEXNOVTABLE
 GraphicsInclusion
 {
 protected:
-  virtual
+                                                                                                                                                                                                    virtual
   MIKTEXTHISCALL
-  ~GraphicsInclusion () = 0;
+  ~GraphicsInclusion ()
+    = 0;
 
 public:
   virtual
