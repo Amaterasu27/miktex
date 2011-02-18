@@ -76,11 +76,22 @@ to &MiKTeX; users.</para>
 
 <section>
 
+<title>&Yap;</title>
+
+<para>The classic (version 2.4) render method has been reimplemented:
+&DVI; files are rendered using bitmaps fonts (text) and &Ghostscript;
+(&EPS; figures). The slow &Dvips; render method still can be selected
+for documents containing a lot of fancy &PostScript; specials.</para>
+
+</section>
+
+<section>
+
 <title>Upgrades</title>
 
 <itemizedlist>
 <listitem><para>&BibTeX; 0.99d</para></listitem>
-<listitem><para>&Dvipng; 1.13</para></listitem>
+<listitem><para>&Dvipng; 1.14</para></listitem>
 <listitem><para>&Dvips; 5.99</para></listitem>
 <listitem><para>&MakeIndex; 1.15</para></listitem>
 <listitem><para>&pdfTeX; 1.40.11</para></listitem>
