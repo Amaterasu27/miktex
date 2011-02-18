@@ -91,7 +91,6 @@ change various display settings:</para>
 <term><guilabel>Default render method</guilabel></term>
 <listitem>
 <para>The default render method (one of
-<guilabel>Auto</guilabel>,
 <guilabel>Pk</guilabel>,
 <guilabel>Dvips</guilabel>).
 See <xref linkend="rendermethods"/>, for more information.</para>

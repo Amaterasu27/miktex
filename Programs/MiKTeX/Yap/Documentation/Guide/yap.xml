@@ -2,10 +2,10 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5CR1//EN"
                       "http://www.oasis-open.org/docbook/xml/4.5CR1/docbookx.dtd" [
 
-<!ENTITY rev "2.7.2863">
-<!ENTITY yaprev "2.7.2863">
-<!ENTITY date "November 04, 2007">
-<!ENTITY month "November 2007">
+<!ENTITY rev "2.9.4066">
+<!ENTITY yaprev "2.9.4063">
+<!ENTITY date "February 18, 2011">
+<!ENTITY month "February 2011">
 
 <!ENTITY MiKTeX "<application>MiKTeX</application>">
 <!ENTITY Yap "<application>Yap</application>">
@@ -39,7 +39,7 @@
 <surname>Schenk</surname>
 </author>
 <copyright>
-<year>2007</year>
+<year>2011</year>
 <holder>Christian Schenk</holder>
 </copyright>
 <date>&date;</date>
@@ -144,11 +144,6 @@ item on the <guimenu>File</guimenu> menu.</para></listitem>
 
 <indexterm>
 <primary>render method</primary>
-<secondary>Auto</secondary>
-</indexterm>
-
-<indexterm>
-<primary>render method</primary>
 <secondary>Pk</secondary>
 </indexterm>
 
@@ -158,11 +153,6 @@ item on the <guimenu>File</guimenu> menu.</para></listitem>
 </indexterm>
 
 <variablelist>
-<varlistentry>
-<term>Auto</term>
-<listitem><para>&Yap; automatically chooses an appropriate
-render method.</para></listitem>
-</varlistentry>
 <varlistentry>
 <term>Pk</term>
 <listitem><para>The &DVI; file is rendered using packed raster fonts. This

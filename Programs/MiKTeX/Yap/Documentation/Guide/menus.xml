@@ -292,17 +292,6 @@ dialog box (see <xref linkend="printps"/>).</para>
 
 <title><guisubmenu>Render Method</guisubmenu></title>
 
-<section id="menuitemauto">
-
-<?dbhh topicname="HID_PAGEMODE_AUTO" topicid="0"?>
-
-<title><guimenuitem>Auto</guimenuitem></title>
-
-<para>Selects the Pk render method, if possible. Automatically
-switches to Dvips, if the page contains &PostScript; instructions.</para>
-
-</section>
-
 <section id="menuitempkfonts">
 
 <?dbhh topicname="HID_PAGEMODE_PK" topicid="0"?>
