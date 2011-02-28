@@ -315,7 +315,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
   PathNameArray vec = ConstructSearchVector(fileType);
 
   // get the file type information
-  const FileTypeInfo * pFileTypeInfo = GetInternalFileTypeInfo(fileType);
+  const InternalFileTypeInfo * pFileTypeInfo = GetInternalFileTypeInfo(fileType);
   MIKTEX_ASSERT (pFileTypeInfo != 0);
 
   // check to see whether the file name has a registered file name extension
@@ -325,13 +325,22 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
   {
     for (CSVList ext (pFileTypeInfo->fileNameExtensions.c_str(),
 		      PATH_DELIMITER);
-	 ext.GetCurrent() != 0;
+	 ext.GetCurrent() != 0 && ! hasRegisteredExtension;
 	 ++ ext)
     {
       if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
       {
 	hasRegisteredExtension = true;
-	break;
+      }
+    }
+    for (CSVList ext (pFileTypeInfo->alternateExtensions.c_str(),
+		      PATH_DELIMITER);
+	 ext.GetCurrent() != 0 && ! hasRegisteredExtension;
+	 ++ ext)
+    {
+      if (PathName::Compare(lpszExtension, ext.GetCurrent()) == 0)
+      {
+	hasRegisteredExtension = true;
       }
     }
   }

@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -802,6 +802,8 @@ struct InternalFileTypeInfo : public FileTypeInfo
 {
 public:
   PathNameArray searchVec;
+public:
+  string alternateExtensions;
 };
 
 /* _________________________________________________________________________
@@ -2175,8 +2177,27 @@ private:
 		    /*[in]*/ const char *	lpszFileType,
 		    /*[in]*/ const char *	lpszApplication,
 		    /*[in]*/ const char *	lpszFileNameExtensions,
+		    /*[in]*/ const char *	lpszAlternateExtensions,
 		    /*[in]*/ const char *	lpszDefaultSearchPath,
 		    /*[in]*/ const char *	lpszEnvVarNames);
+private:
+  void
+  RegisterFileType (/*[in]*/ FileType		fileType,
+		    /*[in]*/ const char *	lpszFileType,
+		    /*[in]*/ const char *	lpszApplication,
+		    /*[in]*/ const char *	lpszFileNameExtensions,
+		    /*[in]*/ const char *	lpszDefaultSearchPath,
+		    /*[in]*/ const char *	lpszEnvVarNames)
+  {
+    RegisterFileType (
+      fileType,
+      lpszFileType,
+      lpszApplication,
+      lpszFileNameExtensions,
+      0,
+      lpszDefaultSearchPath,
+      lpszEnvVarNames);
+  }
     
 private:
   void

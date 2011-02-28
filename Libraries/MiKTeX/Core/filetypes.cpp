@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -138,6 +138,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType	fileType,
 			       /*[in]*/ const char *	lpszFileType,
 			       /*[in]*/ const char *	lpszApplication,
 			       /*[in]*/ const char *	lpszFileNameExtensions,
+			       /*[in]*/ const char *	lpszAlternateExtensions,
 			       /*[in]*/ const char *	lpszDefaultSearchPath,
 			       /*[in]*/ const char *	lpszEnvVarNames)
 {
@@ -155,7 +156,10 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType	fileType,
   fti.fileNameExtensions =
     GetConfigValue(section.c_str(),
 		   "extensions",
-		   lpszFileNameExtensions);
+		   lpszFileNameExtensions );
+  fti.alternateExtensions = GetConfigValue(section.c_str(),
+    "alternate_extensions",
+    lpszAlternateExtensions == 0 ? "" : lpszAlternateExtensions);
   fti.searchPath =
     GetConfigValue(section.c_str(),
 		   "path",
