@@ -1871,7 +1871,9 @@ private:
   FindFileInternal (/*[in]*/ const char *		lpszFileName,
 		    /*[in]*/ const PathNameArray &	vec,
 		    /*[in]*/ bool			firstMatchOnly,
-		    /*[in]*/ bool			tryHard,
+		    /*[in]*/ bool			useFndb,
+		    /*[in]*/ bool			searchFileSystem,
+		    /*[out]*/ bool &			dontLookOutAnyFurther,
 		    /*[out]*/ PathNameArray &		result);
 
 private:

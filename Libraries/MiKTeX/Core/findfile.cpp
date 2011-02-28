@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -137,18 +137,26 @@ bool
 SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
 			       /*[in]*/ const PathNameArray &	directoryPatterns,			       
 			       /*[in]*/ bool			firstMatchOnly,
-			       /*[in]*/ bool			tryHard,
+			       /*[in]*/ bool			useFndb,
+			       /*[in]*/ bool			searchFileSystem,
+			       /*[out]*/ bool &			dontLookOutAnyFurther,
 			       /*[out]*/ vector<PathName> &	result)
      
 {
   AutoTraceTime att ("find file", lpszFileName);
 
+  MIKTEX_ASSERT (useFndb || searchFileSystem);
+
+  bool found = false;
+  dontLookOutAnyFurther = false;
+
   // if a fully qualified path name is given, then don't look out any
   // further
   if (Utils::IsAbsolutePath(lpszFileName))
   {
+    dontLookOutAnyFurther = true;
     PathName path (lpszFileName);
-    bool found = CheckCandidate(path, 0);
+    found = CheckCandidate(path, 0);
     if (found)
     {
       result.push_back (path);
@@ -160,8 +168,8 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
   // any further
   if (IsExplicitlyRelativePath(lpszFileName))
   {
+    dontLookOutAnyFurther = true;
     PathName pathWD;
-    bool found = false;
     for (unsigned idx = 0; ! (found && firstMatchOnly) && GetWorkingDirectory(idx, pathWD); ++ idx)
     {
       PathName path (pathWD);
@@ -176,59 +184,60 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
     return (found);
   }
 
-  // first round: make use of the file name database
-  bool found = false;
-  for (PathNameArray::const_iterator it = directoryPatterns.begin();
-       ! (found && firstMatchOnly) && it != directoryPatterns.end();
-       ++ it)
+  // make use of the file name database
+  if (useFndb)
   {
-    if (found && ! firstMatchOnly && IsMpmFile(it->Get()))
+    for (PathNameArray::const_iterator it = directoryPatterns.begin();
+      ! (found && firstMatchOnly) && it != directoryPatterns.end();
+      ++ it)
     {
-      // don't trigger the package installer
-      continue;
-    }
-    FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
-    if (pFndb != 0)
-    {
-      // search fndb
-      AutoFndbRelease autoRelease (pFndb);
-      vector<PathName> paths;
-      vector<string> fileNameInfo;
-      if (pFndb->Search(lpszFileName,
-			it->Get(),
-			firstMatchOnly,
-			paths,
-			fileNameInfo))
+      if (found && ! firstMatchOnly && IsMpmFile(it->Get()))
       {
-	for (int idx = 0; idx < paths.size(); ++ idx)
+	// don't trigger the package installer
+	continue;
+      }
+      FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
+      if (pFndb != 0)
+      {
+	// search fndb
+	AutoFndbRelease autoRelease (pFndb);
+	vector<PathName> paths;
+	vector<string> fileNameInfo;
+	if (pFndb->Search(lpszFileName,
+	  it->Get(),
+	  firstMatchOnly,
+	  paths,
+	  fileNameInfo))
 	{
-	  if (CheckCandidate(paths[idx], fileNameInfo[idx].c_str()))
+	  for (int idx = 0; idx < paths.size(); ++ idx)
 	  {
-	    found = true;
-	    result.push_back (paths[idx]);
+	    if (CheckCandidate(paths[idx], fileNameInfo[idx].c_str()))
+	    {
+	      found = true;
+	      result.push_back (paths[idx]);
+	    }
 	  }
 	}
       }
-    }
-    else
-    {
-      // search disk
-      vector<PathName> paths;
-      if (SearchFileSystem(lpszFileName, it->Get(), firstMatchOnly, paths))
+      else
       {
-	found = true;
-	result.insert (result.end(), paths.begin(), paths.end());
+	// search the file system because the file name database does not exist
+	vector<PathName> paths;
+	if (SearchFileSystem(lpszFileName, it->Get(), firstMatchOnly, paths))
+	{
+	  found = true;
+	  result.insert (result.end(), paths.begin(), paths.end());
+	}
       }
     }
   }
 
-  if (found || ! tryHard)
+  if (found || ! searchFileSystem)
   {
     return (found);
   }
 
-  // we must try hard to find the file, so:
-  // second round: ignore the file name database
+  // search the file system
   for (PathNameArray::const_iterator it = directoryPatterns.begin();
        ! (found && firstMatchOnly) && it != directoryPatterns.end();
        ++ it)
@@ -241,11 +250,10 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
     FileNameDatabase * pFndb = GetFileNameDatabase(it->Get());
     if (pFndb == 0)
     {
-      // fndb does not exist => we already searched the file system
+      // fndb does not exist => we already searched the file system (see above)
       continue;
     }
     pFndb->Release ();
-    // search the file system
     vector<PathName> paths;
     if (SearchFileSystem(lpszFileName, it->Get(), firstMatchOnly, paths))
     {
@@ -326,7 +334,9 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
 	break;
       }
     }
-  }      
+  }
+
+  vector<PathName> fileNamesToTry;
 
   // try each registered file name extension, if none was specified
   if (! hasRegisteredExtension)
@@ -338,15 +348,39 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
     {
       PathName fileName (lpszFileName);
       fileName.AppendExtension (ext.GetCurrent());
-      if (FindFileInternal(fileName.Get(), vec, firstMatchOnly, tryHard, result) && firstMatchOnly)
+      fileNamesToTry.push_back (fileName);
+    }
+  }
+
+  // try it with the given file name
+  fileNamesToTry.push_back (lpszFileName);
+
+  bool dontLookOutAnyFurther = false;
+
+  // first round: use the fndb
+  for (vector<PathName>::const_iterator it = fileNamesToTry.begin();
+    it != fileNamesToTry.end() && ! dontLookOutAnyFurther;
+    ++ it)
+  {
+    if (FindFileInternal(it->Get(), vec, firstMatchOnly, true, false, dontLookOutAnyFurther, result) && firstMatchOnly)
+    {
+      return (true);
+    }
+  }
+
+  // second round: don't use the fndb
+  if (tryHard)
+  {
+    for (vector<PathName>::const_iterator it = fileNamesToTry.begin();
+      it != fileNamesToTry.end() && ! dontLookOutAnyFurther;
+      ++ it)
+    {
+      if (FindFileInternal(it->Get(), vec, firstMatchOnly, false, true, dontLookOutAnyFurther, result) && firstMatchOnly)
       {
 	return (true);
       }
     }
   }
-
-  // try it with the given file name
-  FindFileInternal (lpszFileName, vec, firstMatchOnly, tryHard, result);
 
   if (create)
   {
@@ -354,7 +388,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
     {
       if (TryCreateFile(lpszFileName, fileType))
       {
-	FindFileInternal (lpszFileName, vec, firstMatchOnly, false, result);
+	FindFileInternal (lpszFileName, vec, firstMatchOnly, true, false, dontLookOutAnyFurther, result);
       }
     }
     else if ((fileType == FileType::BASE || fileType == FileType::FMT || fileType == FileType::MEM)
@@ -376,7 +410,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *	      lpszFileName,
 	if (TryCreateFile(lpszFileName, fileType))
 	{
 	  result.clear ();
-	  FindFileInternal (lpszFileName, vec, firstMatchOnly, false, result);
+	  FindFileInternal (lpszFileName, vec, firstMatchOnly, true, false, dontLookOutAnyFurther, result);
 	}
       }
     }
@@ -399,12 +433,30 @@ SessionImpl::FindFile (/*[in]*/ const char *	  lpszFileName,
   MIKTEX_ASSERT_STRING (lpszFileName);
   MIKTEX_ASSERT_STRING (lpszPathList);
 
-  return (FindFileInternal(
+  bool dontLookOutAnyFurther;
+
+  bool found = FindFileInternal(
     lpszFileName,
     SplitSearchPath(lpszPathList),
     (flags & FindFileFlags::All) == 0,
-    (flags & FindFileFlags::TryHard) != 0,
-    result));
+    true,
+    false,
+    dontLookOutAnyFurther,
+    result);
+
+  if (! found && ! dontLookOutAnyFurther && (flags & FindFileFlags::TryHard) != 0)
+  {
+    found = FindFileInternal(
+      lpszFileName,
+      SplitSearchPath(lpszPathList),
+      (flags & FindFileFlags::All) == 0,
+      false,
+      true,
+      dontLookOutAnyFurther,
+      result);
+  }
+
+  return (found);
 }
 
 /* _________________________________________________________________________
