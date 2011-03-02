@@ -1875,7 +1875,6 @@ private:
 		    /*[in]*/ bool			firstMatchOnly,
 		    /*[in]*/ bool			useFndb,
 		    /*[in]*/ bool			searchFileSystem,
-		    /*[out]*/ bool &			dontLookOutAnyFurther,
 		    /*[out]*/ PathNameArray &		result);
 
 private:
