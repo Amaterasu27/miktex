@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -81,7 +81,12 @@ int main(int argc, char *argv[])
 				launchApp = false;
 			clp.at(i).processed = true;
 			QTextStream strm(stdout);
-			strm << QObject::tr("TeXworks %1r%2 (%3)\n").arg(TEXWORKS_VERSION).arg(SVN_REVISION_STR).arg(TW_BUILD_ID_STR);
+			strm << QString("TeXworks %1r%2 (%3)\n\n").arg(TEXWORKS_VERSION).arg(SVN_REVISION_STR).arg(TW_BUILD_ID_STR);
+			strm << QString::fromUtf8("\
+Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler\n\
+License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n\n");
 			strm.flush();
 		}
 		if ((i = clp.getNextSwitch("help")) >= 0) {

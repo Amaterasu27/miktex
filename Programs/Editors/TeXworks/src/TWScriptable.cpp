@@ -1,23 +1,23 @@
 /*
- This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-2010  Jonathan Kew
- 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- For links to further information, or to contact the author,
- see <http://texworks.org/>.
- */
+	This is part of TeXworks, an environment for working with TeX documents
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	For links to further information, or to contact the author,
+	see <http://texworks.org/>.
+*/
 
 #include "TWScriptable.h"
 #include "TWScriptAPI.h"
@@ -198,7 +198,7 @@ void TWScriptManager::loadPlugins()
 	}
 }
 
-void TWScriptManager::reloadScripts(bool forceAll /*= false*/)
+void TWScriptManager::reloadScripts(bool forceAll /* = false */)
 {
 	QSETTINGS_OBJECT(settings);
 	QStringList disabled = settings.value("disabledScripts", QStringList()).toStringList();
@@ -446,7 +446,7 @@ TWScriptManager::runScript(QObject* script, QObject * context, QVariant & result
 }
 
 void
-TWScriptManager::runHooks(const QString& hookName, QObject * context /*= NULL */)
+TWScriptManager::runHooks(const QString& hookName, QObject * context /* = NULL */)
 {
 	foreach (TWScript *s, getHookScripts(hookName)) {
 		runScript(s, context, TWScript::ScriptHook);
@@ -491,7 +491,7 @@ TWScriptable::updateScriptsMenu()
 }
 
 void
-TWScriptable::removeScriptsFromMenu(QMenu *menu, int startIndex /*= 0*/)
+TWScriptable::removeScriptsFromMenu(QMenu *menu, int startIndex /* = 0 */)
 {
 	if (!menu)
 		return;

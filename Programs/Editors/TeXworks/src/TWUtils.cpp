@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -441,7 +441,7 @@ QStringList* TWUtils::getTranslationList()
 
 QHash<QString, QString>* TWUtils::dictionaryList = NULL;
 
-QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /*= false*/)
+QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /* = false */)
 {
 	if (dictionaryList != NULL) {
 		if (!forceReload)

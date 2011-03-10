@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -310,7 +310,7 @@ void TWApp::about()
 {
 	QString aboutText = tr("<p>%1 is a simple environment for editing, typesetting, and previewing TeX documents.</p>").arg(TEXWORKS_NAME);
 	aboutText += "<small>";
-	aboutText += "<p>&#xA9; 2007-2010 Jonathan Kew &amp; Stefan L&#xF6;ffler";
+	aboutText += "<p>&#xA9; 2007-2011  Jonathan Kew, Stefan L&#xF6;ffler";
 	aboutText += tr("<br>Version %1 r.%2 (%3)").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(TW_BUILD_ID_STR);
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2.");
 	aboutText += tr("<p><a href=\"http://qt.nokia.com/\">Qt application framework</a> v%1 by Qt Software, a division of Nokia Corporation.").arg(qVersion());
@@ -918,8 +918,8 @@ void TWApp::setDefaultEngineList()
 		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("$synctexoption") << "$fullname", true)
-		<< Engine("ConTeXt", "texmfstart" EXE, QStringList("texexec") << "$fullname", true)
-		<< Engine("XeConTeXt", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "$fullname", true)
+		<< Engine("ConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--synctex" << "$fullname", true)
+		<< Engine("XeConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "--synctex" << "$fullname", true)
 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)
 		<< Engine("MakeIndex", "makeindex" EXE, QStringList("$basename"), false);
 	defaultEngineIndex = 1;
@@ -1317,7 +1317,7 @@ int TWApp::getVersion()
 }
 
 //Q_INVOKABLE
-QMap<QString, QVariant> TWApp::openFileFromScript(const QString& fileName, QObject * scriptApiObj, const int pos /*= -1*/, const bool askUser /*= false*/)
+QMap<QString, QVariant> TWApp::openFileFromScript(const QString& fileName, QObject * scriptApiObj, const int pos /* = -1 */, const bool askUser /* = false */)
 {
 	QSETTINGS_OBJECT(settings);
 	QMap<QString, QVariant> retVal;
