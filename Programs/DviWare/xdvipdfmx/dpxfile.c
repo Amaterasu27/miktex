@@ -647,6 +647,18 @@ dpx_create_temp_file (void)
   {
     tmp = NEW(_MAX_PATH + 1, char);
     miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
+#if defined(MIKTEX_WINDOWS)
+    {
+      char * lpsz;
+      for (lpsz = tmp; *lpsz != 0; ++ lpsz)
+      {
+	if (*lpsz == '\\')
+	{
+	  *lpsz = '/';
+	}
+      }
+    }
+#endif
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
