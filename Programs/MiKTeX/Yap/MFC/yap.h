@@ -787,7 +787,7 @@ public:
   {
     try
       {
-	YapLog (_T("%s"), output.c_str());
+	YapLog ("%s", output.c_str());
       }
     catch (const exception &)
       {

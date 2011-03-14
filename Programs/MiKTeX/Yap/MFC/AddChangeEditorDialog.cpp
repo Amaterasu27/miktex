@@ -1,6 +1,6 @@
 /* AddChangeEditorDialog.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -92,7 +92,7 @@ AddChangeEditorDialog::OnInitDialog ()
       if (hr.Failed())
 	{
 #if 1
-	  TraceError (_T("Auto completion error: %s"), hr.GetText());
+	  TraceError (T_("Auto completion error: %s"), hr.GetText());
 #else
 	  FATAL_MIKTEX_ERROR ("AddChangeEditorDialog::OnInitDialog",
 			      _T("Auto completion error."),
@@ -138,25 +138,25 @@ AddChangeEditorDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	  if (idx != currentIdx
 	      && StringCompare(editors[idx].name.c_str(), name, true) == 0)
 	    {
-	      AfxMessageBox (T_("The specified editor name already exists."));
+	      AfxMessageBox (T_(_T("The specified editor name already exists.")));
 	      pDX->Fail ();
 	    }
 	}
       pDX->PrepareEditCtrl (IDC_PATH);
       if (! File::Exists(PathName(program)))
 	{
-	  AfxMessageBox (T_("The specified program file does not exist."));
+	  AfxMessageBox (T_(_T("The specified program file does not exist.")));
 	  pDX->Fail ();
 	}
       pDX->PrepareEditCtrl (IDC_ARGUMENTS);
       if (! (arguments.Find("%f") >= 0))
 	{
-	  AfxMessageBox (T_("Missing file name (%f) in argument string."));
+	  AfxMessageBox (T_(_T("Missing file name (%f) in argument string.")));
 	  pDX->Fail ();
 	}
       if (! (arguments.Find("%l") >= 0))
 	{
-	  AfxMessageBox (T_("Missing line number (%l) in argument string."));
+	  AfxMessageBox (T_(_T("Missing line number (%l) in argument string.")));
 	  pDX->Fail ();
 	}
     }
@@ -172,25 +172,25 @@ AddChangeEditorDialog::OnBrowse ()
 {
   try
     {
-      OPENFILENAME ofn;
+      OPENFILENAMEW ofn;
       ZeroMemory (&ofn, sizeof(ofn));
       ofn.lStructSize = sizeof(ofn);
       ofn.hwndOwner = GetSafeHwnd();
       ofn.hInstance = 0;
-      string filter;
-      filter += T_("Executables (*.exe)");
-      filter += '\0';
-      filter += T_("*.exe");
-      filter += '\0';
-      filter += T_("All files (*.*)");
-      filter += '\0';
-      filter += "*.*";
-      filter += '\0';
+      wstring filter;
+      filter += T_(L"Executables (*.exe)");
+      filter += L'\0';
+      filter += T_(L"*.exe");
+      filter += L'\0';
+      filter += T_(L"All files (*.*)");
+      filter += L'\0';
+      filter += L"*.*";
+      filter += L'\0';
       ofn.lpstrFilter = filter.c_str();
       ofn.lpstrCustomFilter = 0;
       ofn.nMaxCustFilter = 0;
       ofn.nFilterIndex = 1;
-      char szFileName[BufferSizes::MaxPath];
+      wchar_t szFileName[BufferSizes::MaxPath];
       szFileName[0] = 0;
       ofn.lpstrFile = szFileName;
       ofn.nMaxFile = BufferSizes::MaxPath;
@@ -203,13 +203,13 @@ AddChangeEditorDialog::OnBrowse ()
       ofn.Flags = 0;
       ofn.Flags |= OFN_FILEMUSTEXIST;
       ofn.Flags |= OFN_PATHMUSTEXIST;
-      ofn.lpstrDefExt = ".exe";
-      if (! GetOpenFileName(&ofn))
+      ofn.lpstrDefExt = L".exe";
+      if (! GetOpenFileNameW(&ofn))
 	{
 	  // <todo>check error condition with CommDlgExtendedError</todo>
 	  return;
 	}
-      programEdit.SetWindowText (ofn.lpstrFile);
+      programEdit.SetWindowText (CW2T(ofn.lpstrFile));
       EnableButtons ();
     }
   catch (const MiKTeXException & e)
