@@ -353,11 +353,11 @@ YapApplication::InitInstance ()
       ParseYapCommandLine (m_lpCmdLine, cmdInfo);
       
       // set trace flags
-      if (cmdInfo.traceFlags.GetLength() > 0)
+      if (! cmdInfo.traceFlags.empty())
 	{
 	  tracing = true;
 	  traceFlags = cmdInfo.traceFlags;
-	  TraceStream::SetTraceFlags (cmdInfo.traceFlags);
+	  TraceStream::SetTraceFlags (cmdInfo.traceFlags.c_str());
 	}
       
       YapLog (T_("Yap arguments: %s"), m_lpCmdLine);
@@ -482,13 +482,13 @@ YapApplication::InitInstance ()
       // perform a forward search, if requested
       if (cmdInfo.sourceLineNum >= 0)
 	{
-	  FindSrcSpecial (cmdInfo.sourceLineNum, cmdInfo.sourceFile);
+	  FindSrcSpecial (cmdInfo.sourceLineNum, cmdInfo.sourceFile.c_str());
 	}
       
       // perform a hyper-goto, if requested
-      if (cmdInfo.hyperLabel.GetLength() > 0)
+      if (! cmdInfo.hyperLabel.empty())
 	{
-	  GotoHyperLabel (cmdInfo.hyperLabel);
+	  GotoHyperLabel (cmdInfo.hyperLabel.c_str());
 	}
 
       return (TRUE);
@@ -554,13 +554,13 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CDialog::DoDataExchange (pDX);
   if (! pDX->m_bSaveAndValidate)
-    {
-      CString str;
-      str.Format (T_(T_("Yet Another Previewer %s")), MIKTEX_COMPONENT_VERSION_STR);
-      str += "\r\n";
-      str += MIKTEX_COMP_COPYRIGHT_STR;
-      GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
-    }
+  {
+    CString str;
+    str.Format (T_(_T("Yet Another Previewer %s")), _T(MIKTEX_COMPONENT_VERSION_STR));
+    str += _T("\r\n");
+    str += _T(MIKTEX_COMP_COPYRIGHT_STR);
+    GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
+  }
 }
 
 /* _________________________________________________________________________
@@ -704,7 +704,7 @@ YapApplication::ActivateFirstInstance
   path.MakeAbsolute ();
 
   CString ddeCommand;
-  ddeCommand.Format ("[open(\"%s\")]", path.Get());
+  ddeCommand.Format (_T("[open(\"%s\")]"), CA2T(path.Get()));
   DdeExecute ("yap", "system", ddeCommand);
   
   // delegate DVI search
@@ -712,15 +712,15 @@ YapApplication::ActivateFirstInstance
     {
       ddeCommand.Format ("[findsrc(\"%d %s\")]",
 			 static_cast<int>(cmdInfo.sourceLineNum),
-			 static_cast<const char *>(cmdInfo.sourceFile));
+			 cmdInfo.sourceFile.c_str());
       DdeExecute ("yap", "system", ddeCommand);
     }
   
   // delegate hyper-goto
-  if (cmdInfo.hyperLabel.GetLength() > 0)
+  if (! cmdInfo.hyperLabel.empty())
     {
       ddeCommand.Format ("[gotohyperlabel(\"%s\")]",
-			 static_cast<const char *>(cmdInfo.hyperLabel));
+			 static_cast<const char *>(cmdInfo.hyperLabel.c_str()));
       DdeExecute ("yap", "system", ddeCommand);
     }
   
@@ -835,61 +835,61 @@ namespace {
 }
 
 BOOL
-YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
+  YapApplication::OnDDECommand (/*[in]*/ LPTSTR  lpszCommand)
 {
   ddeServing = true;
 
   BOOL done = FALSE;
 
   try
+  {
+    YapLog ("OnDDECommand(\"%s\")", CT2A(lpszCommand));
+
+    done = CWinApp::OnDDECommand(lpszCommand);
+
+    if (! done)
     {
-      YapLog ("OnDDECommand(\"%s\")", lpszCommand);
-
-      done = CWinApp::OnDDECommand(lpszCommand);
-
-      if (! done)
+      CString ddeCommand = lpszCommand;
+      if (ddeCommand.Left(10) == _T("[findsrc(\""))
+      {
+	CString src = ddeCommand.Right(ddeCommand.GetLength() - 10);
+	int i = src.Find(_T('"'));
+	if (i != -1)
 	{
-	  CString ddeCommand = lpszCommand;
-	  if (ddeCommand.Left(10) == "[findsrc(\"")
-	    {
-	      CString src = ddeCommand.Right(ddeCommand.GetLength() - 10);
-	      int i = src.Find('"');
-	      if (i != -1)
-		{
-		  src = src.Left(i);
-		  char * lpszFileName = 0;
-		  long line = _tcstol(src, &lpszFileName, 10);
-		  while (*lpszFileName == ' ')
-		    {
-		      ++ lpszFileName;
-		    }
-		  FindSrcSpecial (line, lpszFileName);
-		  done = TRUE;
-		}
-	    }
-	  else if (ddeCommand.Left(17) == "[gotohyperlabel(\"")
-	    {
-	      CString label = ddeCommand.Right(ddeCommand.GetLength() - 17);
-	      int i = label.Find('"');
-	      if (i != -1)
-		{
-		  label = label.Left(i);
-		  GotoHyperLabel (label);
-		  done = TRUE;
-		}
-	    }
+	  src = src.Left(i);
+	  LPTSTR lpszFileName = 0;
+	  long line = _tcstol(src, &lpszFileName, 10);
+	  while (*lpszFileName == _T(' '))
+	  {
+	    ++ lpszFileName;
+	  }
+	  FindSrcSpecial (line, CT2A(lpszFileName));
+	  done = TRUE;
 	}
+      }
+      else if (ddeCommand.Left(17) == _T("[gotohyperlabel(\""))
+      {
+	CString label = ddeCommand.Right(ddeCommand.GetLength() - 17);
+	int i = label.Find(_T('"'));
+	if (i != -1)
+	{
+	  label = label.Left(i);
+	  GotoHyperLabel (CT2A(label));
+	  done = TRUE;
+	}
+      }
     }
+  }
 
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
 
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
 
   ddeServing = false;
 
@@ -945,7 +945,7 @@ YapApplication::FindSrcSpecial (/*[in]*/ int		line,
 bool
 YapApplication::GotoHyperLabel (/*[in]*/ const char * lpszLabel)
 {
-  CString hashLabel;
+  string hashLabel;
   hashLabel = '#';
   hashLabel += lpszLabel;
   POSITION posTemplate = GetFirstDocTemplatePosition();
@@ -970,7 +970,7 @@ YapApplication::GotoHyperLabel (/*[in]*/ const char * lpszLabel)
 		  continue;
 		}
 	      DviView * pDviView = reinterpret_cast<DviView *>(pView);
-	      if (pDviView->Navigate(hashLabel, false))
+	      if (pDviView->Navigate(hashLabel.c_str(), false))
 		{
 		  return (true);
 		}
@@ -1012,7 +1012,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 
   // make command line
   string commandLine;
-  const char * lpsz = g_pYapConfig->inverseSearchCommandLine;
+  const char * lpsz = g_pYapConfig->inverseSearchCommandLine.c_str();
   bool haveName = false;
   bool haveLine = false;
   while (*lpsz != 0)
@@ -1037,7 +1037,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 		("StartEditor",
 		 T_("The editor command is not valid."),
 		 (static_cast<const char *>
-		  (g_pYapConfig->inverseSearchCommandLine)));
+		 (g_pYapConfig->inverseSearchCommandLine.c_str())));
 	    }
 	  lpsz += 2;
 	}
@@ -1205,13 +1205,13 @@ UpdateAllDviViews (/*[in]*/ bool reread)
    GetCommandPrefix
    _________________________________________________________________________ */
 
-CString
-GetCommandPrefix (/*[in]*/ bool bClear)
+string
+GetCommandPrefix (/*[in]*/ bool clear)
 {
   ASSERT_VALID (AfxGetApp());
   ASSERT_VALID (AfxGetApp()->m_pMainWnd);
   MainFrame * pMain = reinterpret_cast<MainFrame*>(AfxGetApp()->m_pMainWnd);
-  return (pMain->GetCommandPrefix(bClear));
+  return (pMain->GetCommandPrefix(clear));
 }
 
 /* _________________________________________________________________________
@@ -1241,13 +1241,13 @@ YapApplication::OnViewTrace ()
       tracing = ! tracing;
       if (tracing)
 	{
-	  if (traceFlags.GetLength() == 0)
+	  if (! traceFlags.empty())
 	    {
 	      traceFlags = YAP_TRACE_FLAGS_LVL_3;
 	    }
 	}
       TraceStream::SetTraceFlags (tracing
-				  ? traceFlags
+				  ? traceFlags.c_str()
 				  : reinterpret_cast<const char *>(0));
     }
   catch (const MiKTeXException & e)
@@ -1299,8 +1299,19 @@ YapApplication::OnRegisterMiKTeX ()
    AllowShellCommand
    _________________________________________________________________________ */
 
+string trim (const string & s)
+{
+  const size_t start = s.find_first_not_of(" \t");
+  if (start == string::npos)
+  {
+    return ("");
+  }
+  size_t end = s.find_last_not_of(" \t");
+  return (s.substr(start, end - start + 1));
+}
+
 bool
-AllowShellCommand (/*[in]*/ const CString & command)
+AllowShellCommand (/*[in]*/ const char * lpszCommand)
 {
   switch (g_pYapConfig->enableShellCommands)
     {
@@ -1311,16 +1322,16 @@ AllowShellCommand (/*[in]*/ const CString & command)
       {
 	CString message;
 	// <fixme>hard-coded string</fixme>
-	message.Format ((T_("The following script is embedded in the ")
-			 T_("document:\n\n%s\n\n")
-			 T_("Do you allow to execute this script?")),
-			static_cast<const char *>(command));
+	message.Format ((T_(_T("The following script is embedded in the "))
+			 T_(_T("document:\n\n%s\n\n"))
+			 T_(_T("Do you allow to execute this script?"))),
+			 CA2T(lpszCommand));
 	return (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) == IDYES);
       }
     case YapConfig::SEC_SECURE_COMMANDS:
       {
-	CString name = command.SpanExcluding(" ");
-	for (Tokenizer tok (g_pYapConfig->secureCommands, " ,;");
+	string name = trim(lpszCommand);
+	for (Tokenizer tok (g_pYapConfig->secureCommands.c_str(), " ,;");
 	     tok.GetCurrent() != 0;
 	     ++ tok)
 	  {

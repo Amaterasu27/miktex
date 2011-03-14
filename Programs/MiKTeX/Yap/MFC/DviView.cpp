@@ -650,10 +650,10 @@ DviView::OnNextPage ()
 	  UNEXPECTED_CONDITION ("DviView::OnNextPage");
 	}
       int d = 1;
-      CString commandPrefix = GetCommandPrefix(true);
-      if (commandPrefix.GetLength() > 0)
+      string commandPrefix = GetCommandPrefix(true);
+      if (! commandPrefix.empty())
 	{
-	  d = atoi(commandPrefix);
+	  d = atoi(commandPrefix.c_str());
 	}
       if (g_pYapConfig->doublePage
 	  && pDoc->IsOnLeft(pageIdx)
@@ -741,10 +741,10 @@ DviView::OnPrevPage ()
 	}
       int pageIdxOld = pageIdx;
       int d = -1;
-      CString commandPrefix = GetCommandPrefix(true);
-      if (commandPrefix.GetLength() > 0)
+      string commandPrefix = GetCommandPrefix(true);
+      if (! commandPrefix.empty())
 	{
-	  d = atoi(commandPrefix) * -1;
+	  d = atoi(commandPrefix.c_str()) * -1;
 	}
       if (g_pYapConfig->doublePage
 	  && pDoc->IsOnLeft(pageIdx)
@@ -1172,11 +1172,11 @@ DviView::OnGotoPage ()
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      CString commandPrefix = GetCommandPrefix(true);
+      string commandPrefix = GetCommandPrefix(true);
       int pageIdx;
-      if (commandPrefix.GetLength() > 0)
+      if (! commandPrefix.empty())
 	{
-	  int pageNum = atoi(commandPrefix);
+	  int pageNum = atoi(commandPrefix.c_str());
 	  pageIdx = pDoc->FindPage(pageNum);
 	}
       else
@@ -1293,10 +1293,10 @@ DviView::Zoom (/*[in]*/ bool zoomIn)
 {
   int sign = (zoomIn ? -1 : 1);
   int d = 1 * sign;
-  CString commandPrefix = GetCommandPrefix(true);
-  if (commandPrefix.GetLength() > 0)
+  string commandPrefix = GetCommandPrefix(true);
+  if (! commandPrefix.empty())
     {
-      d = atoi(commandPrefix) * sign;
+      d = atoi(commandPrefix.c_str()) * sign;
     }
   DviDoc * pDoc = GetDocument();
   ASSERT_VALID (pDoc);
@@ -1447,7 +1447,7 @@ DviView::OnLButtonDown (/*[in]*/ UINT	flags,
 
       leftButtonDown = true;
 
-      CString hyperTarget;
+      string hyperTarget;
 
       int pageIdx;
       int x, y;
@@ -1507,10 +1507,10 @@ DviView::OnLButtonDown (/*[in]*/ UINT	flags,
 	      size = DviMagnifyingGlass::Large;
 	      magGlassShrinkFactor = g_pYapConfig->magGlassLargeShrinkFactor;
 	    }
-	  CString commandPrefix = GetCommandPrefix(true);
-	  if (commandPrefix.GetLength() > 0)
+	  string commandPrefix = GetCommandPrefix(true);
+	  if (! commandPrefix.empty())
 	    {
-	      magGlassShrinkFactor = atoi(commandPrefix);
+	      magGlassShrinkFactor = atoi(commandPrefix.c_str());
 	    }
 	  if (magGlassShrinkFactor <= 0)
 	    {
@@ -1579,11 +1579,11 @@ DviView::OnLButtonUp (/*[in]*/ UINT	flags,
 	  pToolWindow = 0;
 	}
 
-      CString hyperTarget;
+      string hyperTarget;
 
       if (GetHyperTeXSpecialAtCursor(hyperTarget))
 	{
-	  Navigate (hyperTarget);
+	  Navigate (hyperTarget.c_str());
 	}
       else if (currentMouseTool == Hand)
 	{
@@ -1662,15 +1662,15 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
       ASSERT_VALID (pMain);
       MIKTEX_ASSERT (pMain->IsKindOf(RUNTIME_CLASS(MainFrame)));
 
-      CString hyperTarget;
+      string hyperTarget;
 
       if (! leftButtonDown && (GetHyperTeXSpecialAtCursor(hyperTarget)))
 	{
-	  pMain->SetMessageText (hyperTarget);
+	  pMain->SetMessageText (CA2T(hyperTarget.c_str()));
 	}
       else
 	{
-	  pMain->SetMessageText ("");
+	  pMain->SetMessageText (_T(""));
 	}
 
 #if 0
@@ -1721,7 +1721,7 @@ DviView::OnSetCursor (/*[in]*/ CWnd *	pWnd,
 
   try
     {
-      CString hyperTarget;
+      string hyperTarget;
 
       int pageIdx;
       int x, y;
@@ -2518,7 +2518,7 @@ void
 DviView::InitializeGammaTable ()
 {
   gammaTable.clear ();
-  CSVList gammas (g_pYapConfig->gammaValues, _T(' '));
+  CSVList gammas (g_pYapConfig->gammaValues.c_str(), _T(' '));
   while (gammas.GetCurrent() != 0)
     {
       gammaTable.push_back (_tstof(gammas.GetCurrent()));

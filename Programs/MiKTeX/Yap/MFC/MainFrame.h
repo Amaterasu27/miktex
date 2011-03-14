@@ -1,6 +1,6 @@
 /* MainFrame.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -207,7 +207,7 @@ public:
   AddCommandPrefixChar (/*[in]*/ char ch);
 
 public:
-  CString
+  string
   GetCommandPrefix (/*[in]*/ bool clear = false);
 
 public:
@@ -225,7 +225,7 @@ protected:
   CToolBar toolBar;
 
 private:
-  CString commandPrefix;
+  string commandPrefix;
 
 private:
   bool isFullScreen;

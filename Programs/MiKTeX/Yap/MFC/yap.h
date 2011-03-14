@@ -215,9 +215,6 @@ typedef EnumWrapper<UnitsEnum> Units;
 class YapConfig
 {
 public:
-  CString ghostscriptDevice;
-
-public:
   bool maintainHorizontalPosition;
 
 public:
@@ -230,7 +227,7 @@ public:
   DWORD printerMetafontMode;
 
 public:
-  CString inverseSearchCommandLine;
+  string inverseSearchCommandLine;
 
 public:
   int pageXShift;
@@ -245,7 +242,7 @@ public:
   bool showSourceSpecials;
 
 public:
-  CString dvipsExtraOptions;
+  string dvipsExtraOptions;
 
 public:
   int lastTool;
@@ -295,7 +292,7 @@ public:
   };
 
 public:
-  CString secureCommands;
+  string secureCommands;
 
 public:
   bool checkFileTypeAssociations;
@@ -312,7 +309,7 @@ public:
   double gamma;
 
 public:
-  CString gammaValues;
+  string gammaValues;
 
 public:
   bool doublePage;
@@ -384,9 +381,9 @@ private:
   void
   PutValue (/*[in]*/ const char *	lpszKeyName,
 	    /*[in]*/ const char *	lpszValueName,
-	    /*[in]*/ const CString &	value)
+	    /*[in]*/ const string &	value)
   {
-    pCfg->PutValue (lpszKeyName, lpszValueName, value);
+    pCfg->PutValue (lpszKeyName, lpszValueName, value.c_str());
   }
 
 private:
@@ -467,22 +464,21 @@ private:
 
 private:
   template<>
-  CString
+  string
   GetValue (/*[in]*/ const char *	lpszKeyName,
 	    /*[in]*/ const char *	lpszValueName,
-	    /*[in]*/ const CString &	defaultValue)
+	    /*[in]*/ const string &	defaultValue)
   {
     string value;
     if (pCfg->TryGetValue(lpszKeyName, lpszValueName, value))
     {
-      return (value.c_str());
+      return (value);
     }
     else
     {
       return (defaultValue);
     }
   }
-
 
 private:
   SmartPointer<Cfg> pCfg;
@@ -583,10 +579,10 @@ public:
   }
 
 public:
-  CString sourceFile;
+  string sourceFile;
 
 public:
-  CString hyperLabel;
+  string hyperLabel;
 
 public:
   int sourceLineNum;
@@ -595,7 +591,7 @@ public:
   bool singleInstance;
 
 public:
-  CString traceFlags;
+  string traceFlags;
 };
 
 /* _________________________________________________________________________
@@ -671,7 +667,7 @@ protected:
   bool tracing;
 
 public:
-  CString traceFlags;
+  string traceFlags;
 
 private:
   SessionWrapper pSession;
@@ -720,7 +716,7 @@ bool
 AddCommandPrefixChar (/*[in]*/ char ch);
 
 bool
-AllowShellCommand (/*[in]*/ const CString & command);
+AllowShellCommand (/*[in]*/ const char * lpszCommand);
 
 void DrawTransparentBitmap (/*[in]*/ HDC,
 			    /*[in]*/ HBITMAP,
@@ -728,7 +724,7 @@ void DrawTransparentBitmap (/*[in]*/ HDC,
 			    /*[in]*/ short,
 			    /*[in]*/ COLORREF);
 
-CString
+string
 GetCommandPrefix (/*[in]*/ bool clear);
 
 DWORD

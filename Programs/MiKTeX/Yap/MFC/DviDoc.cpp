@@ -457,12 +457,12 @@ DviDoc::GetActiveDocument ()
    DviDoc::GetDocDir
    _________________________________________________________________________ */
 
-CString
+PathName
 DviDoc::GetDocDir ()
 {
-  PathName pathDocDir = GetPathName();
-  pathDocDir.RemoveFileSpec ();
-  return (pathDocDir.Get());
+  PathName result = GetPathName();
+  result.RemoveFileSpec ();
+  return (result);
 }
 
 /* _________________________________________________________________________

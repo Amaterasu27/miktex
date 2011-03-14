@@ -199,7 +199,7 @@ YapConfig::Load ()
   checkFileTypeAssociations =
     GetValue("Settings", "Check Associations", true);
   inverseSearchCommandLine =
-    GetValue("Settings", "Editor", CString("notepad \"%f\""));
+    GetValue("Settings", "Editor", string("notepad \"%f\""));
   lastTool =
     GetValue("Settings", "Last Tool", 0);
   maintainHorizontalPosition =
@@ -234,15 +234,14 @@ YapConfig::Load ()
     gamma = 1.0;
   }
   gammaValues =
-    GetValue("screen", "gammavalues", CString(DEFAULT_GAMMA_VALUES));
-  CString displayMode =
-    GetValue("screen", "mode", CString("ljfour"));
-  if (! SetDisplayMetafontMode(displayMode))
+    GetValue("screen", "gammavalues", string(DEFAULT_GAMMA_VALUES));
+  string displayMode = GetValue("screen", "mode", string("ljfour"));
+  if (! SetDisplayMetafontMode(displayMode.c_str()))
   {
     FATAL_MIKTEX_ERROR (
       "YapConfig::Load",
       T_("Unknown METAFONT mode."),
-      static_cast<const char *>(displayMode));
+      displayMode.c_str());
   }
   displayShrinkFactor =
     GetValue("screen", "shrinkfactor", 6);
@@ -253,23 +252,23 @@ YapConfig::Load ()
   renderGraphicsInBackground =
     GetValue("screen", "graphicsinbackground", DEFAULT_bRenderGraphicsInBackground);
   dviPageMode = StringToEnum<DviPageMode>(
-    GetValue("screen", "dvipagemode", CString(DEFAULT_DVIPAGE_MODE_STRING)),
+    GetValue("screen", "dvipagemode", string(DEFAULT_DVIPAGE_MODE_STRING)).c_str(),
      dviPageModes);
   unit = StringToEnum<Units>(
-    GetValue("screen", "unit", CString(DEFAULT_UNIT_STRING)),
+    GetValue("screen", "unit", string(DEFAULT_UNIT_STRING)).c_str(),
      units);
 
   //
   // [printer]
   //
-  CString printerMode =
-    GetValue("printer", "mode", CString("ljfour"));
-  if (! SetPrinterMetafontMode(printerMode))
+  string printerMode =
+    GetValue("printer", "mode", string("ljfour"));
+  if (! SetPrinterMetafontMode(printerMode.c_str()))
   {
     FATAL_MIKTEX_ERROR (
       "YapConfig::Load",
       T_("Unknown METAFONT mode."),
-      static_cast<const char *>(printerMode));
+      printerMode.c_str());
   }
   pageXShift =
     GetValue("printer", "nPageXShift", 0);
@@ -280,7 +279,7 @@ YapConfig::Load ()
   // [DVIPS]
   //
   dvipsExtraOptions =
-    GetValue("DVIPS", "Extra Options",  CString(""));
+    GetValue("DVIPS", "Extra Options",  string(""));
 
   //
   // [Magnifying Glass]
@@ -338,7 +337,7 @@ YapConfig::Load ()
   enableShellCommands =
     GetValue("Security", "EnableEmbeddedCommands", SEC_ASK_USER);
   secureCommands =
-    GetValue("Security", "SecureCommands", CString(DEFAULT_SECURE_COMMANDS));
+    GetValue("Security", "SecureCommands", string(DEFAULT_SECURE_COMMANDS));
 }
 
 /* _________________________________________________________________________
@@ -362,7 +361,7 @@ YapConfig::Save ()
     "Settings",
     "Editor",
     inverseSearchCommandLine,
-    CString("notepad \"%f\""));
+    string("notepad \"%f\""));
   UpdateValue (
     "Settings",
     "Last Tool",
@@ -413,14 +412,14 @@ YapConfig::Save ()
     "screen",
     "gammavalues",
     gammaValues,
-    CString(DEFAULT_GAMMA_VALUES));
+    string(DEFAULT_GAMMA_VALUES));
   if (SessionWrapper(true)->GetMETAFONTMode(displayMetafontMode, &mfmode))
   {
     UpdateValue (
       "screen",
       "mode",
-      CString(mfmode.szMnemonic),
-      CString("ljfour"));
+      string(mfmode.szMnemonic),
+      string("ljfour"));
   }
   UpdateValue ("screen",
 		  "shrinkfactor",
@@ -434,12 +433,12 @@ YapConfig::Save ()
   UpdateValue (
     "screen",
     "dvipagemode",
-    CString(EnumToString<DviPageMode>(dviPageMode.Get(), dviPageModes)),
-    CString(DEFAULT_DVIPAGE_MODE_STRING));
+    string(EnumToString<DviPageMode>(dviPageMode.Get(), dviPageModes)),
+    string(DEFAULT_DVIPAGE_MODE_STRING));
   UpdateValue ("screen",
     "unit",
-    CString(EnumToString<Units>(unit.Get(), units)),
-    CString(DEFAULT_UNIT_STRING));
+    string(EnumToString<Units>(unit.Get(), units)),
+    string(DEFAULT_UNIT_STRING));
 
   //
   // [printer]
@@ -449,8 +448,8 @@ YapConfig::Save ()
     UpdateValue (
       "printer",
       "mode",
-      CString(mfmode.szMnemonic),
-      CString("ljfour"));
+      string(mfmode.szMnemonic),
+      string("ljfour"));
   }
   UpdateValue (
     "printer",
@@ -470,7 +469,7 @@ YapConfig::Save ()
     "DVIPS",
     "Extra Options",
     dvipsExtraOptions,
-    CString(""));
+    string(""));
 
   //
   // [Magnifying Glass]
@@ -555,7 +554,7 @@ YapConfig::Save ()
     "Security",
     "SecureCommands",
     secureCommands,
-    CString(DEFAULT_SECURE_COMMANDS));
+    string(DEFAULT_SECURE_COMMANDS));
 
   PathName fileName =
     SessionWrapper(true)->GetSpecialPath(SpecialPath::UserConfigRoot);

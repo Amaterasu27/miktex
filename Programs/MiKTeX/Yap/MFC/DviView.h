@@ -495,8 +495,8 @@ public:
 
 public:
   bool
-  GotoSrcSpecial (/*[in]*/ int			line,
-		  /*[in]*/ const CString &	fileName);
+  GotoSrcSpecial (/*[in]*/ int		line,
+		  /*[in]*/ const char *	lpszFileName);
 
 public:
   bool
@@ -721,7 +721,7 @@ private:
 
 private:
   bool
-  GetHyperTeXSpecialAtCursor (/*[in]*/ CString & hyperTarget);
+  GetHyperTeXSpecialAtCursor (/*[out]*/ string & hyperTarget);
 
 private:
   void
@@ -739,13 +739,13 @@ private:
 private:
   bool
   IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
-		       /*[in]*/ CString &		dviFileName,
-		       /*[in]*/ CString &		hashLabel);
+		       /*[out]*/ string &	dviFileName,
+		       /*[out]*/ string &	hashLabel);
 
 private:
   void
-  PrintPostScript (/*[in]*/ const CString &		dviFileName,
-		   /*[in]*/ const CString &		printerName,
+  PrintPostScript (/*[in]*/ const char *		lpszDviFileName,
+		   /*[in]*/ const char *		lpszPrinterName,
 		   /*[in]*/ const DviView::PrintRange &	printRange);
 
 private:

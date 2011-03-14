@@ -1,6 +1,6 @@
 /* SourceSpecialsDialog.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -91,8 +91,8 @@ private:
 private:
   struct SrcSpecial
   {
-    CString pageName;
-    CString fileName;
+    string pageName;
+    PathName fileName;
     int line;
   };
 

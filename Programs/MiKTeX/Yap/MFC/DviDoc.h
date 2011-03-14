@@ -137,7 +137,7 @@ public:
     const;
 
 public:
-  CString
+  PathName
   GetDocDir ();
 
 public:

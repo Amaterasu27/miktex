@@ -1,6 +1,6 @@
 /* SecurityOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -50,7 +50,7 @@ END_MESSAGE_MAP();
 SecurityOptionsPage::SecurityOptionsPage ()
   : CPropertyPage (SecurityOptionsPage::IDD),
     enableShellCommands (g_pYapConfig->enableShellCommands),
-    secureCommands (g_pYapConfig->secureCommands)
+    secureCommands (g_pYapConfig->secureCommands.c_str())
 {
 }
 

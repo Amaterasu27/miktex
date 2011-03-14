@@ -237,8 +237,8 @@ DviView::OnUpdateFileDvips (/*[in]*/ CCmdUI * pCmdUI)
    _________________________________________________________________________ */
 
 void
-DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
-			  /*[in]*/ const CString &		printerName,
+DviView::PrintPostScript (/*[in]*/ const char *	lpszDviFileName,
+			  /*[in]*/ const char *	lpszPrinterName,
 			  /*[in]*/ const DviView::PrintRange &	pr)
 {
   // locate mtprint.exe
@@ -254,7 +254,7 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
 
   // make command-line
   CommandLineBuilder commandLine;
-  commandLine.AppendOption ("--printer=", printerName);
+  commandLine.AppendOption ("--printer=", lpszPrinterName);
   commandLine.AppendOption ("--print-method=", "ps");
   switch (pr.nRange)
     {
@@ -277,13 +277,13 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
       commandLine.AppendOption ("--odd-only");
       break;
     }
-  commandLine.AppendArgument (dviFileName);
+  commandLine.AppendArgument (lpszDviFileName);
 
   auto_ptr<ProgressDialog> pProgDlg (ProgressDialog::Create());
   pProgDlg->StartProgressDialog (GetSafeHwnd());
   pProgDlg->SetTitle (T_("Print"));
   pProgDlg->SetLine (1, T_("Being printed:"));
-  pProgDlg->SetLine (2, dviFileName);
+  pProgDlg->SetLine (2, lpszDviFileName);
   char szBuf[4096];
   size_t n = 4096;
   int exitCode;
@@ -300,7 +300,7 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
     {
       FATAL_MIKTEX_ERROR ("DviView::PrintPostScript",
 			  T_("The MiKTeX print utility could not be run."),
-			  T_("mtprint.exe"));
+			  "mtprint.exe");
     }
 
   if (exitCode != 0)
@@ -308,7 +308,7 @@ DviView::PrintPostScript (/*[in]*/ const CString &		dviFileName,
       FATAL_MIKTEX_ERROR ("DviView::PrintPostScript",
 			  (T_("The MiKTeX print utility failed for some ")
 			   T_("reason.")),
-			  T_("mtprint.exe"));
+			  "mtprint.exe");
     }
 }
 

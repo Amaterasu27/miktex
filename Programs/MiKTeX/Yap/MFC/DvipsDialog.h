@@ -1,6 +1,6 @@
 /* DvipsDialog.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -32,7 +32,7 @@ public:
   DvipsDialog (/*[in]*/ CWnd * pParent = 0);
 
 public:
-  const CString &
+  const char *
   GetPrinterName ()
     const
   {

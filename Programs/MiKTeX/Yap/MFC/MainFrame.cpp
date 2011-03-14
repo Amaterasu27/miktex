@@ -280,22 +280,22 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       int m = pDviView->GetCurrentPageIdx() + 1;
       int n = pDviDoc->GetPageCount();
       CString str;
-      str.Format (T_("Page: %s (%d%s of %d)"),
-		  pDviDoc->GetPageName(pDviView->GetCurrentPageIdx()),
+      str.Format (_T("Page: %s (%d%s of %d)"),
+		  CA2T(pDviDoc->GetPageName(pDviView->GetCurrentPageIdx())),
 		  m,
 		  (m % 10 == 1
 		   ? (m % 100 == 11
-		      ? "th"
-		      : "st")
+		      ? _T("th")
+		      : _T("st"))
 		   : (m % 10 == 2
 		      ? (m % 100 == 12
-			 ? "th"
-			 : "nd")
+			 ? _T("th")
+			 : _T("nd"))
 		      : (m % 10 == 3
 			 ? (m % 100 == 13
-			    ? "th"
-			    : "rd")
-			 : "th"))),
+			    ? _T("th")
+			    : _T("rd"))
+			 : _T("th")))),
 		  n);
       pCmdUI->SetText (str); 
     }
@@ -319,7 +319,7 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
 void
 MainFrame::OnUpdateCommandPrefix (/*[in,out]*/ CCmdUI * pCmdUI)
 {
-  pCmdUI->SetText (commandPrefix); 
+  pCmdUI->SetText (CA2T(commandPrefix.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -387,7 +387,7 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviView->GetSource(sourceFileName, line))
 	{
 	  CString str;
-	  str.Format ("%s L:%d", sourceFileName.Get(), line);
+	  str.Format (_T("%s L:%d"), CA2T(sourceFileName.Get()), line);
 	  pCmdUI->SetText (str); 
 	}
       else
@@ -483,7 +483,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
 	}
       CString str;
       int precision = 2;
-      str.Format ("%.*f,%.*f%s",
+      str.Format (_T("%.*f,%.*f%s"),
 		  precision, x2,
 		  precision, y2,
 		  lpszUnit);
@@ -581,35 +581,30 @@ MainFrame::AddCommandPrefixChar (/*[in]*/ char	ch)
 {
   bool done = true;
   if (isdigit(ch))
-    {
-      commandPrefix += ch;
-    }
+  {
+    commandPrefix += ch;
+  }
   else if (ch == '-')
+  {
+    if (! commandPrefix.empty() && commandPrefix[0] == '-')
     {
-      if (commandPrefix.GetLength() > 0
-	  && commandPrefix.GetAt(0) == '-')
-	{
-	  CString tmp =
-	    commandPrefix.Right(commandPrefix.GetLength() - 1);
-	  commandPrefix = tmp;
-	}
-      else
-	{
-	  CString tmp = commandPrefix;
-	  commandPrefix = "-";
-	  commandPrefix += tmp;
-	}
+      commandPrefix = commandPrefix.substr(1, commandPrefix.length() - 1);
     }
-  else if (ch == VK_BACK && commandPrefix.GetLength() > 0)
+    else
     {
-      CString tmp =
-	commandPrefix.Left(commandPrefix.GetLength() - 1);
-      commandPrefix = tmp;
+      string tmp = commandPrefix;
+      commandPrefix = "-";
+      commandPrefix += tmp;
     }
+  }
+  else if (ch == VK_BACK && ! commandPrefix.empty())
+  {
+    commandPrefix = commandPrefix.substr(0, commandPrefix.length() - 1);
+  }
   else
-    {
-      done = false;
-    }
+  {
+    done = false;
+  }
   return (done);
 }
 
@@ -618,15 +613,15 @@ MainFrame::AddCommandPrefixChar (/*[in]*/ char	ch)
    MainFrame::GetCommandPrefix
    _________________________________________________________________________ */
 
-CString
+string
 MainFrame::GetCommandPrefix (/*[in]*/ bool clear)
 {
-  CString str = commandPrefix;
+  string result = commandPrefix;
   if (clear)
-    {
-      commandPrefix = "";
-    }
-  return (str);
+  {
+    commandPrefix = "";
+  }
+  return (result);
 }
 
 /* _________________________________________________________________________

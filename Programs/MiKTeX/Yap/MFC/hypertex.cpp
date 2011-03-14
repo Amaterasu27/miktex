@@ -1,6 +1,6 @@
 /* hypertex.cpp: HyperTeX specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -31,7 +31,7 @@
    _________________________________________________________________________ */
 
 bool
-DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ CString & name)
+DviView::GetHyperTeXSpecialAtCursor (/*[out]*/ string & name)
 {
   DviDoc * pDoc = GetDocument();
 
@@ -142,15 +142,15 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
   else
     {
       // check to see whether it is DVI file reference
-      if (_tcsnicmp(T_("file:"), lpszUrl, 5) == 0)
+      if (_strnicmp("file:", lpszUrl, 5) == 0)
 	{
 	  const char * lpszFileLabel = lpszUrl + 5;
-	  CString dviFileName;
-	  CString hashLabel;
+	  string dviFileName;
+	  string hashLabel;
 	  if (IsOtherDviFileLabel(lpszFileLabel, dviFileName, hashLabel))
 	    {
 	      PathName path;
-	      if (! FindDviFile(dviFileName, path))
+	      if (! FindDviFile(dviFileName.c_str(), path))
 		{
 		  return (false);
 		}
@@ -160,7 +160,7 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 		{
 		  return (false);
 		}
-	      if (hashLabel.GetLength() == 0)
+	      if (hashLabel.empty())
 		{
 		  return (true);
 		}
@@ -176,7 +176,7 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 		  if (pView->IsKindOf(RUNTIME_CLASS(DviView)))
 		    {
 		      DviView * pDviView = reinterpret_cast<DviView*>(pView);
-		      if (pDviView->Navigate(hashLabel, false))
+		      if (pDviView->Navigate(hashLabel.c_str(), false))
 			{
 			  return (true);
 			}
@@ -274,23 +274,23 @@ DviView::OnUpdateForward (/*[in]*/ CCmdUI * pCmdUI)
 
 bool
 DviView::IsOtherDviFileLabel (/*[in]*/ const char *	lpszLabel,
-			      /*[out]*/ CString &		dviFileName,
-			      /*[out]*/ CString &		hashLabel)
+			      /*[out]*/ string &	dviFileName,
+			      /*[out]*/ string &	hashLabel)
 {
   dviFileName = "";
   hashLabel = "";
   while (*lpszLabel != 0 && *lpszLabel != '#')
-    {
-      dviFileName += *lpszLabel++;
-    }
+  {
+    dviFileName += *lpszLabel++;
+  }
   if (! PathName(dviFileName).HasExtension(".dvi"))
-    {
-      return (false);
-    }
+  {
+    return (false);
+  }
   while (*lpszLabel != 0)
-    {
-      hashLabel += *lpszLabel++;
-    }
+  {
+    hashLabel += *lpszLabel++;
+  }
   return (true);
 }
 

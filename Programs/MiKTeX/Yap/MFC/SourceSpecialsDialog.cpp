@@ -1,6 +1,6 @@
 /* SourceSpecialsDialog.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -169,17 +169,13 @@ SourceSpecialsDialog::OnInitDialog ()
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText =
-	    (const_cast<char *>
-	     (static_cast<const char *>(it->pageName)));
+	  lvitem.pszText = const_cast<char *>(static_cast<const char *>(it->pageName.c_str()));
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
-	  lvitem.pszText =
-	    (const_cast<char *>
-	     (static_cast<const char *>(it->fileName)));
+	  lvitem.pszText = const_cast<char *>(it->fileName.Get());
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
@@ -307,7 +303,7 @@ SourceSpecialsDialog::OnEditSource ()
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
-      StartEditor (szFileName, pDviDoc->GetDocDir(), atoi(szLineNum));
+      StartEditor (szFileName, pDviDoc->GetDocDir().Get(), atoi(szLineNum));
     }
   catch (const MiKTeXException & e)
     {

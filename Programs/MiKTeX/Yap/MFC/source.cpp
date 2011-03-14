@@ -1,6 +1,6 @@
 /* source.cpp: source specials
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -44,7 +44,7 @@ DviView::CloseSourceSpecialsDialog ()
 
 bool
 DviView::GotoSrcSpecial (/*[in]*/ int			line,
-			 /*[in]*/ const CString &	fileName)
+			 /*[in]*/ const char *		lpszFileName)
 {
   ClearSearchPosition ();
 
@@ -53,7 +53,7 @@ DviView::GotoSrcSpecial (/*[in]*/ int			line,
 
   DviPosition position;
 
-  if (! pDoc->FindSrcSpecial(fileName, line, position))
+  if (! pDoc->FindSrcSpecial(lpszFileName, line, position))
     {
       return (false);
     }
@@ -100,7 +100,7 @@ DviView::OnPageEditor ()
       int line;
       if (GetSource(fileName, line))
 	{
-	  StartEditor (fileName.Get(), pDoc->GetDocDir(), line);
+	  StartEditor (fileName.Get(), pDoc->GetDocDir().Get(), line);
 	}
       else
 	{
