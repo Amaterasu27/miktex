@@ -1,6 +1,6 @@
 /* Ruler.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -27,7 +27,7 @@
 #define RULER_COLOR RGB(186, 218, 254)
 
 namespace {
-  const char * const YAP_RULER_CLASS = "MiKTeX_ruler";
+  const _TCHAR * const YAP_RULER_CLASS = _T("MiKTeX_ruler");
   bool classRegistered = false;
 }
 
@@ -169,7 +169,7 @@ Ruler::OnPaint ()
 	  lastPosition = sizeWindow.cy;
 	}
       CString sample;
-      sample.Format ("%d",
+      sample.Format (_T("%d"),
 		     static_cast<int>(lastPosition / pixelsPerUnit));
       CRect rect (0, 0, 0, 0);
       dc.DrawText (sample, &rect, DT_CALCRECT);
@@ -199,7 +199,7 @@ Ruler::OnPaint ()
       for (int i1 = 0; TICK_POSITION(i1, 0) < lastPosition; i1 += markerStep)
 	{
 	  CString marker;
-	  marker.Format ("%d", i1);
+	  marker.Format (_T("%d"), i1);
 	  int p = TICK_POSITION(i1, 0);
 	  UINT format;
 	  if (kind == Horizontal)

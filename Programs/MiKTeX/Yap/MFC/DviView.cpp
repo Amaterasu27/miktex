@@ -2297,7 +2297,7 @@ DviView::OnFileDocumentProperties ()
     {
       DviDoc * pDoc = GetDocument();
       ASSERT_VALID (pDoc);
-      CPropertySheet dlg (T_("Document Properties"), 0, 0);
+      CPropertySheet dlg (T_(_T("Document Properties")), 0, 0);
       DocumentFontsPage pageFonts;
       pageFonts.fontTable = pDoc->GetFontTable();
       dlg.AddPage (&pageFonts);
@@ -2521,7 +2521,7 @@ DviView::InitializeGammaTable ()
   CSVList gammas (g_pYapConfig->gammaValues.c_str(), _T(' '));
   while (gammas.GetCurrent() != 0)
     {
-      gammaTable.push_back (_tstof(gammas.GetCurrent()));
+      gammaTable.push_back (atof(gammas.GetCurrent()));
       ++ gammas;
     }
   if (gammaTable.size() == 0)

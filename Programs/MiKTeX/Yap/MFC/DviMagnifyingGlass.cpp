@@ -1,6 +1,6 @@
 /* DviMagnifyingGlass.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -27,7 +27,7 @@
 #include "DviView.h"
 
 namespace {
-  const char * const YAP_MAGNIFYING_GLASS_CLASS = "MiKTeX_mag";
+  const _TCHAR * const YAP_MAGNIFYING_GLASS_CLASS = _T("MiKTeX_mag");
   bool classRegistered = false;
 }
 

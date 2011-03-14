@@ -46,7 +46,7 @@ DisplayOptionsPage::DisplayOptionsPage ()
   : CPropertyPage (IDD),
     metafontModeIdx (static_cast<int>(g_pYapConfig->displayMetafontMode))
 {
-  shrinkFactor.Format ("%d", g_pYapConfig->displayShrinkFactor);
+  shrinkFactor.Format (_T("%d"), g_pYapConfig->displayShrinkFactor);
 }
 
 /* _________________________________________________________________________
@@ -66,11 +66,11 @@ DisplayOptionsPage::OnInitDialog ()
 	   SessionWrapper(true)->GetMETAFONTMode(idx, &mode);
 	   ++ idx)
 	{
-	  CString modeString = mode.szMnemonic;
+	  string modeString = mode.szMnemonic;
 	  modeString += " (";
 	  modeString += mode.szDescription;
 	  modeString += ")";
-	  if (modeComboBox.AddString(modeString) < 0)
+	  if (modeComboBox.AddString(CA2T(modeString.c_str())) < 0)
 	    {
 	      FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	    }
@@ -81,7 +81,7 @@ DisplayOptionsPage::OnInitDialog ()
 		  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 		}
 	      resolution = mode.iHorzRes;
-	      resolutionControl.SetWindowText (NUMTOSTR(resolution));
+	      resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
 	    }
 	}
       int idx = -1;
@@ -238,7 +238,7 @@ DisplayOptionsPage::OnChangeMode ()
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))
 	{
 	  resolution = mode.iHorzRes;
-	  resolutionControl.SetWindowText (NUMTOSTR(resolution));
+	  resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
 	  metafontModeIdx = idx;
 	}
       SetModified (TRUE);

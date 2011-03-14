@@ -1,6 +1,6 @@
 /* InverseSearchOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -50,7 +50,7 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
 {
   HKEY hkey;
   if (RegOpenKey(HKEY_LOCAL_MACHINE,
-		 T_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion"),
+		 _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion"),
 		 &hkey)
       != ERROR_SUCCESS)
     {
@@ -61,7 +61,7 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
     (static_cast<unsigned long>(path.GetCapacity()) * sizeof(char));
   long res =
     RegQueryValueEx(hkey,
-		    T_("ProgramFilesDir"),
+		    _T("ProgramFilesDir"),
 		    0,
 		    0,
 		    reinterpret_cast<LPBYTE>(path.GetBuffer()),
@@ -85,7 +85,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
   HKEY hkey;
   long res =
     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 T_("SOFTWARE\\GNU\\Emacs"),
+		 _T("SOFTWARE\\GNU\\Emacs"),
 		 0,
 		 KEY_READ,
 		 &hkey);
@@ -100,7 +100,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
     (static_cast<unsigned long>(emacsDir.GetCapacity()) * sizeof(char));
   res =
     RegQueryValueEx(hkey,
-		    T_("emacs_dir"),
+		    _T("emacs_dir"),
 		    0,
 		    &type,
 		    reinterpret_cast<LPBYTE>(emacsDir.GetBuffer()),
@@ -109,7 +109,7 @@ LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
     {
       return (false);
     }
-  PathName pathBinDir (emacsDir, T_("bin"));
+  PathName pathBinDir (emacsDir, "bin");
   ntEmacs = pathBinDir;
   ntEmacs += lpszName;
   ntEmacs.SetExtension (".exe");
@@ -126,8 +126,8 @@ MakeNTEmacsCommandLine (/*[out]*/ string &	program,
 		        /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
-  if (! LocateNTEmacs(pathEmacs, T_("runemacs.exe"))
-      && ! LocateNTEmacs(pathEmacs, T_("emacs.exe")))
+  if (! LocateNTEmacs(pathEmacs, "runemacs.exe")
+      && ! LocateNTEmacs(pathEmacs, "emacs.exe"))
     {
       return (false);
     }
@@ -146,13 +146,13 @@ MakeNTEmacsClientCommandLine (/*[out]*/ string &	program,
 			      /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
-  char * lpszFileName;
-  if (! (LocateNTEmacs(pathEmacs, T_("gnuclientw.exe"))
+  _TCHAR * lpszFileName;
+  if (! (LocateNTEmacs(pathEmacs, "gnuclientw.exe")
 	 || SearchPath(0,
-		       T_("gnuclientw.exe"),
+		       _T("gnuclientw.exe"),
 		       0,
 		       static_cast<unsigned long>(pathEmacs.GetCapacity()),
-		       pathEmacs.GetBuffer(),
+		       CA2T(pathEmacs.Get()),
 		       &lpszFileName)))
     {
       return (false);
@@ -174,8 +174,8 @@ MakeXEmacsCommandLine (/*[out]*/ string &	program,
   HKEY hkey;
   long res =
     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 (T_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
-		  T_("\\App Paths\\xemacs.exe")),
+		 (_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
+		  _T("\\App Paths\\xemacs.exe")),
 		 0,
 		 KEY_READ,
 		 &hkey);
@@ -190,7 +190,7 @@ MakeXEmacsCommandLine (/*[out]*/ string &	program,
     (static_cast<unsigned long>(pathEmacsDir.GetCapacity() * sizeof(char)));
   res =
     RegQueryValueEx(hkey,
-		    T_("Path"),
+		    _T("Path"),
 		    0,
 		    &type,
 		    reinterpret_cast<LPBYTE>
@@ -200,10 +200,10 @@ MakeXEmacsCommandLine (/*[out]*/ string &	program,
     {
       return (false);
     }
-  PathName pathEmacs (pathEmacsDir, T_("runemacs.exe"));
+  PathName pathEmacs (pathEmacsDir, "runemacs.exe");
   if (! File::Exists(pathEmacs))
     {
-      pathEmacs.Set (pathEmacsDir, T_("xemacs.exe"));
+      pathEmacs.Set (pathEmacsDir, "xemacs.exe");
       if (! File::Exists(pathEmacs))
 	{
 	  return (false);
@@ -225,7 +225,7 @@ LocateTeXnicCenter (/*[out]*/ PathName & tc)
   HKEY hkey;
   long res =
     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 T_("SOFTWARE\\ToolsCenter\\TeXnicCenter"),
+		 _T("SOFTWARE\\ToolsCenter\\TeXnicCenter"),
 		 0,
 		 KEY_READ,
 		 &hkey);
@@ -240,14 +240,14 @@ LocateTeXnicCenter (/*[out]*/ PathName & tc)
     (static_cast<unsigned long>(tcRoot.GetCapacity()) * sizeof(char));
   res =
     RegQueryValueEx(hkey,
-		    T_("AppPath"),
+		    _T("AppPath"),
 		    0,
 		    &type,
 		    reinterpret_cast<LPBYTE>(tcRoot.GetBuffer()),
 		    &size);
   if (res == ERROR_SUCCESS && type == REG_SZ)
     {
-      tc.Set (tcRoot, T_("TEXCNTR.EXE"));
+      tc.Set (tcRoot, "TEXCNTR.EXE");
       if (File::Exists(tc))
 	{
 	  return (true);
@@ -271,7 +271,7 @@ MakeTeXnicCenterCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = tc.Get();
-  arguments = T_("/ddecmd \"[goto('%f', '%l')]\"");
+  arguments = "/ddecmd \"[goto('%f', '%l')]\"";
   return (true);
 }
 
@@ -289,8 +289,8 @@ LocateVisualTeX (/*[out]*/ PathName & path)
       return (false);
     }
   path = pathProgramFiles;
-  path += T_("Visual-TeX");
-  path += T_("vtex.exe");
+  path += "Visual-TeX";
+  path += "vtex.exe";
   return (File::Exists(path));
 }
 
@@ -309,7 +309,7 @@ MakeVisualTeXCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = path.Get();
-  arguments = T_("\"%f\" /line:%l");
+  arguments = "\"%f\" /line:%l";
   return (true);
 }
 
@@ -324,7 +324,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
   HKEY hkey;
   long res =
     RegOpenKeyEx(HKEY_CURRENT_USER,
-		 T_("Software\\WinEdt"),
+		 _T("Software\\WinEdt"),
 		 0,
 		 KEY_READ,
 		 &hkey);
@@ -338,7 +338,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
 	 * sizeof(char));
       res =
 	RegQueryValueEx(hkey,
-			T_("Install Root"),
+			_T("Install Root"),
 			0,
 			&type,
 			reinterpret_cast<LPBYTE>
@@ -347,7 +347,7 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
       if (res == ERROR_SUCCESS && type == REG_SZ)
 	{
 	  winEdt = pathWinEdtDir;
-	  winEdt += T_("winedt.exe");
+	  winEdt += "winedt.exe";
 	  if (File::Exists(winEdt))
 	    {
 	      return (true);
@@ -356,8 +356,8 @@ LocateWinEdt (/*[out]*/ PathName & winEdt)
     }
   res =
     RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 (T_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
-		  T_("\\App Paths\\WinEdt.exe")),
+		 (_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
+		  _T("\\App Paths\\WinEdt.exe")),
 		 0,
 		 KEY_READ,
 		 &hkey);
@@ -398,7 +398,7 @@ MakeWinEdtCommandLine (/*[out]*/ string &	program,
       return (false);
     }
   program = pathWinEdt.Get();
-  arguments = T_("\"[Open(|%f|);SelPar(%l,8)]\"");
+  arguments = "\"[Open(|%f|);SelPar(%l,8)]\"";
   return (true);
 }
 
@@ -416,8 +416,8 @@ LocateLaTeXMng (/*[out]*/ PathName & path)
       return (false);
     }
   path = pathProgramFiles;
-  path += T_("LaTeXMng");
-  path += T_("LaTeXMng.exe");
+  path += "LaTeXMng";
+  path += "LaTeXMng.exe";
   return (File::Exists(path));
 }
 
@@ -458,8 +458,8 @@ LocateWinTeXXP (/*[out]*/ PathName & path)
       return (false);
     }
   path = pathProgramFiles;
-  path += T_("WinTeX");
-  path += T_("wintex.exe");
+  path += "WinTeX";
+  path += "wintex.exe";
   return (File::Exists(path));
 }
 
@@ -496,8 +496,8 @@ LocateWinShell (/*[out]*/ PathName & path)
       return (false);
     }
   path = pathProgramFiles;
-  path += T_("WinShell");
-  path += T_("WinShell.exe");
+  path += "WinShell";
+  path += "WinShell.exe";
   return (File::Exists(path));
 }
 
@@ -534,8 +534,8 @@ LocateLaTeXWIDE (/*[out]*/ PathName & path)
       return (false);
     }
   path = pathProgramFiles;
-  path += T_("LaTeX WIDE");
-  path += T_("LWide.exe");
+  path += "LaTeX WIDE";
+  path += "LWide.exe";
   return (File::Exists(path));
 }
 
@@ -608,10 +608,10 @@ InverseSearchOptionsPage::OnInitDialog ()
 	    {
 	      commandLineIdx = idx;
 	    }
-	  CString str = it->name.c_str();
+	  CString str = CA2T(it->name.c_str());
 	  if (idx < firstCustomIdx)
 	    {
-	      str += T_(" (auto-detected)");	      
+	      str += T_(_T(" (auto-detected)"));
 	    }
 	  if (editorListBox.AddString(str) < 0)
 	    {
@@ -628,7 +628,7 @@ InverseSearchOptionsPage::OnInitDialog ()
 		("InverseSearchOptionsPage::OnInitDialog");
 	    }
 	  commandLineDisplay.SetWindowText
-	    (editors[commandLineIdx].GetCommandLine().c_str());
+	    (CA2T(editors[commandLineIdx].GetCommandLine().c_str()));
 	}
       
       EnableButtons ();
@@ -683,11 +683,11 @@ InverseSearchOptionsPage::OnSelChangeEditor ()
       if (idx >= 0)
 	{
 	  commandLineDisplay.SetWindowText
-	    (editors[idx].GetCommandLine().c_str());
+	    (CA2T(editors[idx].GetCommandLine().c_str()));
 	}
       else
 	{
-	  commandLineDisplay.SetWindowText ("");
+	  commandLineDisplay.SetWindowText (_T(""));
 	}
       SetModified (TRUE);
       EnableButtons ();
@@ -717,7 +717,7 @@ InverseSearchOptionsPage::OnAddEditor ()
 	{
 	  EditorInfo editorInfo = dlg.GetEditorInfo();
 	  editors.push_back (editorInfo);
-	  if (editorListBox.AddString(editorInfo.name.c_str()) < 0)
+	  if (editorListBox.AddString(CA2T(editorInfo.name.c_str())) < 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("InverseSearchOptionsPage::OnAddEditor");

@@ -185,7 +185,7 @@ DviView::OnFileDvips ()
 	  pr.nEvenOdd = PrintRange::OddOnly;
 	  break;
 	}
-      PrintPostScript (pDoc->GetPathName(),
+      PrintPostScript (CT2A(pDoc->GetPathName()),
 		       dlg.GetPrinterName(),
 		       pr);
       g_pYapConfig->Save ();
@@ -262,8 +262,9 @@ DviView::PrintPostScript (/*[in]*/ const char *	lpszDviFileName,
       break;
     case PrintRange::Range:
       {
-	CString str;
-	str.Format ("%d-%d", pr.nFirst, pr.nLast);
+	string str (NUMTOSTR(pr.nFirst));
+	str += "-";
+	str += NUMTOSTR(pr.nLast);
 	commandLine.AppendOption ("--page-range=", str);
 	break;
       }

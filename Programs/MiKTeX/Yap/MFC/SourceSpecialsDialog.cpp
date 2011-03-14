@@ -127,10 +127,10 @@ SourceSpecialsDialog::OnInitDialog ()
 				    | LVS_EX_FULLROWSELECT);
       
       if (listControl.InsertColumn(0,
-				   T_("Page"),
+				   T_(_T("Page")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-  Page  ")),
+				   listControl.GetStringWidth(T_(_T("\
+  Page  "))),
 				   0)
 	  < 0)
 	{
@@ -138,10 +138,10 @@ SourceSpecialsDialog::OnInitDialog ()
 	}
 
       if (listControl.InsertColumn(1,
-				   T_("Source File"),
+				   T_(_T("Source File")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-  abrakadabra.tex  ")),
+				   listControl.GetStringWidth(T_(_T("\
+  abrakadabra.tex  "))),
 				   1)
 	  < 0)
 	{
@@ -149,10 +149,10 @@ SourceSpecialsDialog::OnInitDialog ()
 	}
 
       if (listControl.InsertColumn(2,
-				   T_("Line"),
+				   T_(_T("Line")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth(T_("\
-  99999  ")),
+				   listControl.GetStringWidth(T_(_T("\
+  99999  "))),
 				   2)
 	  < 0)
 	{
@@ -169,19 +169,19 @@ SourceSpecialsDialog::OnInitDialog ()
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText = const_cast<char *>(static_cast<const char *>(it->pageName.c_str()));
+	  lvitem.pszText = CA2T(it->pageName.c_str());
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
-	  lvitem.pszText = const_cast<char *>(it->fileName.Get());
+	  lvitem.pszText = CA2T(it->fileName.Get());
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 2;
-	  lvitem.pszText = const_cast<char *>(NUMTOSTR(it->line));
+	  lvitem.pszText = CA2T(NUMTOSTR(it->line));
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
@@ -226,19 +226,19 @@ SourceSpecialsDialog::OnGoto ()
       item.cchTextMax = BufferSizes::MaxPath;
       item.iItem = idx;
       item.iSubItem = 0;
-      item.pszText = szPageNum;
+      item.pszText = CA2T(szPageNum);
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 1;
-      item.pszText = szFileName;
+      item.pszText = CA2T(szFileName);
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
-      item.pszText = szLineNum;
+      item.pszText = CA2T(szLineNum);
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
@@ -292,13 +292,13 @@ SourceSpecialsDialog::OnEditSource ()
       item.cchTextMax = BufferSizes::MaxPath;
       item.iItem = idx;
       item.iSubItem = 1;
-      item.pszText = szFileName;
+      item.pszText = CA2T(szFileName);
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
-      item.pszText = szLineNum;
+      item.pszText = CA2T(szLineNum);
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);

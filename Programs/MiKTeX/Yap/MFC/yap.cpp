@@ -204,7 +204,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
   // parse the rest
   for (; leftovers != 0 && *leftovers != 0; ++ leftovers)
     {
-      if (_tcsicmp(*leftovers, "/dde") == 0)
+      if (_stricmp(*leftovers, "/dde") == 0)
 	{
 	  AfxOleSetUserCtrl (FALSE);
 	  cmdInfo.m_nShellCommand = CCommandLineInfo::FileDDE;
@@ -260,7 +260,7 @@ END_MESSAGE_MAP();
 YapApplication::YapApplication ()
   : tracing (false)
 {
-  SetAppID ("MiKTeXorg.MiKTeX.Yap." MIKTEX_COMPONENT_VERSION_STR);
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.Yap." MIKTEX_COMPONENT_VERSION_STR));
   EnableHtmlHelp ();
 }
 
@@ -318,14 +318,14 @@ YapApplication::InitInstance ()
   initCtrls.dwICC = ICC_WIN95_CLASSES;
   if (! InitCommonControlsEx(&initCtrls))
     {
-      AfxMessageBox ("The application could not be initialized (1).",
+      AfxMessageBox (T_(_T("The application could not be initialized (1).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   if (! CWinApp::InitInstance())
     {
-      AfxMessageBox ("The application could not be initialized (2).",
+      AfxMessageBox (T_(_T("The application could not be initialized (2).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
@@ -335,7 +335,7 @@ YapApplication::InitInstance ()
   // don't use COINIT_MULTITHREADED; see KB828643
   if (FAILED(CoInitializeEx(0, COINIT_APARTMENTTHREADED)))
     {
-      AfxMessageBox ("The application could not be initialized (3).",
+      AfxMessageBox (T_(_T("The application could not be initialized (3).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
@@ -350,7 +350,7 @@ YapApplication::InitInstance ()
       
       // get command-line arguments
       YapCommandLineInfo cmdInfo;
-      ParseYapCommandLine (m_lpCmdLine, cmdInfo);
+      ParseYapCommandLine (CT2A(m_lpCmdLine), cmdInfo);
       
       // set trace flags
       if (! cmdInfo.traceFlags.empty())
@@ -385,18 +385,18 @@ YapApplication::InitInstance ()
 	{
 	  MIKTEX_ASSERT (_CrtIsValidHeapPointer(m_pszHelpFilePath));
 	  free (reinterpret_cast<void*>
-		(const_cast<char *>(m_pszHelpFilePath)));
-	  m_pszHelpFilePath = _tcsdup(helpFileName.Get());
+		(const_cast<LPTSTR>(m_pszHelpFilePath)));
+	  m_pszHelpFilePath = _tcsdup(CA2T(helpFileName.Get()));
 	}
       
       // change the registry key under which our settings are stored
       if (! pSession->IsMiKTeXPortable())
       {
-	SetRegistryKey (MIKTEX_COMP_COMPANY_STR
+	SetRegistryKey (CA2T(MIKTEX_COMP_COMPANY_STR
 	  "\\"
 	  MIKTEX_PRODUCTNAME_STR
 	  "\\"
-	  MIKTEX_SERIES_STR);
+	  MIKTEX_SERIES_STR));
       }
       
       // load standard ini file options (including MRU)
@@ -437,14 +437,14 @@ YapApplication::InitInstance ()
 	  && (registering || g_pYapConfig->checkFileTypeAssociations)
 	  && ! unregistering)
 	{
-	  char szClass[BufferSizes::MaxPath];
-	  long size = BufferSizes::MaxPath;
+	  _TCHAR szClass[BufferSizes::MaxPath];
+	  long size = sizeof(_TCHAR) * BufferSizes::MaxPath;
 	  if ((::RegQueryValue(HKEY_CLASSES_ROOT,
-			       ".dvi",
+			       _T(".dvi"),
 			       szClass,
 			       &size)
 	       == ERROR_SUCCESS)
-	      && ((StringCompare(szClass,
+	      && ((StringCompare(CT2A(szClass),
 				 Utils::MakeProgId("dvi").c_str(),
 				 true)
 		   != 0))
@@ -455,7 +455,7 @@ YapApplication::InitInstance ()
 		      == IDYES)))
 	    {
 	      // remove .dvi file association; will be restored later
-	      SHDeleteKey (HKEY_CLASSES_ROOT, ".dvi");
+	      SHDeleteKey (HKEY_CLASSES_ROOT, _T(".dvi"));
 	    }
 	}
       
@@ -473,7 +473,7 @@ YapApplication::InitInstance ()
       
       // the main window has been initialized, so show and update it
       CWindowPlacement wp;
-      if (! wp.Restore("Settings", pMainFrame))
+      if (! wp.Restore(_T("Settings"), pMainFrame))
 	{
 	  pMainFrame->ShowWindow (m_nCmdShow);
 	}
@@ -556,7 +556,7 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
   if (! pDX->m_bSaveAndValidate)
   {
     CString str;
-    str.Format (T_(_T("Yet Another Previewer %s")), _T(MIKTEX_COMPONENT_VERSION_STR));
+    str.Format (T_(_T("Yet Another Previewer %s")), static_cast<LPTSTR>(CA2T((MIKTEX_COMPONENT_VERSION_STR))));
     str += _T("\r\n");
     str += _T(MIKTEX_COMP_COPYRIGHT_STR);
     GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
@@ -694,7 +694,7 @@ YapApplication::ActivateFirstInstance
     }
   wndChild->SetForegroundWindow ();
   
-  if (strlen(cmdInfo.m_strFileName) == 0)
+  if (cmdInfo.m_strFileName.IsEmpty())
     {
       return (true);
     }
@@ -703,8 +703,8 @@ YapApplication::ActivateFirstInstance
   PathName path (cmdInfo.m_strFileName);
   path.MakeAbsolute ();
 
-  CString ddeCommand;
-  ddeCommand.Format (_T("[open(\"%s\")]"), CA2T(path.Get()));
+  CStringA ddeCommand;
+  ddeCommand.Format ("[open(\"%s\")]", path.Get());
   DdeExecute ("yap", "system", ddeCommand);
   
   // delegate DVI search
@@ -720,7 +720,7 @@ YapApplication::ActivateFirstInstance
   if (! cmdInfo.hyperLabel.empty())
     {
       ddeCommand.Format ("[gotohyperlabel(\"%s\")]",
-			 static_cast<const char *>(cmdInfo.hyperLabel.c_str()));
+			 cmdInfo.hyperLabel.c_str());
       DdeExecute ("yap", "system", ddeCommand);
     }
   
@@ -772,7 +772,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(result));
     }
   AutoDdeUninitialize autoDdeUninitialize (inst);
-  HSZ hszServer = DdeCreateStringHandle(inst, lpszServer, CP_WINANSI);
+  HSZ hszServer = DdeCreateStringHandle(inst, CA2T(lpszServer), CP_WINANSI);
   if (hszServer == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -780,7 +780,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
   AutoDdeFreeStringHandle autoDdeFreeStringHandle1 (inst, hszServer);
-  HSZ hszTopic = DdeCreateStringHandle(inst, lpszTopic, CP_WINANSI);
+  HSZ hszTopic = DdeCreateStringHandle(inst, CA2T(lpszTopic), CP_WINANSI);
   if (hszTopic == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -1054,7 +1054,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 	{
 	  return;
 	}
-      CPropertySheet dlg (T_("Options"), 0, 0);
+      CPropertySheet dlg (T_(_T("Options")), 0, 0);
       InverseSearchOptionsPage pageIsearch;
       dlg.AddPage (&pageIsearch);
       if (dlg.DoModal () == IDOK)
@@ -1074,7 +1074,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
   startupInfo.wShowWindow = SW_SHOWNORMAL;
   PROCESS_INFORMATION processInfo;
   if (! ::CreateProcess(0,
-			const_cast<char *>(commandLine.c_str()),
+			CA2T(commandLine.c_str()),
 			0,
 			0,
 			FALSE,
@@ -1147,15 +1147,15 @@ TraceError (/*[in]*/ const char *	lpszFormat,
    _________________________________________________________________________ */
 
 CDocument *
-YapApplication::OpenDocumentFile (/*[in]*/ const char * lpszFileName)
+YapApplication::OpenDocumentFile (/*[in]*/ LPCTSTR lpszFileName)
 {
   try
     {
-      PathName pathShort = lpszFileName;
+      PathName pathShort = CT2A(lpszFileName);
 #if defined(REMOVE_BLANKS_FROM_DOCUMENT_FILENAMES)
       Utils::RemoveBlanksFromPathName (pathShort);
 #endif
-      return (CWinApp::OpenDocumentFile(pathShort.Get()));
+      return (CWinApp::OpenDocumentFile(CA2T(pathShort.Get())));
     }
   catch (const MiKTeXException & e)
     {
@@ -1325,7 +1325,7 @@ AllowShellCommand (/*[in]*/ const char * lpszCommand)
 	message.Format ((T_(_T("The following script is embedded in the "))
 			 T_(_T("document:\n\n%s\n\n"))
 			 T_(_T("Do you allow to execute this script?"))),
-			 CA2T(lpszCommand));
+			 static_cast<LPTSTR>(CA2T(lpszCommand)));
 	return (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) == IDYES);
       }
     case YapConfig::SEC_SECURE_COMMANDS:

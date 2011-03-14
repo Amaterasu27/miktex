@@ -136,25 +136,25 @@ AddChangeEditorDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	   ++ idx)
 	{
 	  if (idx != currentIdx
-	      && StringCompare(editors[idx].name.c_str(), name, true) == 0)
+	      && StringCompare(editors[idx].name.c_str(), CT2A(name), true) == 0)
 	    {
 	      AfxMessageBox (T_(_T("The specified editor name already exists.")));
 	      pDX->Fail ();
 	    }
 	}
       pDX->PrepareEditCtrl (IDC_PATH);
-      if (! File::Exists(PathName(program)))
+      if (! File::Exists(PathName(CT2A(program))))
 	{
 	  AfxMessageBox (T_(_T("The specified program file does not exist.")));
 	  pDX->Fail ();
 	}
       pDX->PrepareEditCtrl (IDC_ARGUMENTS);
-      if (! (arguments.Find("%f") >= 0))
+      if (! (arguments.Find(_T("%f")) >= 0))
 	{
 	  AfxMessageBox (T_(_T("Missing file name (%f) in argument string.")));
 	  pDX->Fail ();
 	}
-      if (! (arguments.Find("%l") >= 0))
+      if (! (arguments.Find(_T("%l")) >= 0))
 	{
 	  AfxMessageBox (T_(_T("Missing line number (%l) in argument string.")));
 	  pDX->Fail ();
@@ -309,8 +309,8 @@ AddChangeEditorDialog::EnableButtons ()
   argumentsEdit.GetWindowText (arguments);
   pOk->EnableWindow
     (! (name.IsEmpty() || program.IsEmpty() || arguments.IsEmpty())
-     && arguments.Find("%f") >= 0
-     && arguments.Find("%l") >= 0);
+     && arguments.Find(_T("%f")) >= 0
+     && arguments.Find(_T("%l")) >= 0);
 }
 
 /* _________________________________________________________________________
@@ -321,5 +321,5 @@ AddChangeEditorDialog::EnableButtons ()
 EditorInfo
 AddChangeEditorDialog::GetEditorInfo ()
 {
-  return (EditorInfo(name, program, arguments));
+  return (EditorInfo(CT2A(name), CT2A(program), CT2A(arguments)));
 }

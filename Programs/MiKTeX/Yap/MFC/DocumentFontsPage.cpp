@@ -1,6 +1,6 @@
 /* DocumentFontsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -71,9 +71,9 @@ DocumentFontsPage::OnInitDialog ()
 				   | LVS_EX_FULLROWSELECT);
 
       if (listControl.InsertColumn(0,
-				  T_("Name"),
+				  T_(_T("Name")),
 				  LVCFMT_LEFT,
-				  listControl.GetStringWidth(T_("xxx \
+				  listControl.GetStringWidth(_T("xxx \
 cmbxti12")),
 				  0)
 	  < 0)
@@ -82,9 +82,9 @@ cmbxti12")),
 	}
 
       if (listControl.InsertColumn(1,
-				  T_("File"),
+				  T_(_T("File")),
 				  LVCFMT_LEFT,
-				  listControl.GetStringWidth(T_("xxx \
+				  listControl.GetStringWidth(_T("xxx \
 C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 				  1)
 	  < 0)
@@ -102,7 +102,7 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText = const_cast<char*>(it->name.c_str());
+	  lvitem.pszText = CA2T(it->name.c_str());
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
@@ -110,8 +110,8 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.iSubItem = 1;
 	  lvitem.pszText =
 	    (it->notLoadable
-	     ? T_("   >>> Not loadable - double-click to see details")
-	     : const_cast<char*>(it->fileName.c_str()));
+	     ? T_(_T("   >>> Not loadable - double-click to see details"))
+	     : CA2T(it->fileName.c_str()));
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
@@ -157,8 +157,8 @@ DocumentFontsPage::OnDoubleClick (/*[in]*/ NMHDR *	pNMHDR,
 	  return;
 	}
       CString title;
-      title.Format (T_("%s Logbook"), info.name.c_str());
-      TextViewerDialog::DoModal (this, title, info.transcript.c_str());
+      title.Format (T_(_T("%s Logbook")), static_cast<LPTSTR>(CA2T(info.name.c_str())));
+      TextViewerDialog::DoModal (this, CT2A(title), info.transcript.c_str());
       *pResult = 0;
     }
 

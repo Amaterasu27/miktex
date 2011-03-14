@@ -23,7 +23,7 @@ CWindowPlacement::~CWindowPlacement()
 
 //////////////////
 // Restore window placement from profile key
-BOOL CWindowPlacement::Restore(LPCSTR lpKeyName, CWnd* pWnd)
+BOOL CWindowPlacement::Restore(LPCTSTR lpKeyName, CWnd* pWnd)
 {
    GetProfileWP(lpKeyName);
 
@@ -40,33 +40,33 @@ BOOL CWindowPlacement::Restore(LPCSTR lpKeyName, CWnd* pWnd)
 
 //////////////////
 // Get window placement from profile.
-void CWindowPlacement::GetProfileWP(LPCSTR lpKeyName)
+void CWindowPlacement::GetProfileWP(LPCTSTR lpKeyName)
 {
    CWinApp *pApp = AfxGetApp();
    ASSERT_VALID(pApp);
 
-   showCmd = pApp->GetProfileInt(lpKeyName, "wp.showCmd", showCmd);
-   flags   = pApp->GetProfileInt(lpKeyName, "wp.flags", flags);
+   showCmd = pApp->GetProfileInt(lpKeyName, _T("wp.showCmd"), showCmd);
+   flags   = pApp->GetProfileInt(lpKeyName, _T("wp.flags"), flags);
 
-ptMinPosition.x = pApp->GetProfileInt(lpKeyName, "wp.ptMinPosition.x", 
+ptMinPosition.x = pApp->GetProfileInt(lpKeyName, _T("wp.ptMinPosition.x"), 
       ptMinPosition.x);
-ptMinPosition.y = pApp->GetProfileInt(lpKeyName, "wp.ptMinPosition.y",
+ptMinPosition.y = pApp->GetProfileInt(lpKeyName, _T("wp.ptMinPosition.y"),
       ptMinPosition.y);
-ptMaxPosition.x = pApp->GetProfileInt(lpKeyName, "wp.ptMaxPosition.x", 
+ptMaxPosition.x = pApp->GetProfileInt(lpKeyName, _T("wp.ptMaxPosition.x"), 
       ptMaxPosition.x);
-ptMaxPosition.y = pApp->GetProfileInt(lpKeyName, "wp.ptMaxPosition.y",
+ptMaxPosition.y = pApp->GetProfileInt(lpKeyName, _T("wp.ptMaxPosition.y"),
       ptMaxPosition.y);
 
    RECT& rc = rcNormalPosition;  // because I hate typing
-   rc.left  = pApp->GetProfileInt(lpKeyName, "wp.left",   rc.left);
-   rc.right = pApp->GetProfileInt(lpKeyName, "wp.right",  rc.right);
-   rc.top   = pApp->GetProfileInt(lpKeyName, "wp.top",    rc.top);
-   rc.bottom= pApp->GetProfileInt(lpKeyName, "wp.bottom", rc.bottom);
+   rc.left  = pApp->GetProfileInt(lpKeyName, _T("wp.left"),   rc.left);
+   rc.right = pApp->GetProfileInt(lpKeyName, _T("wp.right"),  rc.right);
+   rc.top   = pApp->GetProfileInt(lpKeyName, _T("wp.top"),    rc.top);
+   rc.bottom= pApp->GetProfileInt(lpKeyName, _T("wp.bottom"), rc.bottom);
 }
 
 ////////////////
 // Save window placement in app profile
-void CWindowPlacement::Save(LPCSTR lpKeyName, CWnd* pWnd)
+void CWindowPlacement::Save(LPCTSTR lpKeyName, CWnd* pWnd)
 {
    pWnd->GetWindowPlacement(this);
    WriteProfileWP(lpKeyName);
@@ -74,20 +74,20 @@ void CWindowPlacement::Save(LPCSTR lpKeyName, CWnd* pWnd)
 
 //////////////////
 // Write window placement to app profile
-void CWindowPlacement::WriteProfileWP(LPCSTR lpKeyName)
+void CWindowPlacement::WriteProfileWP(LPCTSTR lpKeyName)
 {
    CWinApp *pApp = AfxGetApp();
    ASSERT_VALID(pApp);
-   pApp->WriteProfileInt(lpKeyName, "wp.showCmd",         showCmd);
-   pApp->WriteProfileInt(lpKeyName, "wp.flags",           flags);
-   pApp->WriteProfileInt(lpKeyName, "wp.ptMinPosition.x", ptMinPosition.x);
-   pApp->WriteProfileInt(lpKeyName, "wp.ptMinPosition.y", ptMinPosition.y);
-   pApp->WriteProfileInt(lpKeyName, "wp.ptMaxPosition.x", ptMaxPosition.x);
-   pApp->WriteProfileInt(lpKeyName, "wp.ptMaxPosition.y", ptMaxPosition.y);
-   pApp->WriteProfileInt(lpKeyName, "wp.left",  rcNormalPosition.left);
-   pApp->WriteProfileInt(lpKeyName, "wp.right", rcNormalPosition.right);
-   pApp->WriteProfileInt(lpKeyName, "wp.top",   rcNormalPosition.top);
-   pApp->WriteProfileInt(lpKeyName, "wp.bottom",rcNormalPosition.bottom);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.showCmd"),         showCmd);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.flags"),           flags);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.ptMinPosition.x"), ptMinPosition.x);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.ptMinPosition.y"), ptMinPosition.y);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.ptMaxPosition.x"), ptMaxPosition.x);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.ptMaxPosition.y"), ptMaxPosition.y);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.left"),  rcNormalPosition.left);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.right"), rcNormalPosition.right);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.top"),   rcNormalPosition.top);
+   pApp->WriteProfileInt(lpKeyName, _T("wp.bottom"),rcNormalPosition.bottom);
 }
 
 // The ugly casts are required to help the VC++ 3.0 compiler decide which

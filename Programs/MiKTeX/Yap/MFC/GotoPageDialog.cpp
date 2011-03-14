@@ -1,6 +1,6 @@
 /* GotoPageDialog.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -60,7 +60,7 @@ GotoPageDialog::OnInitDialog ()
     {
       for (int pageIdx = 0; pageIdx < pDviDoc->GetPageCount(); ++ pageIdx)
 	{
-	  pageComboBox.AddString (pDviDoc->GetPageName(pageIdx));
+	  pageComboBox.AddString (CA2T(pDviDoc->GetPageName(pageIdx)));
 	}
       if (this->pageIdx >= 0)
 	{

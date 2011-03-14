@@ -12,12 +12,12 @@ struct CWindowPlacement : public WINDOWPLACEMENT {
    ~CWindowPlacement();
    
    // Read/write to app profile
-   void GetProfileWP(LPCSTR lpKeyName);
-   void WriteProfileWP(LPCSTR lpKeyName);
+   void GetProfileWP(LPCTSTR lpKeyName);
+   void WriteProfileWP(LPCTSTR lpKeyName);
 
    // Save/restore window pos (from app profile)
-   void Save(LPCSTR lpKeyName, CWnd* pWnd);
-   BOOL Restore(LPCSTR lpKeyName, CWnd* pWnd);
+   void Save(LPCTSTR lpKeyName, CWnd* pWnd);
+   BOOL Restore(LPCTSTR lpKeyName, CWnd* pWnd);
 
    // Save/restore from archive
    friend CArchive& operator<<(CArchive& ar, const CWindowPlacement& wp);

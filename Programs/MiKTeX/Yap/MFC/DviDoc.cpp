@@ -151,7 +151,7 @@ DviDoc::BeginDviPrinting (/*[in]*/ const CDC * pPrinterDC)
   pDvi = 0;
   try
     {
-      CreateDocument (GetPathName());
+      CreateDocument (CT2A(GetPathName()));
     }
   catch (const exception &)
     {
@@ -232,7 +232,7 @@ DviDoc::Reread ()
     {
       delete pDvi;
     }
-  CreateDocument (GetPathName());
+  CreateDocument (CT2A(GetPathName()));
 }
 
 /* _________________________________________________________________________
@@ -544,7 +544,7 @@ DviDoc::GetDviFileStatus ()
 	  modificationTime = File::GetLastWriteTime(PathName(GetPathName()));
 	  if (timeMod != modificationTime)
 	    {
-	      YapLog (T_("%s has been modified"), Q_(GetPathName()));
+	      YapLog (T_("%s has been modified"), Q_(CT2A(GetPathName())));
 	      modificationTime = timeMod;
 	      fileStatus = DVIFILE_MODIFIED;
 	    }

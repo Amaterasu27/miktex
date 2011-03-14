@@ -20,7 +20,7 @@
 
 #pragma once
 
-#define YAP_WND_CLASS "MiKTeX_yap"
+#define YAP_WND_CLASS _T("MiKTeX_yap")
 
 #include "DviStatusBar.h"
 

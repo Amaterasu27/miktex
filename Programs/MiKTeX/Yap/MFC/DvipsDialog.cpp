@@ -1,6 +1,6 @@
 /* DvipsDialog.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -103,8 +103,8 @@ DvipsDialog::OnInitDialog ()
 	      if (! OpenPrinter(lppi1->pName, &hPrinter, 0))
 		{
 #if 1
-		  TraceStream::TraceLastWin32Error (T_("OpenPrinter"),
-						    lppi1->pName,
+		  TraceStream::TraceLastWin32Error ("OpenPrinter",
+						    CT2A(lppi1->pName),
 						    __FILE__,
 						    __LINE__);
 		  continue;
@@ -150,7 +150,7 @@ DvipsDialog::OnInitDialog ()
       size_t size = 300;
       if (Utils::GetDefPrinter(szDefaultPrinter, &size))
 	{
-	  if (m_comboPrinterName.SelectString(-1, szDefaultPrinter) < 0)
+	  if (m_comboPrinterName.SelectString(-1, CA2T(szDefaultPrinter)) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("DvipsDialog::OnInitDialog");
 	    }

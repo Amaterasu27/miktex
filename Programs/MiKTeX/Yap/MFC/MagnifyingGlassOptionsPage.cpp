@@ -1,6 +1,6 @@
 /* MagnifyingGlassOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -72,13 +72,13 @@ MagnifyingGlassOptionsPage::MagnifyingGlassOptionsPage ()
 
 {
   smallShrinkFactor.Format
-    ("%d",
+    (_T("%d"),
      g_pYapConfig->magGlassSmallShrinkFactor);
   mediumShrinkFactor.Format
-    ("%d",
+    (_T("%d"),
      g_pYapConfig->magGlassMediumShrinkFactor);
   largeShrinkFactor.Format
-    ("%d",
+    (_T("%d"),
      g_pYapConfig->magGlassLargeShrinkFactor);
 }
 

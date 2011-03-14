@@ -160,7 +160,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT lpCreateStruct)
       EnableDocking (CBRS_ALIGN_ANY);
       DockControlBar (&toolBar);
 
-      LoadBarState ("Settings");
+      LoadBarState (_T("Settings"));
 
       return (0);
     }
@@ -186,7 +186,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT lpCreateStruct)
 BOOL
 MainFrame::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs) 
 {
-  SetTitle (T_("Yap"));
+  SetTitle (T_(_T("Yap")));
   cs.lpszClass = YAP_WND_CLASS;
   return (CMDIFrameWnd::PreCreateWindow(cs));
 }
@@ -201,7 +201,7 @@ MainFrame::OnViewOptions ()
 {
   try
     {
-      CPropertySheet dlg (T_("Options"), 0, 0);
+      CPropertySheet dlg (T_(_T("Options")), 0, 0);
       
 #if 0
       dlg.EnableStackedTabs (FALSE);
@@ -259,13 +259,13 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
@@ -274,14 +274,14 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
 	  || pDviView->GetCurrentPageIdx() < 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       int m = pDviView->GetCurrentPageIdx() + 1;
       int n = pDviDoc->GetPageCount();
       CString str;
       str.Format (_T("Page: %s (%d%s of %d)"),
-		  CA2T(pDviDoc->GetPageName(pDviView->GetCurrentPageIdx())),
+		  static_cast<LPTSTR>(CA2T(pDviDoc->GetPageName(pDviView->GetCurrentPageIdx()))),
 		  m,
 		  (m % 10 == 1
 		   ? (m % 100 == 11
@@ -332,9 +332,9 @@ MainFrame::OnClose ()
 {
   if (! IsFullScreen())
     {
-      SaveBarState ("Settings");
+      SaveBarState (_T("Settings"));
       CWindowPlacement wp;
-      wp.Save ("Settings", this);
+      wp.Save (_T("Settings"), this);
     }
   CMDIFrameWnd::OnClose ();
 }
@@ -364,13 +364,13 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
@@ -387,7 +387,7 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviView->GetSource(sourceFileName, line))
 	{
 	  CString str;
-	  str.Format (_T("%s L:%d"), CA2T(sourceFileName.Get()), line);
+	  str.Format (_T("%s L:%d"), static_cast<LPTSTR>(CA2T(sourceFileName.Get())), line);
 	  pCmdUI->SetText (str); 
 	}
       else
@@ -426,13 +426,13 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CDocument * pDoc = pChild->GetActiveDocument();
@@ -441,7 +441,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED
 	  || ! reinterpret_cast<DviView*>(pView)->GetPoint(x, y))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
 #define pxl2bp(pxl) (((pxl) * 72.0) / pDviDoc->GetDisplayResolution())
@@ -486,7 +486,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       str.Format (_T("%.*f,%.*f%s"),
 		  precision, x2,
 		  precision, y2,
-		  lpszUnit);
+		  static_cast<LPTSTR>(CA2T(lpszUnit)));
       pCmdUI->SetText (str); 
     }
 
@@ -515,20 +515,20 @@ MainFrame::OnUpdateEffectivePageMode (/*[in,out]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pChild != 0);
       if (pChild == 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CDocument * pDoc = pChild->GetActiveDocument();
       DviDoc * pDviDoc = reinterpret_cast<DviDoc*>(pDoc);
       if (pDviDoc->GetDviFileStatus() != DviDoc::DVIFILE_LOADED)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       CView * pView = pChild->GetActiveView();
       if (pView == 0 || ! pView->IsKindOf(RUNTIME_CLASS(DviView)))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       DviView * pDviView = reinterpret_cast<DviView*>(pView);
@@ -536,12 +536,12 @@ MainFrame::OnUpdateEffectivePageMode (/*[in,out]*/ CCmdUI * pCmdUI)
       int x, y;
       if (! pDviView->GetPageUnderCursor(pageIdx, x, y))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       if (pDviDoc->GetPageStatus(pageIdx) != PageStatus::Loaded)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       DviPage * pDviPage = pDviDoc->GetLoadedPage(pageIdx);
@@ -552,11 +552,11 @@ MainFrame::OnUpdateEffectivePageMode (/*[in,out]*/ CCmdUI * pCmdUI)
       AutoUnlockPage autoUnlockPage (pDviPage);
       if (pDviPage->GetDviPageMode() == DviPageMode::Dvips)
 	{
-	  pCmdUI->SetText ("Dvips");
+	  pCmdUI->SetText (_T("Dvips"));
 	}
       else
 	{
-	  pCmdUI->SetText ("Pk");
+	  pCmdUI->SetText (_T("Pk"));
 	}
     }
 

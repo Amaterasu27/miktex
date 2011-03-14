@@ -1,6 +1,6 @@
 /* PrintOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
    
    This file is part of Yap.
 
@@ -65,10 +65,10 @@ PrintOptionsPage::OnInitDialog ()
       for (int idx = 0;
 	   SessionWrapper(true)->GetMETAFONTMode(idx, &mode); ++ idx)
 	{
-	  CString modeString = mode.szMnemonic;
-	  modeString += " (";
-	  modeString += mode.szDescription;
-	  modeString += ")";
+	  CString modeString = CA2T(mode.szMnemonic);
+	  modeString += _T(" (");
+	  modeString += CA2T(mode.szDescription);
+	  modeString += _T(")");
 	  if (modeComboBox.AddString(modeString) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("PrintOptionsPage::OnInitDialog");
@@ -80,7 +80,7 @@ PrintOptionsPage::OnInitDialog ()
 		  UNEXPECTED_CONDITION ("PrintOptionsPage::OnInitDialog");
 		}
 	      resolution = mode.iHorzRes;
-	      resolutionControl.SetWindowText (NUMTOSTR(resolution));
+	      resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
 	    }
 	}
     }
@@ -162,7 +162,7 @@ PrintOptionsPage::OnChangeMode ()
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))
 	{
 	  resolution = mode.iHorzRes;
-	  resolutionControl.SetWindowText (NUMTOSTR(resolution));
+	  resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
 	  metafontModeIdx = idx;
 	  SetModified (TRUE);
 	}
