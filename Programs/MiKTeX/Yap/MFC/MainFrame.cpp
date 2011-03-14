@@ -1,6 +1,6 @@
 /* MainFrame.cpp: main frame window
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -89,7 +89,6 @@ END_MESSAGE_MAP();
 namespace {
 
   UINT
-  BASED_CODE
   indicators[] =
     {
       ID_SEPARATOR,           // status line indicator
@@ -161,7 +160,7 @@ MainFrame::OnCreate (/*[in,out]*/ LPCREATESTRUCT lpCreateStruct)
       EnableDocking (CBRS_ALIGN_ANY);
       DockControlBar (&toolBar);
 
-      LoadBarState (T_("Settings"));
+      LoadBarState ("Settings");
 
       return (0);
     }

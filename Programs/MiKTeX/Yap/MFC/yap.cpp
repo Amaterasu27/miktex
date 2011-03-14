@@ -1,6 +1,6 @@
 /* yap.cpp: Yet Another Previewer
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -51,48 +51,48 @@ enum {
 namespace {
   struct poptOption const aoption[] = {
     {
-      T_("dde"), 0,
+      "dde", 0,
       POPT_ARG_NONE, 0,
       OPT_DDE,
       T_("Starts up for DDE."), 0
     },
     {
-      T_("find-src-special"), 's',
+      "find-src-special", 's',
       POPT_ARG_STRING, 0,
       OPT_FIND_SRC_SPECIAL,
       T_("Initiates forward search."), T_("SrcSpecial")
     },
     {
-      T_("goto-hyper-label"), 'g',
+      "goto-hyper-label", 'g',
       POPT_ARG_STRING, 0,
       OPT_GOTO_HYPER_LABEL,
       T_("Jumps to a HyperTeX label."), T_("HYPERLABEL")
     },
     {
-      T_("print"), 0,
+      "print", 0,
       POPT_ARG_NONE, 0,
       OPT_PRINT,
       T_("Sends the document to the default printer."), 0
     },
     {
-      T_("register"), 0,
+      "register", 0,
       POPT_ARG_NONE, 0,
       OPT_REGISTER,
       T_("Stores Yap related keys in the Windows Registry."), 0
     },
     {
-      T_("single-instance"), '1',
+      "single-instance", '1',
       POPT_ARG_NONE, 0,
       OPT_SINGLE_INSTANCE,
       T_("Reuses an application window, if one exists."), 0
     },
     {
-      T_("trace"), 0, POPT_ARG_STRING, 0,
+      "trace", 0, POPT_ARG_STRING, 0,
       OPT_TRACE,
       T_("Turns tracing on."), T_("TRACEFLAGS")
     },
     {
-      T_("unregister"), 0,
+      "unregister", 0,
       POPT_ARG_NONE, 0,
       OPT_UNREGISTER,
       T_("Removes Yap related keys from the Windows Registry."), 0
@@ -194,7 +194,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 
   if (option < -1)
     {
-      FATAL_MIKTEX_ERROR (T_("ParseYapCommandLine"),
+      FATAL_MIKTEX_ERROR ("ParseYapCommandLine",
 			  T_("Invalid Yap command-line."),
 			  0);
     }
@@ -204,7 +204,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
   // parse the rest
   for (; leftovers != 0 && *leftovers != 0; ++ leftovers)
     {
-      if (_tcsicmp(*leftovers, T_("/dde")) == 0)
+      if (_tcsicmp(*leftovers, "/dde") == 0)
 	{
 	  AfxOleSetUserCtrl (FALSE);
 	  cmdInfo.m_nShellCommand = CCommandLineInfo::FileDDE;
@@ -260,6 +260,7 @@ END_MESSAGE_MAP();
 YapApplication::YapApplication ()
   : tracing (false)
 {
+  SetAppID ("MiKTeXorg.MiKTeX.Yap." MIKTEX_COMPONENT_VERSION_STR);
   EnableHtmlHelp ();
 }
 
@@ -317,21 +318,24 @@ YapApplication::InitInstance ()
   initCtrls.dwICC = ICC_WIN95_CLASSES;
   if (! InitCommonControlsEx(&initCtrls))
     {
-      AfxMessageBox (T_("The application could not be initialized (1)."),
+      AfxMessageBox ("The application could not be initialized (1).",
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   if (! CWinApp::InitInstance())
     {
-      AfxMessageBox (T_("The application could not be initialized (2)."),
+      AfxMessageBox ("The application could not be initialized (2).",
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
-  if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED)))
+  EnableTaskbarInteraction (FALSE);
+
+  // don't use COINIT_MULTITHREADED; see KB828643
+  if (FAILED(CoInitializeEx(0, COINIT_APARTMENTTHREADED)))
     {
-      AfxMessageBox (T_("The application could not be initialized (3)."),
+      AfxMessageBox ("The application could not be initialized (3).",
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
@@ -342,7 +346,7 @@ YapApplication::InitInstance ()
       pSession.CreateSession (Session::InitInfo("yap"));
       
       trace_yap = auto_ptr<TraceStream>(TraceStream::Open("yap"));
-      trace_error = auto_ptr<TraceStream>(TraceStream::Open(T_("error")));
+      trace_error = auto_ptr<TraceStream>(TraceStream::Open("error"));
       
       // get command-line arguments
       YapCommandLineInfo cmdInfo;
@@ -469,7 +473,7 @@ YapApplication::InitInstance ()
       
       // the main window has been initialized, so show and update it
       CWindowPlacement wp;
-      if (! wp.Restore(T_("Settings"), pMainFrame))
+      if (! wp.Restore("Settings", pMainFrame))
 	{
 	  pMainFrame->ShowWindow (m_nCmdShow);
 	}
@@ -700,24 +704,24 @@ YapApplication::ActivateFirstInstance
   path.MakeAbsolute ();
 
   CString ddeCommand;
-  ddeCommand.Format (T_("[open(\"%s\")]"), path.Get());
-  DdeExecute ("yap", T_("system"), ddeCommand);
+  ddeCommand.Format ("[open(\"%s\")]", path.Get());
+  DdeExecute ("yap", "system", ddeCommand);
   
   // delegate DVI search
   if (cmdInfo.sourceLineNum >= 0)
     {
-      ddeCommand.Format (T_("[findsrc(\"%d %s\")]"),
+      ddeCommand.Format ("[findsrc(\"%d %s\")]",
 			 static_cast<int>(cmdInfo.sourceLineNum),
 			 static_cast<const char *>(cmdInfo.sourceFile));
-      DdeExecute ("yap", T_("system"), ddeCommand);
+      DdeExecute ("yap", "system", ddeCommand);
     }
   
   // delegate hyper-goto
   if (cmdInfo.hyperLabel.GetLength() > 0)
     {
-      ddeCommand.Format (T_("[gotohyperlabel(\"%s\")]"),
+      ddeCommand.Format ("[gotohyperlabel(\"%s\")]",
 			 static_cast<const char *>(cmdInfo.hyperLabel));
-      DdeExecute ("yap", T_("system"), ddeCommand);
+      DdeExecute ("yap", "system", ddeCommand);
     }
   
   return (true);
@@ -751,7 +755,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 	    /*[in]*/ const char * lpszTopic,
 	    /*[in]*/ const char * lpszCommand)
 {
-  YapLog (T_("DdeExecute(\"%s\", \"%s\", \"%s\")"),
+  YapLog ("DdeExecute(\"%s\", \"%s\", \"%s\")",
 	  lpszServer,
 	  lpszTopic,
 	  lpszCommand);
@@ -763,7 +767,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 		  0);
   if (result != DMLERR_NO_ERROR)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE communication could not be initiated."),
 			  NUMTOSTR(result));
     }
@@ -771,7 +775,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
   HSZ hszServer = DdeCreateStringHandle(inst, lpszServer, CP_WINANSI);
   if (hszServer == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE communication could not be initiated."),
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
@@ -779,7 +783,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
   HSZ hszTopic = DdeCreateStringHandle(inst, lpszTopic, CP_WINANSI);
   if (hszTopic == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE communication could not be initiated."),
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
@@ -787,7 +791,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
   HCONV hconv = DdeConnect(inst, hszServer, hszTopic, 0);
   if (hconv == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE connection could not be established."),
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
@@ -800,7 +804,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			0, 0, CF_TEXT, 0);
   if (hddedata == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE connection could not be established."),
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
@@ -815,7 +819,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			   0)
       == 0)
     {
-      FATAL_MIKTEX_ERROR (T_("DdeExecute"),
+      FATAL_MIKTEX_ERROR ("DdeExecute",
 			  T_("DDE transaction failed."),
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
@@ -839,14 +843,14 @@ YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
 
   try
     {
-      YapLog (T_("OnDDECommand(\"%s\")"), lpszCommand);
+      YapLog ("OnDDECommand(\"%s\")", lpszCommand);
 
       done = CWinApp::OnDDECommand(lpszCommand);
 
       if (! done)
 	{
 	  CString ddeCommand = lpszCommand;
-	  if (ddeCommand.Left(10) == T_("[findsrc(\""))
+	  if (ddeCommand.Left(10) == "[findsrc(\"")
 	    {
 	      CString src = ddeCommand.Right(ddeCommand.GetLength() - 10);
 	      int i = src.Find('"');
@@ -863,7 +867,7 @@ YapApplication::OnDDECommand (/*[in]*/ char * lpszCommand)
 		  done = TRUE;
 		}
 	    }
-	  else if (ddeCommand.Left(17) == T_("[gotohyperlabel(\""))
+	  else if (ddeCommand.Left(17) == "[gotohyperlabel(\"")
 	    {
 	      CString label = ddeCommand.Right(ddeCommand.GetLength() - 17);
 	      int i = label.Find('"');
@@ -1030,7 +1034,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 	      break;
 	    default:
 	      FATAL_MIKTEX_ERROR
-		(T_("StartEditor"),
+		("StartEditor",
 		 T_("The editor command is not valid."),
 		 (static_cast<const char *>
 		  (g_pYapConfig->inverseSearchCommandLine)));
@@ -1080,7 +1084,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
 			&startupInfo,
 			&processInfo))
     {
-      FATAL_WINDOWS_ERROR (T_("CreateProcess"), commandLine.c_str());
+      FATAL_WINDOWS_ERROR ("CreateProcess", commandLine.c_str());
     }
   CloseHandle (processInfo.hThread);
   CloseHandle (processInfo.hProcess);

@@ -1,6 +1,6 @@
 /* StdAfx.h: includes precompiled header files			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -20,6 +20,10 @@
 
 #include <miktex/Core/First>
 
+#if ! defined(_SECURE_ATL)
+#define _SECURE_ATL 1
+#endif
+
 #if ! defined(VC_EXTRALEAN)
 #  define VC_EXTRALEAN
 #endif
@@ -34,6 +38,10 @@
 #include <afxext.h>
 #include <afxdisp.h>
 #include <afxmt.h>
+
+#if ! defined(_AFX_NO_OLE_SUPPORT)
+#  include <afxdtctl.h>
+#endif
 
 #if ! defined(_AFX_NO_AFXCMN_SUPPORT)
 #  include <afxcmn.h>
