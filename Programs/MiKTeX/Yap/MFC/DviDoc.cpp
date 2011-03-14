@@ -100,14 +100,14 @@ DviDoc::~DviDoc ()
    _________________________________________________________________________ */
 
 BOOL
-DviDoc::OnOpenDocument (/*[in]*/ const char * lpszPathName) 
+DviDoc::OnOpenDocument (/*[in]*/ LPCTSTR lpszPathName) 
 {
   try
     {
       MIKTEX_ASSERT (pDvi == 0);
       MIKTEX_ASSERT (pDviSave == 0);
       MIKTEX_ASSERT (! isPrintContext);
-      CreateDocument (lpszPathName);
+      CreateDocument (CT2A(lpszPathName));
       return (TRUE);
     }
   catch (const MiKTeXException & e)

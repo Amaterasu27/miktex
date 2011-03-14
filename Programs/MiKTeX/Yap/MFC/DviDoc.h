@@ -246,7 +246,7 @@ public:
 public:
   virtual
   BOOL
-  OnOpenDocument (/*[in]*/ const char * lpszPathName);
+  OnOpenDocument (/*[in]*/ LPCTSTR lpszPathName);
 
 protected:
   virtual
