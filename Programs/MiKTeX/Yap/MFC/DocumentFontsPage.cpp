@@ -102,16 +102,18 @@ C:\\texmf\\fonts\\pk\\ljfour\\public\\cmextra\\dpi600\\cmbxti12.pk")),
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText = CA2T(it->name.c_str());
+	  CString name (it->name.c_str());
+	  lvitem.pszText = name.GetBuffer();
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
+	  CString fileName (it->fileName.c_str());
 	  lvitem.pszText =
 	    (it->notLoadable
 	     ? T_(_T("   >>> Not loadable - double-click to see details"))
-	     : CA2T(it->fileName.c_str()));
+	     : fileName.GetBuffer());
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("DocumentFontsPage::OnInitDialog");

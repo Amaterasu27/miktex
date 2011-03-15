@@ -1,6 +1,6 @@
 /* stdafx.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 

@@ -1,6 +1,6 @@
 /* PropPageRoots.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -226,10 +226,11 @@ PropPageTeXMFRoots::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 	  if (szDrive[0] != 0)
 	    {
 	      PathName root (szDrive, "\\", 0, 0);
+	      CString rootStr (root.Get());
 	      ::SendMessage (hwnd,
 			     BFFM_SETSELECTION,
 			     TRUE,
-			     reinterpret_cast<LPARAM>(root.Get()));
+			     reinterpret_cast<LPARAM>(rootStr.GetString()));
 	    }
 	  return (0);
 	default:
@@ -252,19 +253,20 @@ PropPageTeXMFRoots::OnAdd ()
 {
   try
     {
-      BROWSEINFOA browseInfo;
+      BROWSEINFO browseInfo;
       ZeroMemory (&browseInfo, sizeof(browseInfo));
       browseInfo.hwndOwner = GetSafeHwnd();
       browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
+#if 0
+      browseInfo.ulFlags |= BIF_USENEWUI;
+#else
       // We cannot use BIF_USENEWUI because we are running in a
       // multithreaded apartment.  See MSDN "INFO: Calling Shell
       // Functions and Interfaces from a Multithreaded Apartment".
-#if 0
-      browseInfo.ulFlags |= BIF_USENEWUI;
 #endif
       browseInfo.lpfn = BrowseCallbackProc;
       browseInfo.lParam = reinterpret_cast<LPARAM>(this);
-      browseInfo.lpszTitle = T_("Select the root directory to be added:");
+      browseInfo.lpszTitle = T_(_T("Select the root directory to be added:"));
       LPITEMIDLIST pidlRoot = 0;
       if (SHGetSpecialFolderLocation(0, CSIDL_DRIVES, &pidlRoot) != S_OK)
 	{
@@ -272,20 +274,20 @@ PropPageTeXMFRoots::OnAdd ()
 	}
       AutoCoTaskMem autoFree (pidlRoot);
       browseInfo.pidlRoot = pidlRoot;
-      LPITEMIDLIST pidl = SHBrowseForFolderA(&browseInfo);
+      LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
       if (pidl == 0)
 	{
 	  return;
 	}
-      char szDir[BufferSizes::MaxPath];
-      BOOL done = SHGetPathFromIDListA(pidl, szDir);
+      _TCHAR szDir[BufferSizes::MaxPath];
+      BOOL done = SHGetPathFromIDList(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! done)
 	{
 	  FATAL_WINDOWS_ERROR ("SHGetPathFromIDList", 0);
 	}
       CheckRoot (szDir);
-      LVITEMA lvitem;
+      LVITEM lvitem;
       lvitem.iItem = listControl.GetItemCount();
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
@@ -398,7 +400,7 @@ PropPageTeXMFRoots::OnMovedown ()
       roots[idx] = roots[idx + 1];
       roots[idx + 1] = tmp;
 
-      LVITEMA lvitem;
+      LVITEM lvitem;
       lvitem.mask = LVIF_PARAM;
       lvitem.iSubItem = 0;
 
@@ -461,7 +463,7 @@ PropPageTeXMFRoots::OnMoveup ()
       roots[idx] = roots[idx - 1];
       roots[idx - 1] = tmp;
 
-      LVITEMA lvitem;
+      LVITEM lvitem;
       lvitem.mask = LVIF_PARAM;
       lvitem.iSubItem = 0;
       
@@ -576,9 +578,9 @@ PropPageTeXMFRoots::InsertColumn (/*[in]*/ int		colIdx,
 				  /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -758,16 +760,16 @@ PropPageTeXMFRoots::Refresh ()
     {
       continue;
     }
-    LVITEMA lvitem;
+    LVITEM lvitem;
     lvitem.iItem = roots.size();
     lvitem.mask = LVIF_TEXT | LVIF_PARAM;
     lvitem.iSubItem = 0;
-    PathName compacted;
-    if (! PathCompactPathEx(compacted.GetBuffer(), root.Get(), 45, 0))
+    CString compacted;
+    if (! PathCompactPathEx(compacted.GetBuffer(BufferSizes::MaxPath), CA2T(root.Get()), 45, 0))
     {
-      compacted = root;
+      compacted = root.Get();
     }
-    lvitem.pszText = const_cast<char*>(compacted.Get());
+    lvitem.pszText = compacted.GetBuffer();
     lvitem.lParam = roots.size();
     if (listControl.InsertItem(&lvitem) < 0)
     {
@@ -826,7 +828,8 @@ PropPageTeXMFRoots::Refresh ()
     {
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 1;
-      lvitem.pszText = const_cast<char*>(description.c_str());
+      CString descriptionString (description.c_str());
+      lvitem.pszText = descriptionString.GetBuffer();
       if (! listControl.SetItem(&lvitem))
       {
 	FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -1037,7 +1040,7 @@ This directory can be used for local additions.");
 	}
       Utils::CopyString (pInfoTip->pszText,
 			 pInfoTip->cchTextMax,
-			 info.c_str());
+			 CA2T(info.c_str()));
     }
   catch (const MiKTeXException & e)
     {

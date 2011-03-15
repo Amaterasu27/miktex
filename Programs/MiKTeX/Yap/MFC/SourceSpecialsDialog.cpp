@@ -169,19 +169,22 @@ SourceSpecialsDialog::OnInitDialog ()
 	  lvitem.iItem = idx;
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iSubItem = 0;
-	  lvitem.pszText = CA2T(it->pageName.c_str());
+	  CString pageName (it->pageName.c_str());
+	  lvitem.pszText = pageName.GetBuffer();
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 1;
-	  lvitem.pszText = CA2T(it->fileName.Get());
+	  CString fileName (it->fileName.Get());
+	  lvitem.pszText = fileName.GetBuffer();
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
 	    }
 	  lvitem.iSubItem = 2;
-	  lvitem.pszText = CA2T(NUMTOSTR(it->line));
+	  CString line (NUMTOSTR(it->line));
+	  lvitem.pszText = line.GetBuffer();
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      UNEXPECTED_CONDITION ("SourceSpecialsDialog::OnInitDialog");
@@ -219,31 +222,31 @@ SourceSpecialsDialog::OnGoto ()
       int idx = listControl.GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
       MIKTEX_ASSERT (idx >= 0);
       LV_ITEM item;
-      char szPageNum[BufferSizes::MaxPath];
-      char szLineNum[BufferSizes::MaxPath];
-      char szFileName[BufferSizes::MaxPath];
+      _TCHAR szPageNum[BufferSizes::MaxPath];
+      _TCHAR szLineNum[BufferSizes::MaxPath];
+      _TCHAR szFileName[BufferSizes::MaxPath];
       item.mask = LVIF_TEXT;
       item.cchTextMax = BufferSizes::MaxPath;
       item.iItem = idx;
       item.iSubItem = 0;
-      item.pszText = CA2T(szPageNum);
+      item.pszText = szPageNum;
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 1;
-      item.pszText = CA2T(szFileName);
+      item.pszText = szFileName;
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
-      item.pszText = CA2T(szLineNum);
+      item.pszText = szLineNum;
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
-      pView->GotoSrcSpecial (atoi(szLineNum), szFileName);
+      pView->GotoSrcSpecial (_ttoi(szLineNum), CT2A(szFileName));
     }
   catch (const MiKTeXException & e)
     {

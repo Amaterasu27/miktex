@@ -1,6 +1,6 @@
 /* MpmView.cpp:
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -92,15 +92,15 @@ MpmView::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs)
    _________________________________________________________________________ */
 
 void
-MpmView::InsertColumn (/*[in]*/ int			colIdx,
+MpmView::InsertColumn (/*[in]*/ int		colIdx,
 		       /*[in]*/ const char *	lpszLabel,
 		       /*[in]*/ const char *	lpszLongest)
 {
   CListCtrl & listControl = GetListCtrl();
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -433,7 +433,7 @@ MpmView::OnButtonSearchClicked ()
       while (pIter->GetNext(packageInfo))
 	{
 	  bool match = false;
-	  CString str = packageInfo.deploymentName.c_str();
+	  CString str (packageInfo.deploymentName.c_str());
 	  str.MakeLower ();
 	  match = (deploymentName.GetLength() == 0
 		    || str.Find(deploymentName) >= 0);
@@ -444,8 +444,8 @@ MpmView::OnButtonSearchClicked ()
 	  // <todo>
 	  match =
 	    (searchWords.GetLength() == 0
-	     || (packageInfo.title.find(searchWords) != string::npos
-		 || (packageInfo.description.find(searchWords)
+	     || (packageInfo.title.find(CT2A(searchWords)) != string::npos
+		 || (packageInfo.description.find(CT2A(searchWords))
 		     != string::npos)));
 	  // </todo>
 	  if (! match)
@@ -461,7 +461,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(fileNamePattern,
+		    PathName::Match(CT2A(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.docFiles.begin();
@@ -469,7 +469,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(fileNamePattern,
+		    PathName::Match(CT2A(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.sourceFiles.begin();
@@ -477,7 +477,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(fileNamePattern,
+		    PathName::Match(CT2A(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      match = found;
@@ -521,7 +521,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.mask = LVIF_TEXT | LVIF_PARAM;
   lvitem.iSubItem = 0;
   lvitem.lParam = idx;
-  lvitem.pszText = const_cast<char *>(packageInfo.deploymentName.c_str());
+  CString deploymentName (packageInfo.deploymentName.c_str());
+  lvitem.pszText = deploymentName.GetBuffer();
   if (listctrl.InsertItem(&lvitem) < 0)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
@@ -530,8 +531,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 1
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 1;
-  string str = pManager->GetContainerPath(packageInfo.deploymentName, true);
-  lvitem.pszText = const_cast<char *>(str.c_str());
+  CString str (pManager->GetContainerPath(packageInfo.deploymentName, true).c_str());
+  lvitem.pszText = str.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -539,9 +540,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
   // column 2
   lvitem.iSubItem = 2;
-  lvitem.pszText =
-    const_cast<char *>
-    (NUMTOSTR(static_cast<unsigned>(packageInfo.GetSize())));
+  CString size (NUMTOSTR(static_cast<unsigned>(packageInfo.GetSize())));
+  lvitem.pszText = size.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -551,8 +551,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   CString str2;
   lvitem.iSubItem = 3;
   CTime t (packageInfo.timePackaged);
-  str2 = t.FormatGmt("%Y-%m-%d");
-  lvitem.pszText = const_cast<char *>(str2.GetString());
+  str2 = t.FormatGmt(_T("%Y-%m-%d"));
+  lvitem.pszText = str2.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -567,9 +567,9 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   else
     {
       CTime t (packageInfo.timeInstalled);
-      str2 = t.FormatGmt("%Y-%m-%d");
+      str2 = t.FormatGmt(_T("%Y-%m-%d"));
     }
-  lvitem.pszText = const_cast<char *>(str2.GetString());
+  lvitem.pszText = str2.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -577,7 +577,8 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
   // column 5
   lvitem.iSubItem = 5;
-  lvitem.pszText = const_cast<char *>(packageInfo.title.c_str());
+  CString title (packageInfo.title.c_str());
+  lvitem.pszText = title.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -591,7 +592,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
 void
 MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
-				   /*[in]*/ CPoint	point)
+			/*[in]*/ CPoint	point)
 {
   try
     {
@@ -723,7 +724,7 @@ MpmView::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 
 void
 MpmView::OnNMDblclk (/*[in]*/ NMHDR *	pNMHDR,
-				/*[in]*/ LRESULT *	pResult)
+		     /*[in]*/ LRESULT *	pResult)
 {
   UNUSED_ALWAYS (pNMHDR);
   OnProperties ();
@@ -801,9 +802,9 @@ void MpmView::OnInstall ()
       CHECK_WINDOWS_ERROR ("CListCtrl::GetNextItem", 0);
       MIKTEX_ASSERT (toBeInstalled.size() > 0 || toBeRemoved.size() > 0);
       CString str1;
-      str1.Format ("%u", toBeInstalled.size());
+      str1.Format (_T("%u"), toBeInstalled.size());
       CString str2;
-      str2.Format ("%u", toBeRemoved.size());
+      str2.Format (_T("%u"), toBeRemoved.size());
       CString str;
       AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, str2);
       if (IsWindowsVista() && pSession->IsAdminMode())
@@ -819,13 +820,13 @@ void MpmView::OnInstall ()
 	  taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
 	  taskDialogConfig.pszWindowTitle =
 	    MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
-	  taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+	  taskDialogConfig.pszMainInstruction = T_(L"Do you want to proceed?");
 	  CStringW strContent (str);
 	  taskDialogConfig.pszContent = strContent;
 	  taskDialogConfig.cButtons = 2;
 	  TASKDIALOG_BUTTON const buttons[] = {
-	    {IDOK, L"Proceed"},
-	    {IDCANCEL, L"Cancel"}
+	    {IDOK, T_(L"Proceed"}),
+	    {IDCANCEL, T_(L"Cancel")}
 	  };
 	  taskDialogConfig.pButtons = buttons;
 	  taskDialogConfig.nDefaultButton = IDOK;
@@ -980,11 +981,11 @@ MpmView::OnResetView ()
 	(pApp->GetMainWnd()->IsKindOf(RUNTIME_CLASS(MainFrame)));
       MainFrame * pMain =
 	DYNAMIC_DOWNCAST(MainFrame, pApp->GetMainWnd());
-      pMain->GetDlgBarItem(IDC_EDIT_PACKAGE_NAME)->SetWindowText("");
+      pMain->GetDlgBarItem(IDC_EDIT_PACKAGE_NAME)->SetWindowText(_T(""));
       CString searchWords;
-      pMain->GetDlgBarItem(IDC_EDIT_WORDS)->SetWindowText("");
+      pMain->GetDlgBarItem(IDC_EDIT_WORDS)->SetWindowText(_T(""));
       CString strFileName;
-      pMain->GetDlgBarItem(IDC_EDIT_FILE_NAME)->SetWindowText("");
+      pMain->GetDlgBarItem(IDC_EDIT_FILE_NAME)->SetWindowText(_T(""));
       FillListView ();
     }
   catch (const MiKTeXException & e)

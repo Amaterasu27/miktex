@@ -1,6 +1,6 @@
 /* PropPageFormats.cpp:
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -101,7 +101,7 @@ PropPageFormats::OnMake ()
 	  int idx = listControl.GetNextSelectedItem(pos);
 	  CString formatKey = listControl.GetItemText(idx, 0);
 	  FormatInfo formatInfo =
-	    SessionWrapper(true)->GetFormatInfo(formatKey);
+	    SessionWrapper(true)->GetFormatInfo(CT2A(formatKey));
 	  CommandLineBuilder cmdLine;
 	  cmdLine.AppendOption ("--dump=", formatInfo.key);
 	  if (! pSheet->RunIniTeXMF(formatInfo.description.c_str(),
@@ -203,16 +203,16 @@ PropPageFormats::OnEdit ()
     {
       int idx = GetSelectedItem();
       CString formatKey = listControl.GetItemText(idx, 0);
-      FormatDefinitionDialog dlg (this, formatKey);
+      FormatDefinitionDialog dlg (this, CT2A(formatKey));
       if (dlg.DoModal() != IDOK)
 	{
 	  return;
 	}
       FormatInfo formatInfo = dlg.GetFormatInfo();
-      if (PathName::Compare(formatInfo.key.c_str(), formatKey) != 0)
+      if (PathName::Compare(formatInfo.key.c_str(), CT2A(formatKey)) != 0)
 	{
 	  // rename key: delete old, create new
-	  SessionWrapper(true)->DeleteFormatInfo (formatKey);
+	  SessionWrapper(true)->DeleteFormatInfo (CT2A(formatKey));
 	  formatKey = formatInfo.key.c_str();
 	}
       SessionWrapper(true)->SetFormatInfo (formatInfo);
@@ -244,7 +244,7 @@ PropPageFormats::OnRemove ()
 	{
 	  int idx = GetSelectedItem();
 	  CString formatKey = listControl.GetItemText(idx, 0);
-	  SessionWrapper(true)->DeleteFormatInfo (formatKey);
+	  SessionWrapper(true)->DeleteFormatInfo (CT2A(formatKey));
 	  if (! listControl.DeleteItem(idx))
 	    {
 	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
@@ -268,14 +268,14 @@ PropPageFormats::OnRemove ()
    _________________________________________________________________________ */
 
 void
-PropPageFormats::InsertColumn (/*[in]*/ int			colIdx,
+PropPageFormats::InsertColumn (/*[in]*/ int		colIdx,
 			       /*[in]*/ const char *	lpszLabel,
 			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -369,7 +369,8 @@ PropPageFormats::Refresh ()
       lvitem.iItem = static_cast<int>(idx);
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iSubItem = 0;
-      lvitem.pszText = const_cast<char*>(formatInfo.key.c_str());
+      CString key (formatInfo.key.c_str());
+      lvitem.pszText = key.GetBuffer();
       lvitem.lParam = idx;
       int whereIndex = listControl.InsertItem(&lvitem);
       if (whereIndex < 0)
@@ -379,14 +380,15 @@ PropPageFormats::Refresh ()
       lvitem.iItem = whereIndex;
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 1;
-      lvitem.pszText = const_cast<char*>(formatInfo.description.c_str());
+      CString description (formatInfo.description.c_str());
+      lvitem.pszText = description.GetBuffer();
       if (! listControl.SetItem(&lvitem))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
 	}
       lvitem.mask = LVIF_TEXT;
       lvitem.iSubItem = 2;
-      lvitem.pszText = (formatInfo.exclude ? T_("exclude") : "");
+      lvitem.pszText = (formatInfo.exclude ? T_(_T("exclude")) : _T(""));
       if (! listControl.SetItem(&lvitem))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);
@@ -423,7 +425,7 @@ namespace
 BOOL
 PropPageFormats::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo) 
 {
-  return (::OnHelpInfo(pHelpInfo, aHelpIDs, T_("FormatsPage.txt")));
+  return (::OnHelpInfo(pHelpInfo, aHelpIDs, "FormatsPage.txt"));
 }
 
 /* _________________________________________________________________________
@@ -437,7 +439,7 @@ PropPageFormats::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, T_("FormatsPage.txt"));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "FormatsPage.txt");
     }
   catch (const MiKTeXException & e)
     {

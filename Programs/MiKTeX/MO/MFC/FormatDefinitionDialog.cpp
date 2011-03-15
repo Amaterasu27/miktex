@@ -1,6 +1,6 @@
 /* FormatDefinitionDialog.cpp:
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -89,19 +89,18 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
   pDX->PrepareEditCtrl (IDC_FMT_KEY);
   if (formatKey.IsEmpty())
     {
-      AfxMessageBox (T_("You must specify a format key."),
+      AfxMessageBox (T_(_T("You must specify a format key.")),
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
-  if (PathName::Compare(static_cast<const char *>(formatKey),
-			originalFormatInfo.key)
+  if (PathName::Compare(CT2A(formatKey), originalFormatInfo.key.c_str())
       != 0)
     {
       FormatInfo unused;
-      if (SessionWrapper(true)->TryGetFormatInfo(formatKey, unused))
+      if (SessionWrapper(true)->TryGetFormatInfo(CT2A(formatKey), unused))
 	{
 	  AfxMessageBox
-	    (T_("A format with the given key already exists."),
+	    (T_(_T("A format with the given key already exists.")),
 	     MB_ICONEXCLAMATION);
 	  pDX->Fail ();
 	}
@@ -112,7 +111,7 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
   pDX->PrepareEditCtrl (IDC_INPUT_NAME);
   if (inputName.IsEmpty())
     {
-      AfxMessageBox (T_("You must specify an input file name."),
+      AfxMessageBox (T_(_T("You must specify an input file name.")),
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
@@ -120,18 +119,18 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
   pDX->PrepareCtrl (IDC_COMPILER);
   if (compiler.IsEmpty())
     {
-      AfxMessageBox (T_("You must choose a compiler."), MB_ICONEXCLAMATION);
+      AfxMessageBox (T_(_T("You must choose a compiler.")), MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
 
-  formatInfo.key = formatKey;
-  formatInfo.name = formatName;
-  formatInfo.description = description;
+  formatInfo.key = CT2A(formatKey);
+  formatInfo.name = CT2A(formatName);
+  formatInfo.description = CT2A(description);
   formatInfo.exclude = (exclude ? true : false);
-  formatInfo.inputFile = inputName;
-  formatInfo.outputFile = outputName;
-  formatInfo.preloaded = preloadedFormat;
-  formatInfo.compiler = compiler;
+  formatInfo.inputFile = CT2A(inputName);
+  formatInfo.outputFile = CT2A(outputName);
+  formatInfo.preloaded = CT2A(preloadedFormat);
+  formatInfo.compiler = CT2A(compiler);
 }
 
 /* _________________________________________________________________________
@@ -173,7 +172,7 @@ namespace
 BOOL
 FormatDefinitionDialog::OnHelpInfo (/*in]*/ HELPINFO * pHelpInfo) 
 {
-  return (::OnHelpInfo(pHelpInfo, aHelpIDs, T_("FmtDefDialog.txt")));
+  return (::OnHelpInfo(pHelpInfo, aHelpIDs, "FmtDefDialog.txt"));
 }
 
 /* _________________________________________________________________________
@@ -187,7 +186,7 @@ FormatDefinitionDialog::OnContextMenu (/*in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, T_("FmtDefDialog.txt"));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "FmtDefDialog.txt");
     }
   catch (const MiKTeXException & e)
     {
@@ -217,17 +216,17 @@ FormatDefinitionDialog::OnInitDialog ()
 	   ++ idx)
 	{
 	  compilers.insert (formatInfo.compiler);
-	  if (PathName::Compare(formatInfo.key.c_str(), formatKey) == 0)
+	  if (PathName::Compare(formatInfo.key.c_str(), CT2A(formatKey)) == 0)
 	    {
 	      continue;
 	    }
-	  preloadedFormatComboBox.AddString (formatInfo.key.c_str());
+	  preloadedFormatComboBox.AddString (CA2T(formatInfo.key.c_str()));
 	}
       for (set<string>::const_iterator it = compilers.begin();
 	   it != compilers.end();
 	   ++ it)
 	{
-	  compilerComboBox.AddString (it->c_str());
+	  compilerComboBox.AddString (CA2T(it->c_str()));
 	}
       UpdateData (FALSE);
     }

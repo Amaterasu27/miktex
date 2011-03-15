@@ -1,6 +1,6 @@
 /* MainFrame.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -166,11 +166,11 @@ MainFrame::PreCreateWindow (/*[in,out]*/ CREATESTRUCT & cs)
       cs.style &= ~FWS_ADDTOTITLE;
       if (SessionWrapper(true)->IsAdminMode())
       {
-	SetTitle (T_("MiKTeX Package Manager (Admin)"));
+	SetTitle (T_(_T("MiKTeX Package Manager (Admin)")));
       }
       else
       {
-	SetTitle (T_("MiKTeX Package Manager"));
+	SetTitle (T_(_T("MiKTeX Package Manager")));
       }
       return (TRUE);
     }
@@ -211,17 +211,17 @@ MainFrame::OnUpdateNumPackages (/*[in]*/ CCmdUI * pCmdUI)
       pCmdUI->Enable (pView != 0);
       if (pView == 0)
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       if (! pView->IsKindOf(RUNTIME_CLASS(MpmView)))
 	{
-	  pCmdUI->SetText ("");
+	  pCmdUI->SetText (_T(""));
 	  return;
 	}
       MpmView * pMpmView = reinterpret_cast<MpmView*>(pView);
       CString str;
-      str.Format (T_("Total: %d"), pMpmView->GetNumberOfPackages());
+      str.Format (T_(_T("Total: %d")), pMpmView->GetNumberOfPackages());
       pCmdUI->SetText (str); 
     }
 

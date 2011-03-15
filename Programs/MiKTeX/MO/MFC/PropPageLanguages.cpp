@@ -1,6 +1,6 @@
 /* PropPageLanguages.cpp:
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -92,9 +92,9 @@ PropPageLanguages::InsertColumn (/*[in]*/ int		colIdx,
 				 /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
   {
@@ -163,9 +163,9 @@ PropPageLanguages::InstallLanguagePackages (/*[in]*/ const vector<string> toBeIn
 {
 #if INSTALL_LANGUAGE_PACKAGES
   CString str1;
-  str1.Format ("%u", toBeInstalled.size());
+  str1.Format (_T("%u"), toBeInstalled.size());
   CString str;
-  AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, "0");
+  AfxFormatString2 (str, IDP_UPDATE_MESSAGE, str1, _T("0"));
   if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
   {
     DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
@@ -179,13 +179,13 @@ PropPageLanguages::InstallLanguagePackages (/*[in]*/ const vector<string> toBeIn
     taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
     taskDialogConfig.pszWindowTitle =
       MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
-    taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+    taskDialogConfig.pszMainInstruction = T_(L"Do you want to proceed?");
     CStringW strContent (str);
     taskDialogConfig.pszContent = strContent;
     taskDialogConfig.cButtons = 2;
     TASKDIALOG_BUTTON const buttons[] = {
-      {IDOK, L"Proceed"},
-      {IDCANCEL, L"Cancel"}
+      {IDOK, T_(L"Proceed")},
+      {IDCANCEL, T_(L"Cancel")}
     };
     taskDialogConfig.pButtons = buttons;
     taskDialogConfig.nDefaultButton = IDOK;
@@ -297,7 +297,7 @@ namespace
 BOOL
 PropPageLanguages::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo) 
 {
-  return (::OnHelpInfo(pHelpInfo, aHelpIDs, T_("LanguagesPage.txt")));
+  return (::OnHelpInfo(pHelpInfo, aHelpIDs, "LanguagesPage.txt"));
 }
 
 /* _________________________________________________________________________
@@ -311,7 +311,7 @@ PropPageLanguages::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, T_("LanguagesPage.txt"));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "LanguagesPage.txt");
     }
   catch (const MiKTeXException & e)
     {
@@ -445,7 +445,7 @@ PropPageLanguages::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
       {
 	if (! languages[pnmv->iItem].loaderExists && languages[pnmv->iItem].packageNames.size() == 0)
 	{
-	  AfxMessageBox (T_("This language is not yet available."),
+	  AfxMessageBox (T_(_T("This language is not yet available.")),
 			 MB_OK | MB_ICONEXCLAMATION);
 	  *pResult = TRUE;
 	}
@@ -454,7 +454,7 @@ PropPageLanguages::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
       {
 	if (pnmv->iItem == 0)
 	{
-	  AfxMessageBox (T_("This language cannot be excluded."),
+	  AfxMessageBox (T_(_T("This language cannot be excluded.")),
 			 MB_OK | MB_ICONEXCLAMATION);
 	  *pResult = TRUE;
 	}
@@ -521,12 +521,12 @@ PropPageLanguages::RefreshRow (/*[in]*/ int idx)
 
   int colIdx = 0;
 
-  if (! listControl.SetItemText(idx, colIdx ++, lang.key.c_str()))
+  if (! listControl.SetItemText(idx, colIdx ++, CA2T(lang.key.c_str())))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }
 
-  if (! listControl.SetItemText(idx, colIdx ++, lang.synonyms.c_str()))
+  if (! listControl.SetItemText(idx, colIdx ++, CA2T(lang.synonyms.c_str())))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }

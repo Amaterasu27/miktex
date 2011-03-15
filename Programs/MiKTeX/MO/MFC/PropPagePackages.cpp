@@ -1,6 +1,6 @@
 /* PropPagePackages.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -145,7 +145,7 @@ PropPagePackages::OnApply ()
       if (IsWindowsVista() && SessionWrapper(true)->IsAdminMode())
 	{
 	  DllProc4<HRESULT, const TASKDIALOGCONFIG *, int *, int *, BOOL *>
-	    taskDialogIndirect (T_("comctl32.dll"), T_("TaskDialogIndirect"));
+	    taskDialogIndirect ("comctl32.dll", "TaskDialogIndirect");
 	  TASKDIALOGCONFIG taskDialogConfig;
 	  memset (&taskDialogConfig, 0, sizeof(taskDialogConfig));
 	  taskDialogConfig.cbSize = sizeof(TASKDIALOGCONFIG);
@@ -155,13 +155,13 @@ PropPagePackages::OnApply ()
 	  taskDialogConfig.pszMainIcon = MAKEINTRESOURCEW(TD_SHIELD_ICON);
 	  taskDialogConfig.pszWindowTitle =
 	    MAKEINTRESOURCEW(AFX_IDS_APP_TITLE);
-	  taskDialogConfig.pszMainInstruction = L"Do you want to proceed?";
+	  taskDialogConfig.pszMainInstruction = T_(L"Do you want to proceed?");
 	  CStringW strContent (str);
 	  taskDialogConfig.pszContent = strContent;
 	  taskDialogConfig.cButtons = 2;
 	  TASKDIALOG_BUTTON const buttons[] = {
-	    {IDOK, L"Proceed"},
-	    {IDCANCEL, L"Cancel"}
+	    {IDOK, T_(L"Proceed")},
+	    {IDCANCEL, T_(L"Cancel")}
 	  };
 	  taskDialogConfig.pButtons = buttons;
 	  taskDialogConfig.nDefaultButton = IDOK;
@@ -243,7 +243,7 @@ namespace
 BOOL
 PropPagePackages::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo) 
 {
-  return (::OnHelpInfo(pHelpInfo, aHelpIDs, _T(_T("PackagesPage.txt"))));
+  return (::OnHelpInfo(pHelpInfo, aHelpIDs, "PackagesPage.txt"));
 }
 
 /* _________________________________________________________________________
@@ -257,7 +257,7 @@ PropPagePackages::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, _T(_T("PackagesPage.txt")));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "PackagesPage.txt");
     }
   catch (const MiKTeXException & e)
     {
@@ -314,7 +314,7 @@ PropPagePackages::OnSelchangedTree (/*[in]*/ NMHDR *	pNMHDR,
    _________________________________________________________________________ */
 
 void
-PropPagePackages::SetWindowText (/*[in]*/ UINT			controlId,
+PropPagePackages::SetWindowText (/*[in]*/ UINT		controlId,
 				 /*[in]*/ const char *	lpszText)
 {
   CWnd * pWnd = GetDlgItem(controlId);
@@ -322,7 +322,7 @@ PropPagePackages::SetWindowText (/*[in]*/ UINT			controlId,
     {
       UNEXPECTED_CONDITION ("PropPagePackages::SetWindowText");
     }
-  pWnd->SetWindowText (lpszText);
+  pWnd->SetWindowText (CA2T(lpszText));
 }
 
 /* _________________________________________________________________________
@@ -347,27 +347,27 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
       if (pPackageInfo->timeInstalled > 0)
 	{
 	  CTime timeInstall (pPackageInfo->timeInstalled);
-	  SetWindowText (IDC_INSTALLED, timeInstall.Format(_T("%x %X")));
+	  SetWindowText (IDC_INSTALLED, CT2A(timeInstall.Format(_T("%x %X"))));
 	}
       else
 	{
-	  SetWindowText (IDC_INSTALLED, _T("<not installed>"));
+	  SetWindowText (IDC_INSTALLED, T_("<not installed>"));
 	}
       if (! pPackageInfo->IsPureContainer() && pPackageInfo->timePackaged > 0)
 	{
     	  CTime timePackaged (pPackageInfo->timePackaged);
-	  SetWindowText (IDC_PACKED, timePackaged.Format(_T("%x %X")));
+	  SetWindowText (IDC_PACKED, CT2A(timePackaged.Format(_T("%x %X"))));
 	}
       else
 	{
-	  SetWindowText (IDC_PACKED, _T(""));
+	  SetWindowText (IDC_PACKED, "");
 	}
       CString text;
-      text.Format (_T("%u Bytes"),
+      text.Format (T_(_T("%u Bytes")),
 		   (pPackageInfo->sizeRunFiles
 		    + pPackageInfo->sizeDocFiles
 		    + pPackageInfo->sizeSourceFiles));
-      SetWindowText (IDC_PACKAGE_SIZE, text);
+      SetWindowText (IDC_PACKAGE_SIZE, CT2A(text));
     }
 }
 
@@ -402,7 +402,7 @@ PropPagePackages::OnChangeUrl ()
 	  RepositoryType repositoryType =
 	    pManager->GetDefaultPackageRepository(repository);
 	  this->url = repository.c_str();
-	  SetWindowText (IDC_URL, this->url);
+	  SetWindowText (IDC_URL, CT2A(this->url));
 	  Scan ();
 	}
     }
@@ -428,9 +428,9 @@ PropPagePackages::Scan ()
   auto_ptr<PackageInstaller> pInstaller (pManager->CreateInstaller());
   pInstaller->UpdateDbAsync ();
   auto_ptr<ProgressDialog> pProgDlg (ProgressDialog::Create());
-  pProgDlg->SetTitle (_T("Package Database Maintenance"));
-  pProgDlg->SetLine (1, _T("Downloading package database..."));
-  pProgDlg->SetLine (2, _T(""));
+  pProgDlg->SetTitle (T_("Package Database Maintenance"));
+  pProgDlg->SetLine (1, T_("Downloading package database..."));
+  pProgDlg->SetLine (2, "");
   pProgDlg->StartProgressDialog (GetSafeHwnd());
   while (! pProgDlg->HasUserCancelled())
     {
@@ -531,7 +531,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 	{
 	  if (! info.empty())
 	    {
-	      info += _T("\r\n\r\n");
+	      info += "\r\n\r\n";
 	      info += pi.description;
 	    }
 	}
@@ -556,7 +556,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 #endif
       _tcsncpy_s (pInfoTip->pszText,
 		  pInfoTip->cchTextMax,
-		  info.c_str(),
+		  CA2T(info.c_str()),
 		  _TRUNCATE);
     }
   catch (const MiKTeXException & e)

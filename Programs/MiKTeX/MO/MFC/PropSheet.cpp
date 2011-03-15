@@ -1,6 +1,6 @@
 /* PropSheet.cpp:
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -48,11 +48,11 @@ PropSheet::PropSheet (/*[in]*/ PackageManager * pManager)
   AddPage (&packagesPage);
   if (pSession->IsAdminMode())
   {
-    SetTitle (T_("MiKTeX Options (Admin)"));
+    SetTitle (T_(_T("MiKTeX Options (Admin)")));
   }
   else
   {
-    SetTitle (T_("MiKTeX Options"));
+    SetTitle (T_(_T("MiKTeX Options")));
   }
 }
 
@@ -174,8 +174,8 @@ The MiKTeX configuration utility could not be found."),
       return (true);
     }
 
-  if (AfxMessageBox(T_("The MiKTeX configuration utility failed. \
-Do you want to see the transcript?"),
+  if (AfxMessageBox(T_(_T("The MiKTeX configuration utility failed. \
+Do you want to see the transcript?")),
 		    MB_YESNO | MB_ICONEXCLAMATION) == IDYES)
     {
       TextViewerDialog::DoModal (this,

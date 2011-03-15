@@ -1,6 +1,6 @@
 /* mo.cpp: MiKTeX Options
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -60,21 +60,21 @@ MiKTeXOptionsApplication::InitInstance ()
 
   if (! InitCommonControlsEx(&initCtrls))
     {
-      AfxMessageBox (T_("The application could not be initialized (1)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (1).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   if (! CWinApp::InitInstance())
     {
-      AfxMessageBox (T_("The application could not be initialized (2)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (2).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
-  if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED)))
+  if (FAILED(CoInitializeEx(0, COINIT_APARTMENTTHREADED)))
     {
-      AfxMessageBox (T_("The application could not be initialized (3)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (3).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
@@ -85,10 +85,10 @@ MiKTeXOptionsApplication::InitInstance ()
 
       if (! pSession->IsMiKTeXPortable() && ! Utils::CheckPath(false))
 	{
-	  if (AfxMessageBox(T_("\
+	  if (AfxMessageBox(T_(_T("\
 MiKTeX is not correctly configured: the location of the MiKTeX executables \
 is not known to the operating system.\r\n\r\n\
-Click OK to repair the MiKTeX configuration."),
+Click OK to repair the MiKTeX configuration.")),
 			    MB_OKCANCEL)
 	      == IDOK)
 	    {
@@ -115,8 +115,8 @@ Click OK to repair the MiKTeX configuration."),
 	INT_PTR ret = dlg.DoModal();
 	if (ret == IDOK
 	    && dlg.MustBuildFormats()
-	    && (AfxMessageBox("\
-To apply the new settings, it is necessary to rebuild the format files.",
+	    && (AfxMessageBox(T_(_T("\
+To apply the new settings, it is necessary to rebuild the format files.")),
 			      MB_OKCANCEL)
 		== IDOK))
 	  {
@@ -197,8 +197,8 @@ OnHelpInfo (/*[in]*/ HELPINFO *		pHelpInfo,
 	{
 	  return (FALSE);
 	}
-      CString htmlHelpUrl = helpFile.Get();
-      htmlHelpUrl += "::/";
+      CString htmlHelpUrl (helpFile.Get());
+      htmlHelpUrl += _T("::/");
       htmlHelpUrl += lpszTopicFile;
       HtmlHelp (reinterpret_cast<HWND>(pHelpInfo->hItemHandle),
 		htmlHelpUrl,
@@ -252,7 +252,7 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
   helpFileUrl += "::/";
   helpFileUrl += lpszTopicFile;
   HtmlHelp (pWnd->GetSafeHwnd(),
-	    helpFileUrl.c_str(),
+	    CA2T(helpFileUrl.c_str()),
 	    HH_TP_HELP_CONTEXTMENU,
 	    reinterpret_cast<DWORD_PTR>(const_cast<DWORD*>(pHelpIds)));
 }
@@ -273,7 +273,7 @@ GetDllVersion (/*[in]*/ const char * lpszDllName)
 {
   DWORD version = 0;
 
-  HINSTANCE hinstDll = LoadLibrary(lpszDllName);
+  HINSTANCE hinstDll = LoadLibrary(CA2T(lpszDllName));
   
   if (hinstDll != 0)
     {

@@ -1,6 +1,6 @@
 /* PropPageGeneral.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -93,7 +93,7 @@ PropPageGeneral::OnInitDialog ()
 	   SessionWrapper(true)->GetPaperSizeInfo(idx, paperSizeInfo);
 	   ++ idx)
 	{
-	  CString displayName = paperSizeInfo.name.c_str();
+	  CString displayName (paperSizeInfo.name.c_str());
 	  if (StringCompare(paperSizeInfo.name.c_str(),
 			    paperSizeInfo.dvipsName.c_str(),
 			    true)
@@ -317,7 +317,7 @@ PropPageGeneral::OnHelpInfo (/*[in]*/ HELPINFO * pHelpInfo)
 {
   try
     {
-      return (::OnHelpInfo(pHelpInfo, aHelpIDs, T_("GeneralPage.txt")));
+      return (::OnHelpInfo(pHelpInfo, aHelpIDs, "GeneralPage.txt"));
     }
   catch (const MiKTeXException & e)
     {
@@ -342,7 +342,7 @@ PropPageGeneral::OnContextMenu (/*[in]*/ CWnd *	pWnd,
 {
   try
     {
-      DoWhatsThisMenu (pWnd, point, aHelpIDs, T_("GeneralPage.txt"));
+      DoWhatsThisMenu (pWnd, point, aHelpIDs, "GeneralPage.txt");
     }
   catch (const MiKTeXException & e)
     {

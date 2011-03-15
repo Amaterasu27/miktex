@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 

@@ -1,6 +1,6 @@
 /* mpm.cpp:
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -45,6 +45,7 @@ END_MESSAGE_MAP();
 
 PackageManagerApplication::PackageManagerApplication ()
 {
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.MiKTeXOptions." MIKTEX_COMPONENT_VERSION_STR));
   EnableHtmlHelp ();
 }
 
@@ -63,7 +64,7 @@ PackageManagerApplication theApp;
 BOOL
 PackageManagerApplication::InitInstance ()
 {
-  CoInitializeEx (0, COINIT_MULTITHREADED);
+  CoInitializeEx (0, COINIT_APARTMENTTHREADED);
 
   INITCOMMONCONTROLSEX InitCtrls;
   InitCtrls.dwSize = sizeof(InitCtrls);
@@ -76,16 +77,18 @@ PackageManagerApplication::InitInstance ()
       return (FALSE);
     }
 
+  EnableTaskbarInteraction (FALSE);
+
   try
     {
       pSession.CreateSession (Session::InitInfo("mpm"));
       TraceStream::SetTraceFlags ("error,mpm,config");
       
-      SetRegistryKey (MIKTEX_COMP_COMPANY_STR
+      SetRegistryKey (CA2T(MIKTEX_COMP_COMPANY_STR
 		      "\\"
 		      MIKTEX_PRODUCTNAME_STR
 		      "\\"
-		      MIKTEX_SERIES_STR);
+		      MIKTEX_SERIES_STR));
       
       LoadStdProfileSettings (0);
       
@@ -190,9 +193,9 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
       if (! pDX->m_bSaveAndValidate)
 	{
 	  CString str;
-	  str.Format (T_("MiKTeX Package Manager (windowed mode) version %s"),
-		      MIKTEX_COMPONENT_VERSION_STR);
-	  str += "\r\n";
+	  str.Format (T_(_T("MiKTeX Package Manager (windowed mode) version %s")),
+		      CA2T(MIKTEX_COMPONENT_VERSION_STR));
+	  str += _T("\r\n");
 	  str += MIKTEX_COMP_COPYRIGHT_STR;
 	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);
 	  if (pWnd == 0)
