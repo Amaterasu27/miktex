@@ -1,6 +1,6 @@
 /* winProcess.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -604,7 +604,7 @@ winProcess::get_ExitCode ()
 MIKTEXSTATICFUNC(PathName)
 FindSystemShell ()
 {
-  MIKTEXPERMANENTVAR(char) szCmd[BufferSizes::MaxPath] = { 0 };
+  MIKTEXPERMANENTVAR(wchar_t) szCmd[BufferSizes::MaxPath] = { 0 };
 
   // locate the command interpreter
   if (szCmd[0] == 0)
@@ -614,28 +614,28 @@ FindSystemShell ()
 	{
 	  if (! Utils::IsAbsolutePath(path.c_str()))
 	    {
-	      char * lpsz = 0;
-	      if (! SearchPath(0,
-			       path.c_str(),
-			       0,
-			       ARRAY_SIZE(szCmd),
-			       szCmd,
-			       &lpsz))
+	      wchar_t * lpsz = 0;
+	      if (! SearchPathW(0,
+				PathName(path).ToWideCharString().c_str(),
+				0,
+				ARRAY_SIZE(szCmd),
+				szCmd,
+				&lpsz))
 		{
 		  szCmd[0] = 0;
 		}
 	    }
 	  else if (File::Exists(path))
 	    {
-	      Utils::CopyString (szCmd, ARRAY_SIZE(szCmd), path.c_str());
+	      Utils::CopyString (szCmd, ARRAY_SIZE(szCmd), PathName(path).ToWideCharString().c_str());
 	    }
 	}
       if (szCmd[0] == 0)
 	{
-	  const char * lpszShell;
+	  const wchar_t * lpszShell;
 	  if (IsWindowsNT())
 	    {
-	      lpszShell = "cmd.exe";
+	      lpszShell = L"cmd.exe";
 	    }
 	  else
 	    {
@@ -645,13 +645,13 @@ FindSystemShell ()
 	      UNSUPPORTED_PLATFORM ();
 #endif
 	    }
-	  char * lpsz = 0;
-	  if (SearchPath(0,
-			 lpszShell,
-			 0,
-			 ARRAY_SIZE(szCmd),
-			 szCmd,
-			 &lpsz)
+	  wchar_t * lpsz = 0;
+	  if (SearchPathW(0,
+			  lpszShell,
+			  0,
+			  ARRAY_SIZE(szCmd),
+			  szCmd,
+			  &lpsz)
 	      == 0)
 	    {
 	      FATAL_MIKTEX_ERROR ("Process::ExecuteSystemCommand",
@@ -825,7 +825,7 @@ Process2::GetCurrentProcess ()
 
 bool
 winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
-			        /*[out]*/ PROCESSENTRY32 & result)
+			        /*[out]*/ PROCESSENTRY32W & result)
 {
   HANDLE snapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (snapshotHandle == INVALID_HANDLE_VALUE)
@@ -833,9 +833,9 @@ winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
     FATAL_WINDOWS_ERROR ("CreateToolHelp32Snapshot", 0);
   }
   AutoHANDLE autoSnapshotHandle (snapshotHandle);
-  PROCESSENTRY32 processEntry;
+  PROCESSENTRY32W processEntry;
   processEntry.dwSize = sizeof(processEntry);
-  if (! Process32First(snapshotHandle, &processEntry))
+  if (! Process32FirstW(snapshotHandle, &processEntry))
   {
     DWORD lastError = GetLastError();
     if (lastError == ERROR_NO_MORE_FILES)
@@ -844,7 +844,7 @@ winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
     }
     else
     {
-      FATAL_WINDOWS_ERROR_2 ("Process32First", lastError, 0);
+      FATAL_WINDOWS_ERROR_2 ("Process32FirstW", lastError, 0);
     }
   }
   do
@@ -854,7 +854,7 @@ winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
       result = processEntry;
       return (true);
     }
-  } while (Process32Next(snapshotHandle, &processEntry));
+  } while (Process32NextW(snapshotHandle, &processEntry));
   DWORD lastError = GetLastError();
   if (lastError == ERROR_NO_MORE_FILES)
   {
@@ -862,7 +862,7 @@ winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
   }
   else
   {
-    FATAL_WINDOWS_ERROR_2 ("Process32First", lastError, 0);
+    FATAL_WINDOWS_ERROR_2 ("Process32NextW", lastError, 0);
   }
 }
 
@@ -871,10 +871,10 @@ winProcess::TryGetProcessEntry (/*[in]*/ DWORD processId,
    winProcess::GetProcessEntry
    _________________________________________________________________________ */
 
-PROCESSENTRY32
+PROCESSENTRY32W
 winProcess::GetProcessEntry (/*[in]*/ DWORD processId)
 {
-  PROCESSENTRY32 result;
+  PROCESSENTRY32W result;
   if (! TryGetProcessEntry(processId, result))
   {
     SessionImpl::GetSession()->trace_error->WriteFormattedLine(

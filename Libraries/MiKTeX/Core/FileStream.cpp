@@ -1,6 +1,6 @@
 /* FileStream.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -171,7 +171,7 @@ FileStream::SetBinary ()
 #if defined(MIKTEX_WINDOWS)
   if (_setmode(_fileno(pFile), _O_BINARY) < 0)
     {
-      FATAL_CRT_ERROR (_T("_setmode"), 0);
+      FATAL_CRT_ERROR ("_setmode", 0);
     }
 #endif
 }

@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -785,20 +785,21 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
 {
   void * pMessageBuffer;
   unsigned long len =
-    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		  0,
-		  functionResult,
-		  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		  reinterpret_cast<char *>(&pMessageBuffer),
-		  0,
-		  0);
+    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		   0,
+		   functionResult,
+		   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		   reinterpret_cast<wchar_t *>(&pMessageBuffer),
+		   0,
+		   0);
   if (len == 0)
     {
       TraceError (T_("FormatMessage() failed for some reason"));
       return (false);
     }
   AutoLocalMemory autoFree (pMessageBuffer);
-  errorMessage = reinterpret_cast<char *>(pMessageBuffer);
+  errorMessage =
+    Utils::WideCharToAnsi(reinterpret_cast<wchar_t *>(pMessageBuffer));
   return (true);
 }
 
@@ -932,11 +933,11 @@ MIKTEXSTATICFUNC(void)
 GetAlternate (/*[in]*/ const char *	lpszPath,
 	      /*[out]*/ char *		lpszAlternate)
 {
-  WIN32_FIND_DATA finddata;
-  HANDLE hnd = FindFirstFileA(lpszPath, &finddata);
+  WIN32_FIND_DATAW finddata;
+  HANDLE hnd = FindFirstFileW(PathName(lpszPath).ToWideCharString().c_str(), &finddata);
   if (hnd == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("FindFirstFileA", lpszPath);
+      FATAL_WINDOWS_ERROR ("FindFirstFileW", lpszPath);
     }
   if (! FindClose(hnd))
     {
@@ -1070,22 +1071,16 @@ PathName::Combine (/*[out]*/ char *		lpszPath,
 		   /*[in]*/ const char *	lpszExtension)
 {
 #if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
-  if (_tmakepath_s(lpszPath,
-		   sizePath,
-		   lpszDrive,
-		   lpszAbsPath,
-		   lpszRelPath,
-		   lpszExtension)
+  if (_makepath_s(lpszPath,
+		  sizePath,
+		  lpszDrive,
+		  lpszAbsPath,
+		  lpszRelPath,
+		  lpszExtension)
       != 0)
     {
-      FATAL_CRT_ERROR ("_tmakepath_s", 0);
+      FATAL_CRT_ERROR ("_makepath_s", 0);
     }
-#  else
-  char szPath[BufferSizes::MaxPath];
-  _tmakepath (szPath, lpszDrive, lpszAbsPath, lpszRelPath, lpszExtension);
-  Utils::CopyString (lpszPath, sizePath, szPath);
-#  endif
 #else  // not Microsoft C++
 #  error Unimplemented: PathName::Combine()
 #endif	// not Microsoft C++
@@ -1112,23 +1107,19 @@ PathName::Split (/*[in]*/ const char *	lpszPath,
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszName, sizeName);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszExtension, sizeExtension);
 #if defined(_MSC_VER)
-#  if _MSC_VER >= 1400
-  if (_tsplitpath_s(lpszPath,
-		    lpszDrive,
-		    sizeDrive,
-		    lpszDir,
-		    sizeDir,
-		    lpszName,
-		    sizeName,
-		    lpszExtension,
-		    sizeExtension)
+  if (_splitpath_s(lpszPath,
+		   lpszDrive,
+		   sizeDrive,
+		   lpszDir,
+		   sizeDir,
+		   lpszName,
+		   sizeName,
+		   lpszExtension,
+		   sizeExtension)
       != 0)
     {
       FATAL_CRT_ERROR ("_tsplitpath_s", 0);
     }
-#  else
-  _tsplitpath (lpszPath, lpszDrive, lpszDir, lpszName, lpszExtension);
-#  endif
 #else  // not Microsoft C++
 #  error Unimplemented: PathName::Split()
 #endif	// not Microsoft C++
@@ -1257,10 +1248,10 @@ string
 Utils::GetOSVersionString ()
 {
   // get Windows version information
-  OSVERSIONINFOEXA osvi;
-  ZeroMemory (&osvi, sizeof(OSVERSIONINFOEX));
-  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
-  if (! GetVersionEx(reinterpret_cast<OSVERSIONINFOA*>(&osvi)))
+  OSVERSIONINFOEXW osvi;
+  ZeroMemory (&osvi, sizeof(osvi));
+  osvi.dwOSVersionInfoSize = sizeof(osvi);
+  if (! GetVersionExW(reinterpret_cast<OSVERSIONINFOW*>(&osvi)))
     {
       UNSUPPORTED_PLATFORM ();
     }
@@ -1542,7 +1533,7 @@ Utils::GetOSVersionString ()
        if (osvi.szCSDVersion[0] != 0)
 	 {
 	   NeedBlank (str);
-	   str += osvi.szCSDVersion;
+	   str += Utils::WideCharToAnsi(osvi.szCSDVersion);
 	 }
 
        // build number
@@ -1660,17 +1651,17 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	}
       else
 	{
-	  char cBuffer[4096];
-	  if (GetProfileString("windows",
-			       "device",
-			       ",,,",
-			       cBuffer,
-			       4096)
+	  wchar_t cBuffer[4096];
+	  if (GetProfileStringW(L"windows",
+			        L"device",
+			        L",,,",
+			        cBuffer,
+			        4096)
 	      <= 0)
 	    {
 	      return (false);
 	    }
-	  Tokenizer tok (cBuffer, ",");
+	  Tokenizer tok (Utils::WideCharToAnsi(cBuffer).c_str(), ",");
 	  if (tok.GetCurrent() == 0)
 	    {
 	      return (false);
@@ -1703,7 +1694,7 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
     {
       return (false);
     }
-  HWND hwnd = HtmlHelp(hWnd, pathHelpFile.Get(), HH_HELP_CONTEXT, topic);
+  HWND hwnd = HtmlHelpW(hWnd, pathHelpFile.ToWideCharString().c_str(), HH_HELP_CONTEXT, topic);
   if (hwnd == 0)
     {
       return (false);
@@ -2066,7 +2057,7 @@ SessionImpl::IsFileAlreadyOpen (/*[in]*/ const char * lpszFileName)
   unsigned long error = NO_ERROR;
 
   HANDLE hFile =
-    CreateFile(lpszFileName,
+    CreateFile(PathName(lpszFileName).ToWideCharString().c_str(),
 	       GENERIC_READ,
 	       FILE_SHARE_READ,
 	       0,
@@ -2462,7 +2453,7 @@ GetMediaType (/*[in]*/ const char * lpszPath)
     {
       return (DRIVE_UNKNOWN);
     }
-  return (GetDriveType(pathRootName.Get()));
+  return (GetDriveTypeW(pathRootName.ToWideCharString().c_str()));
 }
 
 /* _________________________________________________________________________
@@ -2519,17 +2510,17 @@ CreateDirectoryForEveryone (/*[in]*/ const char * lpszPath)
       FATAL_WINDOWS_ERROR ("AllocateAndInitializeSid", 0);
     }
 
-  EXPLICIT_ACCESS ea[1];
-  ZeroMemory (&ea, 1 * sizeof(EXPLICIT_ACCESS));
+  EXPLICIT_ACCESSW ea[1];
+  ZeroMemory (&ea, sizeof(ea));
   ea[0].grfAccessPermissions = FILE_ALL_ACCESS;
   ea[0].grfAccessMode = GRANT_ACCESS;
   ea[0].grfInheritance= SUB_CONTAINERS_AND_OBJECTS_INHERIT;
   ea[0].Trustee.TrusteeForm = TRUSTEE_IS_SID;
   ea[0].Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
   ea[0].Trustee.ptstrName =
-    reinterpret_cast<char *>(pEveryoneSID.Get());
+    reinterpret_cast<wchar_t *>(pEveryoneSID.Get());
   
-  if (SetEntriesInAcl(1, ea, 0, &pACL) != ERROR_SUCCESS)
+  if (SetEntriesInAclW(1, ea, 0, &pACL) != ERROR_SUCCESS)
     {
       FATAL_WINDOWS_ERROR ("SetEntriesInAcl", 0);
     }
@@ -2558,9 +2549,9 @@ CreateDirectoryForEveryone (/*[in]*/ const char * lpszPath)
   sa.lpSecurityDescriptor = pSD;
   sa.bInheritHandle = FALSE;
 
-  if (! CreateDirectoryA(lpszPath, &sa))
+  if (! CreateDirectoryW(PathName(lpszPath).ToWideCharString().c_str(), &sa))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryW", lpszPath);
     }
 }
 #endif
@@ -2623,14 +2614,14 @@ CreateDirectoryPath (/*[in]*/ const char *	lpszPath)
     {
       CreateDirectoryForEveryone (lpszPath);
     }
-  else if (! CreateDirectoryA(lpszPath, 0))
+  else if (! CreateDirectoryW(PathName(lpszPath).ToWideCharString().c_str(), 0))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryW", lpszPath);
     }
 #else
-  if (! CreateDirectoryA(lpszPath, 0))
+  if (! CreateDirectoryW(PathName(lpszPath).ToWideCharString().c_str(), 0))
     {
-      FATAL_WINDOWS_ERROR ("CreateDirectoryA", lpszPath);
+      FATAL_WINDOWS_ERROR ("CreateDirectoryW", lpszPath);
     }
 #endif
 }
@@ -2671,9 +2662,9 @@ Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
      lpszValueName,
      lpszValue);
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_tputenv_s(lpszValueName, lpszValue) != 0)
+  if (_putenv_s(lpszValueName, lpszValue) != 0)
     {
-      FATAL_CRT_ERROR ("_tputenv_s", lpszValueName);
+      FATAL_CRT_ERROR ("_putenv_s", lpszValueName);
     }
 #else
   string str = lpszValueName;
@@ -2704,13 +2695,13 @@ Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
    example, this is how you safely execute URLs with ShellExecute(Ex):
    _________________________________________________________________________ */
 
-BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
+BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFOW lpExecInfo)
 {
     BOOL bRet;
     DWORD dwErr;
     HRESULT hr;
     PARSEDURL pu;
-    TCHAR szSchemeBuffer[INTERNET_MAX_SCHEME_LENGTH + 1];
+    wchar_t szSchemeBuffer[INTERNET_MAX_SCHEME_LENGTH + 1];
     HKEY hkeyClass;
  
     /* Default error codes */
@@ -2733,29 +2724,29 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
     {
         /* Extract the scheme out of the URL */
         pu.cbSize = sizeof(pu);
-        hr = ParseURL(lpExecInfo->lpFile, &pu);
+        hr = ParseURLW(lpExecInfo->lpFile, &pu);
  
         /* Is the URL really, unambiguously an URL? */
         if
         (
             SUCCEEDED(hr) &&
             pu.pszProtocol == lpExecInfo->lpFile &&
-            pu.pszProtocol[pu.cchProtocol] == TEXT(':')
+            pu.pszProtocol[pu.cchProtocol] == L':'
         )
         {
             /* We need the scheme name NUL-terminated, so we copy it */
-            hr = StringCbCopyN
+            hr = StringCbCopyNW
             (
                 szSchemeBuffer,
                 sizeof(szSchemeBuffer),
                 pu.pszProtocol,
-                pu.cchProtocol * sizeof(TCHAR)
+                pu.cchProtocol * sizeof(wchar_t)
             );
  
             if(SUCCEEDED(hr))
             {
                 /* Is the URL scheme a registered ProgId? */
-                hr = AssocQueryKey
+                hr = AssocQueryKeyW
                 (
                     ASSOCF_INIT_IGNOREUNKNOWN,
                     ASSOCKEY_CLASS,
@@ -2767,10 +2758,10 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
                 if(SUCCEEDED(hr))
                 {
                     /* Is the ProgId really an URL scheme? */
-                    dwErr = RegQueryValueEx
+                    dwErr = RegQueryValueExW
                     (
                         hkeyClass,
-                        TEXT("URL Protocol"),
+                        L"URL Protocol",
                         NULL,
                         NULL,
                         NULL,
@@ -2786,7 +2777,7 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
                         lpExecInfo->hkeyClass = hkeyClass;
  
                         /* Finally, execute the damn URL */
-                        bRet = ShellExecuteEx(lpExecInfo);
+                        bRet = ShellExecuteExW(lpExecInfo);
  
                         /* To preserve ShellExecuteEx's last error */
                         dwErr = NO_ERROR;
@@ -2815,10 +2806,10 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFO lpExecInfo)
     return bRet;
 }
  
-BOOL ShellExecuteURLEx(LPSHELLEXECUTEINFO lpExecInfo)
+BOOL ShellExecuteURLEx(LPSHELLEXECUTEINFOW lpExecInfo)
 {
     BOOL bRet;
-    SHELLEXECUTEINFO ExecInfo;
+    SHELLEXECUTEINFOW ExecInfo;
  
     /* We use a copy of the parameters, because you never know */
     CopyMemory(&ExecInfo, lpExecInfo, sizeof(ExecInfo));
@@ -2835,10 +2826,10 @@ BOOL ShellExecuteURLEx(LPSHELLEXECUTEINFO lpExecInfo)
 HINSTANCE ShellExecuteURL
 (
     HWND hwnd,
-    LPCTSTR lpOperation,
-    LPCTSTR lpFile,
-    LPCTSTR lpParameters,
-    LPCTSTR lpDirectory,
+    const wchar_t * lpOperation,
+    const wchar_t * lpFile,
+    const wchar_t * lpParameters,
+    const wchar_t * lpDirectory,
     INT nShowCmd
 )
 {
@@ -2873,7 +2864,7 @@ Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
   HINSTANCE hInst =
     ShellExecuteURL(0,
 		    0,
-		    lpszUrl,
+		    Utils::AnsiToWideChar(lpszUrl).c_str(),
 		    0,
 		    0,
 		    SW_SHOWNORMAL);
@@ -3219,7 +3210,7 @@ Utils::AnsiToWideChar (/*[in]*/ const char * lpszAnsi)
      buf.GetCapacity());
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", lpszAnsi);
     }
   if (n < 0)
     {
@@ -3401,7 +3392,7 @@ bool
 Utils::CheckPath (/*[in]*/ bool repair)
 {
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
-   REGSTR_PATH_CURRENTCONTROLSET "\\Control\\Session Manager\\Environment"
+   "System\\CurrentControlSet\\Control\\Session Manager\\Environment"
 
 #define REGSTR_KEY_ENVIRONMENT_USER "Environment"
   

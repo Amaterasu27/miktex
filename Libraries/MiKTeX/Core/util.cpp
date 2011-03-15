@@ -1,6 +1,6 @@
 /* util.cpp: generic utilities
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -776,7 +776,7 @@ NumberString::Init (/*[in]*/ long long	num,
   int n;
   const char * lpszFormat = (hex ? "%llx" : "%lld");
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-  n = _stprintf_s (buffer, BUFSIZE, lpszFormat, num);
+  n = sprintf_s (buffer, BUFSIZE, lpszFormat, num);
 #else
   n = sprintf (buffer, lpszFormat, num);
 #endif
@@ -796,7 +796,7 @@ NumberString::Init (/*[in]*/ double	num)
 {
   int n;
 #if defined(_MSC_VER) && _MSC_VER >= 1400
-  n = _stprintf_s (buffer, BUFSIZE, "%f", num);
+  n = sprintf_s (buffer, BUFSIZE, "%f", num);
 #else
   n = sprintf (buffer, "%f", num);
 #endif

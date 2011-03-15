@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -402,7 +402,7 @@ VersionNumber::TryParse (/*[in]*/ const char *		lpszVersion,
 			 /*[out]*/ VersionNumber &	versionNumber)
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
-#  define SScanF _stscanf_s
+#  define SScanF sscanf_s
 #else
 #  define SScanF sscanf
 #endif
@@ -720,10 +720,10 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
     {
       BUF_TOO_SMALL ("Utils::GetEnvironmentString");
     }
-  if (_tgetenv_s(&bufSize,
-		 lpszOut,
-		 bufSize,
-		 lpszName)
+  if (getenv_s(&bufSize,
+	       lpszOut,
+	       bufSize,
+	       lpszName)
       != 0)
     {
       FATAL_CRT_ERROR ("getenv_s", lpszName);

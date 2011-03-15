@@ -1,6 +1,6 @@
 /* log.cpp: tracing
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -245,11 +245,11 @@ TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
   str += NUMTOSTR(clock());
   str += " [";
 #if defined(MIKTEX_WINDOWS)
-  PathName path;
-  if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) != 0)
+  wchar_t szPath[BufferSizes::MaxPath];
+  if (GetModuleFileNameW(0, szPath, BufferSizes::MaxPath) != 0)
     {
       char szName[BufferSizes::MaxPath];
-      path.GetFileNameWithoutExtension (szName);
+      PathName(szPath).GetFileNameWithoutExtension (szName);
       str += szName;
     }
 #endif
@@ -265,7 +265,7 @@ TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
       str += '\n';
     }
 #if defined(MIKTEX_WINDOWS)
-  OutputDebugString (str.c_str());
+  OutputDebugStringW (Utils::AnsiToWideChar(str.c_str()).c_str());
 #else
   if (stderr != 0)
     {

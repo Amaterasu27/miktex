@@ -1,6 +1,6 @@
 /* winThread.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -74,7 +74,7 @@ winThread::winThread (/*[in]*/ void (MIKTEXCALLBACK * function) (void *),
     {
       this->function = function;
       this->argument = argument;
-      hStarted = CreateEventA(0, TRUE, FALSE, 0);
+      hStarted = CreateEventW(0, TRUE, FALSE, 0);
       if (hStarted == 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CreateEventA", 0);
@@ -226,7 +226,7 @@ CriticalSectionMonitor::Leave ()
 
 AutoResetEvent::AutoResetEvent ()
 {
-  handle = CreateEventA(0, TRUE, FALSE, 0);
+  handle = CreateEventW(0, TRUE, FALSE, 0);
   if (handle == 0)
   {
     FATAL_WINDOWS_ERROR ("CreateEventA", 0);

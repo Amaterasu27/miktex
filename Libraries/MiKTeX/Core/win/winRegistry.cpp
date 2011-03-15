@@ -1,6 +1,6 @@
 /* winRegistry.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -150,14 +150,14 @@ bool
 winRegistry::TryDeleteRegistryKey (/*[in]*/ HKEY	  hkeyParent,
 				   /*[in]*/ const char *  lpszPath)
 {
-  long result = SHDeleteKeyA(hkeyParent, lpszPath);  
+  long result = SHDeleteKeyW(hkeyParent, Utils::AnsiToWideChar(lpszPath).c_str());
   if (result != ERROR_SUCCESS)
   {
     if (result == ERROR_FILE_NOT_FOUND)
     {
       return (false);
     }
-    FATAL_WINDOWS_ERROR_2 ("SHDeleteKeyA",
+    FATAL_WINDOWS_ERROR_2 ("SHDeleteKeyW",
       result,
       lpszPath);
   }

@@ -555,7 +555,7 @@ FdOpen (/*[in]*/ int		fd,
 {
   FILE * stream;
 #if defined(_MSC_VER)
-  stream = _tfdopen(fd, lpszMode);
+  stream = _fdopen(fd, lpszMode);
 #else
   stream = fdopen(fd, lpszMode);
 #endif

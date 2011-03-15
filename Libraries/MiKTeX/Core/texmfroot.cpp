@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -705,9 +705,9 @@ SessionImpl::RegisterRootDirectories (/*[in]*/ const string &	roots)
 	  AutoSysString c (errorInfo.sourceFile);
 	  Session::FatalMiKTeXError
 	    ("SessionImpl::RegisterRootDirectories",
-	     CW2CT(errorInfo.message),
-	     CW2CT(errorInfo.info),
-	     CW2CT(errorInfo.sourceFile),
+	     CW2A(errorInfo.message),
+	     CW2A(errorInfo.info),
+	     CW2A(errorInfo.sourceFile),
 	     errorInfo.sourceLine);
 	}
       return;

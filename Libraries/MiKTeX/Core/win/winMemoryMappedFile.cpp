@@ -95,9 +95,9 @@ winMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
   
   // try to open an existing file mapping
   hMapping =
-    OpenFileMappingA(readWrite ? FILE_MAP_WRITE : FILE_MAP_READ,
+    OpenFileMappingW(readWrite ? FILE_MAP_WRITE : FILE_MAP_READ,
 		     FALSE,
-		     name.c_str());
+		     PathName(name).ToWideCharString().c_str());
 
   if (hMapping != 0)
     {

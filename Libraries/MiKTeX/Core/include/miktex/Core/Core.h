@@ -1,6 +1,6 @@
 /* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -2351,18 +2351,6 @@ public:
     return (std::basic_string<CharType>(buffer));
   }
 
-#if defined(MIKTEX_WINDOWS)
-public:
-  void
-  Ansify ()
-  {
-    if (Utils::IsUTF8(Get(), false))
-      {
-	Set (Utils::UTF8ToAnsi(Get()));
-      }
-  }
-#endif
-
 public:
   const CharType &
   operator[] (/*[in]*/ size_t idx)
@@ -2861,6 +2849,18 @@ public:
   {
     return (Convert(ConvertPathNameFlags::ToDos));
   }
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  std::basic_string<wchar_t>
+  ToWideCharString ()
+    const
+  {
+    return (Utils::IsUTF8(Get())
+      ? Utils::UTF8ToWideChar(Get())
+      : Utils::AnsiToWideChar(Get()));
+  }
+#endif
 
   /// Normalizes this path name.
   /// @return Returns a reference to this object.

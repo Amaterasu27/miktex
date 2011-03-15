@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1002,12 +1002,12 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
 #if defined(MIKTEX_WINDOWS)
   else if (! haveValue && StringCompare(lpszValueName, CFG_MACRO_NAME_WINDIR, true) == 0)
   {
-    PathName path;
-    if (GetWindowsDirectory(path.GetBuffer(), static_cast<UINT>(path.GetCapacity()) == 0))
+    wchar_t szPath[BufferSizes::MaxPath];
+    if (GetWindowsDirectoryW(szPath, BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectory", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
-    value = path.ToString();
+    value = Utils::WideCharToAnsi(szPath);
     haveValue = true;
   }
 #endif

@@ -1,6 +1,6 @@
 /* DllProc.cpp:
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -81,10 +81,10 @@ DllProcBase::GetProc ()
     }
   if (hModule == 0)
     {
-      hModule = LoadLibraryA(dllName.c_str());
+      hModule = LoadLibraryW(Utils::AnsiToWideChar(dllName.c_str()).c_str());
       if (hModule == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("LoadLibrary", dllName.c_str());
+	  FATAL_WINDOWS_ERROR ("LoadLibraryW", dllName.c_str());
 	}
     }
   proc = GetProcAddress(hModule, procName.c_str());

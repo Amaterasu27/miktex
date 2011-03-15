@@ -1,6 +1,6 @@
 /* scratchdir.cpp: managing scratch directories
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -153,7 +153,7 @@ MIKTEXSTATICFUNC(bool)
 NameExists (/*[in]*/ const char *	lpszName)
 {
 #if defined(MIKTEX_WINDOWS)
-  unsigned long attributes = GetFileAttributes(lpszName);
+  unsigned long attributes = GetFileAttributesW(PathName(lpszName).ToWideCharString().c_str());
   return (attributes != INVALID_FILE_ATTRIBUTES);
 #else
   struct stat statbuf;

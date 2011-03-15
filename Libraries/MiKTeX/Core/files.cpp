@@ -715,14 +715,14 @@ File::Delete (/*[in]*/ const PathName &		path,
 	{
 	  absPath.MakeAbsolute ();
 	}
-      PathName dir;
+      wchar_t szDir[BufferSizes::MaxPath];
       if (IsWindowsNT())
 	{
-	  DllProc3<BOOL, LPCTSTR, LPTSTR, DWORD>
-	    getVolumePathNameA ("Kernel32.dll",  "GetVolumePathNameA");
-	  if (! getVolumePathNameA(absPath.Get(),
-				   dir.GetBuffer(),
-				   dir.GetCapacity()))
+	  DllProc3<BOOL, LPCWSTR, LPWSTR, DWORD>
+	    getVolumePathNameW ("Kernel32.dll",  "GetVolumePathNameW");
+	  if (! getVolumePathNameW(absPath.ToWideCharString().c_str(),
+				   szDir,
+				   BufferSizes::MaxPath))
 	    {
 	      FATAL_WINDOWS_ERROR ("GetVolumePathNameA", absPath.Get());
 	    }
@@ -736,14 +736,14 @@ File::Delete (/*[in]*/ const PathName &		path,
 	  UNSUPPORTED_PLATFORM ();
 #endif
 	}
-      char szTemp[BufferSizes::MaxPath];
-      if (GetTempFileNameA(dir.Get(), "mik", 0, szTemp) == 0)
+      wchar_t szTemp[BufferSizes::MaxPath];
+      if (GetTempFileNameW(szDir, L"mik", 0, szTemp) == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetTempFileNameA", dir.Get());
+	  FATAL_WINDOWS_ERROR ("GetTempFileNameA", Utils::WideCharToAnsi(szDir).c_str());
 	}
       File::Delete (szTemp);
       File::Move (absPath, szTemp);
-      SessionImpl::GetSession()->ScheduleFileRemoval (szTemp);
+      SessionImpl::GetSession()->ScheduleFileRemoval (PathName(szTemp).Get());
     }
 #endif
 }

@@ -1,6 +1,6 @@
 /* File.cpp: file operations
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -58,7 +58,7 @@ Directory::SetCurrentDirectory (/*[in]*/ const PathName &	path)
 bool
 Directory::Exists (/*[in]*/ const PathName &	path)
 {
-  unsigned long attributes = GetFileAttributesA(path.Get());
+  unsigned long attributes = GetFileAttributesW(path.ToWideCharString().c_str());
   if (attributes != INVALID_FILE_ATTRIBUTES)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
@@ -77,7 +77,7 @@ Directory::Exists (/*[in]*/ const PathName &	path)
 	 || error == ERROR_BAD_NETPATH
 	 || error == ERROR_PATH_NOT_FOUND))
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesW", path.Get());
     }
   return (false);
 }
@@ -95,9 +95,9 @@ Directory::Delete (/*[in]*/ const PathName &	path)
      T_("deleting directory %s"),
      Q_(path));
 
-  if (! RemoveDirectoryA(path.Get()))
+  if (! RemoveDirectoryW(path.ToWideCharString().c_str()))
     {
-      FATAL_WINDOWS_ERROR ("RemoveDirectoryA", path.Get());
+      FATAL_WINDOWS_ERROR ("RemoveDirectoryW", path.Get());
     }
 }
 
@@ -109,7 +109,7 @@ Directory::Delete (/*[in]*/ const PathName &	path)
 bool
 File::Exists (/*[in]*/ const PathName &	path)
 {
-  unsigned long attributes = GetFileAttributesA(path.Get());
+  unsigned long attributes = GetFileAttributesW(path.ToWideCharString().c_str());
   if (attributes != INVALID_FILE_ATTRIBUTES)
     {
       if ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
@@ -131,7 +131,7 @@ File::Exists (/*[in]*/ const PathName &	path)
 	 || error == ERROR_INVALID_NAME
 	 || error == ERROR_PATH_NOT_FOUND))
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesW", path.Get());
     }
   SessionImpl::GetSession()->trace_access->WriteFormattedLine
     ("core",
@@ -178,11 +178,11 @@ File::GetAttributes (/*[in]*/ const PathName &	path)
 unsigned long
 File::GetNativeAttributes (/*[in]*/ const PathName & path)
 {
-  unsigned long attributes = GetFileAttributesA(path.Get());
+  unsigned long attributes = GetFileAttributesW(path.ToWideCharString().c_str());
 
   if (attributes == INVALID_FILE_ATTRIBUTES)
     {
-      FATAL_WINDOWS_ERROR ("GetFileAttributesA", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFileAttributesW", path.Get());
     }
 
   return (attributes);
@@ -242,9 +242,9 @@ File::SetNativeAttributes (/*[in]*/ const PathName &	path,
      static_cast<int>(nativeAttributes),
      Q_(path));
 
-  if (! SetFileAttributesA(path.Get(), static_cast<DWORD>(nativeAttributes)))
+  if (! SetFileAttributesW(path.ToWideCharString().c_str(), static_cast<DWORD>(nativeAttributes)))
     {
-      FATAL_WINDOWS_ERROR ("SetFileAttributesA", path.Get());
+      FATAL_WINDOWS_ERROR ("SetFileAttributesW", path.Get());
     }
 }
 
@@ -257,7 +257,7 @@ size_t
 File::GetSize (/*[in]*/ const PathName &	path)
 {
   HANDLE h =
-    CreateFileA(path.Get(),
+    CreateFileW(path.ToWideCharString().c_str(),
 		GENERIC_READ,
 		FILE_SHARE_READ,
 		0,
@@ -267,7 +267,7 @@ File::GetSize (/*[in]*/ const PathName &	path)
 
   if (h == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileA", path.Get());
+      FATAL_WINDOWS_ERROR ("CreateFileW", path.Get());
     }
 
   AutoHANDLE autoClose (h);
@@ -444,7 +444,7 @@ Directory::SetTimes (/*[in]*/ const PathName &	path,
 		     /*[in]*/ time_t		lastWriteTime)
 {
   HANDLE h =
-    CreateFileA(path.Get(),
+    CreateFileW(path.ToWideCharString().c_str(),
 		FILE_WRITE_ATTRIBUTES,
 		0,
 		0,
@@ -453,7 +453,7 @@ Directory::SetTimes (/*[in]*/ const PathName &	path,
 		0);
   if (h == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileA", path.Get());
+      FATAL_WINDOWS_ERROR ("CreateFileW", path.Get());
     }
   AutoHANDLE autoClose (h);
   SetTimesInternal (h, creationTime, lastAccessTime, lastWriteTime);
@@ -470,16 +470,16 @@ File::GetTimes (/*[in]*/ const PathName &	path,
 		/*[out]*/ time_t &		lastAccessTime,
 		/*[out]*/ time_t &		lastWriteTime)
 {
-  WIN32_FIND_DATA findData;
-  HANDLE findHandle = FindFirstFileA(path.Get(), &findData);
+  WIN32_FIND_DATAW findData;
+  HANDLE findHandle = FindFirstFileW(path.ToWideCharString().c_str(), &findData);
   if (findHandle == INVALID_HANDLE_VALUE)
-    {
-      FATAL_WINDOWS_ERROR ("FindFirstFileA", path.Get());
-    }
+  {
+    FATAL_WINDOWS_ERROR ("FindFirstFileW", path.Get());
+  }
   if (! FindClose(findHandle))
-    {
-      FATAL_WINDOWS_ERROR ("FindClose", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR ("FindClose", 0);
+  }
   creationTime = FileTimeToUniversalCrtTime(findData.ftCreationTime);
   lastAccessTime = FileTimeToUniversalCrtTime(findData.ftLastAccessTime);
   lastWriteTime = FileTimeToUniversalCrtTime(findData.ftLastWriteTime);
@@ -497,9 +497,9 @@ File::Delete (/*[in]*/ const PathName &	path)
     ("core",
      T_("deleting %s"),
      Q_(path));
-  if (! DeleteFileA(path.Get()))
+  if (! DeleteFileW(path.ToWideCharString().c_str()))
     {
-      FATAL_WINDOWS_ERROR ("DeleteFileA", path.Get());
+      FATAL_WINDOWS_ERROR ("DeleteFileW", path.Get());
     }
 }
 
@@ -518,9 +518,9 @@ File::Move (/*[in]*/ const PathName &	source,
      Q_(source),
      Q_(dest));
 
-  if (! MoveFileA(source.Get(), dest.Get()))
+  if (! MoveFileW(source.ToWideCharString().c_str(), dest.ToWideCharString().c_str()))
     {
-      FATAL_WINDOWS_ERROR ("MoveFileA", source.Get());
+      FATAL_WINDOWS_ERROR ("MoveFileW", source.Get());
     }
 }
 
@@ -554,9 +554,9 @@ File::Copy (/*[in]*/ const PathName &	source,
 	}
     }
 
-  if (! CopyFileA(source.Get(), dest.Get(), FALSE))
+  if (! CopyFileW(source.ToWideCharString().c_str(), dest.ToWideCharString().c_str(), FALSE))
     {
-      FATAL_WINDOWS_ERROR ("CopyFileA", source.Get());
+      FATAL_WINDOWS_ERROR ("CopyFileW", source.Get());
     }
 }
 
@@ -672,26 +672,18 @@ File::Open (/*[in]*/ const PathName &	path,
 	  Directory::Create (dir);
 	}
     }
-#  if (_MSC_VER >= 1400)
-  if (_sopen_s(&fd,
-	       path.Get(),
-	       flags,
-	       shflags,
-	       (((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE))
+  if (_wsopen_s(&fd,
+		path.ToWideCharString().c_str(),
+		flags,
+		shflags,
+		(((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE))
       != 0)
     {
       fd = -1;
     }
-#else
-  fd =
-    _sopen(path.Get(),
-	   flags,
-	   shflags,
-	   (((flags & O_CREAT) == 0) ? 0 : S_IREAD | S_IWRITE));
-#endif
   if (fd < 0)
     {
-      FATAL_CRT_ERROR ("_sopen", path.Get());
+      FATAL_CRT_ERROR ("_wsopen_s", path.Get());
     }
 #else
   UNUSED_ALWAYS (shflags);

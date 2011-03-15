@@ -1,6 +1,6 @@
 /* winProcess.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -109,18 +109,18 @@ private:
   bool processStarted;
 
 private:
-  PROCESSENTRY32 processEntry;
+  PROCESSENTRY32W processEntry;
 
 private:
   static
-  PROCESSENTRY32
+  PROCESSENTRY32W
   GetProcessEntry (/*[in]*/ DWORD processId);
 
 private:
   static
   bool
   TryGetProcessEntry (/*[in]*/ DWORD processId,
-		      /*[out]*/ PROCESSENTRY32 & processEntry);
+		      /*[out]*/ PROCESSENTRY32W & processEntry);
 
 private:
   friend class Process;
