@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 2002-2008 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -90,7 +90,7 @@ FinishPage::OnSetActive ()
 {
   try
     {
-      pSheet->SetFinishText (T_("Finish"));
+      pSheet->SetFinishText (T_(_T("Finish")));
       if (pSheet->GetErrorFlag())
 	{
 	  CString str;
@@ -162,12 +162,12 @@ FinishPage::OnWizardFinish ()
 	{
 	  if (viewReport == BST_CHECKED)
 	    {
-	      if (ShellExecute(0,
-			       "open",
-			       g_logFileName.Get(),
-			       0,
-			       0,
-			       SW_SHOWNORMAL)
+	      if (ShellExecuteW(0,
+			        L"open",
+				g_logFileName.ToWideCharString().c_str(),
+				0,
+				0,
+				SW_SHOWNORMAL)
 		  <= reinterpret_cast<HINSTANCE>(32))
 		{
 		  Process::Start ("notepad.exe", g_logFileName.Get());

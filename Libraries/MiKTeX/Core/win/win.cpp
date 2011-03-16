@@ -2057,13 +2057,13 @@ SessionImpl::IsFileAlreadyOpen (/*[in]*/ const char * lpszFileName)
   unsigned long error = NO_ERROR;
 
   HANDLE hFile =
-    CreateFile(PathName(lpszFileName).ToWideCharString().c_str(),
-	       GENERIC_READ,
-	       FILE_SHARE_READ,
-	       0,
-	       OPEN_EXISTING,
-	       FILE_ATTRIBUTE_NORMAL,
-	       0);
+    CreateFileW(PathName(lpszFileName).ToWideCharString().c_str(),
+	        GENERIC_READ,
+	        FILE_SHARE_READ,
+	        0,
+	        OPEN_EXISTING,
+	        FILE_ATTRIBUTE_NORMAL,
+	        0);
 
   if (hFile == INVALID_HANDLE_VALUE)
     {
@@ -2700,7 +2700,7 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFOW lpExecInfo)
     BOOL bRet;
     DWORD dwErr;
     HRESULT hr;
-    PARSEDURL pu;
+    PARSEDURLW pu;
     wchar_t szSchemeBuffer[INTERNET_MAX_SCHEME_LENGTH + 1];
     HKEY hkeyClass;
  
@@ -2833,7 +2833,7 @@ HINSTANCE ShellExecuteURL
     INT nShowCmd
 )
 {
-    SHELLEXECUTEINFO ExecuteInfo;
+    SHELLEXECUTEINFOW ExecuteInfo;
  
     ExecuteInfo.fMask = SEE_MASK_FLAG_NO_UI; /* Odd but true */
     ExecuteInfo.hwnd = hwnd;

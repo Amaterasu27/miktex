@@ -1,6 +1,6 @@
 /* LicensePage.cpp:
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -98,12 +98,12 @@ LicensePage::OnInitDialog ()
       cf.bPitchAndFamily = FIXED_PITCH | FF_MODERN; 
       Utils::CopyString (cf.szFaceName,
 			 LF_FACESIZE,
-			 "Courier New");
+			 _T("Courier New"));
       cf.yHeight = 160;
       licenseControl.SetDefaultCharFormat (cf); 
       HRSRC hrsrc = FindResource(0,
 				 MAKEINTRESOURCE(IDR_LICENSE),
-				 "LICENSE");
+				 _T("LICENSE"));
       if (hrsrc == 0)
 	{
 	  FATAL_WINDOWS_ERROR ("FindResource", 0);

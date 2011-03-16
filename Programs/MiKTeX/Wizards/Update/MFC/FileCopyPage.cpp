@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual update process
 
-   Copyright (C) 2002-2010 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -373,7 +373,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 
 	  // disable controls
 	  EnableControl (IDC_PROGRESS1_TITLE, false);
-	  GetControl(IDC_PACKAGE)->SetWindowText ("");
+	  GetControl(IDC_PACKAGE)->SetWindowText (_T(""));
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
@@ -395,7 +395,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(sharedData.packageName.c_str());
+		(CA2T(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 
@@ -486,7 +486,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   uType |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  UINT u = ::MessageBox(0, str.c_str(), 0, uType);
+  UINT u = ::MessageBoxW(0, CA2W(str.c_str()), 0, uType);
   return (u != IDCANCEL);
 }
 
@@ -773,7 +773,7 @@ FileCopyPage::OpenLog ()
   // C:\texmf\miktex\config\update-2005-11-04-08-50.log
   CTime t = CTime::GetCurrentTime();
   PathName pathLog (GetMainConfigDir(),
-		    static_cast<const char *>
+		    static_cast<LPCTSTR>
 		    (t.Format(T_("update-%Y-%m-%d-%H-%M"))),
 		    ".log");
 
@@ -824,7 +824,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
   CString str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  str.FormatV (CA2T(lpszFmt), args);
   va_end (args);
   int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
@@ -839,7 +839,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
   sharedData.reportUpdate = true;
   if (writeLog)
     {
-      Log ("%s", static_cast<const char *>(str));
+      Log ("%s", static_cast<LPCTSTR>(str));
     }
   if (immediate)
     {

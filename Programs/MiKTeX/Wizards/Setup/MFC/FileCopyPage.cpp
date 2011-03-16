@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2010 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -293,7 +293,7 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 
       if (theApp.setupTask == SetupTask::Download)
 	{
-	  GetControl(IDC_PROGRESS1_TITLE)->SetWindowText (T_("Downloading:"));
+	  GetControl(IDC_PROGRESS1_TITLE)->SetWindowText (T_(_T("Downloading:")));
 	}
 
       // create the worker thread
@@ -375,7 +375,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 
 	  // disable controls
 	  EnableControl (IDC_PROGRESS1_TITLE, false);
-	  GetControl(IDC_PACKAGE)->SetWindowText ("");
+	  GetControl(IDC_PACKAGE)->SetWindowText (_T(""));
 	  EnableControl (IDC_PACKAGE, false);
 	  progressControl1.SetPos (0);
 	  progressControl1.EnableWindow (FALSE);
@@ -397,7 +397,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(sharedData.packageName.c_str());
+		(CA2T(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 
@@ -460,7 +460,7 @@ FileCopyPage::OnReport (/*[in]*/ WPARAM	wParam,
   UNUSED_ALWAYS (lParam);
   long len = reportControl.GetTextLength();
   reportControl.SetSel (len, len);
-  reportControl.ReplaceSel (reinterpret_cast<const char *>(wParam));
+  reportControl.ReplaceSel (CA2T(reinterpret_cast<const char *>(wParam)));
   reportControl.SendMessage (EM_SCROLLCARET);
   return (0);
 }
@@ -963,7 +963,7 @@ FileCopyPage::ConfigureMiKTeX ()
     CSingleLock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
-    sharedData.packageName = static_cast<const char *>(str);
+    sharedData.packageName = CT2A(str);
     sharedData.newPackage = true;
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
@@ -1247,24 +1247,24 @@ FileCopyPage::CalculateExpenditure ()
    _________________________________________________________________________ */
 
 void
-FileCopyPage::Report (/*[in]*/ bool			writeLog,
+FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/ const char *	lpszFmt,
-		      /*[in]*/				...)
+		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
   CString str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  str.FormatV (CA2T(lpszFmt), args);
   va_end (args);
   //int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
   if (writeLog)
     {
-      Log ("%s", static_cast<const char *>(str));
+      Log ("%s", static_cast<const char *>(CT2A(str)));
     }
   SendMessage (WM_REPORT,
-	       reinterpret_cast<WPARAM>(static_cast<const char *>(str)));
+	       reinterpret_cast<WPARAM>(static_cast<const char *>(CT2A(str))));
 }
 
 /* _________________________________________________________________________

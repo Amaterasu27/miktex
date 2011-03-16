@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -105,7 +105,7 @@ public:
     path += T_("MiKTeX Setup");
     if (! Directory::Exists(path))
       {
-	if (! CreateDirectory(path.Get(), 0))
+	if (! CreateDirectory(CA2T(path.Get()), 0))
 	  {
 	    FATAL_WINDOWS_ERROR ("CreateDirectory", path.Get());
 	  }
@@ -404,4 +404,4 @@ SplitUrl (/*[in]*/ const string &	url,
    STR_BYT_SIZ
    _________________________________________________________________________ */
 
-#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(char))
+#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(*lpsz))

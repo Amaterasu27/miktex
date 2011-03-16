@@ -1,6 +1,6 @@
 /* CdPage.cpp
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -208,25 +208,25 @@ CdPage::ShowDrives ()
 	  continue;
 	}
 
-      char szDrive[4];
-      szDrive[0] = char('A') + static_cast<char>(drv);
-      szDrive[1] = ':';
-      szDrive[2] = '\\';
+      wchar_t szDrive[4];
+      szDrive[0] = wchar_t(L'A') + static_cast<wchar_t>(drv);
+      szDrive[1] = L':';
+      szDrive[2] = L'\\';
       szDrive[3] = 0;
 
       DWORD fileSystemFlags;
       DWORD maximumComponentLength;
-      char fileSystemName[BufferSizes::MaxPath];
-      char volumeName[BufferSizes::MaxPath];
+      wchar_t fileSystemName[BufferSizes::MaxPath];
+      wchar_t volumeName[BufferSizes::MaxPath];
 
-      if (! GetVolumeInformation(szDrive,
-				 volumeName,
-				 BufferSizes::MaxPath,
-				 0,
-				 &maximumComponentLength, 
-				 &fileSystemFlags,
-				 fileSystemName,
-				 BufferSizes::MaxPath))
+      if (! GetVolumeInformationW(szDrive,
+				  volumeName,
+				  BufferSizes::MaxPath,
+				  0,
+				  &maximumComponentLength, 
+				  &fileSystemFlags,
+				  fileSystemName,
+				  BufferSizes::MaxPath))
 	{
 	  continue;
 	}
@@ -239,15 +239,15 @@ CdPage::ShowDrives ()
       szDrive[2] = 0;
 
       CString comboBoxItem (szDrive);
-      comboBoxItem += " (";
+      comboBoxItem += _T(" (");
       comboBoxItem += volumeName;
-      comboBoxItem += ')';
+      comboBoxItem += _T(')');
       if (driveComboBox.AddString(comboBoxItem) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	}
 
-      drives.push_back (szDrive);
+      drives.push_back (static_cast<const char *>(CW2A(szDrive)));
 
       noDriveFound = false;
     }

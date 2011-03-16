@@ -1,6 +1,6 @@
 /* UpdateDialog.cpp:
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -718,7 +718,7 @@ UpdateDialogImpl::Report (/*[in]*/ bool		immediate,
   CString str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  str.FormatV (CA2T(lpszFmt), args);
   va_end (args);
   int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
@@ -782,7 +782,7 @@ UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
   va_start (marker, lpszFormat);
   string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
-  GetControl(ctrlId)->SetWindowText (str.c_str());
+  GetControl(ctrlId)->SetWindowText (CA2T(str.c_str()));
 }
 
 /* _________________________________________________________________________

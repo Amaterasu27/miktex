@@ -1,6 +1,6 @@
 /* SiteWizLocal.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -185,13 +185,12 @@ SiteWizLocal::OnWizardFinish ()
 	  CString prompt;
 	  AfxFormatString1 (prompt, IDP_NOT_A_FOLDER, directory);
 	  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
-			      prompt,
-			      directory);
+			      CT2A(prompt),
+			      CT2A(directory));
 	}
       else
 	{
-	  if (! (pManager->IsLocalPackageRepository
-		 (static_cast<const char *>(directory))))
+	  if (! (pManager->IsLocalPackageRepository(PathName(directory))))
 	    {
 	      PathName mpmIni (directory);
 	      mpmIni += "texmf";
@@ -203,14 +202,14 @@ SiteWizLocal::OnWizardFinish ()
 				    IDP_NOT_LOCAL_REPOSITORY,
 				    directory);
 		  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
-				      prompt,
-				      directory);
+				      CT2A(prompt),
+				      CT2A(directory));
 		}
 	    }
 	}
       pManager->SetDefaultPackageRepository
 	(RepositoryType::Local,
-	 static_cast<const char *>(directory));
+	 string(CT2A(directory)));
       return (CPropertyPage::OnWizardFinish());
     }
   catch (const MiKTeXException & e)

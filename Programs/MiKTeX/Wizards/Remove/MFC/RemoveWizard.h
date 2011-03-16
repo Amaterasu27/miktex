@@ -1,6 +1,6 @@
 /* RemoveWizard.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -86,7 +86,7 @@ public:
   {
     SetWizardButtons (PSWIZB_FINISH);
     EnableCancelButton (false);
-    SetFinishText (T_("Close"));
+    SetFinishText (T_(_T("Close")));
   }
 
 public:

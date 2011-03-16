@@ -25,11 +25,11 @@
 
 /* _________________________________________________________________________
 
-   Directory::GetCurrentDirectory
+   Directory::GetCurrentDirectoryA
    _________________________________________________________________________ */
 
 PathName
-Directory::GetCurrentDirectory ()
+Directory::GetCurrentDirectoryA ()
 {
   PathName cd;
   cd.SetToCurrentDirectory ();

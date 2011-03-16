@@ -1,6 +1,6 @@
 /* Update.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2000 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -121,7 +121,7 @@ public:
   {
     SetWizardButtons (PSWIZB_FINISH);
     EnableCancelButton (false);
-    SetFinishText (T_("Close"));
+    SetFinishText (T_(_T("Close")));
   }
 
 public:

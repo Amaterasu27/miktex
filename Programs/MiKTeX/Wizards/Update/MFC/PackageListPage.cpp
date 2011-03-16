@@ -1,6 +1,6 @@
 /* PackageListPag.cpp:
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -370,7 +370,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       // </fixme>
 
       // display the deployment name
-      listControl.SetItemText (idx, 0, it->deploymentName.c_str());
+      listControl.SetItemText (idx, 0, CA2T(it->deploymentName.c_str()));
 
       // display the 'old' package time-stamp, if the package is known
       if (locallyKnown && oldPackageInfo.timeInstalled > 0)
@@ -384,12 +384,12 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       // correctly installed
       if (it->action == PackageInstaller::UpdateInfo::Repair)
       {
-	listControl.SetItemText (idx, 2, "to be repaired");
+	listControl.SetItemText (idx, 2, T_(_T("to be repaired")));
       }
       else if (it->action == PackageInstaller::UpdateInfo::ForceRemove
 	       || it->action == PackageInstaller::UpdateInfo::KeepObsolete)
       {
-	listControl.SetItemText (idx, 2, "obsolete (to be removed)");
+	listControl.SetItemText (idx, 2, T_(_T("obsolete (to be removed)")));
       }
       else
       {
@@ -492,45 +492,45 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
   if (g_upgrading
       && IsMiKTeXPackage(updateInfo.deploymentName))
   {
-    AfxMessageBox (T_("The MiKTeX upgrade operation must be executed \
-as a whole."),
+    AfxMessageBox (T_(_T("The MiKTeX upgrade operation must be executed \
+as a whole.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
   {
-    AfxMessageBox (T_("This package is currently installed for all users. Only the admin variant of the wizard can update this package."),
+    AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can update this package.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepObsolete)
   {
-    AfxMessageBox (T_("This package is currently installed for all users. Only the admin variant of the wizard can remove this package."),
+    AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can remove this package.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
   {
-    AfxMessageBox (T_("This package cannot be updated rihgt now. \
-Let the wizard conclude. Then run the wizard again."),
+    AfxMessageBox (T_(_T("This package cannot be updated rihgt now. \
+Let the wizard conclude. Then run the wizard again.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::Repair)
   {
-    AfxMessageBox (T_("This package needs to be repaired."),
+    AfxMessageBox (T_(_T("This package needs to be repaired.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceRemove)
   {
-    AfxMessageBox (T_("This package must be removed."),
+    AfxMessageBox (T_(_T("This package must be removed.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
   else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceUpdate)
   {
-    AfxMessageBox (T_("This package has to be updated."),
+    AfxMessageBox (T_(_T("This package has to be updated.")),
 		   MB_OK | MB_ICONEXCLAMATION);
     *pResult = TRUE;
   }
@@ -677,7 +677,7 @@ PackageListPage::DoFindUpdates ()
 
   if (updates.size() == 0)
   {
-    AfxMessageBox (T_("There are currently no updates available."),
+    AfxMessageBox (T_(_T("There are currently no updates available.")),
 		   MB_OK | MB_ICONINFORMATION);
   }
 }
@@ -705,7 +705,7 @@ PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   style |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  return (::MessageBox(0, str.c_str(), 0, style) != IDCANCEL);
+  return (::MessageBoxW(0, CA2W(str.c_str()), 0, style) != IDCANCEL);
 }
 
 /* _________________________________________________________________________
@@ -767,7 +767,7 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
   }
-  if (! listControl.SetItemText(0, 0, lpszText))
+  if (! listControl.SetItemText(0, 0, CA2T(lpszText)))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }
@@ -783,14 +783,14 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
    _________________________________________________________________________ */
 
 void
-PackageListPage::InsertColumn (/*[in]*/ int			colIdx,
+PackageListPage::InsertColumn (/*[in]*/ int		colIdx,
 			       /*[in]*/ const char *	lpszLabel,
 			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
   {

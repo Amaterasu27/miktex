@@ -1,6 +1,6 @@
 /* RemoveWizard.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -60,7 +60,7 @@ RemoveWizard::RemoveWizard ()
     }
   LOGFONT TitleLogFont = ncm.lfMessageFont;
   TitleLogFont.lfWeight = FW_BOLD;
-  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, T_("Verdana Bold"));
+  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, _T("Verdana Bold"));
   HDC hdc = ::GetDC(0);
   TitleLogFont.lfHeight = 0 - GetDeviceCaps(hdc, LOGPIXELSY) * 12 / 72;
   ::ReleaseDC (0, hdc);
@@ -173,6 +173,6 @@ RemoveWizard::SetNextText (/*[in]*/ const char * lpszText)
     }
   CString ret;
   pWnd->GetWindowText (ret);
-  pWnd->SetWindowText (lpszText);
+  pWnd->SetWindowText (CA2T(lpszText));
   return (ret);
 }

@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -87,7 +87,7 @@ FinishPage::OnSetActive ()
 {
   try
     {
-      pSheet->SetFinishText (T_("Close"));
+      pSheet->SetFinishText (T_(_T("Close")));
 
       if (pSheet->GetErrorFlag())
 	{
@@ -203,8 +203,8 @@ FinishPage::OnWizardFinish ()
 		  PathName pathRelNotes (theApp.GetInstallRoot(),
 					 MIKTEX_PATH_RELNOTES_HTML);
 		  if (ShellExecute(0,
-				   T_("open"),
-				   pathRelNotes.Get(),
+				   _T("open"),
+				   CA2T(pathRelNotes.Get()),
 				   0,
 				   0,
 				   SW_SHOWNORMAL)

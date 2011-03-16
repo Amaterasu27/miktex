@@ -138,7 +138,7 @@ WelcomePage::OnKillActive ()
       try
 	{
 	  pSheet->SetThoroughlyFlag (thoroughly != FALSE);
-	  pSheet->SetNextText (oldNextText);
+	  pSheet->SetNextText (CT2A(oldNextText));
 	}
       catch (const MiKTeXException & e)
 	{
@@ -176,21 +176,21 @@ WelcomePage::ShowItems ()
   listBox.ResetContent ();
   if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      if (listBox.AddString(T_("Installed packages")) < 0)
+      if (listBox.AddString(T_(_T("Installed packages"))) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	}
     }
   if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      if (listBox.AddString(T_("Shortcuts")) < 0)
+      if (listBox.AddString(T_(_T("Shortcuts"))) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	}
     }
   if (! SessionWrapper(true)->IsMiKTeXDirect())
     {
-      if (listBox.AddString(T_("MiKTeX registry settings")) < 0)
+      if (listBox.AddString(T_(_T("MiKTeX registry settings"))) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	}
@@ -202,7 +202,7 @@ WelcomePage::ShowItems ()
 	   it != vec.end();
 	   ++ it)
 	{
-	  if (listBox.AddString(it->Get()) < 0)
+	  if (listBox.AddString(it->ToWideCharString().c_str()) < 0)
 	    {
 	      FATAL_WINDOWS_ERROR ("CListBox::AddString", 0);
 	    }

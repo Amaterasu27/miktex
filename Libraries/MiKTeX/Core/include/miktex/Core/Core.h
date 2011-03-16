@@ -4112,7 +4112,7 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(PathName)
-  GetCurrentDirectory ();
+  GetCurrentDirectoryA (); // FIXME
 
   /// Sets the current (working) directory.
 public:

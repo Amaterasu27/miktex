@@ -1,6 +1,6 @@
 /* Remove.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -45,6 +45,7 @@ END_MESSAGE_MAP();
 
 RemoveWizardApp::RemoveWizardApp ()
 {
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.Remove." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -64,21 +65,21 @@ RemoveWizardApp::InitInstance ()
 
   if (! InitCommonControlsEx(&initCtrls))
     {
-      AfxMessageBox (T_("The application could not be initialized (1)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (1).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   if (FAILED(CoInitialize(0)))
     {
-      AfxMessageBox (T_("The application could not be initialized (2)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (2).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   try
     {
-      SessionWrapper pSession (Session::InitInfo(_T("remove")));
+      SessionWrapper pSession (Session::InitInfo("remove"));
   
       logFileName =
 	SessionWrapper(true)->GetSpecialPath(SpecialPath::InstallRoot);
@@ -122,7 +123,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
       str += T_("Details: ");
       str += e.GetInfo();
     }
-  AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________
@@ -137,7 +138,7 @@ ReportError (/*[in]*/ const exception & e)
   str = T_("The operation could not be completed for the following reason: ");
   str += "\n\n";
   str += e.what();
-  AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________

@@ -1,6 +1,6 @@
 /* TpmParser.cpp:
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -202,7 +202,10 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
       MIKTEX_ASSERT (This->elementStack.top() == lpszName);
       This->elementStack.pop ();
 #if defined(MIKTEX_WINDOWS)
-      This->charBuffer.Ansify ();
+      if (Utils::IsUTF8(This->charBuffer.Get(), false))
+      {
+	This->charBuffer.Set (Utils::UTF8ToAnsi(This->charBuffer.Get()));
+      }
 #endif
       if (StrCmp(lpszName, X_("TPM:Creator")) == 0)
 	{

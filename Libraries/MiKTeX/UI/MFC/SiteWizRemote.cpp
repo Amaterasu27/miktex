@@ -1,6 +1,6 @@
 /* SiteWizRemote.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -85,7 +85,7 @@ SiteWizRemote::OnSetActive ()
 	    }
 	  if (! listControl.SetItemText(0,
 					0,
-					T_("Connecting...")))
+					T_(_T("Connecting..."))))
 	    {
 	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
 	    }
@@ -172,9 +172,9 @@ SiteWizRemote::InsertColumn (/*[in]*/ int		colIdx,
 			     /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -311,7 +311,7 @@ SiteWizRemote::SetItemText (/*[in]*/ int		itemIdx,
 			    /*[in]*/ int		colIdx,
 			    /*[in]*/ const char *	lpszText)
 {
-  if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
+  if (! listControl.SetItemText(itemIdx, colIdx, CA2T(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
@@ -327,20 +327,20 @@ SplitUrl (/*[in]*/ const string &	url,
 	  /*[out]*/ string &		protocol,
 	  /*[out]*/ string &		host)
 {
-  char szProtocol[200];
-  char szHost[200];
+  _TCHAR szProtocol[200];
+  _TCHAR szHost[200];
   URL_COMPONENTS url_comp = { 0 };
   url_comp.dwStructSize = sizeof(url_comp);
   url_comp.lpszScheme = szProtocol;
   url_comp.dwSchemeLength = 200;
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
-  if (! InternetCrackUrl(url.c_str(), 0, 0, &url_comp))
+  if (! InternetCrackUrl(CA2T(url.c_str()), 0, 0, &url_comp))
     {
       FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
     }
-  protocol = szProtocol;
-  host = szHost;
+  protocol = CT2A(szProtocol);
+  host = CT2A(szHost);
 }
 /* _________________________________________________________________________
 
@@ -404,11 +404,11 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 	  SplitUrl (it->url, protocol, host);
 
 	  SetItemText (idx, 0, it->country.c_str());
-	  CString protUC = protocol.c_str();
+	  CString protUC (protocol.c_str());
 	  protUC.MakeUpper ();
-	  SetItemText (idx, 1, protUC);
+	  SetItemText (idx, 1, CT2A(protUC));
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
+      	  SetItemText (idx, 3, CT2A(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
 	  SetItemText (idx, 4, it->description.c_str());
 
 	  if (it->url == url)

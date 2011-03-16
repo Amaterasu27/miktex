@@ -1,6 +1,6 @@
 /* PropPageFiles.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -70,10 +70,10 @@ PropPageFiles::OnInitDialog ()
   try
     {
       if (listControl.InsertColumn(0,
-				   T_("File name"),
+				   T_(_T("File name")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth("\
-xxx mmmmmmmm.txt"),
+				   listControl.GetStringWidth(_T("\
+xxx mmmmmmmm.txt")),
 				   0)
 	  < 0)
 	{
@@ -81,10 +81,10 @@ xxx mmmmmmmm.txt"),
 	}
 
       if (listControl.InsertColumn(1,
-				   T_("Path"),
+				   T_(_T("Path")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth("\
-xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
+				   listControl.GetStringWidth(_T("\
+xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
 				   1)
 	  < 0)
 	{
@@ -144,14 +144,16 @@ PropPageFiles::AddFile (/*[in]*/ int		idx,
   lvitem.iItem = idx;
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 0;
-  lvitem.pszText = fileName.GetBuffer();
+  CString fileNameString (fileName.Get());
+  lvitem.pszText = fileNameString.GetBuffer();
   if (listControl.InsertItem(&lvitem) < 0)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
   lvitem.iItem = idx;
   lvitem.iSubItem = 1;
-  lvitem.pszText = path.GetBuffer();
+  CString pathString (path.Get());
+  lvitem.pszText = pathString.GetBuffer();
   if (! listControl.SetItem(&lvitem))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);

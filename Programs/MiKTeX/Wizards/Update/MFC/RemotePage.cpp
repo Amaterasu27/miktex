@@ -1,6 +1,6 @@
 /* RemotePage.cpp:
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -319,11 +319,11 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  SplitUrl (it->url, protocol, host);
 
 	  SetItemText (idx, 0, it->country.c_str());
-	  CString protUC = protocol.c_str();
+	  CString protUC (protocol.c_str());
 	  protUC.MakeUpper ();
-	  SetItemText (idx, 1, protUC);
+	  SetItemText (idx, 1, CT2A(protUC));
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CTime(it->timeDate).Format("%d-%b-%y"));
+      	  SetItemText (idx, 3, CT2A(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
 #if SHOW_DESCRIPTION
 	  SetItemText (idx, 4, it->description.c_str());
 #endif
@@ -449,14 +449,14 @@ RemotePage::WorkerThread (/*[in]*/ void * pv)
    _________________________________________________________________________ */
 
 void
-RemotePage::InsertColumn (/*[in]*/ int			colIdx,
+RemotePage::InsertColumn (/*[in]*/ int		colIdx,
 			  /*[in]*/ const char *	lpszLabel,
 			  /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       lpszLabel,
+			       CA2T(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(lpszLongest),
+			       listControl.GetStringWidth(CA2T(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -470,11 +470,11 @@ RemotePage::InsertColumn (/*[in]*/ int			colIdx,
    _________________________________________________________________________ */
  
 void
-RemotePage::SetItemText (/*[in]*/ int			itemIdx,
-			 /*[in]*/ int			colIdx,
+RemotePage::SetItemText (/*[in]*/ int		itemIdx,
+			 /*[in]*/ int		colIdx,
 			 /*[in]*/ const char *	lpszText)
 {
-  if (! listControl.SetItemText(itemIdx, colIdx, lpszText))
+  if (! listControl.SetItemText(itemIdx, colIdx, CA2T(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
@@ -500,7 +500,7 @@ RemotePage::SetProgressText (/*[in]*/ const char * lpszText)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
-  if (! listControl.SetItemText(0, 0, lpszText))
+  if (! listControl.SetItemText(0, 0, CA2T(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }

@@ -1,6 +1,6 @@
 /* FinishPage.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -84,7 +84,7 @@ FinishPage::OnInitDialog ()
 BOOL
 FinishPage::OnSetActive ()
 {
-  pSheet->SetFinishText (T_("Finish"));
+  pSheet->SetFinishText (T_(_T("Finish")));
   CancelToClose ();
   return (CPropertyPage::OnSetActive());
 }

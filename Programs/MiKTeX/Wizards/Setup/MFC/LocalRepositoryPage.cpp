@@ -1,6 +1,6 @@
 /* LocalRepositoryPag.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -98,12 +98,12 @@ LocalRepositoryPage::OnSetActive ()
 	  if (theApp.setupTask == SetupTask::Download)
 	    {
 	      pWnd->SetWindowText
-		(T_("Download the MiKTeX distribution to:"));
+		(T_(_T("Download the MiKTeX distribution to:")));
 	    }
 	  else
 	    {
 	      pWnd->SetWindowText
-		(T_("Install MiKTeX from:"));
+		(T_(_T("Install MiKTeX from:")));
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -222,7 +222,7 @@ LocalRepositoryPage::OnKillActive ()
 	    }
 	  if (ret)
 	    {
-	      theApp.localPackageRepository = fileName;
+	      theApp.localPackageRepository = static_cast<LPCTSTR>(fileName);
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -269,7 +269,7 @@ LocalRepositoryPage::OnBrowse ()
 	{
 	  return;
 	}
-      char szFolderPath[BufferSizes::MaxPath];
+      _TCHAR szFolderPath[BufferSizes::MaxPath];
       BOOL havePath = SHGetPathFromIDList(pidl, szFolderPath);
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)

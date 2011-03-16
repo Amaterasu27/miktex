@@ -1,6 +1,6 @@
 /* LocalPage.cpp:
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -194,7 +194,7 @@ LocalPage::OnBrowse ()
 {
   try
     {
-      BROWSEINFO bi;
+      BROWSEINFOW bi;
       ZeroMemory (&bi, sizeof(bi));
       bi.hwndOwner = GetSafeHwnd();
       bi.pszDisplayName = 0;
@@ -205,13 +205,13 @@ LocalPage::OnBrowse ()
 	}
       bi.lpszTitle = title;
       bi.ulFlags = BIF_RETURNONLYFSDIRS;
-      LPCITEMIDLIST pidl = SHBrowseForFolder(&bi);
+      LPCITEMIDLIST pidl = SHBrowseForFolderW(&bi);
       if (pidl == 0)
 	{
 	  return;
 	}
-      char szFolderPath[BufferSizes::MaxPath];
-      BOOL havePath = SHGetPathFromIDList(pidl, szFolderPath);
+      wchar_t szFolderPath[BufferSizes::MaxPath];
+      BOOL havePath = SHGetPathFromIDListW(pidl, szFolderPath);
       CoTaskMemFree (const_cast<LPITEMIDLIST>(pidl));
       if (! havePath)
 	{

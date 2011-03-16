@@ -1,6 +1,6 @@
 /* SetupWizard.h:						-*- C++ -*-
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -105,12 +105,12 @@ public:
   {
     SetWizardButtons (PSWIZB_FINISH);
     EnableCancelButton (false);
-    SetFinishText (T_("Close"));
+    SetFinishText (T_(_T("Close")));
   }
 
 public:
   CString
-  SetNextText (/*[in]*/ const char * lpszText);
+  SetNextText (/*[in]*/ LPCTSTR lpszText);
 
 private:
   void

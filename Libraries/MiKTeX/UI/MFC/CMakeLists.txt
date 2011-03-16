@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,6 +37,8 @@ configure_file(
 add_definitions(
   -D_AFXDLL
   -D_AFXEXT
+  -D_UNICODE
+  -DUNICODE
 )
 
 set(${ui_mfc_dll_name}_sources

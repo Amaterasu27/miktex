@@ -1,6 +1,6 @@
 /* LogFile.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -285,8 +285,8 @@ LogFile::RemoveRegistrySettings ()
 	{
 	  continue;
 	}
-      RegDeleteValue (hkeySub, it->strValueName);
-      char szName[BufferSizes::MaxPath];
+      RegDeleteValueW (hkeySub, it->strValueName);
+      _TCHAR szName[BufferSizes::MaxPath];
       DWORD sizeName = BufferSizes::MaxPath;
       FILETIME fileTime;
       bool del =
@@ -302,7 +302,7 @@ LogFile::RemoveRegistrySettings ()
       RegCloseKey (hkeySub);
       if (del)
 	{
-	  RegDeleteKey (it->hkey, it->strSubKey);
+	  RegDeleteKeyW (it->hkey, it->strSubKey);
 	}
     }
 }

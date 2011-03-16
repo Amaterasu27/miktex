@@ -1,6 +1,6 @@
 /* fcmiktex.cpp:						-*- C++ -*-
 
-   Copyright (C) 2007-2008 Christian Schenk
+   Copyright (C) 2007-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -160,10 +160,6 @@ miktex_close_cache_file (/*[in]*/ int		fd,
 {
   try
     {
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-      string ansidir = Utils::UTF8ToAnsi(lpszDir);
-      lpszDir = ansidir.c_str();
-#endif
       time_t dirCreationTime, dirAccessTime, dirWriteTime;
       File::GetTimes (lpszDir,
 		      dirCreationTime,

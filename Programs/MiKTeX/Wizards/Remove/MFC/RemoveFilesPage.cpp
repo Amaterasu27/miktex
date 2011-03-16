@@ -1,6 +1,6 @@
 /* RemoveFilesPage.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -27,6 +27,8 @@
 #include "RemoveWizard.h"
 
 const UINT nIDTimer = 314;
+
+#define REGSTR_PATH_CURRENTCONTROLSET_A "System\\CurrentControlSet"
 
 /* _________________________________________________________________________
 
@@ -479,7 +481,7 @@ RemoveFilesPage::OnTimer (/*[in]*/ UINT_PTR nIDEvent)
 	    {
 	      UNEXPECTED_CONDITION ("RemoveFilesPage::OnTimer");
 	    }
-	  pWnd ->SetWindowText ("");
+	  pWnd ->SetWindowText (_T(""));
 	  pWnd->EnableWindow (FALSE);
 	  progressControl.SetPos (0);
 	  progressControl.EnableWindow (FALSE);
@@ -653,40 +655,42 @@ void
 RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 {
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
-   REGSTR_PATH_CURRENTCONTROLSET T_("\\Control\\Session Manager\\Environment")
+   REGSTR_PATH_CURRENTCONTROLSET_A T_("\\Control\\Session Manager\\Environment")
 #define REGSTR_KEY_ENVIRONMENT_USER T_("Environment")
   
   HKEY hkey;
 
+  CA2W subkey (shared
+    ? REGSTR_KEY_ENVIRONMENT_COMMON
+    : REGSTR_KEY_ENVIRONMENT_USER);
+
   LONG result =
-    RegOpenKeyEx((shared
-		  ? HKEY_LOCAL_MACHINE
-		  : HKEY_CURRENT_USER),
-		 (shared
-		  ? REGSTR_KEY_ENVIRONMENT_COMMON
-		  : REGSTR_KEY_ENVIRONMENT_USER),
-		 0,
-		 KEY_QUERY_VALUE | KEY_SET_VALUE,
-		 &hkey);
+    RegOpenKeyExW((shared
+		   ? HKEY_LOCAL_MACHINE
+		   : HKEY_CURRENT_USER),
+		  subkey,
+		  0,
+		  KEY_QUERY_VALUE | KEY_SET_VALUE,
+		  &hkey);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKey"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
     }
 
   AutoHKEY autoHKEY (hkey);
 
   DWORD type;
-  CharBuffer<char> value (32 * 1024);
-  DWORD valueSize = static_cast<DWORD>(value.GetCapacity());
+  CharBuffer<wchar_t> value (32 * 1024);
+  DWORD valueSize = static_cast<DWORD>(value.GetCapacity() * sizeof(wchar_t));
 
   result =
-    RegQueryValueEx(hkey,
-		    T_("Path"),
-		    0,
-		    &type,
-		    reinterpret_cast<LPBYTE>(value.GetBuffer()),
-		    &valueSize);
+    RegQueryValueExW(hkey,
+		     L"Path",
+		     0,
+		     &type,
+		     reinterpret_cast<LPBYTE>(value.GetBuffer()),
+		     &valueSize);
  
   bool havePath = (result == ERROR_SUCCESS);
 
@@ -694,36 +698,37 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
     {
       if (result != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR_2 (T_("RegQueryValueEx"), result, 0);
+	  FATAL_WINDOWS_ERROR_2 (T_("RegQueryValueExW"), result, 0);
 	}
     }
   else
     {
-      string path = value.Get();
+      string path = CW2A(value.Get());
       if (RemoveBinDirFromPath(path))
 	{
+	  CharBuffer<wchar_t> wpath (CA2W(path.c_str()));
 	  result =
-	    RegSetValueEx(hkey,
-			  T_("Path"),
-			  0,
-			  type,
-			  reinterpret_cast<const BYTE *>(path.c_str()),
-			  static_cast<DWORD>(STR_BYT_SIZ(path.c_str())));
+	    RegSetValueExW(hkey,
+			   L"Path",
+			   0,
+			   type,
+			   reinterpret_cast<const BYTE *>(wpath.Get()),
+			   static_cast<DWORD>((StrLen(wpath.Get()) + 1) * sizeof(wpath.Get()[0])));
 
 	  if (result != ERROR_SUCCESS)
 	    {
-	      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueEx"), result, 0);
+	      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueExW"), result, 0);
 	    }
 	  
 	  DWORD_PTR sendMessageResult;
 	  
-	  if (SendMessageTimeout(HWND_BROADCAST,
-				 WM_SETTINGCHANGE,
-				 0,
-				 reinterpret_cast<LPARAM>(T_("Environment")),
-				 SMTO_ABORTIFHUNG,
-				 5000,
-				 &sendMessageResult)
+	  if (SendMessageTimeoutW(HWND_BROADCAST,
+				  WM_SETTINGCHANGE,
+				  0,
+				  reinterpret_cast<LPARAM>(L"Environment"),
+				  SMTO_ABORTIFHUNG,
+				  5000,
+				  &sendMessageResult)
 	      == 0)
 	    {
 	      CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
@@ -845,30 +850,30 @@ RemoveFilesPage::RemoveRegistryKey (/*[in]*/ HKEY		hkeyRoot,
   AutoHKEY hkeySub;
 
   LONG result =
-    RegOpenKeyEx(hkeyRoot,
-		 subKey.Get(),
-		 0,
-		 KEY_READ,
-		 &hkeySub);
+    RegOpenKeyExW(hkeyRoot,
+                  subKey.ToWideCharString().c_str(),
+		  0,
+		  KEY_READ,
+		  &hkeySub);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
     }
   
-  char szName[BufferSizes::MaxPath];
+  wchar_t szName[BufferSizes::MaxPath];
   DWORD size = BufferSizes::MaxPath;
 
   FILETIME fileTime;
   
-  while ((result = RegEnumKeyEx(hkeySub.Get(),
-				0,
-				szName,
-				&size,
-				0,
-				0,
-				0,
-				&fileTime))
+  while ((result = RegEnumKeyExW(hkeySub.Get(),
+				 0,
+				 szName,
+				 &size,
+				 0,
+				 0,
+				 0,
+				 &fileTime))
 	 == ERROR_SUCCESS)
     {
       RemoveRegistryKey (hkeyRoot, PathName(subKey, szName));
@@ -877,16 +882,16 @@ RemoveFilesPage::RemoveRegistryKey (/*[in]*/ HKEY		hkeyRoot,
 
   if (result != ERROR_NO_MORE_ITEMS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegEnumKeyEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegEnumKeyExW"), result, 0);
     }
 
   hkeySub.Reset ();
 
-  result = RegDeleteKey(hkeyRoot, subKey.Get());
+  result = RegDeleteKey(hkeyRoot, subKey.ToWideCharString().c_str());
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegDeleteKey"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegDeleteKeyW"), result, 0);
     }
 }
 
@@ -902,11 +907,11 @@ RemoveFilesPage::Exists (/*[in]*/ HKEY			hkeyRoot,
   AutoHKEY hkeySub;
 
   LONG result =
-    RegOpenKeyEx(hkeyRoot,
-		 subKey.Get(),
-		 0,
-		 KEY_READ,
-		 &hkeySub);
+    RegOpenKeyExW(hkeyRoot,
+                  subKey.ToWideCharString().c_str(),
+		  0,
+		  KEY_READ,
+		  &hkeySub);
 
   if (result != ERROR_SUCCESS)
     {
@@ -914,7 +919,7 @@ RemoveFilesPage::Exists (/*[in]*/ HKEY			hkeyRoot,
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
     }
 
   return (true);
@@ -933,7 +938,7 @@ RemoveFilesPage::IsEmpty (/*[in]*/ HKEY			hkeyRoot,
 
   LONG result =
     RegOpenKeyEx(hkeyRoot,
-		 subKey.Get(),
+		 subKey.ToWideCharString().c_str(),
 		 0,
 		 KEY_READ,
 		 &hkeySub);

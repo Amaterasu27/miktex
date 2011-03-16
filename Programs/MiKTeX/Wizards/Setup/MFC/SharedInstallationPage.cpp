@@ -1,6 +1,6 @@
 /* SharedInstallationPage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -83,35 +83,35 @@ SharedInstallationPage::OnInitDialog ()
 	{
 	  UNEXPECTED_CONDITION ("SharedInstallationPage::OnInitDialog");
 	}
-      char szLogonName[30];
+      wchar_t szLogonName[30];
       DWORD sizeLogonName = sizeof(szLogonName) / sizeof(szLogonName[0]);
-      if (! GetUserName(szLogonName, &sizeLogonName))
+      if (! GetUserNameW(szLogonName, &sizeLogonName))
 	{
 	  if (GetLastError() == ERROR_NOT_LOGGED_ON)
 	    {
-	      Utils::CopyString (szLogonName, 30, T_("unknown user"));
+	      Utils::CopyString (szLogonName, 30, L"unknown user");
 	    }
 	  else
 	    {
-	      FATAL_WINDOWS_ERROR ("GetUserName", 0);
+	      FATAL_WINDOWS_ERROR ("GetUserNameW", 0);
 	    }
 	}
       CString str;
-      pWnd->GetWindowText(str);
-      str += " ";
+      pWnd->GetWindowText (str);
+      str += L" ";
       str += szLogonName;
       if (IsWindowsNT())
 	{
-	  char szDisplayName[30];
-	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPTSTR, PULONG>
-	    getUserNameEx ("Secur32.dll", "GetUserNameExA");
+	  wchar_t szDisplayName[30];
+	  DllProc3<BOOLEAN, EXTENDED_NAME_FORMAT, LPWSTR, PULONG>
+	    getUserNameExW ("Secur32.dll", "GetUserNameExW");
 	  ULONG sizeDisplayName =
 	    sizeof(szDisplayName) / sizeof(szDisplayName[0]);
-	  if (getUserNameEx(NameDisplay, szDisplayName, &sizeDisplayName))
+	  if (getUserNameExW(NameDisplay, szDisplayName, &sizeDisplayName))
 	    {
-	      str += " (";
+	      str += L" (";
 	      str += szDisplayName;
-	      str += ')';
+	      str += L')';
 	    }
 	}
       pWnd->SetWindowText(str);
@@ -261,8 +261,8 @@ SharedInstallationPage::OnShared ()
 	  && ! (SessionWrapper(true)->RunningAsAdministrator()
 		|| SessionWrapper(true)->RunningAsPowerUser()))
 	{
-	  AfxMessageBox (T_("You must have administrator privileges to set up \
-a shared MiKTeX system."),
+	  AfxMessageBox (T_(_T("You must have administrator privileges to set up \
+a shared MiKTeX system.")),
 			 MB_OK | MB_ICONSTOP);
 	  commonUserSetup = 1;
 	  UpdateData (FALSE);

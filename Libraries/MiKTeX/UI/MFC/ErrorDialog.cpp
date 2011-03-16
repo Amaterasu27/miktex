@@ -1,6 +1,6 @@
 /* ErrorDialog.cpp:
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -166,7 +166,7 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what());
+      AfxMessageBox (CA2T(e.what()));
       return (-1);
     }
 }
@@ -191,7 +191,7 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what());
+      AfxMessageBox (CA2T(e.what()));
       return (-1);
     }
 }
@@ -242,12 +242,12 @@ ErrorDialogImpl::OnCopy ()
 	  FATAL_WINDOWS_ERROR ("SetClipboardData", 0);
 	}
       hGlobal = 0;
-      AfxMessageBox (T_("\
-The error report has been copied to the Clipboard."));
+      AfxMessageBox (T_(_T("\
+The error report has been copied to the Clipboard.")));
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what());
+      AfxMessageBox (CA2T(e.what()));
     }
   if (hGlobal != 0)
     {

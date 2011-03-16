@@ -1,6 +1,6 @@
 /* SettingsPage.cpp:
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -162,7 +162,7 @@ BOOL
 SettingsPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
-  theApp.paperSize = paperSize;
+  theApp.paperSize = CT2A(paperSize);
   switch (installOnTheFly)
     {
     case 0:

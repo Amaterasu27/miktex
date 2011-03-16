@@ -42,6 +42,7 @@ END_MESSAGE_MAP ();
 
 MiKTeXOptionsApplication::MiKTeXOptionsApplication ()
 {
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.MiKTeXOptions." MIKTEX_COMPONENT_VERSION_STR));
   // EnableHtmlHelp ();
 }
 

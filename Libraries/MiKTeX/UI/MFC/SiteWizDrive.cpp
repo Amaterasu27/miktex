@@ -1,6 +1,6 @@
 /* SiteWizDrive.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -114,16 +114,16 @@ SiteWizDrive::ShowDrives ()
 	  continue;
 	}
 
-      char szDrive[4];
-      szDrive[0] = char('A') + static_cast<char>(drv);
-      szDrive[1] = ':';
-      szDrive[2] = '\\';
+      _TCHAR szDrive[4];
+      szDrive[0] = _TCHAR(_T('A')) + static_cast<_TCHAR>(drv);
+      szDrive[1] = _T(':');
+      szDrive[2] = _T('\\');
       szDrive[3] = 0;
 
       DWORD fileSystemFlags;
       DWORD maximumComponentLength;
-      char fileSystemName[BufferSizes::MaxPath];
-      char volumeName[BufferSizes::MaxPath];
+      _TCHAR fileSystemName[BufferSizes::MaxPath];
+      _TCHAR volumeName[BufferSizes::MaxPath];
 
       if (! GetVolumeInformation(szDrive,
 				 volumeName,
@@ -145,15 +145,15 @@ SiteWizDrive::ShowDrives ()
       szDrive[2] = 0;
 
       CString comboBoxItem (szDrive);
-      comboBoxItem += " (";
+      comboBoxItem += _T(" (");
       comboBoxItem += volumeName;
-      comboBoxItem += ')';
+      comboBoxItem += _T(')');
       if (driveComboBox.AddString(comboBoxItem) < 0)
 	{
 	  FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	}
 
-      drives.push_back (szDrive);
+      drives.push_back (string(CT2A(szDrive)));
 
       noDriveFound = false;
     }

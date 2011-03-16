@@ -1,6 +1,6 @@
 /* Update.cpp:
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Update Wizard.
 
@@ -53,19 +53,18 @@ public:
    _________________________________________________________________________ */
 
 void
-AddArgument (/*[in]*/ const CString &		argument,
-	     /*[in,out]*/ int &			argc,
+AddArgument (/*[in]*/ const CString &	argument,
+	     /*[in,out]*/ int &		argc,
 	     /*[in,out]*/ char ** &	argv,
-	     /*[in,out]*/ int &			argMax)
+	     /*[in,out]*/ int &		argMax)
 {
   if (argc == argMax)
     {
       argMax += 10;
       argv =
-	reinterpret_cast<char**>(realloc(argv,
-					       argMax * sizeof(argv[0])));
+	reinterpret_cast<char**>(realloc(argv, argMax * sizeof(argv[0])));
     }
-  argv[ argc ++ ] = _tcsdup(argument);
+  argv[ argc ++ ] = strdup(CT2A(argument));
 }
 
 /* _________________________________________________________________________
@@ -76,7 +75,7 @@ AddArgument (/*[in]*/ const CString &		argument,
 void
 GetArguments (/*[in]*/ const char *	lpszCommandLine,
 	      /*[in]*/ const char *	lpszExeName,
-	      /*[in,out]*/ int &		argc,
+	      /*[in,out]*/ int &	argc,
 	      /*[in,out]*/ char ** &	argv)
 {
   argc = 0;
@@ -84,7 +83,7 @@ GetArguments (/*[in]*/ const char *	lpszCommandLine,
 
   int argMax = 0;
 
-  AddArgument (lpszExeName, argc, argv, argMax);
+  AddArgument (CString(lpszExeName), argc, argv, argMax);
 
   CString argument;
   bool copying = false;
@@ -147,9 +146,9 @@ FreeArguments (/*[in]*/ int		argc,
 
 const struct option long_options[] =
 {
-  T_("dry-run"),		no_argument,		0,	OPT_DRYRUN,
-  T_("help"),                   no_argument,		0,	OPT_HELP,
-  0,				no_argument,		0,	0,
+  "dry-run",		no_argument,		0,	OPT_DRYRUN,
+  "help",               no_argument,		0,	OPT_HELP,
+  0,			no_argument,		0,	0,
 };
 
 /* _________________________________________________________________________
@@ -160,10 +159,10 @@ const struct option long_options[] =
 void
 ShowHelpAndExit (/*[in]*/ int retCode = 0)
 {
-  AfxMessageBox (T_("Usage: updatewiz [OPTIONS]\r\n\r\n\
+  AfxMessageBox (T_(_T("Usage: updatewiz [OPTIONS]\r\n\r\n\
 Options:\r\n\r\n\
   --dry-run\r\n\
-  --help\r\n"));
+  --help\r\n")));
   exit (retCode);
 }
 
@@ -179,7 +178,7 @@ ParseUpdateCommandLine (/*[in]*/ const char *	lpszCommandLine,
   int argc;
   char ** argv;
 
-  GetArguments (lpszCommandLine, AfxGetAppName(), argc, argv);
+  GetArguments (lpszCommandLine, CT2A(AfxGetAppName()), argc, argv);
 
   int iOptIdx = 0;
   int c;
@@ -229,6 +228,7 @@ END_MESSAGE_MAP();
 
 UpdateWizardApplication::UpdateWizardApplication ()
 {
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.Update." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -253,14 +253,14 @@ UpdateWizardApplication::InitInstance ()
 
   if (! InitCommonControlsEx(&initCtrls))
     {
-      AfxMessageBox (T_("The application could not be initialized (1)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (1).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
 
   if (FAILED(CoInitialize(0)))
     {
-      AfxMessageBox (T_("The application could not be initialized (2)."),
+      AfxMessageBox (T_(_T("The application could not be initialized (2).")),
 		     MB_ICONSTOP | MB_OK);
       return (FALSE);
     }
@@ -271,10 +271,10 @@ UpdateWizardApplication::InitInstance ()
 
       if (! pSession->IsMiKTeXPortable() && ! Utils::CheckPath(false))
 	{
-	  if (AfxMessageBox(T_("\
+	  if (AfxMessageBox(T_(_T("\
 MiKTeX is not correctly configured: the location of the MiKTeX executables \
 is not known to the operating system.\r\n\r\n\
-Click OK to repair the MiKTeX configuration."),
+Click OK to repair the MiKTeX configuration.")),
 			    MB_OKCANCEL)
 	      == IDOK)
 	    {
@@ -298,7 +298,7 @@ Click OK to repair the MiKTeX configuration."),
 
       // get command-line arguments
       UpdateWizardCommandLineInfo cmdinfo;
-      ParseUpdateCommandLine (m_lpCmdLine, cmdinfo);
+      ParseUpdateCommandLine (CT2A(m_lpCmdLine), cmdinfo);
       
       {
 	UpdateWizard dlg;
@@ -338,18 +338,19 @@ UpdateWizardApplication::Upgrade (/*[out]*/ bool & upgrading)
   upgrading = false;
   try
     {
-      Session::InitInfo initInfo (T_("upgrade"),
+      Session::InitInfo initInfo ("upgrade",
 				  Session::InitFlags::NoConfigFiles);
       SessionWrapper pSession (initInfo);
-      PathName path;
-      if (GetModuleFileName(0, path.GetBuffer(), BufferSizes::MaxPath) == 0)
+      wchar_t szPath[BufferSizes::MaxPath];
+      if (GetModuleFileNameW(0, szPath, BufferSizes::MaxPath) == 0)
 	{
-	  FATAL_WINDOWS_ERROR (T_("GetModuleFileName"), 0);
+	  FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
 	}
-      if (path.GetFileNameWithoutExtension() == T_("upgrade"))
+      PathName path (szPath);
+      if (path.GetFileNameWithoutExtension() == "upgrade")
 	{
 	  PathName migrate;
-	  if (! pSession->FindFile(T_("migrate"), FileType::EXE, migrate))
+	  if (! pSession->FindFile("migrate", FileType::EXE, migrate))
 	    {
 	      FATAL_MIKTEX_ERROR ("UpdateWizardApplication::Upgrade",
 				  T_("migrate.exe could not be found."),
@@ -470,7 +471,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
       str += T_("Details: ");
       str += e.GetInfo();
     }
-  AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________
@@ -485,7 +486,7 @@ ReportError (/*[in]*/ const exception & e)
   str = T_("The operation could not be completed for the following reason: ");
   str += "\n\n";
   str += e.what();
-  AfxMessageBox (str.c_str(), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________
@@ -498,18 +499,18 @@ SplitUrl (/*[in]*/ const string &	url,
 	  /*[out]*/ string &		protocol,
 	  /*[out]*/ string &		host)
 {
-  char szProtocol[200];
-  char szHost[200];
-  URL_COMPONENTS url_comp = { 0 };
+  wchar_t szProtocol[200];
+  wchar_t szHost[200];
+  URL_COMPONENTSW url_comp = { 0 };
   url_comp.dwStructSize = sizeof(url_comp);
   url_comp.lpszScheme = szProtocol;
   url_comp.dwSchemeLength = 200;
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
-  if (! InternetCrackUrl(url.c_str(), 0, 0, &url_comp))
+  if (! InternetCrackUrlW(CA2W(url.c_str()), 0, 0, &url_comp))
     {
-      FATAL_WINDOWS_ERROR (T_("InternetCrackUrl"), 0);
+      FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
     }
-  protocol = szProtocol;
-  host = szHost;
+  protocol = CW2A(szProtocol);
+  host = CW2A(szHost);
 }

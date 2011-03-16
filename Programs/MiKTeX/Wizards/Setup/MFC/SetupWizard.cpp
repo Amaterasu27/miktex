@@ -1,6 +1,6 @@
 /* SetupWizard.cpp:
 
-   Copyright (C) 1999-2010 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -57,7 +57,7 @@ SetupWizard::SetupWizard (/*[in]*/ PackageManager * pManager)
     }
   if (! SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0))
     {
-      FATAL_WINDOWS_ERROR (T_("SystemParametersInfo"), 0);
+      FATAL_WINDOWS_ERROR ("SystemParametersInfo", 0);
     }
   LOGFONT TitleLogFont = ncm.lfMessageFont;
   TitleLogFont.lfWeight = FW_BOLD;
@@ -130,8 +130,8 @@ SetupWizard::OnInitDialog ()
       CString title;
       if (theApp.isMiKTeXDirect)
 	{
-	  title.Format (T_("MiKTeX %s Setup (%d-bit)"),
-			MIKTEXTEXT(MIKTEX_FULL_VERSION_STR),
+	  title.Format (T_(_T("MiKTeX %s Setup (%d-bit)")),
+			static_cast<LPCTSTR>(CA2T(MIKTEX_FULL_VERSION_STR)),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
       else if (theApp.prefabricated)
@@ -157,15 +157,15 @@ SetupWizard::OnInitDialog ()
 	      __assume (false);
 	      break;
 	    }
-	  title.Format (T_("%sMiKTeX %s Installer (%d-bit)"),
-			static_cast<const char *>(prefix),
-			static_cast<const char *>(version),
+	  title.Format (T_(_T("%sMiKTeX %s Installer (%d-bit)")),
+			static_cast<LPCTSTR>(prefix),
+			static_cast<LPCTSTR>(version),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
       else
 	{
-	  title.Format (T_("MiKTeX %s Net Installer (%d-bit)"),
-			MIKTEXTEXT(MIKTEX_VERSION_STR),
+	  title.Format (T_(_T("MiKTeX %s Net Installer (%d-bit)")),
+			static_cast<LPCTSTR>(CA2T(MIKTEX_VERSION_STR)),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
       SetTitle (title);
@@ -204,7 +204,7 @@ SetupWizard::EnableCancelButton (/*[in]*/ bool enable)
    _________________________________________________________________________ */
 
 CString
-SetupWizard::SetNextText (/*[in]*/ const char * lpszText)
+SetupWizard::SetNextText (/*[in]*/ LPCTSTR lpszText)
 {
   CWnd * pWnd = GetDlgItem(ID_WIZNEXT);
   if (pWnd == 0)

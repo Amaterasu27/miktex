@@ -1,6 +1,6 @@
 /* TypePage.cpp:
 
-   Copyright (C) 2002-2009 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -152,16 +152,16 @@ TypePage::OnInitDialog ()
 	  string host;
 	  SplitUrl (remoteRepository, protocol, host);
 	  CString text;
-	  text.Format (T_("%s://%s (last used)"),
-		       protocol.c_str(),
-		       host.c_str());
+	  text.Format (T_(_T("%s://%s (last used)")),
+		       static_cast<LPCTSTR>(CA2T(protocol.c_str())),
+		       static_cast<LPCTSTR>(CA2T(host.c_str())));
 	  GetControl(IDC_LAST_USED_REPOSITORY)->SetWindowText (text);
 	}
 
       if (haveLocalRepository)
 	{
 	  CString text;
-	  text.Format (T_("%s (last used)"), localRepository.Get());
+	  text.Format (T_(_T("%s (last used)")), static_cast<LPCTSTR>(CA2T(localRepository.Get())));
 	  GetControl(IDC_LAST_USED_DIRECTORY)->SetWindowText (text);
 	}
 
@@ -255,10 +255,10 @@ TypePage::OnWizardNext ()
 	      RepositoryInfo repositoryInfo =
 		g_pManager->VerifyPackageRepository(remoteRepository);
 	      if (repositoryInfo.delay > 0
-		  && (AfxMessageBox(T_("\
+		  && (AfxMessageBox(T_(_T("\
 The last used pacakage repository does not contain \
 the latest packages.\r\n\r\n\
-Continue anyway?"),
+Continue anyway?")),
 				    MB_YESNO)
 		      != IDYES))
 		{

@@ -1,6 +1,6 @@
 /* InstallDirPage.cpp:
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -182,7 +182,7 @@ InstallDirPage::OnKillActive ()
 	    }
 	  if (ret)
 	    {
-	      theApp.SetInstallRoot (static_cast<const char*>(m_strInstallDir));
+	      theApp.SetInstallRoot (static_cast<LPCTSTR>(m_strInstallDir));
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -296,13 +296,13 @@ InstallDirPage::OnBrowse ()
       browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
       browseInfo.lpfn = BrowseCallbackProc;
       browseInfo.lParam = reinterpret_cast<LPARAM>(this);
-      browseInfo.lpszTitle = T_("Select the MiKTeX installation directory:");
+      browseInfo.lpszTitle = T_(_T("Select the MiKTeX installation directory:"));
       LPITEMIDLIST pidl = SHBrowseForFolder(&browseInfo);
       if (pidl == 0)
 	{
 	  return;
 	}
-      char szDir[BufferSizes::MaxPath];
+      _TCHAR szDir[BufferSizes::MaxPath];
       BOOL done = SHGetPathFromIDList(pidl, szDir);
       CoTaskMemFree (pidl);
       if (! done)

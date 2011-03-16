@@ -1,6 +1,6 @@
 /* ProgressDialog.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -321,10 +321,10 @@ private:
   HWND hWindow;
 
 private:
-  CString lines[2];
+  string lines[2];
 
 private:
-  CString title;
+  string title;
 
 private:
   CEvent readyEvent;
@@ -500,9 +500,9 @@ ProgressDialogImpl::StartProgressDialog (/*[in]*/ HWND hwndParent)
   haveProgressDialog = true;
 
   // set the window texts
-  SetTitle (title);
-  SetLine (1, lines[0]);
-  SetLine (2, lines[1]);
+  SetTitle (title.c_str());
+  SetLine (1, lines[0].c_str());
+  SetLine (2, lines[1].c_str());
 
   // make the progress window visible
   ShowWindow (hWindow, SW_SHOW);

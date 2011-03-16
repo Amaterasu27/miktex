@@ -1,6 +1,6 @@
 /* InfoListPage.cpp:
 
-   Copyright (C) 1999-2009 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -74,7 +74,7 @@ InfoListPage::OnSetActive ()
       try
 	{
 	  CreateReport ();
-	  oldNextText = pSheet->SetNextText (T_("&Start"));
+	  oldNextText = pSheet->SetNextText (T_(_T("&Start")));
 	}
       catch (const MiKTeXException & e)
 	{
@@ -217,33 +217,33 @@ InfoListPage::CreateReport ()
   switch (theApp.setupTask.Get())
     {
     case SetupTask::Download:
-      info += (T_("Download ") + packageSet + T_(" from ") + CRLF
-	       + TAB + theApp.remotePackageRepository.c_str() + CRLF
-	       + T_(" to ") + CRLF
-	       + TAB + theApp.localPackageRepository.Get());
+      info += (T_(_T("Download ")) + packageSet + T_(_T(" from ")) + CRLF
+	       + TAB + CA2T(theApp.remotePackageRepository.c_str()) + CRLF
+	       + T_(_T(" to ")) + CRLF
+	       + TAB + CA2T(theApp.localPackageRepository.Get()));
       break;
     case SetupTask::InstallFromCD:
-      info += (T_("Install ") + packageSet + T_(" from CD/DVD"));
+      info += (T_(_T("Install ")) + packageSet + T_(_T(" from CD/DVD")));
       break;
     case SetupTask::InstallFromLocalRepository:
       if (theApp.prefabricated)
 	{
-	  info += (T_("Install ") + packageSet + T_(" to ") + CRLF
-		   + TAB + theApp.GetInstallRoot().Get());
+	  info += (T_(_T("Install ")) + packageSet + T_(_T(" to ")) + CRLF
+		   + TAB + CA2T(theApp.GetInstallRoot().Get()));
 	}
       else
 	{
-	  info += (T_("Install ") + packageSet + T_(" from ") + CRLF
-		   + TAB + theApp.localPackageRepository.Get() + CRLF
-		   + T_(" to ") + CRLF
-		   + TAB + theApp.GetInstallRoot().Get());
+	  info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
+		   + TAB + CA2T(theApp.localPackageRepository.Get()) + CRLF
+		   + T_(_T(" to ")) + CRLF
+		   + TAB + CA2T(theApp.GetInstallRoot().Get()));
 	}
       break;
     case SetupTask::InstallFromRemoteRepository:
-      info += (T_("Install ") + packageSet + T_(" from ") + CRLF
-	       + TAB + theApp.remotePackageRepository.c_str() + CRLF
-	       + T_(" to ") + CRLF
-	       + TAB + theApp.GetInstallRoot().Get());
+      info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
+	       + TAB + CA2T(theApp.remotePackageRepository.c_str()) + CRLF
+	       + T_(_T(" to ")) + CRLF
+	       + TAB + CA2T(theApp.GetInstallRoot().Get()));
       break;
     case SetupTask::PrepareMiKTeXDirect:
       info += T_("Prepare to run MiKTeX from ");

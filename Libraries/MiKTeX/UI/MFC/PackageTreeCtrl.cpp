@@ -1,6 +1,6 @@
 /* PackageTreeCtrl.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -234,8 +234,8 @@ PackageTreeCtrlImpl::Refresh ()
   ins.hParent = TVI_ROOT;
   ins.hInsertAfter = TVI_ROOT;
   ins.item.mask = TVIF_PARAM | TVIF_TEXT;
-  ins.item.pszText =
-    const_cast<char *>(rootPackageInfo.displayName.c_str());
+  CString displayName (rootPackageInfo.displayName.c_str());
+  ins.item.pszText = displayName.GetBuffer();
   ins.item.lParam = 0;
   HTREEITEM hRoot = InsertItem(&ins);
   if (hRoot == 0)
@@ -286,7 +286,8 @@ PackageTreeCtrlImpl::AddPackage (/*[in]*/ HTREEITEM		hParent,
   ins.item.state = INDEXTOSTATEIMAGEMASK(state);
   ins.item.stateMask = TVIS_STATEIMAGEMASK;
   MIKTEX_ASSERT (packageInfo.displayName.length() > 0);
-  ins.item.pszText = const_cast<char *>(packageInfo.displayName.c_str());
+  CString displayName (packageInfo.displayName.c_str());
+  ins.item.pszText = displayName.GetBuffer();
   ins.item.lParam = lvl;
   HTREEITEM hItem = InsertItem(&ins);
   if (hItem == 0)
@@ -638,7 +639,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
 	PackageInfo packageInfo;
 	while (pIter->GetNext(packageInfo))
 	  {
-	    if (_tcsicmp(packageInfo.displayName.c_str(),
+	    if (_tcsicmp(CA2T(packageInfo.displayName.c_str()),
 			 dlg.GetName())
 		== 0)
 	      {

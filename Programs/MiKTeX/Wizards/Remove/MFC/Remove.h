@@ -95,7 +95,7 @@ protected:
    STR_BYT_SIZ
    _________________________________________________________________________ */
 
-#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(char))
+#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(*lpsz))
 
 /* _________________________________________________________________________
 

@@ -61,7 +61,7 @@ UpdateWizard::UpdateWizard ()
     }
   LOGFONT TitleLogFont = ncm.lfMessageFont;
   TitleLogFont.lfWeight = FW_BOLD;
-  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, "Verdana Bold");
+  Utils::CopyString (TitleLogFont.lfFaceName, LF_FACESIZE, _T("Verdana Bold"));
   HDC hdc = ::GetDC(0);
   TitleLogFont.lfHeight = 0 - GetDeviceCaps(hdc, LOGPIXELSY) * 12 / 72;
   ::ReleaseDC (0, hdc);
@@ -113,7 +113,7 @@ UpdateWizard::OnInitDialog ()
 	}
       if (SessionWrapper(true)->IsAdminMode())
       {
-	title = title + T_(" (Admin)");
+	title += T_(" (Admin)");
       }
       SetTitle (title);
       if (! g_upgrading

@@ -1,6 +1,6 @@
 /* ProgramFolderPage.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -78,9 +78,9 @@ ProgramFolderPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
     {
       folderName.TrimLeft ();
       folderName.TrimRight ();
-      if (folderName.FindOneOf("\\/:*?\"<>|") >= 0)
+      if (folderName.FindOneOf(_T("\\/:*?\"<>|")) >= 0)
 	{
-	  AfxMessageBox ("The folder name is not valid.", MB_OK | MB_ICONSTOP);
+	  AfxMessageBox (T_(_T("The folder name is not valid.")), MB_OK | MB_ICONSTOP);
 	  pDX->Fail ();
 	}
     }
@@ -134,7 +134,7 @@ ProgramFolderPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.folderName = folderName;
+      theApp.folderName = CT2A(folderName);
     }
   return (ret);
 }

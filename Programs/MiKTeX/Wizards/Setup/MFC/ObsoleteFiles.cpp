@@ -1,6 +1,6 @@
 /* ObsoleteFiles.cpp: obsolete files
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -24,10 +24,10 @@
 
 const char * g_apszObsoleteFiles[] =
 {
-  MIKTEX_PATH_BIN_DIR T_("\\bigtex.exe"),
-  MIKTEX_PATH_BIN_DIR T_("\\biglatex.exe"),
-  MIKTEX_PATH_BIN_DIR T_("\\hugetex.exe"),
-  MIKTEX_PATH_BIN_DIR T_("\\hugelatex.exe"),
+  MIKTEX_PATH_BIN_DIR "\\bigtex.exe",
+  MIKTEX_PATH_BIN_DIR "\\biglatex.exe",
+  MIKTEX_PATH_BIN_DIR "\\hugetex.exe",
+  MIKTEX_PATH_BIN_DIR "\\hugelatex.exe",
   MIKTEX_PATH_BIN_DIR "\\mfc42.dll",
   MIKTEX_PATH_BIN_DIR "\\msvcp50.dll",
   MIKTEX_PATH_BIN_DIR "\\msvcp60.dll",

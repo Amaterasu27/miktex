@@ -1,6 +1,6 @@
 /* PropSheetPackage.cpp:
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -64,7 +64,7 @@ PropSheetPackageImpl::PropSheetPackageImpl
  /*[in]*/ CWnd *		pParentWnd,
  /*[in]*/ UINT			selectPage)
 {
-  Construct (packageInfo.deploymentName.c_str(), pParentWnd, selectPage);
+  Construct (CA2T(packageInfo.deploymentName.c_str()), pParentWnd, selectPage);
   pPage1 = new PropPagePackage (packageInfo);
   pPage2 = new PropPageFiles (packageInfo);
   AddPage (pPage1);

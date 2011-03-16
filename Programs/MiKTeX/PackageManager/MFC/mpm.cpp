@@ -45,7 +45,7 @@ END_MESSAGE_MAP();
 
 PackageManagerApplication::PackageManagerApplication ()
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.MiKTeXOptions." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (CA2T("MiKTeXorg.MiKTeX.PackageManaer." MIKTEX_COMPONENT_VERSION_STR));
   EnableHtmlHelp ();
 }
 

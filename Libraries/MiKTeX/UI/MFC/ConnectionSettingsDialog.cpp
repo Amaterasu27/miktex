@@ -1,6 +1,6 @@
 /* ConnectionSettingsDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -81,11 +81,11 @@ ConnectionSettingsDialog::OnInitDialog ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   return (ret);
 }
@@ -122,11 +122,11 @@ ConnectionSettingsDialog::OnUseProxy ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -144,11 +144,11 @@ ConnectionSettingsDialog::OnChangeHost ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -166,11 +166,11 @@ ConnectionSettingsDialog::OnChangePort ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -189,17 +189,17 @@ ConnectionSettingsDialog::OnOK ()
       proxySettings.useProxy = (useProxy ? true : false);
       proxySettings.authenticationRequired =
 	(proxyAuthenticationRequired ? true : false);
-      proxySettings.proxy = static_cast<const char *>(proxyHost);
+      proxySettings.proxy = CT2A(static_cast<LPCTSTR>(proxyHost));
       proxySettings.port = proxyPort;
       PackageManager::SetProxy (proxySettings);
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (e.what(), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 

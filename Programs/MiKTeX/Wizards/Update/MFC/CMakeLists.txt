@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,11 @@ include_directories(BEFORE
 )
 
 set(CMAKE_MFC_FLAG 1)
+
+add_definitions(
+  -D_UNICODE
+  -DUNICODE
+)
 
 set(update_mfc_sources
   ${CMAKE_CURRENT_BINARY_DIR}/ConnectionSettingsDialog.cpp

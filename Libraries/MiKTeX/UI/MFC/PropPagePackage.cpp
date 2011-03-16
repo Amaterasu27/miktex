@@ -1,6 +1,6 @@
 /* PropPagePackage.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -61,11 +61,11 @@ PropPagePackage::PropPagePackage (/*[in]*/ const PackageInfo & packageInfo)
   Construct (IDD_PROPPAGE_PACKAGE);
   m_psp.dwFlags &= ~ (PSP_HASHELP);
   date =
-    CTime(packageInfo.timePackaged).Format("%Y-%m-%d %H:%M:%S");
+    CTime(packageInfo.timePackaged).Format(_T("%Y-%m-%d %H:%M:%S"));
   MakeOneLine (description, packageInfo.description);
   name = packageInfo.displayName.c_str();
   MakeOneLine (title, packageInfo.title);
-  size.Format (T_("%u Bytes"),
+  size.Format (T_(_T("%u Bytes")),
 	       static_cast<unsigned>(packageInfo.GetSize()));
 }
 

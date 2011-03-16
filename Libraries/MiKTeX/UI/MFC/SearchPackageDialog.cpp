@@ -1,6 +1,6 @@
 /* SearchPackageDialog.cpp:
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -80,10 +80,10 @@ SearchPackageDialog::OnInitDialog ()
   try
     {
       if (listControl.InsertColumn(0,
-				   T_("Name"),
+				   T_(_T("Name")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth("\
-xxx mmmmmmmm"),
+				   listControl.GetStringWidth(_T("\
+xxx mmmmmmmm")),
 				   0)
 	  < 0)
 	{
@@ -91,10 +91,10 @@ xxx mmmmmmmm"),
 	}
 
       if (listControl.InsertColumn(1,
-				   T_("Title"),
+				   T_(_T("Title")),
 				   LVCFMT_LEFT,
-				   listControl.GetStringWidth("\
-xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"),
+				   listControl.GetStringWidth(_T("\
+xxx mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")),
 				   1)
 	  < 0)
 	{
@@ -293,7 +293,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  bool haveMatch = false;
 	  CString givenName = GetWindowText(IDC_NAME);
 	  givenName.MakeLower ();
-	  CString packageName = packageInfo.displayName.c_str();
+	  CString packageName (packageInfo.displayName.c_str());
 	  packageName.MakeLower ();
 	  haveMatch =
 	    (givenName.GetLength() == 0
@@ -305,7 +305,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  CString givenTitle = GetWindowText(IDC_TITLE);
 	  haveMatch =
 	    (givenTitle.GetLength() == 0
-	     || packageInfo.title.find(givenTitle) != string::npos);
+	     || packageInfo.title.find(CT2A(givenTitle)) != string::npos);
 	  if (! haveMatch)
 	    {
 	      continue;
@@ -313,7 +313,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  CString givenDescription = GetWindowText(IDC_DESCRIPTION);
 	  haveMatch =
 	    (givenDescription.GetLength() == 0
-	     || (packageInfo.description.find(givenDescription)
+	     || (packageInfo.description.find(CT2A(givenDescription))
 		 != string::npos));
 	  if (! haveMatch)
 	    {
@@ -330,7 +330,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(givenFile, path.Get());
+		  found = PathName::Match(CT2A(givenFile), path.Get());
 		}
 	      for (it = packageInfo.docFiles.begin();
 		   ! found && it != packageInfo.docFiles.end();
@@ -338,7 +338,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(givenFile, path.Get());
+		  found = PathName::Match(CT2A(givenFile), path.Get());
 		}
 	      for (it = packageInfo.sourceFiles.begin();
 		   ! found && it != packageInfo.sourceFiles.end();
@@ -346,7 +346,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(givenFile, path.Get());
+		  found = PathName::Match(CT2A(givenFile), path.Get());
 		}
 	      haveMatch = found;
 	    }
@@ -359,7 +359,8 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  lvitem.mask = LVIF_TEXT | LVIF_PARAM;
 	  lvitem.iSubItem = 0;
 	  lvitem.lParam = idx;
-	  lvitem.pszText = const_cast<LPTSTR>(packageInfo.displayName.c_str());
+	  CString displayName (packageInfo.displayName.c_str());
+	  lvitem.pszText = displayName.GetBuffer();
 	  if (listControl.InsertItem(&lvitem) < 0)
 	    {
 	      FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
@@ -367,7 +368,8 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  lvitem.mask = LVIF_TEXT;
 	  lvitem.iItem = idx;
 	  lvitem.iSubItem = 1;
-	  lvitem.pszText = const_cast<LPTSTR>(packageInfo.title.c_str());
+	  CString title (packageInfo.title.c_str());
+	  lvitem.pszText = title.GetBuffer();
 	  if (! listControl.SetItem(&lvitem))
 	    {
 	      FATAL_WINDOWS_ERROR ("CListCtrl::SetItem", 0);

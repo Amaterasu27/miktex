@@ -1,6 +1,6 @@
 /* InstallPackageDialog.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -55,7 +55,7 @@ InstallPackageDialog::InstallPackageDialog
 void
 InstallPackageDialog::FormatControlText
 (/*[in]*/ UINT			ctrlId,
- /*[in]*/ const char *	lpszFormat,
+ /*[in]*/ const char *		lpszFormat,
  /*[in]*/			...)
 {
   CWnd * pWnd = GetDlgItem(ctrlId);
@@ -67,7 +67,7 @@ InstallPackageDialog::FormatControlText
   va_start (marker, lpszFormat);
   string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
-  pWnd->SetWindowText (str.c_str());
+  pWnd->SetWindowText (CA2T(str.c_str()));
 }
 
 /* _________________________________________________________________________

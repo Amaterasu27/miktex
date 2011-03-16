@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,8 @@ set(CMAKE_MFC_FLAG 2)
 
 add_definitions(
   -D_AFXDLL
+  -D_UNICODE
+  -DUNICODE
 )
 
 set(mo_mfc_sources
