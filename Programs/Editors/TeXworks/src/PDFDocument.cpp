@@ -47,7 +47,6 @@
 #include <QUrl>
 #include <QShortcut>
 #include <QFileSystemWatcher>
-#include <QDebug>
 #include <QToolTip>
 #if defined(MIKTEX)
 // see http://code.google.com/p/texworks/issues/detail?id=78#c1
