@@ -110,7 +110,10 @@ const QString TWUtils::getLibraryPath(const QString& subdir)
 		  MiKTeX::Core::PathName dir;
 		  dir = MiKTeX::Core::SessionWrapper(true)->GetSpecialPath(MiKTeX::Core::SpecialPath::UserDataRoot);
 		  dir += TEXWORKS_NAME;
-		  dir += TEXWORKS_VERSION;
+		  std::string subdir (NUMTOSTR(VER_MAJOR));
+		  subdir += ".";
+		  subdir += NUMTOSTR(VER_MINOR);
+		  dir += subdir;
 		  libRootPath = dir.Get();
 		}
 #else
