@@ -460,7 +460,7 @@ FileCopyPage::OnReport (/*[in]*/ WPARAM	wParam,
   UNUSED_ALWAYS (lParam);
   long len = reportControl.GetTextLength();
   reportControl.SetSel (len, len);
-  reportControl.ReplaceSel (CA2T(reinterpret_cast<const char *>(wParam)));
+  reportControl.ReplaceSel (reinterpret_cast<LPCTSTR>(wParam));
   reportControl.SendMessage (EM_SCROLLCARET);
   return (0);
 }
@@ -1252,19 +1252,18 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CString str;
+  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (CA2T(lpszFmt), args);
+  str.FormatV (lpszFmt, args);
   va_end (args);
   //int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
   if (writeLog)
     {
-      Log ("%s", static_cast<const char *>(CT2A(str)));
+      Log ("%s", static_cast<const char *>(str));
     }
-  SendMessage (WM_REPORT,
-	       reinterpret_cast<WPARAM>(static_cast<const char *>(CT2A(str))));
+  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(CA2T(str))));
 }
 
 /* _________________________________________________________________________

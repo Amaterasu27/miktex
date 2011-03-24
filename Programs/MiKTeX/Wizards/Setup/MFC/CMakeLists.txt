@@ -110,6 +110,10 @@ add_executable(setup WIN32 ${setup_mfc_sources})
 
 merge_trustinfo_manifest(setup highestAvailable)
 
+if(NATIVE_WINDOWS)
+  add_link_flags(setup "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
+
 target_link_libraries(setup
   ${bzip2_lib_name}
   ${core_lib_name}
@@ -121,7 +125,6 @@ target_link_libraries(setup
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
-  ${ui_lib_name}
   ${uriparser_lib_name}
   ${zlib_lib_name}
 )
