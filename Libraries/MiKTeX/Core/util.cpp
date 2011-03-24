@@ -197,7 +197,7 @@ GenericCopyString (/*[out]*/ CharType *		lpszBuf,
 
   if (length >= bufSize)
     {
-      BUF_TOO_SMALL ("Utils::CopyString");
+      BUF_TOO_SMALL ("Utils::GenericCopyString");
     }
 
   memcpy (lpszBuf, lpszSource, sizeof(CharType) * (length + 1));
@@ -245,24 +245,53 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
   MIKTEX_ASSERT_STRING (lpszSource);
 
 #if defined(MIKTEX_WINDOWS)
-  int n = WideCharToMultiByte
-    (CP_ACP,
-     WC_NO_BEST_FIT_CHARS,
-     lpszSource,
-     -1,
-     lpszBuf,
-     bufSize,
-     0,
-     FALSE);
-  if (n == 0)
+  return (StrLen(WideCharToAnsi(lpszSource, lpszBuf, bufSize)) + 1);
+#else
+  size_t length;
+
+  for (length = 0; length < bufSize; ++ length)
     {
-      FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
+      if (*lpszSource > 255)
+	{
+	  INVALID_ARGUMENT ("Utils::CopyString", 0);
+	}
+      if ((lpszBuf[length] = lpszSource[length]) == 0)
+	{
+	  break;
+	}
     }
-  if (n < 0)
+
+  if (length == bufSize)
     {
-      UNEXPECTED_CONDITION ("Utils::CopyString");
+      BUF_TOO_SMALL ("Utils::CopyString");
     }
-  return (static_cast<size_t>(n));
+
+  return (length);
+#endif
+}
+
+/* _________________________________________________________________________
+
+   Utils::CopyString
+   _________________________________________________________________________ */
+
+size_t
+Utils::CopyString (/*[out]*/ wchar_t *		lpszBuf,
+		   /*[in]*/ size_t		bufSize,
+		   /*[in]*/ const char *	lpszSource)
+{
+  MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
+  MIKTEX_ASSERT_STRING (lpszSource);
+
+#if defined(MIKTEX_WINDOWS)
+  if (IsUTF8(lpszSource, true))
+  {
+    return (CopyString(lpszBuf, bufSize, UTF8ToWideChar(lpszSource).c_str()));
+  }
+  else
+  {
+    return (StrLen(AnsiToWideChar(lpszSource, lpszBuf, bufSize)) + 1);
+  }
 #else
   size_t length;
 

@@ -1,6 +1,6 @@
 /* winDirectoryLister.cpp: directory lister (Windows)
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -174,7 +174,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	      pathPattern += pattern.c_str();
 	    }
 	  handle = FindFirstFileExW(
-	    Utils::AnsiToWideChar(pathPattern.Get()).c_str(),
+	    AW_(pathPattern.Get()),
 	    IsWindows7() ? FindExInfoBasic : FindExInfoStandard,
 	    &ffdat,
 	    (options & Options::DirectoriesOnly) != 0 ? FindExSearchLimitToDirectories : FindExSearchNameMatch,
@@ -208,7 +208,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	 || (((options & Options::FilesOnly) != 0)
 	     && ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)));
   direntry2.wname = ffdat.cFileName;
-  direntry2.name = Utils::WideCharToAnsi(ffdat.cFileName);
+  direntry2.name = WA_(ffdat.cFileName);
   direntry2.isDirectory =
     ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
   direntry2.size = ffdat.nFileSizeLow;

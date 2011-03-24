@@ -212,6 +212,12 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
+#if defined(MIKTEX_WINDOWS)
+#  define WA_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
+#  define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
+#  define AW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+#endif
+
 #define MIKTEXINTERNALFUNC(type) type
 #define MIKTEXINTERNALVAR(type) type
 

@@ -43,39 +43,37 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 		      /*[in]*/ int	nFallbackFolder,
 		      /*[in]*/ bool	getCurrentPath)
 {
-  static DllProc5<HRESULT, HWND, int, HANDLE, DWORD, char *>
-    pFunc ("shfolder.dll", "SHGetFolderPathA");
-  PathName ret;
   DWORD flags =
     ( 0
       | (getCurrentPath
 	 ? SHGFP_TYPE_CURRENT
 	 : SHGFP_TYPE_DEFAULT)
       | 0);
+  wchar_t szPath[MAX_PATH];
   HRESULT hr =
-    pFunc(0,
+    SHGetFolderPathW(0,
 	  nFolder | CSIDL_FLAG_CREATE,
 	  0,
 	  flags,
-	  ret.GetBuffer());
+	  szPath);
   if (hr == E_INVALIDARG && (nFolder != nFallbackFolder))
     {
       hr =
-	pFunc(0,
+	SHGetFolderPathW(0,
 	      nFallbackFolder | CSIDL_FLAG_CREATE,
 	      0,
 	      flags,
-	      ret.GetBuffer());
+	      szPath);
     }
   if (hr == S_FALSE)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
 			  T_("A required file system folder does not exist."),
 			  NUMTOSTR(nFolder));
     }
   if (hr == E_INVALIDARG)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
 			  T_("Unsupported Windows product."),
 			  NUMTOSTR(nFolder));
     }
@@ -85,7 +83,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 			  T_("A required file system path could not be retrieved."),
 			  NUMTOSTR(nFolder));
     }
-  return (ret);
+  return (szPath);
 }
 
 /* _________________________________________________________________________
@@ -114,13 +112,20 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
   // we do this once
   if (myProgramFile.GetLength() == 0)
     {
-      if (GetModuleFileNameA(0,
-			     myProgramFile.GetBuffer(),
-			     BufferSizes::MaxPath)
-	  == 0)
+      wchar_t szPath[BufferSizes::MaxPath];
+      DWORD n =
+	GetModuleFileNameW(0,
+			   szPath,
+			   BufferSizes::MaxPath);
+      if (n == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
+	  FATAL_WINDOWS_ERROR ("GetModuleFileNameW", 0);
 	}
+      if (n == BufferSizes::MaxPath)
+      {
+	BUF_TOO_SMALL ("SessionImpl::GetMyProgramFile");
+      }
+      myProgramFile = szPath;
       myProgramFileCanon = myProgramFile;
       myProgramFileCanon.Canonicalize ();
     }
@@ -146,13 +151,20 @@ SessionImpl::GetDllPathName (/*[in]*/ bool canonicalized)
   // we do this once
   if (dllPathName.GetLength() == 0)
     {
-      if (GetModuleFileNameA(hinstDLL,
-			     dllPathName.GetBuffer(),
-			     BufferSizes::MaxPath)
-	  == 0)
+      wchar_t szPath[BufferSizes::MaxPath];
+      DWORD n = GetModuleFileNameW(
+	hinstDLL,
+	szPath,
+	BufferSizes::MaxPath);
+      if (n == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetModuleFileNameA", 0);
+	  FATAL_WINDOWS_ERROR ("GetModuleFileNameW", 0);
 	}
+      if (n == BufferSizes::MaxPath)
+      {
+	BUF_TOO_SMALL ("SessionImpl::GetDllPathName");
+      }
+      dllPathName = szPath;
       dllPathNameCanon = dllPathName;
       dllPathNameCanon.Canonicalize ();
     }
@@ -521,15 +533,15 @@ SessionImpl::GetAcrobatFontDir (/*[out]*/ PathName &	path)
   {
     flags.set (Flags::CachedAcrobatFontDir);
 
-    const char * const ACRORD32 =
-      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\AcroRd32.exe";
+    const wchar_t * const ACRORD32 =
+      L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\AcroRd32.exe";
 
-    string pathExe;
+    wstring pathExe;
 
     if (! winRegistry::TryGetRegistryValue(
       HKEY_LOCAL_MACHINE,
       ACRORD32,
-      "",
+      L"",
       pathExe,
       0))
     {
@@ -580,15 +592,15 @@ SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
   {
     flags.set (Flags::CachedAtmFontDir);
 
-    const char * const ATMSETUP =
-      "SOFTWARE\\Adobe\\Adobe Type Manager\\Setup";
+    const wchar_t * const ATMSETUP =
+      L"SOFTWARE\\Adobe\\Adobe Type Manager\\Setup";
 
-    string pfbDir;
+    wstring pfbDir;
 
     if (! winRegistry::TryGetRegistryValue(
       HKEY_LOCAL_MACHINE,
       ATMSETUP,
-      "PFB_DIR",
+      L"PFB_DIR",
       pfbDir,
       0))
     {
@@ -625,16 +637,16 @@ SessionImpl::GetATMFontDir (/*[out]*/ PathName &	path)
 MIKTEXSTATICFUNC(bool)
 GetPsFontDirectory (/*[out]*/ PathName & path)
 {
-  char szWinDir[BufferSizes::MaxPath];
+  wchar_t szWinDir[BufferSizes::MaxPath];
 
-  if (GetWindowsDirectoryA(szWinDir, BufferSizes::MaxPath) == 0)
+  if (GetWindowsDirectoryW(szWinDir, BufferSizes::MaxPath) == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
 
   char szWinDrive[BufferSizes::MaxPath];
 
-  PathName::Split (szWinDir,
+  PathName::Split (PathName(szWinDir).Get(),
 		   szWinDrive, BufferSizes::MaxPath,
 		   0, 0,
 		   0, 0,
@@ -700,12 +712,14 @@ SessionImpl::GetPsFontDirs (/*[out]*/ string &	psFontDirs)
 MIKTEXINTERNALFUNC(bool)
 GetWindowsFontsDirectory (/*[out]*/ PathName & path)
 {
-  if (GetWindowsDirectoryA(path.GetBuffer(),
-			   static_cast<UINT>(path.GetCapacity()))
+  wchar_t szWinDir[BufferSizes::MaxPath];
+  if (GetWindowsDirectoryW(szWinDir,
+			   BufferSizes::MaxPath)
       == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
+  path = szWinDir;
   path += "Fonts";
   return (Directory::Exists(path));
 }
@@ -794,7 +808,7 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
 		   0);
   if (len == 0)
     {
-      TraceError (T_("FormatMessage() failed for some reason"));
+      TraceError (T_("FormatMessageW() failed for some reason"));
       return (false);
     }
   AutoLocalMemory autoFree (pMessageBuffer);
@@ -933,6 +947,8 @@ MIKTEXSTATICFUNC(void)
 GetAlternate (/*[in]*/ const char *	lpszPath,
 	      /*[out]*/ char *		lpszAlternate)
 {
+  MIKTEX_ASSERT_STRING (lpszPath);
+  MIKTEX_ASSERT_PATH_BUFFER (lpszAlternate);
   WIN32_FIND_DATAW finddata;
   HANDLE hnd = FindFirstFileW(PathName(lpszPath).ToWideCharString().c_str(), &finddata);
   if (hnd == INVALID_HANDLE_VALUE)
@@ -1236,7 +1252,7 @@ inline
 HMODULE
 GetKernel32Module ()
 {
-  HMODULE h = GetModuleHandleA("kernel32.dll");
+  HMODULE h = GetModuleHandleW(L"kernel32.dll");
   if (h == 0)
     {
       UNEXPECTED_CONDITION ("GetKernel32Module");
@@ -1576,19 +1592,19 @@ bool
 Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
 {
-  OSVERSIONINFO osv;
+  OSVERSIONINFOW osv;
   osv.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-  GetVersionEx (&osv);
+  GetVersionExW (&osv);
   if (osv.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
     {
       unsigned long dwNeeded, dwReturned;
-      EnumPrinters (PRINTER_ENUM_DEFAULT,
-		    0,
-		    2,
-		    0,
-		    0,
-		    &dwNeeded,
-		    &dwReturned);
+      EnumPrintersW (PRINTER_ENUM_DEFAULT,
+		     0,
+		     2,
+		     0,
+		     0,
+		     &dwNeeded,
+		     &dwReturned);
       if (dwNeeded == 0)
 	{
 	  return (false);
@@ -1598,19 +1614,19 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	{
 	  OUT_OF_MEMORY ("Utils::GetDefPrinter");
 	}
-      PRINTER_INFO_2 * ppi2 =
-	reinterpret_cast<PRINTER_INFO_2*>(hMem.Get());
-      if (! EnumPrinters(PRINTER_ENUM_DEFAULT,
-			 0,
-			 2,
-			 reinterpret_cast<LPBYTE>(ppi2),
-			 dwNeeded,
-			 &dwNeeded,
-			 &dwReturned))
+      PRINTER_INFO_2W * ppi2 =
+	reinterpret_cast<PRINTER_INFO_2W *>(hMem.Get());
+      if (! EnumPrintersW(PRINTER_ENUM_DEFAULT,
+			  0,
+			  2,
+			  reinterpret_cast<LPBYTE>(ppi2),
+			  dwNeeded,
+			  &dwNeeded,
+			  &dwReturned))
 	{
 	  return (false);
 	}
-      unsigned long l = static_cast<unsigned long>(StrLen(ppi2->pPrinterName));
+      size_t l = StrLen(ppi2->pPrinterName);
       if (l >= *pBufferSize)
 	{
 	  *pBufferSize = l + 1;
@@ -1628,10 +1644,11 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	}
       if (osv.dwMajorVersion >= 5)
 	{
-	  DllProc2<BOOL, char *, LPDWORD>
-	    getDefaultPrinterA ("winspool.drv", "GetDefaultPrinterA");
+	  DllProc2<BOOL, wchar_t *, LPDWORD>
+	    getDefaultPrinterW ("winspool.drv", "GetDefaultPrinterW");
 	  DWORD dwBufferSize = static_cast<DWORD>(*pBufferSize);
-	  BOOL bDone = getDefaultPrinterA(pPrinterName, &dwBufferSize);
+	  CharBuffer<wchar_t> printerName (*pBufferSize);
+	  BOOL bDone = getDefaultPrinterW(printerName.GetBuffer(), &dwBufferSize);
 	  if (! bDone)
 	    {
 	      if (::GetLastError() == ERROR_FILE_NOT_FOUND)
@@ -1640,11 +1657,12 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		}
 	      else
 		{
-		  FATAL_WINDOWS_ERROR ("GetDefaultPrinterA", 0);
+		  FATAL_WINDOWS_ERROR ("GetDefaultPrinterW", 0);
 		}
 	    }
 	  else
 	    {
+	      Utils::CopyString (pPrinterName, *pBufferSize, printerName.Get());
 	      *pBufferSize = dwBufferSize;
 	      return (true);
 	    }
@@ -1729,16 +1747,18 @@ PathName::SetToCurrentDirectory ()
 PathName &
 PathName::SetToTempDirectory ()
 {
+  wchar_t szTemp[BufferSizes::MaxPath];
   unsigned long n =
-    GetTempPathA(static_cast<DWORD>(GetCapacity()), GetBuffer());
+    GetTempPathW(static_cast<DWORD>(BufferSizes::MaxPath), szTemp);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetTempPathA", 0);
+      FATAL_WINDOWS_ERROR ("GetTempPathW", 0);
     }
   if (n >= GetCapacity())
     {
       UNEXPECTED_CONDITION ("PathName::SetToTempDirectory");
     }
+  *this = szTemp;
   return (*this);
 }
 
@@ -1752,12 +1772,16 @@ PathName::SetToTempFile ()
 {
   PathName pathTempDir = SessionImpl::GetSession()->GetTempDirectory();
 
-  UINT n = GetTempFileNameA(pathTempDir.Get(), "mik", 0, GetBuffer());
+  wchar_t szTemp[MAX_PATH];
+
+  UINT n = GetTempFileNameW(pathTempDir.ToWideCharString().c_str(), L"mik", 0, szTemp);
 
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetTempFileNameA", pathTempDir.Get());
+      FATAL_WINDOWS_ERROR ("GetTempFileNameW", pathTempDir.Get());
     }
+
+  *this = szTemp;
 
   SessionImpl::GetSession()->trace_tempfile->WriteFormattedLine
     ("core",
@@ -2101,9 +2125,9 @@ SessionImpl::ScheduleFileRemoval (/*[in]*/ const char * lpszFileName)
      Q_(lpszFileName));
   if (IsWindowsNT())
     {
-      if (! MoveFileExA(lpszFileName, 0, MOVEFILE_DELAY_UNTIL_REBOOT))
+      if (! MoveFileExW(PathName(lpszFileName).ToWideCharString().c_str(), 0, MOVEFILE_DELAY_UNTIL_REBOOT))
 	{
-	  FATAL_WINDOWS_ERROR ("MoveFileExA", lpszFileName);
+	  FATAL_WINDOWS_ERROR ("MoveFileExW", lpszFileName);
 	}
     }
   else
@@ -3160,23 +3184,24 @@ miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
-string
-Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
+char *
+Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar,
+		       /*[out]*/ char *		lpszAnsi,
+		       /*[in]*/ size_t		size)
 {
   if (*lpszWideChar == 0)
     {
       return ("");
     }
-  CharBuffer<char, 512> buf (wcslen(lpszWideChar) + 1);
   int n = WideCharToMultiByte
     (CP_ACP,
      WC_NO_BEST_FIT_CHARS,
      lpszWideChar,
      -1,
-     buf.GetBuffer(),
-     buf.GetCapacity(),
+     lpszAnsi,
+     size,
      0,
-     0);
+     FALSE);
   if (n == 0)
     {
       FATAL_WINDOWS_ERROR ("WideCharToMultiByte", 0);
@@ -3185,7 +3210,51 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
     {
       UNEXPECTED_CONDITION ("Utils::WideCharToAnsi");
     }
-  return (buf.Get());
+  return (lpszAnsi);
+}
+
+/* _________________________________________________________________________
+
+   Utils::WideCharToAnsi
+   _________________________________________________________________________ */
+
+string
+Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
+{
+  CharBuffer<char, 512> buf (wcslen(lpszWideChar) + 1);
+  return (WideCharToAnsi(lpszWideChar, buf.GetBuffer(), buf.GetCapacity()));
+}
+
+/* _________________________________________________________________________
+
+   Utils::AnsiToWideChar
+   _________________________________________________________________________ */
+
+wchar_t *
+Utils::AnsiToWideChar (/*[in]*/ const char *	lpszAnsi,
+		       /*[out]*/ wchar_t *	lpszWideChar,
+			/*[in]*/ size_t		size)
+{
+  if (*lpszAnsi == 0)
+    {
+      return (L"");
+    }
+  int n = MultiByteToWideChar
+    (CP_ACP,
+     0,
+     lpszAnsi,
+     -1,
+     lpszWideChar,
+     size);
+  if (n == 0)
+    {
+      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", lpszAnsi);
+    }
+  if (n < 0)
+    {
+      UNEXPECTED_CONDITION ("Utils::AnsiToWideChar");
+    }
+  return (lpszWideChar);
 }
 
 /* _________________________________________________________________________
@@ -3196,27 +3265,8 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
 wstring
 Utils::AnsiToWideChar (/*[in]*/ const char * lpszAnsi)
 {
-  if (*lpszAnsi == 0)
-    {
-      return (L"");
-    }
   CharBuffer<wchar_t, 512> buf (strlen(lpszAnsi) + 1);
-  int n = MultiByteToWideChar
-    (CP_ACP,
-     0,
-     lpszAnsi,
-     -1,
-     buf.GetBuffer(),
-     buf.GetCapacity());
-  if (n == 0)
-    {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", lpszAnsi);
-    }
-  if (n < 0)
-    {
-      UNEXPECTED_CONDITION ("Utils::AnsiToWideChar");
-    }
-  return (buf.Get());
+  return (AnsiToWideChar(lpszAnsi, buf.GetBuffer(), buf.GetCapacity()));
 }
 
 /* _________________________________________________________________________
@@ -3392,34 +3442,34 @@ bool
 Utils::CheckPath (/*[in]*/ bool repair)
 {
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
-   "System\\CurrentControlSet\\Control\\Session Manager\\Environment"
+   L"System\\CurrentControlSet\\Control\\Session Manager\\Environment"
 
-#define REGSTR_KEY_ENVIRONMENT_USER "Environment"
+#define REGSTR_KEY_ENVIRONMENT_USER L"Environment"
   
   SessionWrapper pSession (true);
 
-  string systemPath;
+  wstring systemPath;
 
   if (! winRegistry::TryGetRegistryValue(HKEY_LOCAL_MACHINE,
 				         REGSTR_KEY_ENVIRONMENT_COMMON,
-				         "Path",
+				         L"Path",
 					 systemPath,
 					 0))
   {
-    systemPath = "";
+    systemPath = L"";
   }
 
-  string userPath;
+  wstring userPath;
 
   if (! pSession->IsAdminMode())
   {
     if (! winRegistry::TryGetRegistryValue(HKEY_CURRENT_USER,
 					   REGSTR_KEY_ENVIRONMENT_USER,
-					   "Path",
+					   L"Path",
 					   userPath,
 					   0))
     {
-      userPath = "";
+      userPath = L"";
     }
   }
 
@@ -3432,7 +3482,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 
   bool systemPathOkay = (
     ! Directory::Exists(commonBinDir)
-    || ::CheckPath(systemPath, commonBinDir, repairedSystemPath, systemPathCompetition));
+    || ::CheckPath(WA_(systemPath), commonBinDir, repairedSystemPath, systemPathCompetition));
 
   bool repaired = false;
 
@@ -3447,7 +3497,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	T_("Something is wrong with the system PATH:"));
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
-	systemPath.c_str());
+	WA_(systemPath.c_str()));
     }
     else if (! systemPathOkay && repair)
     {
@@ -3457,11 +3507,11 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedSystemPath.c_str());
+      systemPath = AW_(repairedSystemPath.c_str());
       winRegistry::SetRegistryValue (HKEY_LOCAL_MACHINE,
 				     REGSTR_KEY_ENVIRONMENT_COMMON,
-				     "Path",
-				     repairedSystemPath.c_str());
-      systemPath = repairedSystemPath;
+				     L"Path",
+				     systemPath.c_str());
       systemPathOkay = true;
       repaired = true;
     }
@@ -3472,7 +3522,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     {
       string repairedUserPath;
       bool userPathCompetition;
-      systemPathOkay = ::CheckPath(userPath, commonBinDir, repairedUserPath, userPathCompetition);
+      systemPathOkay = ::CheckPath(WA_(userPath), commonBinDir, repairedUserPath, userPathCompetition);
       if (! systemPathOkay && repair)
       {
 	SessionImpl::GetSession()->trace_error->WriteLine
@@ -3481,11 +3531,11 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	SessionImpl::GetSession()->trace_error->WriteLine
 	  ("core",
 	  repairedUserPath.c_str());
+	userPath = AW_(repairedUserPath);
 	winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				       REGSTR_KEY_ENVIRONMENT_USER,
-				       "Path",
-				       repairedUserPath.c_str());
-	userPath = repairedUserPath;
+				       L"Path",
+				       userPath.c_str());
 	systemPathOkay = true;
 	repaired = true;
       }
@@ -3496,7 +3546,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     bool userPathCompetition;
     userPathOkay = (
       ! Directory::Exists(userBinDir)
-      || ::CheckPath(userPath, userBinDir, repairedUserPath, userPathCompetition));
+      || ::CheckPath(WA_(userPath), userBinDir, repairedUserPath, userPathCompetition));
     if (! userPathOkay && repair)
     {
       SessionImpl::GetSession()->trace_error->WriteLine
@@ -3505,11 +3555,11 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedUserPath.c_str());
+      userPath = AW_(repairedUserPath);
       winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				     REGSTR_KEY_ENVIRONMENT_USER,
-				     "Path",
-				     repairedUserPath.c_str());
-      userPath = repairedUserPath;
+				     L"Path",
+				     userPath.c_str());
       userPathOkay = true;
       repaired = true;
     }
@@ -3518,10 +3568,10 @@ Utils::CheckPath (/*[in]*/ bool repair)
   if (repaired)
   {
     DWORD_PTR sendMessageResult;
-    if (SendMessageTimeoutA(HWND_BROADCAST,
+    if (SendMessageTimeoutW(HWND_BROADCAST,
 			    WM_SETTINGCHANGE,
 			    0,
-			    reinterpret_cast<LPARAM>("Environment"),
+			    reinterpret_cast<LPARAM>(L"Environment"),
 			    SMTO_ABORTIFHUNG,
 			    5000,
 			    &sendMessageResult)
@@ -3529,7 +3579,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     {
       if (::GetLastError() != ERROR_SUCCESS)
       {
-	FATAL_WINDOWS_ERROR ("SendMessageTimeoutA", 0);
+	FATAL_WINDOWS_ERROR ("SendMessageTimeoutW", 0);
       }
     }
   }
@@ -3545,20 +3595,20 @@ Utils::CheckPath (/*[in]*/ bool repair)
 void
 Utils::CanonicalizePathName (/*[in,out]*/ PathName & path)
 {
-  PathName resolved;
-  DWORD n = GetFullPathNameA(path.Get(),
-			     resolved.GetCapacity(),
-			     resolved.GetBuffer(),
+  wchar_t szFullPath[BufferSizes::MaxPath];
+  DWORD n = GetFullPathNameW(path.ToWideCharString().c_str(),
+			     BufferSizes::MaxPath,
+			     szFullPath,
 			     0);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetFullPathNameA", path.Get());
+      FATAL_WINDOWS_ERROR ("GetFullPathNameW", path.Get());
     }
-  if (n >= resolved.GetCapacity())
+  if (n >= BufferSizes::MaxPath)
     {
       BUF_TOO_SMALL ("Utils::CanonicalizePathName");
     }
-  path = resolved;
+  path = szFullPath;
 }
 
 /* _________________________________________________________________________
@@ -3851,6 +3901,7 @@ HResult::GetText ()
 {
   if (lpszMessage == 0)
   {
+    // FIXME: use Unicode version
     FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER|
       FORMAT_MESSAGE_FROM_SYSTEM|
       FORMAT_MESSAGE_IGNORE_INSERTS,

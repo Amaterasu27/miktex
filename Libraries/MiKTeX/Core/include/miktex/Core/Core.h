@@ -1558,6 +1558,13 @@ public:
 	      /*[in]*/ size_t		bufSize,
 	      /*[in]*/ const wchar_t *	lpszSource);
 
+public:
+  static
+  MIKTEXCORECEEAPI(size_t)
+  CopyString (/*[out]*/ wchar_t *	lpszBuf,
+	      /*[in]*/ size_t		bufSize,
+	      /*[in]*/ const char *	lpszSource);
+
   /// Gets the value of an environment variable.
   /// @param lpszName The name of the environment variable.
   /// @param[out] str The string object to be filled with the value.
@@ -1801,8 +1808,26 @@ public:
 #if defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXCORECEEAPI(char *)
+  WideCharToAnsi (/*[in]*/ const wchar_t *  lpszWideChar,
+		  /*[out]*/ char *	    lpszAnsi,
+		  /*[in]*/ size_t	    size);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
   MIKTEXCORECEEAPI(std::string)
   WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXCORECEEAPI(wchar_t *)
+  AnsiToWideChar (/*[in]*/ const char * lpszAnsi,
+		  /*[out]*/ wchar_t *	lpszWideChar,
+		  /*[in]*/ size_t	size);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -2410,6 +2435,15 @@ public:
     return (*this);
   }
 };
+
+#if 0
+template<int BUFSIZE=512>
+class WideCharBuffer : public CharBuffer<wchar_t, BUFSIZE>
+{
+public:
+
+};
+#endif
 
 /* _________________________________________________________________________
 
@@ -7201,15 +7235,15 @@ private:
   void
   Quote (/*[in]*/ const CharType * lpsz)
   {
-    bool needQuotes = (*lpsz == 0 || StrChr(lpsz, ' ') != 0);
+    bool needQuotes = (*lpsz == 0 || StrChr(lpsz, 0x20/*' '*/) != 0);
     if (needQuotes)
       {
-	CharBuffer<CharType>::Append ('"');
+	CharBuffer<CharType>::Append (0x22/*'"'*/);
       }
     CharBuffer<CharType>::Append (lpsz);
     if (needQuotes)
       {
-	CharBuffer<CharType>::Append ('"');
+	CharBuffer<CharType>::Append (0x22/*'"'*/);
       }
   }
 };
@@ -7525,9 +7559,11 @@ public:
     return (hr == other);
   }
 public:
+  // FIXME: use wchar_t pointer
   MIKTEXCORETHISAPI(const char *)
   GetText ();
 private:
+  // FIXME: use wchar_t pointer
   char * lpszMessage;
 private:
   HRESULT hr;

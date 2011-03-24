@@ -1,6 +1,6 @@
 /* winRegistry.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -34,6 +34,15 @@ public:
   static
   bool
   TryGetRegistryValue (/*[in]*/ HKEY		hkeyParent,
+		       /*[in]*/ const wchar_t *	lpszPath,
+		       /*[in]*/ const wchar_t *	lpszValueName,
+		       /*[out]*/ wstring &	value,
+		       /*[in]*/ const wchar_t * lpszDefaultValue);
+
+public:
+  static
+  bool
+  TryGetRegistryValue (/*[in]*/ HKEY		hkeyParent,
 		       /*[in]*/ const char *	lpszPath,
 		       /*[in]*/ const char *	lpszValueName,
 		       /*[out]*/ string &	value,
@@ -42,9 +51,21 @@ public:
 public:
   static
   bool
-  TryDeleteRegistryValue (/*[in]*/ HKEY	   hkeyParent,
+  TryDeleteRegistryValue (/*[in]*/ HKEY		   hkeyParent,
+			  /*[in]*/ const wchar_t * lpszPath,
+			  /*[in]*/ const wchar_t * lpszValueName);
+
+public:
+  static
+  bool
+  TryDeleteRegistryValue (/*[in]*/ HKEY		hkeyParent,
 			  /*[in]*/ const char * lpszPath,
 			  /*[in]*/ const char * lpszValueName);
+public:
+  static
+  bool
+  TryDeleteRegistryKey (/*[in]*/ HKEY		  hkeyParent,
+			/*[in]*/ const wchar_t *  lpszPath);
 
 public:
   static
@@ -56,9 +77,26 @@ public:
   static
   void
   SetRegistryValue (/*[in]*/ HKEY		hkeyParent,
+		    /*[in]*/ const wchar_t *	lpszPath,
+		    /*[in]*/ const wchar_t *	lpszValueName,
+		    /*[in]*/ const wchar_t *	lpszValue);
+
+public:
+  static
+  void
+  SetRegistryValue (/*[in]*/ HKEY		hkeyParent,
 		    /*[in]*/ const char *	lpszPath,
 		    /*[in]*/ const char *	lpszValueName,
 		    /*[in]*/ const char *	lpszValue);
+
+public:
+  static
+  bool
+  TryGetRegistryValue (/*[in]*/ TriState	shared,
+		       /*[in]*/ const wchar_t *	lpszKeyName,
+		       /*[in]*/ const wchar_t *	lpszValueName,
+		       /*[out]*/ wstring &	value,
+		       /*[in]*/ const wchar_t *	lpszDefaultValue);
 
 public:
   static
@@ -73,11 +111,26 @@ public:
   static
   bool
   TryGetRegistryValue (/*[in]*/ TriState	shared,
+		       /*[in]*/ const wchar_t *	lpszKeyName,
+		       /*[in]*/ const wchar_t *	lpszValueName,
+		       /*[out]*/ PathName &	path,
+		       /*[in]*/ const wchar_t *	lpszDefaultPath);
+
+public:
+  static
+  bool
+  TryGetRegistryValue (/*[in]*/ TriState	shared,
 		       /*[in]*/ const char *	lpszKeyName,
 		       /*[in]*/ const char *	lpszValueName,
 		       /*[out]*/ PathName &	path,
 		       /*[in]*/ const char *	lpszDefaultPath);
 
+public:
+  static
+  bool
+  TryDeleteRegistryValue (/*[in]*/ TriState		shared,
+			  /*[in]*/ const wchar_t *	lpszKeyName,
+			  /*[in]*/ const wchar_t *	lpszValueName);
 
 public:
   static
@@ -85,6 +138,14 @@ public:
   TryDeleteRegistryValue (/*[in]*/ TriState	shared,
 			  /*[in]*/ const char *	lpszKeyName,
 			  /*[in]*/ const char *	lpszValueName);
+
+public:
+  static
+  void
+  SetRegistryValue (/*[in]*/ TriState		shared,
+		    /*[in]*/ const wchar_t *	lpszKeyName,
+		    /*[in]*/ const wchar_t *	lpszValueName,
+		    /*[in]*/ const wchar_t *	lpszValue);
 
 public:
   static
