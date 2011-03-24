@@ -94,7 +94,6 @@ set(libs
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
-  ${ui_lib_name}
   ${uriparser_lib_name}
   ${zlib_lib_name}
 )
@@ -113,6 +112,10 @@ endif(NATIVE_WINDOWS)
 add_executable(update_mfc WIN32 ${update_mfc_sources})
 
 merge_trustinfo_manifest(update_mfc asInvoker)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(update_mfc "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(update_mfc ${libs})
 
@@ -138,6 +141,10 @@ install(
 add_executable(update_mfc_admin WIN32 ${update_mfc_sources})
 
 merge_trustinfo_manifest(update_mfc_admin requireAdministrator)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(update_mfc_admin "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(update_mfc_admin ${libs})
 

@@ -345,7 +345,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
       // update the report
       if (sharedData.reportUpdate)
 	{
-	  reportEditBox.SetWindowText (sharedData.report);
+	  reportEditBox.SetWindowText (CA2T(sharedData.report.c_str()));
 	  reportEditBox.SetSel (100000, 100000);
 	  sharedData.reportUpdate = false;
 	}
@@ -821,10 +821,10 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CString str;
+  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (CA2T(lpszFmt), args);
+  str.FormatV (lpszFmt, args);
   va_end (args);
   int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
@@ -839,7 +839,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
   sharedData.reportUpdate = true;
   if (writeLog)
     {
-      Log ("%s", static_cast<LPCTSTR>(str));
+      Log ("%s", static_cast<const char *>(str));
     }
   if (immediate)
     {

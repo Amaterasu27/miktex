@@ -68,7 +68,6 @@ set(libs
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
-  ${ui_lib_name}
   ${uriparser_lib_name}
   ${zlib_lib_name}
 )
@@ -87,6 +86,10 @@ endif(NATIVE_WINDOWS)
 add_executable(remove_mfc WIN32 ${remove_mfc_sources})
 
 merge_trustinfo_manifest(remove_mfc asInvoker)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(remove_mfc "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(remove_mfc ${libs})
 
@@ -112,6 +115,10 @@ install(
 add_executable(remove_mfc${miktex_admin_suffix} WIN32 ${remove_mfc_sources})
 
 merge_trustinfo_manifest(remove_mfc${miktex_admin_suffix} requireAdministrator)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(remove_mfc${miktex_admin_suffix} "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(remove_mfc${miktex_admin_suffix} ${libs})
 

@@ -179,7 +179,7 @@ RemoveFilesPage::OnStartRemovingFiles (/*[in]*/ WPARAM	wParam,
 			    FALSE,
 			    DUPLICATE_SAME_ACCESS))
 	{
-	  FATAL_WINDOWS_ERROR (T_("DuplicateHandle"), 0);
+	  FATAL_WINDOWS_ERROR ("DuplicateHandle", 0);
 	}
       pThread->ResumeThread ();
       
@@ -655,8 +655,8 @@ void
 RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 {
 #define REGSTR_KEY_ENVIRONMENT_COMMON \
-   REGSTR_PATH_CURRENTCONTROLSET_A T_("\\Control\\Session Manager\\Environment")
-#define REGSTR_KEY_ENVIRONMENT_USER T_("Environment")
+   REGSTR_PATH_CURRENTCONTROLSET_A "\\Control\\Session Manager\\Environment"
+#define REGSTR_KEY_ENVIRONMENT_USER "Environment"
   
   HKEY hkey;
 
@@ -675,7 +675,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExW", result, 0);
     }
 
   AutoHKEY autoHKEY (hkey);
@@ -698,7 +698,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
     {
       if (result != ERROR_FILE_NOT_FOUND)
 	{
-	  FATAL_WINDOWS_ERROR_2 (T_("RegQueryValueExW"), result, 0);
+	  FATAL_WINDOWS_ERROR_2 ("RegQueryValueExW", result, 0);
 	}
     }
   else
@@ -717,7 +717,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 
 	  if (result != ERROR_SUCCESS)
 	    {
-	      FATAL_WINDOWS_ERROR_2 (T_("RegSetValueExW"), result, 0);
+	      FATAL_WINDOWS_ERROR_2 ("RegSetValueExW", result, 0);
 	    }
 	  
 	  DWORD_PTR sendMessageResult;
@@ -731,7 +731,7 @@ RemoveFilesPage::UnregisterPathNT (/*[in]*/ bool shared)
 				  &sendMessageResult)
 	      == 0)
 	    {
-	      CHECK_WINDOWS_ERROR (T_("SendMessageTimeout"), 0);
+	      CHECK_WINDOWS_ERROR ("SendMessageTimeoutW", 0);
 	    }
 	}
     }
@@ -858,7 +858,7 @@ RemoveFilesPage::RemoveRegistryKey (/*[in]*/ HKEY		hkeyRoot,
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExW", result, 0);
     }
   
   wchar_t szName[BufferSizes::MaxPath];
@@ -882,16 +882,16 @@ RemoveFilesPage::RemoveRegistryKey (/*[in]*/ HKEY		hkeyRoot,
 
   if (result != ERROR_NO_MORE_ITEMS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegEnumKeyExW"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegEnumKeyExW", result, 0);
     }
 
   hkeySub.Reset ();
 
-  result = RegDeleteKey(hkeyRoot, subKey.ToWideCharString().c_str());
+  result = RegDeleteKeyW(hkeyRoot, subKey.ToWideCharString().c_str());
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegDeleteKeyW"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegDeleteKeyW", result, 0);
     }
 }
 
@@ -919,7 +919,7 @@ RemoveFilesPage::Exists (/*[in]*/ HKEY			hkeyRoot,
 	{
 	  return (false);
 	}
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyExW"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExW", result, 0);
     }
 
   return (true);
@@ -937,37 +937,37 @@ RemoveFilesPage::IsEmpty (/*[in]*/ HKEY			hkeyRoot,
   AutoHKEY hkeySub;
 
   LONG result =
-    RegOpenKeyEx(hkeyRoot,
-		 subKey.ToWideCharString().c_str(),
-		 0,
-		 KEY_READ,
-		 &hkeySub);
+    RegOpenKeyExW(hkeyRoot,
+		  subKey.ToWideCharString().c_str(),
+		  0,
+		  KEY_READ,
+		  &hkeySub);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegOpenKeyEx"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegOpenKeyExW", result, 0);
     }
 
   DWORD nSubKeys;
   DWORD nValues;
 
   result =
-    RegQueryInfoKey(hkeySub.Get(),
-		    0,
-		    0,
-		    0,
-		    &nSubKeys,
-		    0,
-		    0,
-		    &nValues,
-		    0,
-		    0,
-		    0,
-		    0);
+    RegQueryInfoKeyW(hkeySub.Get(),
+		     0,
+		     0,
+		     0,
+		     &nSubKeys,
+		     0,
+		     0,
+		     &nValues,
+		     0,
+		     0,
+		     0,
+		     0);
 
   if (result != ERROR_SUCCESS)
     {
-      FATAL_WINDOWS_ERROR_2 (T_("RegQueryInfoKey"), result, 0);
+      FATAL_WINDOWS_ERROR_2 ("RegQueryInfoKeyW", result, 0);
     }
 
   return (nSubKeys + nValues == 0);

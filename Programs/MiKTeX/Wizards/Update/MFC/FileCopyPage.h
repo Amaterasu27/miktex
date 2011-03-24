@@ -201,7 +201,7 @@ private:
 	waitingForClickOnNext (false)
     {
     }
-    CString report;
+    string report;
     DWORD secondsRemaining;
     auto_ptr<StreamWriter> pLogStream;
     bool newPackage;
