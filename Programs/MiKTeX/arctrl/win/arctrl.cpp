@@ -1,6 +1,6 @@
 /* arctrl.cpp: control Acrobat Reader
 
-   Copyright (C) 2006-2009 Christian Schenk
+   Copyright (C) 2006-2011 Christian Schenk
 */
 
 /* This program (arctrl) is based on public domain work by Fabrice
@@ -61,7 +61,7 @@ private:
   MIKTEXNORETURN
   void
   FatalError (/*[in]*/ const char *	lpszFormat,
-	      /*[in]*/				...);
+	      /*[in]*/			...);
 
 public:
   void
@@ -91,7 +91,7 @@ private:
 private:
   void
   ExecuteDdeCommand (/*[in]*/ const char *	lpszCommand,
-		     /*[in]*/				...);
+		     /*[in]*/			...);
 
 private:
   void
@@ -160,6 +160,9 @@ private:
   HCONV hConv;
 
 private:
+  bool ARstarted;
+
+private:
   static DWORD idInst;
 
 private:
@@ -198,7 +201,7 @@ enum Option
 const struct poptOption ArCtrl::aoption[] =
 {
   {
-    T_("version"), 'V',
+    "version", 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -217,7 +220,7 @@ const struct poptOption ArCtrl::aoption[] =
 const struct poptOption ArCtrl::aoptionOpen[] =
 {
   {
-    T_("file"), 0,
+    "file", 0,
     POPT_ARG_STRING, 0,
     OPT_FILE,
     T_("Open FILE."),
@@ -225,7 +228,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
   },
 
   {
-    T_("page"), 0,
+    "page", 0,
     POPT_ARG_STRING, 0,
     OPT_PAGE,
     T_("Go to the N-th page."),
@@ -233,7 +236,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
   },
 
   {
-    T_("goto"), 0,
+    "goto", 0,
     POPT_ARG_STRING, 0,
     OPT_GOTO,
     T_("Go to the specified named destination within the document."),
@@ -241,7 +244,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
   },
 
   {
-    T_("version"), 'V',
+    "version", 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -260,7 +263,7 @@ const struct poptOption ArCtrl::aoptionOpen[] =
 const struct poptOption ArCtrl::aoptionClose[] =
 {
   {
-    T_("all"), 0,
+    "all", 0,
     POPT_ARG_NONE, 0,
     OPT_ALL,
     T_("Close all files."),
@@ -268,7 +271,7 @@ const struct poptOption ArCtrl::aoptionClose[] =
   },
 
   {
-    T_("file"), 0,
+    "file", 0,
     POPT_ARG_STRING, 0,
     OPT_FILE,
     T_("Close FILE."),
@@ -276,7 +279,7 @@ const struct poptOption ArCtrl::aoptionClose[] =
   },
 
   {
-    T_("version"), 'V',
+    "version", 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -295,7 +298,7 @@ const struct poptOption ArCtrl::aoptionClose[] =
 const struct poptOption ArCtrl::aoptionCommandLoop[] =
 {
   {
-    T_("version"), 'V',
+    "version", 'V',
     POPT_ARG_NONE, 0,
     OPT_VERSION,
     T_("Print version information and exit."),
@@ -320,7 +323,8 @@ DWORD ArCtrl::idInst = 0;
 
 ArCtrl::ArCtrl ()
   : mode (None),
-    hConv (0)
+    hConv (0),
+    ARstarted (false)
 {
 }
 
@@ -349,7 +353,7 @@ void
 ArCtrl::ShowVersion ()
 {
   cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					   MIKTEX_COMPONENT_VERSION_STR)
+					  MIKTEX_COMPONENT_VERSION_STR)
        << "\n"
        << T_("Written by Christian Schenk in 2006.\n")
        << T_("Based on public domain work by Fabrice Popineau.\n")
@@ -383,10 +387,10 @@ ArCtrl::FatalError (/*[in]*/ const char *	lpszFormat,
 HSZ
 ArCtrl::CreateDdeString (/*[in]*/ const char * lpsz)
 {
-  HSZ hsz = DdeCreateStringHandle(idInst, lpsz, CP_WINANSI);
+  HSZ hsz = DdeCreateStringHandleA(idInst, lpsz, CP_WINANSI);
   if (hsz == 0)
     {
-      FatalError (T_("DdeCreateStringHandle() failed for some reason."));
+      FatalError (T_("DdeCreateStringHandleA() failed for some reason."));
     }
   return (hsz);
 }
@@ -399,20 +403,25 @@ ArCtrl::CreateDdeString (/*[in]*/ const char * lpsz)
 void
 ArCtrl::StartAR ()
 {
+  if (ARstarted)
+  {
+    return;
+  }
   PathName pdfFile;
-  if (! pSession->FindFile(T_("miktex.pdf"), FileType::TEXSYSDOC, pdfFile))
+  if (! pSession->FindFile("miktex.pdf", FileType::TEXSYSDOC, pdfFile))
     {
       FatalError (T_("MiKTeX is not installed."));
     }
   PathName dir = pdfFile;
   dir.RemoveFileSpec ();
   char szExecutable[BufferSizes::MaxPath];
-  if (FindExecutable(T_("miktex.pdf"), dir.Get(), szExecutable)
+  if (FindExecutable("miktex.pdf", dir.Get(), szExecutable)
       <= reinterpret_cast<HINSTANCE>(32))
     {
       FatalError (T_("The PDF viewer could not be located."));
     }
   auto_ptr<Process> pProcess (Process::Start(ProcessStartInfo(szExecutable)));
+  ARstarted = true;
 #if 0
   // <todo>
   WaitForInputIdle (hProcess, INFINITE);
@@ -490,16 +499,21 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
    ArCtrl::EstablishConversation
    _________________________________________________________________________ */
 
+const char * const ServiceNames[] = {
+  "acroviewR10",
+  "acroview"
+};
+
 void
 ArCtrl::EstablishConversation ()
 {
   DWORD idInst = 0;
 
   UINT ret =
-    DdeInitialize(&idInst,
-		  DdeCallback,
-		  APPCMD_CLIENTONLY,
-		  0);
+    DdeInitializeA(&idInst,
+		   DdeCallback,
+		   APPCMD_CLIENTONLY,
+		   0);
 
   if (ret != DMLERR_NO_ERROR)
     {
@@ -508,33 +522,31 @@ ArCtrl::EstablishConversation ()
 
   this->idInst = idInst;
 
-  HSZ hszServer = CreateDdeString(T_("acroview"));
-
-  AutoDdeFreeStringHandle autoFree1 (idInst, hszServer);
-
-  HSZ hszTopic = CreateDdeString(T_("control"));
-
+  HSZ hszTopic = CreateDdeString("control");
   AutoDdeFreeStringHandle autoFree2 (idInst, hszTopic);
 
-  hConv = DdeConnect(idInst, hszServer, hszTopic, 0);
+  MIKTEX_ASSERT (hConv == 0);
 
-  if (hConv == 0)
+  for (int idx = 0; hConv == 0 && idx < sizeof(ServiceNames) / sizeof(ServiceNames[0]); ++ idx)
+  {
+    HSZ hszService = CreateDdeString(ServiceNames[idx]);
+    AutoDdeFreeStringHandle autoFree1 (idInst, hszService);
+    hConv = DdeConnect(idInst, hszService, hszTopic, 0);
+    if (hConv == 0)
     {
       StartAR ();
-      for (int i = 0; i < 5; ++ i)
-	{
-	  Sleep (500);
-	  hConv = DdeConnect(idInst, hszServer, hszTopic, 0);
-	  if (hConv != 0)
-	    {
-	      break;
-	    }
-	}
-      if (hConv == 0)
-	{
-	  FatalError (T_("The DDE conversation could not be established."));
-	}
+      for (int rounds = 0; hConv == 0 && rounds < 5; ++ rounds)
+      {
+	Sleep (500);
+	hConv = DdeConnect(idInst, hszService, hszTopic, 0);
+      }
     }
+  }
+
+  if (hConv == 0)
+  {
+    FatalError (T_("The DDE conversation could not be established."));
+  }
 }
 
 /* _________________________________________________________________________
@@ -579,7 +591,7 @@ ArCtrl::ExecuteDdeCommand (/*[in]*/ const char *	lpszCommand,
     DdeClientTransaction(const_cast<BYTE *>
 			 (reinterpret_cast<const BYTE *>(data.c_str())),
 			 static_cast<DWORD>
-			 ((data.length() + 1) * sizeof(char)),
+			 ((data.length() + 1) * sizeof(data[0])),
 			 hConv,
 			 0,
 			 0,
@@ -607,7 +619,7 @@ ArCtrl::DocOpen (/*[in]*/ const PathName & path)
     }
   PathName fullPath (path);
   fullPath.MakeAbsolute ();
-  ExecuteDdeCommand (T_("[DocOpen(\"%s\")]"), fullPath.Get());
+  ExecuteDdeCommand ("[DocOpen(\"%s\")]", fullPath.Get());
 }
 
 /* _________________________________________________________________________
@@ -624,7 +636,7 @@ ArCtrl::DocClose (/*[in]*/ const PathName & path)
     }
   PathName fullPath (path);
   fullPath.MakeAbsolute ();
-  ExecuteDdeCommand (T_("[DocClose(\"%s\")]"), fullPath.Get());
+  ExecuteDdeCommand ("[DocClose(\"%s\")]", fullPath.Get());
 }
 
 /* _________________________________________________________________________
@@ -635,7 +647,7 @@ ArCtrl::DocClose (/*[in]*/ const PathName & path)
 void
 ArCtrl::CloseAllDocs ()
 {
-  ExecuteDdeCommand (T_("[CloseAllDocs()]"));
+  ExecuteDdeCommand ("[CloseAllDocs()]");
 }
 
 /* _________________________________________________________________________
@@ -646,7 +658,7 @@ ArCtrl::CloseAllDocs ()
 void
 ArCtrl::AppShow ()
 {
-  ExecuteDdeCommand (T_("[AppShow()]"));
+  ExecuteDdeCommand ("[AppShow()]");
 }
 
 /* _________________________________________________________________________
@@ -657,7 +669,7 @@ ArCtrl::AppShow ()
 void
 ArCtrl::AppHide ()
 {
-  ExecuteDdeCommand (T_("[AppHide()]"));
+  ExecuteDdeCommand ("[AppHide()]");
 }
 
 /* _________________________________________________________________________
@@ -668,7 +680,7 @@ ArCtrl::AppHide ()
 void
 ArCtrl::AppExit ()
 {
-  ExecuteDdeCommand (T_("[AppExit()]"));
+  ExecuteDdeCommand ("[AppExit()]");
 }
 
 /* _________________________________________________________________________
@@ -686,7 +698,7 @@ ArCtrl::DocGoTo (/*[in]*/ const PathName &	path,
     }
   PathName fullPath (path);
   fullPath.MakeAbsolute ();
-  ExecuteDdeCommand (T_("[DocGoTo(\"%s\",%d)]"),
+  ExecuteDdeCommand ("[DocGoTo(\"%s\",%d)]",
 		     fullPath.Get(),
 		     pageNum);
 }
@@ -706,7 +718,7 @@ ArCtrl::DocGoToNameDest (/*[in]*/ const PathName &	path,
     }
   PathName fullPath (path);
   fullPath.MakeAbsolute ();
-  ExecuteDdeCommand (T_("[DocGoToNameDest(\"%s\",\"%s\")]"),
+  ExecuteDdeCommand ("[DocGoToNameDest(\"%s\",\"%s\")]",
 		     fullPath.Get(),
 		     nameDest.c_str());
 }
@@ -725,7 +737,7 @@ ArCtrl::FileOpen (/*[in]*/ const PathName & path)
     }
   PathName fullPath (path);
   fullPath.MakeAbsolute ();
-  ExecuteDdeCommand (T_("[FileOpen(\"%s\")]"), fullPath.Get());
+  ExecuteDdeCommand ("[FileOpen(\"%s\")]", fullPath.Get());
 }
 
 /* _________________________________________________________________________
@@ -745,7 +757,7 @@ ArCtrl::Execute (/*[in]*/ const string & command)
     }
   ++ tok;
   const char * lpszArgument = tok.GetCurrent();
-  if (StringCompare(lpszCommand, T_("open"), true) == 0)
+  if (StringCompare(lpszCommand, "open", true) == 0)
     {
       if (lpszArgument == 0)
 	{
@@ -754,7 +766,7 @@ ArCtrl::Execute (/*[in]*/ const string & command)
 	}
       DocOpen (lpszArgument);
     }
-  else if (StringCompare(lpszCommand, T_("close"), true) == 0)
+  else if (StringCompare(lpszCommand, "close", true) == 0)
     {
       if (lpszArgument == 0)
 	{
@@ -763,7 +775,7 @@ ArCtrl::Execute (/*[in]*/ const string & command)
 	}
       DocClose (lpszArgument);
     }
-  else if (StringCompare(lpszCommand, T_("closeall"), true) == 0)
+  else if (StringCompare(lpszCommand, "closeall", true) == 0)
     {
       if (lpszArgument != 0)
 	{
@@ -772,7 +784,7 @@ ArCtrl::Execute (/*[in]*/ const string & command)
 	}
       CloseAllDocs ();
     }
-  else if (StringCompare(lpszCommand, T_("goto"), true) == 0)
+  else if (StringCompare(lpszCommand, "goto", true) == 0)
     {
       if (lpszArgument == 0)
 	{
@@ -787,7 +799,7 @@ ArCtrl::Execute (/*[in]*/ const string & command)
 	}
       DocGoTo (lpszArgument, atoi(tok.GetCurrent()) - 1);
     }
-  else if (StringCompare(lpszCommand, T_("gotoname"), true) == 0)
+  else if (StringCompare(lpszCommand, "gotoname", true) == 0)
     {
       if (lpszArgument == 0)
 	{
@@ -802,32 +814,32 @@ ArCtrl::Execute (/*[in]*/ const string & command)
 	}
       DocGoToNameDest (lpszArgument, tok.GetCurrent());
     }
-  else if (StringCompare(lpszCommand, T_("show"), true) == 0)
+  else if (StringCompare(lpszCommand, "show", true) == 0)
     {
       AppShow ();
     }
-  else if (StringCompare(lpszCommand, T_("hide"), true) == 0)
+  else if (StringCompare(lpszCommand, "hide", true) == 0)
     {
       AppHide ();
     }
-  else if (StringCompare(lpszCommand, T_("exit"), true) == 0)
+  else if (StringCompare(lpszCommand, "exit", true) == 0)
     {
       AppExit ();
       return (false);
     }
-  else if (StringCompare(lpszCommand, T_("help"), true) == 0)
+  else if (StringCompare(lpszCommand, "help", true) == 0)
     {
-      cout << T_("")
-	   << T_("close FILE\n")
-	   << T_("closeall\n")
-	   << T_("exit\n")
-	   << T_("goto FILE PAGE\n")
-	   << T_("gotoname FILE NAMEDEST\n")
-	   << T_("help\n")
-	   << T_("hide\n")
-	   << T_("open FILE\n")
-	   << T_("show\n")
-	   << T_("");
+      cout << ""
+	   << "close FILE\n"
+	   << "closeall\n"
+	   << "exit\n"
+	   << "goto FILE PAGE\n"
+	   << "gotoname FILE NAMEDEST\n"
+	   << "help\n"
+	   << "hide\n"
+	   << "open FILE\n"
+	   << "show\n"
+	   << "";
     }
   return (true);
 }
@@ -857,7 +869,7 @@ ArCtrl::ReadAndExecute ()
    _________________________________________________________________________ */
 
 void
-ArCtrl::Run (/*[in]*/ int				argc,
+ArCtrl::Run (/*[in]*/ int			argc,
 	     /*[in]*/ const char **		argv)
 {
   string program = Utils::GetExeName();
@@ -869,17 +881,17 @@ ArCtrl::Run (/*[in]*/ int				argc,
   string nameDest;
   bool all = false;
   
-  if (PathName::Compare(program, T_("pdfopen")) == 0)
+  if (PathName::Compare(program, "pdfopen") == 0)
     {
       mode = Open;
       pOption = &aoptionOpen[0];
     }
-  else if (PathName::Compare(program, T_("pdfclose")) == 0)
+  else if (PathName::Compare(program, "pdfclose") == 0)
     {
       mode = Close;
       pOption = &aoptionClose[0];
     }
-  else if (PathName::Compare(program, T_("pdfdde")) == 0)
+  else if (PathName::Compare(program, "pdfdde") == 0)
     {
       mode = CommandLoop;
       pOption = &aoptionCommandLoop[0];
@@ -1007,7 +1019,7 @@ extern "C"
 __declspec(dllexport)
 int
 __cdecl
-arctrlmain (/*[in]*/ int			argc,
+arctrlmain (/*[in]*/ int		argc,
 	    /*[in]*/ const char **	argv)
 {
   try
