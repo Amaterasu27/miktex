@@ -143,6 +143,10 @@ add_executable(yap WIN32 ${yap_mfc_sources})
 
 merge_trustinfo_manifest(yap asInvoker)
 
+if(NATIVE_WINDOWS)
+  add_link_flags(yap "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
+
 target_link_libraries(yap
   ${core_dll_name}
   ${dvi_dll_name}
