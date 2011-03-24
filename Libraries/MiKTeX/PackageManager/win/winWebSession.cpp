@@ -1,6 +1,6 @@
 /* winWebSession.cpp:
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -77,11 +77,11 @@ winWebSession::OpenUrl (/*[in]*/ const char * lpszUrl)
 	}
       
       hInternet
-	= InternetOpen(MPM_AGENT,
-		       INTERNET_OPEN_TYPE_PRECONFIG,
-		       0,
-		       0,
-		       INTERNET_FLAG_KEEP_CONNECTION);
+	= InternetOpenW(CA2W(MPM_AGENT),
+		        INTERNET_OPEN_TYPE_PRECONFIG,
+			0,
+			0,
+			INTERNET_FLAG_KEEP_CONNECTION);
       if (hInternet == 0)
 	{
 	  string error;

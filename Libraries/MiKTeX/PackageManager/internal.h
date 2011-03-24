@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -353,7 +353,7 @@ AssertValidString (/*[in]*/ const char *	lp,
 {
 #if defined(_MSC_VER) && defined(MIKTEX_DEBUG)
   MIKTEX_ASSERT (lp != 0);
-  MIKTEX_ASSERT (! IsBadStringPtr(lp, n));
+  MIKTEX_ASSERT (! IsBadStringPtrA(lp, n));
 #else
   UNUSED (lp);
   UNUSED (n);

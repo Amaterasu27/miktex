@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -2298,9 +2298,9 @@ PackageInstallerImpl::InstallRemove ()
 	  AutoSysString c (errorInfo.sourceFile);
 	  Session::FatalMiKTeXError
 	    ("PackageInstallerImpl::InstallRemove",
-	     CW2CT(errorInfo.message),
-	     CW2CT(errorInfo.info),
-	     CW2CT(errorInfo.sourceFile),
+	     CW2A(errorInfo.message),
+	     CW2A(errorInfo.info),
+	     CW2A(errorInfo.sourceFile),
 	     errorInfo.sourceLine);
 	}
       return;
@@ -2927,9 +2927,9 @@ PackageInstallerImpl::UpdateDb ()
 	  AutoSysString b (errorInfo.info);
 	  AutoSysString c (errorInfo.sourceFile);
 	  Session::FatalMiKTeXError ("PackageInstallerImpl::UpdateDb",
-				     CW2CT(errorInfo.message),
-				     CW2CT(errorInfo.info),
-				     CW2CT(errorInfo.sourceFile),
+				     CW2A(errorInfo.message),
+				     CW2A(errorInfo.info),
+				     CW2A(errorInfo.sourceFile),
 				     errorInfo.sourceLine);
 	}
       return;
