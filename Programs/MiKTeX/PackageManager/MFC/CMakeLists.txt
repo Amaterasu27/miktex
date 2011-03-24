@@ -70,6 +70,10 @@ add_executable(mpm_mfc WIN32 ${mpm_mfc_sources})
 
 merge_trustinfo_manifest(mpm_mfc asInvoker)
 
+if(NATIVE_WINDOWS)
+  add_link_flags(mpm_mfc "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
+
 target_link_libraries(mpm_mfc ${libs})
 
 get_target_property(mpm_mfc_exe mpm_mfc LOCATION)
@@ -90,6 +94,10 @@ install(TARGETS mpm_mfc DESTINATION ${bindir})
 add_executable(mpm_mfc${miktex_admin_suffix} WIN32 ${mpm_mfc_sources})
 
 merge_trustinfo_manifest(mpm_mfc${miktex_admin_suffix} requireAdministrator)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(mpm_mfc${miktex_admin_suffix} "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(mpm_mfc${miktex_admin_suffix} ${libs})
 

@@ -78,6 +78,10 @@ add_executable(mo WIN32 ${mo_mfc_sources})
 
 merge_trustinfo_manifest(mo asInvoker)
 
+if(NATIVE_WINDOWS)
+  add_link_flags(mo "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
+
 target_link_libraries(mo ${libs})
 
 get_target_property(mo_mfc_exe mo LOCATION)
@@ -98,6 +102,10 @@ install(TARGETS mo DESTINATION ${bindir})
 add_executable(mo${miktex_admin_suffix} WIN32 ${mo_mfc_sources})
 
 merge_trustinfo_manifest(mo${miktex_admin_suffix} requireAdministrator)
+
+if(NATIVE_WINDOWS)
+  add_link_flags(mo${miktex_admin_suffix} "/ENTRY:\"wWinMainCRTStartup\"")
+endif(NATIVE_WINDOWS)
 
 target_link_libraries(mo${miktex_admin_suffix} ${libs})
 
