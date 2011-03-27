@@ -59,11 +59,18 @@
 #define setthreshold(g)  (g->GCthreshold = (g->estimate/100) * g->gcpause)
 
 
+#if defined(MIKTEX) && defined(_MSC_VER) && defined(_WIN64)
+/* FIXME: Microsoft Visual C++ 2010 for x64 optimization bug */
+#  pragma optimize("", off)
+#endif
 static void removeentry (Node *n) {
   lua_assert(ttisnil(gval(n)));
   if (iscollectable(gkey(n)))
     setttype(gkey(n), LUA_TDEADKEY);  /* dead key; remove it */
 }
+#if defined(MIKTEX) && defined(_MSC_VER) && defined(_WIN64)
+#  pragma optimize("", on)
+#endif
 
 
 static void reallymarkobject (global_State *g, GCObject *o) {
