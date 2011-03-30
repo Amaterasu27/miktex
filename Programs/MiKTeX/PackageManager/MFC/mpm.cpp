@@ -194,7 +194,7 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	{
 	  CString str;
 	  str.Format (T_(_T("MiKTeX Package Manager (windowed mode) version %s")),
-		      CA2T(MIKTEX_COMPONENT_VERSION_STR));
+		      static_cast<LPCTSTR>(CA2T(MIKTEX_COMPONENT_VERSION_STR)));
 	  str += _T("\r\n");
 	  str += MIKTEX_COMP_COPYRIGHT_STR;
 	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);
