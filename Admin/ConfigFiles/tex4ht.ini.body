@@ -1,9 +1,5 @@
-[tex4ht]
+[ft.other text files]
 
-TEX4HTFONTSET=alias,iso8859,unicode
-
-TEX4HTINPUTS=.
-TEX4HTINPUTS;=%R/tex4ht/base//
-TEX4HTINPUTS;=%R/tex4ht/ht-fonts/alias//
-TEX4HTINPUTS;=%R/tex4ht/ht-fonts/iso8859//
-TEX4HTINPUTS;=%R/tex4ht/ht-fonts/unicode//
+path=.
+path;=%R/tex4ht/base//
+path;=%R/tex4ht/ht-fonts/{alias,iso8859,unicode}//
