@@ -65,7 +65,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 	      flags,
 	      szPath);
     }
-  if (hr == S_FALSE)
+  if (hr == E_FAIL)
     {
       FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
 			  T_("A required file system folder does not exist."),
