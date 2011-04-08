@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -89,6 +89,7 @@ set(rel_mspack_dir	"Libraries/3rd/libmspack")
 set(rel_mthelp_dir	"Programs/MiKTeX/mthelp")
 set(rel_mtprint_dir	"Programs/MiKTeX/mtprint")
 set(rel_mtrep_dir	"Libraries/MiKTeX/WebServiceClients/Repository")
+set(rel_musixflx_dir	"Programs/Converters/musixflx")
 set(rel_netpbm_dir	"Libraries/3rd/netpbm")
 set(rel_obsdcompat_dir	"Libraries/3rd/obsdcompat")
 set(rel_omega_dir	"Programs/TeXAndFriends/omega/omega")
