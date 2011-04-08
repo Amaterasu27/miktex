@@ -67,35 +67,29 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
     }
   if (hr == E_FAIL)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("A required file system folder does not exist."),
 			  NUMTOSTR(nFolder));
     }
   if (hr == E_INVALIDARG)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("Unsupported Windows product."),
 			  NUMTOSTR(nFolder));
     }
+  if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+  {
+    FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+      T_("A required file system folder cannot be accessed."),
+      NUMTOSTR(nFolder));
+  }
   if (hr != S_OK)
     {
       FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("A required file system path could not be retrieved."),
-			  NUMTOSTR(nFolder));
+			  (string(NUMTOSTR(nFolder)) + " (hr=" + NUMTOHEXSTR(hr) + ")").c_str());
     }
   return (szPath);
-}
-
-/* _________________________________________________________________________
-
-   MyGetFolderPath
-   _________________________________________________________________________ */
-
-MIKTEXSTATICFUNC(PathName)
-MyGetFolderPath (/*[in]*/ int	nFolder,
-		 /*[in]*/ bool	getCurrentPath)
-{
-  return (Utils::GetFolderPath(nFolder, nFolder, getCurrentPath));
 }
 
 /* _________________________________________________________________________
@@ -267,21 +261,34 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config,
     else
     {
       product = "MiKTeX";
-      ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-      ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+      wchar_t szProgramFiles[MAX_PATH];
+      if (SHGetFolderPathW(0, CSIDL_PROGRAM_FILES, 0, SHGFP_TYPE_CURRENT, szProgramFiles) == S_OK)
+      {
+	ret.commonInstallRoot = szProgramFiles;
+	ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+      }
     }
-    ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
-    ret.commonDataRoot += product;
-    ret.commonDataRoot += MIKTEX_SERIES_STR;
+    wchar_t szPath[MAX_PATH];
+    if (SHGetFolderPathW(0, CSIDL_COMMON_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.commonDataRoot =szPath;
+      ret.commonDataRoot += product;
+      ret.commonDataRoot += MIKTEX_SERIES_STR;
+    }
     ret.commonConfigRoot = ret.commonDataRoot;
-    ret.userDataRoot =
-      Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-    ret.userDataRoot += product;
-    ret.userDataRoot += MIKTEX_SERIES_STR;
-    ret.userConfigRoot =
-      Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
-    ret.userConfigRoot += product;
-    ret.userConfigRoot += MIKTEX_SERIES_STR;
+    if (SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK
+        || SHGetFolderPathW(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.userDataRoot = szPath;
+      ret.userDataRoot += product;
+      ret.userDataRoot += MIKTEX_SERIES_STR;
+    }
+    if (SHGetFolderPathW(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.userConfigRoot = szPath;
+      ret.userConfigRoot += product;
+      ret.userConfigRoot += MIKTEX_SERIES_STR;
+    }
     ret.userInstallRoot = ret.userConfigRoot;
   }
   return (ret);
