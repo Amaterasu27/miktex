@@ -715,10 +715,10 @@ UpdateDialogImpl::Report (/*[in]*/ bool		immediate,
 			  /*[in]*/		...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CString str;
+  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (CA2T(lpszFmt), args);
+  str.FormatV (lpszFmt, args);
   va_end (args);
   int len = str.GetLength();
   CSingleLock (&criticalSectionMonitor, TRUE);
