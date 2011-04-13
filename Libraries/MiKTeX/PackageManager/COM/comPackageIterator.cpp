@@ -1,6 +1,6 @@
 /* comPackageIterator.cpp:
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -87,7 +87,7 @@ comPackageIterator::GetNextPackageInfo
 {
   *pDone = VARIANT_FALSE;
   MiKTeX::Packages::PackageInfo packageInfo;
-  while (pIter->GetNext(packageInfo) && *pDone == VARIANT_FALSE)
+  while (*pDone == VARIANT_FALSE && pIter->GetNext(packageInfo))
     {
       if (! packageInfo.IsPureContainer())
 	{
