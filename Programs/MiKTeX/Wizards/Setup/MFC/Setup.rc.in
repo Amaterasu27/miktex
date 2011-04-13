@@ -9,9 +9,9 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#include "Setup-version.h"
 #endif
 #include "afxres.h"
-#include "Setup-version.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -60,9 +60,9 @@ END
 BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
+    "#include ""Setup-version.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
-    "#include ""Setup-version.h""\r\n"
     "\0"
 END
 
