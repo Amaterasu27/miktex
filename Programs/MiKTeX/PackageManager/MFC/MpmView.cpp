@@ -255,6 +255,10 @@ MpmView::FillListView ()
   sortOrder = 1;
   clickedColumn = 0;
   GetListCtrl().SortItems (CompareItems, reinterpret_cast<LPARAM>(this));
+  if (Utils::RunningOnAServer())
+  {
+    UI::MFC::GiveBackDialog (0);
+  }      
 }
 
 /* _________________________________________________________________________

@@ -1661,6 +1661,11 @@ public:
 
 public:
   static
+  MIKTEXCORECEEAPI(bool)
+  RunningOnAServer ();
+
+public:
+  static
   MIKTEXCORECEEAPI(void)
   UncompressFile (/*[in]*/ const char *	lpszPathIn,
 		  /*[out]*/ PathName &	pathOut);
@@ -1776,6 +1781,11 @@ public:
   static
   MIKTEXCORECEEAPI(void)
   RegisterMiKTeXUser ();
+
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  IsRegisteredMiKTeXUser ();
 
 public:
   static

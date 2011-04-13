@@ -810,6 +810,10 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 {
   BEGIN_USE_MY_RESOURCES()
     {
+      if (Utils::RunningOnAServer())
+      {
+	GiveBackDialog (pParent);
+      }
       string url;
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (toBeInstalled.size() > 0

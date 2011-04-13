@@ -84,6 +84,11 @@ MiKTeXOptionsApplication::InitInstance ()
     {
       SessionWrapper pSession (Session::InitInfo("mo"));
 
+      if (Utils::RunningOnAServer())
+      {
+	UI::MFC::GiveBackDialog (0);
+      }
+      
       if (! pSession->IsMiKTeXPortable() && ! Utils::CheckPath(false))
 	{
 	  if (AfxMessageBox(T_(_T("\
@@ -108,7 +113,7 @@ Click OK to repair the MiKTeX configuration.")),
 		}
 	    }
 	}
-      
+
       PackageManagerPtr pManager (PackageManager::Create());
       
       {			 // destroy dlg before MiKTeX is uninitialized

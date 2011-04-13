@@ -1590,6 +1590,24 @@ Utils::GetOSVersionString ()
 
 /* _________________________________________________________________________
 
+   Utils::RunningOnAServer
+   _________________________________________________________________________ */
+
+bool
+Utils::RunningOnAServer ()
+{
+  OSVERSIONINFOEXW osvi;
+  ZeroMemory (&osvi, sizeof(osvi));
+  osvi.dwOSVersionInfoSize = sizeof(osvi);
+  if (! GetVersionExW(reinterpret_cast<OSVERSIONINFOW*>(&osvi)))
+  {
+    UNSUPPORTED_PLATFORM ();
+  }
+  return (osvi.wProductType != VER_NT_WORKSTATION);
+}
+
+/* _________________________________________________________________________
+
    Utils::GetDefPrinter
 
    See Q246772.
@@ -2916,6 +2934,17 @@ void
 Utils::RegisterMiKTeXUser ()
 {
   ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+}
+
+/* _________________________________________________________________________
+
+   Utils::IsRegisteredMiKTeXUser
+   _________________________________________________________________________ */
+
+bool
+Utils::IsRegisteredMiKTeXUser ()
+{
+  return (false);
 }
 
 /* _________________________________________________________________________

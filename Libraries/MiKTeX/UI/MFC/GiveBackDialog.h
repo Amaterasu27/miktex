@@ -1,6 +1,6 @@
-/* StdAfx.h: pre-compiled header stuff
+/* GiveBackDialog.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2011 Christian Schenk
+   Copyright (C) 2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -19,37 +19,30 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#pragma once
+class GiveBackDialog : public CDialog
+{
+private:
+  enum { IDD = IDD_GIVE_BACK };
 
-#if ! defined(VC_EXTRALEAN)
-#  define VC_EXTRALEAN
-#endif
+protected:
+  DECLARE_MESSAGE_MAP();
 
-#include "targetver.h"
+private:
+  DECLARE_DYNAMIC(GiveBackDialog)
+    
+public:
+  GiveBackDialog (/*[in]*/ CWnd * pParent = 0);
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
+protected:
+  virtual
+  void
+  DoDataExchange (/*[in]*/ CDataExchange * pDX);
 
-#include <afxwin.h>
-#include <afxext.h>
-#include <afxcmn.h>
-#include <afxdlgs.h>
-#include <afxinet.h>
-#include <afxmt.h>
-#include <afxtempl.h>
+protected:
+  virtual
+  BOOL
+  OnInitDialog ();
 
-#include <Shlobj.h>
-
-#include <algorithm>
-#include <locale>
-#include <map>
-#include <memory>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include <miktex/Core/Core>
-#include <miktex/Core/Debug>
-#include <miktex/PackageManager/PackageManager>
-#include <miktex/Core/Paths>
-#include <miktex/Core/Registry>
-#include <miktex/Core/Urls>
+protected:
+  afx_msg void OnClickUrl (NMHDR * pNMHDR, LRESULT * pResult);
+};
