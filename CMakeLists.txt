@@ -618,6 +618,7 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${uriparser_lib_name}
   ${md5_lib_name}
   ${CURL_LIBRARIES}
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${popt_lib_name}
 )
@@ -673,6 +674,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/include
 )
 
 if(USE_SYSTEM_BZIP2)
@@ -873,6 +875,14 @@ if(NOT USE_SYSTEM_EXPAT)
     add_subdirectory(${rel_expat_dir})
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_EXPAT)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_botan_dir}-static)
+endif(BUILDING_MIKTEX)
+
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_botan_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype2_dir})

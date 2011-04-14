@@ -12,6 +12,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/${rel_miktex_bin_dir}/${app_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${botan_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${bzip2_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${core_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${core_ps_dll_name}.dll

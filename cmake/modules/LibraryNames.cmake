@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,6 +42,7 @@ set(app_dll_name	"${miktex_dll_prefix}-app")
 set(arctrl_dll_name	"${miktex_dll_prefix}-arctrl")
 set(bibtex_dll_name	"${miktex_dll_prefix}-bibtex")
 set(bmeps_dll_name	"${miktex_dll_prefix}-bmeps")
+set(botan_dll_name	"${miktex_dll_prefix}-botan")
 if(NOT USE_SYSTEM_BZIP2)
   set(bzip2_dll_name	"${miktex_dll_prefix}-bzip2")
 endif(NOT USE_SYSTEM_BZIP2)
@@ -140,6 +141,7 @@ set(icuuc_dll_name	"icuuc")
 
 ## static library names
 set(app_lib_name	"app-static")
+set(botan_lib_name	"botan-static")
 if(NOT USE_SYSTEM_BZIP2)
   set(bzip2_lib_name	"bzip2-static")
 endif(NOT USE_SYSTEM_BZIP2)
