@@ -118,7 +118,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 void
 PrintDigest (/*[in]*/ const MD5 & md5)
 {
-  cout << '@' <<  md5.ToString() << endl;
+  cout << md5.ToString() << endl;
 }
 
 /* _________________________________________________________________________
