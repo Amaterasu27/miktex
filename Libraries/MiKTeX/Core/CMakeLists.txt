@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -59,6 +59,7 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(${core_dll_name}_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/miktex.der.h
   ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/IntegerTypes.h
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/Core/Paths.h
@@ -115,6 +116,17 @@ set(${core_dll_name}_sources
   texmfroot.cpp
   uncompress.cpp
   util.cpp
+)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/miktex.der.h
+  COMMAND ${bintoc_exe} miktex_der
+	< ${CMAKE_SOURCE_DIR}/Resources/PublicKeys/miktex.der
+	> ${CMAKE_CURRENT_BINARY_DIR}/miktex.der.h
+  DEPENDS
+    ${bintoc_exe}
+    ${CMAKE_SOURCE_DIR}/Resources/PublicKeys/miktex.der
+  VERBATIM
 )
 
 if(NATIVE_WINDOWS)
@@ -280,6 +292,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   
   target_link_libraries(${core_dll_name}
     ${CMAKE_THREAD_LIBS_INIT}
+    ${botan_dll_name}
     ${bzip2_dll_name}
     ${lzma_dll_name}
     ${md5_dll_name}

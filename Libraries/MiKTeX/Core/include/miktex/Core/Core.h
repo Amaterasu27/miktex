@@ -3694,6 +3694,24 @@ typedef EnumWrapper<SpecialPathEnum> SpecialPath;
    Callback Interfaces
    _________________________________________________________________________ */
 
+class
+MIKTEXNOVTABLE
+IPrivateKeyProvider
+{
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetPrivateKeyFile ()
+    = 0;
+
+public:
+  virtual
+  bool
+  GetPassphrase (/*[out]*/ std::string & passphrase)
+    = 0;
+};
+
 /// Find file callback interface
 class
 MIKTEXNOVTABLE
@@ -3945,12 +3963,14 @@ public:
   GetDigest ()
     = 0;
 
+#if 1 // OBSOLETE
 public:
   virtual
   bool
   MIKTEXTHISCALL
   TryGetOriginalDigest (/*[out]*/ MD5 & originalDigest)
     = 0;
+#endif
 
   /// Gets a configuration value.
 public:
@@ -4107,6 +4127,31 @@ public:
   MIKTEXTHISCALL
   DeleteValue (/*[in]*/ const char *	lpszKey,
 	       /*[in]*/ const char * lpszValueName)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Read (/*[in]*/ const PathName &	path,
+        /*[in]*/ bool			mustBeSigned)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  IsSigned ()
+    = 0;
+
+  /// Write configuration settings into a file and sign the file.
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Write (/*[in]*/ const PathName & 	path,
+	 /*[in]*/ const char *		lpszHeader,
+	 /*[in]*/ IPrivateKeyProvider * pPrivateKeyProvider)
     = 0;
 
 };				// class Cfg

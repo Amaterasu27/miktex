@@ -368,6 +368,9 @@ GetWindowsFontsDirectory (/*[out]*/ PathName & path);
 const char *
 GetFileNameExtension (/*[in]*/ const char * lpszPath);
   
+Botan::Public_Key *
+LoadPublicKey ();
+
 bool
 HaveEnvironmentString (/*[in]*/ const char * lpszName);
 

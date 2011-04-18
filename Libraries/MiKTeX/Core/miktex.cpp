@@ -753,6 +753,24 @@ HaveEnvironmentString (/*[in]*/ const char * lpszName)
 
 /* _________________________________________________________________________
 
+   LoadPublicKey
+   _________________________________________________________________________ */
+
+namespace {
+#define PUBLIC_KEY_NAME DC13376B_CCAB_4B4B_B795_6AB245A77596
+#define miktex_der PUBLIC_KEY_NAME
+#include "miktex.der.h"
+}
+
+MIKTEXINTERNALFUNC(Botan::Public_Key *)
+LoadPublicKey ()
+{
+  return (Botan::X509::load_key(
+    Botan::MemoryVector<Botan::byte>(&PUBLIC_KEY_NAME[0], sizeof(PUBLIC_KEY_NAME))));
+}
+
+/* _________________________________________________________________________
+
    SessionImpl::SetCWDEnv
    _________________________________________________________________________ */
 
@@ -1061,6 +1079,8 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     }
 #endif
 
+  Botan::LibraryInitializer::initialize ();
+
   initialized = true;
 
   this->initInfo = initInfo;
@@ -1203,6 +1223,8 @@ SessionImpl::Uninitialize ()
       scratchDirectories.clear ();
       inputDirectories.clear ();
       UnregisterLibraryTraceStreams ();
+      configurationSettings.clear ();
+      Botan::LibraryInitializer::deinitialize ();
     }
   catch (const exception &)
     {
