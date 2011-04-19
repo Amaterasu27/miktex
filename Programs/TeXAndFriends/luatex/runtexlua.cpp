@@ -1,6 +1,6 @@
 /* runtexlua.cpp: run a texlua script
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -91,7 +91,7 @@ main (/*[in]*/ int	argc,
       PathName scriptsIni = app.GetSession()->GetSpecialPath(SpecialPath::DistRoot);
       scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
       SmartPointer<Cfg> pConfig (Cfg::Create());
-      pConfig->Read (scriptsIni);
+      pConfig->Read (scriptsIni, true);
       std::string relScriptPath;
       if (! pConfig->TryGetValue(CFGKEY, scriptName.c_str(), relScriptPath))
       {

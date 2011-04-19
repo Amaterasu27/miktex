@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -2444,7 +2444,7 @@ IniTeXMFApp::MakeLinks (/*[in]*/ bool force)
 
   SmartPointer<Cfg> pConfig (Cfg::Create());
 
-  pConfig->Read (scriptsIni);
+  pConfig->Read (scriptsIni, true);
 
   char szScriptEngine[BufferSizes::MaxCfgName];
   for (const char * lpszScriptEngine = pConfig->FirstKey(szScriptEngine, BufferSizes::MaxCfgName);

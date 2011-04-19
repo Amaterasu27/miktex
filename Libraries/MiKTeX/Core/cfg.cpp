@@ -31,8 +31,9 @@
       + message + ".").c_str())
 
 const char COMMENT_CHAR = ';';
-const char * COMMENT_CHAR_STR = ";";
+const char * const COMMENT_CHAR_STR = ";";
 
+const char * const EMSA_ = "EMSA1(SHA-256)";
 /* _________________________________________________________________________
 
    GetBaseNameSansExt
@@ -493,7 +494,7 @@ public:
   MIKTEXTHISCALL
   IsSigned ()
   {
-    return (signature);
+    return (signature.size() > 0);
   }
 
 public:
@@ -1137,6 +1138,11 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
      T_("parsing: %s..."),
      path.Get());
 
+  if (mustBeSigned)
+  {
+    traceStream->WriteFormattedLine ("core", T_("signature required..."));
+  }
+
   bool wasEmpty = Empty();
 
   StreamReader reader (path);
@@ -1239,7 +1245,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
       const char * lpsz = tok.GetCurrent();
       if (lpsz != 0)
       {
-	if (StringCompare(lpsz, "signature") == 0)
+	if (StringCompare(lpsz, "signature/miktex:") == 0)
 	{
 	  ++ tok;
 	  lpsz = tok.GetCurrent();
@@ -1270,7 +1276,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
       UNEXPECTED_CONDITION ("CfgImpl::Read");
     }
     Botan::Pipe pipe (new Botan::PK_Verifier_Filter(
-      Botan::get_pk_verifier(*pRsaKey, "EMSA1(SHA-256)"),
+      Botan::get_pk_verifier(*pRsaKey, EMSA_),
       signature));
     pipe.start_msg ();
     Walk (pipe);
@@ -1392,15 +1398,24 @@ CfgImpl::Write (/*[in]*/ const PathName &	path,
       UNEXPECTED_CONDITION ("CfgImpl::Write");
     }
     pPipe.reset (new Botan::Pipe(
-      new Botan::PK_Signer_Filter(new Botan::PK_Signer(*pRsaKey, Botan::get_emsa("EMSA1(SHA-256)")), rng),
+      new Botan::PK_Signer_Filter(new Botan::PK_Signer(*pRsaKey, Botan::get_emsa(EMSA_)), rng),
       new Botan::Base64_Encoder()));
     pPipe->start_msg ();
     Walk (*pPipe);
     pPipe->end_msg ();
     writer.WriteLine ();
-    writer.WriteFormattedLine ("%c%c%c%c signature %s",
+    writer.WriteFormattedLine (
+      T_("%c%c%c%c This configuration file is signed by a MiKTeX maintainer. The signature follows."),
+      COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR);
+    writer.WriteFormattedLine (
+      T_("%c%c%c%c-----BEGIN MIKTEX SIGNATURE-----"),
+      COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR);
+    writer.WriteFormattedLine ("%c%c%c%c signature/miktex: %s",
       COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR,
       pPipe->read_all_as_string().c_str());
+    writer.WriteFormattedLine (
+      T_("%c%c%c%c-----END MIKTEX SIGNATURE-----"),
+      COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR, COMMENT_CHAR);
   }
   writer.Close ();
   File::SetTimes (path, t, t, t);

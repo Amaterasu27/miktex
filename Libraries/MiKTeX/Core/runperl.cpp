@@ -1,6 +1,6 @@
 /* runperl.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -76,7 +76,7 @@ SessionImpl::RunPerl (/*[in]*/ int		argc,
   PathName scriptsIni = GetSpecialPath(SpecialPath::DistRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
-  pConfig->Read (scriptsIni);
+  pConfig->Read (scriptsIni, true);
   string relScriptPath;
   if (! pConfig->TryGetValue("perl", szName, relScriptPath))
   {
