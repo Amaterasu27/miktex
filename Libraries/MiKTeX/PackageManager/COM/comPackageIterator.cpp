@@ -100,6 +100,29 @@ comPackageIterator::GetNextPackageInfo
 
 /* _________________________________________________________________________
 
+   comPackageIterator::GetNextPackageInfo2
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageIterator::GetNextPackageInfo2
+(/*[out]*/ MiKTeXPackageManagerLib::PackageInfo2 *	pPackageInfo,
+  /*[out,retval]*/ VARIANT_BOOL *			pDone)
+{
+  *pDone = VARIANT_FALSE;
+  MiKTeX::Packages::PackageInfo packageInfo;
+  while (*pDone == VARIANT_FALSE && pIter->GetNext(packageInfo))
+    {
+      if (! packageInfo.IsPureContainer())
+	{
+	  CopyPackageInfo (*pPackageInfo, packageInfo);
+	  *pDone = VARIANT_TRUE;
+	}
+    }
+  return (*pDone == VARIANT_FALSE ? S_FALSE : S_OK);
+}
+
+/* _________________________________________________________________________
+
    comPackageIterator::InterfaceSupportsErrorInfo
    _________________________________________________________________________ */
 
@@ -108,7 +131,8 @@ comPackageIterator::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
 {
   static const IID * arr[] = 
     {
-      &__uuidof(IPackageIterator)
+      &__uuidof(IPackageIterator),
+      &__uuidof(IPackageIterator2)
     };
   
   for (int idx = 0; idx < sizeof(arr) / sizeof(arr[0]); ++ idx)

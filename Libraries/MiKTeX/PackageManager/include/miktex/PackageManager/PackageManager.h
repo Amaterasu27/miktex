@@ -1,6 +1,6 @@
 /* miktex/PackageManager/PackageManager.h: package manager API	-*- C++ -*-
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -28,6 +28,10 @@
 
 #if ! defined(D5760AC70396FF41BBDD7DD560BDBBBC_)
 #define D5760AC70396FF41BBDD7DD560BDBBBC_
+
+#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG)
+#  define MIKTEX_EXTENDED_PACKAGEINFO 1
+#endif
 
 #include <miktex/Core/Core>
 
@@ -131,6 +135,13 @@ struct PackageInfo
   /// 
   bool isObsolete;
 
+#if MIKTEX_EXTENDED_PACKAGEINFO
+  std::string ctanPath;
+  std::string licenseType;
+  std::string copyrightOwner;
+  std::string copyrightYear;
+#endif
+
   /// Initializes a new package info struct.
   PackageInfo ()
     : archiveFileSize (0),
@@ -169,6 +180,12 @@ struct PackageInfo
     digest = rhs.digest;
     isRemovable = rhs.isRemovable;
     isObsolete = rhs.isObsolete;
+#if MIKTEX_EXTENDED_PACKAGEINFO
+    ctanPath = rhs.ctanPath;
+    licenseType = rhs.licenseType;
+    copyrightOwner = rhs.copyrightOwner;
+    copyrightYear = rhs.copyrightYear;
+#endif
     return (*this);
   }
 
@@ -195,6 +212,12 @@ struct PackageInfo
       digest (other.digest),
       isRemovable (other.isRemovable),
       isObsolete (other.isObsolete)
+#if MIKTEX_EXTENDED_PACKAGEINFO
+      ,ctanPath (other.ctanPath),
+      licenseType (other.licenseType),
+      copyrightOwner (other.copyrightOwner),
+      copyrightYear (other.copyrightYear)
+#endif
   {
   }
 

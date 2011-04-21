@@ -178,6 +178,37 @@ TpmParser::OnStartElement (/*[in]*/ void *			pv,
 	      UNEXPECTED_CONDITION ("TpmParser::OnStartElement");
 	    }
 	}
+#if MIKTEX_EXTENDED_PACKAGEINFO
+      else if (StrCmp(lpszName, X_("TPM:CTAN")) == 0)
+      {
+	const XML_Char * lpszPath;
+	if (aAttr != 0 && (lpszPath = GetAttributeValue(aAttr, X_("path"))) != 0)
+	{
+	  This->packageInfo.ctanPath = lpszPath;
+	}
+      }
+      else if (StrCmp(lpszName, X_("TPM:Copyright")) == 0)
+      {
+	const XML_Char * lpszOwner;
+	if (aAttr != 0 && (lpszOwner = GetAttributeValue(aAttr, X_("owner"))) != 0)
+	{
+	  This->packageInfo.copyrightOwner = lpszOwner;
+	}
+	const XML_Char * lpszYear;
+	if (aAttr != 0 && (lpszYear = GetAttributeValue(aAttr, X_("year"))) != 0)
+	{
+	  This->packageInfo.copyrightYear = lpszYear;
+	}
+      }
+      else if (StrCmp(lpszName, X_("TPM:License")) == 0)
+      {
+	const XML_Char * lpszType;
+	if (aAttr != 0 && (lpszType = GetAttributeValue(aAttr, X_("type"))) != 0)
+	{
+	  This->packageInfo.licenseType = lpszType;
+	}
+      }
+#endif
       This->elementStack.push (lpszName);
     }
   catch (const exception &)

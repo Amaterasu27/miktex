@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -2120,6 +2120,31 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:MD5" node
   xml.StartElement ("TPM:MD5");
   xml.Text (packageInfo.digest.ToString());
+  xml.EndElement ();
+
+#if MIKTEX_EXTENDED_PACKAGEINFO
+  if (! packageInfo.ctanPath.empty())
+  {
+    xml.StartElement ("TPM:CTAN");
+    xml.AddAttribute ("path", packageInfo.ctanPath.c_str());
+    xml.EndElement ();
+  }
+
+  if (! (packageInfo.copyrightOwner.empty() && packageInfo.copyrightYear.empty()))
+  {
+    xml.StartElement ("TPM:Copyright");
+    xml.AddAttribute ("owner", packageInfo.copyrightOwner.c_str());
+    xml.AddAttribute ("year", packageInfo.copyrightYear.c_str());
+    xml.EndElement ();
+  }
+
+  if (! packageInfo.licenseType.empty())
+  {
+    xml.StartElement ("TPM:License");
+    xml.AddAttribute ("type", packageInfo.licenseType.c_str());
+    xml.EndElement ();
+  }
+#endif
 
   xml.EndAllElements ();
 

@@ -1,6 +1,6 @@
 /* PackageManager.h:						-*- C++ -*-
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -29,8 +29,8 @@ class ATL_NO_VTABLE comPackageManager
 		       &__uuidof(MiKTeXPackageManagerLib
 				 ::MAKE_CURVER_ID(PackageManager))>,
     public ISupportErrorInfo,
-    public IDispatchImpl<MiKTeXPackageManagerLib::IPackageManager2,
-			 &__uuidof(MiKTeXPackageManagerLib::IPackageManager2),
+    public IDispatchImpl<MiKTeXPackageManagerLib::IPackageManager3,
+			 &__uuidof(MiKTeXPackageManagerLib::IPackageManager3),
 			 &__uuidof(MiKTeXPackageManagerLib
 				   ::MAKE_CURVER_ID(__MiKTeXPackageManager)),
 			 /*wMajor =*/ 1,
@@ -60,6 +60,7 @@ public:
   BEGIN_COM_MAP(comPackageManager)
     COM_INTERFACE_ENTRY(IPackageManager)
     COM_INTERFACE_ENTRY(IPackageManager2)
+    COM_INTERFACE_ENTRY(IPackageManager3)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(ISupportErrorInfo)
   END_COM_MAP();
@@ -93,6 +94,11 @@ public:
 public:
   STDMETHOD(CreatePackageIterator)
   (/*[out,retval]*/ MiKTeXPackageManagerLib::IPackageIterator ** ppIter);
+
+public:
+  STDMETHOD(GetPackageInfo2)
+  (/*[in]*/ BSTR						deploymentName,
+   /*[out,retval]*/ MiKTeXPackageManagerLib::PackageInfo2 *	pPackageInfo);
 
 private:
   void

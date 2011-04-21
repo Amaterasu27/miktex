@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MPC.
 
@@ -1016,10 +1016,9 @@ PackageCreator::WriteDescriptionFile (/*[in]*/ const string &	description,
    _________________________________________________________________________ */
 
 void
-PackageCreator::InitializeStagingDirectory
-(/*[in]*/ const PackageInfo &	packageInfo,
- /*[in]*/ const MD5 &		digest,
- /*[in]*/ const PathName &	stagingDir)
+PackageCreator::InitializeStagingDirectory (/*[in]*/ const PackageInfo &  packageInfo,
+					    /*[in]*/ const MD5 &	  digest,
+					    /*[in]*/ const PathName &	  stagingDir)
 {
   // create staging directory
   Directory::Create (stagingDir);
@@ -1038,12 +1037,22 @@ PackageCreator::InitializeStagingDirectory
   fprintf (stream.Get(), "version=%s\n", packageInfo.version.c_str());
   fprintf (stream.Get(), "targetsystem=%s\n", packageInfo.targetSystem.c_str());
   fprintf (stream.Get(), "md5=%s\n", digest.ToString().c_str());
+#if defined(MIKTEX_EXTENDED_PACKAGEINFO)
+  fprintf (stream.Get(), "ctan_path=%s\n", packageInfo.ctanPath.c_str());
+  fprintf (stream.Get(), "copyright_owner=%s\n", packageInfo.copyrightOwner.c_str());
+  fprintf (stream.Get(), "copyright_year=%s\n", packageInfo.copyrightYear.c_str());
+  fprintf (stream.Get(), "license_type=%s\n", packageInfo.licenseType.c_str());
+#endif
   for (size_t i = 0; i < packageInfo.requiredPackages.size(); ++ i)
     {
-      if (i > 0)
-	{
-	  fputc (';', stream.Get());
-	}
+      if (i == 0)
+      {
+	fputs ("requires=", stream.Get());
+      }
+      else
+      {
+	fputc (';', stream.Get());
+      }
       fputs (packageInfo.requiredPackages[i].c_str(), stream.Get());
     }
 
@@ -1197,6 +1206,13 @@ PackageCreator::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
     {
       packageInfo.digest = MD5::Parse(str.c_str());
     }
+
+#if defined(MIKTEX_EXTENDED_PACKAGEINFO)
+  pCfg->TryGetValue(0, "ctan_path", packageInfo.ctanPath);
+  pCfg->TryGetValue(0, "copyright_owner", packageInfo.copyrightOwner);
+  pCfg->TryGetValue(0, "copyright_year", packageInfo.copyrightYear);
+  pCfg->TryGetValue(0, "license_type", packageInfo.licenseType);
+#endif
 
   // read extra description file
   ReadDescriptionFile (lpszStagingDir, packageInfo.description);
@@ -1464,10 +1480,9 @@ PackageCreator::CollectPackages
    _________________________________________________________________________ */
 
 void
-PackageCreator::BuildTDS
-(/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
- /*[in]*/ const PathName &			destDir,
- /*[in,out]*/ Cfg &				dbLight)
+PackageCreator::BuildTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
+			  /*[in]*/ const PathName &			destDir,
+			  /*[in,out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
        it != packageTable.end();
@@ -2338,10 +2353,9 @@ PackageCreator::LoadDbHeavy (/*[in]*/ const PathName & repository)
    _________________________________________________________________________ */
 
 void
-PackageCreator::UpdateRepository
-(/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
- /*[in]*/ const PathName &			repository,
- /*[out]*/ Cfg &				dbLight)
+PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
+				  /*[in]*/ const PathName &			repository,
+				  /*[out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::iterator it = packageTable.begin();
        it != packageTable.end();
