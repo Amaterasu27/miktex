@@ -9,9 +9,9 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#include "yap-version.h"
 #endif
 #include "afxres.h"
-#include "yap-version.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -40,9 +40,9 @@ END
 BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
+    "#include ""yap-version.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
-    "#include ""yap-version.h""\r\n"
     "\0"
 END
 
