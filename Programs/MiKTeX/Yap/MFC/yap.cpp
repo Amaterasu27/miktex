@@ -772,7 +772,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(result));
     }
   AutoDdeUninitialize autoDdeUninitialize (inst);
-  HSZ hszServer = DdeCreateStringHandle(inst, CA2T(lpszServer), CP_WINANSI);
+  HSZ hszServer = DdeCreateStringHandle(inst, CA2T(lpszServer), CP_WINNEUTRAL);
   if (hszServer == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -780,7 +780,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
   AutoDdeFreeStringHandle autoDdeFreeStringHandle1 (inst, hszServer);
-  HSZ hszTopic = DdeCreateStringHandle(inst, CA2T(lpszTopic), CP_WINANSI);
+  HSZ hszTopic = DdeCreateStringHandle(inst, CA2T(lpszTopic), CP_WINNEUTRAL);
   if (hszTopic == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -797,11 +797,16 @@ DdeExecute (/*[in]*/ const char * lpszServer,
     }
   AutoDdeDisconnect autoDdeDisconnect (hconv);
   HDDEDATA hddedata;
-  hddedata =
-    DdeCreateDataHandle(inst,
-		reinterpret_cast<BYTE*>(const_cast<char *>(lpszCommand)),
-			static_cast<unsigned long>(strlen(lpszCommand) + 1),
-			0, 0, CF_TEXT, 0);
+#if defined(_UNICODE)
+  UINT fmt = CF_UNICODETEXT;
+#else
+  UINT fmt = CF_TEXT;
+#endif
+  hddedata = DdeCreateDataHandle(
+    inst,
+    reinterpret_cast<BYTE*>(static_cast<LPTSTR>(CA2T(lpszCommand))),
+    static_cast<unsigned long>((strlen(lpszCommand) + 1) * sizeof(_TCHAR)),
+    0, 0, fmt, 0);
   if (hddedata == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -843,7 +848,7 @@ BOOL
 
   try
   {
-    YapLog ("OnDDECommand(\"%s\")", CT2A(lpszCommand));
+    YapLog ("OnDDECommand(\"%s\")", static_cast<const char *>(CT2A(lpszCommand)));
 
     done = CWinApp::OnDDECommand(lpszCommand);
 
