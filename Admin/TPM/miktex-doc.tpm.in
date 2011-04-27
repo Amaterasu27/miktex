@@ -4,6 +4,7 @@
   <rdf:Description about="http://www.miktex.org/packages/miktex/">
     <TPM:Name>MiKTeX doc</TPM:Name>
     <TPM:Title>MiKTeX documentation</TPM:Title>
+    <TPM:Copyright owner="Christian Schenk" year="@MIKTEX_YEAR_VERSION@"/>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
