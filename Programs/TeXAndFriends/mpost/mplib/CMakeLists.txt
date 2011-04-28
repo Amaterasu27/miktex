@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,8 +30,8 @@ add_definitions(
 )
 
 set(mplib_cweb_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/memio.c
   ${CMAKE_CURRENT_BINARY_DIR}/mp.c
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmath.c
   ${CMAKE_CURRENT_BINARY_DIR}/psout.c
   ${CMAKE_CURRENT_BINARY_DIR}/svgout.c
   ${CMAKE_CURRENT_BINARY_DIR}/tfmin.c
@@ -39,7 +39,7 @@ set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mplib.h
   ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
   ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mpmemio.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmath.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmp.h
   ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpsvgout.h
@@ -49,22 +49,6 @@ set(mplib_cweb_sources
 set_source_files_properties(
   ${mplib_cweb_sources}
   PROPERTIES GENERATED TRUE
-)
-
-add_custom_command(
-  OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/memio.c
-    ${CMAKE_CURRENT_BINARY_DIR}/mpmemio.h
-  COMMAND
-    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/memio
-  WORKING_DIRECTORY
-    ${CMAKE_CURRENT_BINARY_DIR}
-  MAIN_DEPENDENCY
-    memio.w
-  DEPENDS
-    ${ctangle_exe}
-    ${CMAKE_CURRENT_SOURCE_DIR}/memio.w
-  VERBATIM
 )
 
 add_custom_command(
@@ -81,6 +65,22 @@ add_custom_command(
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mp.w
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmath.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmath.h
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/mpmath
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}
+  MAIN_DEPENDENCY
+    mpmath.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/mpmath.w
   VERBATIM
 )
 
