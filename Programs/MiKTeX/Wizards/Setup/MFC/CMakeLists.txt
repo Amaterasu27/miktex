@@ -115,6 +115,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 target_link_libraries(setup
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${curl_lib_name}
