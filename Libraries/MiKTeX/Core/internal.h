@@ -1543,6 +1543,20 @@ public:
   void
   SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo);
 
+#if MIKTEX_USER_REGISTRATION
+public:
+  virtual
+  void
+  RegisterMiKTeXUser ();
+#endif
+
+#if MIKTEX_USER_REGISTRATION
+public:
+  virtual
+  bool
+  TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo & info);
+#endif
+
   // -----------------------------------------------------------------------
   // *** public ***
 

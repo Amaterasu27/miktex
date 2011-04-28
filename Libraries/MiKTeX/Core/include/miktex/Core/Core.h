@@ -36,6 +36,10 @@
 #  pragma once
 #endif
 
+#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG)
+#  define MIKTEX_USER_REGISTRATION 1
+#endif
+
 #if ! defined(A089FEF06254514BA063DED44B70E66F)
 #define A089FEF06254514BA063DED44B70E66F
 
@@ -332,6 +336,24 @@ public:
     const
   {
     return (sizeOfStruct);
+  }
+};
+
+/* _________________________________________________________________________
+   
+   RegisteredMiKTeXUserInfo
+   _________________________________________________________________________ */
+
+struct RegisteredMiKTeXUserInfo
+{
+  std::string id;
+  std::string name;
+  std::string organization;
+  std::string email;
+  bool isRegistered;
+  RegisteredMiKTeXUserInfo ()
+    : isRegistered (false)
+  {
   }
 };
 
@@ -1777,15 +1799,19 @@ public:
   MIKTEXCORECEEAPI(bool)
   IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root);
 
+#if ! MIKTEX_USER_REGISTRATION
 public:
   static
   MIKTEXCORECEEAPI(void)
   RegisterMiKTeXUser ();
+#endif
 
+#if ! MIKTEX_USER_REGISTRATION
 public:
   static
   MIKTEXCORECEEAPI(bool)
   IsRegisteredMiKTeXUser ();
+#endif
 
 public:
   static
@@ -6744,6 +6770,22 @@ public:
   MIKTEXTHISCALL
   SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo)
     = 0;
+
+#if MIKTEX_USER_REGISTRATION
+public:
+  virtual
+  void
+  RegisterMiKTeXUser ()
+    = 0;
+#endif
+
+#if MIKTEX_USER_REGISTRATION
+public:
+  virtual
+  bool
+  TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo & info)
+    = 0;
+#endif
 
 public:
   static

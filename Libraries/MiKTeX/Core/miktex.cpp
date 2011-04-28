@@ -326,6 +326,102 @@ SessionImpl::GetMakeFontsFlag ()
 
 /* _________________________________________________________________________
 
+   SessionImpl::TryGetRegisteredMiKTeXUserInfo
+   _________________________________________________________________________ */
+
+#if MIKTEX_USER_REGISTRATION
+bool
+SessionImpl::TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo & info)
+{
+  static TriState haveResult = TriState::Undetermined;
+  static RegisteredMiKTeXUserInfo result;
+  if (haveResult == TriState::Undetermined)
+  {
+    haveResult = TriState::False;
+    string licenseFile;
+    if (! TryGetConfigValue(0, MIKTEX_REGVAL_LICENSE_FILE, licenseFile))
+    {
+      return (false);
+    }
+    if (! File::Exists(licenseFile))
+    {
+      return (false);
+    }
+    SmartPointer<Cfg> pcfg (Cfg::Create());
+    pcfg->Read (licenseFile, true);
+    if (! pcfg->TryGetValue("license", "id", result.id))
+    {
+      return (false);
+    }
+    string str;
+    if (pcfg->TryGetValue("license", "isregistered", str))
+    {
+      result.isRegistered = (str == "yes");
+    }
+    if (! pcfg->TryGetValue("license", "name", result.name))
+    {
+      return (false);
+    }
+    if (! pcfg->TryGetValue("license", "organization", result.organization))
+    {
+      result.organization = "";
+    }
+    if (! pcfg->TryGetValue("license", "email", result.email))
+    {
+      result.email = "";
+    }
+    haveResult = TriState::True;
+  }
+  if (haveResult == TriState::True)
+  {
+    info = result;
+    return (true);
+  }
+  return (false);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   SessionImpl::TryGetRegisteredMiKTeXUserInfo
+   _________________________________________________________________________ */
+
+#if MIKTEX_USER_REGISTRATION
+void
+SessionImpl::RegisterMiKTeXUser ()
+{
+  Utils::ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   Utils::IsRegisteredMiKTeXUser
+   _________________________________________________________________________ */
+
+#if ! MIKTEX_USER_REGISTRATION
+bool
+Utils::IsRegisteredMiKTeXUser ()
+{
+  return (false);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   Utils::RegisterMiKTeXUser
+   _________________________________________________________________________ */
+
+#if ! MIKTEX_USER_REGISTRATION
+void
+Utils::RegisterMiKTeXUser ()
+{
+  ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+}
+#endif
+
+/* _________________________________________________________________________
+
    Utils::GetMiKTeXVersionString
    _________________________________________________________________________ */
 

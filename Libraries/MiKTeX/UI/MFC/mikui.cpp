@@ -177,8 +177,17 @@ MIKTEXCEECALL
 MiKTeX::UI::MFC::GiveBackDialog (/*[in]*/ CWnd *  pParent,
 				 /*[in]*/ bool	  force)
 {
+  bool isRegistered;
+#if MIKTEX_USER_REGISTRATION
+  RegisteredMiKTeXUserInfo info;
+  isRegistered =
+    SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(info)
+    && info.isRegistered;
+#else
+  isRegistered = Utils::IsRegisteredMiKTeXUser();
+#endif
   static time_t lastShowTime = 0;
-  if (force || (difftime(time(0), lastShowTime) > 3600) && ! Utils::IsRegisteredMiKTeXUser())
+  if (force || (difftime(time(0), lastShowTime) > 3600) && ! isRegistered)
   {
     ::GiveBackDialog dlg (pParent);
     lastShowTime = time(0);

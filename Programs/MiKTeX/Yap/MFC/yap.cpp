@@ -583,7 +583,11 @@ AboutDialog::OnClickRegisterMiKTeX ()
 {
   try
     {
+#if MIKTEX_USER_REGISTRATION
+      SessionWrapper(true)->RegisterMiKTeXUser ();
+#else
       Utils::RegisterMiKTeXUser ();
+#endif
     }
   catch (const MiKTeXException & e)
     {
@@ -1287,7 +1291,11 @@ YapApplication::OnRegisterMiKTeX ()
 {
   try
     {
+#if MIKTEX_USER_REGISTRATION
+      SessionWrapper(true)->RegisterMiKTeXUser ();
+#else
       Utils::RegisterMiKTeXUser ();
+#endif
     }
   catch (const MiKTeXException & e)
     {

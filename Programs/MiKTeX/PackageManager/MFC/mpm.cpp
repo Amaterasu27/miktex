@@ -226,7 +226,11 @@ AboutDialog::OnClickRegisterMiKTeXUser ()
 {
   try
     {
+#if MIKTEX_USER_REGISTRATION
+      SessionWrapper(true)->RegisterMiKTeXUser ();
+#else
       Utils::RegisterMiKTeXUser ();
+#endif
     }
   catch (const MiKTeXException & e)
     {

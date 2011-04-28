@@ -2927,28 +2927,6 @@ Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
 
 /* _________________________________________________________________________
 
-   Utils::RegisterMiKTeXUser
-   _________________________________________________________________________ */
-
-void
-Utils::RegisterMiKTeXUser ()
-{
-  ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
-}
-
-/* _________________________________________________________________________
-
-   Utils::IsRegisteredMiKTeXUser
-   _________________________________________________________________________ */
-
-bool
-Utils::IsRegisteredMiKTeXUser ()
-{
-  return (false);
-}
-
-/* _________________________________________________________________________
-
    Argv::Append
 
    Mimic the behaviour of CommandLineToArgvW().
