@@ -1,7 +1,7 @@
 /* miktex/KPSE/Emulation.h: kpathsea emulation			-*- C++ -*-
 
    Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -306,10 +306,8 @@ typedef struct kpathsea_instance
 
 #define kpse_make_tex_discard_errors kpse_def_inst.make_tex_discard_errors
 
-#if defined(program_invocation_name)
-#  undef program_invocation_name
-#endif
-#define program_invocation_name kpse_def_inst.invocation_name
+#define kpse_invocation_name kpse_def_inst.invocation_name
+
 #endif
 
 #if defined(__cplusplus)
@@ -337,7 +335,7 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define START_FATAL()						\
   do {								\
-    fprintf (stderr, "%s: fatal: ", program_invocation_name);
+    fprintf (stderr, "%s: fatal: ", kpse_invocation_name);
 
 #define END_FATAL()				\
     fputs (".\n", stderr);			\
@@ -367,7 +365,7 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define FATAL_PERROR(str)				\
   do {							\
-    fprintf (stderr, "%s: ", program_invocation_name);	\
+    fprintf (stderr, "%s: ", kpse_invocation_name);	\
     perror (str);					\
     miktex_exit (1);					\
   } while (0)

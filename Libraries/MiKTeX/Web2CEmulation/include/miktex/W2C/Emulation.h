@@ -1,6 +1,6 @@
 /* miktex/W2C/Emulation.h: Web2C emulation			-*- C++ -*-
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2011 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -173,6 +173,8 @@ MIKTEX_END_EXTERN_C_BLOCK
 typedef double real;
 
 #define intcast(x) ((integer)(x))
+
+#define ucharcast(x) ((unsigned char)(x))
 
 /* _________________________________________________________________________
 
