@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: epdf.h 3650 2010-04-26 08:13:41Z taco $ */
+/* $Id: epdf.h 4054 2011-01-10 19:05:54Z hhenkel $ */
 
 // this is the common header file for C++ sources pdftoepdf.cc and lepdflib.cc
 
@@ -31,22 +31,15 @@
 #  include <string.h>
 #  include <kpathsea/c-ctype.h>
 #  include <sys/stat.h>
-#  ifdef POPPLER_VERSION
-#    define GString GooString
-#    include <dirent.h>
-#    include <poppler-config.h>
-#    include <goo/GooString.h>
-#    include <goo/gmem.h>
-#    include <goo/gfile.h>
-#  else
-#    include <aconf.h>
-#    include <GString.h>
-#    include <gmem.h>
-#    include <gfile.h>
-#    include <assert.h>
-#  endif
+#  include <dirent.h>
+#  include <poppler-config.h>
+#  include <goo/GooString.h>
+#  include <goo/gmem.h>
+#  include <goo/gfile.h>
 #  include "Object.h"
 #  include "Stream.h"
+#  include "Gfx.h"
+#  include "Annot.h"
 #  include "Array.h"
 #  include "Dict.h"
 #  include "XRef.h"
@@ -64,9 +57,13 @@ extern "C" {
 
 #if ! defined(MIKTEX)
     extern char *xstrdup(const char *);
+#endif
+
+    typedef enum { FE_FAIL, FE_RETURN_NULL } file_error_mode;
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
 
+#if ! defined(MIKTEX)
     typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
 #endif
 
@@ -77,7 +74,7 @@ extern "C" {
 #    undef CONFIG_H             /* header file */
 #  endif
 
-#  include <w2c/c-auto.h>     /* define SIZEOF_LONG */
+#  include <c-auto.h>           /* define SIZEOF_LONG */
 
 #  include "openbsd-compat.h"
 #  include "image.h"
@@ -90,25 +87,24 @@ extern "C" {
     /* pdfgen.c */
     __attribute__ ((format(printf, 2, 3)))
     extern void pdf_printf(PDF, const char *fmt, ...);
-    extern void pdf_puts(PDF, const char *);
     extern void pdf_begin_obj(PDF, int, bool);
     extern void pdf_end_obj(PDF);
     extern void pdf_begin_stream(PDF);
     extern void pdf_end_stream(PDF);
     extern void pdf_room(PDF, int);
-#  define pdf_out(B,A) do { pdf_room(B,1); B->buf[B->ptr++] = A; } while (0)
+    extern void pdf_out_block(PDF pdf, const char *s, size_t n);
+
+#  define pdf_out(B, A) do { pdf_room(B, 1); B->buf[B->ptr++] = A; } while (0)
+#  define pdf_puts(pdf, s) pdf_out_block((pdf), (s), strlen(s))
 
     /* pdftables.c */
     extern int pdf_new_objnum(PDF);
-
-    /* epdf.c */
-    extern void epdf_free(void);
 
     /* pdftoepdf.cc */
     extern void read_pdf_info(image_dict *, int, int, img_readtype_e);
     extern void write_epdf(PDF, image_dict *);
     extern void unrefPdfDocument(char *);
-    extern void epdf_check_mem(void);
+    extern void epdf_free(void);
 
     /* utils.c */
     __attribute__ ((format(printf, 1, 2)))
@@ -131,6 +127,9 @@ extern "C" {
 // and &obj to get a pointer to the object.
 // It is no longer necessary to call Object::free explicitely.
 
+#  if 0
+// PdfObject is replaced by xpdf's Object type, with manual obj.free()
+
 // *INDENT-OFF*
 class PdfObject {
   public:
@@ -152,6 +151,7 @@ class PdfObject {
     Object iObject;
 };
 // *INDENT-ON*
+#  endif
 
 /**********************************************************************/
 
@@ -167,9 +167,10 @@ struct PdfDocument {
     PDFDoc *doc;
     InObj *inObjList;           // temporary linked list
     avl_table *ObjMapTree;      // permanent over luatex run
-    int occurences;             // number of references to the PdfDocument; it can be deleted when occurences == 0
+    unsigned int occurences;    // number of references to the PdfDocument; it can be deleted when occurences == 0
+    unsigned int pc;            // counter to track PDFDoc generation or deletion
 };
 
-PdfDocument *refPdfDocument(char *file_path);
+PdfDocument *refPdfDocument(char *file_path, file_error_mode fe);
 
 #endif                          /* EPDF_H */

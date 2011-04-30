@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: utils.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$Id: utils.w 3779 2010-07-31 11:29:22Z oneiros $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include "openbsd-compat.h"
@@ -57,14 +57,10 @@ static const char _svn_version[] =
 #include "lua/luatex-api.h"     /* for ptexbanner */
 
 #include "png.h"
-#ifdef POPPLER_VERSION
-#  define xpdfString "poppler"
-#  include "poppler-config.h"
-#  define xpdfVersion POPPLER_VERSION
-#else
-#  define xpdfString "xpdf"
-#  include "xpdf/config.h"      /* just to get the xpdf version */
-#endif
+
+/* POPPLER_VERSION is defined in poppler-config.h for poppler from
+ * the TeX Live tree, or in the Makefile for an installed version.  */
+#include "poppler-config.h"
 
 @ @c
 #define check_nprintf(size_get, size_want) \
@@ -362,9 +358,9 @@ void initversionstring(char **versions)
     (void) asprintf(versions,
                     "Compiled with libpng %s; using libpng %s\n"
                     "Compiled with zlib %s; using zlib %s\n"
-                    "Compiled with %s version %s\n",
+                    "Compiled with poppler version %s\n",
                     PNG_LIBPNG_VER_STRING, png_libpng_ver,
-                    ZLIB_VERSION, zlib_version, xpdfString, xpdfVersion);
+                    ZLIB_VERSION, zlib_version, POPPLER_VERSION);
 }
 
 @ @c
@@ -415,7 +411,6 @@ scaled divide_scaled(scaled s, scaled m, int dd)
     /* rounding */
     if (2 * r >= m) {
         q++;
-        r -= m;
     }
     return sign * q;
 }

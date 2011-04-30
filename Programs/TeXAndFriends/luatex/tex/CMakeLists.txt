@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,10 +19,10 @@
 
 include_directories(
   ${CMAKE_BINARY_DIR}/${rel_mp_dir}
-  ${CMAKE_BINARY_DIR}/${rel_xpdf_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
 )
 
 set(luatexlib_cwebs
@@ -48,24 +48,21 @@ set(luatexlib_cwebs
   ../font/writettf.w
   ../font/writetype0.w
   ../font/writetype2.w
-  ../image/epdf.w
   ../image/writeimg.w
   ../image/writejbig2.w
+  ../image/writejp2.w
   ../image/writejpg.w
   ../image/writepng.w
+  ../lang/hnjalloc.w
+  ../lang/hyphen.w
+  ../lang/texlang.w
   ../lua/luagen.w
   ../lua/luainit.w
   ../lua/luanode.w
   ../lua/luastuff.w
   ../lua/luatoken.w
   ../lua/texluac.w
-  ../ocp/ocp.w
-  ../ocp/runocp.w
-  ../ocp/readocp.w
-  ../ocp/ocplist.w
-  ../lang/hnjalloc.w
-  ../lang/hyphen.w
-  ../lang/texlang.w
+  ../luascripts/txt2zlib.w
   ../pdf/pagetree.w
   ../pdf/pdfaction.w
   ../pdf/pdfannot.w
@@ -78,6 +75,7 @@ set(luatexlib_cwebs
   ../pdf/pdflink.w
   ../pdf/pdflistout.w
   ../pdf/pdfliteral.w
+  ../pdf/pdfluaapi.w
   ../pdf/pdfobj.w
   ../pdf/pdfoutline.w
   ../pdf/pdfpage.w
@@ -89,40 +87,40 @@ set(luatexlib_cwebs
   ../pdf/pdfthread.w
   ../pdf/pdfxform.w
   ../tex/align.w
-  ../tex/dumpdata.w
-  ../tex/expand.w
-  ../tex/inputstack.w
-  ../tex/maincontrol.w
-  ../tex/mlist.w
-  ../tex/postlinebreak.w
-  ../tex/scanning.w
-  ../tex/texdeffont.w
-  ../tex/texnodes.w
   ../tex/arithmetic.w
-  ../tex/conditional.w
-  ../tex/equivalents.w
-  ../tex/extensions.w
-  ../tex/commands.w
-  ../tex/linebreak.w
-  ../tex/mathcodes.w
-  ../tex/nesting.w
-  ../tex/primitive.w
-  ../tex/texfileio.w
-  ../tex/textcodes.w
   ../tex/buildpage.w
+  ../tex/commands.w
+  ../tex/conditional.w
   ../tex/directions.w
+  ../tex/dumpdata.w
+  ../tex/equivalents.w
   ../tex/errors.w
+  ../tex/expand.w
+  ../tex/extensions.w
   ../tex/filename.w
+  ../tex/inputstack.w
+  ../tex/linebreak.w
   ../tex/mainbody.w
+  ../tex/maincontrol.w
+  ../tex/mathcodes.w
   ../tex/memoryword.w
+  ../tex/mlist.w
+  ../tex/nesting.w
   ../tex/packaging.w
+  ../tex/postlinebreak.w
+  ../tex/primitive.w
   ../tex/printing.w
+  ../tex/scanning.w
   ../tex/stringpool.w
+  ../tex/texdeffont.w
+  ../tex/texfileio.w
   ../tex/texmath.w
+  ../tex/texnodes.w
+  ../tex/textcodes.w
   ../tex/textoken.w
-  ../utils/utils.w
-  ../utils/managed-sa.w
   ../utils/avlstuff.w
+  ../utils/managed-sa.w
+  ../utils/utils.w
 )
 
 foreach(cweb ${luatexlib_cwebs})
@@ -152,9 +150,48 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
+add_executable(txt2zlib txt2zlib.c)
+
+target_link_libraries(txt2zlib
+  ${zlib_dll_name}
+)
+
+merge_trustinfo_manifest(txt2zlib asInvoker)
+
+get_target_property(txt2zlib_exe txt2zlib LOCATION)
+
+make_directory(${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+  COMMAND
+    ${txt2zlib_exe}
+      ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
+      pdflua.c
+  WORKING_DIRECTORY
+    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts
+  MAIN_DEPENDENCY
+    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
+  DEPENDS
+    ${txt2zlib_exe}
+    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
+  VERBATIM
+)
+
+set_source_files_properties(
+  ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+  PROPERTIES
+    GENERATED TRUE
+)
 set(luatexlib_sources
   ${luatexlib_cweb_sources}
   ${CMAKE_SOURCE_DIR}/${rel_mp_dir}/lmplib.c
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-common.h
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-luatex.h
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
+  ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
   ../dvi/dvigen.h
   ../font/luatexfont.h
   ../font/mapfile.h
@@ -170,6 +207,7 @@ set(luatexlib_sources
   ../image/pdftoepdf.h
   ../image/writeimg.h
   ../image/writejbig2.h
+  ../image/writejp2.h
   ../image/writejpg.h
   ../image/writepng.h
   ../lang/hnjalloc.h
@@ -182,6 +220,7 @@ set(luatexlib_sources
   ../lua/liolib.c
   ../lua/lkpselib.c
   ../lua/llanglib.c
+  ../lua/llfslibext.c
   ../lua/llualib.c
   ../lua/lnodelib.c
   ../lua/loslibext.c
@@ -192,11 +231,8 @@ set(luatexlib_sources
   ../lua/ltokenlib.c
   ../lua/luagen.h
   ../lua/luatex-api.h
+  ../luascripts/pdflua.h
   ../luatex.h
-  ../ocp/ocp.h
-  ../ocp/ocplist.h
-  ../ocp/readocp.h
-  ../ocp/runocp.h
   ../pdf/pagetree.h
   ../pdf/pdfaction.h
   ../pdf/pdfannot.h
@@ -209,6 +245,7 @@ set(luatexlib_sources
   ../pdf/pdflink.h
   ../pdf/pdflistout.h
   ../pdf/pdfliteral.h
+  ../pdf/pdfluaapi.h
   ../pdf/pdfobj.h
   ../pdf/pdfoutline.h
   ../pdf/pdfpage.h
@@ -256,10 +293,6 @@ set(luatexlib_sources
   ../utils/avl.h
   ../utils/avlstuff.h
   ../utils/managed-sa.h
-  ../utils/synctex-common.h
-  ../utils/synctex-luatex.h
-  ../utils/synctex.c
-  ../utils/synctex.h
   ../utils/utils.h
 )
 
