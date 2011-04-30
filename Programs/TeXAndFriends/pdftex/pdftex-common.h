@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Han The Thanh, <thanh@pdftex.org>
+Copyright 2010-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,9 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* This file contains declarations used in C code (via ptexlib.h) as
@@ -51,6 +49,7 @@ extern integer pdfbufsize;
 extern boolean pdfosmode;
 extern eightbits pdflastbyte;
 extern integer fixedinclusioncopyfont;
+extern integer pdfpagegroupval;
 
 /* pdftexcoerce.h - generated from pdftex.web */
 extern integer pdfnewobjnum(void);
@@ -62,7 +61,7 @@ extern void zpdfosgetosbuf(integer);
 #define pdfosgetosbuf(s) zpdfosgetosbuf((integer) (s))
 extern void zpdfbeginobj(integer, integer);
 #define pdfbeginobj(i, pdfoslevel) zpdfbeginobj((integer) (i), (integer) (pdfoslevel))
-#endif
+#endif /* MIKTEX */
 
 /* epdf.c */
 #ifdef __cplusplus
@@ -118,5 +117,6 @@ extern int epdf_selected_page;
 extern int epdf_num_pages;
 extern int epdf_page_box;
 extern void *epdf_doc;
+extern int epdf_has_page_group;
 
 #endif /* PDFTEX_COMMON_H */

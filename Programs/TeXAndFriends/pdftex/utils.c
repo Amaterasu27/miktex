@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,8 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "openbsd-compat.h"
@@ -253,7 +252,7 @@ void pdftex_fail(const char *fmt, ...)
     va_start(args, fmt);
     println();
     safe_print("!pdfTeX error: ");
-    safe_print(program_invocation_name);
+    safe_print(kpse_invocation_name);
     if (cur_file_name) {
         safe_print(" (file ");
         safe_print(cur_file_name);
@@ -280,7 +279,7 @@ void pdftex_fail(const char *fmt, ...)
     } else {
         exit(EX_SOFTWARE);
     }
-#endif
+#endif /* MIKTEX */
 }
 
 /* The output format of this fuction must be the same as pdf_warn in
@@ -292,7 +291,7 @@ void pdftex_warn(const char *fmt, ...)
     va_start(args, fmt);
     println();
     println();
-    tex_printf("pdfTeX warning: %s", program_invocation_name);
+    tex_printf("pdfTeX warning: %s", kpse_invocation_name);
     if (cur_file_name)
         tex_printf(" (file %s)", cur_file_name);
     tex_printf(": ");
@@ -365,7 +364,7 @@ void setjobid(int year, int month, int day, int time)
                  year, month, day, time / 60, time % 60,
                  name_string, format_string, ptexbanner,
                  versionstring, kpathsea_version_string);
-#endif
+#endif /* MIKTEX */
     check_nprintf(i, slen);
     job_id_string = xstrdup(s);
     xfree(s);
@@ -394,7 +393,7 @@ void makepdftexbanner(void)
     /* The Web2c version string starts with a space.  */
     i = snprintf(s, slen,
                  "%s%s %s", ptexbanner, versionstring, kpathsea_version_string);
-#endif
+#endif /* MIKTEX */
     check_nprintf(i, slen);
     pdftexbanner = maketexstring(s);
     xfree(s);
@@ -1330,7 +1329,7 @@ void initversionstring(char **versions)
                     PNG_LIBPNG_VER_STRING, png_libpng_ver,
                     ZLIB_VERSION, zlib_version, xpdfString, xpdfVersion);
 }
-#endif
+#endif /* MIKTEX */
 
 
 /*************************************************/

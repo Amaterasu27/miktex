@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -48,11 +48,9 @@ add_definitions(
   -DPDF_PARSER_ONLY
   -DUSE_GZIP
   -DpdfTeX
+  -DSYNCTEX_ENGINE_H="synctex-pdftex.h"
+  -D__SyncTeX__
 )
-
-if(WITH_SYNCTEX)
-  add_definitions(-D__SyncTeX__)
-endif(WITH_SYNCTEX)
 
 set(synctex_pdftex_ch_srcs_mem_only
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
@@ -61,16 +59,14 @@ set(synctex_pdftex_ch_srcs_mem_only
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
 )
 
-if(WITH_SYNCTEX)
-  set(synctex_pdftex_ch_srcs_on
-    ${synctex_pdftex_ch_srcs_mem_only}
-    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
-    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
-    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
-    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
-    ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
-  )
-endif(WITH_SYNCTEX)
+set(synctex_pdftex_ch_srcs_on
+  ${synctex_pdftex_ch_srcs_mem_only}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
+)
 
 set(pdftosrc_sources
   pdftosrc.cc
@@ -148,9 +144,7 @@ add_custom_command(
   VERBATIM
 )
 
-if(WITH_SYNCTEX)
-  set(miktex_synctex_changefiles ${tex_miktex_synctex_ch})
-endif(WITH_SYNCTEX)
+set(miktex_synctex_changefiles ${tex_miktex_synctex_ch})
 
 set(miktex_tex_change_files
   ${mltex_miktex_ch}
@@ -226,36 +220,8 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #endif
 ")
 
-add_custom_command(
-  OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
-  COMMAND ${SED_EXE}
-		s/TEX-OR-MF-OR-MP/pdftex/
-		${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-		> ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
-  WORKING_DIRECTORY
-	${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS
-	${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-  VERBATIM
-)
-
 set_source_files_properties(
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
-  PROPERTIES GENERATED TRUE
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.h
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdftex.h
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.h
-)
-
-set_source_files_properties(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   avl.c
   avlstuff.c
   epdf.c
@@ -286,6 +252,7 @@ endif(LINK_EVERYTHING_STATICALLY)
 
 set(${pdftex_target_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   avl.c
   avlstuff.c
   epdf.c
@@ -308,13 +275,6 @@ set(${pdftex_target_name}_sources
   writettf.c
   writezip.c
 )
-
-if(WITH_SYNCTEX)
-  set(${pdftex_target_name}_sources
-    ${${pdftex_target_name}_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/synctex-pdftex.cpp
-  )
-endif(WITH_SYNCTEX)
 
 set_source_files_properties(
   ${${pdftex_target_name}_sources}
