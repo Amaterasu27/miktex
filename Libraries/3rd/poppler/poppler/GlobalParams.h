@@ -20,6 +20,7 @@
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2009 Jonathan Kew <jonathan_kew@sil.org>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
+// Copyright (C) 2009 William Bader <williambader@hotmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -60,7 +61,7 @@ struct XpdfSecurityHandler;
 class GlobalParams;
 class GfxFont;
 class Stream;
-#ifdef WIN32
+#ifdef _WIN32
 class WinFontList;
 #endif
 
@@ -193,6 +194,7 @@ public:
   GBool getPSEmbedTrueType();
   GBool getPSEmbedCIDPostScript();
   GBool getPSEmbedCIDTrueType();
+  GBool getPSSubstFonts();
   GBool getPSPreload();
   GBool getPSOPI();
   GBool getPSASCIIHex();
@@ -204,7 +206,6 @@ public:
   GBool getEnableFreeType();
   GBool getAntialias();
   GBool getVectorAntialias();
-  GBool getForceNoFTAutoHinting();
   GBool getStrokeAdjust();
   ScreenType getScreenType();
   int getScreenSize();
@@ -238,6 +239,7 @@ public:
   void setPSEmbedTrueType(GBool embed);
   void setPSEmbedCIDPostScript(GBool embed);
   void setPSEmbedCIDTrueType(GBool embed);
+  void setPSSubstFonts(GBool substFonts);
   void setPSPreload(GBool preload);
   void setPSOPI(GBool opi);
   void setPSASCIIHex(GBool hex);
@@ -248,7 +250,6 @@ public:
   GBool setEnableFreeType(char *s);
   GBool setAntialias(char *s);
   GBool setVectorAntialias(char *s);
-  GBool setForceNoFTAutoHinting(char *s);
   void setStrokeAdjust(GBool strokeAdjust);
   void setScreenType(ScreenType st);
   void setScreenSize(int size);
@@ -302,7 +303,8 @@ private:
   GooList *toUnicodeDirs;		// list of ToUnicode CMap dirs [GooString]
   GooHash *displayFonts;		// display font info, indexed by font name
 				//   [DisplayFontParam]
-#ifdef WIN32
+#ifdef _WIN32
+  GBool baseFontsInitialized;
   WinFontList *winFontList;	// system TrueType fonts
 #endif
   GBool psExpandSmaller;	// expand smaller pages to fill paper
@@ -317,6 +319,7 @@ private:
   GBool psEmbedTrueType;	// embed TrueType fonts?
   GBool psEmbedCIDPostScript;	// embed CID PostScript fonts?
   GBool psEmbedCIDTrueType;	// embed CID TrueType fonts?
+  GBool psSubstFonts;		// substitute missing fonts?
   GBool psPreload;		// preload PostScript images and forms into
 				//   memory
   GBool psOPI;			// generate PostScript OPI comments?
@@ -331,7 +334,6 @@ private:
   GBool enableFreeType;		// FreeType enable flag
   GBool antialias;		// anti-aliasing enable flag
   GBool vectorAntialias;	// vector anti-aliasing enable flag
-  GBool forceNoFTAutoHinting;  // force to disable FT autohinting
   GBool strokeAdjust;		// stroke adjustment enable flag
   ScreenType screenType;	// halftone screen type
   int screenSize;		// screen matrix size

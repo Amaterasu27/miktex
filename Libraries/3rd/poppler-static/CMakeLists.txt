@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(POPPLER_VERSION "0.11.1")
+set(POPPLER_VERSION "0.12.4")
 
 ##use_static_crt()
 ##use_static_libraries()
@@ -64,6 +64,8 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/GooString.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmem.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/FixedPoint.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/PNGWriter.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gstrtod.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiBase.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiEncodings.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiTrueType.cc
@@ -118,7 +120,6 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Sound.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XpdfPluginAPI.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.cc
-
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashBitmap.cc
