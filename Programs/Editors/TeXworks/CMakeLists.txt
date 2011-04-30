@@ -24,8 +24,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_BINARY_DIR}/src
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/qt4/src
   ${CMAKE_SOURCE_DIR}/${rel_hunspell_dir}/src/hunspell
