@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2010 Christian Schenk
+## Copyright (C) 2008-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -45,6 +45,7 @@ add_definitions(
   -DLE_USE_CMEMORY
   -DMIKTEX_XETEX
   -D__SyncTeX__
+  -DSYNCTEX_ENGINE_H="synctex-xetex.h"
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
   -DXETEX_GRAPHITE
@@ -172,36 +173,8 @@ file(READ ${etex_dyn_sed} etex_dyn_sed_contents)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${tex_dyn_sed_contents}")
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
-add_custom_command(
-  OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
-  COMMAND ${SED_EXE}
-		s/TEX-OR-MF-OR-MP/xetex/
-		${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-		> ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
-  WORKING_DIRECTORY
-	${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS
-	${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-  VERBATIM
-)
-
 set_source_files_properties(
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
-  PROPERTIES GENERATED TRUE
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.h
-)
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xetex.h
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xetex.h
-)
-
-set_source_files_properties(
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   XeTeX_ext.c
   XeTeX_pic.c
   bmpimage.c
@@ -214,8 +187,8 @@ set_source_files_properties(
 )
 
 set(${xetex_dll_name}_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/synctex-xe.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   FontTableCache.cpp
   XeTeXFontInst.cpp
   XeTeXFontInst_FT2.cpp
@@ -270,6 +243,7 @@ target_link_libraries(${xetex_dll_name}
   ${png_dll_name}
   ${teckit_dll_name}
   ${xpdf_lib_name}
+  ${w2cemu_dll_name}
 )
 
 delay_load(${xetex_dll_name}

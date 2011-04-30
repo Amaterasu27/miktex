@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2010 Christian Schenk
+%% Copyright (C) 2007-2011 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -362,15 +362,15 @@ done: name:=a_make_name_string;
 % _____________________________________________________________________________
 
 @x
-  print_c_string(name_of_file+1);
+  print_c_string(stringcast(name_of_file+1));
 @y
-  print_c_string(name_of_file);
+  print_c_string(stringcast(name_of_file));
 @z
 
 @x
-    print_c_string(name_of_file+1);
+    print_c_string(stringcast(name_of_file+1));
 @y
-    print_c_string(name_of_file);
+    print_c_string(stringcast(name_of_file));
 @z
 
 % _____________________________________________________________________________

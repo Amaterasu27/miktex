@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ copyright (c) 2009-2011 by Jonathan Kew
 
  Written by Jonathan Kew
 
@@ -61,30 +61,23 @@ authorization from the copyright holders.
 @z
 
 @x
-@d eTeX_version_string=='-2.2' {current \eTeX\ version}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
-@d eTeX_version_string=='-2.2' {current \eTeX\ version}
-
-@d XeTeX_version=0
-@d XeTeX_revision==".9997"
-@d XeTeX_version_string=='-0.9997.4' {current \XeTeX\ version}
-@z
-
-@x
-@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
-  {printed when \eTeX\ starts}
-@#
-@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
 @d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
-@d banner==eTeX_banner
-@d banner_k==eTeX_banner_k
-@y
+@d XeTeX_version=0
+@d XeTeX_revision==".9997"
+@d XeTeX_version_string=='-0.9997.5' {current \XeTeX\ version}
+@#
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
 @d XeTeX_banner_k==XeTeX_banner
-@#
+@z
+
+@x
+@d banner==eTeX_banner
+@d banner_k==eTeX_banner_k
+@y
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k
 @z
@@ -3208,14 +3201,14 @@ for j:=str_start_macro(e) to str_start_macro(e+1)-1 do append_to_name(so(str_poo
 
 @x
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
 name_of_file := xmalloc_array (UTF8_code, n+(b-a+1)+format_ext_length+1);
 for j:=1 to n do append_to_name(TEX_format_default[j]);
 @z
 
 @x
-  append_to_name(xord[TEX_format_default[j]]);
+  append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
   append_to_name(TEX_format_default[j]);
 @z
@@ -3435,7 +3428,7 @@ pack_file_name(nom,aire,cur_ext);
 if XeTeX_tracing_fonts_state>0 then begin
   begin_diagnostic;
   print_nl("Requested font """);
-  print_c_string(name_of_file+1);
+  print_c_string(stringcast(name_of_file+1));
   print('"');
   if s < 0 then begin
     print(" scaled ");
@@ -3484,7 +3477,7 @@ if XeTeX_tracing_fonts_state>0 then begin
   end else if file_opened then begin
     begin_diagnostic;
     print_nl(" -> ");
-    print_c_string(name_of_file+1);
+    print_c_string(stringcast(name_of_file+1));
     end_diagnostic(false);
   end;
 end;
