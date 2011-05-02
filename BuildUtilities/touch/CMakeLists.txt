@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,6 +34,7 @@ add_executable(${miktex_prefix}touch ${touch_sources})
 merge_trustinfo_manifest(${miktex_prefix}touch asInvoker)
 
 target_link_libraries(${miktex_prefix}touch
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}

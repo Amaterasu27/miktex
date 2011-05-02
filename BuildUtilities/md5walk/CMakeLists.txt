@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,6 +35,7 @@ merge_trustinfo_manifest(md5walk asInvoker)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(md5walk
+    ${botan_lib_name}
     ${bzip2_lib_name}
     ${core_lib_name}
     ${md5_lib_name}
