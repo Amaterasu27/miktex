@@ -42,34 +42,36 @@
 
 /* _________________________________________________________________________
 
-   LocateProgramFilesDir
+   ReadPath
    _________________________________________________________________________ */
 
 bool
-LocateProgramFilesDir (/*[out]*/ PathName &	path)
+ReadPath (/*[in]*/ HKEY		    hkeyRoot,
+	  /*[in]*/ const wchar_t *  lpszSubKey,
+	  /*[in]*/ const wchar_t *  lpszValueName,
+	  /*[out]*/ PathName &	    path)
 {
   HKEY hkey;
-  if (RegOpenKey(HKEY_LOCAL_MACHINE,
-		 _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion"),
-		 &hkey)
-      != ERROR_SUCCESS)
-    {
-      return (false);
-    }
+  if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, KEY_READ, &hkey) != ERROR_SUCCESS)
+  {
+    return (false);
+  }
   AutoHKEY autoHKEY (hkey);
-  unsigned long size =
-    (static_cast<unsigned long>(path.GetCapacity()) * sizeof(char));
-  long res =
-    RegQueryValueEx(hkey,
-		    _T("ProgramFilesDir"),
-		    0,
-		    0,
-		    reinterpret_cast<LPBYTE>(path.GetBuffer()),
-		    &size);
-  if (res != ERROR_SUCCESS)
-    {
-      return (false);
-    }
+  wchar_t szPath[_MAX_PATH];
+  unsigned long size = sizeof(szPath);
+  unsigned long type;
+  long res = RegQueryValueExW(
+    hkey,
+    lpszValueName,
+    0,
+    &type,
+    reinterpret_cast<LPBYTE>(&szPath[0]),
+    &size);
+  if (res != ERROR_SUCCESS || type != REG_SZ)
+  {
+    return (false);
+  }
+  path = szPath;
   return (true);
 }
 
@@ -79,41 +81,23 @@ LocateProgramFilesDir (/*[out]*/ PathName &	path)
    _________________________________________________________________________ */
 
 bool
-LocateNTEmacs (/*[out]*/ PathName &		ntEmacs,
+LocateNTEmacs (/*[out]*/ PathName &	ntEmacs,
 	       /*[in]*/ const char *	lpszName)
 {
-  HKEY hkey;
-  long res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 _T("SOFTWARE\\GNU\\Emacs"),
-		 0,
-		 KEY_READ,
-		 &hkey);
-  if (res != ERROR_SUCCESS)
-    {
-      return (false);
-    }
-  AutoHKEY autoHKEY (hkey);
-  unsigned long type;
-  PathName emacsDir;
-  unsigned long size =
-    (static_cast<unsigned long>(emacsDir.GetCapacity()) * sizeof(char));
-  res =
-    RegQueryValueEx(hkey,
-		    _T("emacs_dir"),
-		    0,
-		    &type,
-		    reinterpret_cast<LPBYTE>(emacsDir.GetBuffer()),
-		    &size);
-  if (res != ERROR_SUCCESS || type != REG_SZ)
-    {
-      return (false);
-    }
-  PathName pathBinDir (emacsDir, "bin");
-  ntEmacs = pathBinDir;
-  ntEmacs += lpszName;
-  ntEmacs.SetExtension (".exe");
-  return (File::Exists(ntEmacs));
+  PathName path;
+  if (! ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\GNU\\Emacs", L"emacs_dir", path))
+  {
+    return (false);
+  }
+  path += "bin";
+  path += lpszName;
+  path.SetExtension (".exe");
+  if (! File::Exists(path))
+  {
+    return (false);
+  }
+  ntEmacs = path;
+  return (true);
 }
 
 /* _________________________________________________________________________
@@ -126,11 +110,10 @@ MakeNTEmacsCommandLine (/*[out]*/ string &	program,
 		        /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
-  if (! LocateNTEmacs(pathEmacs, "runemacs.exe")
-      && ! LocateNTEmacs(pathEmacs, "emacs.exe"))
-    {
-      return (false);
-    }
+  if (! LocateNTEmacs(pathEmacs, "runemacs.exe") && ! LocateNTEmacs(pathEmacs, "emacs.exe"))
+  {
+    return (false);
+  }
   program = pathEmacs.Get();
   arguments = "+%l \"%f\"";
   return (true);
@@ -146,17 +129,16 @@ MakeNTEmacsClientCommandLine (/*[out]*/ string &	program,
 			      /*[out]*/ string &	arguments)
 {
   PathName pathEmacs;
-  _TCHAR * lpszFileName;
-  if (! (LocateNTEmacs(pathEmacs, "gnuclientw.exe")
-	 || SearchPath(0,
-		       _T("gnuclientw.exe"),
-		       0,
-		       static_cast<unsigned long>(pathEmacs.GetCapacity()),
-		       CA2T(pathEmacs.Get()),
-		       &lpszFileName)))
+  if (! LocateNTEmacs(pathEmacs, "gnuclientw.exe"))
+  {
+    wchar_t szEmacs[_MAX_PATH];
+    wchar_t * lpszFileName;
+    if (! SearchPathW(0, L"gnuclientw.exe", 0, _MAX_PATH, szEmacs, &lpszFileName))
     {
       return (false);
     }
+    pathEmacs = szEmacs;
+  }
   program = pathEmacs.Get();
   arguments = "-F +%l \"%f\"";
   return (true);
@@ -171,44 +153,27 @@ bool
 MakeXEmacsCommandLine (/*[out]*/ string &	program,
 		       /*[out]*/ string &	arguments)
 {
-  HKEY hkey;
-  long res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 (_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
-		  _T("\\App Paths\\xemacs.exe")),
-		 0,
-		 KEY_READ,
-		 &hkey);
-  if (res != ERROR_SUCCESS)
-    {
-      return (false);
-    }
-  AutoHKEY autoHKEY (hkey);
-  unsigned long type;
-  PathName pathEmacsDir;
-  unsigned long size =
-    (static_cast<unsigned long>(pathEmacsDir.GetCapacity() * sizeof(char)));
-  res =
-    RegQueryValueEx(hkey,
-		    _T("Path"),
-		    0,
-		    &type,
-		    reinterpret_cast<LPBYTE>
-		    (pathEmacsDir.GetBuffer()),
-		    &size);
-  if (res != ERROR_SUCCESS || type != REG_SZ)
-    {
-      return (false);
-    }
-  PathName pathEmacs (pathEmacsDir, "runemacs.exe");
+  PathName emacsDir;
+  if (! ReadPath(
+    HKEY_LOCAL_MACHINE,
+    L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\xemacs.exe",
+    L"Path",
+    emacsDir))
+  {
+    return (false);
+  }
+  PathName pathEmacs;
+  pathEmacs = emacsDir;
+  pathEmacs += "runemacs.exe";
   if (! File::Exists(pathEmacs))
+  {
+    pathEmacs = emacsDir;
+    pathEmacs += "xemacs.exe";
+    if (! File::Exists(pathEmacs))
     {
-      pathEmacs.Set (pathEmacsDir, "xemacs.exe");
-      if (! File::Exists(pathEmacs))
-	{
-	  return (false);
-	}
+      return (false);
     }
+  }
   program = pathEmacs.Get();
   arguments = "+%l \"%f\"";
   return (true);
@@ -222,38 +187,18 @@ MakeXEmacsCommandLine (/*[out]*/ string &	program,
 bool
 LocateTeXnicCenter (/*[out]*/ PathName & tc)
 {
-  HKEY hkey;
-  long res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 _T("SOFTWARE\\ToolsCenter\\TeXnicCenter"),
-		 0,
-		 KEY_READ,
-		 &hkey);
-  if (res != ERROR_SUCCESS)
-    {
-      return (false);
-    }
-  AutoHKEY autoHKEY (hkey);
-  unsigned long type;
-  PathName tcRoot;
-  unsigned long size =
-    (static_cast<unsigned long>(tcRoot.GetCapacity()) * sizeof(char));
-  res =
-    RegQueryValueEx(hkey,
-		    _T("AppPath"),
-		    0,
-		    &type,
-		    reinterpret_cast<LPBYTE>(tcRoot.GetBuffer()),
-		    &size);
-  if (res == ERROR_SUCCESS && type == REG_SZ)
-    {
-      tc.Set (tcRoot, "TEXCNTR.EXE");
-      if (File::Exists(tc))
-	{
-	  return (true);
-	}
-    }
-  return (false);
+  PathName path;
+  if (! ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenter", L"AppPath", path))
+  {
+    return (false);
+  }
+  path += "TEXCNTR.EXE";;
+  if (! File::Exists(path))
+  {
+    return (false);
+  }
+  tc = path;
+  return (true);
 }
 
 /* _________________________________________________________________________
@@ -267,9 +212,9 @@ MakeTeXnicCenterCommandLine (/*[out]*/ string &	program,
 {
   PathName tc;
   if (! LocateTeXnicCenter(tc))
-    {
-      return (false);
-    }
+  {
+    return (false);
+  }
   program = tc.Get();
   arguments = "/ddecmd \"[goto('%f', '%l')]\"";
   return (true);
@@ -277,20 +222,18 @@ MakeTeXnicCenterCommandLine (/*[out]*/ string &	program,
 
 /* _________________________________________________________________________
 
-   LocateVisualTeX
+   LocateProgram
    _________________________________________________________________________ */
 
 bool
-LocateVisualTeX (/*[out]*/ PathName & path)
+LocateProgram (/*[in]*/ const char *  lpszSubDir,
+	       /*[in]*/ const char *  lpszFileName,
+	       /*[out]*/ PathName &   path)
 {
-  PathName pathProgramFiles;
-  if (! LocateProgramFilesDir(pathProgramFiles))
-    {
-      return (false);
-    }
-  path = pathProgramFiles;
-  path += "Visual-TeX";
-  path += "vtex.exe";
+  path =
+    Utils::GetFolderPath(CSIDL_PROGRAM_FILESX86, CSIDL_PROGRAM_FILESX86, true);
+  path += lpszSubDir;
+  path += lpszFileName;
   return (File::Exists(path));
 }
 
@@ -304,10 +247,10 @@ MakeVisualTeXCommandLine (/*[out]*/ string &	program,
 			  /*[out]*/ string &	arguments)
 {
   PathName path;
-  if (! LocateVisualTeX(path))
-    {
-      return (false);
-    }
+  if (! LocateProgram("Visual-TeX", "vtex.exe", path))
+  {
+    return (false);
+  }
   program = path.Get();
   arguments = "\"%f\" /line:%l";
   return (true);
@@ -321,66 +264,15 @@ MakeVisualTeXCommandLine (/*[out]*/ string &	program,
 bool
 LocateWinEdt (/*[out]*/ PathName & winEdt)
 {
-  HKEY hkey;
-  long res =
-    RegOpenKeyEx(HKEY_CURRENT_USER,
-		 _T("Software\\WinEdt"),
-		 0,
-		 KEY_READ,
-		 &hkey);
-  if (res == ERROR_SUCCESS)
-    {
-      AutoHKEY autoHKEY (hkey);
-      unsigned long type;
-      PathName pathWinEdtDir;
-      unsigned long size =
-	(static_cast<unsigned long>(pathWinEdtDir.GetCapacity())
-	 * sizeof(char));
-      res =
-	RegQueryValueEx(hkey,
-			_T("Install Root"),
-			0,
-			&type,
-			reinterpret_cast<LPBYTE>
-			(pathWinEdtDir.GetBuffer()),
-			&size);
-      if (res == ERROR_SUCCESS && type == REG_SZ)
-	{
-	  winEdt = pathWinEdtDir;
-	  winEdt += "winedt.exe";
-	  if (File::Exists(winEdt))
-	    {
-	      return (true);
-	    }
-	}
-    }
-  res =
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		 (_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion")
-		  _T("\\App Paths\\WinEdt.exe")),
-		 0,
-		 KEY_READ,
-		 &hkey);
-  if (res != ERROR_SUCCESS)
-    {
-      return (false);
-    }
-  AutoHKEY autoHKEY (hkey);
-  unsigned long type;
-  unsigned long size =
-    (static_cast<unsigned long>(winEdt.GetCapacity()) * sizeof(char));
-  res =
-    RegQueryValueEx(hkey,
-		    0,
-		    0,
-		    &type,
-		    reinterpret_cast<LPBYTE>(winEdt.GetBuffer()),
-		    &size);
-  if (res == ERROR_SUCCESS && type == REG_SZ)
+  if (ReadPath(HKEY_CURRENT_USER, L"Software\\WinEdt", L"Install Root", winEdt))
+  {
+    winEdt += "winedt.exe";
+    if (File::Exists(winEdt))
     {
       return (true);
     }
-  return (false);
+  }
+  return (ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\WinEdt.exe", 0, winEdt));
 }
 
 /* _________________________________________________________________________
@@ -394,31 +286,12 @@ MakeWinEdtCommandLine (/*[out]*/ string &	program,
 {
   PathName pathWinEdt;
   if (! LocateWinEdt(pathWinEdt))
-    {
-      return (false);
-    }
+  {
+    return (false);
+  }
   program = pathWinEdt.Get();
   arguments = "\"[Open(|%f|);SelPar(%l,8)]\"";
   return (true);
-}
-
-/* _________________________________________________________________________
-
-   LocateLaTeXMng
-   _________________________________________________________________________ */
-
-bool
-LocateLaTeXMng (/*[out]*/ PathName & path)
-{
-  PathName pathProgramFiles;
-  if (! LocateProgramFilesDir(pathProgramFiles))
-    {
-      return (false);
-    }
-  path = pathProgramFiles;
-  path += "LaTeXMng";
-  path += "LaTeXMng.exe";
-  return (File::Exists(path));
 }
 
 /* _________________________________________________________________________
@@ -431,36 +304,14 @@ MakeLaTeXMngCommandLine (/*[out]*/ string &	program,
 			 /*[out]*/ string &	arguments)
 {
   PathName path;
-  if (! LocateLaTeXMng(path))
-    {
-      return (false);
-    }
+  if (! LocateProgram("LaTeXMng", "LaTeXMng.exe", path))
+  {
+    return (false);
+  }
   program = path.Get();
-
   //latexmng -l%l %f
-
-
   arguments = "-l%l \"%f\"";
   return (true);
-}
-
-/* _________________________________________________________________________
-
-   LocateWinTeXXP
-   _________________________________________________________________________ */
-
-bool
-LocateWinTeXXP (/*[out]*/ PathName & path)
-{
-  PathName pathProgramFiles;
-  if (! LocateProgramFilesDir(pathProgramFiles))
-    {
-      return (false);
-    }
-  path = pathProgramFiles;
-  path += "WinTeX";
-  path += "wintex.exe";
-  return (File::Exists(path));
 }
 
 /* _________________________________________________________________________
@@ -470,35 +321,16 @@ LocateWinTeXXP (/*[out]*/ PathName & path)
 
 bool
 MakeWinTeXXPCommandLine (/*[out]*/ string &	program,
-			  /*[out]*/ string &	arguments)
+			 /*[out]*/ string &	arguments)
 {
   PathName path;
-  if (! LocateWinTeXXP(path))
-    {
-      return (false);
-    }
+  if (! LocateProgram("WinTeX", "wintex.exe", path))
+  {
+    return (false);
+  }
   program = path.Get();
   arguments = "-f \"%f\" -l %l";
   return (true);
-}
-
-/* _________________________________________________________________________
-
-   LocateWinShell
-   _________________________________________________________________________ */
-
-bool
-LocateWinShell (/*[out]*/ PathName & path)
-{
-  PathName pathProgramFiles;
-  if (! LocateProgramFilesDir(pathProgramFiles))
-    {
-      return (false);
-    }
-  path = pathProgramFiles;
-  path += "WinShell";
-  path += "WinShell.exe";
-  return (File::Exists(path));
 }
 
 /* _________________________________________________________________________
@@ -511,32 +343,13 @@ MakeWinShellCommandLine (/*[out]*/ string &	program,
 			 /*[out]*/ string &	arguments)
 {
   PathName path;
-  if (! LocateWinShell(path))
-    {
-      return (false);
-    }
+  if (! LocateProgram("WinShell", "WinShell.exe", path))
+  {
+    return (false);
+  }
   program = path.Get();
   arguments = "-c \"%f\" -l %l";
   return (true);
-}
-
-/* _________________________________________________________________________
-
-   LocateLaTeXWIDE
-   _________________________________________________________________________ */
-
-bool
-LocateLaTeXWIDE (/*[out]*/ PathName & path)
-{
-  PathName pathProgramFiles;
-  if (! LocateProgramFilesDir(pathProgramFiles))
-    {
-      return (false);
-    }
-  path = pathProgramFiles;
-  path += "LaTeX WIDE";
-  path += "LWide.exe";
-  return (File::Exists(path));
 }
 
 /* _________________________________________________________________________
@@ -549,10 +362,10 @@ MakeLaTeXWIDECommandLine (/*[out]*/ string &	program,
 			  /*[out]*/ string &	arguments)
 {
   PathName path;
-  if (! LocateLaTeXWIDE(path))
-    {
-      return (false);
-    }
+  if (! LocateProgram("LaTeX WIDE", "LWide.exe", path))
+  {
+    return (false);
+  }
   program = path.Get();
   arguments = "\"%f\" /l%l";
   return (true);
