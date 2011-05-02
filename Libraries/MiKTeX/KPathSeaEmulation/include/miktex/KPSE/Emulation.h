@@ -308,6 +308,10 @@ typedef struct kpathsea_instance
 
 #define kpse_invocation_name kpse_def_inst.invocation_name
 
+#if 1 && ! defined(program_invocation_name)
+#  define program_invocation_name kpse_def_inst.invocation_name
+#endif
+
 #endif
 
 #if defined(__cplusplus)

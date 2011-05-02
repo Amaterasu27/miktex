@@ -562,7 +562,7 @@ static void *synctex_dot_open(void)
         size_t len = strlen(tmp);
         if (len>0) {
             /*  jobname was set by the \jobname command on the *TeX side  */
-#if defined(MIKTEX) && 0 /* obsolete */
+#if defined(MIKTEX)
 	/* C++: typecast needed */
             char *the_busy_name = (char*)xmalloc((size_t)
                                           ( len
@@ -793,6 +793,8 @@ void synctexterminate(boolean log_opened)
 	    tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
 	    strcpy (tmp, path.Get());
 	  }
+#endif
+#if defined(MIKTEX)
 	/* C++: typecast needed */
         the_real_syncname = (char*)xmalloc((unsigned)
                                     (strlen(tmp) + strlen(synctex_suffix) +
