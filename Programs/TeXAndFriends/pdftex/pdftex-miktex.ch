@@ -1,6 +1,6 @@
 %% pdftex-miktex.ch:
 %% 
-%% Copyright (C) 1998-2010 Christian Schenk
+%% Copyright (C) 1998-2011 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -21,17 +21,6 @@
 %% //                    INSPIRED BY WEB2C'S PDFTEX.CH                       //
 %% //                                                                        //
 %% ////////////////////////////////////////////////////////////////////////////
-
-% _____________________________________________________________________________
-%
-% [1.2]
-% _____________________________________________________________________________
-
-@x
-@d banner==pdfeTeX_banner
-@y
-@d banner==pdfTeX_banner
-@z
 
 % _____________________________________________________________________________
 %
