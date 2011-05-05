@@ -308,6 +308,11 @@ YapApplication::RegisterWindowClass ()
 
 namespace {
   bool initialized = false;
+  const char * const COMMERCIAL_INVOKERS =
+    "winedt"		  // http://www.winedt.com
+    ";" "Inlage 4"	  // http://www.inlage.com/
+    ";" "CodingStudio"	  // http://www.dfordsoft.com/
+    ;
 }
 
 BOOL
@@ -471,11 +476,16 @@ YapApplication::InitInstance ()
 	  return (FALSE);
 	}
 
-#if MIKTEX_USER_REGISTRATION
-      unsigned showSplashWindow = 5;
-#else
       unsigned showSplashWindow = 0;
-#endif
+
+      vector<string> invokers = Process2::GetInvokerNames();
+      for (vector<string>::const_iterator it = invokers.begin(); it != invokers.end(); ++ it)
+      {
+	if (Utils::Contains(COMMERCIAL_INVOKERS, PathName(*it).GetFileNameWithoutExtension().Get()))
+	{
+	  showSplashWindow = 5;
+	}
+      }
 
       if (! g_pYapConfig->showSplashWindow)
       {
@@ -1310,21 +1320,25 @@ void
 YapApplication::OnRegisterMiKTeX ()
 {
   try
-    {
+  {
 #if MIKTEX_USER_REGISTRATION
-      SessionWrapper(true)->RegisterMiKTeXUser ();
+    RegisteredMiKTeXUserInfo info;
+    SessionWrapper(true)->RegisterMiKTeXUser (info);
 #else
-      Utils::RegisterMiKTeXUser ();
+    Utils::RegisterMiKTeXUser ();
 #endif
-    }
+  }
+  catch (const OperationCancelledException &)
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
 }
 
 /* _________________________________________________________________________
