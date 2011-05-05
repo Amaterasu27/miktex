@@ -1546,8 +1546,8 @@ public:
 #if MIKTEX_USER_REGISTRATION
 public:
   virtual
-  void
-  RegisterMiKTeXUser ();
+  RegisteredMiKTeXUserInfo
+  RegisterMiKTeXUser (/*[in]*/ const RegisteredMiKTeXUserInfo & info);
 #endif
 
 #if MIKTEX_USER_REGISTRATION

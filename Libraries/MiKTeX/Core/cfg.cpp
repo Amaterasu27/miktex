@@ -1207,7 +1207,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
       }
       Utils::CopyString (szKeyName, BufferSizes::MaxCfgName, lpsz);
     }
-    else if (line[0] == COMMENT_CHAR && line[1] == COMMENT_CHAR && line[2] == ' ')
+    else if (line.length() >= 3 && line[0] == COMMENT_CHAR && line[1] == COMMENT_CHAR && line[2] == ' ')
     {
       if (! documentation.empty())
       {
@@ -1215,7 +1215,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
       }
       documentation += &line[3];
     }
-    else if ((line[0] == COMMENT_CHAR && (IsAlNum(line[1]) || line[1] == '.'))
+    else if ((line.length() >= 2 && line[0] == COMMENT_CHAR && (IsAlNum(line[1]) || line[1] == '.'))
       || IsAlNum(line[0]) || line[0] == '.')
     {
       string valueName;
@@ -1238,7 +1238,7 @@ CfgImpl::Read (/*[in]*/ const PathName &	path,
 	documentation.c_str(),
 	line[0] == COMMENT_CHAR);
     }
-    else if (line[0] == COMMENT_CHAR && line[1] == COMMENT_CHAR && line[2] == COMMENT_CHAR && line[3] == COMMENT_CHAR)
+    else if (line.length() >= 4 && line[0] == COMMENT_CHAR && line[1] == COMMENT_CHAR && line[2] == COMMENT_CHAR && line[3] == COMMENT_CHAR)
     {
       documentation = "";
       Tokenizer tok (line.c_str() + 4, " \t");
@@ -1309,7 +1309,7 @@ CfgImpl::ParseValueDefinition (/*[in]*/ const string &		line,
 			       /*[out]*/ string &		value,
 			       /*[out]*/ CfgImpl::PutMode &	putMode)
 {
-  MIKTEX_ASSERT (IsAlNum(line[0]) || line[0] == '.');
+  MIKTEX_ASSERT (! line.empty() && (IsAlNum(line[0]) || line[0] == '.'));
 
   size_t posEqual = line.find('=');
 

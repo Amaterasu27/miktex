@@ -387,10 +387,12 @@ SessionImpl::TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo 
    _________________________________________________________________________ */
 
 #if MIKTEX_USER_REGISTRATION
-void
-SessionImpl::RegisterMiKTeXUser ()
+RegisteredMiKTeXUserInfo
+SessionImpl::RegisterMiKTeXUser (/*[in]*/ const RegisteredMiKTeXUserInfo & info)
 {
   Utils::ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+  // TODO
+  throw new OperationCancelledException();
 }
 #endif
 
