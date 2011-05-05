@@ -22,6 +22,8 @@
 #include "pnm.h"
 #include "png.h"
 #if defined(MIKTEX)
+#  include <pnginfo.h>
+#  include <pngstruct.h>
 #  define trans trans_alpha
 #  define trans_values trans_color
 #endif
@@ -227,7 +229,11 @@ FILE *tfp;
     pm_error ("cannot allocate LIBPNG structures");
   }
 
+#if defined(MIKTEX)
+  if (setjmp (png_ptr->png_jmpbuf)) {
+#else
   if (setjmp (png_ptr->jmpbuf)) {
+#endif
     png_destroy_read_struct (&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     free (png_ptr);
     free (info_ptr);
