@@ -178,6 +178,28 @@ YapConfig::SetPrinterMetafontMode (/*[in]*/ const char * lpszMnemonic)
 
 /* _________________________________________________________________________
 
+   DefaultInverseSearchTemplate
+   _________________________________________________________________________ */
+
+static
+string
+DefaultInverseSearchTemplate ()
+{
+  string inverseSearchTemplate;
+  PathName texworks;
+  if (SessionWrapper(true)->FindFile(MIKTEX_TEXWORKS_EXE, FileType::EXE, texworks))
+  {
+    inverseSearchTemplate = Q_(texworks);
+    inverseSearchTemplate += " -p=%l \"%f\"";
+  }
+  else
+  {
+    inverseSearchTemplate = "notepad \"%f\"";
+  }  
+  return (inverseSearchTemplate);
+}
+/* _________________________________________________________________________
+
    YapConfig::Load
    _________________________________________________________________________ */
 
@@ -193,13 +215,28 @@ YapConfig::Load ()
     pCfg->Read (fileName);
   }
 
+#if MIKTEX_USER_REGISTRATION
+  RegisteredMiKTeXUserInfo userInfo;
+  bool isRegisteredUser = (SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(userInfo) && userInfo.isRegistered);
+#else
+  bool isRegisteredUser = false;
+#endif
+
   //
   // [Settings]
   //
+  if (isRegisteredUser)
+  {
+    showSplashWindow =
+      GetValue("Settings", "Show Splash Window", true);
+  }
+  else
+  {
+    showSplashWindow = true;
+  }
   checkFileTypeAssociations =
     GetValue("Settings", "Check Associations", true);
-  inverseSearchCommandLine =
-    GetValue("Settings", "Editor", string("notepad \"%f\""));
+  inverseSearchCommandLine = GetValue("Settings", "Editor", DefaultInverseSearchTemplate());
   lastTool =
     GetValue("Settings", "Last Tool", 0);
   maintainHorizontalPosition =
@@ -353,6 +390,7 @@ YapConfig::Save ()
   //
   // [Settings]
   //
+  UpdateValue ("Settings", "Show Splash Window", showSplashWindow, true);
   UpdateValue (
     "Settings","Check Associations",
     checkFileTypeAssociations,
@@ -361,7 +399,7 @@ YapConfig::Save ()
     "Settings",
     "Editor",
     inverseSearchCommandLine,
-    string("notepad \"%f\""));
+    DefaultInverseSearchTemplate());
   UpdateValue (
     "Settings",
     "Last Tool",
@@ -577,6 +615,7 @@ YapConfig::YapConfig ()
   : dviPageMode (DEFAULT_DVIPAGE_MODE),
     unit (Units::None),
     win95 ((GetVersion() & 0x80000000) != 0),
+    showSplashWindow (true),
     pCfg (Cfg::Create())
 {
   Load ();

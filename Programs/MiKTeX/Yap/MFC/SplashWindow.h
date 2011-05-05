@@ -1,6 +1,6 @@
-/* AdvancedOptionsPage.h:					-*- C++ -*-
+/* SplashWindow.h:						-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -20,40 +20,23 @@
 
 #pragma once
 
-class AdvancedOptionsPage : public CPropertyPage
+#include "resource.h"
+
+class SplashWindow : public CDialog
 {
 private:
-  enum { IDD = IDD_ADVANCED_OPTIONS };
+  enum { IDD = IDD_SPLASH };
 
 protected:
   DECLARE_MESSAGE_MAP();
+  
+public:
+  SplashWindow ();
 
 public:
-  AdvancedOptionsPage ();
-
-protected:
-  virtual
   void
-  DoDataExchange (/*[in]*/ CDataExchange * pDX);
+  Show (/*[in]*/ unsigned seconds);
 
 protected:
-  virtual
-  BOOL
-  OnInitDialog ();
-
-protected:
-  virtual
-  BOOL
-  OnApply ();
-
-protected:
-  afx_msg
-  void
-  OnClickCheckBox ();
-
-private:
-  BOOL checkFileTypeAssociations;
-
-private:
-  BOOL showSplashWindow;
+  afx_msg void OnTimer (/*[in]*/ UINT_PTR id);
 };

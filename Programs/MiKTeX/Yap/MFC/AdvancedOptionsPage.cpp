@@ -1,6 +1,6 @@
 /* AdvancedOptionsPage.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -31,7 +31,9 @@
 
 BEGIN_MESSAGE_MAP(AdvancedOptionsPage, CPropertyPage)
   ON_BN_CLICKED(IDC_CHECK_ASSOCIATION,
-		&AdvancedOptionsPage::OnClickCheckAssoc)
+		&AdvancedOptionsPage::OnClickCheckBox)
+  ON_BN_CLICKED(IDC_CHECK_SPLASH,
+		&AdvancedOptionsPage::OnClickCheckBox)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -41,7 +43,8 @@ END_MESSAGE_MAP();
 
 AdvancedOptionsPage::AdvancedOptionsPage ()
   : CPropertyPage (IDD),
-    checkFileTypeAssociations (g_pYapConfig->checkFileTypeAssociations)
+    checkFileTypeAssociations (g_pYapConfig->checkFileTypeAssociations ? BST_CHECKED : BST_UNCHECKED),
+    showSplashWindow (g_pYapConfig->showSplashWindow ? BST_CHECKED : BST_UNCHECKED)
 {
 }
 
@@ -55,6 +58,7 @@ AdvancedOptionsPage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
   DDX_Check (pDX, IDC_CHECK_ASSOCIATION, checkFileTypeAssociations);
+  DDX_Check (pDX, IDC_CHECK_SPLASH, showSplashWindow);
 }
 
 /* _________________________________________________________________________
@@ -90,7 +94,28 @@ AdvancedOptionsPage::OnApply ()
    _________________________________________________________________________ */
 
 void
-AdvancedOptionsPage::OnClickCheckAssoc ()
+AdvancedOptionsPage::OnClickCheckBox ()
 {
   SetModified (TRUE);
+}
+
+/* _________________________________________________________________________
+
+   AdvancedOptionsPage::OnInitDialog
+   _________________________________________________________________________ */
+
+BOOL
+AdvancedOptionsPage::OnInitDialog ()
+{
+  BOOL ret = CPropertyPage::OnInitDialog();
+#if MIKTEX_USER_REGISTRATION
+  RegisteredMiKTeXUserInfo info;
+  if (showSplashWindow && ! (SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(info) && info.isRegistered))
+  {
+    GetDlgItem(IDC_CHECK_SPLASH)->EnableWindow (FALSE);
+  }
+#else
+  GetDlgItem(IDC_CHECK_SPLASH)->EnableWindow (FALSE);
+#endif
+  return (ret);
 }

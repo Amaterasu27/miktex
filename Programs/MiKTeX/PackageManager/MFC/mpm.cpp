@@ -225,21 +225,25 @@ void
 AboutDialog::OnClickRegisterMiKTeXUser ()
 {
   try
-    {
+  {
 #if MIKTEX_USER_REGISTRATION
-      SessionWrapper(true)->RegisterMiKTeXUser ();
+    RegisteredMiKTeXUserInfo info;
+    SessionWrapper(true)->RegisterMiKTeXUser (info);
 #else
-      Utils::RegisterMiKTeXUser ();
+    Utils::RegisterMiKTeXUser ();
 #endif
-    }
+  }
+  catch (const OperationCancelledException &)
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
 }
 
 /* _________________________________________________________________________

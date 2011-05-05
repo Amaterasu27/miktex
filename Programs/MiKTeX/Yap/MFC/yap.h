@@ -21,6 +21,7 @@
 #pragma once
 
 #include "resource.h"
+#include "SplashWindow.h"
 
 #define YAP_TRACE_FLAGS_LVL_1			\
   MIKTEX_TRACE_ERROR ","			\
@@ -325,6 +326,9 @@ public:
 
 public:
   Units unit;
+
+public:
+  bool showSplashWindow;
 
 public:
   YapConfig ();
@@ -671,6 +675,9 @@ public:
 
 private:
   SessionWrapper pSession;
+
+private:
+  SplashWindow splashWindow;
 
 public:
   auto_ptr<TraceStream> trace_yap;

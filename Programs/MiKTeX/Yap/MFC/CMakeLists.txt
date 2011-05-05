@@ -83,6 +83,8 @@ set(yap_mfc_sources
   SecurityOptionsPage.h
   SourceSpecialsDialog.cpp
   SourceSpecialsDialog.h
+  SplashWindow.cpp
+  SplashWindow.h
   StdAfx.cpp
   StdAfx.h
   UIOptionsPage.cpp

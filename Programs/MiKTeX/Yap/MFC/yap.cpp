@@ -470,6 +470,22 @@ YapApplication::InitInstance ()
 	{
 	  return (FALSE);
 	}
+
+#if MIKTEX_USER_REGISTRATION
+      unsigned showSplashWindow = 5;
+#else
+      unsigned showSplashWindow = 0;
+#endif
+
+      if (! g_pYapConfig->showSplashWindow)
+      {
+	showSplashWindow = 0;
+      }
+
+      if (showSplashWindow > 0)
+      {
+	splashWindow.Show (showSplashWindow);
+      }
       
       // the main window has been initialized, so show and update it
       CWindowPlacement wp;
@@ -582,21 +598,25 @@ void
 AboutDialog::OnClickRegisterMiKTeX ()
 {
   try
-    {
+  {
 #if MIKTEX_USER_REGISTRATION
-      SessionWrapper(true)->RegisterMiKTeXUser ();
+    RegisteredMiKTeXUserInfo info;
+    SessionWrapper(true)->RegisterMiKTeXUser (info);
 #else
-      Utils::RegisterMiKTeXUser ();
+    Utils::RegisterMiKTeXUser ();
 #endif
-    }
+  }
+  catch (const OperationCancelledException &)
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
 }
 
 /* _________________________________________________________________________
