@@ -56,7 +56,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 	  0,
 	  flags,
 	  szPath);
-  if (hr == E_INVALIDARG && (nFolder != nFallbackFolder))
+  if ((hr == E_FAIL || hr == E_INVALIDARG) && (nFolder != nFallbackFolder))
     {
       hr =
 	SHGetFolderPathW(0,
