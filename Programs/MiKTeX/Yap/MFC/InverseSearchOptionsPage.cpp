@@ -231,7 +231,7 @@ LocateProgram (/*[in]*/ const char *  lpszSubDir,
 	       /*[out]*/ PathName &   path)
 {
   path =
-    Utils::GetFolderPath(CSIDL_PROGRAM_FILESX86, CSIDL_PROGRAM_FILESX86, true);
+    Utils::GetFolderPath(CSIDL_PROGRAM_FILESX86, CSIDL_PROGRAM_FILES, true);
   path += lpszSubDir;
   path += lpszFileName;
   return (File::Exists(path));
