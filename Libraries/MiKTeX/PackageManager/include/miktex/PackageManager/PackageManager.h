@@ -29,7 +29,7 @@
 #if ! defined(D5760AC70396FF41BBDD7DD560BDBBBC_)
 #define D5760AC70396FF41BBDD7DD560BDBBBC_
 
-#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG)
+#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG) || defined(_WIN64)
 #  define MIKTEX_EXTENDED_PACKAGEINFO 1
 #endif
 
