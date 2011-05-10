@@ -23,7 +23,7 @@
 #include <kpathsea/absolute.h>
 
 static const char _svn_version[] =
-    "$Id: texfileio.w 4229 2011-04-30 07:20:23Z taco $"
+    "$Id: texfileio.w 4256 2011-05-09 13:15:39Z taco $"
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 @ @c
@@ -784,17 +784,6 @@ except of course for a short time just after |job_name| has become nonzero.
 @c
 unsigned char *texmf_log_name;  /* full name of the log file */
 
-static void set_recorder_filename(char *filename) {
-    if (output_directory) {
-        filename = concat3(output_directory, DIR_SEP_STRING, filename);
-        recorder_change_filename(filename);
-        free(filename);
-    } else {
-        recorder_change_filename(filename);
-    }
-}
-
-
 @ The |open_log_file| routine is used to open the transcript file and to help
 it catch up to what has previously been printed on the terminal.
 
@@ -809,7 +798,7 @@ void open_log_file(void)
     if (job_name == 0)
         job_name = getjobname(maketexstring("texput")); /* TODO */
     fn = pack_job_name(".fls");
-    set_recorder_filename(fn);
+    recorder_change_filename(fn);
     fn = pack_job_name(".log");
     while (!lua_a_open_out(&log_file, fn, 0)) {
         /* Try to get a different log file name */
@@ -866,6 +855,26 @@ char *get_full_log_name (void)
        return xstrdup((const char*)texmf_log_name);
    } 
 }
+
+@ Synctex uses this to get the anchored path of an input file.
+
+@c
+char *luatex_synctex_get_current_name (void)
+{
+  char *pwdbuf = NULL, *ret;
+  int pwdbufsize = 2;
+  if (kpse_absolute_p(fullnameoffile, false)) {
+     return xstrdup(fullnameoffile);
+  }
+  do {
+    pwdbufsize = 2*pwdbufsize;
+    pwdbuf = xrealloc (pwdbuf, pwdbufsize);
+  } while (!getcwd(pwdbuf, pwdbufsize));
+  ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
+  free(pwdbuf) ;
+  return ret;
+}
+
 
 @ Let's turn now to the procedure that is used to initiate file reading
 when an `\.{\\input}' command is being processed.

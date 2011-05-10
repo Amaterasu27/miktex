@@ -507,7 +507,18 @@ static void init_kpse(void)
     }
     if (!user_progname) {
         if (ini_version) {
-            user_progname = input_name;
+            if (input_name) {
+                char *p = input_name + strlen(input_name) - 1;
+                while (p >= input_name) {
+                    if (IS_DIR_SEP (*p)) {
+                        p++;
+                        input_name = p;
+                        break;
+                    }
+                    p--;
+                }
+                user_progname = remove_suffix (input_name);
+            }
             if (!user_progname) {
                 user_progname = cleaned_invocation_name(argv[0]);
             }
@@ -777,6 +788,12 @@ void lua_initialize(int ac, char **av)
     argc = ac;
     argv = av;
 
+#if defined(MIKTEX)
+        if (asprintf(&banner, "This is LuaTeX, Version %s (%s)",
+                     luatex_version_string, MIKTEX_BANNER_STR) < 0) {
+            exit(EXIT_FAILURE);
+        }
+#else
     if (luatex_svn < 0) {
         if (asprintf(&banner, "This is LuaTeX, Version %s-%d",
                      luatex_version_string, luatex_date_info) < 0) {
@@ -788,6 +805,7 @@ void lua_initialize(int ac, char **av)
             exit(EXIT_FAILURE);
         }
     }
+#endif
     ptexbanner = banner;
 
     kpse_invocation_name = cleaned_invocation_name(argv[0]);
