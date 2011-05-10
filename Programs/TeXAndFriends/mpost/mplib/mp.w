@@ -1219,7 +1219,11 @@ str_number mp_rtsl (MP mp, const char *s, size_t l) {
     str->str = xmalloc (l + 1, 1);
     memcpy (str->str, s, (l + 1));
     str->len = tmp.len;
+#if defined(MIKTEX)
+    MIKTEX_VERIFY (avl_ins (str, mp->strings, avl_false) > 0);
+#else
     assert (avl_ins (str, mp->strings, avl_false) > 0);
+#endif
     xfree (str->str);
     xfree (str);
     str = (str_number) avl_find (&tmp, mp->strings);
@@ -1372,7 +1376,11 @@ str_number mp_make_string (MP mp) {                               /* current str
     str = xmalloc (1, sizeof (mp_lstring));
     str->str = mp->cur_string;
     str->len = tmp.len;
+#if defined(MIKTEX)
+    MIKTEX_VERIFY (avl_ins (str, mp->strings, avl_false) > 0);
+#else
     assert (avl_ins (str, mp->strings, avl_false) > 0);
+#endif
     str = (str_number) avl_find (&tmp, mp->strings);
     mp->pool_in_use = mp->pool_in_use + (integer) length (str);
     if (mp->pool_in_use > mp->max_pl_used)
@@ -4574,7 +4582,11 @@ static mp_sym mp_do_id_lookup (MP mp, avl_tree symbols, const char *j,
   str = (mp_sym) avl_find (s, symbols);
   if (str == NULL && insert_new) {
     mp->st_count++;
+#if defined(MIKTEX)
+    MIKTEX_VERIFY (avl_ins (s, symbols, avl_false) > 0);
+#else
     assert (avl_ins (s, symbols, avl_false) > 0);
+#endif
     str = (mp_sym) avl_find (s, symbols);
   }
   delete_symbols_entry (s);
