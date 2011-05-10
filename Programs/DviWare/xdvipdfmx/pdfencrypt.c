@@ -46,7 +46,6 @@
 
 #define MAX_KEY_LEN 16
 #define MAX_STR_LEN 32
-#define MAX_PWD_LEN 128
 
 static unsigned char algorithm, revision, key_size;
 static unsigned long permission;
@@ -79,8 +78,8 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
-#define PRODUCER "%s-%s, Copyright \251 2002 by Jin-Hwan Cho and Shunsaku Hirata"
-static void compute_id_string (char *dviname, char *pdfname)
+#define PRODUCER "%s-%s, Copyright \251 2002-2010 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
+void pdf_enc_compute_id_string (char *dviname, char *pdfname)
 {
   char *date_string, *producer;
   time_t current_time;
@@ -102,8 +101,10 @@ static void compute_id_string (char *dviname, char *pdfname)
   MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
   RELEASE (producer);
 
-  MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
-  MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
+  if (dviname)
+    MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
+  if (pdfname)
+    MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
   MD5_final(id_string, &md5_ctx);
 }
 
@@ -365,27 +366,33 @@ static char *getpass (const char *prompt)
 }
 #endif
 
-void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfname)
+void pdf_enc_set_passwd (unsigned bits, unsigned perm, const char *owner_pw, const char *user_pw)
 {
-  register char *retry_passwd;
+  char *retry_passwd;
 
-  while (1) {
-    strcpy(owner_passwd, getpass("Owner password: "));
-    retry_passwd = getpass("Re-enter owner password: ");
-    if (!strcmp(owner_passwd, retry_passwd))
-      break;
-    fputs("Password is not identical.\nTry again.\n", stderr);
-    fflush(stderr);
-  }
-
-  while (1) {
-    strcpy(user_passwd, getpass("User password: "));
-    retry_passwd = getpass("Re-enter user password: ");
-    if (!strcmp(user_passwd, retry_passwd))
-      break;
-    fputs("Password is not identical.\nTry again.\n", stderr);
-    fflush(stderr);
-  }
+  if (owner_pw) {
+    strncpy(owner_passwd, owner_pw, MAX_PWD_LEN);
+  } else
+    while (1) {
+      strncpy(owner_passwd, getpass("Owner password: "), MAX_PWD_LEN);
+      retry_passwd = getpass("Re-enter owner password: ");
+      if (!strncmp(owner_passwd, retry_passwd, MAX_PWD_LEN))
+	break;
+      fputs("Password is not identical.\nTry again.\n", stderr);
+      fflush(stderr);
+    }
+  
+  if (user_pw) {
+    strncpy(user_passwd, user_pw, MAX_PWD_LEN);
+  } else
+    while (1) {
+      strncpy(user_passwd, getpass("User password: "), MAX_PWD_LEN);
+      retry_passwd = getpass("Re-enter user password: ");
+      if (!strncmp(user_passwd, retry_passwd, MAX_PWD_LEN))
+	break;
+      fputs("Password is not identical.\nTry again.\n", stderr);
+      fflush(stderr);
+    }
 
   key_size = (unsigned char)(bits / 8);
   algorithm = (key_size == 5 ? 1 : 2);
@@ -394,7 +401,6 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfn
   if (revision == 3)
     permission |= 0xFFFFF000;
 
-  compute_id_string(dviname, pdfname);
   compute_owner_password();
   compute_user_password();
 }

@@ -17,10 +17,10 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4084
+#define MIKTEX_COMP_J2000_VERSION 4144
 #define MIKTEX_COMP_ORIG_VERSION_STR "0.7.8"
 
-#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 2006 SIL International and Jin-Hwan Cho"
-#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2006 SIL International and Jin-Hwan Cho"
+#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 2006-2001 SIL International and Jin-Hwan Cho"
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2006-2011 SIL International and Jin-Hwan Cho"
 
 #include <miktex/Core/Version>

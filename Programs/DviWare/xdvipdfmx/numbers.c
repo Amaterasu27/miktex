@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/numbers.c,v 1.8 2004/03/03 13:19:00 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/numbers.c,v 1.9 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
