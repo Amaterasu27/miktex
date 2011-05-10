@@ -36,7 +36,7 @@
 #  pragma once
 #endif
 
-#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG)
+#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG) || defined(_WIN64)
 #  define MIKTEX_USER_REGISTRATION 1
 #endif
 
@@ -351,8 +351,10 @@ struct RegisteredMiKTeXUserInfo
   std::string organization;
   std::string email;
   bool isRegistered;
+  time_t expirationDate;
   RegisteredMiKTeXUserInfo ()
-    : isRegistered (false)
+    : isRegistered (false),
+      expirationDate(static_cast<time_t>(-1))
   {
   }
 };

@@ -338,35 +338,64 @@ SessionImpl::TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo 
   if (haveResult == TriState::Undetermined)
   {
     haveResult = TriState::False;
-    string licenseFile;
-    if (! TryGetConfigValue(0, MIKTEX_REGVAL_LICENSE_FILE, licenseFile))
+    string reginfoFile;
+    if (! TryGetConfigValue(0, MIKTEX_REGVAL_REGINFO_FILE, reginfoFile))
     {
       return (false);
     }
-    if (! File::Exists(licenseFile))
+    if (! File::Exists(reginfoFile))
     {
       return (false);
     }
     SmartPointer<Cfg> pcfg (Cfg::Create());
-    pcfg->Read (licenseFile, true);
-    if (! pcfg->TryGetValue("license", "id", result.id))
+    pcfg->Read (reginfoFile, true);
+    if (! pcfg->TryGetValue("reginfo", "id", result.id))
     {
       return (false);
     }
     string str;
-    if (pcfg->TryGetValue("license", "isregistered", str))
+    if (pcfg->TryGetValue("reginfo", "isregistered", str))
     {
       result.isRegistered = (str == "yes");
     }
-    if (! pcfg->TryGetValue("license", "name", result.name))
+    if (pcfg->TryGetValue("reginfo", "expirationdate", str))
+    {
+      int year, month, day;
+      if (sscanf(str.c_str(), "%d-%d-%d", &year, &month, &day) != 3
+	  || year < 2011
+	  || month < 1 || month > 12
+	  || day < 1 || day > 31)
+      {
+	result.isRegistered = false;
+      }
+      else
+      {
+	struct tm date;
+	memset (&date, 0, sizeof(date));
+	date.tm_hour = 23;
+	date.tm_isdst = -1;
+	date.tm_mday = day;
+	date.tm_min = 59;
+	date.tm_mon = month - 1;
+	date.tm_sec = 59;
+	date.tm_year = year - 1900;
+	result.expirationDate = mktime(&date);
+	if (result.expirationDate == static_cast<time_t>(-1)
+	  || result.expirationDate < time(0))
+	{
+	  result.isRegistered = false;
+	}
+      }
+    }
+    if (! pcfg->TryGetValue("reginfo", "name", result.name))
     {
       return (false);
     }
-    if (! pcfg->TryGetValue("license", "organization", result.organization))
+    if (! pcfg->TryGetValue("reginfo", "organization", result.organization))
     {
       result.organization = "";
     }
-    if (! pcfg->TryGetValue("license", "email", result.email))
+    if (! pcfg->TryGetValue("reginfo", "email", result.email))
     {
       result.email = "";
     }
