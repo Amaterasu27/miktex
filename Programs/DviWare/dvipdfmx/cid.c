@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.33 2009/05/06 01:50:55 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.34 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

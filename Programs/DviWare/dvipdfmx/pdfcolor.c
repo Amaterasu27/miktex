@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.17 2008/12/11 16:03:04 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfcolor.c,v 1.18 2011/03/06 03:14:14 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

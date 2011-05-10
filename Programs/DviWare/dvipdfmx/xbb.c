@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.29 2009/10/10 09:58:48 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.30 2011/03/06 03:14:15 chofchof Exp $
 
     This is extractbb, a bounding box extraction program.
 

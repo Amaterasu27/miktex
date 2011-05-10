@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.h,v 1.10 2008/05/08 18:51:59 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.h,v 1.11 2011/03/06 03:14:15 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
