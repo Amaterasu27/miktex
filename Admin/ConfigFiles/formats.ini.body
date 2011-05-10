@@ -136,6 +136,7 @@ input=mltex.ini
 
 [mpost]
 
+attributes=exclude
 compiler=mpost
 description=MetaPost default mem file
 input=mpost.ini
