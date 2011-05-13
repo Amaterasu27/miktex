@@ -82,3 +82,4 @@ Thu Jun 19 09:39:21 UTC 2008
 #  define SYNCTEX_LINE_MODEL(NODE,TYPE)\
                 mem[NODE+TYPE##_node_size-synchronization_field_size].hh.rh
 #endif
+#  define SYNCTEX_GET_CURRENT_NAME() generic_synctex_get_current_name()
