@@ -226,8 +226,8 @@ AboutDialog::OnClickRegisterMiKTeXUser ()
 {
   try
   {
-#if MIKTEX_USER_REGISTRATION
-    RegisteredMiKTeXUserInfo info;
+#if HAVE_MIKTEX_USER_INFO
+    MiKTeXUserInfo info;
     SessionWrapper(true)->RegisterMiKTeXUser (info);
 #else
     Utils::RegisterMiKTeXUser ();

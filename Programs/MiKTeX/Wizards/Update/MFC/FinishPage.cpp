@@ -46,10 +46,9 @@ FinishPage::FinishPage()
     visitWebSite (BST_CHECKED),
     pSheet (0)
 {
-#if MIKTEX_USER_REGISTRATION
-  RegisteredMiKTeXUserInfo info;
-  if (SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(info)
-    && info.isRegistered)
+#if HAVE_MIKTEX_USER_INFO
+  MiKTeXUserInfo info;
+  if (SessionWrapper(true)->TryGetMiKTeXUserInfo(info) && info.IsMember())
   {
     visitWebSite = BST_UNCHECKED;
   }

@@ -37,7 +37,7 @@
 #endif
 
 #if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG) || defined(_WIN64)
-#  define MIKTEX_USER_REGISTRATION 1
+#  define HAVE_MIKTEX_USER_INFO 1
 #endif
 
 #if ! defined(A089FEF06254514BA063DED44B70E66F)
@@ -341,22 +341,36 @@ public:
 
 /* _________________________________________________________________________
    
-   RegisteredMiKTeXUserInfo
+   MiKTeXUserInfo
    _________________________________________________________________________ */
 
-struct RegisteredMiKTeXUserInfo
+struct MiKTeXUserInfo
 {
+  enum { Developer = 1, Contributor = 2, Sponsor = 4, KnownUser = 8 };
+  enum { Individual = 100 };
   std::string id;
   std::string name;
   std::string organization;
   std::string email;
-  bool isRegistered;
+  int role;
+  int level;
   time_t expirationDate;
-  RegisteredMiKTeXUserInfo ()
-    : isRegistered (false),
-      expirationDate(static_cast<time_t>(-1))
+  MiKTeXUserInfo ()
+    : role (0),
+      level (0),
+      expirationDate (static_cast<time_t>(-1))
   {
   }
+  bool IsMember () const
+  {
+    return (level >= Individual
+            && expirationDate != static_cast<time_t>(-1)
+            && expirationDate >= time(0));
+  }
+  bool IsDeveloper () const { return (IsMember() && (role & Developer) != 0); }
+  bool IsContributor () const { return (IsMember() && (role & Contributor) != 0); }
+  bool IsSponsor () const { return (IsMember() && (role & Sponsor) != 0); }
+  bool IsKnownUser () const { return (IsMember() && (role & KnownUser) != 0); }
 };
 
 /* _________________________________________________________________________
@@ -1801,14 +1815,14 @@ public:
   MIKTEXCORECEEAPI(bool)
   IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root);
 
-#if ! MIKTEX_USER_REGISTRATION
+#if ! HAVE_MIKTEX_USER_INFO
 public:
   static
   MIKTEXCORECEEAPI(void)
   RegisterMiKTeXUser ();
 #endif
 
-#if ! MIKTEX_USER_REGISTRATION
+#if ! HAVE_MIKTEX_USER_INFO
 public:
   static
   MIKTEXCORECEEAPI(bool)
@@ -6773,19 +6787,19 @@ public:
   SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo)
     = 0;
 
-#if MIKTEX_USER_REGISTRATION
+#if HAVE_MIKTEX_USER_INFO
 public:
   virtual
-  RegisteredMiKTeXUserInfo
-  RegisterMiKTeXUser (/*[in]*/ const RegisteredMiKTeXUserInfo & info)
+  MiKTeXUserInfo
+  RegisterMiKTeXUser (/*[in]*/ const MiKTeXUserInfo & info)
     = 0;
 #endif
 
-#if MIKTEX_USER_REGISTRATION
+#if HAVE_MIKTEX_USER_INFO
 public:
   virtual
   bool
-  TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo & info)
+  TryGetMiKTeXUserInfo (/*[out]*/ MiKTeXUserInfo & info)
     = 0;
 #endif
 

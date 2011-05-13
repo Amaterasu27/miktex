@@ -326,78 +326,99 @@ SessionImpl::GetMakeFontsFlag ()
 
 /* _________________________________________________________________________
 
-   SessionImpl::TryGetRegisteredMiKTeXUserInfo
+   SessionImpl::TryGetMiKTeXUserInfo
    _________________________________________________________________________ */
 
-#if MIKTEX_USER_REGISTRATION
+#if HAVE_MIKTEX_USER_INFO
 bool
-SessionImpl::TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo & info)
+SessionImpl::TryGetMiKTeXUserInfo (/*[out]*/ MiKTeXUserInfo & info)
 {
   static TriState haveResult = TriState::Undetermined;
-  static RegisteredMiKTeXUserInfo result;
+  static MiKTeXUserInfo result;
   if (haveResult == TriState::Undetermined)
   {
     haveResult = TriState::False;
-    string reginfoFile;
-    if (! TryGetConfigValue(0, MIKTEX_REGVAL_REGINFO_FILE, reginfoFile))
+    string userInfoFile;
+    if (! TryGetConfigValue(0, MIKTEX_REGVAL_USERINFO_FILE, userInfoFile))
     {
       return (false);
     }
-    if (! File::Exists(reginfoFile))
+    if (! File::Exists(userInfoFile))
     {
       return (false);
     }
     SmartPointer<Cfg> pcfg (Cfg::Create());
-    pcfg->Read (reginfoFile, true);
-    if (! pcfg->TryGetValue("reginfo", "id", result.id))
+    pcfg->Read (userInfoFile, true);
+    if (! pcfg->TryGetValue("user", "id", result.id))
     {
       return (false);
     }
-    string str;
-    if (pcfg->TryGetValue("reginfo", "isregistered", str))
-    {
-      result.isRegistered = (str == "yes");
-    }
-    if (pcfg->TryGetValue("reginfo", "expirationdate", str))
-    {
-      int year, month, day;
-      if (sscanf(str.c_str(), "%d-%d-%d", &year, &month, &day) != 3
-	  || year < 2011
-	  || month < 1 || month > 12
-	  || day < 1 || day > 31)
-      {
-	result.isRegistered = false;
-      }
-      else
-      {
-	struct tm date;
-	memset (&date, 0, sizeof(date));
-	date.tm_hour = 23;
-	date.tm_isdst = -1;
-	date.tm_mday = day;
-	date.tm_min = 59;
-	date.tm_mon = month - 1;
-	date.tm_sec = 59;
-	date.tm_year = year - 1900;
-	result.expirationDate = mktime(&date);
-	if (result.expirationDate == static_cast<time_t>(-1)
-	  || result.expirationDate < time(0))
-	{
-	  result.isRegistered = false;
-	}
-      }
-    }
-    if (! pcfg->TryGetValue("reginfo", "name", result.name))
+    if (! pcfg->TryGetValue("user", "name", result.name))
     {
       return (false);
     }
-    if (! pcfg->TryGetValue("reginfo", "organization", result.organization))
+    if (! pcfg->TryGetValue("user", "organization", result.organization))
     {
       result.organization = "";
     }
-    if (! pcfg->TryGetValue("reginfo", "email", result.email))
+    if (! pcfg->TryGetValue("user", "email", result.email))
     {
       result.email = "";
+    }
+    string str;
+    if (pcfg->TryGetValue("membership", "expirationdate", str))
+    {
+      int year, month, day;
+      if (sscanf(str.c_str(), "%d-%d-%d", &year, &month, &day) == 3
+	  && year >= 1970
+	  && month >= 1 && month <= 12
+	  && day >= 1 || day <= 31)
+      {
+	struct tm date;
+	memset (&date, 0, sizeof(date));
+	date.tm_year = year - 1900;
+	date.tm_mon = month - 1;
+	date.tm_mday = day;
+	date.tm_hour = 23;
+	date.tm_min = 59;
+	date.tm_sec = 59;
+	date.tm_isdst = -1;
+	result.expirationDate = mktime(&date);
+      }
+    }
+    if (pcfg->TryGetValue("membership", "level", str))
+    {
+      if (StringCompare(str.c_str(), "individual", true) == 0)
+      {
+	result.level = MiKTeXUserInfo::Individual;
+      }
+      else
+      {
+	result.level = atoi(str.c_str());
+      }
+    }
+    if (pcfg->TryGetValue("membership", "role", str))
+    {
+      if (StringCompare(str.c_str(), "developer", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Developer;
+      }
+      else if (StringCompare(str.c_str(), "contributor", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Contributor;
+      }
+      else if (StringCompare(str.c_str(), "sponsor", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Sponsor;
+      }
+      else if (StringCompare(str.c_str(), "knownuser", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::KnownUser;
+      }
+      else
+      {
+	result.role = atoi(str.c_str());
+      }
     }
     haveResult = TriState::True;
   }
@@ -412,12 +433,12 @@ SessionImpl::TryGetRegisteredMiKTeXUserInfo (/*[out]*/ RegisteredMiKTeXUserInfo 
 
 /* _________________________________________________________________________
 
-   SessionImpl::TryGetRegisteredMiKTeXUserInfo
+   SessionImpl::TryGetMiKTeXUserInfo
    _________________________________________________________________________ */
 
-#if MIKTEX_USER_REGISTRATION
-RegisteredMiKTeXUserInfo
-SessionImpl::RegisterMiKTeXUser (/*[in]*/ const RegisteredMiKTeXUserInfo & info)
+#if HAVE_MIKTEX_USER_INFO
+MiKTeXUserInfo
+SessionImpl::RegisterMiKTeXUser (/*[in]*/ const MiKTeXUserInfo & info)
 {
   Utils::ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
   // TODO
@@ -430,7 +451,7 @@ SessionImpl::RegisterMiKTeXUser (/*[in]*/ const RegisteredMiKTeXUserInfo & info)
    Utils::IsRegisteredMiKTeXUser
    _________________________________________________________________________ */
 
-#if ! MIKTEX_USER_REGISTRATION
+#if ! HAVE_MIKTEX_USER_INFO
 bool
 Utils::IsRegisteredMiKTeXUser ()
 {
@@ -443,7 +464,7 @@ Utils::IsRegisteredMiKTeXUser ()
    Utils::RegisterMiKTeXUser
    _________________________________________________________________________ */
 
-#if ! MIKTEX_USER_REGISTRATION
+#if ! HAVE_MIKTEX_USER_INFO
 void
 Utils::RegisterMiKTeXUser ()
 {
