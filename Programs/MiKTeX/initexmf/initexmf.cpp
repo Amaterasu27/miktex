@@ -2748,10 +2748,6 @@ IniTeXMFApp::SetConfigValue (/*[in]*/ const char *  lpszValueSpec)
 	}
       ++ lpsz;
     }
-  else
-    {
-      FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
-    }
   string valueName;
   for (; *lpsz != 0 && *lpsz != '='; ++ lpsz)
     {
@@ -2795,10 +2791,6 @@ IniTeXMFApp::ShowConfigValue (/*[in]*/ const char *  lpszValueSpec)
 	  FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
 	}
       ++ lpsz;
-    }
-  else
-    {
-      FatalError (T_("Invalid value: %s."), Q_(lpszValueSpec));
     }
   string valueName = lpsz;
   string value;
