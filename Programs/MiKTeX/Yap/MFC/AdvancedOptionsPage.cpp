@@ -73,7 +73,8 @@ AdvancedOptionsPage::OnApply ()
     {
       g_pYapConfig->checkFileTypeAssociations =
 	(checkFileTypeAssociations ? true : false);
-      
+      g_pYapConfig->showSplashWindow =
+	(showSplashWindow ? true : false);
       return (CPropertyPage::OnApply());
     }
   catch (const MiKTeXException & e)
@@ -108,14 +109,5 @@ BOOL
 AdvancedOptionsPage::OnInitDialog ()
 {
   BOOL ret = CPropertyPage::OnInitDialog();
-#if MIKTEX_USER_REGISTRATION
-  RegisteredMiKTeXUserInfo info;
-  if (showSplashWindow && ! (SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(info) && info.isRegistered))
-  {
-    GetDlgItem(IDC_CHECK_SPLASH)->EnableWindow (FALSE);
-  }
-#else
-  GetDlgItem(IDC_CHECK_SPLASH)->EnableWindow (FALSE);
-#endif
   return (ret);
 }

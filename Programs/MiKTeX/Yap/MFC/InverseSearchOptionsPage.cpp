@@ -52,7 +52,11 @@ ReadPath (/*[in]*/ HKEY		    hkeyRoot,
 	  /*[out]*/ PathName &	    path)
 {
   HKEY hkey;
-  if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, KEY_READ, &hkey) != ERROR_SUCCESS)
+  REGSAM samDesired = KEY_READ;
+#if defined(MIKTEX_WINDOWS_64)
+  samDesired |= KEY_WOW64_32KEY;
+#endif
+  if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, samDesired, &hkey) != ERROR_SUCCESS)
   {
     return (false);
   }

@@ -215,25 +215,10 @@ YapConfig::Load ()
     pCfg->Read (fileName);
   }
 
-#if MIKTEX_USER_REGISTRATION
-  RegisteredMiKTeXUserInfo userInfo;
-  bool isRegisteredUser = (SessionWrapper(true)->TryGetRegisteredMiKTeXUserInfo(userInfo) && userInfo.isRegistered);
-#else
-  bool isRegisteredUser = false;
-#endif
-
   //
   // [Settings]
   //
-  if (isRegisteredUser)
-  {
-    showSplashWindow =
-      GetValue("Settings", "Show Splash Window", true);
-  }
-  else
-  {
-    showSplashWindow = true;
-  }
+  showSplashWindow = GetValue("Settings", "Show Splash Window", true);
   checkFileTypeAssociations =
     GetValue("Settings", "Check Associations", true);
   inverseSearchCommandLine = GetValue("Settings", "Editor", DefaultInverseSearchTemplate());
