@@ -212,7 +212,7 @@ class PackageCreator
 public:
   PackageCreator ()
     : optVerbose (false),
-      timePackaged (static_cast<time_t>(-1)),
+      programStartTime (static_cast<time_t>(-1)),
       texmfPrefix ("texmf"),
       defaultLevel ('T'),
       miktexSeries (MIKTEX_SERIES_STR),
@@ -434,6 +434,13 @@ protected:
 		     /*[in]*/ const PathName &		repository);
 
 protected:
+  bool
+  HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
+			  /*[in]*/ const string &	deploymentName,
+			  /*[out]*/ PathName &		archiveFile,
+			  /*[out]*/ ArchiveFileType &	archiveFileType);
+
+protected:
   Cfg *
   LoadDbLight (/*[in]*/ const PathName & repository);
 
@@ -483,7 +490,7 @@ private:
 
 private:
   // value of "TPM:TimePackaged"
-  time_t timePackaged;
+  time_t programStartTime;
 
 private:
   string texmfPrefix;
@@ -1092,7 +1099,7 @@ PackageCreator::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
 	      packageinfo.deploymentName.c_str(),
 	      MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX),
      packageinfo,
-     timePackaged);
+     programStartTime);
 
   // copy files and calculate digests
   FileDigestTable fileDigests;
@@ -1202,7 +1209,7 @@ PackageCreator::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
 
   // get TDS digest (optional value)
   string str;
-  if (pCfg->TryGetValue(0, "md5", str))
+  if (pCfg->TryGetValue(0, "MD5", str))
     {
       packageInfo.digest = MD5::Parse(str.c_str());
     }
@@ -1246,6 +1253,7 @@ PackageCreator::GetPackageLevel (/*[in]*/ const MpcPackageInfo & packageInfo)
    PackageCreator::GetPackageArchiveFileType
    _________________________________________________________________________ */
 
+#if 0
 ArchiveFileType
 PackageCreator::GetPackageArchiveFileType
 (/*[in]*/ const MpcPackageInfo &	packageInfo)
@@ -1259,6 +1267,7 @@ PackageCreator::GetPackageArchiveFileType
     }
   return (it->second.archiveFileType);
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -1507,7 +1516,7 @@ PackageCreator::BuildTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTa
 			it->second.digest.ToString().c_str());
       dbLight.PutValue (it->second.deploymentName.c_str(),
 			"TimePackaged",
-			NUMTOSTR(timePackaged));
+			NUMTOSTR(programStartTime));
       if (! it->second.version.empty())
 	{
 	  dbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1698,9 +1707,9 @@ PackageCreator::CreateRepositoryInformationFile
       lastupd += it->deploymentName;
     }
   const time_t t2000 = 946681200;
-  int days = static_cast<int>((timePackaged - t2000) / (60 * 60 * 24));
+  int days = static_cast<int>((programStartTime - t2000) / (60 * 60 * 24));
   SmartPointer<Cfg> pCfg (Cfg::Create());
-  pCfg->PutValue ("repository", "date", NUMTOSTR(timePackaged));
+  pCfg->PutValue ("repository", "date", NUMTOSTR(programStartTime));
   pCfg->PutValue ("repository", "version", NUMTOSTR(days));
   pCfg->PutValue ("repository",
 		  "lstdigest",
@@ -2057,23 +2066,22 @@ PackageCreator::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
 
 /* _________________________________________________________________________
 
-   PackageCreator::CreateArchiveFile
+   PackageCreator::HavePackageArchiveFile
    _________________________________________________________________________ */
 
-ArchiveFileType
-PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
-				   /*[in]*/ const PathName &	repository)
+bool
+PackageCreator::HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
+					/*[in]*/ const string &		deploymentName,
+					/*[out]*/ PathName &		archiveFile,
+					/*[out]*/ ArchiveFileType &	archiveFileType)
 {
-  PathName archiveFile;
+  PathName archiveFile2;
 
-  bool reuseExisting = false;
-
-  ArchiveFileType archiveFileType (ArchiveFileType::None);
+  archiveFileType = ArchiveFileType::None;
 
   // check to see whether a cabinet file exists
-  PathName archiveFile2;
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_CABINET_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2101,7 +2109,25 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       archiveFileType = ArchiveFileType::TarLzma;
     }
 
-  if (archiveFileType != ArchiveFileType::None)
+  return (archiveFileType != ArchiveFileType::None);
+}
+
+/* _________________________________________________________________________
+
+   PackageCreator::CreateArchiveFile
+   _________________________________________________________________________ */
+
+ArchiveFileType
+PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
+				   /*[in]*/ const PathName &		repository)
+{
+  PathName archiveFile;
+
+  bool reuseExisting = false;
+
+  ArchiveFileType archiveFileType (ArchiveFileType::None);
+
+  if (HavePackageArchiveFile(packageInfo.deploymentName, repository, archiveFile, archiveFileType))
     {
       Verbose (T_("Checking %s..."), archiveFile.Get());
 
@@ -2139,7 +2165,11 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 
   if (! reuseExisting)
     {
+#if 1
+      archiveFileType = defaultArchiveFileType;
+#else
       archiveFileType = GetPackageArchiveFileType(packageInfo);
+#endif
 
       PathName packageArchiveFile (packageInfo.deploymentName.c_str());
       packageArchiveFile.AppendExtension
@@ -2170,12 +2200,28 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 	(packageDefinitionDir,
 	 packageInfo.deploymentName.c_str(),
 	 MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
-      
+
+#if 1
+      // keep the time-stamp, if possible
+      string strMD5;
+      string strTimePackaged;
+      if (dblight.TryGetValue(packageInfo.deploymentName.c_str(), "MD5", strMD5)
+	  && MD5::Parse(strMD5.c_str()) == packageInfo.digest
+	  && dblight.TryGetValue(packageInfo.deploymentName.c_str(), "TimePackaged", strTimePackaged))
+	{
+	  packageInfo.timePackaged = atoi(strTimePackaged.c_str());
+	}
+      else
+	{
+	  packageInfo.timePackaged = programStartTime;
+	}
+#endif
+
       // create the package definition file
       PackageManager::WritePackageDefinitionFile
 	(packageDefinitionFile,
 	 packageInfo,
-	 timePackaged);
+	 packageInfo.timePackaged);
       
       string command;
       
@@ -2231,13 +2277,11 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
   // get MD5 of archive file
   packageInfo.archiveFileDigest = MD5::FromFile(archiveFile.Get());
 
-  if (! reuseExisting)
-    {
-      packageInfo.timePackaged = timePackaged;
-
-      // touch the new archive file
-      File::SetTimes (archiveFile, timePackaged, timePackaged, timePackaged);
-    }
+  // touch the new archive file
+  File::SetTimes (archiveFile,
+		  packageInfo.timePackaged,
+		  packageInfo.timePackaged,
+		  packageInfo.timePackaged);
 
   return (archiveFileType);
 }
@@ -2396,10 +2440,13 @@ PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packag
 
       // get TDS digest of already existing package
       string str;
-      if (dbLight.TryGetValue(it->second.deploymentName.c_str(), "md5", str))
+      if (dbLight.TryGetValue(it->second.deploymentName.c_str(), "MD5", str))
 	{
 	  // don't remake archive file if there are no changes
-	  if (MD5::Parse(str.c_str()) == it->second.digest)
+	  PathName archiveFile;
+	  ArchiveFileTYpe archiveFileTyp (ArchiveFileType::None);
+	  if (MD5::Parse(str.c_str()) == it->second.digest
+	      && HavePackageArchiveFile(str, repository, archiveFile, archiveFileType))
 	    {
 #if 0
 	      Verbose (T_("%s hasn't changed => skipping"),
@@ -2673,7 +2720,7 @@ PackageCreator::Run (/*[in]*/ int		argc,
   bool optVersion = false;
 
   optVerbose = false;
-  timePackaged = time(0);
+  programStartTime = time(0);
 
   Cpopt popt (argc, argv, options);
 
@@ -2729,7 +2776,7 @@ PackageCreator::Run (/*[in]*/ int		argc,
 	  texmfPrefix = lpszOptArg;
 	  break;
 	case OPT_TIME_PACKAGED:
-	  timePackaged = atoi(lpszOptArg);
+	  programStartTime = atoi(lpszOptArg);
 	  break;
 	case OPT_TPM_DIR:
 	  tpmDir = lpszOptArg;
