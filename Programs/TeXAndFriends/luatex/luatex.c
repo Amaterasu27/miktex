@@ -15,16 +15,16 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 4248 2011-05-05 13:56:58Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/luatex.c $";
+    "$Id: luatex.c 4276 2011-05-19 05:11:57Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.70.1/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
 
 int luatex_svn = luatex_svn_revision;
 int luatex_version = 70;        /* \.{\\luatexversion}  */
-int luatex_revision = '0';      /* \.{\\luatexrevision}  */
+int luatex_revision = '1';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
-const char *luatex_version_string = "beta-0.70.0";
+const char *luatex_version_string = "beta-0.70.1";
 const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
@@ -669,10 +669,7 @@ static void ipc_snd(int n, int is_eof, char *data)
 
 
 /* This routine notifies the server if there is an eof, or the filename
-   if a new DVI file is starting.  This is the routine called by TeX.
-   Aleph defines str_start(#) as str_start_ar[# - too_big_char], with
-   too_big_char = biggest_char + 1 = 65536 (omstr.ch).*/
-
+   if a new DVI file is starting.  This is the routine called by TeX.  */
 void ipcpage(int is_eof)
 {
     static boolean begun = false;
@@ -690,7 +687,7 @@ void ipcpage(int is_eof)
            preview program.  */
 	name = static_pdf->file_name;
         p = concat3(cwd, DIR_SEP_STRING, name);
-        /* free(name); */
+        free(cwd);
         len = strlen(p);
         begun = true;
     }

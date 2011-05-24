@@ -23,7 +23,7 @@
 #include <kpathsea/absolute.h>
 
 static const char _svn_version[] =
-    "$Id: texfileio.w 4256 2011-05-09 13:15:39Z taco $"
+    "$Id: texfileio.w 4272 2011-05-17 14:10:30Z taco $"
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 @ @c
@@ -862,14 +862,10 @@ char *get_full_log_name (void)
 char *luatex_synctex_get_current_name (void)
 {
   char *pwdbuf = NULL, *ret;
-  int pwdbufsize = 2;
   if (kpse_absolute_p(fullnameoffile, false)) {
      return xstrdup(fullnameoffile);
   }
-  do {
-    pwdbufsize = 2*pwdbufsize;
-    pwdbuf = xrealloc (pwdbuf, pwdbufsize);
-  } while (!getcwd(pwdbuf, pwdbufsize));
+  pwdbuf = xgetcwd();
   ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
   free(pwdbuf) ;
   return ret;

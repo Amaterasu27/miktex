@@ -68,10 +68,6 @@ static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
 #if defined(MIKTEX)
 const char * ptexbanner = "This is MiKTeX-pdfTeX " MIKTEX_COMPONENT_VERSION_STR;
-#else
-extern string ptexbanner;       /* from web2c/lib/texmfmp.c */
-extern string versionstring;    /* from web2c/lib/version.c */
-extern KPSEDLL string kpathsea_version_string;  /* from kpathsea/version.c */
 #endif
 
 size_t last_ptr_index;          /* for use with alloc_array */

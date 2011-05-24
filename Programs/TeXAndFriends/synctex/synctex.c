@@ -733,6 +733,7 @@ void synctexstartinput(void)
 	    /* C++: typecast needed */
             synctex_ctxt.root_name = (char*)xrealloc(synctex_ctxt.root_name, strlen("texput") + 1);
 #else
+            synctex_ctxt.root_name = xrealloc(synctex_ctxt.root_name, strlen("texput") + 1);
 #endif /* MIKTEX */
             strcpy(synctex_ctxt.root_name, "texput");
         }
