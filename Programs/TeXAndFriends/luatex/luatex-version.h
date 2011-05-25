@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4150
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.70.0"
+#define MIKTEX_COMP_J2000_VERSION 4162
+#define MIKTEX_COMP_ORIG_VERSION_STR "0.70.1"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 1996-2006 Han The Thanh, (C) 2006-2008 Taco Hoekwater"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1996-2006 Han The Thanh, © 2006-2008 Taco Hoekwater"

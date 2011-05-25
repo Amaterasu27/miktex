@@ -773,6 +773,19 @@ miktex_xfopen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
+   miktex_xgetcwd
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_xgetcwd ()
+{
+  PathName path;
+  path.SetToCurrentDirectory ();
+  return (xstrdup(path.Get()));
+}
+
+/* _________________________________________________________________________
+
    miktex_kpse_bitmap_tolerance
 
    [KB] The tolerances change whether we base things on DPI1 or DPI2.

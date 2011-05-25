@@ -431,6 +431,8 @@ MIKTEX_END_EXTERN_C_BLOCK
 #  define xputenv(var, value) kpathsea_xputenv(kpse_def, var, value)
 #endif
 
+#define xgetcwd() miktex_xgetcwd()
+
 /* _________________________________________________________________________
 
    concatn.h
@@ -951,6 +953,9 @@ miktex_xftello (/*[in]*/ FILE *		pfile,
 MIKTEXKPSCEEAPI(MIKTEX_INT64)
 miktex_xftello64 (/*[in]*/ FILE *	pfile,
 	          /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_xgetcwd ();
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK
