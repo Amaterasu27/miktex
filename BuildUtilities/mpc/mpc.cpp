@@ -431,7 +431,8 @@ protected:
 protected:
   ArchiveFileType
   CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
-		     /*[in]*/ const PathName &		repository);
+		     /*[in]*/ const PathName &		repository,
+		     /*[in]*/ Cfg &			dblight);
 
 protected:
   bool
@@ -2091,7 +2092,7 @@ PackageCreator::HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
 
   // check to see whether a .tar.bz2 file exists
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_TARBZIP2_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2101,7 +2102,7 @@ PackageCreator::HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
 
   // check to see whether a .tar.lzma file exists
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_TARLZMA_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2119,7 +2120,8 @@ PackageCreator::HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
 
 ArchiveFileType
 PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
-				   /*[in]*/ const PathName &		repository)
+				   /*[in]*/ const PathName &		repository,
+				   /*[in]*/ Cfg &			dblight)
 {
   PathName archiveFile;
 
@@ -2127,7 +2129,7 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
 
   ArchiveFileType archiveFileType (ArchiveFileType::None);
 
-  if (HavePackageArchiveFile(packageInfo.deploymentName, repository, archiveFile, archiveFileType))
+  if (HavePackageArchiveFile(repository, packageInfo.deploymentName, archiveFile, archiveFileType))
     {
       Verbose (T_("Checking %s..."), archiveFile.Get());
 
@@ -2444,9 +2446,9 @@ PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packag
 	{
 	  // don't remake archive file if there are no changes
 	  PathName archiveFile;
-	  ArchiveFileTYpe archiveFileTyp (ArchiveFileType::None);
+	  ArchiveFileType archiveFileType (ArchiveFileType::None);
 	  if (MD5::Parse(str.c_str()) == it->second.digest
-	      && HavePackageArchiveFile(str, repository, archiveFile, archiveFileType))
+	    && HavePackageArchiveFile(repository, it->second.deploymentName, archiveFile, archiveFileType))
 	    {
 #if 0
 	      Verbose (T_("%s hasn't changed => skipping"),
@@ -2458,7 +2460,7 @@ PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packag
 
       // create the archive file
       ArchiveFileType archiveFileType =
-	CreateArchiveFile(it->second, repository);
+	CreateArchiveFile(it->second, repository, dbLight);
 
       // update database records
       dbLight.PutValue (it->second.deploymentName.c_str(),
