@@ -659,7 +659,11 @@ CompareSerieses (/*[in]*/ const string &	ver1,
    PackageInstallerImpl::FindUpdates
    _________________________________________________________________________ */
 
-#define MAVERICK T_("miktex-bin") "-" MIKTEX_SERIES_STR
+#if defined(MIKTEX_WINDOWS_64)
+#define MAVERICK "miktex-bin" "-" "x64" "-" MIKTEX_SERIES_STR
+#else
+#define MAVERICK "miktex-bin" "-" MIKTEX_SERIES_STR
+#endif
 
 void
 PackageInstallerImpl::FindUpdates ()
@@ -3021,6 +3025,7 @@ PackageInstallerImpl::UpdateDb ()
       PathName newPackageDefinitionFile (tempDir, name);
       tpmparser.Parse (newPackageDefinitionFile);
 
+#if 0
       PackageInfo currentPackageInfo;
       if (! IsPureContainer(szDeploymentName)
 	  && pManager->TryGetPackageInfo(szDeploymentName, currentPackageInfo)
@@ -3029,6 +3034,7 @@ PackageInstallerImpl::UpdateDb ()
 	// nothing new
 	continue;
       }
+#endif
       
       // move the new package definition file into the package
       // definition directory
