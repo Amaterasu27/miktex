@@ -29,9 +29,7 @@
 #if ! defined(D5760AC70396FF41BBDD7DD560BDBBBC_)
 #define D5760AC70396FF41BBDD7DD560BDBBBC_
 
-#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG) || defined(_WIN64)
-#  define MIKTEX_EXTENDED_PACKAGEINFO 1
-#endif
+#define MIKTEX_EXTENDED_PACKAGEINFO 1
 
 #include <miktex/Core/Core>
 
@@ -140,6 +138,7 @@ struct PackageInfo
   std::string licenseType;
   std::string copyrightOwner;
   std::string copyrightYear;
+  std::string versionDate;
 #endif
 
   /// Initializes a new package info struct.
