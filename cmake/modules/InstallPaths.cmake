@@ -1,6 +1,6 @@
 ## InstallPaths.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -55,17 +55,14 @@ if(MIKTEX_WORDS_BIGENDIAN)
   set(rel_miktex_base_dir "miktex/data/be")
   set(rel_miktex_fmt_dir "miktex/data/be")
   set(rel_miktex_fndb_dir "miktex/data/be")
-  set(rel_miktex_mem_dir "miktex/data/be")
 else(MIKTEX_WORDS_BIGENDIAN)
   set(rel_miktex_base_dir "miktex/data/le")
   set(rel_miktex_fmt_dir "miktex/data/le")
   set(rel_miktex_fndb_dir "miktex/data/le")
-  set(rel_miktex_mem_dir "miktex/data/le")
 endif(MIKTEX_WORDS_BIGENDIAN)
 
 set(basedir "${texmfdir}/${rel_miktex_base_dir}")
 set(formatdir "${texmfdir}/${rel_miktex_fmt_dir}")
-set(memdir "${texmfdir}/${rel_miktex_mem_dir}")
 
 set(rel_miktex_doc_dir "doc/miktex")
 
