@@ -2139,10 +2139,6 @@ IniTeXMFApp::MakeFormatFile (/*[in]*/ const char * lpszFormatKey)
     {
       maker = MIKTEX_MAKEBASE_EXE;
     }
-  else if (formatInfo.compiler == "mpost")
-    {
-      maker = MIKTEX_MAKEMEM_EXE;
-    }
   else
     {
       maker = MIKTEX_MAKEFMT_EXE;

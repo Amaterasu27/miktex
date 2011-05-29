@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -38,7 +38,6 @@ set(${makex_target_name}_sources
   internal.h
   makebase.cpp
   makefmt.cpp
-  makemem.cpp
   makemf.cpp
   makepk.cpp
   maketfm.cpp
@@ -77,7 +76,6 @@ endif(LINK_EVERYTHING_STATICALLY)
 set(exes
   makebase
   makefmt
-  makemem
   makemf
   makepk
   maketfm
