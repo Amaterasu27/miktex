@@ -36,9 +36,7 @@
 #  pragma once
 #endif
 
-#if 0 || defined(MIKTEX_STATIC) || defined(_DEBUG) || defined(_WIN64)
-#  define HAVE_MIKTEX_USER_INFO 1
-#endif
+#define HAVE_MIKTEX_USER_INFO 1
 
 #if ! defined(A089FEF06254514BA063DED44B70E66F)
 #define A089FEF06254514BA063DED44B70E66F
@@ -3900,8 +3898,7 @@ public:
     LIG,
     LUA,
     MAP,
-    /// MetaPost memory files (*.mem).
-    MEM,
+    MEM, // OBSOLETE
     MF,
     MFPOOL,
     MFT,

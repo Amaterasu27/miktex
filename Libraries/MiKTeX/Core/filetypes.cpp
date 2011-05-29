@@ -545,7 +545,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 	"mem",
 	"MetaPost",
 	".mem",
-	P2_(CURRENT_DIRECTORY, s_(MIKTEX_PATH_MEM_DIR)),
+	CURRENT_DIRECTORY,
 	"");
       break;
   
@@ -1099,7 +1099,6 @@ SessionImpl::TryCreateFile (/*[in]*/ const char * lpszFileName,
   {
   case FileType::BASE:
   case FileType::FMT:
-  case FileType::MEM:
     if (! FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, makeUtility))
     {
       FATAL_MIKTEX_ERROR ("SessionImpl::TryCreateFile",
