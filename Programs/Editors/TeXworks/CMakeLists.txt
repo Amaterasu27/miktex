@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2010 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,6 +37,7 @@ add_definitions(
 )
 
 set(texworks_sources
+  src/ClickableLabel.h
   src/CommandlineParser.cpp
   src/CommandlineParser.h
   src/CompletingEdit.cpp
@@ -44,6 +45,7 @@ set(texworks_sources
   src/ConfigurableApp.h
   src/ConfirmDelete.cpp
   src/ConfirmDelete.h
+  src/DefaultBinaryPathsWin.h
   src/FindDialog.cpp
   src/FindDialog.h
   src/HardWrapDialog.cpp
@@ -54,6 +56,8 @@ set(texworks_sources
   src/PDFDocument.h
   src/PrefsDialog.cpp
   src/PrefsDialog.h
+  src/ResourcesDialog.cpp
+  src/ResourcesDialog.h
   src/ScriptManager.cpp
   src/ScriptManager.h
   src/SvnRev.h
@@ -122,6 +126,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
+  src/ClickableLabel.h
   src/CompletingEdit.h
   src/ConfigurableApp.h
   src/ConfirmDelete.h
@@ -130,6 +135,7 @@ set(texworks_moc_sources
   src/PDFDocks.h
   src/PDFDocument.h
   src/PrefsDialog.h
+  src/ResourcesDialog.h
   src/ScriptManager.h
   src/TWApp.h
   src/TWScript.h
@@ -151,6 +157,7 @@ set(texworks_ui_files
   src/PDFFind.ui
   src/PrefsDialog.ui
   src/Replace.ui
+  src/ResourcesDialog.ui
   src/ScriptManager.ui
   src/SearchResults.ui
   src/TeXDocument.ui
