@@ -15,7 +15,6 @@
 texmf/miktex/bin/${makex_dll_name}.dll
 texmf/miktex/bin/${miktex_prefix}makebase.exe
 texmf/miktex/bin/${miktex_prefix}makefmt.exe
-texmf/miktex/bin/${miktex_prefix}makemem.exe
 texmf/miktex/bin/${miktex_prefix}makemf.exe
 texmf/miktex/bin/${miktex_prefix}makepk.exe
 texmf/miktex/bin/${miktex_prefix}maketfm.exe
