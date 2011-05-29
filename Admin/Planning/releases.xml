@@ -5,6 +5,6 @@
   <release version="2.6" state="end-of-life" w98me="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" releasedate="2007-04-30" bugfixesuntil="2008-12-31" availableuntil="2010-12-31" pdftex="1.40.4" mpost="1.000" defeng="pdftex" />
   <release version="2.7" state="end-of-life" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.999.7" releasedate="2007-12-17" bugfixesuntil="2009-12-31" availableuntil="2010-12-31" pdftex="1.40.9" mpost="1.005" defeng="pdftex" />
   <release version="2.8" state="outdated" portable="Y" w2k="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.9995.1" pdftex="1.40.10" mpost="1.005" texworks="0.1" defeng="pdftex" releasedate="2009-09-01" bugfixesuntil="2010-12-31" availableuntil="2012-12-31" />
-  <release version="2.9" state="current" portable="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" releasedate="2010-10-09" availableuntil="2013-12-31" bugfixesuntil="2012-12-31" xetex="0.9997.4" pdftex="1.40.11" mpost="1.211" texworks="0.4.0" defeng="pdftex" luatex="0.60.2" />
-  <release version="3.0" state="planned" portable="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.9997.4" pdftex="1.40.11" mpost="1.211" texworks="0.4.0" defeng="pdftex" luatex="0.60.2" />
+  <release version="2.9" state="current" portable="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" releasedate="2010-10-09" availableuntil="2013-12-31" bugfixesuntil="2012-12-31" xetex="0.9997.5" pdftex="1.40.12" mpost="1.504" texworks="0.4.1" defeng="pdftex" luatex="0.70.1" />
+  <release version="3.0" state="planned" portable="Y" xp="Y" srv2003="Y" vista="Y" srv2008="Y" seven="Y" xetex="0.9997.4" pdftex="1.40.12" mpost="1.504" texworks="0.4.1" defeng="pdftex" luatex="0.70.1" />
 </releases>
