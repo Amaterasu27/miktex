@@ -223,10 +223,17 @@ inline
 bool
 miktexopendvifile (/*[in]*/ FileType & f)
 {
-  return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
+  MiKTeX::Core::PathName outPath;
+  bool done = THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
 				THEAPP.GetNameOfFile().Get(),
 				MiKTeX::Core::FileShare::Read,
-				false));
+				false,
+				outPath);
+  if (done)
+  {
+    THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
+  }
+  return (done);
 }
 
 /* _________________________________________________________________________
@@ -239,10 +246,17 @@ inline
 bool
 miktexopenpdffile (/*[in]*/ FileType & f)
 {
-  return (THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
+  MiKTeX::Core::PathName outPath;
+  bool done = THEAPP.OpenOutputFile(*reinterpret_cast<C4P::FileRoot*>(&f),
 				THEAPP.GetNameOfFile().Get(),
 				MiKTeX::Core::FileShare::Read,
-				false));
+				false,
+				outPath);
+  if (done)
+  {
+    THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
+  }
+  return (done);
 }
 
 /* _________________________________________________________________________

@@ -1,6 +1,6 @@
 /* inputline.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -293,7 +293,8 @@ bool
 WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ const char *		lpszPath,
 				 /*[in]*/ FileShare		share,
-				 /*[in]*/ bool			text)
+				 /*[in]*/ bool			text,
+				 /*[out]*/ PathName &		outPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
   FILE * pfile = 0;
@@ -330,6 +331,10 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 			      FileAccess::Write,
 			      text,
 			      share);
+      if (pfile != 0)
+      {
+	outPath = lpszPath;
+      }
     }
   if (pfile == 0)
     {
