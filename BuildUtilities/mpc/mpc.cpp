@@ -2144,7 +2144,7 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
       packageInfo.timePackaged = atoi(strTimePackaged.c_str());
       reuseExisting = true;
     }
-#if 0
+#if 1
     else
     {
       // extract the package definition file
