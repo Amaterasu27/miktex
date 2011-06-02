@@ -459,6 +459,10 @@ int main(int ac, string * av)
   lpszPath = kpse_var_value("TEXMFVAR");
   xputenv ("TEXMFCACHE", lpszPath);
   free (lpszPath);
+  // this is also for ConTeXt
+  lpszPath = kpse_var_value("TEXMF");
+  xputenv ("TEXMF", lpszPath);
+  free (lpszPath);
 #endif
 
 #  ifdef __EMX__
