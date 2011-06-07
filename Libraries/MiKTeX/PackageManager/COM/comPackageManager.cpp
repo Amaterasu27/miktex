@@ -167,9 +167,7 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	}
       
       MiKTeX::Packages::PackageInfo packageInfo =
-	pManager->GetPackageInfo(static_cast<const char *>
-				 (CW2A(deploymentName)));
-
+	pManager->GetPackageInfo(Utils::WideCharToUTF8(deploymentName));
       CopyPackageInfo (*pPackageInfo, packageInfo);
 
       return (S_OK);
@@ -244,9 +242,7 @@ comPackageManager::GetPackageInfo2 (/*[in]*/ BSTR		deploymentName,
 	}
       
       MiKTeX::Packages::PackageInfo packageInfo =
-	pManager->GetPackageInfo(static_cast<const char *>
-				 (CW2A(deploymentName)));
-
+	pManager->GetPackageInfo(Utils::WideCharToUTF8(deploymentName));
       CopyPackageInfo (*pPackageInfo, packageInfo);
 
       return (S_OK);

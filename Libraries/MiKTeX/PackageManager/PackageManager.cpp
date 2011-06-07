@@ -1869,7 +1869,7 @@ public:
     : stream (stream),
       freshElement (false)
   {
-    FPutS ("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n", stream);
+    FPutS ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", stream);
   }
 
 public:

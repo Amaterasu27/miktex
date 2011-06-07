@@ -525,7 +525,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.mask = LVIF_TEXT | LVIF_PARAM;
   lvitem.iSubItem = 0;
   lvitem.lParam = idx;
-  CString deploymentName (packageInfo.deploymentName.c_str());
+  CharBuffer<wchar_t> deploymentName = Utils::UTF8ToWideChar(packageInfo.deploymentName.c_str());
   lvitem.pszText = deploymentName.GetBuffer();
   if (listctrl.InsertItem(&lvitem) < 0)
     {
@@ -535,7 +535,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 1
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 1;
-  CString str (pManager->GetContainerPath(packageInfo.deploymentName, true).c_str());
+  CharBuffer<wchar_t> str = Utils::UTF8ToWideChar(pManager->GetContainerPath(packageInfo.deploymentName, true).c_str());
   lvitem.pszText = str.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
@@ -581,7 +581,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
   // column 5
   lvitem.iSubItem = 5;
-  CString title (packageInfo.title.c_str());
+  CharBuffer<wchar_t> title = Utils::UTF8ToWideChar(packageInfo.title.c_str());
   lvitem.pszText = title.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {

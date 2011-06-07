@@ -322,7 +322,8 @@ PropPagePackages::SetWindowText (/*[in]*/ UINT		controlId,
     {
       UNEXPECTED_CONDITION ("PropPagePackages::SetWindowText");
     }
-  pWnd->SetWindowText (CA2T(lpszText));
+  ::SetWindowTextW (pWnd->GetSafeHwnd(),
+    Utils::UTF8ToWideChar(lpszText).c_str());
 }
 
 /* _________________________________________________________________________
@@ -556,7 +557,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 #endif
       _tcsncpy_s (pInfoTip->pszText,
 		  pInfoTip->cchTextMax,
-		  CA2T(info.c_str()),
+		  CW2T(Utils::UTF8ToWideChar(info.c_str()).c_str()),
 		  _TRUNCATE);
     }
   catch (const MiKTeXException & e)

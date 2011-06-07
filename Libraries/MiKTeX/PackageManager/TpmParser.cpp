@@ -232,12 +232,6 @@ TpmParser::OnEndElement (/*[in]*/ void *		pv,
       MIKTEX_ASSERT (! This->elementStack.empty());
       MIKTEX_ASSERT (This->elementStack.top() == lpszName);
       This->elementStack.pop ();
-#if defined(MIKTEX_WINDOWS)
-      if (Utils::IsUTF8(This->charBuffer.Get(), false))
-      {
-	This->charBuffer.Set (Utils::UTF8ToAnsi(This->charBuffer.Get()));
-      }
-#endif
       if (StrCmp(lpszName, X_("TPM:Creator")) == 0)
 	{
 	  This->packageInfo.creator = This->charBuffer.Get();

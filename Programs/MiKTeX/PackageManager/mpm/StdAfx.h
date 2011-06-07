@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2008 Christian Schenk
+   Copyright (C) 2003-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -32,8 +32,6 @@
 #endif
 
 #include <algorithm>
-#include <iomanip>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <set>

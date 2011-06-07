@@ -1,6 +1,6 @@
 /* comPackageInstaller.cpp:
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -128,7 +128,7 @@ comPackageInstaller::ReportLine (/*[in]*/ const char * lpszLine)
     {
       return;
     }
-  HRESULT hr = pCallback->ReportLine(_bstr_t(lpszLine));
+  HRESULT hr = pCallback->ReportLine(_bstr_t(Utils::UTF8ToWideChar(lpszLine).c_str()));
   if (FAILED(hr))
     {
       // what todo?
@@ -148,7 +148,7 @@ comPackageInstaller::OnRetryableError (/*[in]*/ const char * lpszMessage)
       return (false);
     }
   VARIANT_BOOL doContinue;
-  HRESULT hr = pCallback->OnRetryableError(_bstr_t(lpszMessage), &doContinue);
+  HRESULT hr = pCallback->OnRetryableError(_bstr_t(Utils::UTF8ToWideChar(lpszMessage).c_str()), &doContinue);
   if (FAILED(hr))
     {
       doContinue = VARIANT_FALSE;
@@ -191,7 +191,7 @@ comPackageInstaller::Add (/*[in]*/ BSTR		packageName,
     {
       if (toBeInstalled)
 	{
-	  packagesToBeInstalled.push_back (string(CW2A(packageName)));
+	  packagesToBeInstalled.push_back (Utils::WideCharToUTF8(packageName));
 	  trace_mpm->WriteFormattedLine ("mpmsvc",
 					 T_("to be installed: %s"),
 					 packagesToBeInstalled.back().c_str());
@@ -292,8 +292,8 @@ comPackageInstaller::GetErrorInfo (/*[out,retval]*/ ErrorInfo * pErrorInfo)
     }
   try
     {
-      _bstr_t message = lastMiKTeXException.what();
-      _bstr_t info = lastMiKTeXException.GetInfo().c_str();
+      _bstr_t message = Utils::UTF8ToWideChar(lastMiKTeXException.what()).c_str();
+      _bstr_t info = Utils::UTF8ToWideChar(lastMiKTeXException.GetInfo().c_str()).c_str();
       _bstr_t sourceFile = lastMiKTeXException.GetSourceFile().c_str();
       pErrorInfo->message = message.Detach();
       pErrorInfo->info = info.Detach();
@@ -371,7 +371,7 @@ comPackageInstaller::SetRepository (/*[in]*/ BSTR repository)
 	    }
 	  pInstaller.reset (pManager->CreateInstaller());
 	}
-      pInstaller->SetRepository (string(_bstr_t(repository)));
+      pInstaller->SetRepository (Utils::WideCharToUTF8(repository));
     }
   catch (const MiKTeXException & e)
     {

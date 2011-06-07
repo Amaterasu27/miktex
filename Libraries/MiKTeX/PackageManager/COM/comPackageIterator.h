@@ -28,12 +28,12 @@ void
 CopyPackageInfo (/*[out]*/ MiKTeXPackageManagerLib::PackageInfo &	left,
 		 /*[in]*/ const MiKTeX::Packages::PackageInfo &		right)
 {
-  left.deploymentName = _bstr_t(right.deploymentName.c_str()).Detach();
-  left.displayName = _bstr_t(right.displayName.c_str()).Detach();
-  left.title = _bstr_t(right.title.c_str()).Detach();
-  left.version = _bstr_t(right.version.c_str()).Detach();
-  left.description = _bstr_t(right.description.c_str()).Detach();
-  left.creator = _bstr_t(right.creator.c_str()).Detach();
+  left.deploymentName = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.deploymentName.c_str()).c_str()).Detach();
+  left.displayName = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.displayName.c_str()).c_str()).Detach();
+  left.title = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.title.c_str()).c_str()).Detach();
+  left.version = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.version.c_str()).c_str()).Detach();
+  left.description = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.description.c_str()).c_str()).Detach();
+  left.creator = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.creator.c_str()).c_str()).Detach();
   left.sizeRunFiles = right.sizeRunFiles;
   left.sizeDocFiles = right.sizeDocFiles;
   left.sizeSourceFiles = right.sizeSourceFiles;
@@ -69,12 +69,12 @@ void
 CopyPackageInfo (/*[out]*/ MiKTeXPackageManagerLib::PackageInfo2 &	left,
 		 /*[in]*/ const MiKTeX::Packages::PackageInfo &		right)
 {
-  left.deploymentName = _bstr_t(right.deploymentName.c_str()).Detach();
-  left.displayName = _bstr_t(right.displayName.c_str()).Detach();
-  left.title = _bstr_t(right.title.c_str()).Detach();
-  left.version = _bstr_t(right.version.c_str()).Detach();
-  left.description = _bstr_t(right.description.c_str()).Detach();
-  left.creator = _bstr_t(right.creator.c_str()).Detach();
+  left.deploymentName = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.deploymentName.c_str()).c_str()).Detach();
+  left.displayName = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.displayName.c_str()).c_str()).Detach();
+  left.title = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.title.c_str()).c_str()).Detach();
+  left.version = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.version.c_str()).c_str()).Detach();
+  left.description = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.description.c_str()).c_str()).Detach();
+  left.creator = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.creator.c_str()).c_str()).Detach();
   left.sizeRunFiles = right.sizeRunFiles;
   left.sizeDocFiles = right.sizeDocFiles;
   left.sizeSourceFiles = right.sizeSourceFiles;
@@ -104,10 +104,10 @@ CopyPackageInfo (/*[out]*/ MiKTeXPackageManagerLib::PackageInfo2 &	left,
   left.archiveFileSize = right.archiveFileSize;
   memcpy (&left.digest, &right.digest, sizeof(left.digest));
 #if MIKTEX_EXTENDED_PACKAGEINFO
-  left.copyrightOwner = _bstr_t(right.copyrightOwner.c_str()).Detach();
-  left.copyrightYear = _bstr_t(right.copyrightYear.c_str()).Detach();
-  left.licenseType = _bstr_t(right.licenseType.c_str()).Detach();
-  left.ctanPath = _bstr_t(right.ctanPath.c_str()).Detach();
+  left.copyrightOwner = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.copyrightOwner.c_str()).c_str()).Detach();
+  left.copyrightYear = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.copyrightYear.c_str()).c_str()).Detach();
+  left.licenseType = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.licenseType.c_str()).c_str()).Detach();
+  left.ctanPath = _bstr_t(MiKTeX::Core::Utils::UTF8ToWideChar(right.ctanPath.c_str()).c_str()).Detach();
 #else
   left.copyrightOwner = _bstr_t("").Detach();
   left.copyrightYear = _bstr_t("").Detach();
