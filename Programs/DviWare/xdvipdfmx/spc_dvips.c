@@ -596,7 +596,11 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
     return error;
   }
 
+#if defined(MIKTEX)
+  fp = fopen(gs_out, "rb");
+#else
   fp = fopen(gs_out, "r");
+#endif
    if (pdf_copy_clip(fp, 1, 0, 0) != 0) {
     spc_warn(spe, "Failed to parse the clipping path.");
     RELEASE(gs_in);
