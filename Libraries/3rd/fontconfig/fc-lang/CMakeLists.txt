@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2010 Christian Schenk
+## Copyright (C) 2008-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -261,6 +261,7 @@ set(orth_files
 add_definitions(
   -DHAVE_CONFIG_H
   -DDONT_USE_MIKTEX_EXIT
+  -D_UNICODE
 )
 
 include_directories(BEFORE
@@ -288,6 +289,7 @@ target_link_libraries(fc-lang
   ${app_dll_name}
   $(core_dll_name)
   ${getopt_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 add_custom_command(

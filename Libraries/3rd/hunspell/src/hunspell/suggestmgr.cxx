@@ -1,3 +1,7 @@
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include "license.hunspell"
 #include "license.myspell"
 

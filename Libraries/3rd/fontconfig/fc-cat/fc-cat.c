@@ -22,6 +22,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #else

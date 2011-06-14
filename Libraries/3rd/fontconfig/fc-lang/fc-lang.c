@@ -22,6 +22,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include "fccharset.c"
 #include "fcstr.c"
 #include "fcserialize.c"

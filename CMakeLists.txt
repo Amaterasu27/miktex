@@ -743,6 +743,12 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
+if(NATIVE_WINDOWS)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
+  )
+endif(NATIVE_WINDOWS)
+
 if(QT4_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
@@ -836,6 +842,10 @@ endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
 
 ###############################################################################
 ## add sub-directories
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_utf8wrap_dir})
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_build_tools_etc_dir})
 

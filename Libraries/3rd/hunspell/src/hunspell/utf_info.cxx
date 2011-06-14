@@ -1,3 +1,7 @@
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include "csutil.hxx"
 /* fields: Unicode letter, toupper, tolower */
 static struct unicode_info utf_lst[] = {

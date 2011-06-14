@@ -28,18 +28,9 @@
 FcBool
 FcFileIsDir (const FcChar8 *file)
 {
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    wchar_t wdirbuf[FC_MAX_FILE_LEN];
-    wchar_t * wdir = miktex_utf8_to_wide_char(file, FC_MAX_FILE_LEN, wdirbuf);
-#endif
-
     struct stat	    statb;
 
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    if (_wstat (wdir, &statb) != 0)
-#else
     if (FcStat ((const char *) file, &statb) != 0)
-#endif
 	return FcFalse;
     return S_ISDIR(statb.st_mode);
 }
@@ -146,15 +137,8 @@ FcDirScanConfig (FcFontSet	*set,
 		 FcBool		force, /* XXX unused */
 		 FcConfig	*config)
 {
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    WDIR		*d;
-    struct wdirent	*e;
-    wchar_t wdirbuf[FC_MAX_FILE_LEN];
-    wchar_t * wdir = miktex_utf8_to_wide_char(dir, FC_MAX_FILE_LEN, wdirbuf);
-#else
     DIR			*d;
     struct dirent	*e;
-#endif
     FcStrSet		*files;
     FcChar8		*file;
     FcChar8		*base;
@@ -184,11 +168,7 @@ FcDirScanConfig (FcFontSet	*set,
     if (FcDebug () & FC_DBG_SCAN)
 	printf ("\tScanning dir %s\n", dir);
 	
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    d = wopendir(wdir);
-#else
     d = opendir ((char *) dir);
-#endif
     if (!d)
     {
 	/* Don't complain about missing directories */
@@ -203,22 +183,6 @@ FcDirScanConfig (FcFontSet	*set,
 	ret = FcFalse;
 	goto bail1;
     }
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    while ((e = wreaddir(d)))
-    {
-      if (e->d_name[0] != L'.')
-      {
-	miktex_wide_char_to_utf8 (
-	  e->d_name,
-	  FC_MAX_FILE_LEN,
-	  (char*) base);
-	if (!FcStrSetAdd (files, file)) {
-	  ret = FcFalse;
-	  goto bail2;
-	}
-      }
-    }
-#else
     while ((e = readdir (d)))
     {
 	if (e->d_name[0] != '.' && strlen (e->d_name) < FC_MAX_FILE_LEN)
@@ -230,7 +194,6 @@ FcDirScanConfig (FcFontSet	*set,
 	    }
 	}
     }
-#endif
 
     /*
      * Sort files to make things prettier
@@ -246,11 +209,7 @@ FcDirScanConfig (FcFontSet	*set,
 bail2:
     FcStrSetDestroy (files);
 bail1:
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    wclosedir (d);
-#else
     closedir (d);
-#endif
 bail:
     return ret;
 }
@@ -281,19 +240,10 @@ FcDirCacheScan (const FcChar8 *dir, FcConfig *config)
     FcCache		*cache = NULL;
     struct stat		dir_stat;
 
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-    wchar_t wdirbuf[FC_MAX_FILE_LEN];
-    wchar_t * wdir = miktex_utf8_to_wide_char(dir, FC_MAX_FILE_LEN, wdirbuf);
-#endif
-
     if (FcDebug () & FC_DBG_FONTSET)
 	printf ("cache scan dir %s\n", dir);
 
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-	if (_wstat(wdir, &dir_stat) < 0)
-#else
     if (FcStat ((char *) dir, &dir_stat) < 0)
-#endif
     {
 	if (errno != ENOENT)
 	    ret = FcFalse;

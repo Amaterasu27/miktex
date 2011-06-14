@@ -1,6 +1,6 @@
 ## CreateDllWrapper.cmake
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,7 +35,7 @@ macro(create_dll_wrapper _name _dll)
   )
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
-    COMPILE_FLAGS "-DDLLMAIN=${_dllmain}"
+    COMPILE_FLAGS "-DDLLMAIN=${_dllmain} -D_UNICODE"
   )
   target_link_libraries(${_name} ${_dll})
   merge_trustinfo_manifest(${_name} asInvoker)

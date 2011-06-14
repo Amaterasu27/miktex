@@ -1,6 +1,6 @@
 ## CreateExeAlias.cmake
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -40,7 +40,7 @@ macro(create_exe_alias _name _exe)
   else(_pre_argv STREQUAL "")
     set_source_files_properties(
       ${CMAKE_CURRENT_BINARY_DIR}/${_name}alias.cpp
-      COMPILE_FLAGS "-DREAL_NAME=\\\"${_exe}\\\" -DPRE_ARGV=${_pre_argv}"
+      COMPILE_FLAGS "-DREAL_NAME=\\\"${_exe}\\\" -DPRE_ARGV=${_pre_argv} -D_UNICODE"
     )
   endif(_pre_argv STREQUAL "")
   target_link_libraries(${_name} ${core_dll_name})

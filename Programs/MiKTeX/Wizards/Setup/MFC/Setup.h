@@ -43,6 +43,9 @@
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
+#define UW_(x) MiKTeX::Core::Utils::UTF8ToWideChar(x).c_str()
+#define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
+
 #if defined(MIKTEX_UNICODE)
 #  define tcout wcout
 #  define tcerr wcerr
@@ -208,7 +211,7 @@ public:
   PackageManagerPtr pManager;
 
 public:
-  string folderName;
+  PathName folderName;
 
 public:
   string paperSize;

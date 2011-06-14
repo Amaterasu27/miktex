@@ -1,6 +1,6 @@
 /* wrapper.cpp: wrap a main function
 
-   Copyright (C) 2004-2010 Christian Schenk
+   Copyright (C) 2004-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -57,24 +57,45 @@ MAINFUNC (/*[in]*/ int		argc,
 // call exit())
 MiKTeX::App::Application app;
 
-#if defined(main)
+#if defined(main) && ! defined(_UNICODE)
 #  undef main
 #endif
 
 int
 MIKTEXCEECALL
-main (/*[in]*/ int	argc,
-      /*[in]*/ char *	argv[])
+#if defined(_UNICODE)
+wmain (/*[in]*/ int		argc,
+       /*[in]*/ wchar_t *	argv[])
+#else
+main (/*[in]*/ int		argc,
+      /*[in]*/ char *		argv[])
+#endif
 {
   try
     {
+      MIKTEX_UTF8_CONSOLE_OUTPUT ();
+#if defined(MIKTEX_WINDOWS)
+      std::vector<std::string> utf8args;
+      utf8args.reserve (argc);
+#endif
       std::vector<char *> args;
-      args.reserve (argc);
+      args.reserve (argc + 1);
       for (int idx = 0; idx < argc; ++ idx)
       {
+#if defined(MIKTEX_WINDOWS)
+#if defined(_UNICODE)
+	utf8args.push_back (MiKTeX::Core::Utils::WideCharToUTF8(argv[idx]));
+#else
+	utf8args.push_back (MiKTeX::Core::Utils::AnsiToUTF8(argv[idx]));
+#endif
+	args.push_back (const_cast<char*>(utf8args[idx].c_str()));
+#else
 	args.push_back (argv[idx]);
+#endif
       }
       args.push_back (0);
+
+      MIKTEX_UTF8_CONSOLE_OUTPUT ();
 
       app.Init (args);
 

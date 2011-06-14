@@ -1007,7 +1007,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
     {
       FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
-    value = Utils::WideCharToAnsi(szPath);
+    value = WU_(szPath);
     haveValue = true;
   }
 #endif

@@ -1,6 +1,6 @@
 /* path.cpp: path name utilities
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -197,10 +197,10 @@ Utils::IsSafeFileName (/*[in]*/ const char *	lpszPath,
     }  
 #if defined(MIKTEX_WINDOWS)
   const char * lpszExtension = GetFileNameExtension(lpszFileName);
-  const char * lpszForbiddenExtensions = ::GetEnvironmentString("PATHEXT");
-  if (lpszForbiddenExtensions != 0 && lpszExtension != 0)
+  string forbiddenExtensions;
+  if (::GetEnvironmentString("PATHEXT", forbiddenExtensions) && lpszExtension != 0)
     {
-      for (CSVList ext (lpszForbiddenExtensions, PATH_DELIMITER);
+      for (CSVList ext (forbiddenExtensions.c_str(), PATH_DELIMITER);
 	   ext.GetCurrent() != 0;
 	   ++ ext)
 	{

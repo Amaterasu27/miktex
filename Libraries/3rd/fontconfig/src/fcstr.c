@@ -998,11 +998,22 @@ FcStrCanonFilename (const FcChar8 *s)
 {
 #ifdef _WIN32
     FcChar8 full[FC_MAX_FILE_LEN + 2];
+#if defined(MIKTEX)
+    wchar_t wbuf1[FC_MAX_FILE_LEN + 2];
+    wchar_t wbuf2[FC_MAX_FILE_LEN + 2];
+    if (_wfullpath(wbuf1, miktex_utf8_to_wide_char(s, FC_MAX_FILE_LEN + 2, wbuf2), FC_MAX_FILE_LEN + 2) == 0)
+    {
+      // fixme
+      return (0);
+    }
+    miktex_wide_char_to_utf8(wbuf1, FC_MAX_FILE_LEN + 2, full);
+#else
     int size = GetFullPathName (s, sizeof (full) -1,
 				full, NULL);
 
     if (size == 0)
 	perror ("GetFullPathName");
+#endif
 
     FcConvertDosPath (full);
     return FcStrCanonAbsoluteFilename (full);

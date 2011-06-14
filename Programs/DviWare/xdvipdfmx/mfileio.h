@@ -28,6 +28,10 @@
 #include <stdio.h>
 #include "numbers.h"
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #ifdef IODEBUG
 FILE *mfopen (const char *name, const char *mode,
 	      const char *function, int line);

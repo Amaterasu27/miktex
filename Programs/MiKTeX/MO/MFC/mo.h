@@ -71,6 +71,11 @@ HasIE3 ();
    Error Macros
    _________________________________________________________________________ */
 
+#if defined(MIKTEX_WINDOWS)
+#  define WU_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
+#  define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+#endif
+
 #define BUF_TOO_SMALL(function)						\
   FATAL_MIKTEX_ERROR (function,						\
                       T_("Not enough room in an internal buffer."),	\

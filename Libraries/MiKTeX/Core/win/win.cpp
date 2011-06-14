@@ -820,7 +820,7 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
     }
   AutoLocalMemory autoFree (pMessageBuffer);
   errorMessage =
-    Utils::WideCharToAnsi(reinterpret_cast<wchar_t *>(pMessageBuffer));
+    Utils::WideCharToUTF8(reinterpret_cast<wchar_t *>(pMessageBuffer));
   return (true);
 }
 
@@ -1556,7 +1556,7 @@ Utils::GetOSVersionString ()
        if (osvi.szCSDVersion[0] != 0)
 	 {
 	   NeedBlank (str);
-	   str += Utils::WideCharToAnsi(osvi.szCSDVersion);
+	   str += Utils::WideCharToUTF8(osvi.szCSDVersion);
 	 }
 
        // build number
@@ -1704,7 +1704,7 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	    {
 	      return (false);
 	    }
-	  Tokenizer tok (Utils::WideCharToAnsi(cBuffer).c_str(), ",");
+	  Tokenizer tok (Utils::WideCharToUTF8(cBuffer).c_str(), ",");
 	  if (tok.GetCurrent() == 0)
 	    {
 	      return (false);
@@ -2700,29 +2700,29 @@ void
 Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
 			     /*[in]*/ const char *	lpszValue)
 {
-  const char * lpszOldValue = ::GetEnvironmentString(lpszValueName);
-  if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
-    {
-      return;
-    }
+  string oldValue;
+  if (::GetEnvironmentString(lpszValueName, oldValue) && StringCompare(oldValue.c_str(), lpszValue, false) == 0)
+  {
+    return;
+  }
   SessionImpl::GetSession()->trace_config->WriteFormattedLine
     ("core",
-     T_("setting env %s=%s"),
-     lpszValueName,
-     lpszValue);
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_putenv_s(lpszValueName, lpszValue) != 0)
-    {
-      FATAL_CRT_ERROR ("_putenv_s", lpszValueName);
-    }
+    T_("setting env %s=%s"),
+    lpszValueName,
+    lpszValue);
+#if defined(MIKTEX_WINDOWS) && defined(_MSC_VER)
+  if (_wputenv_s(UW_(lpszValueName), UW_(lpszValue)) != 0)
+  {
+    FATAL_CRT_ERROR ("_wputenv_s", lpszValueName);
+  }
 #else
   string str = lpszValueName;
   str += '=';
   str += lpszValue;
   if (putenv(str.c_str()) != 0)
-    {
-      FATAL_CRT_ERROR ("putenv", str.c_str());
-    }
+  {
+    FATAL_CRT_ERROR ("putenv", str.c_str());
+  }
 #endif
 }
 
@@ -2913,7 +2913,7 @@ Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
   HINSTANCE hInst =
     ShellExecuteURL(0,
 		    0,
-		    Utils::AnsiToWideChar(lpszUrl).c_str(),
+		    Utils::UTF8ToWideChar(lpszUrl).c_str(),
 		    0,
 		    0,
 		    SW_SHOWNORMAL);
@@ -3075,13 +3075,13 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
 
 /* _________________________________________________________________________
 
-   WideCharToUTF8
+   Utils::WideCharToUTF8
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(char*)
-WideCharToUTF8 (/*[in]*/ const wchar_t *  lpszWideChar,
-		/*[in,out]*/ size_t &	  sizeUtf8,
-		/*[out]*/ char *	  lpszUtf8)
+char *
+Utils::WideCharToUTF8 (/*[in]*/ const wchar_t *	  lpszWideChar,
+		       /*[in,out]*/ size_t &	  sizeUtf8,
+		       /*[out]*/ char *		  lpszUtf8)
 {
   MIKTEX_ASSERT (sizeUtf8 == 0 || lpszUtf8 != 0);
   MIKTEX_ASSERT (sizeUtf8 != 0 || lpszUtf8 == 0);
@@ -3172,9 +3172,9 @@ string
 Utils::WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
 {
   size_t len = 0;
-  ::WideCharToUTF8 (lpszWideChar, len, 0);
+  WideCharToUTF8 (lpszWideChar, len, 0);
   CharBuffer<char, 200> buf (len);
-  ::WideCharToUTF8 (lpszWideChar, len, buf.GetBuffer());
+  WideCharToUTF8 (lpszWideChar, len, buf.GetBuffer());
   return (buf.Get());
 }
 
@@ -3189,7 +3189,7 @@ miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
 			  /*[out]*/ char *	    lpszUtf8)
 {
   C_FUNC_BEGIN();
-  return (WideCharToUTF8(lpszWideChar, sizeUtf8, lpszUtf8));
+  return (Utils::WideCharToUTF8(lpszWideChar, sizeUtf8, lpszUtf8));
   C_FUNC_END();
 }
 
@@ -3198,6 +3198,8 @@ miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 char *
 Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar,
 		       /*[out]*/ char *		lpszAnsi,
@@ -3226,18 +3228,22 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar,
     }
   return (lpszAnsi);
 }
+#endif
 
 /* _________________________________________________________________________
 
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 string
 Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
 {
   CharBuffer<char, 512> buf (wcslen(lpszWideChar) + 1);
   return (WideCharToAnsi(lpszWideChar, buf.GetBuffer(), buf.GetCapacity()));
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -3346,6 +3352,8 @@ miktex_ansi_to_utf8 (/*[in]*/ const char *	lpszAnsi,
    miktex_utf8_to_ansi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 MIKTEXCEEAPI(char*)
 miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
 		     /*[in]*/ size_t		sizeAnsi,
@@ -3357,6 +3365,7 @@ miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
   return (lpszAnsi);
   C_FUNC_END ();
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -3496,7 +3505,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 
   bool systemPathOkay = (
     ! Directory::Exists(commonBinDir)
-    || ::CheckPath(WA_(systemPath), commonBinDir, repairedSystemPath, systemPathCompetition));
+    || ::CheckPath(WU_(systemPath), commonBinDir, repairedSystemPath, systemPathCompetition));
 
   bool repaired = false;
 
@@ -3511,7 +3520,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	T_("Something is wrong with the system PATH:"));
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
-	WA_(systemPath.c_str()));
+	WU_(systemPath.c_str()));
     }
     else if (! systemPathOkay && repair)
     {
@@ -3521,7 +3530,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedSystemPath.c_str());
-      systemPath = AW_(repairedSystemPath.c_str());
+      systemPath = UW_(repairedSystemPath.c_str());
       winRegistry::SetRegistryValue (HKEY_LOCAL_MACHINE,
 				     REGSTR_KEY_ENVIRONMENT_COMMON,
 				     L"Path",
@@ -3536,7 +3545,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     {
       string repairedUserPath;
       bool userPathCompetition;
-      systemPathOkay = ::CheckPath(WA_(userPath), commonBinDir, repairedUserPath, userPathCompetition);
+      systemPathOkay = ::CheckPath(WU_(userPath), commonBinDir, repairedUserPath, userPathCompetition);
       if (! systemPathOkay && repair)
       {
 	SessionImpl::GetSession()->trace_error->WriteLine
@@ -3545,7 +3554,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	SessionImpl::GetSession()->trace_error->WriteLine
 	  ("core",
 	  repairedUserPath.c_str());
-	userPath = AW_(repairedUserPath);
+	userPath = UW_(repairedUserPath);
 	winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				       REGSTR_KEY_ENVIRONMENT_USER,
 				       L"Path",
@@ -3560,7 +3569,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     bool userPathCompetition;
     userPathOkay = (
       ! Directory::Exists(userBinDir)
-      || ::CheckPath(WA_(userPath), userBinDir, repairedUserPath, userPathCompetition));
+      || ::CheckPath(WU_(userPath), userBinDir, repairedUserPath, userPathCompetition));
     if (! userPathOkay && repair)
     {
       SessionImpl::GetSession()->trace_error->WriteLine
@@ -3569,7 +3578,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedUserPath.c_str());
-      userPath = AW_(repairedUserPath);
+      userPath = UW_(repairedUserPath);
       winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				     REGSTR_KEY_ENVIRONMENT_USER,
 				     L"Path",

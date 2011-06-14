@@ -127,11 +127,11 @@ SetupWizard::OnInitDialog ()
   try
     {
       SetIcon (AfxGetApp()->LoadIcon(IDR_MAINFRAME), TRUE);
-      CString title;
+      CStringW title;
       if (theApp.isMiKTeXDirect)
 	{
 	  title.Format (T_(_T("MiKTeX %s Setup (%d-bit)")),
-			static_cast<LPCTSTR>(CA2T(MIKTEX_FULL_VERSION_STR)),
+			static_cast<LPCTSTR>(UW_(MIKTEX_FULL_VERSION_STR)),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
       else if (theApp.prefabricated)
@@ -165,7 +165,7 @@ SetupWizard::OnInitDialog ()
       else
 	{
 	  title.Format (T_(_T("MiKTeX %s Net Installer (%d-bit)")),
-			static_cast<LPCTSTR>(CA2T(MIKTEX_VERSION_STR)),
+			static_cast<LPCTSTR>(UW_(MIKTEX_VERSION_STR)),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
       SetTitle (title);

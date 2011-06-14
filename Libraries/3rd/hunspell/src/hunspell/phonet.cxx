@@ -27,6 +27,10 @@
                 Porting from Aspell to Hunspell using C-like structs
 */
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include <stdlib.h> 
 #include <string.h>
 #include <stdio.h> 

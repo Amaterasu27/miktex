@@ -503,8 +503,8 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 	QFileInfo affFile(dictPath + "/" + language + ".aff");
 	QFileInfo dicFile(dictPath + "/" + language + ".dic");
 	if (affFile.isReadable() && dicFile.isReadable()) {
-		h = Hunspell_create(affFile.canonicalFilePath().toLocal8Bit().data(),
-							dicFile.canonicalFilePath().toLocal8Bit().data());
+		h = Hunspell_create(affFile.canonicalFilePath().toUtf8().data(),
+							dicFile.canonicalFilePath().toUtf8().data());
 		(*dictionaries)[language] = h;
 	}
 
@@ -519,8 +519,8 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 	  QFileInfo dicFile(dictPath + "/" + language + ".dic");
 	  if (affFile.isReadable() && dicFile.isReadable())
 	  {
-	    h = Hunspell_create(affFile.canonicalFilePath().toLocal8Bit().data(),
-	      dicFile.canonicalFilePath().toLocal8Bit().data());
+	    h = Hunspell_create(affFile.canonicalFilePath().toUtf8().data(),
+	      dicFile.canonicalFilePath().toUtf8().data());
 	    (*dictionaries)[language] = h;
 	    break;
 	  }

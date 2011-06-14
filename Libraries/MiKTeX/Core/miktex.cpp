@@ -778,20 +778,25 @@ Fndb::Search (/*[in]*/ const char *		lpszFileName,
 /* _________________________________________________________________________
 
    GetEnvironmentString
-
-   Fast but insecure.
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(const char *)
-GetEnvironmentString (/*[in]*/ const char * lpszName)
+MIKTEXINTERNALFUNC(bool)
+GetEnvironmentString (/*[in]*/ const char * lpszName,
+		      /*[in]*/ string &	    value)
 {
-#if defined(_MSC_VER)
-#  pragma warning (push)
-#  pragma warning (disable: 4996)
-#endif
-  return (getenv(lpszName));
-#if defined(_MSC_VER)
-#  pragma warning (pop)
+#if defined(MIKTEX_WINDOWSx)
+  return (Utils::WideCharToUTF8(getenv(lpszName)));
+#else
+  const char * lpszValue = getenv(lpszName);
+  if (lpszValue == 0)
+  {
+    return (false);
+  }
+  else
+  {
+    value = lpszValue;
+    return (true);
+  }
 #endif
 }
 
@@ -804,13 +809,7 @@ bool
 Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			     /*[out]*/ string &		str)
 {
-  bool haveValue = false;
-  const char * lpszOut = ::GetEnvironmentString(lpszName);
-  if (lpszOut != 0)
-    {
-      str = lpszOut;
-      haveValue = true;
-    }
+  bool haveValue = ::GetEnvironmentString(lpszName, str);
   if (SessionImpl::TryGetSession() != 0
       && SessionImpl::GetSession()->trace_env.get() != 0
       && SessionImpl::GetSession()->trace_env->IsEnabled())
@@ -896,7 +895,8 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 MIKTEXINTERNALFUNC(bool)
 HaveEnvironmentString (/*[in]*/ const char * lpszName)
 {
-  return (GetEnvironmentString(lpszName) != 0);
+  string value;
+  return (GetEnvironmentString(lpszName, value));
 }
 
 /* _________________________________________________________________________

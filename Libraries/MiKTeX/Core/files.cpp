@@ -1,6 +1,6 @@
 /* files.cpp: file system operations
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -739,7 +739,7 @@ File::Delete (/*[in]*/ const PathName &		path,
       wchar_t szTemp[BufferSizes::MaxPath];
       if (GetTempFileNameW(szDir, L"mik", 0, szTemp) == 0)
 	{
-	  FATAL_WINDOWS_ERROR ("GetTempFileNameA", Utils::WideCharToAnsi(szDir).c_str());
+	  FATAL_WINDOWS_ERROR ("GetTempFileNameW", WU_(szDir));
 	}
       File::Delete (szTemp);
       File::Move (absPath, szTemp);

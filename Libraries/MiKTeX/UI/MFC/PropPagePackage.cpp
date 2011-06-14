@@ -27,6 +27,31 @@
 
 /* _________________________________________________________________________
 
+   MakeOneline
+   _________________________________________________________________________ */
+
+static
+void
+MakeOneLine (/*[out]*/ CString &	dest,
+	     /*[in]*/ const wstring &	source)
+{
+  for (wstring::const_iterator it = source.begin();
+       it != source.end();
+       ++ it)
+  {
+    if (*it == L'\n')
+    {
+      dest += L' ';
+    }
+    else
+    {
+      dest += *it;
+    }
+  }
+}
+	     
+/* _________________________________________________________________________
+
    PropPagePackage::PropPagePackage
    _________________________________________________________________________ */
 
@@ -35,10 +60,11 @@ PropPagePackage::PropPagePackage (/*[in]*/ const PackageInfo & packageInfo)
 {
   Construct (IDD_PROPPAGE_PACKAGE);
   m_psp.dwFlags &= ~ (PSP_HASHELP);
-  date =
-    CTime(packageInfo.timePackaged).Format(_T("%Y-%m-%d %H:%M:%S"));  
-  size.Format (T_(_T("%u Bytes")),
-	       static_cast<unsigned>(packageInfo.GetSize()));
+  date = CTime(packageInfo.timePackaged).Format(_T("%Y-%m-%d %H:%M:%S"));
+  MakeOneLine (description, Utils::UTF8ToWideChar(packageInfo.description));
+  name = Utils::UTF8ToWideChar(packageInfo.displayName).c_str();
+  MakeOneLine (title, Utils::UTF8ToWideChar(packageInfo.title));
+  size.Format (T_(_T("%u Bytes")), static_cast<unsigned>(packageInfo.GetSize()));
 }
 
 /* _________________________________________________________________________
@@ -51,7 +77,10 @@ PropPagePackage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 {
   CPropertyPage::DoDataExchange (pDX);
   DDX_Text(pDX, IDC_DATE, date);
+  DDX_Text(pDX, IDC_DESCRIPTION, description);
+  DDX_Text(pDX, IDC_NAME, name);
   DDX_Text(pDX, IDC_PACKAGE_SIZE, size);
+  DDX_Text(pDX, IDC_TITLE, title);
 }
 
 /* _________________________________________________________________________
@@ -64,28 +93,11 @@ END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
 
-   PropPagePackage::SetUtf8Text
-   _________________________________________________________________________ */
-
-void
-PropPagePackage::SetUtf8Text (/*[in]*/ UINT	      ctrlId,
-			      /*[in]*/ const char *  lpszUtf8Text)
-{
-  ::SetWindowTextW(GetDlgItem(ctrlId)->GetSafeHwnd(),
-    Utils::UTF8ToWideChar(lpszUtf8Text).c_str());
-}
-
-/* _________________________________________________________________________
-
    PropPagePackage::OnInitDialog
    _________________________________________________________________________ */
 
 BOOL
 PropPagePackage::OnInitDialog ()
 {
-  BOOL ret = CPropertyPage::OnInitDialog();
-  SetUtf8Text (IDC_NAME, packageInfo.displayName.c_str());
-  SetUtf8Text (IDC_DESCRIPTION, packageInfo.description.c_str());
-  SetUtf8Text (IDC_TITLE, packageInfo.title.c_str());
-  return (ret);
+  return (CPropertyPage::OnInitDialog());
 }

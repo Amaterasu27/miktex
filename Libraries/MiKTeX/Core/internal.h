@@ -213,9 +213,8 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 #if defined(MIKTEX_WINDOWS)
-#  define WA_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
-#  define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
-#  define AW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+#  define WU_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
+#  define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
 #endif
 
 #define MIKTEXINTERNALFUNC(type) type
@@ -374,8 +373,9 @@ LoadPublicKey ();
 bool
 HaveEnvironmentString (/*[in]*/ const char * lpszName);
 
-const char *
-GetEnvironmentString (/*[in]*/ const char * lpszName);
+bool
+GetEnvironmentString (/*[in]*/ const char * lpszName,
+                      /*[out]*/ string &    value);
   
 bool
 IsExplicitlyRelativePath (/*[in]*/ const char * lpszPath);
@@ -2365,8 +2365,12 @@ public:
   {
     if (theNameOfTheGame.empty())
     {
-      const char * lpszEngine = GetEnvironmentString("engine");
-      return (lpszEngine == 0 ? "engine-not-set" : lpszEngine);
+      string engine;
+      if (! GetEnvironmentString("engine", engine))
+      {
+	engine = "engine-not-set";
+      }
+      return (engine);
     }
     else
     {

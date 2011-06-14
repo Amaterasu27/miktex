@@ -57,7 +57,7 @@ BOOL
 ProgramFolderPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  folderName = theApp.folderName.c_str();
+  folderName = theApp.folderName.ToWideCharString().c_str();
   BOOL ret = CPropertyPage::OnInitDialog();
   return (ret);
 }
@@ -134,7 +134,7 @@ ProgramFolderPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.folderName = CT2A(folderName);
+      theApp.folderName = static_cast<LPCTSTR>(folderName);
     }
   return (ret);
 }

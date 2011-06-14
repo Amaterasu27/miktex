@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,6 +19,7 @@
 
 add_definitions(
   -DHAVE_CONFIG_H
+  -D_UNICODE
 )
 
 set(fc-query_sources
@@ -41,6 +42,7 @@ target_link_libraries(fc-query
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS fc-query DESTINATION ${bindir})

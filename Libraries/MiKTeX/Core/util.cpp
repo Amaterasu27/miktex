@@ -244,30 +244,7 @@ Utils::CopyString (/*[out]*/ char *		lpszBuf,
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
 
-#if defined(MIKTEX_WINDOWS)
-  return (StrLen(WideCharToAnsi(lpszSource, lpszBuf, bufSize)) + 1);
-#else
-  size_t length;
-
-  for (length = 0; length < bufSize; ++ length)
-    {
-      if (*lpszSource > 255)
-	{
-	  INVALID_ARGUMENT ("Utils::CopyString", 0);
-	}
-      if ((lpszBuf[length] = lpszSource[length]) == 0)
-	{
-	  break;
-	}
-    }
-
-  if (length == bufSize)
-    {
-      BUF_TOO_SMALL ("Utils::CopyString");
-    }
-
-  return (length);
-#endif
+  return (StrLen(WideCharToUTF8(lpszSource, bufSize, lpszBuf)));
 }
 
 /* _________________________________________________________________________
@@ -283,37 +260,7 @@ Utils::CopyString (/*[out]*/ wchar_t *		lpszBuf,
   MIKTEX_ASSERT_CHAR_BUFFER (lpszBuf, bufSize);
   MIKTEX_ASSERT_STRING (lpszSource);
 
-#if defined(MIKTEX_WINDOWS)
-  if (IsUTF8(lpszSource, true))
-  {
-    return (CopyString(lpszBuf, bufSize, UTF8ToWideChar(lpszSource).c_str()));
-  }
-  else
-  {
-    return (StrLen(AnsiToWideChar(lpszSource, lpszBuf, bufSize)) + 1);
-  }
-#else
-  size_t length;
-
-  for (length = 0; length < bufSize; ++ length)
-    {
-      if (*lpszSource > 255)
-	{
-	  INVALID_ARGUMENT ("Utils::CopyString", 0);
-	}
-      if ((lpszBuf[length] = lpszSource[length]) == 0)
-	{
-	  break;
-	}
-    }
-
-  if (length == bufSize)
-    {
-      BUF_TOO_SMALL ("Utils::CopyString");
-    }
-
-  return (length);
-#endif
+  return (CopyString(lpszBuf, bufSize, UTF8ToWideChar(lpszSource).c_str()));
 }
 
 /* _________________________________________________________________________

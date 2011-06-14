@@ -95,7 +95,7 @@ Directory::Delete (/*[in]*/ const PathName &	path)
      T_("deleting directory %s"),
      Q_(path));
 
-  if (! RemoveDirectoryW(AW_(path.Get())))
+  if (! RemoveDirectoryW(UW_(path.Get())))
     {
       FATAL_WINDOWS_ERROR ("RemoveDirectoryW", path.Get());
     }

@@ -228,7 +228,8 @@ MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut);
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
+MIKTEXDEPRECATED
 MIKTEXCEEAPI(char*)
 miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
 		     /*[in]*/ size_t		sizeAnsi,
@@ -1851,6 +1852,16 @@ public:
 public:
 #if defined(MIKTEX_WINDOWS)
   static
+  MIKTEXCORECEEAPI(std::wstring)
+  UTF8ToWideChar (/*[in]*/ const std::string & str)
+  {
+    return (UTF8ToWideChar(str.c_str()));
+  }
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
   MIKTEXCORECEEAPI(std::string)
   WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
@@ -1859,14 +1870,25 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(char *)
+  WideCharToUTF8 (/*[in]*/ const wchar_t *  lpszWideChar,
+		  /*[in,out]*/ size_t &	    sizeUtf8,
+		  /*[out]*/ char *	    lpszUtf8);
+#endif
+
+#if 0 && defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXDEPRECATED
+  MIKTEXCORECEEAPI(char *)
   WideCharToAnsi (/*[in]*/ const wchar_t *  lpszWideChar,
 		  /*[out]*/ char *	    lpszAnsi,
 		  /*[in]*/ size_t	    size);
 #endif
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXDEPRECATED
   MIKTEXCORECEEAPI(std::string)
   WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
@@ -1904,9 +1926,10 @@ public:
 		     /*[in]*/ const PathName &	suffix_,
 		     /*[out]*/ PathName &	prefix);
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXDEPRECATED
   std::string
   UTF8ToAnsi (/*[in]*/ const char * lpszUtf8)
   {
@@ -2940,9 +2963,7 @@ public:
   ToWideCharString ()
     const
   {
-    return (Utils::IsUTF8(Get())
-      ? Utils::UTF8ToWideChar(Get())
-      : Utils::AnsiToWideChar(Get()));
+    return (Utils::UTF8ToWideChar(Get()));
   }
 #endif
 
@@ -8306,6 +8327,43 @@ public:
 };
 
 typedef AutoResource<void *, free2_> AutoMemoryPointer2;
+
+/* _________________________________________________________________________
+
+   AutoUTF8ConsoleOutput
+   _________________________________________________________________________ */
+
+class AutoUTF8ConsoleOutput
+{
+public:
+  AutoUTF8ConsoleOutput ()
+  {
+ #if defined(MIKTEX_WINDOWS)
+    oldCodePage = GetConsoleOutputCP();
+    SetConsoleOutputCP (CP_UTF8);
+#endif
+  }
+  ~AutoUTF8ConsoleOutput ()
+  {
+#if defined(MIKTEX_WINDOWS)
+     SetConsoleOutputCP (oldCodePage);
+#endif
+  }
+#if defined(MIKTEX_WINDOWS)
+private:
+  UINT oldCodePage;
+#endif
+};
+
+#define MIKTEX_UTF8_CONSOLE_OUTPUT() \
+  MiKTeX::Core::AutoUTF8ConsoleOutput miktex_auto_utf8_console_output_xxx
+
+#define MIKTEX_BEGIN_UTF8_CONSOLE_OUTPUT() \
+{ \
+  MiKTeX::Core::AutoUTF8ConsoleOutput miktex_auto_utf8_console_output_xxx;
+
+#define MIKTEX_END_UTF8_CONSOLE_OUTPUT() \
+}
 
 /* _________________________________________________________________________ */
 

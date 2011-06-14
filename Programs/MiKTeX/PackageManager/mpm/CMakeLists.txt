@@ -28,6 +28,10 @@ set(mpm_sources
   mpm.cpp
 )
 
+add_definitions(
+  -D_UNICODE
+)
+
 if(NATIVE_WINDOWS)
   set(mpm_sources ${mpm_sources} mpm.rc)
 endif(NATIVE_WINDOWS)

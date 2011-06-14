@@ -34,6 +34,10 @@ add_definitions(
   -DpdfTeX
 )
 
+add_definitions(
+  -D_UNICODE
+)
+
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)

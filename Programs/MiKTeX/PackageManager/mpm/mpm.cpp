@@ -1442,33 +1442,6 @@ Application::ReadFileList (/*[in]*/ const PathName &		path,
 
 /* _________________________________________________________________________
 
-   AutoUTF8ConsoleOutput
-   _________________________________________________________________________ */
-
-class AutoUTF8ConsoleOutput
-{
-public:
-  AutoUTF8ConsoleOutput ()
-  {
- #if defined(MIKTEX_WINDOWS)
-    oldCodePage = GetConsoleOutputCP();
-    SetConsoleOutputCP (CP_UTF8);
-#endif
-  }
-  ~AutoUTF8ConsoleOutput ()
-  {
-#if defined(MIKTEX_WINDOWS)
-     SetConsoleOutputCP (oldCodePage);
-#endif
-  }
-#if defined(MIKTEX_WINDOWS)
-private:
-  UINT oldCodePage;
-#endif
-};
-
-/* _________________________________________________________________________
-
    Application::Main
    _________________________________________________________________________ */
 
@@ -1476,8 +1449,6 @@ void
 Application::Main (/*[in]*/ int			argc,
 		   /*[in]*/ const char **	argv)
 {
-  AutoUTF8ConsoleOutput xxx;
-
   StartupConfig startupConfig;
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName (argv[0]);
@@ -1971,8 +1942,13 @@ Application::SignalHandler (/*[in]*/ int signalToBeHandled)
    _________________________________________________________________________ */
 
 int
+#if defined(_UNICODE)
+wmain (/*[in]*/ int			argc,
+       /*[in]*/ const wchar_t **	argv)
+#else
 main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
+#endif
 {
 #if defined(MIKTEX_WINDOWS)
   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -1985,8 +1961,23 @@ main (/*[in]*/ int		argc,
   int retCode = 0;
   try
     {
+      vector<string> utf8args;
+      utf8args.reserve (argc);
+      vector<const char *> newargv;
+      newargv.reserve (argc + 1);
+      for (int idx = 0; idx < argc; ++ idx)
+      {
+#if defined(_UNICODE)
+	utf8args.push_back (Utils::WideCharToUTF8(argv[idx]));
+#else
+	utf8args.push_back (Utils::AnsiToUTF8(argv[idx]));
+#endif
+	newargv.push_back (utf8args[idx].c_str());
+      }
+      newargv.push_back (0);
+      MIKTEX_UTF8_CONSOLE_OUTPUT ();
       Application app;
-      app.Main (argc, argv);
+      app.Main (argc, &newargv[0]);
     }
   catch (const MiKTeXException & e)
     {

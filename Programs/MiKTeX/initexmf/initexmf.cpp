@@ -206,7 +206,7 @@ public:
   void
   StartDocument ()
   {
-    cout << "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
+    cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   }
 
 public:
@@ -1740,19 +1740,19 @@ IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
 			      /*[in]*/ LPARAM	lparam)
 {
   IniTeXMFApp * This = reinterpret_cast<IniTeXMFApp*>(lparam);
-  char szText[200];
-  if (GetWindowText(hwnd, szText, 200) == 0)
+  wchar_t szText[200];
+  if (GetWindowTextW(hwnd, szText, 200) == 0)
     {
       return (TRUE);
     }
-  if (strstr(szText, "MiKTeX") != 0)
+  if (wcsstr(szText, L"MiKTeX") != 0)
     {
-      if (strstr(szText, "Update") != 0)
+      if (wcsstr(szText, L"Update") != 0)
 	{
 	  This->updateWizardRunning = true;
 	}
-      else if (strstr(szText, "Setup") != 0
-	       || strstr(szText, "Installer") != 0)
+      else if (wcsstr(szText, L"Setup") != 0
+	       || wcsstr(szText, L"Installer") != 0)
 	{
 	  This->setupWizardRunning = true;
 	}
@@ -3029,15 +3029,15 @@ IniTeXMFApp::ReportFndbFiles ()
 void
 IniTeXMFApp::ReportEnvironmentVariables ()
 {
-  LPTSTR lpszEnv = reinterpret_cast<LPTSTR>(GetEnvironmentStrings ());
+  wchar_t * lpszEnv = reinterpret_cast<wchar_t*>(GetEnvironmentStringsW());
   if (lpszEnv == 0)
     {
       return;
     }
   xmlWriter.StartElement ("environment");
-  for (LPTSTR p = lpszEnv; *p != 0; p += strlen(p) + 1)
+  for (wchar_t * p = lpszEnv; *p != 0; p += wcslen(p) + 1)
     {
-      Tokenizer tok (p, "=");
+      Tokenizer tok (Utils::WideCharToUTF8(p).c_str(), "=");
       if (tok.GetCurrent() == 0)
 	{
 	  continue;
@@ -3894,14 +3894,34 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
    _________________________________________________________________________ */
 
 int
+#if defined(_UNICODE)
+wmain (/*[in]*/ int			argc,
+       /*[in]*/ const wchar_t **	argv)
+#else
 main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
+#endif
 {
   try
     {
+      vector<string> utf8args;
+      utf8args.reserve (argc);
+      vector<const char *> newargv;
+      newargv.reserve (argc + 1);
+      for (int idx = 0; idx < argc; ++ idx)
+      {
+#if defined(_UNICODE)
+	utf8args.push_back (Utils::WideCharToUTF8(argv[idx]));
+#else
+	utf8args.push_back (Utils::AnsiToUTF8(argv[idx]));
+#endif
+	newargv.push_back (utf8args[idx].c_str());
+      }
+      newargv.push_back (0);
+      MIKTEX_UTF8_CONSOLE_OUTPUT ();
       IniTeXMFApp app;
-      app.Init (argv[0]);
-      app.Run (argc, argv);
+      app.Init (newargv[0]);
+      app.Run (argc, &newargv[0]);
       app.Finalize ();
       return (0);
     }

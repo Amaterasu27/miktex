@@ -29,6 +29,10 @@
 #include <config.h>
 #endif
 
+#if defined(MIKTEX)
+#  include "miktex/utf8wrap.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #ifdef HAVE_INTTYPES_H

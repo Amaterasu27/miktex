@@ -99,6 +99,10 @@
 
 #include <stdio.h>
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#endif
+
 #define FT_FILE     FILE
 #define ft_fclose   fclose
 #define ft_fopen    fopen

@@ -33,9 +33,6 @@
 #include FT_ERRORS_H
 #include FT_TYPES_H
 
-#if defined(MIKTEX_WINDOWS)
-#  include <Windows.h>
-#endif
 
   /*************************************************************************/
   /*                                                                       */
@@ -215,21 +212,6 @@
   }
 
 
-#if defined(MIKTEX_WINDOWS)
-wchar_t*
-utf8_to_wide_char (/*[in]*/ const char * lpszUtf8,
-		   /*[in,out]*/ size_t   sizeWideChar,
-		   /*[out]*/ wchar_t *   lpszWideChar)
-{
-  int len = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, lpszUtf8, -1, lpszWideChar, sizeWideChar);
-  if (len <= 0)
-  {
-    *lpszWideChar = 0;
-  }
-  return (lpszWideChar);
-}
-#endif
-
   /* documentation is in ftstream.h */
 
   FT_BASE_DEF( FT_Error )
@@ -242,14 +224,7 @@ utf8_to_wide_char (/*[in]*/ const char * lpszUtf8,
     if ( !stream )
       return FT_Err_Invalid_Stream_Handle;
 
-#if defined(MIKTEX_WINDOWS)
-    {
-      wchar_t widecharbuf[_MAX_PATH];
-      file = _wfopen(utf8_to_wide_char(filepathname, _MAX_PATH, widecharbuf), L"rb");
-    }
-#else
     file = ft_fopen( filepathname, "rb" );
-#endif
     if ( !file )
     {
       FT_ERROR(( "FT_Stream_Open:"

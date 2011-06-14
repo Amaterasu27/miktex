@@ -397,7 +397,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(CA2T(sharedData.packageName.c_str()));
+		(UW_(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 
@@ -963,7 +963,7 @@ FileCopyPage::ConfigureMiKTeX ()
     CSingleLock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
-    sharedData.packageName = CT2A(str);
+    sharedData.packageName = WU_(str);
     sharedData.newPackage = true;
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
@@ -1263,7 +1263,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
     {
       Log ("%s", static_cast<const char *>(str));
     }
-  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(CA2T(str))));
+  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UW_(str))));
 }
 
 /* _________________________________________________________________________
