@@ -231,6 +231,7 @@ target_link_libraries(${luatex_program_dll_name}
   ${zzip_dll_name}
 
   ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
   ${getopt_dll_name}
   ${w2cemu_dll_name}
   

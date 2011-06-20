@@ -32,34 +32,75 @@
 MIKTEXSTATICFUNC(wchar_t *)
 UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 {
-  //MIKTEX_ASSERT (Utils::IsUTF8(lpszUtf8));
-  int len = MultiByteToWideChar(
-    CP_UTF8,
-    MB_ERR_INVALID_CHARS,
-    lpszUtf8,
-    -1,
-    0,
-    0);
+  int len = MultiByteToWideChar(CP_UTF8,
+				MB_ERR_INVALID_CHARS,
+				lpszUtf8,
+				-1,
+				0,
+				0);
   if (len <= 0)
-  {
-    //FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
-    return (0);
-  }
+    {
+      throw fixme;
+    }
   wchar_t * lpszWideChar = reinterpret_cast<wchar_t*>(malloc(len * sizeof(wchar_t)));
-  len = MultiByteToWideChar(
-    CP_UTF8,
-    MB_ERR_INVALID_CHARS,
-    lpszUtf8,
-    -1,
-    lpszWideChar,
-    len);
+  if (lpszWideChar == 0)
+    {
+      throw fixme;
+    }
+  len = MultiByteToWideChar(CP_UTF8,
+			    MB_ERR_INVALID_CHARS,
+			    lpszUtf8,
+			    -1,
+			    lpszWideChar,
+			    len);
   if (len <= 0)
-  {
-    free (lpszWideChar);
-    //FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
-    return (0);
-  }
+    {
+      free (lpszWideChar);
+      throw fixme;
+    }
   return (lpszWideChar);
+}
+
+/* _________________________________________________________________________
+
+   WideCharToUTF8
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(char *)
+WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
+{
+  int len = WideCharToMultiByte(CP_UTF8,
+				0,
+				lpszWideChar,
+				-1,
+				0,
+				0,
+				0,
+				0);
+  if (len <= 0)
+    {
+      throw fixme;
+    }
+  char * lpszUtf8 = reinterpret_cast<char*>(malloc(len * sizeof(char)));
+  if (lpszUtf8 == 0)
+    {
+      throw fixme;
+    }
+  len = WideCharToMultiByte(CP_UTF8,
+			    0,
+			    lpszWideChar,
+			    -1,
+			    lpszUtf8,
+			    len,
+			    0,
+			    0);
+  if (len <= 0)
+    {
+      free (lpszUtf8);
+      throw fixme;
+    }
+  return (lpszUtf8);
+  }
 }
 
 /* _________________________________________________________________________
@@ -90,6 +131,35 @@ private:
 };
 
 #define UW_(x) WideCharBuffer(x).Get()
+
+/* _________________________________________________________________________
+
+   Utf8Buffer
+   _________________________________________________________________________ */
+
+class Utf8Buffer
+{
+public:
+  Utf8Buffer (/*[in]*/ const wchar_t * lpszWideChar)
+    : lpszUtf8(WideCharToUtf8(lpszWideChar))
+  {
+  }
+public:
+  ~Utf8Buffer ()
+  {
+    if (lpszUtf8 != 0)
+    {
+      free (lpszUtf8);
+      lpszUtf8 = 0;
+    }
+  }
+public:
+  char * Get() { return (lpszUtf8); }
+private:
+  char * lpszUtf8;
+};
+
+#define WU_(x) Utf8Buffer(x).Get()
 
 /* _________________________________________________________________________
 
@@ -187,4 +257,67 @@ MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_mkdir (/*[in]*/ const char * lpszDirectoryName)
 {
   return (_wmkdir(UW_(lpszDirectoryName)));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_rmdir
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_rmdir (/*[in]*/ const char * lpszDirectoryName)
+{
+  return (_wrmdir(UW_(lpszDirectoryName)));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_chdir
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_chdir (/*[in]*/ const char * lpszDirectoryName)
+{
+  return (_wchdir(UW_(lpszDirectoryName)));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_getcwd
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(char *)
+miktex_utf8_getcwd (/*[out]*/ char *	lpszDirectoryName,
+		    size_t		maxSize)
+{
+  wchar_t * lpszWideChar = reinterpret_cast<wchar_t*>(malloc(maxSize * sizeof(wchar_t)));
+  if (lpszWideChar == 0)
+    {
+      throw fixme;
+    }
+  if (_wgetcwd(lpszWideChar, maxSize) == 0)
+    {
+      free (lpszWideChar);
+      return (0);
+    }
+  Utf8Buffer utf8 (lpszWideChar);
+  free (lpszWideChar);
+  if (wcslen(utf8.Get()) >= maxSize)
+    {
+      throw fixme;
+    }      
+  wcscpy (lpszDirectoryName, utf8.Get());
+  return (lpszDirectoryName);
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_utime
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_utime (/*[in]*/ const char *		lpszFileName,
+		   /*[in]*/ const struct utimbuf *	pTime)
+{
+  return (_wutime(UW_(lpszFileName), pTime));
 }

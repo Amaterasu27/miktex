@@ -1009,7 +1009,7 @@ public:
   GetBottom (/*[in]*/ int shrinkFactor);
 
 public:
-  virtual
+d  virtual
   unsigned long
   MIKTEXTHISCALL
   GetBackgroundColor ();

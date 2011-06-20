@@ -32,6 +32,7 @@
 #include <io.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/utime.h>
 
 // DLL import/export switch
 #if ! defined(BF56453E041E4B58A0EA455A65DD28B1)
@@ -53,16 +54,25 @@ MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_access (/*[in]*/ const char * lpszFileName, /*[in]*/ int mode);
 
 MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_chdir (/*[in]*/ const char * lpszDirectoryName);
+
+MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_chmod (/*[in]*/ const char * lpszFileName, /*[in]*/ int mode);
 
 MIKTEXUTF8WRAPCEEAPI(FILE *)
 miktex_utf8_fopen (/*[in]*/ const char * lpszFileName, /*[in]*/ const char * lpszMode);
+
+MIKTEXUTF8WRAPCEEAPI(char *)
+miktex_utf8_getcwd (/*[out]*/ char * lpszDirectoryName, size_t maxSize)
 
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_mkdir (/*[in]*/ const char * lpszDirectoryName);
 
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_open (/*[in]*/ const char * lpszFileName, /*[in]*/ int flags, ...);
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_rmdir (/*[in]*/ const char * lpszDirectoryName);
 
 struct miktex_utf8_stat
 {
@@ -85,6 +95,9 @@ miktex_utf8_stat (/*[in]*/ const char * lpszFileName, /*[out]*/ struct miktex_ut
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_unlink (/*[in]*/ const char * lpszFileName);
 
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct utimbuf * pTime);
+
 #if defined(__cplusplus)
 }
 #endif
@@ -92,17 +105,21 @@ miktex_utf8_unlink (/*[in]*/ const char * lpszFileName);
 #if ! defined(BF56453E041E4B58A0EA455A65DD28B1)
 #  define _access miktex_utf8_access
 #  define access miktex_utf8_access
+#  define chdir miktex_utf8_chdir
 #  define _chmod miktex_utf8_chmod
 #  define chmod miktex_utf8_chmod
 #  define fopen miktex_utf8_fopen
+#  define getcwd miktex_utf8_getcwd
 #  define _mkdir miktex_utf8_mkdir
 #  define mkdir miktex_utf8_mkdir
 #  define _open miktex_utf8_open
 #  define open miktex_utf8_open
 //#  define _stat miktex_utf8_stat
+#  define rmdir miktex_utf8_rmdir
 #  define stat miktex_utf8_stat
 #  define unlink miktex_utf8_unlink
 #  define _unlink miktex_utf8_unlink
+#  define utime miktex_utf8_utime
 #endif
 
 #endif

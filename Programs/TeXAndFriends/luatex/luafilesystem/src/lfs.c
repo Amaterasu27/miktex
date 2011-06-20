@@ -20,6 +20,12 @@
 ** $Id: lfs.c,v 1.61 2009/07/04 02:10:16 mascarenhas Exp $
 */
 
+#if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
+#  undef CreateFile
+#  define CreateFile CreateFileW
+#endif
+
 #ifndef _WIN32
 #ifndef _AIX
 #define _FILE_OFFSET_BITS 64 /* Linux, Solaris and HP-UX */
@@ -94,9 +100,17 @@ typedef struct dir_data {
   #define STAT_STRUCT struct stati64
  #else
   #define lfs_setmode(L,file,m)   ((void)L, _setmode(_fileno(file), m))
+#if defined(MIKTEX)
   #define STAT_STRUCT struct _stati64
+#else
+  #define STAT_STRUCT struct miktex_utf8_stat
+#endif
  #endif
+#if defined(MIKTEX)
+#define STAT_FUNC miktex_utf8_stat
+#else
 #define STAT_FUNC _stati64
+#endif
 #else
 #define _O_TEXT               0
 #define _O_BINARY             0
@@ -218,14 +232,29 @@ typedef struct lfs_Lock {
 static int lfs_lock_dir(lua_State *L) {
   size_t pathl; HANDLE fd;
   lfs_Lock *lock;
+#if defined(MIKTEX)
+  wchar_t *ln;
+  const wchar_t *lockfile = L"/lockfile.lfs";
+  size_t sizePath;
+#else
   char *ln;
   const char *lockfile = "/lockfile.lfs";
+#endif
   const char *path = luaL_checklstring(L, 1, &pathl);
+#if defined(MIKTEX)
+  sizePath = pathl + wcslen(lockfile) + 1;
+  ln = (wchar_t*)malloc(sizePath * sizeof(wchar_t));;
+#else
   ln = (char*)malloc(pathl + strlen(lockfile) + 1);
+#endif
   if(!ln) { 
     lua_pushnil(L); lua_pushstring(L, strerror(errno)); return 2;
   }
+#if defined(MIKTEX)
+  miktex_utf8_to_wide_char(path, sizePath, ln); strcat(ln, lockfile);
+#else
   strcpy(ln, path); strcat(ln, lockfile);
+#endif
   if((fd = CreateFile(ln, GENERIC_WRITE, 0, NULL, CREATE_NEW, 
 	  	FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE, NULL)) == INVALID_HANDLE_VALUE) {
   	int en = GetLastError();
@@ -410,14 +439,14 @@ static int remove_dir (lua_State *L) {
 ** Directory iterator
 */
 static int dir_iter (lua_State *L) {
-#ifdef _WIN32
+#if ! defined(MIKTEX) && defined(_WIN32)
 	struct _finddata_t c_file;
 #else
 	struct dirent *entry;
 #endif
 	dir_data *d = (dir_data *)luaL_checkudata (L, 1, DIR_METATABLE);
 	luaL_argcheck (L, !d->closed, 1, "closed directory");
-#ifdef _WIN32
+#if ! defined(MIKTEX) && defined(_WIN32)
 	if (d->hFile == 0L) { /* first entry */
 		if ((d->hFile = _findfirst (d->pattern, &c_file)) == -1L) {
 			lua_pushnil (L);
@@ -457,7 +486,7 @@ static int dir_iter (lua_State *L) {
 */
 static int dir_close (lua_State *L) {
 	dir_data *d = (dir_data *)lua_touserdata (L, 1);
-#ifdef _WIN32
+#if ! defined(MIKTEX) && defined(_WIN32)
 	if (!d->closed && d->hFile) {
 		_findclose (d->hFile);
 		d->closed = 1;
@@ -481,7 +510,7 @@ static int dir_iter_factory (lua_State *L) {
 	lua_pushcfunction (L, dir_iter);
 	d = (dir_data *) lua_newuserdata (L, sizeof(dir_data));
 	d->closed = 0;
-#ifdef _WIN32
+#if ! defined(MIKTEX) && defined(_WIN32)
 	d->hFile = 0L;
 	luaL_getmetatable (L, DIR_METATABLE);
 	lua_setmetatable (L, -2);
