@@ -3,9 +3,9 @@ Copyright (c) 2008, 2009, 2010 , 2011 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Fri Mar 11 07:39:12 UTC 2011
+Latest Revision: Tue Jun 14 08:23:30 UTC 2011
 
-Version: 1.13
+Version: 1.16
 
 See synctex_parser_readme.txt for more details
 
@@ -141,8 +141,22 @@ void _synctex_strip_last_path_extension(char * string) {
 	}
 }
 
+const char * synctex_ignore_leading_dot_slash(const char * name)
+{
+    while(SYNCTEX_IS_DOT(*name) && SYNCTEX_IS_PATH_SEPARATOR(name[1])) {
+        name += 2;
+        while (SYNCTEX_IS_PATH_SEPARATOR(*name)) {
+            ++name;
+        }
+    }
+    return name;
+}
+
 /*  Compare two file names, windows is sometimes case insensitive... */
 synctex_bool_t _synctex_is_equivalent_file_name(const char *lhs, const char *rhs) {
+    /*  Remove the leading regex '(\./+)*' in both rhs and lhs */
+    lhs = synctex_ignore_leading_dot_slash(lhs);
+    rhs = synctex_ignore_leading_dot_slash(rhs);
 #	if SYNCTEX_WINDOWS
     /*  On Windows, filename should be compared case insensitive.
 	 *  The characters '/' and '\' are both valid path separators.
@@ -460,6 +474,6 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 
 const char * _synctex_get_io_mode_name(synctex_io_mode_t io_mode) {
     static const char * synctex_io_modes[4] = {"r","rb","a","ab"}; 
-    unsigned index = (io_mode & synctex_io_gz_mask) + 2 * (io_mode & synctex_io_append_mask);
+    unsigned index = ((io_mode & synctex_io_gz_mask)?1:0) + ((io_mode & synctex_io_append_mask)?2:0);// bug pointed out by Jose Alliste
     return synctex_io_modes[index];
 }
