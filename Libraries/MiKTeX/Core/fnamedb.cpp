@@ -377,10 +377,8 @@ FileNameDatabase::OpenFileNameDatabase (/*[in]*/ const char *	lpszFndbPath,
       // grow file-mapping object if necessary
       if (pHeader->size + 131072 > foEnd)
 	{
-	  const size_t GRAN = (1024 * 1024);
-	  const size_t EXTRA = 2 * GRAN;
 	  size_t newSize =
-	    ((pHeader->size + EXTRA + 1) / GRAN) * GRAN;
+	    ((pHeader->size + FNDB_EXTRA + 1) / FNDB_GRAN) * FNDB_GRAN;
 	  traceStream->WriteFormattedLine
 	    ("core",
 	     T_("enlarging fndb file %s (%u -> %u)..."),

@@ -1,6 +1,6 @@
 /* makefndb.cpp: creating the file name database
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -651,17 +651,7 @@ FndbManager::Create (/*[in]*/ const char *		lpszFndbPath,
       fndb.size = GetMemTop();
       if ((fndb.flags & FileNameDatabaseHeader::FndbFlags::Frozen) == 0)
 	{
-	  const size_t GRAN = (1024 * 1024);
-	  size_t extra;
-	  if (rootIdx == SessionImpl::GetSession()->GetInstallRoot())
-	    {
-	      extra = 2 * GRAN;
-	    }
-	  else
-	    {
-	      extra = 1 * GRAN;
-	    }
-	  size_t n = ((GetMemTop() + extra + 1) / GRAN * GRAN) - GetMemTop();
+	  size_t n = ((GetMemTop() + FNDB_EXTRA + 1) / FNDB_GRAN * FNDB_GRAN) - GetMemTop();
 	  ReserveMem (n);
 	}
       AlignMem (FNDB_PAGESIZE);
