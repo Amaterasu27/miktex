@@ -292,6 +292,8 @@ void TeXDocument::init()
 
 	QActionGroup *syntaxGroup = new QActionGroup(this);
 	syntaxGroup->addAction(actionSyntaxColoring_None);
+	if (syntaxOption == "")
+		QTimer::singleShot(1, actionSyntaxColoring_None, SLOT(trigger()));
 
 	int index = 0;
 	foreach (const QString& opt, options) {
@@ -1036,6 +1038,13 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 		return;
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	// Ensure the window is shown early (before setPlainText()).
+	// - this ensures it is shown before the PDF (if opening a new doc)
+	// - this avoids problems during layouting (which can be broken if the
+	//   geometry, highlighting, ... is changed before the window is shown)
+	show();
+
 	deferTagListChanges = true;
 	tagListChanged = false;
 	textEdit->setPlainText(fileContents);
@@ -1098,7 +1107,6 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 	if (autoPlace)
 		sideBySide();
 	
-	show(); // ensure window is shown before the PDF, if opening a new doc
 	editor()->updateLineNumberAreaWidth(0);
 
 	if (pdfDoc)
@@ -2004,6 +2012,11 @@ void TeXDocument::setSyntaxColoring(int index)
 void TeXDocument::setSyntaxColoringMode(const QString& mode)
 {
 	QList<QAction*> actionList = menuSyntax_Coloring->actions();
+	
+	if (mode == "") {
+		QTimer::singleShot(1, actionSyntaxColoring_None, SLOT(trigger()));
+		return;
+	}
 	for (int i = 0; i < actionList.count(); ++i) {
 		if (actionList[i]->isCheckable() && actionList[i]->text().compare(mode, Qt::CaseInsensitive) == 0) {
 			actionList[i]->trigger();
@@ -2021,6 +2034,10 @@ void TeXDocument::setSmartQuotesMode(const QString& mode)
 			return;
 		}
 	}
+	if (mode.isEmpty()) {
+		actionSmartQuotes_None->trigger();
+		return;
+	}
 }
 
 void TeXDocument::setAutoIndentMode(const QString& mode)
@@ -2031,6 +2048,10 @@ void TeXDocument::setAutoIndentMode(const QString& mode)
 			actionList[i]->trigger();
 			return;
 		}
+	}
+	if (mode.isEmpty()) {
+		actionAutoIndent_None->trigger();
+		return;
 	}
 }
 
