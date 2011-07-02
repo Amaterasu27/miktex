@@ -68,12 +68,9 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
 	 relScriptPath.c_str());
     }
   
-  // we cannot quote the command => remove all blanks from the script path
-  Utils::RemoveBlanksFromPathName (scriptPath);
-
   // build command line
   CommandLineBuilder batchCommandLine;
-  batchCommandLine.AppendUnquoted (scriptPath.Get());
+  batchCommandLine.AppendArgument (scriptPath.Get());
   if (argc > 1)
     {
       batchCommandLine.AppendArguments (argc - 1, &argv[1]);

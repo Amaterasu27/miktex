@@ -705,7 +705,7 @@ Wrap (/*[in,out]*/ string &	arguments)
 #endif
     }
 
-  wrappedArguments += "/c ";
+  wrappedArguments += "/s /c \"";
 
   if (wrapped)
     {
@@ -727,6 +727,8 @@ Wrap (/*[in,out]*/ string &	arguments)
     {
       wrappedArguments += arguments;
     }
+
+  wrappedArguments += "\"";
 
   arguments = wrappedArguments;
 
