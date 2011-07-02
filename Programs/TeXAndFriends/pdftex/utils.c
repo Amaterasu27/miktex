@@ -52,9 +52,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include "xpdf/config.h"        /* just to get the xpdf version */
 #define xpdfString "xpdf"
-#if defined(MIKTEX)
-#  include <sys/stat.h>
-#endif
 #endif
 
 #define check_nprintf(size_get, size_want) \

@@ -25,10 +25,16 @@
 #ifndef _MFILEIO_H_
 #define _MFILEIO_H_
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include <stdio.h>
 #include "numbers.h"
 
 #if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
 #  include <miktex/utf8wrap.h>
 #endif
 

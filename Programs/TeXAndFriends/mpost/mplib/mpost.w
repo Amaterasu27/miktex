@@ -43,6 +43,7 @@ have our customary command-line interface.
 #endif
 #include <kpathsea/kpathsea.h>
 #if defined(MIKTEX)
+#  include <miktex/utf8wrap.h>
 #  include <miktex/unxemu.h>
 #endif
 @= /*@@null@@*/ @> static char *mpost_tex_program = NULL;

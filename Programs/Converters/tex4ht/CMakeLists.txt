@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,6 +32,7 @@ add_definitions(
 if(NATIVE_WINDOWS)
   add_definitions(
     -DWIN32
+    -D_UNICODE -DUNICODE
   )
 endif(NATIVE_WINDOWS)
 
@@ -63,6 +64,7 @@ target_link_libraries(htcmd
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS htcmd DESTINATION ${bindir})
@@ -88,6 +90,7 @@ target_link_libraries(t4ht
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS t4ht DESTINATION ${bindir})
@@ -113,6 +116,8 @@ target_link_libraries(tex4ht
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS tex4ht DESTINATION ${bindir})

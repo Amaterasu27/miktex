@@ -1666,7 +1666,7 @@ DviView::OnMouseMove (/*[in]*/ UINT	flags,
 
       if (! leftButtonDown && (GetHyperTeXSpecialAtCursor(hyperTarget)))
 	{
-	  pMain->SetMessageText (CA2T(hyperTarget.c_str()));
+	  pMain->SetMessageText (UT_(hyperTarget.c_str()));
 	}
       else
 	{

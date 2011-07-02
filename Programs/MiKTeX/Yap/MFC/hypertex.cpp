@@ -155,7 +155,7 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 		  return (false);
 		}
 	      MIKTEX_ASSERT (AfxGetApp() != 0);
-	      CDocument * pDoc = AfxGetApp()->OpenDocumentFile(CA2T(path.Get()));
+	      CDocument * pDoc = AfxGetApp()->OpenDocumentFile(UT_(path.Get()));
 	      if (pDoc == 0)
 		{
 		  return (false);
@@ -187,7 +187,7 @@ DviView::Navigate (/*[in]*/ const char *	lpszUrl,
 	}
       if (AllowShellCommand(lpszUrl))
 	{
-	  ShellExecute (m_hWnd, _T("open"), CA2T(lpszUrl), 0, 0, SW_SHOWNORMAL);
+	  ShellExecute (m_hWnd, _T("open"), UT_(lpszUrl), 0, 0, SW_SHOWNORMAL);
 	}
       return (true);
     }

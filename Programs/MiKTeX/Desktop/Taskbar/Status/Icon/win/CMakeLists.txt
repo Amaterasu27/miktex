@@ -20,6 +20,11 @@
 use_static_crt()
 use_static_libraries()
 
+add_definitions(
+  -D_UNICODE
+  -DUNICODE
+)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/res/dialog.manifest.in
   ${CMAKE_CURRENT_BINARY_DIR}/res/dialog.manifest

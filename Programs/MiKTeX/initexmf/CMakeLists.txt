@@ -31,7 +31,7 @@ if(NATIVE_WINDOWS)
   set(initexmf_sources ${initexmf_sources} initexmf.rc)
 endif(NATIVE_WINDOWS)
 
-add_definitions(-D_UNICODE)
+add_definitions(-D_UNICODE -DUNICODE)
 
 add_executable(initexmf ${initexmf_sources})
 

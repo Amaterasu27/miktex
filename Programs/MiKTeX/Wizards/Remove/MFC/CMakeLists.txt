@@ -38,8 +38,7 @@ include_directories(BEFORE
 set(CMAKE_MFC_FLAG 1)
 
 add_definitions(
-  -D_UNICODE
-  -DUNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(remove_mfc_sources

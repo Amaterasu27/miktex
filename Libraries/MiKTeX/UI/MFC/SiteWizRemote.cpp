@@ -172,9 +172,9 @@ SiteWizRemote::InsertColumn (/*[in]*/ int		colIdx,
 			     /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -311,7 +311,7 @@ SiteWizRemote::SetItemText (/*[in]*/ int		itemIdx,
 			    /*[in]*/ int		colIdx,
 			    /*[in]*/ const char *	lpszText)
 {
-  if (! listControl.SetItemText(itemIdx, colIdx, CA2T(lpszText)))
+  if (! listControl.SetItemText(itemIdx, colIdx, UT_(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
@@ -335,12 +335,12 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.dwSchemeLength = 200;
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
-  if (! InternetCrackUrl(CA2T(url.c_str()), 0, 0, &url_comp))
+  if (! InternetCrackUrl(UT_(url.c_str()), 0, 0, &url_comp))
     {
       FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
     }
-  protocol = CT2A(szProtocol);
-  host = CT2A(szHost);
+  protocol = TU_(szProtocol);
+  host = TU_(szHost);
 }
 /* _________________________________________________________________________
 
@@ -406,9 +406,9 @@ SiteWizRemote::FillList (/*[in]*/ WPARAM	wParam,
 	  SetItemText (idx, 0, it->country.c_str());
 	  CString protUC (protocol.c_str());
 	  protUC.MakeUpper ();
-	  SetItemText (idx, 1, CT2A(protUC));
+	  SetItemText (idx, 1, TU_(protUC));
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CT2A(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
+      	  SetItemText (idx, 3, TU_(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
 	  SetItemText (idx, 4, it->description.c_str());
 
 	  if (it->url == url)

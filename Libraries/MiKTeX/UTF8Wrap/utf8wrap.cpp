@@ -21,8 +21,12 @@
 
 #include <Windows.h>
 #include <cstdarg>
+#include <exception>
+#include <vector>
 #include <fcntl.h>
 #include "internal.h"
+
+using namespace std;
 
 /* _________________________________________________________________________
 
@@ -40,12 +44,12 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
 				0);
   if (len <= 0)
     {
-      throw fixme;
+      throw std::exception("MultiByteToWideChar() failed for some reason");
     }
   wchar_t * lpszWideChar = reinterpret_cast<wchar_t*>(malloc(len * sizeof(wchar_t)));
   if (lpszWideChar == 0)
     {
-      throw fixme;
+      throw std::exception("out of memory");
     }
   len = MultiByteToWideChar(CP_UTF8,
 			    MB_ERR_INVALID_CHARS,
@@ -56,7 +60,7 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8)
   if (len <= 0)
     {
       free (lpszWideChar);
-      throw fixme;
+      throw std::exception("MultiByteToWideChar() failed for some reason");
     }
   return (lpszWideChar);
 }
@@ -79,12 +83,12 @@ WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
 				0);
   if (len <= 0)
     {
-      throw fixme;
+      throw std::exception("WideCharToMultiByte() failed for some reason");
     }
   char * lpszUtf8 = reinterpret_cast<char*>(malloc(len * sizeof(char)));
   if (lpszUtf8 == 0)
     {
-      throw fixme;
+      throw std::exception("out of memory");
     }
   len = WideCharToMultiByte(CP_UTF8,
 			    0,
@@ -97,11 +101,10 @@ WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
   if (len <= 0)
     {
       free (lpszUtf8);
-      throw fixme;
+      throw std::exception("WideCharToMultiByte() failed for some reason");
     }
   return (lpszUtf8);
-  }
-}
+};
 
 /* _________________________________________________________________________
 
@@ -141,7 +144,7 @@ class Utf8Buffer
 {
 public:
   Utf8Buffer (/*[in]*/ const wchar_t * lpszWideChar)
-    : lpszUtf8(WideCharToUtf8(lpszWideChar))
+    : lpszUtf8(WideCharToUTF8(lpszWideChar))
   {
   }
 public:
@@ -228,6 +231,17 @@ miktex_utf8_unlink (/*[in]*/ const char * lpszFileName)
 
 /* _________________________________________________________________________
 
+   miktex_utf8_remove
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_remove (/*[in]*/ const char * lpszFileName)
+{
+  return (_wremove(UW_(lpszFileName)));
+}
+
+/* _________________________________________________________________________
+
    miktex_utf8_access
    _________________________________________________________________________ */
 
@@ -293,7 +307,7 @@ miktex_utf8_getcwd (/*[out]*/ char *	lpszDirectoryName,
   wchar_t * lpszWideChar = reinterpret_cast<wchar_t*>(malloc(maxSize * sizeof(wchar_t)));
   if (lpszWideChar == 0)
     {
-      throw fixme;
+      throw std::exception("out of memory");
     }
   if (_wgetcwd(lpszWideChar, maxSize) == 0)
     {
@@ -302,11 +316,11 @@ miktex_utf8_getcwd (/*[out]*/ char *	lpszDirectoryName,
     }
   Utf8Buffer utf8 (lpszWideChar);
   free (lpszWideChar);
-  if (wcslen(utf8.Get()) >= maxSize)
+  if (strlen(utf8.Get()) >= maxSize)
     {
-      throw fixme;
+      throw std::exception("buffer too small");
     }      
-  wcscpy (lpszDirectoryName, utf8.Get());
+  strcpy (lpszDirectoryName, utf8.Get());
   return (lpszDirectoryName);
 }
 
@@ -319,5 +333,68 @@ MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_utime (/*[in]*/ const char *		lpszFileName,
 		   /*[in]*/ const struct utimbuf *	pTime)
 {
-  return (_wutime(UW_(lpszFileName), pTime));
+  struct _utimbuf buf;
+  buf.actime = pTime->actime;
+  buf.modtime = pTime->modtime;
+  return (_wutime(UW_(lpszFileName), &buf));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_rename
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_rename (/*[in]*/ const char * lpszOld, /*[in]*/ const char * lpszNew)
+{
+  return (_wrename(UW_(lpszOld), UW_(lpszNew)));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_spawnvp
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(intptr_t)
+miktex_utf8_spawnvp (/*[in]*/ int mode,
+		     /*[in]*/ const char * lpszFileName,
+		     /*[in]*/ const char * const * argv)
+{
+  vector<wstring> wideArguments;
+  int count;
+  for (count = 0; argv[count] != 0; ++ count)
+  {
+    wideArguments.push_back (UW_(argv[count]));
+  }
+  vector<const wchar_t *> wargv;
+  wargv.reserve (count + 1);
+  for (int idx = 0; idx < count; ++ idx)
+  {
+    wargv.push_back (wideArguments[idx].c_str());
+  }
+  wargv.push_back (0);
+  return (_wspawnvp(mode, UW_(lpszFileName), &wargv[0]));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_system
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_system (/*[in]*/ const char * lpszCommand)
+{
+  return (_wsystem(UW_(lpszCommand)));
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_popen
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(FILE *)
+miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
+		   /*[in]*/ const char * lpszMode)
+{
+  return (_wpopen(UW_(lpszCommand), UW_(lpszMode)));
 }

@@ -425,7 +425,7 @@ InverseSearchOptionsPage::OnInitDialog ()
 	    {
 	      commandLineIdx = idx;
 	    }
-	  CString str = CA2T(it->name.c_str());
+	  CString str = UT_(it->name.c_str());
 	  if (idx < firstCustomIdx)
 	    {
 	      str += T_(_T(" (auto-detected)"));
@@ -445,7 +445,7 @@ InverseSearchOptionsPage::OnInitDialog ()
 		("InverseSearchOptionsPage::OnInitDialog");
 	    }
 	  commandLineDisplay.SetWindowText
-	    (CA2T(editors[commandLineIdx].GetCommandLine().c_str()));
+	    (UT_(editors[commandLineIdx].GetCommandLine().c_str()));
 	}
       
       EnableButtons ();
@@ -500,7 +500,7 @@ InverseSearchOptionsPage::OnSelChangeEditor ()
       if (idx >= 0)
 	{
 	  commandLineDisplay.SetWindowText
-	    (CA2T(editors[idx].GetCommandLine().c_str()));
+	    (UT_(editors[idx].GetCommandLine().c_str()));
 	}
       else
 	{
@@ -534,7 +534,7 @@ InverseSearchOptionsPage::OnAddEditor ()
 	{
 	  EditorInfo editorInfo = dlg.GetEditorInfo();
 	  editors.push_back (editorInfo);
-	  if (editorListBox.AddString(CA2T(editorInfo.name.c_str())) < 0)
+	  if (editorListBox.AddString(UT_(editorInfo.name.c_str())) < 0)
 	    {
 	      UNEXPECTED_CONDITION
 		("InverseSearchOptionsPage::OnAddEditor");

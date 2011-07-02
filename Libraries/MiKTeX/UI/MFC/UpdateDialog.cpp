@@ -782,7 +782,7 @@ UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
   va_start (marker, lpszFormat);
   string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
-  GetControl(ctrlId)->SetWindowText (CA2T(str.c_str()));
+  GetControl(ctrlId)->SetWindowText (UT_(str.c_str()));
 }
 
 /* _________________________________________________________________________

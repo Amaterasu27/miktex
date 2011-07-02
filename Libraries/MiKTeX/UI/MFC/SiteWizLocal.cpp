@@ -185,8 +185,8 @@ SiteWizLocal::OnWizardFinish ()
 	  CString prompt;
 	  AfxFormatString1 (prompt, IDP_NOT_A_FOLDER, directory);
 	  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
-			      CT2A(prompt),
-			      CT2A(directory));
+			      TU_(prompt),
+			      TU_(directory));
 	}
       else
 	{
@@ -202,14 +202,14 @@ SiteWizLocal::OnWizardFinish ()
 				    IDP_NOT_LOCAL_REPOSITORY,
 				    directory);
 		  FATAL_MIKTEX_ERROR ("SiteWizLocal::OnWizardFinish",
-				      CT2A(prompt),
-				      CT2A(directory));
+				      TU_(prompt),
+				      TU_(directory));
 		}
 	    }
 	}
       pManager->SetDefaultPackageRepository
 	(RepositoryType::Local,
-	 string(CT2A(directory)));
+	 string(TU_(directory)));
       return (CPropertyPage::OnWizardFinish());
     }
   catch (const MiKTeXException & e)

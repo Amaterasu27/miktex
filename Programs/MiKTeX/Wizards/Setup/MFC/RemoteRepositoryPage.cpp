@@ -339,7 +339,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  protUC.MakeUpper ();
 	  SetItemText (idx, 1, WU_(protUC));
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, WU_(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
+      	  SetItemText (idx, 3, TU_(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
 #if SHOW_DESCRIPTION
 	  SetItemText (idx, 4, it->description.c_str());
 #endif
@@ -469,9 +469,9 @@ RemoteRepositoryPage::InsertColumn (/*[in]*/ int		colIdx,
 				    /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       UW_(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(UW_(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -489,7 +489,7 @@ RemoteRepositoryPage::SetItemText (/*[in]*/ int			itemIdx,
 				   /*[in]*/ int			colIdx,
 				   /*[in]*/ const char *	lpszText)
 {
-  if (! listControl.SetItemText(itemIdx, colIdx, UW_(lpszText)))
+  if (! listControl.SetItemText(itemIdx, colIdx, UT_(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
@@ -515,7 +515,7 @@ RemoteRepositoryPage::SetProgressText (/*[in]*/ const char * lpszText)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
-  if (! listControl.SetItemText(0, 0, UW_(lpszText)))
+  if (! listControl.SetItemText(0, 0, UT_(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }

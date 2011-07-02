@@ -65,9 +65,9 @@ PrintOptionsPage::OnInitDialog ()
       for (int idx = 0;
 	   SessionWrapper(true)->GetMETAFONTMode(idx, &mode); ++ idx)
 	{
-	  CString modeString = CA2T(mode.szMnemonic);
+	  CString modeString = UT_(mode.szMnemonic);
 	  modeString += _T(" (");
-	  modeString += CA2T(mode.szDescription);
+	  modeString += UT_(mode.szDescription);
 	  modeString += _T(")");
 	  if (modeComboBox.AddString(modeString) < 0)
 	    {
@@ -80,7 +80,7 @@ PrintOptionsPage::OnInitDialog ()
 		  UNEXPECTED_CONDITION ("PrintOptionsPage::OnInitDialog");
 		}
 	      resolution = mode.iHorzRes;
-	      resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
+	      resolutionControl.SetWindowText (UT_(NUMTOSTR(resolution)));
 	    }
 	}
     }
@@ -162,7 +162,7 @@ PrintOptionsPage::OnChangeMode ()
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))
 	{
 	  resolution = mode.iHorzRes;
-	  resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
+	  resolutionControl.SetWindowText (UT_(NUMTOSTR(resolution)));
 	  metafontModeIdx = idx;
 	  SetModified (TRUE);
 	}

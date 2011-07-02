@@ -64,6 +64,12 @@
 #endif
 #include "PDFDoc.h"
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  define MIKTEX_UTF8_WRAP_REMOVE 0
+#  include <miktex/utf8wrap.h>
+#endif
+
 //------------------------------------------------------------------------
 
 #define headerSearchSize 1024	// read this many bytes at beginning of

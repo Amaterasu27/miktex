@@ -305,7 +305,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  CString givenTitle = GetWindowText(IDC_TITLE);
 	  haveMatch =
 	    (givenTitle.GetLength() == 0
-	     || packageInfo.title.find(CT2A(givenTitle)) != string::npos);
+	     || packageInfo.title.find(TU_(givenTitle)) != string::npos);
 	  if (! haveMatch)
 	    {
 	      continue;
@@ -313,7 +313,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 	  CString givenDescription = GetWindowText(IDC_DESCRIPTION);
 	  haveMatch =
 	    (givenDescription.GetLength() == 0
-	     || (packageInfo.description.find(CT2A(givenDescription))
+	     || (packageInfo.description.find(TU_(givenDescription))
 		 != string::npos));
 	  if (! haveMatch)
 	    {
@@ -330,7 +330,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(CT2A(givenFile), path.Get());
+		  found = PathName::Match(TU_(givenFile), path.Get());
 		}
 	      for (it = packageInfo.docFiles.begin();
 		   ! found && it != packageInfo.docFiles.end();
@@ -338,7 +338,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(CT2A(givenFile), path.Get());
+		  found = PathName::Match(TU_(givenFile), path.Get());
 		}
 	      for (it = packageInfo.sourceFiles.begin();
 		   ! found && it != packageInfo.sourceFiles.end();
@@ -346,7 +346,7 @@ SearchPackageDialog::OnBnClickedFindNow ()
 		{
 		  PathName path (it->c_str());
 		  path.RemoveDirectorySpec ();
-		  found = PathName::Match(CT2A(givenFile), path.Get());
+		  found = PathName::Match(TU_(givenFile), path.Get());
 		}
 	      haveMatch = found;
 	    }

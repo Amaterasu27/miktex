@@ -45,7 +45,7 @@ END_MESSAGE_MAP();
 
 RemoveWizardApp::RemoveWizardApp ()
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.Remove." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.Remove." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -123,7 +123,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
       str += T_("Details: ");
       str += e.GetInfo();
     }
-  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________
@@ -138,7 +138,7 @@ ReportError (/*[in]*/ const exception & e)
   str = T_("The operation could not be completed for the following reason: ");
   str += "\n\n";
   str += e.what();
-  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________

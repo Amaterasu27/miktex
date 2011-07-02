@@ -75,6 +75,11 @@
 #include "ICSupport.h"
 #endif
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 // the MSVC math.h doesn't define this
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

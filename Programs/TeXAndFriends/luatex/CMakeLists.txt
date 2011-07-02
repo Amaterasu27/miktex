@@ -35,7 +35,7 @@ add_definitions(
 )
 
 add_definitions(
-  -D_UNICODE
+  -D_UNICODE -DUNICODE
 )
 
 if(MSVC)

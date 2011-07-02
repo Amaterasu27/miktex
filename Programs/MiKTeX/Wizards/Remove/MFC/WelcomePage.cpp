@@ -138,7 +138,7 @@ WelcomePage::OnKillActive ()
       try
 	{
 	  pSheet->SetThoroughlyFlag (thoroughly != FALSE);
-	  pSheet->SetNextText (CT2A(oldNextText));
+	  pSheet->SetNextText (TU_(oldNextText));
 	}
       catch (const MiKTeXException & e)
 	{

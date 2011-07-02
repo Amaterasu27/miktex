@@ -162,7 +162,7 @@ BOOL
 SettingsPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
-  theApp.paperSize = WU_(paperSize);
+  theApp.paperSize = TU_(paperSize);
   switch (installOnTheFly)
     {
     case 0:

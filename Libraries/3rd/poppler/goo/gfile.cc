@@ -57,6 +57,12 @@
 #define PATH_MAX 1024
 #endif
 
+#if defined(MIKTEX)
+#  include <miktex/Core/Core>
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 //------------------------------------------------------------------------
 
 GooString *getHomeDir() {
@@ -64,6 +70,13 @@ GooString *getHomeDir() {
   //---------- VMS ----------
   return new GooString("SYS$LOGIN:");
 
+#elif defined(MIKTEX)
+  std::string home;
+  if (! MiKTeX::Core::Utils::GetEnvironmentString("HOME", home))
+  {
+    home = ".";
+  }
+  return new GooString(home.c_str());
 #elif defined(__EMX__) || defined(_WIN32)
   //---------- OS/2+EMX and Win32 ----------
   char *s;
@@ -110,6 +123,11 @@ GooString *getCurrentDir() {
 
 #if defined(__EMX__)
   if (_getcwd2(buf, sizeof(buf)))
+#elif defined(MIKTEX)
+  MiKTeX::Core::PathName cwd;
+  cwd.SetToCurrentDirectory ();
+  MiKTeX::Core::Utils::CopyString (buf, sizeof(buf) / sizeof(buf[0]), cwd.Get());
+  if (true)
 #elif defined(_WIN32)
   if (GetCurrentDirectory(sizeof(buf), buf))
 #elif defined(ACORN)
@@ -173,10 +191,18 @@ GooString *appendToPath(GooString *path, char *fileName) {
   tmp = new GooString(path);
   tmp->append('/');
   tmp->append(fileName);
+#if defined(MIKTEX)
+  MiKTeX::Core::PathName absPath (tmp->getCString());
+  absPath.MakeAbsolute ();
+  delete tmp;
+  path->clear();
+  path->append(absPath.Get());
+#else
   GetFullPathName(tmp->getCString(), sizeof(buf), buf, &fp);
   delete tmp;
   path->clear();
   path->append(buf);
+#endif
   return path;
 
 #elif defined(ACORN)
@@ -374,6 +400,12 @@ GooString *makePathAbsolute(GooString *path) {
   }
   return path;
 
+#elif defined(MIKTEX)
+  MiKTeX::Core::PathName absPath (path->getCString());
+  absPath.MakeAbsolute ();
+  path->clear ();
+  path->append (absPath.Get());
+  return (path);
 #elif defined(_WIN32)
   //---------- Win32 ----------
   char buf[_MAX_PATH];
@@ -587,7 +619,9 @@ GDirEntry::GDirEntry(char *dirPath, char *nameA, GBool doStat) {
 #ifdef VMS
   char *p;
 #elif defined(_WIN32)
+#if ! defined(MIKTEX)
   DWORD fa;
+#endif
 #elif defined(ACORN)
 #else
   struct stat st;
@@ -605,8 +639,12 @@ GDirEntry::GDirEntry(char *dirPath, char *nameA, GBool doStat) {
 #elif defined(ACORN)
 #else
 #ifdef _WIN32
+#if defined(MIKTEX)
+    dir = MiKTeX::Core::Directory::Exists(fullPath->getCString());
+#else
     fa = GetFileAttributes(fullPath->getCString());
     dir = (fa != 0xFFFFFFFF && (fa & FILE_ATTRIBUTE_DIRECTORY));
+#endif
 #else
     if (stat(fullPath->getCString(), &st) == 0)
       dir = S_ISDIR(st.st_mode);
@@ -623,7 +661,7 @@ GDirEntry::~GDirEntry() {
 GDir::GDir(char *name, GBool doStatA) {
   path = new GooString(name);
   doStat = doStatA;
-#if defined(_WIN32)
+#if defined(_WIN32) && ! defined(MIKTEX)
   GooString *tmp;
 
   tmp = path->copy();
@@ -642,7 +680,7 @@ GDir::GDir(char *name, GBool doStatA) {
 
 GDir::~GDir() {
   delete path;
-#if defined(_WIN32)
+#if defined(_WIN32) && ! defined(MIKTEX)
   if (hnd != INVALID_HANDLE_VALUE) {
     FindClose(hnd);
     hnd = INVALID_HANDLE_VALUE;
@@ -658,7 +696,7 @@ GDir::~GDir() {
 GDirEntry *GDir::getNextEntry() {
   GDirEntry *e;
 
-#if defined(_WIN32)
+#if defined(_WIN32) && ! defined(MIKTEX)
   if (hnd != INVALID_HANDLE_VALUE) {
     e = new GDirEntry(path->getCString(), ffd.cFileName, doStat);
     if (!FindNextFile(hnd, &ffd)) {
@@ -702,7 +740,7 @@ GDirEntry *GDir::getNextEntry() {
 }
 
 void GDir::rewind() {
-#ifdef _WIN32
+#if defined(_WIN32) && ! defined(MIKTEX)
   GooString *tmp;
 
   if (hnd != INVALID_HANDLE_VALUE)

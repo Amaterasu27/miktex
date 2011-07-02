@@ -19,7 +19,7 @@
 
 add_definitions(
   -DHAVE_CONFIG_H
-  -D_UNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(fc-match_sources

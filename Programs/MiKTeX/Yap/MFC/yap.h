@@ -145,6 +145,13 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
 /* _________________________________________________________________________
 
    EditorInfo

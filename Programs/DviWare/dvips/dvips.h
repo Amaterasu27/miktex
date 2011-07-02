@@ -18,6 +18,8 @@
 "This is dvips(k) 5.991 Copyright 2011 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #if defined(MIKTEX)
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
 #include <miktex/Core/Core>
 #include <direct.h>
 #include <sys/stat.h>

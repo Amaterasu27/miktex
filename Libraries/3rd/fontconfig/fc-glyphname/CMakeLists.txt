@@ -20,7 +20,7 @@
 add_definitions(
   -DHAVE_CONFIG_H
   -DDONT_USE_MIKTEX_EXIT
-  -D_UNICODE
+  -D_UNICODE -DUNICODE
 )
 
 include_directories(

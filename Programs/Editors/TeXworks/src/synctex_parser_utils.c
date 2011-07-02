@@ -40,6 +40,11 @@ authorization from the copyright holder.
 
 /*  In this file, we find all the functions that may depend on the operating system. */
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include <synctex_parser_utils.h>
 #include <stdlib.h>
 #include <string.h>

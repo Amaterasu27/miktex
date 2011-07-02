@@ -153,15 +153,15 @@ TypePage::OnInitDialog ()
 	  SplitUrl (remoteRepository, protocol, host);
 	  CString text;
 	  text.Format (T_(_T("%s://%s (last used)")),
-		       static_cast<LPCTSTR>(CA2T(protocol.c_str())),
-		       static_cast<LPCTSTR>(CA2T(host.c_str())));
+		       static_cast<LPCTSTR>(UT_(protocol.c_str())),
+		       static_cast<LPCTSTR>(UT_(host.c_str())));
 	  GetControl(IDC_LAST_USED_REPOSITORY)->SetWindowText (text);
 	}
 
       if (haveLocalRepository)
 	{
 	  CString text;
-	  text.Format (T_(_T("%s (last used)")), static_cast<LPCTSTR>(CA2T(localRepository.Get())));
+	  text.Format (T_(_T("%s (last used)")), static_cast<LPCTSTR>(UT_(localRepository.Get())));
 	  GetControl(IDC_LAST_USED_DIRECTORY)->SetWindowText (text);
 	}
 

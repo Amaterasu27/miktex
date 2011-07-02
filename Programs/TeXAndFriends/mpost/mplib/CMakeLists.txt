@@ -30,6 +30,10 @@ add_definitions(
   -DHAVE_SYS_STAT_H=1
 )
 
+add_definitions(
+  -D_UNICODE -DUNICODE
+)
+
 set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mp.c
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.c
@@ -209,6 +213,7 @@ foreach(x ${executables})
     ${getopt_dll_name}
     ${kpsemu_dll_name}
     ${mp_lib_name}
+    ${utf8wrap_dll_name}
   )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION "${bindir}")

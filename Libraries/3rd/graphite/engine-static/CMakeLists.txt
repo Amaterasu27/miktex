@@ -23,9 +23,8 @@ set (win32_dir ${CMAKE_SOURCE_DIR}/${rel_graphite_dir}/wrappers/win32)
 add_definitions(
   -DGR_NAMESPACE
   -DTRACING
-  -DUNICODE
   -DWIN32
-  -D_UNICODE
+  -D_UNICODE -DUNICODE
   -D_WINDOWS
 )
 

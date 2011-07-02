@@ -345,7 +345,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
       // update the report
       if (sharedData.reportUpdate)
 	{
-	  reportEditBox.SetWindowText (CA2T(sharedData.report.c_str()));
+	  reportEditBox.SetWindowText (UT_(sharedData.report.c_str()));
 	  reportEditBox.SetSel (100000, 100000);
 	  sharedData.reportUpdate = false;
 	}
@@ -395,7 +395,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(CA2T(sharedData.packageName.c_str()));
+		(UT_(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 

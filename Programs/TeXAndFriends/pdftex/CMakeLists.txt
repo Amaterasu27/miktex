@@ -52,6 +52,10 @@ add_definitions(
   -D__SyncTeX__
 )
 
+add_definitions(
+  -D_UNICODE -DUNICODE
+)
+
 set(synctex_pdftex_ch_srcs_mem_only
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch1
@@ -88,6 +92,7 @@ if(BUILDING_MIKTEX)
     ${goo_lib_name}
     ${app_dll_name}
     ${core_dll_name}
+	${utf8wrap_dll_name}
   )
   if(NATIVE_WINDOWS)
     target_link_libraries(pdftosrc
@@ -127,6 +132,7 @@ if(BUILDING_MIKTEX)
     ${core_dll_name}
     ${kpsemu_dll_name}
     ${texmf_dll_name}
+	${utf8wrap_dll_name}
   )
   if(NATIVE_WINDOWS)
     target_link_libraries(ttf2afm
@@ -305,6 +311,7 @@ else(LINK_EVERYTHING_STATICALLY)
     ${png_dll_name}
     ${xpdf_lib_name}
     ${w2cemu_dll_name}
+	${utf8wrap_dll_name}
   )
 endif(LINK_EVERYTHING_STATICALLY)
 

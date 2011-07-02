@@ -21,9 +21,11 @@
 */
 
 #if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
 #  include <miktex/utf8wrap.h>
 #  undef CreateFile
 #  define CreateFile CreateFileW
+#  include <miktex/unxemu.h>
 #endif
 
 #ifndef _WIN32
@@ -84,7 +86,7 @@
 #define MAX_DIR_LENGTH 1023
 typedef struct dir_data {
 	int  closed;
-#ifdef _WIN32
+#if defined(_WIN32) && ! defined(MIKTEX)
 	long hFile;
 	char pattern[MAX_DIR_LENGTH+1];
 #else
@@ -101,9 +103,9 @@ typedef struct dir_data {
  #else
   #define lfs_setmode(L,file,m)   ((void)L, _setmode(_fileno(file), m))
 #if defined(MIKTEX)
-  #define STAT_STRUCT struct _stati64
-#else
   #define STAT_STRUCT struct miktex_utf8_stat
+#else
+  #define STAT_STRUCT struct _stati64
 #endif
  #endif
 #if defined(MIKTEX)
@@ -251,7 +253,7 @@ static int lfs_lock_dir(lua_State *L) {
     lua_pushnil(L); lua_pushstring(L, strerror(errno)); return 2;
   }
 #if defined(MIKTEX)
-  miktex_utf8_to_wide_char(path, sizePath, ln); strcat(ln, lockfile);
+  miktex_utf8_to_wide_char(path, sizePath, ln); wcscat(ln, lockfile);
 #else
   strcpy(ln, path); strcat(ln, lockfile);
 #endif

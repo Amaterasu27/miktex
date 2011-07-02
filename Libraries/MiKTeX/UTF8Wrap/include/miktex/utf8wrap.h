@@ -19,6 +19,10 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
+/* todo:
+   getenv()
+   putenv()
+ */
 #if defined(_MSC_VER)
 #  pragma once
 #endif
@@ -28,9 +32,17 @@
 
 #include <miktex/Core/Definitions.h>
 
+#if defined(__cplusplus)
+#include <cstdio>
+#include <cstdlib>
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#endif
+
 #include <direct.h>
 #include <io.h>
-#include <stdio.h>
+#include <process.h>
 #include <sys/stat.h>
 #include <sys/utime.h>
 
@@ -63,7 +75,7 @@ MIKTEXUTF8WRAPCEEAPI(FILE *)
 miktex_utf8_fopen (/*[in]*/ const char * lpszFileName, /*[in]*/ const char * lpszMode);
 
 MIKTEXUTF8WRAPCEEAPI(char *)
-miktex_utf8_getcwd (/*[out]*/ char * lpszDirectoryName, size_t maxSize)
+miktex_utf8_getcwd (/*[out]*/ char * lpszDirectoryName, size_t maxSize);
 
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_mkdir (/*[in]*/ const char * lpszDirectoryName);
@@ -71,8 +83,23 @@ miktex_utf8_mkdir (/*[in]*/ const char * lpszDirectoryName);
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_open (/*[in]*/ const char * lpszFileName, /*[in]*/ int flags, ...);
 
+MIKTEXUTF8WRAPCEEAPI(FILE *)
+miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
+		   /*[in]*/ const char * lpszMode);
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_rename (/*[in]*/ const char * lpszOld, /*[in]*/ const char * lpszNew);
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_remove (/*[in]*/ const char * lpszFileName);
+
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_rmdir (/*[in]*/ const char * lpszDirectoryName);
+
+MIKTEXUTF8WRAPCEEAPI(intptr_t)
+miktex_utf8_spawnvp (/*[in]*/ int mode,
+		     /*[in]*/ const char * lpszFileName,
+		     /*[in]*/ const char * const * argv);
 
 struct miktex_utf8_stat
 {
@@ -93,6 +120,9 @@ MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_stat (/*[in]*/ const char * lpszFileName, /*[out]*/ struct miktex_utf8_stat * pStat);
 
 MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_system (/*[in]*/ const char * lpszCommand);
+
+MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_unlink (/*[in]*/ const char * lpszFileName);
 
 MIKTEXUTF8WRAPCEEAPI(int)
@@ -102,23 +132,181 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 }
 #endif
 
-#if ! defined(BF56453E041E4B58A0EA455A65DD28B1)
+#if MIKTEX_UTF8_WRAP_ALL
+#  if ! defined(MIKTEX_UTF8_WRAP__ACCESS)
+#    define MIKTEX_UTF8_WRAP__ACCESS 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_ACCESS)
+#    define MIKTEX_UTF8_WRAP_ACCESS 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_CHDIR)
+#    define MIKTEX_UTF8_WRAP_CHDIR 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__CHMOD)
+#    define MIKTEX_UTF8_WRAP__CHMOD 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_CHMOD)
+#    define MIKTEX_UTF8_WRAP_CHMOD 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_FOPEN)
+#    define MIKTEX_UTF8_WRAP_FOPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_GETCWD)
+#    define MIKTEX_UTF8_WRAP_GETCWD 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__MKDIR)
+#    define MIKTEX_UTF8_WRAP__MKDIR 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_MKDIR)
+#    define MIKTEX_UTF8_WRAP_MKDIR 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__OPEN)
+#    define MIKTEX_UTF8_WRAP__OPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_OPEN)
+#    define MIKTEX_UTF8_WRAP_OPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__POPEN)
+#    define MIKTEX_UTF8_WRAP__POPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_POPEN)
+#    define MIKTEX_UTF8_WRAP_POPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_RENAME)
+#    define MIKTEX_UTF8_WRAP_RENAME 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_REMOVE)
+#    define MIKTEX_UTF8_WRAP_REMOVE 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_RMDIR)
+#    define MIKTEX_UTF8_WRAP_RMDIR 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__SPAWNVP)
+#    define MIKTEX_UTF8_WRAP__SPAWNVP 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_SPAWNVP)
+#    define MIKTEX_UTF8_WRAP_SPAWNVP 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__STAT)
+#    define MIKTEX_UTF8_WRAP__STAT 0
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_STAT)
+#    define MIKTEX_UTF8_WRAP_STAT 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__SYSTEM)
+#    define MIKTEX_UTF8_WRAP__SYSTEM 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_SYSTEM)
+#    define MIKTEX_UTF8_WRAP_SYSTEM 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP__UNLINK)
+#    define MIKTEX_UTF8_WRAP__UNLINK 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_UNLINK)
+#    define MIKTEX_UTF8_WRAP_UNLINK 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_UTIME)
+#    define MIKTEX_UTF8_WRAP_UTIME 1
+#  endif
+#endif
+
+#if MIKTEX_UTF8_WRAP__ACCESS
 #  define _access miktex_utf8_access
+#endif
+
+#if MIKTEX_UTF8_WRAP_ACCESS
 #  define access miktex_utf8_access
+#endif
+
+#if MIKTEX_UTF8_WRAP_CHDIR
 #  define chdir miktex_utf8_chdir
+#endif
+
+#if MIKTEX_UTF8_WRAP__CHMOD
 #  define _chmod miktex_utf8_chmod
+#endif
+
+#if MIKTEX_UTF8_WRAP_CHMOD
 #  define chmod miktex_utf8_chmod
+#endif
+
+#if MIKTEX_UTF8_WRAP_FOPEN
 #  define fopen miktex_utf8_fopen
+#endif
+
+#if MIKTEX_UTF8_WRAP_GETCWD
 #  define getcwd miktex_utf8_getcwd
+#endif
+
+#if MIKTEX_UTF8_WRAP__MKDIR
 #  define _mkdir miktex_utf8_mkdir
+#endif
+
+#if MIKTEX_UTF8_WRAP_MKDIR
 #  define mkdir miktex_utf8_mkdir
+#endif
+
+#if MIKTEX_UTF8_WRAP__OPEN
 #  define _open miktex_utf8_open
+#endif
+
+#if MIKTEX_UTF8_WRAP_OPEN
 #  define open miktex_utf8_open
-//#  define _stat miktex_utf8_stat
+#endif
+
+#if MIKTEX_UTF8_WRAP__POPEN
+#  define _popen miktex_utf8_popen
+#endif
+
+#if MIKTEX_UTF8_WRAP_POPEN
+#  define popen miktex_utf8_popen
+#endif
+
+#if MIKTEX_UTF8_WRAP_RENAME
+#  define rename miktex_utf8_rename
+#endif
+
+#if MIKTEX_UTF8_WRAP_REMOVE
+#  define remove miktex_utf8_remove
+#endif
+
+#if MIKTEX_UTF8_WRAP_RMDIR
 #  define rmdir miktex_utf8_rmdir
+#endif
+
+#if MIKTEX_UTF8_WRAP__SPAWNVP
+#  define _spawnvp miktex_utf8_spawnvp
+#endif
+
+#if MIKTEX_UTF8_WRAP_SPAWNVP
+#  define spawnvp miktex_utf8_spawnvp
+#endif
+
+#if MIKTEX_UTF8_WRAP__STAT
+#  define _stat miktex_utf8_stat
+#endif
+
+#if MIKTEX_UTF8_WRAP_STAT
 #  define stat miktex_utf8_stat
-#  define unlink miktex_utf8_unlink
+#endif
+
+#if MIKTEX_UTF8_WRAP__SYSTEM
+#  define _system miktex_utf8_system
+#endif
+
+#if MIKTEX_UTF8_WRAP_SYSTEM
+#  define system miktex_utf8_system
+#endif
+
+#if MIKTEX_UTF8_WRAP__UNLINK
 #  define _unlink miktex_utf8_unlink
+#endif
+
+#if MIKTEX_UTF8_WRAP_UNLINK
+#  define unlink miktex_utf8_unlink
+#endif
+
+#if MIKTEX_UTF8_WRAP_UTIME
 #  define utime miktex_utf8_utime
 #endif
 

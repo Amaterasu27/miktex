@@ -32,7 +32,7 @@ main (/*[in]*/ int	argc,
     {
       return (1);
     }
-  STARTUPINFO startupInfo;
+  STARTUPINFOA startupInfo;
   ZeroMemory (&startupInfo, sizeof(startupInfo));
   startupInfo.cb = sizeof(startupInfo);
   startupInfo.dwFlags = STARTF_USESTDHANDLES;
@@ -42,7 +42,7 @@ main (/*[in]*/ int	argc,
   PROCESS_INFORMATION processInfo;
   ZeroMemory (&processInfo, sizeof(processInfo));
   BOOL done =
-    CreateProcess(0, argv[1], 0, 0, TRUE, 0, 0, 0, &startupInfo, &processInfo);
+    CreateProcessA(0, argv[1], 0, 0, TRUE, 0, 0, 0, &startupInfo, &processInfo);
   if (! done)
     {
       return (1);

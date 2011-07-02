@@ -370,7 +370,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       // </fixme>
 
       // display the deployment name
-      listControl.SetItemText (idx, 0, CA2T(it->deploymentName.c_str()));
+      listControl.SetItemText (idx, 0, UT_(it->deploymentName.c_str()));
 
       // display the 'old' package time-stamp, if the package is known
       if (locallyKnown && oldPackageInfo.timeInstalled > 0)
@@ -767,7 +767,7 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
   }
-  if (! listControl.SetItemText(0, 0, CA2T(lpszText)))
+  if (! listControl.SetItemText(0, 0, UT_(lpszText)))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }
@@ -788,9 +788,9 @@ PackageListPage::InsertColumn (/*[in]*/ int		colIdx,
 			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
   {

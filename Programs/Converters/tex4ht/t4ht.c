@@ -110,6 +110,10 @@
 #endif
 
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
 
 #include <stdio.h>   
 #include <stdlib.h>  

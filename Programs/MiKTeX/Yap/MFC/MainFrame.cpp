@@ -281,7 +281,7 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
       int n = pDviDoc->GetPageCount();
       CString str;
       str.Format (_T("Page: %s (%d%s of %d)"),
-		  static_cast<LPTSTR>(CA2T(pDviDoc->GetPageName(pDviView->GetCurrentPageIdx()))),
+		  static_cast<LPTSTR>(UT_(pDviDoc->GetPageName(pDviView->GetCurrentPageIdx()))),
 		  m,
 		  (m % 10 == 1
 		   ? (m % 100 == 11
@@ -319,7 +319,7 @@ MainFrame::OnUpdatePageMofN (/*[in,out]*/ CCmdUI * pCmdUI)
 void
 MainFrame::OnUpdateCommandPrefix (/*[in,out]*/ CCmdUI * pCmdUI)
 {
-  pCmdUI->SetText (CA2T(commandPrefix.c_str()));
+  pCmdUI->SetText (UT_(commandPrefix.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -387,7 +387,7 @@ MainFrame::OnUpdateSource (/*[in,out]*/ CCmdUI * pCmdUI)
       if (pDviView->GetSource(sourceFileName, line))
 	{
 	  CString str;
-	  str.Format (_T("%s L:%d"), static_cast<LPTSTR>(CA2T(sourceFileName.Get())), line);
+	  str.Format (_T("%s L:%d"), static_cast<LPTSTR>(UT_(sourceFileName.Get())), line);
 	  pCmdUI->SetText (str); 
 	}
       else
@@ -486,7 +486,7 @@ MainFrame::OnUpdatePoint (/*[in,out]*/ CCmdUI * pCmdUI)
       str.Format (_T("%.*f,%.*f%s"),
 		  precision, x2,
 		  precision, y2,
-		  static_cast<LPTSTR>(CA2T(lpszUnit)));
+		  static_cast<LPTSTR>(UT_(lpszUnit)));
       pCmdUI->SetText (str); 
     }
 

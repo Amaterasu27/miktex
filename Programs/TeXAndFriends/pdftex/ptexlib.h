@@ -24,6 +24,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    include <miktex/KPSE/Emulation>
 #    include <miktex/W2C/Emulation>
 #    include <miktex/unxemu.h>
+#    define MIKTEX_UTF8_WRAP_ALL 1
+#    include <miktex/utf8wrap.h>
 #    include "pdftex-miktex.h"
 #    include <miktex/Core/Debug>
 #    if defined(assert)

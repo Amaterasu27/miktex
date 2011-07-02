@@ -64,7 +64,7 @@ AddArgument (/*[in]*/ const CString &	argument,
       argv =
 	reinterpret_cast<char**>(realloc(argv, argMax * sizeof(argv[0])));
     }
-  argv[ argc ++ ] = strdup(CT2A(argument));
+  argv[ argc ++ ] = strdup(TU_(argument));
 }
 
 /* _________________________________________________________________________
@@ -178,7 +178,7 @@ ParseUpdateCommandLine (/*[in]*/ const char *	lpszCommandLine,
   int argc;
   char ** argv;
 
-  GetArguments (lpszCommandLine, CT2A(AfxGetAppName()), argc, argv);
+  GetArguments (lpszCommandLine, TU_(AfxGetAppName()), argc, argv);
 
   int iOptIdx = 0;
   int c;
@@ -228,7 +228,7 @@ END_MESSAGE_MAP();
 
 UpdateWizardApplication::UpdateWizardApplication ()
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.Update." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.Update." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -298,7 +298,7 @@ Click OK to repair the MiKTeX configuration.")),
 
       // get command-line arguments
       UpdateWizardCommandLineInfo cmdinfo;
-      ParseUpdateCommandLine (CT2A(m_lpCmdLine), cmdinfo);
+      ParseUpdateCommandLine (TU_(m_lpCmdLine), cmdinfo);
       
       {
 	UpdateWizard dlg;
@@ -471,7 +471,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
       str += T_("Details: ");
       str += e.GetInfo();
     }
-  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________
@@ -486,7 +486,7 @@ ReportError (/*[in]*/ const exception & e)
   str = T_("The operation could not be completed for the following reason: ");
   str += "\n\n";
   str += e.what();
-  AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+  AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
 }
 
 /* _________________________________________________________________________

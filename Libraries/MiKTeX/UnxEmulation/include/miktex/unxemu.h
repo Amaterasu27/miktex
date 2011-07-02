@@ -1,6 +1,6 @@
 /* miktex/unxemu.h: Unx emulation				-*- C++ -*-
 
-   Copyright (C) 2007-2010 Christian Schenk
+   Copyright (C) 2007-2011 Christian Schenk
 
    This file is part of the MiKTeX UNXEMU Library.
 
@@ -203,6 +203,9 @@ opendir (/*[in]*/ const char * lpszPath);
 MIKTEXUNXCEEAPI(struct dirent *)
 readdir (/*[in]*/ DIR * pDir);
 
+MIKTEXUNXCEEAPI(void)
+rewinddir (/*[in]*/ DIR * pDir);
+
 MIKTEXUNXCEEAPI(int)
 wclosedir (/*[in]*/ WDIR * pDir);
 
@@ -211,6 +214,9 @@ wopendir (/*[in]*/ const wchar_t * lpszPath);
 
 MIKTEXUNXCEEAPI(struct wdirent *)
 wreaddir (/*[in]*/ WDIR * pDir);
+
+MIKTEXUNXCEEAPI(void)
+wrewinddir (/*[in]*/ WDIR * pDir);
 
 #if defined(__cplusplus)
 }

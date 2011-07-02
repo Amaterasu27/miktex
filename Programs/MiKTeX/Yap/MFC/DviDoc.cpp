@@ -107,7 +107,7 @@ DviDoc::OnOpenDocument (/*[in]*/ LPCTSTR lpszPathName)
       MIKTEX_ASSERT (pDvi == 0);
       MIKTEX_ASSERT (pDviSave == 0);
       MIKTEX_ASSERT (! isPrintContext);
-      CreateDocument (CT2A(lpszPathName));
+      CreateDocument (TU_(lpszPathName));
       return (TRUE);
     }
   catch (const MiKTeXException & e)
@@ -151,7 +151,7 @@ DviDoc::BeginDviPrinting (/*[in]*/ const CDC * pPrinterDC)
   pDvi = 0;
   try
     {
-      CreateDocument (CT2A(GetPathName()));
+      CreateDocument (TU_(GetPathName()));
     }
   catch (const exception &)
     {
@@ -232,7 +232,7 @@ DviDoc::Reread ()
     {
       delete pDvi;
     }
-  CreateDocument (CT2A(GetPathName()));
+  CreateDocument (TU_(GetPathName()));
 }
 
 /* _________________________________________________________________________
@@ -544,7 +544,7 @@ DviDoc::GetDviFileStatus ()
 	  modificationTime = File::GetLastWriteTime(PathName(GetPathName()));
 	  if (timeMod != modificationTime)
 	    {
-	      YapLog (T_("%s has been modified"), Q_(CT2A(GetPathName())));
+	      YapLog (T_("%s has been modified"), Q_(TU_(GetPathName())));
 	      modificationTime = timeMod;
 	      fileStatus = DVIFILE_MODIFIED;
 	    }

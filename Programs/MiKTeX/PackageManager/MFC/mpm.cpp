@@ -45,7 +45,7 @@ END_MESSAGE_MAP();
 
 PackageManagerApplication::PackageManagerApplication ()
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.PackageManaer." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.PackageManaer." MIKTEX_COMPONENT_VERSION_STR));
   EnableHtmlHelp ();
 }
 
@@ -84,7 +84,7 @@ PackageManagerApplication::InitInstance ()
       pSession.CreateSession (Session::InitInfo("mpm"));
       TraceStream::SetTraceFlags ("error,mpm,config");
       
-      SetRegistryKey (CA2T(MIKTEX_COMP_COMPANY_STR
+      SetRegistryKey (UT_(MIKTEX_COMP_COMPANY_STR
 		      "\\"
 		      MIKTEX_PRODUCTNAME_STR
 		      "\\"
@@ -194,7 +194,7 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	{
 	  CString str;
 	  str.Format (T_(_T("MiKTeX Package Manager (windowed mode) version %s")),
-		      static_cast<LPCTSTR>(CA2T(MIKTEX_COMPONENT_VERSION_STR)));
+		      static_cast<LPCTSTR>(UT_(MIKTEX_COMPONENT_VERSION_STR)));
 	  str += _T("\r\n");
 	  str += MIKTEX_COMP_COPYRIGHT_STR;
 	  CWnd * pWnd = GetDlgItem(IDC_THE_NAME_OF_THE_GAME);

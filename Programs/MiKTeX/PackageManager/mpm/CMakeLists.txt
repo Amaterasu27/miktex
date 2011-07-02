@@ -29,7 +29,7 @@ set(mpm_sources
 )
 
 add_definitions(
-  -D_UNICODE
+  -D_UNICODE -DUNICODE
 )
 
 if(NATIVE_WINDOWS)

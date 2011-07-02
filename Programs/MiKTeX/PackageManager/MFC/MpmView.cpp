@@ -98,9 +98,9 @@ MpmView::InsertColumn (/*[in]*/ int		colIdx,
 {
   CListCtrl & listControl = GetListCtrl();
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -448,8 +448,8 @@ MpmView::OnButtonSearchClicked ()
 	  // <todo>
 	  match =
 	    (searchWords.GetLength() == 0
-	     || (packageInfo.title.find(CT2A(searchWords)) != string::npos
-		 || (packageInfo.description.find(CT2A(searchWords))
+	     || (packageInfo.title.find(TU_(searchWords)) != string::npos
+		 || (packageInfo.description.find(TU_(searchWords))
 		     != string::npos)));
 	  // </todo>
 	  if (! match)
@@ -465,7 +465,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.docFiles.begin();
@@ -473,7 +473,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.sourceFiles.begin();
@@ -481,7 +481,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      match = found;

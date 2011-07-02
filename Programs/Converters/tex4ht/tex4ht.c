@@ -156,6 +156,12 @@
 #endif
 
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#  include <miktex/unxemu.h>
+#endif
+
 #include <stdio.h>   
 #include <stdlib.h>  
 
@@ -4147,7 +4153,7 @@ static FILE* search_file_ext
     ) n++;
   str[n-1] = '\0';
 #ifndef NOSUBDIR
-#ifdef WIN32
+#if ! defined(MIKTEX) && defined(WIN32)
   
 {
     WIN32_FIND_DATA find_file_data;

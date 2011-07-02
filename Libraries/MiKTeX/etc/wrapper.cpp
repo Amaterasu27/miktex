@@ -95,8 +95,6 @@ main (/*[in]*/ int		argc,
       }
       args.push_back (0);
 
-      MIKTEX_UTF8_CONSOLE_OUTPUT ();
-
       app.Init (args);
 
 #if defined(APPTAGSTR)

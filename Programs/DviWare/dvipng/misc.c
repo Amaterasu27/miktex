@@ -787,6 +787,11 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   struct stat stat;
 #endif
 
+#if defined(MIKTEX_WINDOWS)
+  wchar_t wfilename[_MAX_PATH];
+  miktex_utf8_to_wide_char (filename, _MAX_PATH, wfilename);
+#endif
+
   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
   fmmap->data=NULL;
 #ifndef WIN32
@@ -821,7 +826,11 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   close(fmmap->fd);
 # endif /* HAVE_MMAP */
 #else /* WIN32 */
+#if defined(MIKTEX_WINDOWS)
+  fmmap->hFile = CreateFile(wfilename, GENERIC_READ, FILE_SHARE_READ, 0, 
+#else
   fmmap->hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, 0, 
+#endif
 			    OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
   if (fmmap->hFile == INVALID_HANDLE_VALUE) {
     Warning("cannot open file <%s>", filename);

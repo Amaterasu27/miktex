@@ -1,6 +1,6 @@
 /* mpm.h:							-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -72,6 +72,13 @@
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
+
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
 
 /* _________________________________________________________________________
 

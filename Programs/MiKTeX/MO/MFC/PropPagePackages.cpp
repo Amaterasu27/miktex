@@ -348,7 +348,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
       if (pPackageInfo->timeInstalled > 0)
 	{
 	  CTime timeInstall (pPackageInfo->timeInstalled);
-	  SetWindowText (IDC_INSTALLED, CT2A(timeInstall.Format(_T("%x %X"))));
+	  SetWindowText (IDC_INSTALLED, TU_(timeInstall.Format(_T("%x %X"))));
 	}
       else
 	{
@@ -357,7 +357,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
       if (! pPackageInfo->IsPureContainer() && pPackageInfo->timePackaged > 0)
 	{
     	  CTime timePackaged (pPackageInfo->timePackaged);
-	  SetWindowText (IDC_PACKED, CT2A(timePackaged.Format(_T("%x %X"))));
+	  SetWindowText (IDC_PACKED, TU_(timePackaged.Format(_T("%x %X"))));
 	}
       else
 	{
@@ -368,7 +368,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
 		   (pPackageInfo->sizeRunFiles
 		    + pPackageInfo->sizeDocFiles
 		    + pPackageInfo->sizeSourceFiles));
-      SetWindowText (IDC_PACKAGE_SIZE, CT2A(text));
+      SetWindowText (IDC_PACKAGE_SIZE, TU_(text));
     }
 }
 
@@ -403,7 +403,7 @@ PropPagePackages::OnChangeUrl ()
 	  RepositoryType repositoryType =
 	    pManager->GetDefaultPackageRepository(repository);
 	  this->url = repository.c_str();
-	  SetWindowText (IDC_URL, CT2A(this->url));
+	  SetWindowText (IDC_URL, TU_(this->url));
 	  Scan ();
 	}
     }

@@ -74,6 +74,13 @@ using namespace std;
 
 #define T_(x) MIKTEXTEXT(x)
 
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
 /* _________________________________________________________________________
 
    USE_MY_RESOURCES

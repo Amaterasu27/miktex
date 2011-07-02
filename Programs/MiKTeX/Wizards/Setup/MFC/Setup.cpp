@@ -788,7 +788,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
   reader.Close ();
   int argc;
   char ** argv;
-  GetArguments (commandLine.c_str(), WU_(AfxGetAppName()), argc, argv);
+  GetArguments (commandLine.c_str(), TU_(AfxGetAppName()), argc, argv);
   ParseSetupCommandLine (argc, argv, cmdinfo);
   FreeArguments (argc, argv);
   return (true);
@@ -817,7 +817,7 @@ SetupWizardApplication::SetupWizardApplication ()
     paperSize ("A4"),
     setupTask (SetupTask::None)
 {
-  SetAppID (UW_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -1364,11 +1364,11 @@ CloseLog (/*[in]*/ bool cancel)
   CTime t = CTime::GetCurrentTime();
   if (theApp.setupTask == SetupTask::Download)
     {
-      pathLogFile += WU_(t.Format(_T("download-%Y-%m-%d-%H-%M")));
+      pathLogFile += TU_(t.Format(_T("download-%Y-%m-%d-%H-%M")));
     }
   else
     {
-      pathLogFile += WU_(t.Format(_T("setup-%Y-%m-%d-%H-%M")));
+      pathLogFile += TU_(t.Format(_T("setup-%Y-%m-%d-%H-%M")));
     }
   pathLogFile.SetExtension (".log");
 
@@ -1506,7 +1506,7 @@ SetupWizardApplication::InitInstance ()
       // get command-line arguments
       int argc;
       char ** argv;
-      GetArguments (WU_(m_lpCmdLine), WU_(AfxGetAppName()), argc, argv);
+      GetArguments (TU_(m_lpCmdLine), TU_(AfxGetAppName()), argc, argv);
       SetupCommandLineInfo cmdinfo;
       wchar_t szSetupPath[BufferSizes::MaxPath];
       if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath)
@@ -2203,7 +2203,7 @@ Expand (/*[in]*/ const char *	lpszSource,
   while ((pos = dest.Find(_T("%MIKTEX_INSTALL%"))) >= 0)
     {
       dest.Delete (pos, 16);
-      dest.Insert (pos, UW_(theApp.GetInstallRoot().Get()));
+      dest.Insert (pos, UT_(theApp.GetInstallRoot().Get()));
     }
   return (dest);
 }
@@ -2535,11 +2535,11 @@ LogHeader ()
       UNEXPECTED_CONDITION ("LogHeader");
     }
   Log (T_("%s %s Report\n\n"),
-       static_cast<const char *>(WU_(banner)),
+       static_cast<const char *>(TU_(banner)),
        MIKTEX_COMPONENT_VERSION_STR);
   CTime t = CTime::GetCurrentTime();
-  Log (T_("Date: %s\n"), static_cast<const char *>(WU_(t.Format(_T("%A, %B %d, %Y")))));
-  Log (T_("Time: %s\n"), static_cast<const char *>(WU_(t.Format(_T("%H:%M:%S")))));
+  Log (T_("Date: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%A, %B %d, %Y")))));
+  Log (T_("Time: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%H:%M:%S")))));
   Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
   if (IsWindowsNT())
     {
@@ -2654,7 +2654,7 @@ root directory %s does not exist.")),
   else
     {
       PathName uncRoot;
-      if (! Utils::GetUncRootFromPath(WU_(str), uncRoot))
+      if (! Utils::GetUncRootFromPath(TU_(str), uncRoot))
 	{
 	  CString message;
 	  message.Format (T_(_T("The specified path is invalid because it is not \
@@ -2709,7 +2709,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 	  str += T_("Details: ");
 	  str += e.GetInfo();
 	}
-      AfxMessageBox (UW_(str.c_str()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
       Log (T_("\nAn error occurred:\n"));
       Log (T_("  source file: %s\n"), e.GetSourceFile().c_str());
       Log (T_("  source line: %d\n"), e.GetSourceLine());
@@ -2737,7 +2737,7 @@ ReportError (/*[in]*/ const exception & e)
       str += "\n\n";
       str += e.what();
       Log ("\n%s\n", str.c_str());
-      AfxMessageBox (UW_(str.c_str()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception &)
     {

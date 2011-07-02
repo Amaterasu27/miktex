@@ -66,6 +66,10 @@ extern "C" {
 }
 #include "gtypes.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  include <miktex/unxemu.h>
+#endif
+
 class GooString;
 
 //------------------------------------------------------------------------
@@ -142,7 +146,7 @@ private:
 
   GooString *path;		// directory path
   GBool doStat;			// call stat() for each entry?
-#if defined(_WIN32)
+#if defined(_WIN32) && ! defined(MIKTEX)
   WIN32_FIND_DATA ffd;
   HANDLE hnd;
 #elif defined(ACORN)

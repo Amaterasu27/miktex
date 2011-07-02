@@ -78,7 +78,7 @@ SecurityOptionsPage::OnApply ()
   try
     {
       g_pYapConfig->enableShellCommands = enableShellCommands;
-      g_pYapConfig->secureCommands = CT2A(secureCommands);
+      g_pYapConfig->secureCommands = TU_(secureCommands);
       return (CPropertyPage::OnApply());
     }
   catch (const MiKTeXException & e)

@@ -101,7 +101,7 @@ PropPageFormats::OnMake ()
 	  int idx = listControl.GetNextSelectedItem(pos);
 	  CString formatKey = listControl.GetItemText(idx, 0);
 	  FormatInfo formatInfo =
-	    SessionWrapper(true)->GetFormatInfo(CT2A(formatKey));
+	    SessionWrapper(true)->GetFormatInfo(TU_(formatKey));
 	  CommandLineBuilder cmdLine;
 	  cmdLine.AppendOption ("--dump=", formatInfo.key);
 	  if (! pSheet->RunIniTeXMF(formatInfo.description.c_str(),
@@ -203,16 +203,16 @@ PropPageFormats::OnEdit ()
     {
       int idx = GetSelectedItem();
       CString formatKey = listControl.GetItemText(idx, 0);
-      FormatDefinitionDialog dlg (this, CT2A(formatKey));
+      FormatDefinitionDialog dlg (this, TU_(formatKey));
       if (dlg.DoModal() != IDOK)
 	{
 	  return;
 	}
       FormatInfo formatInfo = dlg.GetFormatInfo();
-      if (PathName::Compare(formatInfo.key.c_str(), CT2A(formatKey)) != 0)
+      if (PathName::Compare(formatInfo.key.c_str(), TU_(formatKey)) != 0)
 	{
 	  // rename key: delete old, create new
-	  SessionWrapper(true)->DeleteFormatInfo (CT2A(formatKey));
+	  SessionWrapper(true)->DeleteFormatInfo (TU_(formatKey));
 	  formatKey = formatInfo.key.c_str();
 	}
       SessionWrapper(true)->SetFormatInfo (formatInfo);
@@ -244,7 +244,7 @@ PropPageFormats::OnRemove ()
 	{
 	  int idx = GetSelectedItem();
 	  CString formatKey = listControl.GetItemText(idx, 0);
-	  SessionWrapper(true)->DeleteFormatInfo (CT2A(formatKey));
+	  SessionWrapper(true)->DeleteFormatInfo (TU_(formatKey));
 	  if (! listControl.DeleteItem(idx))
 	    {
 	      FATAL_WINDOWS_ERROR ("CListCtrl::DeleteItem", 0);
@@ -273,9 +273,9 @@ PropPageFormats::InsertColumn (/*[in]*/ int		colIdx,
 			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {

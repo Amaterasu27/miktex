@@ -196,7 +196,7 @@ winMemoryMappedFile::OpenFile ()
      (readWrite ? T_("reading/writing") : "reading"));
     
   hFile =
-    CreateFileA(path.c_str(),
+    CreateFileW(UW_(path.c_str()),
 		desiredAccess,
 		shareMode,
 		0,
@@ -206,7 +206,7 @@ winMemoryMappedFile::OpenFile ()
 
   if (hFile == INVALID_HANDLE_VALUE)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileA", path.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileW", path.c_str());
     }
 }
 
@@ -241,17 +241,17 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
   
   // create file-mapping object
   hMapping =
-    ::CreateFileMappingA(hFile,
+    ::CreateFileMappingW(hFile,
 			 0,
 			 (readWrite
 			  ? PAGE_READWRITE
 			  : PAGE_READONLY),
 			 0,
 			 static_cast<DWORD>(maximumFileSize),
-			 name.c_str());
+			 UW_(name.c_str()));
   if (hMapping == 0)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileMappingA", name.c_str());
+      FATAL_WINDOWS_ERROR ("CreateFileMappingW", name.c_str());
     }
   
   // map file view into memory

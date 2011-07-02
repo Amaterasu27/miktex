@@ -51,6 +51,11 @@ Thu Jun 19 09:39:21 UTC 2008
 
 */
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 /*  We assume that high level application like pdf viewers will want
  *  to embed this code as is. We assume that they also have locale.h and setlocale.
  *  For other tools such as TeXLive tools, you must define SYNCTEX_USE_LOCAL_HEADER,

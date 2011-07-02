@@ -42,7 +42,7 @@ END_MESSAGE_MAP ();
 
 MiKTeXOptionsApplication::MiKTeXOptionsApplication ()
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.MiKTeXOptions." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.MiKTeXOptions." MIKTEX_COMPONENT_VERSION_STR));
   // EnableHtmlHelp ();
 }
 
@@ -258,7 +258,7 @@ DoWhatsThisMenu (/*[in]*/ CWnd *		pWnd,
   helpFileUrl += "::/";
   helpFileUrl += lpszTopicFile;
   HtmlHelp (pWnd->GetSafeHwnd(),
-	    CA2T(helpFileUrl.c_str()),
+	    UT_(helpFileUrl.c_str()),
 	    HH_TP_HELP_CONTEXTMENU,
 	    reinterpret_cast<DWORD_PTR>(const_cast<DWORD*>(pHelpIds)));
 }
@@ -279,7 +279,7 @@ GetDllVersion (/*[in]*/ const char * lpszDllName)
 {
   DWORD version = 0;
 
-  HINSTANCE hinstDll = LoadLibrary(CA2T(lpszDllName));
+  HINSTANCE hinstDll = LoadLibrary(UT_(lpszDllName));
   
   if (hinstDll != 0)
     {

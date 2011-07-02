@@ -963,7 +963,7 @@ FileCopyPage::ConfigureMiKTeX ()
     CSingleLock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
-    sharedData.packageName = WU_(str);
+    sharedData.packageName = TU_(str);
     sharedData.newPackage = true;
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
@@ -1263,7 +1263,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
     {
       Log ("%s", static_cast<const char *>(str));
     }
-  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UW_(str))));
+  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UT_(str))));
 }
 
 /* _________________________________________________________________________

@@ -293,7 +293,7 @@ winProcess::Create ()
 	}
 
       // set child handles
-      STARTUPINFOA siStartInfo;
+      STARTUPINFOW siStartInfo;
       ZeroMemory (&siStartInfo, sizeof(siStartInfo));
       siStartInfo.cb = sizeof(siStartInfo);
       siStartInfo.dwFlags = STARTF_USESTDHANDLES;
@@ -342,16 +342,16 @@ winProcess::Create ()
       // experimental
       SessionImpl::GetSession()->UnloadFilenameDatabase ();
 #endif
-      if (! CreateProcessA(fileName.Get(),
-			   STRDUP(commandLine.c_str()).GetBuffer(),
+      if (! CreateProcessW(UW_(fileName.Get()),
+			   UW_(commandLine),
 			   0,	// lpProcessAttributes
 			   0,	// lpThreadAttributes
 			   TRUE,	// bInheritHandles
 			   creationFlags, // dwCreationFlags
 			   0,	// lpEnvironment
-			   (startinfo.WorkingDirectory == ""
+			   (startinfo.WorkingDirectory == L""
 			    ? 0
-			    : startinfo.WorkingDirectory.c_str()),
+			    : UW_(startinfo.WorkingDirectory.c_str())),
 			   &siStartInfo,
 			   &processInformation))
 	{
