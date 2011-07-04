@@ -36,6 +36,7 @@ in order to prevent name clashes.
 @c
 #include <w2c/config.h>
 #if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
 #  include <miktex/utf8wrap.h>
 #  include <miktex/unxemu.h>
 #endif

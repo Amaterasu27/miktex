@@ -39,5 +39,6 @@ target_link_libraries(${miktex_prefix}touch
   ${core_lib_name}
   ${md5_lib_name}
   ${popt_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 )

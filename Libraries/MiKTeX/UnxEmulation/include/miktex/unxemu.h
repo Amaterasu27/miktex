@@ -123,16 +123,8 @@ miktex_strncasecmp (/*[in]*/ const char * lpsz1,
 #define R_OK 4
 #define X_OK W_OK
 
-#if ! defined(getcwd)
-#  define getcwd _getcwd
-#endif
-
 #if ! defined(getpid)
 #  define getpid _getpid
-#endif
-
-#if ! defined(rmdir)
-#  define rmdir _rmdir
 #endif
 
 /* _________________________________________________________________________

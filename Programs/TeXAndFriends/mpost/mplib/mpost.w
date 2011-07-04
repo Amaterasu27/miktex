@@ -43,6 +43,7 @@ have our customary command-line interface.
 #endif
 #include <kpathsea/kpathsea.h>
 #if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
 #  include <miktex/utf8wrap.h>
 #  include <miktex/unxemu.h>
 #endif
@@ -50,7 +51,11 @@ have our customary command-line interface.
 static int debug = 0; /* debugging for makempx */
 static int nokpse = 0;
 #ifdef WIN32
+#if defined(MIKTEX)
+#define GETCWD miktex_utf8_getcwd
+#else
 #define GETCWD _getcwd
+#endif
 #else
 #define GETCWD getcwd
 #endif

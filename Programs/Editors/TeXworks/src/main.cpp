@@ -181,6 +181,20 @@ There is NO WARRANTY, to the extent permitted by law.\n\n");
 	return rval;
 }
 
+#if defined(MIKTEX_WINDOWS)
+
+static QByteArray ToUtf8(const QString & str)
+{
+  return (str.toUtf8());
+}
+
+static QString FromUtf8(const QByteArray & bytes)
+{
+  return (QString::fromUtf8(bytes));
+}
+
+#endif
+
 #if defined(MIKTEX)
 #undef main
 int main(int argc, char *argv[])
@@ -190,11 +204,27 @@ int main(int argc, char *argv[])
   int ret;
   try
   {
+#if defined(MIKTEX_WINDOWS)
+    vector<string> utf8args;
+    utf8args.reserve (argc);
+    vector<char*> args;
+    args.reserve (argc + 1);
+    for (int idx = 0; idx < argc; ++ idx)
+    {
+      utf8args.push_back (Utils::AnsiToUTF8(argv[idx]));
+      args.push_back (const_cast<char *>(utf8args[idx].c_str()));
+    }
+    args.push_back (0);
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+    QFile::setEncodingFunction (ToUtf8);
+    QFile::setDecodingFunction (FromUtf8);
+#endif
     Session::InitInfo initInfo;
-    initInfo.SetProgramInvocationName (argv[0]);
+    initInfo.SetProgramInvocationName (utf8args[0].c_str());
     SessionWrapper pSession;
     pSession.CreateSession (initInfo);
-    ret = Main(argc, argv);
+    ret = Main(argc, &args[0]);
   }
   catch (const MiKTeXException & e)
   {

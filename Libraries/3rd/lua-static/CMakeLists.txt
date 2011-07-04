@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -83,6 +83,6 @@ add_executable(${miktex_prefix}luac ${luac_sources})
 
 merge_trustinfo_manifest(${miktex_prefix}luac asInvoker)
 
-target_link_libraries(${miktex_prefix}luac ${lua_lib_name})
+target_link_libraries(${miktex_prefix}luac ${lua_lib_name} ${utf8wrap_lib_name})
 
 install(TARGETS ${miktex_prefix}luac DESTINATION ${bindir})

@@ -309,9 +309,14 @@ YapApplication::RegisterWindowClass ()
 namespace {
   bool initialized = false;
   const char * const COMMERCIAL_INVOKERS =
+    // yap invokers
     "winedt"		  // http://www.winedt.com
     ";" "Inlage 4"	  // http://www.inlage.com/
     ";" "CodingStudio"	  // http://www.dfordsoft.com/
+#if 0
+    // latex invokers
+    ";" "aurora"	  // http://elevatorlady.ca/
+#endif
     ;
 }
 

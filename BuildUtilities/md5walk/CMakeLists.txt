@@ -40,6 +40,7 @@ if(NATIVE_WINDOWS)
     ${core_lib_name}
     ${md5_lib_name}
     ${popt_lib_name}
+    ${utf8wrap_lib_name}
     ${zlib_lib_name}
     shlwapi
   )

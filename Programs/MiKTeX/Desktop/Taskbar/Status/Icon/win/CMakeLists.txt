@@ -45,6 +45,7 @@ set(libs
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 
   comctl32.lib

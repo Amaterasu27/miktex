@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
 
 /* This file uses only the official API of Lua.
 ** Any function declared here could be written as an application function.

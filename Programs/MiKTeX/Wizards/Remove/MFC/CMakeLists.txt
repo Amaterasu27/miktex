@@ -69,6 +69,7 @@ set(libs
   ${mpm_lib_name}
   ${mspack_lib_name}
   ${uriparser_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 )
 

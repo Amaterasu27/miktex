@@ -28,6 +28,10 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
 #endif
 
 #include "bzlib.h"

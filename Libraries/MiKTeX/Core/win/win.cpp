@@ -1757,10 +1757,12 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (getcwd(GetBuffer(), static_cast<int>(GetCapacity())) == 0)
+  wchar_t buf[_MAX_PATH];
+  if (_wgetcwd(buf, _MAX_PATH) == 0)
     {
-      FATAL_CRT_ERROR ("getcwd", 0);
+      FATAL_CRT_ERROR ("_wgetcwd", 0);
     }
+  *this = buf;
   return (*this);
 }
 

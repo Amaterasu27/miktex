@@ -48,7 +48,7 @@
 
 // DLL import/export switch
 #if ! defined(BF56453E041E4B58A0EA455A65DD28B1)
-#  if defined(_MSC_VER)
+#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
 #    define MIKTEXUTF8WRAPEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXUTF8WRAPEXPORT

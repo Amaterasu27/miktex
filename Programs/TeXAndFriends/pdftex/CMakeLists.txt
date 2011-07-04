@@ -215,10 +215,8 @@ file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed "${etex_dyn_sed_contents}")
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/openbsd-compat.h "
 #if defined(MIKTEX_WINDOWS)
-#include <direct.h>
-#include <sys/stat.h>
-#define stat _stat
-#define getcwd _getcwd
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
 #define snprintf _snprintf
 #if ! defined(__GNUC__)
 #  define __attribute__(x)

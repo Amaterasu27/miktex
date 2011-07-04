@@ -19,10 +19,10 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
 #  define MIKTEXUTF8WRAPEXPORT __declspec(dllexport)
 #else
-#  define MIKTEXUTF8WRAPEXPORTT
+#  define MIKTEXUTF8WRAPEXPORT
 #endif
 
 #define BF56453E041E4B58A0EA455A65DD28B1

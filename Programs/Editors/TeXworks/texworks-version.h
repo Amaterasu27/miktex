@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4200
+#define MIKTEX_COMP_J2000_VERSION 4201
 #define MIKTEX_COMP_ORIG_VERSION_STR "0.4.3 (r.857)"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2007-2011 Jonathan Kew, Stefan Loeffler"

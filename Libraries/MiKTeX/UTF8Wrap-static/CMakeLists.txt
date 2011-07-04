@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,33 +20,15 @@
 use_static_crt()
 use_static_libraries()
 
-set(cfg_sources
-  cfg-version.h
-  cfg.cpp
+include_directories(BEFORE
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}
 )
 
-if(NATIVE_WINDOWS)
-  set(cfg_sources ${cfg_sources} cfg.rc)
-endif(NATIVE_WINDOWS)
-
-add_executable(cfg ${cfg_sources})
-
-merge_trustinfo_manifest(cfg asInvoker)
-
-target_link_libraries(cfg
-  ${core_lib_name}
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${botan_lib_name}
-    ${bzip2_lib_name}
-    ${md5_lib_name}
-	${utf8wrap_lib_name}
-    ${zlib_lib_name}
-  ${popt_lib_name}
-  
+set(${utf8wrap_lib_name}_sources
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include/miktex/utf8wrap.h
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/internal.h
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/utf8wrap-version.h
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/utf8wrap.cpp
 )
 
-if(NATIVE_WINDOWS)
-  target_link_libraries(cfg
-    shlwapi.lib
-  )
-endif(NATIVE_WINDOWS)
+add_library(${utf8wrap_lib_name} STATIC ${${utf8wrap_lib_name}_sources})

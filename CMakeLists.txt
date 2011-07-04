@@ -621,6 +621,7 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${botan_lib_name}
   ${bzip2_lib_name}
   ${popt_lib_name}
+  ${utf8wrap_lib_name}
 )
 
 if(QT4_FOUND)
@@ -845,6 +846,7 @@ endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_utf8wrap_dir})
+  add_subdirectory(${rel_utf8wrap_dir}-static)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_build_tools_etc_dir})
