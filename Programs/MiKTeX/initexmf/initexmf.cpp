@@ -206,7 +206,7 @@ public:
   void
   StartDocument ()
   {
-    cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    printf ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
   }
 
 public:
@@ -214,11 +214,10 @@ public:
   StartElement (/*[in]*/ const char *	lpszName)
   {
     if (freshElement)
-      {
-	cout << '>';
-      }
-    cout << '<';
-    cout << lpszName;
+    {
+      putchar ('>');
+    }
+    printf ("<%s", lpszName);
     freshElement = true;
     elements.push (lpszName);
   }
@@ -228,11 +227,7 @@ public:
   AddAttribute (/*[in]*/ const char *	lpszAttributeName,
 		/*[in]*/ const char *	lpszAttributeValue)
   {
-    cout << ' ';
-    cout << lpszAttributeName;
-    cout << "=\"";
-    cout << lpszAttributeValue;
-    cout << '"';
+    printf (" %s=\"%s\"", lpszAttributeName, lpszAttributeValue);
   }
 
 public:
@@ -246,16 +241,14 @@ public:
 			    0);
       }
     if (freshElement)
-      {
-	cout << "/>";
-	freshElement = false;
-      }
+    {
+      printf ("/>");
+      freshElement = false;
+    }
     else
-      {
-	cout << "</";
-	cout << elements.top();
-	cout << '>';
-      }
+    {
+      printf ("</%s>", elements.top().c_str());
+    }
     elements.pop ();
   }
 
@@ -275,7 +268,7 @@ public:
   {
     if (freshElement)
       {
-	cout << '>';
+	putchar ('>');
 	freshElement = false;
       }
     for (const char * lpszText = text.c_str();
@@ -285,16 +278,16 @@ public:
 	switch (*lpszText)
 	  {
 	  case '&':
-	    cout << "&amp;";
+	    printf ("&amp;");
 	    break;
 	  case '<':
-	    cout << "&lt;";
+	    printf ("&lt;");
 	    break;
 	  case '>':
-	    cout << "&gt;";
+	    printf ("&gt;");
 	    break;
 	  default:
-	    cout << *lpszText;
+	    putchar (*lpszText);
 	    break;
 	  }
       }
@@ -1793,7 +1786,7 @@ IniTeXMFApp::Message (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cout << Utils::FormatString(lpszFormat, arglist);
+  vprintf (lpszFormat, arglist);
   va_end (arglist);
 }
 
@@ -1812,8 +1805,9 @@ IniTeXMFApp::Verbose (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cout << Utils::FormatString(lpszFormat, arglist) << endl;
+  vprintf (lpszFormat, arglist);
   va_end (arglist);
+  putchar ('\n');
 }
 
 /* _________________________________________________________________________
@@ -1831,8 +1825,9 @@ IniTeXMFApp::PrintOnly (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cout << Utils::FormatString(lpszFormat, arglist) << endl;
+  vprintf (lpszFormat, arglist);
   va_end (arglist);
+  putchar ('\n');
 }
 
 /* _________________________________________________________________________
@@ -1848,12 +1843,12 @@ IniTeXMFApp::Warning (/*[in]*/ const char *	lpszFormat,
     {
       return;
     }
+  fprintf (stderr, "%s: warning: ", PROGNAME);
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGNAME << T_(": warning: ")
-       << Utils::FormatString(lpszFormat, arglist)
-       << endl;
+  vfprintf (stderr, lpszFormat, arglist);
   va_end (arglist);
+  putc ('\n', stderr);
 }
 
 /* _________________________________________________________________________
@@ -1866,12 +1861,12 @@ void
 IniTeXMFApp::FatalError (/*[in]*/ const char *	lpszFormat,
 			 /*[in]*/		...)
 {
+  fprintf (stderr, "%s: ", PROGNAME);
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << PROGNAME << ": "
-       << Utils::FormatString(lpszFormat, arglist)
-       << endl;
+  vfprintf (stderr, lpszFormat, arglist);
   va_end (arglist);
+  putc ('\n', stderr);
   throw (1);
 }
 
@@ -1983,12 +1978,9 @@ IniTeXMFApp::ListFormats ()
 {
   FormatInfo formatInfo;
   for (unsigned idx = 0; pSession->GetFormatInfo(idx, formatInfo); ++ idx)
-    {
-      cout << formatInfo.key << " ("
-	   << formatInfo.description
-	   << ")"
-	   << endl;
-    }
+  {
+    printf ("%s (%s)\n", formatInfo.key.c_str(), formatInfo.description.c_str());
+  }
 }
 
 /* _________________________________________________________________________
@@ -2003,13 +1995,9 @@ IniTeXMFApp::ListMetafontModes ()
 {
   MIKTEXMFMODE mode;
   for (unsigned i = 0; pSession->GetMETAFONTMode(i, &mode); ++ i)
-    {
-      cout << setw(8) << left << mode.szMnemonic
-	   << "  " << setw(5) << right << mode.iHorzRes
-	   << "x" << setw(5) << left << mode.iVertRes
-	   << "  " << mode.szDescription
-	   << endl;
-    }
+  {
+    printf ("%-8s  %5dx%-5d  %s\n", mode.szMnemonic, mode.iHorzRes, mode.iVertRes, mode.szDescription);
+  }
 }
 
 /* _________________________________________________________________________
@@ -2794,7 +2782,7 @@ IniTeXMFApp::ShowConfigValue (/*[in]*/ const char *  lpszValueSpec)
 				  valueName.c_str(),
 				  value))
     {
-      cout << value << endl;
+      printf ("%s\n", value.c_str());
     }
 }
 
@@ -2834,29 +2822,27 @@ IniTeXMFApp::ReportMiKTeXVersion ()
     }
   else
     {
-      cout << "MiKTeX: " << Utils::GetMiKTeXVersionString() << endl;
-      cout << "Invokers: ";
+      printf ("MiKTeX: %s\n", Utils::GetMiKTeXVersionString().c_str());
+      printf (T_("Invokers: "));
       for (vector<string>::const_iterator it = invokerNames. begin(); it != invokerNames.end(); ++ it)
       {
 	if (it != invokerNames.begin())
 	{
-	  cout << "/";
+	  printf ("/");
 	}
-	cout << *it;
+	printf ("%s", it->c_str());
       }
-      cout << endl;
+      putchar ('\n');
 #if defined(MIKTEX_WINDOWS)
       if (IsWindowsNT())
-	{
-	  cout << "SystemAdmin: " << (pSession->IsUserAnAdministrator()
-					  ? T_("yes")
-					  : T_("no"))
-	       << endl;
-	  cout << "PowerUser: " << (pSession->IsUserAPowerUser()
-					? T_("yes")
-					: T_("no"))
-	       << endl;
-	}
+      {
+	printf ("SystemAdmin: %s\n", pSession->IsUserAnAdministrator()
+	  ? T_("yes")
+	  : T_("no"));
+	printf ("PowerUser: %s\n", pSession->IsUserAPowerUser()
+	  ? T_("yes")
+	  : T_("no"));
+      }
 #endif
     }
 }
@@ -2879,7 +2865,7 @@ IniTeXMFApp::ReportOSVersion ()
     }
   else
     {
-      cout << "OS: " << Utils::GetOSVersionString() << endl;
+      printf ("OS: \n", Utils::GetOSVersionString().c_str());
     }
 }
 
@@ -2934,28 +2920,16 @@ IniTeXMFApp::ReportRoots ()
   else
     {
       for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
-	{
-	  PathName root = pSession->GetRootDirectory(idx);
-	  cout << "Root" << idx << ": " << root.Get() << endl;
-	}
-      cout << "UserInstall: "
-	   << pSession->GetSpecialPath(SpecialPath::UserInstallRoot).Get()
-	   << endl;
-      cout << "UserData: "
-	   << pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get()
-	   << endl;
-      cout << "UserConfig: "
-	   << pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get()
-	   << endl;
-      cout << "CommonInstall: "
-	<< pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get()
-	<< endl;
-      cout << "CommonData: "
-	<< pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get()
-	<< endl;
-      cout << "CommonConfig: "
-	<< (pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get())
-	<< endl;
+      {
+	PathName root = pSession->GetRootDirectory(idx);
+	printf (T_("Root %u: %s\n"), idx, root.Get());
+      }
+      printf (T_("UserInstall: %s\n"), pSession->GetSpecialPath(SpecialPath::UserInstallRoot).Get());
+      printf (T_("UserData: %s\n"), pSession->GetSpecialPath(SpecialPath::UserDataRoot).Get());
+      printf (T_("UserConfig: %s\n"), pSession->GetSpecialPath(SpecialPath::UserConfigRoot).Get());
+      printf (T_("CommonInstall: %s\n"), pSession->GetSpecialPath(SpecialPath::CommonInstallRoot).Get());
+      printf (T_("CommonData: %s\n"), pSession->GetSpecialPath(SpecialPath::CommonDataRoot).Get());
+      printf (T_("CommonConfig: %s\n"), pSession->GetSpecialPath(SpecialPath::CommonConfigRoot).Get());
     }
 }
 
@@ -2994,29 +2968,29 @@ IniTeXMFApp::ReportFndbFiles ()
   else
     {
       for (unsigned idx = 0; idx < pSession->GetNumberOfTEXMFRoots(); ++ idx)
+      {
+	PathName absFileName;
+	printf (T_("fndb: %u"), idx);
+	if (pSession->FindFilenameDatabase(idx, absFileName))
 	{
-	  PathName absFileName;
-	  cout << "fndb" << idx << ": ";
-	  if (pSession->FindFilenameDatabase(idx, absFileName))
-	    {
-	      cout << absFileName.Get() << endl;
-	    }
-	  else
-	    {
-	      cout << T_("<does not exist>") << endl;
-	    }
+	  printf ("%s\n", absFileName.Get());
 	}
+	else
+	{
+	  printf (T_("<does not exist>\n"));
+	}
+      }
       unsigned r = pSession->DeriveTEXMFRoot(pSession->GetMpmRootPath());
       PathName path;
-      cout << "fndbmpm: ";
+      printf ("fndbmpm: ");
       if (pSession->FindFilenameDatabase(r, path))
-	{
-	  cout << path.Get() << endl;
-	}
+      {
+	printf ("%s\n", path.Get());;
+      }
       else
-	{
-	  cout << T_("<does not exist>") << endl;
-	}
+      {
+	printf (T_("<does not exist>\n"));
+      }
     }
 }
 
@@ -3103,7 +3077,7 @@ IniTeXMFApp::ReportBrokenPackages ()
 	       it != broken.end();
 	       ++ it)
 	    {
-	      cout << *it << T_(": needs to be reinstalled") << endl;
+	      printf (T_("%s: needs to be reinstalled\n"), it->c_str());
 	    }
 	}
     }
@@ -3292,23 +3266,17 @@ IniTeXMFApp::OnFndbItem (/*[in]*/ const char *	lpszPath,
 	{
 	  if (lpszInfo == 0)
 	    {
-	      cout << lpszRel
-		   << endl;
+	      printf ("%s\n", lpszRel);
 	    }
 	  else
 	    {
 	      if (csv)
 		{
-		  cout << lpszRel
-		       << ';'
-		       << lpszInfo
-		       << endl;
+		  printf ("%;%s\n", lpszRel, lpszInfo);
 		}
 	      else
 		{
-		  cout << lpszRel
-		       << " (\"" << lpszInfo << "\")"
-		       << endl;
+		  printf ("%s (\"%s\")\n", lpszRel, lpszInfo);
 		}
 	    }
 	}
@@ -3321,13 +3289,11 @@ IniTeXMFApp::OnFndbItem (/*[in]*/ const char *	lpszPath,
     {
       if (lpszInfo == 0)
 	{
-	  cout << (isDirectory ? 'D' : ' ') << lpszName << endl;
+	  printf ("%c %s\n", isDirectory ? 'D' : ' ', lpszName);
 	}
       else
 	{
-	  cout << (isDirectory ? 'D' : ' ') << lpszName
-	       << " (\"" << lpszInfo << "\")"
-	       << endl;
+	  printf ("%c %s (\"%s\")\n", isDirectory ? 'D' : ' ', lpszName, lpszInfo);
 	}
     }
   return (true);
@@ -3633,13 +3599,12 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 
   if (optVersion)
     {
-      cout << Utils::MakeProgramVersionString(TheNameOfTheGame,
-					      MIKTEX_COMPONENT_VERSION_STR)
-	   << T_("\n\
-Copyright (C) 1996-2009 Christian Schenk\n\
+      printf ("%s\n", Utils::MakeProgramVersionString(TheNameOfTheGame,
+	MIKTEX_COMPONENT_VERSION_STR).c_str());
+      printf (T_("\n\
+Copyright (C) 1996-2011 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	   << endl;
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       return;
     }
 
