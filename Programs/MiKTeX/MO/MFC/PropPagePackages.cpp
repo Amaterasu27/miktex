@@ -463,7 +463,7 @@ PropPagePackages::OnBnClickedPackageManager ()
   try
     {
       PathName path;
-      if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_MFC_EXE,
+      if (! SessionWrapper(true)->FindFile( SessionWrapper(true)->IsAdminMode() ? MIKTEX_MPM_MFC_ADMIN_EXE : MIKTEX_MPM_MFC_EXE,
 					   FileType::EXE,
 					   path))
 	{
