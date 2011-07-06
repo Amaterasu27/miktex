@@ -784,8 +784,17 @@ MIKTEXINTERNALFUNC(bool)
 GetEnvironmentString (/*[in]*/ const char * lpszName,
 		      /*[in]*/ string &	    value)
 {
-#if defined(MIKTEX_WINDOWSx)
-  return (Utils::WideCharToUTF8(getenv(lpszName)));
+#if defined(MIKTEX_WINDOWS)
+  wchar_t * lpszValue = _wgetenv(UW_(lpszName));
+  if (lpszValue == 0)
+  {
+    return (false);
+  }
+  else
+  {
+    value = WU_(lpszValue);
+    return (true);
+  }
 #else
   const char * lpszValue = getenv(lpszName);
   if (lpszValue == 0)

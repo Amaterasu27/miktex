@@ -184,6 +184,7 @@ if(LINK_EVERYTHING_STATICALLY)
 else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${core_dll_name}
+    ${zlib_dll_name}
     ${hunspell_dll_name}
     ${poppler_qt4_dll_name}
     ${QT_QTMAIN_LIBRARY}

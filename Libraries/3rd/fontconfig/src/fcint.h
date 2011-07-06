@@ -30,7 +30,8 @@
 #endif
 
 #if defined(MIKTEX)
-#  include "miktex/utf8wrap.h"
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
 #endif
 
 #include <stdlib.h>

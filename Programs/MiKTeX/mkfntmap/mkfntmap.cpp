@@ -1,6 +1,6 @@
 /* mkfntmap.cpp:
 
-   Copyright (C) 2002-2010 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of MkFntMap.
 
@@ -1427,7 +1427,7 @@ MakeFontMapApp::BuildFontconfigCache ()
   PathName configFile (pSession->GetSpecialPath(SpecialPath::ConfigRoot));
   configFile += MIKTEX_PATH_FONTCONFIG_LOCALFONTS_FILE;
   StreamWriter writer (configFile);
-  writer.WriteLine ("<?xml version=\"1.0\"?>");
+  writer.WriteLine ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
   writer.WriteLine ();
   writer.WriteLine ("<!--");
   writer.WriteLine (T_("\
@@ -1465,11 +1465,7 @@ MakeFontMapApp::BuildFontconfigCache ()
        it != paths.end();
        ++ it)
     {
-#if defined(MIKTEX_WINDOWS)
-      writer.WriteFormattedLine ("<dir>%s</dir>", Utils::AnsiToUTF8(it->c_str()).c_str());
-#else
       writer.WriteFormattedLine ("<dir>%s</dir>", it->c_str());
-#endif
     }
   writer.WriteLine ("</fontconfig>");
   writer.Close ();

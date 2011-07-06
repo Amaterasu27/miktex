@@ -4267,7 +4267,7 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(void)
-  SetCurrentDirectory (/*[in]*/ const PathName &	path);
+  SetCurrentDirectoryA (/*[in]*/ const PathName &	path); // FIXME
 
   /// Deletes a directory.
 public:

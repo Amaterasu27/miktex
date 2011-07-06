@@ -54,6 +54,7 @@ using namespace std;
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 const char * const TheNameOfTheGame = T_("MiKTeX Configuration Utility");
+
 #define PROGNAME "initexmf"
 
 /* _________________________________________________________________________
