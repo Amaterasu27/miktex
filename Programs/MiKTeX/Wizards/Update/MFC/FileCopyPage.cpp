@@ -194,7 +194,7 @@ FileCopyPage::OnKillActive ()
     {
       try
 	{
-	  CSingleLock (&criticalSectionMonitor, TRUE);
+	  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
 	  if (sharedData.pLogStream.get() != 0)
 	    {
 	      sharedData.pLogStream->Close ();
@@ -486,7 +486,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   uType |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  UINT u = ::MessageBoxW(0, CA2W(str.c_str()), 0, uType);
+  UINT u = ::MessageBoxW(0, UW_(str.c_str()), 0, uType);
   return (u != IDCANCEL);
 }
 
@@ -498,7 +498,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   bool visibleProgress = false;
   PackageInstaller::ProgressInfo progressInfo = pInstaller->GetProgressInfo();
   if (nf == Notification::InstallPackageStart
@@ -821,33 +821,37 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  string str (Utils::FormatString(lpszFmt, args));
   va_end (args);
-  int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  int len = str.length();
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
+  {
+    if (str[i] == '\n' && i > 0 && str[i] != '\r')
     {
-      if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')
-	{
-	  sharedData.report += '\r';
-	}
-      sharedData.report += str[i];
+      sharedData.currentLine += '\r';
     }
-  sharedData.reportUpdate = true;
-  if (writeLog)
+    sharedData.currentLine += str[i];
+    if (str[i] == '\n')
     {
-      Log ("%s", static_cast<const char *>(str));
+      sharedData.reportUpdate = true;
+      sharedData.report += sharedData.currentLine;
+      if (writeLog)
+      {
+	Log ("%s", sharedData.currentLine.c_str());
+      }
+      sharedData.currentLine.clear ();
     }
-  if (immediate)
+  }  
+  if (sharedData.reportUpdate && immediate)
+  {
+    if (! PostMessage(WM_PROGRESS))
     {
-      if (! PostMessage(WM_PROGRESS))
-	{
-	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
-	}
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
+  }
 }
 
 /* _________________________________________________________________________

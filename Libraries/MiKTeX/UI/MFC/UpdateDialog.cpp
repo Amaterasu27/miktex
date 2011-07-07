@@ -577,7 +577,7 @@ UpdateDialogImpl::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   bool visibleProgress =
     (nf == Notification::DownloadPackageEnd
      || nf == Notification::InstallFileEnd
@@ -721,7 +721,7 @@ UpdateDialogImpl::Report (/*[in]*/ bool		immediate,
   str.FormatV (lpszFmt, args);
   va_end (args);
   int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
     {
       if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')

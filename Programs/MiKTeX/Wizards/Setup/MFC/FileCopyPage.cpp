@@ -512,7 +512,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
 
   bool visibleProgress = false;
 
@@ -960,7 +960,7 @@ FileCopyPage::ConfigureMiKTeX ()
 
   // refresh progress bar
   {
-    CSingleLock (&criticalSectionMonitor, TRUE);
+    CSingleLock singlelock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
     sharedData.packageName = TU_(str);
@@ -1152,7 +1152,7 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
   if (! pSheet->GetCancelFlag())
     {
       completedIniTeXMFRuns += 1;
-      CSingleLock (&criticalSectionMonitor, TRUE);
+      CSingleLock singlelock (&criticalSectionMonitor, TRUE);
       sharedData.progress1Pos
 	= static_cast<int>(
 	  ((static_cast<double>(completedIniTeXMFRuns)
@@ -1205,7 +1205,7 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
   if (! pSheet->GetCancelFlag())
     {
       completedIniTeXMFRuns += 1;
-      CSingleLock (&criticalSectionMonitor, TRUE);
+      CSingleLock singlelock (&criticalSectionMonitor, TRUE);
       sharedData.progress1Pos
 	= static_cast<int>(
 	  ((static_cast<double>(completedIniTeXMFRuns)
@@ -1252,18 +1252,34 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  string str (Utils::FormatString(lpszFmt, args));
   va_end (args);
-  //int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
-  if (writeLog)
+  int len = str.length();
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
+  string lines;
+  for (int i = 0; i < len; ++ i)
+  {
+    if (str[i] == '\n' && i > 0 && str[i] != '\r')
     {
-      Log ("%s", static_cast<const char *>(str));
+      sharedData.currentLine += '\r';
     }
-  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UT_(str))));
+    sharedData.currentLine += str[i];
+    if (str[i] == '\n')
+    {
+      lines += sharedData.currentLine;
+      sharedData.currentLine.clear ();
+    }
+  }
+  if (writeLog)
+  {
+    Log ("%s", str.c_str());
+  }
+  if (! lines.empty())
+  {
+    SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UT_(lines))));
+  }
 }
 
 /* _________________________________________________________________________

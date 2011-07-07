@@ -1,6 +1,6 @@
 /* FileCopyPage.h:						-*- C++ -*-
 
-   Copyright (C) 2002-2007 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -201,6 +201,7 @@ private:
 	waitingForClickOnNext (false)
     {
     }
+    string currentLine;
     string report;
     DWORD secondsRemaining;
     auto_ptr<StreamWriter> pLogStream;

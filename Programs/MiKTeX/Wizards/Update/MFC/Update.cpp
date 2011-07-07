@@ -507,10 +507,10 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.dwSchemeLength = 200;
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
-  if (! InternetCrackUrlW(CA2W(url.c_str()), 0, 0, &url_comp))
+  if (! InternetCrackUrlW(UW_(url.c_str()), 0, 0, &url_comp))
     {
-      FATAL_WINDOWS_ERROR ("InternetCrackUrl", 0);
+      FATAL_WINDOWS_ERROR ("InternetCrackUrlW", 0);
     }
-  protocol = CW2A(szProtocol);
-  host = CW2A(szHost);
+  protocol = WU_(szProtocol);
+  host = WU_(szHost);
 }

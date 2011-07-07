@@ -705,7 +705,7 @@ PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   style |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  return (::MessageBoxW(0, CA2W(str.c_str()), 0, style) != IDCANCEL);
+  return (::MessageBoxW(0, UW_(str.c_str()), 0, style) != IDCANCEL);
 }
 
 /* _________________________________________________________________________

@@ -2308,7 +2308,16 @@ public:
       }
     else
       {
-	Reserve (StrLen(lpsz) + 1);
+	size_t requiredSize;
+	if (sizeof(CharType) > sizeof(OtherCharType))
+	{
+	  requiredSize = StrLen(lpsz) * 4 + 1; // worst case UTF-8->WideChar
+	}
+	else
+	{
+	  requiredSize = StrLen(lpsz) + 1;
+	}
+	Reserve (requiredSize);
 	Utils::CopyString (buffer, GetCapacity(), lpsz);
       }
   }

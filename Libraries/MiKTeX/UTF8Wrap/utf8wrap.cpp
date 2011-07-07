@@ -191,7 +191,7 @@ miktex_utf8_open (/*[in]*/ const char * lpszFileName, /*[in]*/ int flags, ...)
     pmode = va_arg(ap, int);
     va_end(ap);
   }
-  return (_wopen(UW_(lpszFileName), pmode));
+  return (_wopen(UW_(lpszFileName), flags, pmode));
 }
 
 /* _________________________________________________________________________

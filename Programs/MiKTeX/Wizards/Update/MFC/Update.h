@@ -65,6 +65,9 @@ class UpdateWizardCommandLineInfo;
 #define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
 #define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
 
+#define WU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
 /* _________________________________________________________________________
 
    AutoToggle
