@@ -1,6 +1,6 @@
 /* winMemoryMappedFile.cpp:
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -123,9 +123,9 @@ winMemoryMappedFile::Open (/*[in]*/ const char *	lpszPath,
       // get the size
 #if defined(_MSC_VER)
       struct _stat statbuf;
-      if (_stat(lpszPath, &statbuf) != 0)
+      if (_wstat(UW_(lpszPath), &statbuf) != 0)
 	{
-	  FATAL_CRT_ERROR ("_stat", lpszPath);
+	  FATAL_CRT_ERROR ("_wstat", lpszPath);
 	}
       size = statbuf.st_size;
 #else

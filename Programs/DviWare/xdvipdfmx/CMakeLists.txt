@@ -24,6 +24,8 @@ configure_file(
 
 add_definitions(-DHAVE_CONFIG_H)
 
+add_definitions(-DUNICODE -D_UNICODE)
+
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 

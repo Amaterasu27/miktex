@@ -118,7 +118,7 @@ public:
    _________________________________________________________________________ */
 
 void
-AddArgument (/*[in]*/ const CString &	argument,
+AddArgument (/*[in]*/ const string &	argument,
 	     /*[in,out]*/ int &		argc,
 	     /*[in,out]*/ char ** &	argv,
 	     /*[in,out]*/ int &		argMax)
@@ -130,7 +130,7 @@ AddArgument (/*[in]*/ const CString &	argument,
 	reinterpret_cast<char**>(realloc(argv,
 					 argMax * sizeof(argv[0])));
     }
-  argv[ argc++ ] = strdup(WU_(argument));
+  argv[ argc++ ] = strdup(argument.c_str());
 }
 
 /* _________________________________________________________________________
@@ -149,9 +149,9 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
 
   int argMax = 0;
 
-  AddArgument (CString(lpszExeName), argc, argv, argMax);
+  AddArgument (string(lpszExeName), argc, argv, argMax);
 
-  CString arg;
+  string arg;
 
   bool copying = false;
   bool inQuotedArg = false;
@@ -2194,16 +2194,16 @@ CreateProgramFolder ()
    Expand
    _________________________________________________________________________ */
 
-CString &
+CStringW &
 Expand (/*[in]*/ const char *	lpszSource,
-	/*[out]*/ CString &	dest)
+	/*[out]*/ CStringW &	dest)
 {
   dest = lpszSource;
   int pos;
-  while ((pos = dest.Find(_T("%MIKTEX_INSTALL%"))) >= 0)
+  while ((pos = dest.Find(L"%MIKTEX_INSTALL%")) >= 0)
     {
       dest.Delete (pos, 16);
-      dest.Insert (pos, UT_(theApp.GetInstallRoot().Get()));
+      dest.Insert (pos, UW_(theApp.GetInstallRoot().Get()));
     }
   return (dest);
 }
