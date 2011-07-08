@@ -228,7 +228,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 	      pathDvi = pathFileName;
 	    }
 	  
-	  cmdInfo.m_strFileName = pathDvi.Get();
+	  cmdInfo.m_strFileName = UT_(pathDvi.Get());
 
 	  if (cmdInfo.m_nShellCommand != CCommandLineInfo::FilePrint)
 	    {
@@ -370,7 +370,7 @@ YapApplication::InitInstance ()
 	  TraceStream::SetTraceFlags (cmdInfo.traceFlags.c_str());
 	}
       
-      YapLog (T_("Yap arguments: %s"), m_lpCmdLine);
+      YapLog (T_("Yap arguments: %s"), TU_(m_lpCmdLine));
       
       // return, if another application instance was found
       if (cmdInfo.singleInstance && ActivateFirstInstance(cmdInfo))

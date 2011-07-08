@@ -2309,9 +2309,9 @@ public:
     else
       {
 	size_t requiredSize;
-	if (sizeof(CharType) > sizeof(OtherCharType))
+	if (sizeof(CharType) < sizeof(OtherCharType))
 	{
-	  requiredSize = StrLen(lpsz) * 4 + 1; // worst case UTF-8->WideChar
+	  requiredSize = StrLen(lpsz) * 4 + 1; // worst case: wchar_t to UTF-8
 	}
 	else
 	{
