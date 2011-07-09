@@ -1520,12 +1520,6 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 				      T_("Unknown variable."),
 				      name.c_str());
 		}
-#if defined(MIKTEX_WINDOWS)
-	      if (isUtf8)
-	      {
-		value = Utils::AnsiToUTF8(value.c_str());
-	      }
-#endif
 	      streamOut.Write (value.c_str(), value.length());
 	    }
 	  else
