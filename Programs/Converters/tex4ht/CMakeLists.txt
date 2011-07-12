@@ -26,6 +26,7 @@ add_definitions(
   -DHAVE_STRING_H
   -DKPATHSEA
   -Dmain=Main
+  -DSYSTEM_FUNCTION_OK
   -DUSE_MIKTEX_EXIT
 )
 
@@ -37,37 +38,10 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set_source_files_properties(
-  htcmd.c
   t4ht.c
   tex4ht.c
   PROPERTIES LANGUAGE CXX
 )
-
-set(htcmd_sources
-  ${wrapper_cpp}
-  htcmd-version.h
-  htcmd.c
-)
-
-if(NATIVE_WINDOWS)
-  set(htcmd_sources ${htcmd_sources}
-    htcmd.rc
-  )
-endif(NATIVE_WINDOWS)
-
-add_executable(htcmd ${htcmd_sources})
-
-merge_trustinfo_manifest(htcmd asInvoker)
-
-target_link_libraries(htcmd
-  ${app_dll_name}
-  ${core_dll_name}
-  ${kpsemu_dll_name}
-  ${texmf_dll_name}
-  ${utf8wrap_dll_name}
-)
-
-install(TARGETS htcmd DESTINATION ${bindir})
 
 set(t4ht_sources
   ${wrapper_cpp}

@@ -17,10 +17,10 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4196
-#define MIKTEX_COMP_ORIG_VERSION_STR "2009-01-31-07:33"
+#define MIKTEX_COMP_J2000_VERSION 4210
+#define MIKTEX_COMP_ORIG_VERSION_STR "2010-12-16-08:39"
 
-#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1996-2009 Eitan M. Gurari"
-#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1996-2009 Eitan M. Gurari"
+#define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2009-2010 TeX Users Group, Copyright (C) 1996-2009 Eitan M. Gurari"
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2009-2010 TeX Users Group, © 1996-2009 Eitan M. Gurari"
 
 #include <miktex/Core/Version>

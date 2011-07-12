@@ -11,7 +11,6 @@
       This package includes the TeX4HT binaries.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/htcmd.exe
 texmf/miktex/bin/t4ht.exe
 texmf/miktex/bin/tex4ht.exe
     </TPM:RunFiles>
