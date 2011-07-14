@@ -2866,7 +2866,7 @@ IniTeXMFApp::ReportOSVersion ()
     }
   else
     {
-      printf ("OS: \n", Utils::GetOSVersionString().c_str());
+      printf ("OS: %s\n", Utils::GetOSVersionString().c_str());
     }
 }
 
