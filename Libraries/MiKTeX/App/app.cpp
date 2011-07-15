@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2009 Christian Schenk
+   Copyright (C) 2005-2011 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -164,7 +164,24 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 				       TriState(TriState::Undetermined));
   InstallSignalHandler (SIGINT);
   InstallSignalHandler (SIGTERM);
-  if (! File::Exists(pSession->GetMpmDatabasePathName()))
+  bool mustRefreshFndb = false;
+  PathName mpmDatabasePath (pSession->GetMpmDatabasePathName());
+  if (! File::Exists(mpmDatabasePath))
+  {
+    mustRefreshFndb = true;
+  }
+  else if (! pSession->IsAdminMode())
+  {
+    string value;
+    if (pSession->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, value))
+    {
+      if (static_cast<time_t>(_atoi64(value.c_str())) > File::GetLastWriteTime(mpmDatabasePath))
+      {
+	mustRefreshFndb = true;
+      }
+    }
+  }
+  if (mustRefreshFndb)
   {
     // create file name database files
     PathName initexmf;

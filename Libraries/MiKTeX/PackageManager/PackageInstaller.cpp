@@ -578,10 +578,36 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
 {
   dbLight.Clear ();
 
+#if 1
   // path to mpm.ini
   PathName pathMpmIni (
     pSession->GetSpecialPath(SpecialPath::InstallRoot),
     MIKTEX_PATH_MPM_INI);
+#else
+  PathName commonMpmIni (
+    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
+    MIKTEX_PATH_MPM_INI);
+
+  PathName userMpmIni (
+    pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+    MIKTEX_PATH_MPM_INI);
+
+  PathName pathMpmIni;
+
+  if (pSession->IsAdminMode()
+    || (
+      ! download
+      && userMpmIni != commonMpmIni
+      && File::Exists(commonMpmIni)
+      && (! File::Exists(userMpmIni) || File::GetLastWriteTime(commonMpmIni) > File::GetLastWriteTime(userMpmIni))))
+  {
+    pathMpmIni = commonMpmIni;
+  }
+  else
+  {
+    pathMpmIni = commonMpmIni;
+  }
+#endif
 
   // install (if necessary)
   if (download || ! File::Exists(pathMpmIni))
@@ -670,8 +696,11 @@ PackageInstallerImpl::FindUpdates ()
 {
   trace_mpm->WriteLine ("libmpm", T_("searching for updateable packages"));
 
-  // force a download of the lightweight database
-  LoadDbLight (true);
+  // install the package database
+  UpdateDb ();
+
+  // load lightweight database
+  LoadDbLight (false);
 
   updates.clear ();
 

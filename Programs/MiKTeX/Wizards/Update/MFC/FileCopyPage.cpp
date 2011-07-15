@@ -608,8 +608,10 @@ FileCopyPage::DoTheUpdate ()
   ULogOpen ();
   ULogAddFile (g_logFileName);
 
+#if 0 // already done that
   // update the package database
   pInstaller->UpdateDb ();
+#endif
 
   if (pSheet->GetCancelFlag())
     {
@@ -786,8 +788,8 @@ FileCopyPage::OpenLog ()
   // log general info
   Log (T_("MiKTeX Update Wizard Report\n\n"));
   Log (T_("Version: %s\n"), MIKTEX_COMPONENT_VERSION_STR);
-  Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
-  Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
+  Log (T_("Date: %s\n"), TU_(t.Format(T_("%A, %B %d, %Y"))));
+  Log (T_("Time: %s\n"), TU_(t.Format("%H:%M:%S")));
 }
 
 /* _________________________________________________________________________
