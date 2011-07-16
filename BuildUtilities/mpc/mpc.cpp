@@ -2503,13 +2503,33 @@ PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packag
 			       ? "TarLzma"
 			       : "unknown"))));
 			   
-      if (! it->second.version.empty())
+      if (it->second.version.empty())
+      {
+	string oldVersion;
+	if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
+			        "Version",
+				oldVersion))
 	{
+	  dbLight.DeleteValue(it->second.deploymentName.c_str(), "Version");
+	}
+      }
+      else
+        {
 	  dbLight.PutValue (it->second.deploymentName.c_str(),
 			    "Version",
 			    it->second.version.c_str());
 	}
-      if (! it->second.targetSystem.empty())
+      if (it->second.targetSystem.empty())
+      {
+	string oldTargetSystem;
+	if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
+			        "TargetSystem",
+				oldTargetSystem))
+	{
+	  dbLight.DeleteValue(it->second.deploymentName.c_str(), "TargetSystem");
+	}
+      }
+      else
       {
 	dbLight.PutValue (it->second.deploymentName.c_str(),
 	  "TargetSystem",
