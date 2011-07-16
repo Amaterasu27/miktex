@@ -424,6 +424,29 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 
     // disable Next, if no package is selected
     pSheet->SetWizardButtons (PSWIZB_BACK | (somethingChecked ? PSWIZB_NEXT : 0));
+
+#if 1
+    RepositoryInfo repositoryInfo;
+    if (g_pManager->TryGetRepositoryInfo(repository, repositoryInfo))
+    {
+      struct tm * pTime1 = gmtime(&repositoryInfo.timeDate);
+      if (pTime1 == 0)
+      {
+	UNEXPECTED_CONDITION ("PackageListPage::OnFillList");
+      }
+      pTime1->tm_hour = 23;
+      pTime1->tm_min = 59;
+      pTime1->tm_sec = 59;
+      if (difftime(time(0), mktime(pTime1)) < 60 * 60 * 30)
+      {
+	AfxMessageBox (T_(_T("The repository contains untestet packages. It is recommended that you \
+wait a few days before updating.")),
+          MB_OK | MB_ICONEXCLAMATION);
+      }
+    }
+#endif
+
+
   }
   catch (const MiKTeXException & e)
   {
