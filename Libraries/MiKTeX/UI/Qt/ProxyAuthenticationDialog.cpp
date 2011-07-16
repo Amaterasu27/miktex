@@ -1,6 +1,6 @@
 /* ProxyAuthenticationDialog.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -36,9 +36,11 @@ ProxyAuthenticationDialog::ProxyAuthenticationDialog
   : QDialog (pParent)
 {
   setupUi (this);
+#if 0
   QRegExp namePattern ("\\w+");
   QValidator * pValidator = new QRegExpValidator(namePattern, this);
   leName->setValidator (pValidator);
+#endif
   leName->setText ("");
 }
 
