@@ -892,7 +892,9 @@ miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
   {
     MIKTEX_FREE (kpse->invocation_name);
   }
-  kpse->invocation_name = xstrdup(lpszArgv0);
+  PathName argv0 (lpszArgv0);
+  char szInvocationName[BufferSizes::MaxPath];
+  kpse->invocation_name = xstrdup(argv0.GetFileName(szInvocationName));
   std::string programName;
   if (lpszProgramName == 0)
   {
