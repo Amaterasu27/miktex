@@ -384,7 +384,7 @@ miktex_utf8_spawnvp (/*[in]*/ int mode,
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_system (/*[in]*/ const char * lpszCommand)
 {
-  return (_wsystem(UW_(lpszCommand)));
+  return (_wsystem(lpszCommand == 0 ? 0 : UW_(lpszCommand)));
 }
 
 /* _________________________________________________________________________
