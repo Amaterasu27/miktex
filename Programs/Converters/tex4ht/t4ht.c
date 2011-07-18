@@ -1479,9 +1479,11 @@ get_env_dir(argv[0])
       }
     }
 
+#if ! defined(MIKTEX)
     for (i=0; i < argc; i++)
       free (argv[i]);
     free (argv);
+#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;

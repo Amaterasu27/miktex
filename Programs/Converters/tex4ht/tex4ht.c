@@ -5962,9 +5962,11 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
       }
     }
 
+#if ! defined(MIKTEX)
     for (i=0; i < argc; i++)
       free (argv[i]);
     free (argv);
+#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -5994,19 +5996,23 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-#  if defined(MIKTEX)
-   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s MiKTeX)\n",PLATFORM);
-#  else
    (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s)\n",PLATFORM);
-#endif
 #else
    (IGNORED) printf("tex4ht.c (2010-12-16-08:39)\n");
 #endif
 #else
 #ifdef PLATFORM
+#  if defined(MIKTEX)
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s MiKTeX)\n",PLATFORM);
+#  else
    (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s kpathsea)\n",PLATFORM);
+#  endif
 #else
+#  if defined(MIKTEX)
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 MiKTeX)\n");
+#  else
    (IGNORED) printf("tex4ht.c (2010-12-16-08:39 kpathsea)\n");
+#  endif
 #endif
 #endif
 for(i=0; i<argc; i++){
