@@ -1278,6 +1278,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
   }
   if (! lines.empty())
   {
+    singlelock.Unlock ();
     SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UT_(lines))));
   }
 }
@@ -1365,6 +1366,15 @@ http://miktex.org.\n"),
 			     lpszPackageSet,
 			     setupExe.Get());
   stream.Close ();
+  RepositoryInfo repositoryInfo;
+  if (theApp.pManager->TryGetRepositoryInfo(theApp.remotePackageRepository, repositoryInfo))
+  {
+    StreamWriter stream (PathName(theApp.localPackageRepository, "pr.ini"));
+    stream.WriteFormattedLine ("[repository]");
+    stream.WriteFormattedLine ("date=%d", static_cast<int>(repositoryInfo.timeDate));
+    stream.WriteFormattedLine ("version=%u", static_cast<unsigned>(repositoryInfo.version));
+    stream.Close ();
+  }
 }
 
 /* _________________________________________________________________________
