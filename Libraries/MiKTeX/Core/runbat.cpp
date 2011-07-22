@@ -118,12 +118,19 @@ SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
 	 relScriptPath.c_str());
     }
   
-  // we cannot quote the command => remove all blanks from the script path
-  Utils::RemoveBlanksFromPathName (scriptPath);
+  string batchCommandLine;
+  bool needQuotes = (strchr(scriptPath.Get(), ' ') != 0);
+  if (needQuotes)
+  {
+    batchCommandLine += '"';
+  }
+  batchCommandLine += scriptPath.Get();
+  if (needQuotes)
+  {
+    batchCommandLine += '"';
+  }
 
-  string batchCommandLine = scriptPath.Get();
-
-  if (lpszArguments != 0)
+  if (lpszArguments != 0 && *lpszArguments != 0)
     {
       batchCommandLine += ' ';
       batchCommandLine += lpszArguments;
