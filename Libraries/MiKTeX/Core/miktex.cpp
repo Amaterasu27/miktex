@@ -127,15 +127,17 @@ GetHomeDirectory ()
     {
       return (ret);
     }
-  unsigned int n = GetWindowsDirectoryA(ret.GetBuffer(), ret.GetCapacity());
+  wchar_t szWinDir[_MAX_PATH];
+  unsigned int n = GetWindowsDirectoryW(szWinDir, _MAX_PATH);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
-  else if (n >= ret.GetCapacity())
+  else if (n >= _MAX_PATH)
     {
       BUF_TOO_SMALL ("GetHomeDirectory");
     }
+  ret = szWinDir;
   return (ret);
 #else
   UNEXPECTED_CONDITION ("GetHomeDirectory");
@@ -860,30 +862,20 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   size_t bufSize;
-  if (getenv_s(&bufSize,
-	       0,
-	       0,
-	       lpszName)
-      != 0)
-    {
-      return (false);
-    }
+  if (_wgetenv_s(&bufSize, 0, 0, UW_(lpszName)) != 0)
+  {
+    return (false);
+  }
   if (bufSize == 0)
-    {
-      return (false);
-    }
-  if (bufSize > sizeOut)
-    {
-      BUF_TOO_SMALL ("Utils::GetEnvironmentString");
-    }
-  if (getenv_s(&bufSize,
-	       lpszOut,
-	       bufSize,
-	       lpszName)
-      != 0)
-    {
-      FATAL_CRT_ERROR ("getenv_s", lpszName);
-    }
+  {
+    return (false);
+  }
+  CharBuffer<wchar_t> buf (bufSize);
+  if (_wgetenv_s(&bufSize, buf.GetBuffer(), bufSize, UW_(lpszName)) != 0)
+  {
+    FATAL_CRT_ERROR ("_wgetenv_s", lpszName);
+  }
+  Utils::CopyString (lpszOut, sizeOut, buf.Get());
   return (true);
 #else
   const char * lpsz = getenv(lpszName);
