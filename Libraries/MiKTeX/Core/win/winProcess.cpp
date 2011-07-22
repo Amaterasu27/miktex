@@ -321,9 +321,16 @@ winProcess::Create ()
 
       // build command-line
       string commandLine;
-      commandLine = '"';
+      bool needQuotes = (startinfo.FileName.find(' ') != string::npos);
+      if (needQuotes)
+      {
+	commandLine = '"';
+      }
       commandLine += startinfo.FileName;
-      commandLine += '"';
+      if (needQuotes)
+      {
+	commandLine += '"';
+      }
       if (! startinfo.Arguments.empty())
 	{
 	  commandLine += ' ';
