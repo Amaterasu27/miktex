@@ -115,7 +115,7 @@ public:
     path += T_("MiKTeX Setup");
     if (! Directory::Exists(path))
       {
-	if (! CreateDirectory(CA2T(path.Get()), 0))
+	if (! CreateDirectory(UT_(path.Get()), 0))
 	  {
 	    FATAL_WINDOWS_ERROR ("CreateDirectory", path.Get());
 	  }
