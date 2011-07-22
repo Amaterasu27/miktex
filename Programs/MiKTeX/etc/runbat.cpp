@@ -58,7 +58,9 @@ main (/*[in]*/ int		argc,
 	newargv.push_back (utf8args[idx].c_str());
       }
       newargv.push_back (0);
+#if 0 // breaks under XP (see #3370127)
       MIKTEX_UTF8_CONSOLE_OUTPUT ();
+#endif
       Application app;
       app.Init (newargv[0]);
 #if defined(_UNICODE)
