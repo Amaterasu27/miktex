@@ -966,9 +966,8 @@ if(NOT USE_SYSTEM_PNG)
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_PNG)
 
-add_subdirectory(${rel_xpdf_dir})
-
 if(BUILDING_MIKTEX)
+  set(POPPLER_VERSION "0.12.4")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 

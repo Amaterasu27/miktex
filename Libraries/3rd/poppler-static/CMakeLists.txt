@@ -17,8 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-set(POPPLER_VERSION "0.12.4")
-
 ##use_static_crt()
 ##use_static_libraries()
 

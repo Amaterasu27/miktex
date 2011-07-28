@@ -30,14 +30,14 @@ set(C4P_FLAGS
 )
 
 include_directories(BEFORE
-  ${CMAKE_BINARY_DIR}/${rel_xpdf_dir}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_goo_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_xpdf_xpdf_dir}
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
 )
 
 add_definitions(
@@ -51,6 +51,7 @@ add_definitions(
   -DXETEX_GRAPHITE
   -DXETEX_OTHER
   -DXeTeX
+  -DPOPPLER_VERSION="${POPPLER_VERSION}"
 )
 
 set(synctex_xetex_ch_srcs_mem_only
@@ -231,18 +232,18 @@ set_source_files_properties(
 )
 
 target_link_libraries(${xetex_dll_name}
-  ${fofi_lib_name}
   ${fontconfig_dll_name}
   ${freetype2_dll_name}
-  ${goo_lib_name}
   ${graphite_engine_lib_name}
   ${icudt_dll_name}
   ${icule_dll_name}
   ${icuuc_dll_name}
+  ${jpeg_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
+  ${poppler_lib_name}
   ${teckit_dll_name}
-  ${xpdf_lib_name}
+  ${unxemu_dll_name}
   ${w2cemu_dll_name}
 )
 
