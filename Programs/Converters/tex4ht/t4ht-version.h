@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4216
+#define MIKTEX_COMP_J2000_VERSION 4225
 #define MIKTEX_COMP_ORIG_VERSION_STR "2010-12-16-08:47"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2009-2010 TeX Users Group, Copyright (C) 1998-2009 Eitan M. Gurari"

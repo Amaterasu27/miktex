@@ -26,7 +26,6 @@ add_definitions(
   -DHAVE_STRING_H
   -DKPATHSEA
   -Dmain=Main
-  -DSYSTEM_FUNCTION_OK
   -DUSE_MIKTEX_EXIT
 )
 
