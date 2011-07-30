@@ -71,8 +71,6 @@ main (/*[in]*/ int	argc,
 {
   try
     {
-      MIKTEX_UTF8_CONSOLE_OUTPUT ();
-
       app.Init (TU_(argv[0]));
 
       MIKTEX_ASSERT (argc > 0);

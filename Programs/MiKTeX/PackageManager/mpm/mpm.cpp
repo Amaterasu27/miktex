@@ -1975,7 +1975,6 @@ main (/*[in]*/ int		argc,
 	newargv.push_back (utf8args[idx].c_str());
       }
       newargv.push_back (0);
-      MIKTEX_UTF8_CONSOLE_OUTPUT ();
       Application app;
       app.Main (argc, &newargv[0]);
     }

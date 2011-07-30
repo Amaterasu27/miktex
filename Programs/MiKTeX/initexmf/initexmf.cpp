@@ -3884,7 +3884,6 @@ main (/*[in]*/ int		argc,
 	newargv.push_back (utf8args[idx].c_str());
       }
       newargv.push_back (0);
-      MIKTEX_UTF8_CONSOLE_OUTPUT ();
       IniTeXMFApp app;
       app.Init (newargv[0]);
       app.Run (argc, &newargv[0]);

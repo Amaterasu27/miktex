@@ -73,7 +73,6 @@ main (/*[in]*/ int		argc,
 {
   try
     {
-      MIKTEX_UTF8_CONSOLE_OUTPUT ();
 #if defined(MIKTEX_WINDOWS)
       std::vector<std::string> utf8args;
       utf8args.reserve (argc);

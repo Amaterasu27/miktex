@@ -8364,9 +8364,6 @@ private:
 #endif
 };
 
-#define MIKTEX_UTF8_CONSOLE_OUTPUT() \
-  MiKTeX::Core::AutoUTF8ConsoleOutput miktex_auto_utf8_console_output_xxx
-
 #define MIKTEX_BEGIN_UTF8_CONSOLE_OUTPUT() \
 { \
   MiKTeX::Core::AutoUTF8ConsoleOutput miktex_auto_utf8_console_output_xxx;
