@@ -1472,6 +1472,7 @@ miktex_kpathsea_init_format (/*[in]*/ kpathsea pKpseInstance,
    miktex_kpsemu_create_texmf_cnf
    _________________________________________________________________________ */
 
+#if WITH_CONTEXT_SUPPORT
 MIKTEXKPSCEEAPI(char *)
 miktex_kpsemu_create_texmf_cnf ()
 {
@@ -1559,3 +1560,4 @@ miktex_kpsemu_create_texmf_cnf ()
   }
   return (xstrdup(texmfcnfdir.ToUnix().Get()));
 }
+#endif

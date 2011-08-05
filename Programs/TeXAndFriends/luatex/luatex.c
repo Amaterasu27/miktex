@@ -450,7 +450,7 @@ __declspec(dllexport) int __cdecl Main (int ac, string * av)
 int main(int ac, string * av)
 #endif
 {
-#if defined(MIKTEX)
+#if defined(MIKTEX) && WITH_CONTEXT_SUPPORT
   // create texmf.cnf for ConTeXt
   char * lpszPath = miktex_kpsemu_create_texmf_cnf();
   xputenv ("TEXMFCNF", lpszPath);

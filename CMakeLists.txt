@@ -162,6 +162,12 @@ option(
   FALSE
 )
 
+option(
+  WITH_CONTEXT_SUPPORT
+  "Enable ConTeXt support."
+  FALSE
+)
+
 ## check all dyn.sed files, if you alter C4P_VAR_NAME_PREFIX
 set(C4P_VAR_NAME_PREFIX "g_")
 
@@ -826,6 +832,10 @@ foreach(tpm ${tpms})
   )
 endforeach(tpm)
 
+if(NOT WITH_CONTEXT_SUPPORT)
+  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/miktex-context-config-${MIKTEX_SERIES_STR}.tpm")
+endif(NOT WITH_CONTEXT_SUPPORT)
+
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/${target_system_tag}/*.tpm.in")
 foreach(tpm ${tpms})
   get_filename_component(fn ${tpm} NAME_WE)
@@ -834,6 +844,10 @@ foreach(tpm ${tpms})
     "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/${fn}-${MIKTEX_SERIES_STR}.tpm"
   )
 endforeach(tpm)
+
+if(NOT WITH_CONTEXT_SUPPORT)
+  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/miktex-context-bin-${MIKTEX_SERIES_STR}.tpm")
+endif(NOT WITH_CONTEXT_SUPPORT)
 
 if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
   configure_file(

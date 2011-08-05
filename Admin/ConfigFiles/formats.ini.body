@@ -14,7 +14,7 @@ compiler=pdftex
 description=Babel plain TeX
 input=bplain.ini
 
-!include formats-context.ini
+#!include formats-context.ini
 
 [cslatex]
 

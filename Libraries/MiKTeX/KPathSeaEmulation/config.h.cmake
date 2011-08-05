@@ -1,6 +1,6 @@
 /* config.h (created from config.h.cmake)			-*- C++ -*-
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2011 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -21,3 +21,4 @@
 
 #cmakedefine HAVE_FSEEKO64 1
 #cmakedefine HAVE_FTELLO64 1
+#cmakedefine01 WITH_CONTEXT_SUPPORT

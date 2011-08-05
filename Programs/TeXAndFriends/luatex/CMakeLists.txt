@@ -42,6 +42,11 @@ if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
+if(WITH_CONTEXT_SUPPORT)
+  add_definitions(-DWITH_CONTEXT_SUPPORT=1)
+endif(WITH_CONTEXT_SUPPORT)
+
+
 ###############################################################################
 ## luatex-lua51-static
 ###############################################################################
@@ -288,17 +293,19 @@ merge_trustinfo_manifest(runtexlua asInvoker)
 install(TARGETS runtexlua DESTINATION "${miktex_internal_bindir}")
 
 ###############################################################################
-## runtexlua
+## runmtxrun
 ###############################################################################
 
-add_executable(runmtxrun runmtxrun.cpp)
+if(WITH_CONTEXT_SUPPORT)
+  add_executable(runmtxrun runmtxrun.cpp)
 
-target_link_libraries(runmtxrun
-  ${app_dll_name}
-  ${core_dll_name}
-  ${luatex_program_dll_name}
-)
+  target_link_libraries(runmtxrun
+    ${app_dll_name}
+    ${core_dll_name}
+    ${luatex_program_dll_name}
+  )
 
-merge_trustinfo_manifest(runmtxrun asInvoker)
+  merge_trustinfo_manifest(runmtxrun asInvoker)
 
-install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
+  install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
+endif(WITH_CONTEXT_SUPPORT)

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:TPM="http://texlive.dante.de/">
+  <rdf:Description about="http://www.miktex.org/packages/miktex/">
+    <TPM:Name>MiKTeX ConTeXt config</TPM:Name>
+    <TPM:Title>MiKTeX ConTeXt configuration files</TPM:Title>
+    <TPM:Copyright owner="Christian Schenk" year="@MIKTEX_YEAR_VERSION@"/>
+    <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
+    <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
+    <TPM:Description>
+      This package contains MiKTeX ConTeXt configuration files.
+    </TPM:Description>
+    <TPM:RunFiles>
+texmf/${rel_miktex_config_dir}/cont-de.ini
+texmf/${rel_miktex_config_dir}/cont-en.ini
+texmf/${rel_miktex_config_dir}/cont-fr.ini
+texmf/${rel_miktex_config_dir}/cont-it.ini
+texmf/${rel_miktex_config_dir}/cont-nl.ini
+texmf/${rel_miktex_config_dir}/cont-ro.ini
+texmf/${rel_miktex_config_dir}/context.ini
+texmf/${rel_miktex_config_dir}/formats-context.ini
+    </TPM:RunFiles>
+  </rdf:Description>
+</rdf:RDF>
