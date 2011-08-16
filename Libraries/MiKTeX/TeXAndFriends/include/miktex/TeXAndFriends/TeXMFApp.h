@@ -1103,6 +1103,14 @@ public:
 #if defined(THEDATA) && defined(MIKTEX_XETEX)
   template<>
   int
+  MakeTeXString (/*[in]*/ const char * lpszUtf8)
+  {
+    std::wstring str = MiKTeX::Core::Utils::UTF8ToWideChar(lpszUtf8);
+    return (MakeTeXString(str.c_str()));
+  }
+
+  template<>
+  int
   MakeTeXString (/*[in]*/ const unsigned char * lpszUtf8)
   {
     std::wstring str =

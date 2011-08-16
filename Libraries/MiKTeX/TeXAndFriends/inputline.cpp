@@ -297,6 +297,14 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[out]*/ PathName &		outPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
+#if defined(MIKTEX_WINDOWS)
+  string utf8Path;
+  if (! Utils::IsUTF8(lpszPath))
+  {
+    utf8Path = Utils::AnsiToUTF8(lpszPath);
+    lpszPath = utf8Path.c_str();
+  }
+#endif
   FILE * pfile = 0;
   if (enablePipes && lpszPath[0] == '|')
     {
@@ -354,6 +362,15 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 				/*[in]*/ const char *		lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
+
+#if defined(MIKTEX_WINDOWS)
+  string utf8FileName;
+  if (! Utils::IsUTF8(lpszFileName))
+  {
+    utf8FileName = Utils::AnsiToUTF8(lpszFileName);
+    lpszFileName = utf8FileName.c_str();
+  }
+#endif
 
   if (enablePipes && lpszFileName[0] == '|')
     {

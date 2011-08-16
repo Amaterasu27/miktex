@@ -1,6 +1,6 @@
 /* error.cpp: error handling
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -226,12 +226,12 @@ GetCrtErrorMessage (/*[in]*/ int		functionResult,
 {
 #if defined(_MSC_VER) && _MSC_VER >= 1400
   const size_t BUFSIZE = 512;
-  char buffer[BUFSIZE];
-  if (strerror_s(buffer, BUFSIZE, functionResult) != 0)
+  wchar_t buffer[BUFSIZE];
+  if (_wcserror_s(buffer, BUFSIZE, functionResult) != 0)
     {
       return (false);
     }
-  errorMessage = buffer;
+  errorMessage = Utils::WideCharToUTF8(buffer);
 #  else
   errorMessage = strerror(functionResult);
 #endif

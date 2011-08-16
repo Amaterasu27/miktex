@@ -1093,11 +1093,24 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	{
 	  lpszOptArg = c4pargv[idx];
 	}
-      size_t len = StrLen(lpszOptArg);
-      for (size_t j = 0; j < len; ++ j)
+      if (sizeof(CharType) == sizeof(char))
+      {
+	size_t len = StrLen(lpszOptArg);
+	for (size_t j = 0; j < len; ++ j)
 	{
 	  pBuffer[last++] = lpszOptArg[j];
 	}
+      }
+      else
+      {
+	wstring optarg = Utils::UTF8ToWideChar(lpszOptArg);
+	size_t len = optarg.length();
+	for (size_t j = 0; j < len; ++ j)
+	{
+	  pBuffer[last++] = optarg[j];
+	}
+
+      }
     }
 
   // clear the command-line

@@ -3052,7 +3052,13 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
       0);
     if (len <= 0)
     {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
+      DWORD winError = GetLastError();
+      if (winError == ERROR_NO_UNICODE_TRANSLATION)
+      {
+	OutputDebugStringA ("Bad UTF8ToWideChar() input:");
+	OutputDebugStringA (lpszUtf8);
+      }
+      FATAL_WINDOWS_ERROR_2 ("MultiByteToWideChar", winError, 0);
     }
     sizeWideChar = len;
     return (0);

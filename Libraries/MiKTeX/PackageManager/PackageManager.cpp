@@ -100,7 +100,27 @@ FatalSoapError (/*[in]*/ soap *		pSoap,
   else if (pSoap->error != SOAP_OK)
     {
       const char ** ppText = soap_faultstring(pSoap);
+      string text;
+      if (ppText != 0)
+      {
+#if defined(MIKTEX_WINDOWS)
+	// FIXME: gSoap returns Ansi text
+	text = Utils::AnsiToUTF8(*ppText);
+#else
+	text = *ppText;
+#endif
+      }
       const char ** ppDetail = soap_faultdetail(pSoap);
+      string detail;
+      if (ppDetail)
+      {
+#if defined(MIKTEX_WINDOWS)
+	// FIXME: gSoap returns Ansi text
+	detail = Utils::AnsiToUTF8(*ppDetail);
+#else
+	detail = *ppDetail;
+#endif
+      }
       switch (pSoap->error)
 	{
 	case 403:
@@ -112,8 +132,8 @@ address."),
 			      (ppDetail != 0 ? *ppDetail : 0));
 	default:
 	  Session::FatalMiKTeXError (0,
-				     (ppText != 0 ? *ppText : 0),
-				     (ppDetail != 0 ? *ppDetail : 0),
+				     text.c_str(),
+				     detail.c_str(),
 				     lpszFile,
 				     line);
 	}
