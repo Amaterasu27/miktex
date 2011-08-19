@@ -38,15 +38,15 @@ Directory::GetCurrentDirectoryA ()
 
 /* _________________________________________________________________________
 
-   Directory::SetCurrentDirectory
+   Directory::SetCurrentDirectoryA
    _________________________________________________________________________ */
 
 void
-Directory::SetCurrentDirectory (/*[in]*/ const PathName &	path)
+Directory::SetCurrentDirectoryA (/*[in]*/ const PathName &	path)
 {
-  if (chdir(path.Get()) != 0)
+  if (_wchdir(UW_(path.Get())) != 0)
     {
-      FATAL_CRT_ERROR ("chdir", path.Get());
+      FATAL_CRT_ERROR ("_wchdir", path.Get());
     }
 }
 
