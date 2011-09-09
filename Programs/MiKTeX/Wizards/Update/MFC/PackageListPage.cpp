@@ -680,7 +680,7 @@ PackageListPage::DoFindUpdates ()
     AfxMessageBox (T_(_T("There are currently no updates available.")),
 		   MB_OK | MB_ICONINFORMATION);
   }
-#if 1
+#if 0
   else
   {
     RepositoryInfo repositoryInfo;
