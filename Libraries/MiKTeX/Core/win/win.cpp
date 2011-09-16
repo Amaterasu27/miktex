@@ -1304,8 +1304,8 @@ Utils::GetOSVersionString ()
        str += "Microsoft Windows";
        NeedBlank (str);
        if (osvi.dwMajorVersion == 6
-	   && (osvi.dwMinorVersion == 0
-	       || osvi.dwMinorVersion == 1))
+	   && (osvi.dwMinorVersion >= 0
+	       && osvi.dwMinorVersion <= 2))
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
@@ -1317,6 +1317,10 @@ Utils::GetOSVersionString ()
 		 {
 		   str += "7";
 		 }
+	       else if (osvi.dwMinorVersion == 2)
+	       {
+		 str += "8";
+	       }
 	     }
 	   else
 	     {
@@ -1328,6 +1332,10 @@ Utils::GetOSVersionString ()
 		 {
 		   str += "Server 2008 R2";
 		 }
+	       else if (osvi.dwMinorVersion == 2)
+	       {
+		 str += "Server 8";
+	       }
 	     }
 	   PGPI pGPI =
 	     reinterpret_cast<PGPI>
