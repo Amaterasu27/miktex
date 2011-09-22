@@ -1632,6 +1632,7 @@ SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
 	    }
 	  else if (lpsz[1] == '(' || lpsz[1] == '{' || isalpha(lpsz[1]) || lpsz[1] == '_')
 	    {
+	      const char * lpszBegin = lpsz;
 	      char endChar = (lpsz[1] == '(' ? ')' : (lpsz[1] == '{' ? '}' : 0));
 	      valueName = "";
 	      if (endChar == 0)
@@ -1675,6 +1676,11 @@ SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
 	      if (haveValue)
 	      {
 		expansion += value;
+	      }
+	      else
+	      {
+		lpsz = lpszBegin;
+		expansion += *lpsz;
 	      }
 	      valuesBeingExpanded.erase (it);
 	    }
