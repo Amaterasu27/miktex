@@ -442,6 +442,11 @@ private:
   void
   MakeLanguageDat (/*[in]*/ bool force);
 
+private:
+  void
+  RegisterRoots (/*[in]*/ const vector<PathName> &  roots,
+		 /*[in]*/ bool			    reg);
+
 #if defined(MIKTEX_WINDOWS)
 private:
   void
@@ -638,7 +643,9 @@ enum Option
   OPT_MKLINKS,
   OPT_MKMAPS,
   OPT_PRINT_ONLY,
+  OPT_REGISTER_ROOT,
   OPT_QUIET,
+  OPT_UNREGISTER_ROOT,
   OPT_REPORT,
   OPT_UPDATE_FNDB,
   OPT_USER_ROOTS,
@@ -857,12 +864,20 @@ Open the specified configuration file in an editor.\
     0
   },
 
+  {
+    "register-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_REGISTER_ROOT,
+    T_("Register a TEXMF root directory."),
+    T_("DIR"),
+  },
+
 #if defined(MIKTEX_WINDOWS)
   {
     "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_REGISTER_SHELL_FILE_TYPES,
-    T_("register shell file types."),
+    T_("Register shell file types."),
     0,
   },
 #endif
@@ -907,6 +922,14 @@ Set the specified configuration value."),
     T_("\
 Show the specified configuration value."),
     T_("[SECTION]VALUENAME")
+  },
+
+  {
+    "unregister-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_UNREGISTER_ROOT,
+    T_("Unegister a TEXMF root directory."),
+    T_("DIR"),
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1193,12 +1216,20 @@ Open the specified configuration file in an editor.\
     0
   },
 
+  {
+    "register-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_REGISTER_ROOT,
+    T_("Register a TEXMF root directory."),
+    T_("DIR"),
+  },
+
 #if defined(MIKTEX_WINDOWS)
   {
     "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_REGISTER_SHELL_FILE_TYPES,
-    T_("register shell file types."),
+    T_("Register shell file types."),
     0,
   },
 #endif
@@ -1243,6 +1274,14 @@ Set the specified configuration value."),
     T_("\
 Show the specified configuration value."),
     T_("[SECTION]VALUENAME")
+  },
+
+  {
+    "unregister-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_UNREGISTER_ROOT,
+    T_("Unegister a TEXMF root directory."),
+    T_("DIR"),
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1525,12 +1564,20 @@ Open the specified configuration file in an editor.\
     0
   },
 
+  {
+    "register-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_REGISTER_ROOT,
+    T_("Register a TEXMF root directory."),
+    T_("DIR"),
+  },
+
 #if defined(MIKTEX_WINDOWS)
   {
     "register-shell-file-types", 0,
     POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
     OPT_REGISTER_SHELL_FILE_TYPES,
-    T_("register shell file types."),
+    T_("Register shell file types."),
     0,
   },
 #endif
@@ -1575,6 +1622,14 @@ Set the specified configuration value."),
     T_("\
 Show the specified configuration value."),
     T_("[SECTION]VALUENAME")
+  },
+
+  {
+    "unregister-root", 0,
+    POPT_ARG_STRING, 0,
+    OPT_UNREGISTER_ROOT,
+    T_("Unegister a TEXMF root directory."),
+    T_("DIR"),
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -2263,6 +2318,99 @@ IniTeXMFApp::MakeLink (/*[in]*/ const PathName &  source,
   if (logStream.IsOpen())
   {
     logStream.WriteLine (dest.Get());
+  }
+}
+
+/* _________________________________________________________________________
+     
+   IniTeXMFApp::RegisterRoots
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::RegisterRoots (/*[in]*/ const vector<PathName> &	roots,
+			    /*[in]*/ bool			reg)
+{
+  string newRoots;
+
+  PathName userInstallRoot;
+  PathName userConfigRoot;
+  PathName userDataRoot;
+
+  if (! pSession->IsAdminMode())
+  {
+    userInstallRoot = pSession->GetSpecialPath(SpecialPath::UserInstallRoot);
+    userConfigRoot = pSession->GetSpecialPath(SpecialPath::UserConfigRoot);
+    userDataRoot = pSession->GetSpecialPath(SpecialPath::UserDataRoot);
+  }
+
+  PathName commonInstallRoot = pSession->GetSpecialPath(SpecialPath::CommonInstallRoot);
+  PathName commonConfigRoot = pSession->GetSpecialPath(SpecialPath::CommonConfigRoot);
+  PathName commonDataRoot = pSession->GetSpecialPath(SpecialPath::CommonDataRoot);
+
+  for (unsigned r = 0; r < pSession->GetNumberOfTEXMFRoots(); ++ r)
+  {
+    PathName root = pSession->GetRootDirectory(r);
+    int rootOrdinal = pSession->DeriveTEXMFRoot(root);
+    if (pSession->IsAdminMode() && ! pSession->IsCommonRootDirectory(rootOrdinal))
+    {
+      continue;
+    }
+    if (! pSession->IsAdminMode()
+        && (pSession->IsCommonRootDirectory(rootOrdinal)
+	    || root == userInstallRoot
+	    || root == userConfigRoot
+	    || root == userDataRoot))
+    {
+      continue;
+    }
+    if (root == commonInstallRoot
+      || root == commonConfigRoot
+      || root == commonDataRoot)
+    {
+      continue;
+    }
+    if (! reg)
+    {
+      bool toBeUnregistered = false;
+      for (vector<PathName>::const_iterator it = roots.begin(); it != roots.end() && ! toBeUnregistered; ++ it)
+      {
+	if (*it == root)
+	{
+	  toBeUnregistered = true;
+	}
+      }
+      if (toBeUnregistered)
+      {
+	continue;
+      }
+    }
+    if (! newRoots.empty())
+    {
+      newRoots += PathName::PathNameDelimiter;
+    }
+    newRoots += root.Get();
+  }
+
+  if (reg)
+  {
+    for (vector<PathName>::const_iterator it = roots.begin(); it != roots.end(); ++ it)
+    {
+      if (! newRoots.empty())
+      {
+	newRoots += PathName::PathNameDelimiter;
+      }
+      newRoots += it->Get();
+    }
+  }
+
+  pSession->RegisterRootDirectories(newRoots);
+
+  if (reg)
+  {
+    for (vector<PathName>::const_iterator it = roots.begin(); it != roots.end(); ++ it)
+    {
+      UpdateFilenameDatabase (*it);
+    }
   }
 }
 
@@ -3319,6 +3467,8 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   vector<string> listDirectories;
   vector<string> removeFiles;
   vector<string> updateRoots;
+  vector<PathName> registerRoots;
+  vector<PathName> unregisterRoots;
   string defaultPaperSize;
   string engine;
   string logFile;
@@ -3514,6 +3664,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optRegisterShellFileTypes = true;
 	  break;
 
+	case OPT_REGISTER_ROOT:
+
+	  registerRoots.push_back(lpszOptArg);
+	  break;
+
 	case OPT_REMOVE_FILE:
 
 	  removeFiles.push_back (lpszOptArg);
@@ -3552,6 +3707,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	case OPT_ADMIN:
 
 	  adminMode = true;
+	  break;
+
+	case OPT_UNREGISTER_ROOT:
+
+	  unregisterRoots.push_back(lpszOptArg);
 	  break;
 
 	case OPT_UNREGISTER_SHELL_FILE_TYPES:
@@ -3749,6 +3909,16 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     {
       RemoveFndb ();
     }
+
+  if (! unregisterRoots.empty())
+  {
+    RegisterRoots (unregisterRoots, false);
+  }
+
+  if (! registerRoots.empty())
+  {
+    RegisterRoots (registerRoots, true);
+  }
 
   if (optUpdateFilenameDatabase)
     {
