@@ -1,6 +1,6 @@
 /* AdvancedOptionsPage.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of Yap.
 
@@ -39,13 +39,21 @@ protected:
 protected:
   virtual
   BOOL
+  OnInitDialog ();
+
+protected:
+  virtual
+  BOOL
   OnApply ();
 
 protected:
   afx_msg
   void
-  OnClickCheckAssoc ();
+  OnClickCheckBox ();
 
 private:
   BOOL checkFileTypeAssociations;
+
+private:
+  BOOL showSplashWindow;
 };

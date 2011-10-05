@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebAppInputLine.h:			-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -260,9 +260,7 @@ public:
   {
 #if defined(MIKTEX_XETEX)
     MiKTeX::Core::Utils::CopyString (
-      reinterpret_cast<char *>(THEDATA(nameoffile)),
-      MiKTeX::Core::BufferSizes::MaxPath + 1,
-      MiKTeX::Core::Utils::AnsiToUTF8(fileName.Get()).c_str());
+      reinterpret_cast<char *>(THEDATA(nameoffile)), MiKTeX::Core::BufferSizes::MaxPath + 1, fileName.Get());
 #else
     MiKTeX::Core::Utils::CopyString (
       THEDATA(nameoffile), MiKTeX::Core::BufferSizes::MaxPath + 1, fileName.Get());
@@ -467,7 +465,8 @@ public:
   OpenOutputFile (/*[in]*/ C4P::FileRoot &		f,
 		  /*[in]*/ const char *			lpszPath,
 		  /*[in]*/ MiKTeX::Core::FileShare	share,
-		  /*[in]*/ bool				text);
+		  /*[in]*/ bool				text,
+		  /*[out]*/ MiKTeX::Core::PathName &	outPath);
 
   /* _______________________________________________________________________
      

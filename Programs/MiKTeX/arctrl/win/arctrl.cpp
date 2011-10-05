@@ -32,6 +32,9 @@ using namespace std;
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
+#  define WU_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
+#  define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+
 #if ! defined(UNUSED_ALWAYS)
 #  define UNUSED_ALWAYS(x) static_cast<void>(x)
 #endif
@@ -387,10 +390,11 @@ ArCtrl::FatalError (/*[in]*/ const char *	lpszFormat,
 HSZ
 ArCtrl::CreateDdeString (/*[in]*/ const char * lpsz)
 {
-  HSZ hsz = DdeCreateStringHandleA(idInst, lpsz, CP_WINANSI);
+
+  HSZ hsz = DdeCreateStringHandleW(idInst, UW_(lpsz), CP_WINUNICODE);
   if (hsz == 0)
     {
-      FatalError (T_("DdeCreateStringHandleA() failed for some reason."));
+      FatalError (T_("DdeCreateStringHandleW() failed for some reason."));
     }
   return (hsz);
 }
@@ -415,7 +419,7 @@ ArCtrl::StartAR ()
   PathName dir = pdfFile;
   dir.RemoveFileSpec ();
   char szExecutable[BufferSizes::MaxPath];
-  if (FindExecutable("miktex.pdf", dir.Get(), szExecutable)
+  if (FindExecutableA("miktex.pdf", dir.Get(), szExecutable)
       <= reinterpret_cast<HINSTANCE>(32))
     {
       FatalError (T_("The PDF viewer could not be located."));
@@ -472,10 +476,10 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
 				    T_("DdeGetData() failed for some reason."),
 				    0);
 	      }
-	    CharBuffer<char> buf (len + 1);
+	    CharBuffer<wchar_t> buf (len / sizeof(wchar_t) + sizeof(wchar_t));
 	    DdeGetData (hdata,
 			reinterpret_cast<LPBYTE>(buf.GetBuffer()),
-			len + 1,
+			buf.GetCapacity() * sizeof(wchar_t),
 			0);
 	    if (DdeGetLastError(idInst) != DMLERR_NO_ERROR)
 	      {
@@ -510,7 +514,7 @@ ArCtrl::EstablishConversation ()
   DWORD idInst = 0;
 
   UINT ret =
-    DdeInitializeA(&idInst,
+    DdeInitializeW(&idInst,
 		   DdeCallback,
 		   APPCMD_CLIENTONLY,
 		   0);
@@ -586,7 +590,7 @@ ArCtrl::ExecuteDdeCommand (/*[in]*/ const char *	lpszCommand,
 {
   va_list arglist;
   va_start (arglist, lpszCommand);
-  string data = Utils::FormatString(lpszCommand, arglist);
+  wstring data = UW_(Utils::FormatString(lpszCommand, arglist));
   HDDEDATA h =
     DdeClientTransaction(const_cast<BYTE *>
 			 (reinterpret_cast<const BYTE *>(data.c_str())),

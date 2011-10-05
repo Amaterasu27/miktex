@@ -44,6 +44,7 @@ typedef C4P::C4P_integer integer;
 #define exit(exitCode) throw(exitCode)
 #define uexit(exitCode) throw(exitCode)
 #else
+#include <w2c/c-auto.h>  /* needed for SIZEOF_LONG and NO_DUMP_SHARE */
 /***** copied from TeX/texk/web2c/config.h -- difficult to include in C++ source files ******/
 #ifndef INTEGER_TYPE
 
@@ -232,6 +233,12 @@ extern const UInt32 byteMark;
 
 extern const char *papersize;
 extern const char *outputdriver;
+
+/* gFreeTypeLibrary is defined in XeTeXFontInst_FT2.cpp,
+ * also used in XeTeXFontMgr_FC.cpp and XeTeX_ext.c.  */
+#include <ft2build.h>
+#include FT_FREETYPE_H
+extern FT_Library gFreeTypeLibrary;
 
 #include <stdio.h> /* for FILE */
 

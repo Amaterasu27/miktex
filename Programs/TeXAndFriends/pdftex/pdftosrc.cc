@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,8 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdlib.h>
@@ -91,19 +90,19 @@ int main(int argc, char *argv[])
     xref = doc->getXRef();
     catalogDict.initNull();
     xref->getCatalog(&catalogDict);
-    if (!catalogDict.isDict("Catalog")) {
+    if (!catalogDict.isDict((char *)"Catalog")) {
         fprintf(stderr, "No Catalog found\n");
         exit(1);
     }
     srcStream.initNull();
     if (objnum == 0) {
-        catalogDict.dictLookup("SourceObject", &srcStream);
-        if (!srcStream.isStream("SourceFile")) {
+        catalogDict.dictLookup((char *)"SourceObject", &srcStream);
+        if (!srcStream.isStream((char *)"SourceFile")) {
             fprintf(stderr, "No SourceObject found\n");
             exit(1);
         }
         srcName.initNull();
-        srcStream.getStream()->getDict()->lookup("SourceName", &srcName);
+        srcStream.getStream()->getDict()->lookup((char *)"SourceName", &srcName);
         if (!srcName.isString()) {
             fprintf(stderr, "No SourceName found\n");
             exit(1);

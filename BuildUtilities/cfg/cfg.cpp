@@ -1,6 +1,6 @@
 /* cfg.cpp:
 
-   Copyright (C) 2006-2008 Christian Schenk
+   Copyright (C) 2006-2011 Christian Schenk
 
    This file is part of cfg.
 
@@ -22,6 +22,10 @@
 #include <cstdio>
 #include <cstdlib>
 
+#if defined(_MSC_VER)
+#  include <conio.h>
+#endif
+
 #include <miktex/Core/Core>
 #include <popt-miktex.h>
 #include "cfg-version.h"
@@ -41,7 +45,7 @@ using namespace std;
    TASK
    _________________________________________________________________________ */
 
-enum TASK { None, ComputeDigest, PrintClasses };
+enum TASK { None, ComputeDigest, PrintClasses, Sign };
 
 /* _________________________________________________________________________
 
@@ -53,6 +57,8 @@ enum Option
   OPT_AAA = 1000,
   OPT_COMPUTE_DIGEST,
   OPT_PRINT_CLASSES,
+  OPT_PRIVATE_KEY_FILE,
+  OPT_SIGN,
   OPT_VERSION,
 };
 
@@ -63,12 +69,20 @@ enum Option
 
 const struct poptOption aoption[] = {
   {
-    T_("compute-digest"), 0, POPT_ARG_NONE, 0, OPT_COMPUTE_DIGEST,
+    "compute-digest", 0, POPT_ARG_NONE, 0, OPT_COMPUTE_DIGEST,
     T_("Compute the MD5."), 0,
   },
   {
-    T_("print-classes"), 0, POPT_ARG_NONE, 0, OPT_PRINT_CLASSES,
+    "print-classes", 0, POPT_ARG_NONE, 0, OPT_PRINT_CLASSES,
     T_("Print C++ class definitions."), 0,
+  },
+  {
+    "private-key-file", 0, POPT_ARG_STRING, 0, OPT_PRIVATE_KEY_FILE,
+    T_("The private key file used for signing."), T_("FILE"),
+  },
+  {
+    "sign", 0, POPT_ARG_NONE, 0, OPT_SIGN,
+    T_("Sign the cfg file."), 0,
   },
   {
     T_("version"), 0, POPT_ARG_NONE, 0, OPT_VERSION,
@@ -104,7 +118,7 @@ FatalError (/*[in]*/ const char *	lpszFormat,
 void
 PrintDigest (/*[in]*/ const MD5 & md5)
 {
-  cout << '@' <<  md5.ToString() << endl;
+  cout << md5.ToString() << endl;
 }
 
 /* _________________________________________________________________________
@@ -221,6 +235,51 @@ DoPrintClasses (/*[in]*/ Cfg * pCfg)
 
 /* _________________________________________________________________________
 
+   PrivateKeyProvider
+   _________________________________________________________________________ */
+
+
+class PrivateKeyProvider : public IPrivateKeyProvider
+{
+public:
+  PrivateKeyProvider (/*[in]*/ const PathName & privateKeyFile)
+    : privateKeyFile (privateKeyFile)
+  {
+  }
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetPrivateKeyFile ()
+  {
+    return (privateKeyFile);
+  }
+public:
+  virtual
+  bool
+  GetPassphrase (/*[out]*/ std::string & passphrase)
+  {
+    fputs (T_("Passphrase: "), stdout);
+#if defined(MIKTEX_WINDOWS)
+    const int EOL = '\r';
+#else
+    const inT EOL = '\n';
+#endif
+    passphrase = "";
+    int ch;
+    while ((ch = getch()) != EOL)
+    {
+      passphrase += ch;
+    }
+    putchar ('\n');
+    return (true);
+  }
+private:
+  PathName privateKeyFile;
+};
+
+/* _________________________________________________________________________
+
    main
    _________________________________________________________________________ */
 
@@ -232,14 +291,15 @@ Main (/*[in]*/ int			argc,
 
   Cpopt popt (argc, argv, aoption);
 
-  popt.SetOtherOptionHelp (T_("[OPTION...] [DIRECTORY...]"));
+  popt.SetOtherOptionHelp (T_("[OPTION...] CFGFILE..."));
 
-  TASK task;
+  TASK task = ComputeDigest;
 
-  task = ComputeDigest;
+  PathName privateKeyFile;
 
   while ((option = popt.GetNextOpt()) >= 0)
     {
+      const char * lpszOptArg = popt.GetOptArg();
       switch (option)
 	{
 	case OPT_COMPUTE_DIGEST:
@@ -247,6 +307,12 @@ Main (/*[in]*/ int			argc,
 	  break;
 	case OPT_PRINT_CLASSES:
 	  task = PrintClasses;
+	  break;
+	case OPT_PRIVATE_KEY_FILE:
+	  privateKeyFile = lpszOptArg;
+	  break;
+	case OPT_SIGN:
+	  task = Sign;
 	  break;
 	case OPT_VERSION:
 	  cout <<
@@ -256,7 +322,7 @@ Main (/*[in]*/ int			argc,
 							  MIKTEX_COMP_J2000_VERSION,
 							  0))
 	       << T_("\n\
-Copyright (C) 2006-2008 Christian Schenk\n\
+Copyright (C) 2006-2011 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
 	       << endl;
@@ -280,22 +346,27 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
     }
   
   for (int i = 0; *leftovers != 0; ++ leftovers, ++ i)
+  {
+    SmartPointer<Cfg> pCfg (Cfg::Create());
+    pCfg->Read (*leftovers);
+    if (task == ComputeDigest)
     {
-      SmartPointer<Cfg> pCfg (Cfg::Create());
-      pCfg->Read (*leftovers);
-      if (task == ComputeDigest)
-	{
-	  PrintDigest (pCfg->GetDigest());
-	}
-      else if (task == PrintClasses)
-	{
-	  DoPrintClasses (pCfg.Get());
-	}
+      PrintDigest (pCfg->GetDigest());
     }
+    else if (task == PrintClasses)
+    {
+      DoPrintClasses (pCfg.Get());
+    }
+    else if (task == Sign)
+    {
+      PrivateKeyProvider privateKeyProvider (privateKeyFile);
+      pCfg->Write (*leftovers, 0, &privateKeyProvider);
+    }
+  }
 }
 
 int
-main (/*[in]*/ int			argc,
+main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
 {
   int exitCode;
@@ -309,6 +380,11 @@ main (/*[in]*/ int			argc,
       exitCode = 0;
     }
   catch (const MiKTeXException & e)
+    {
+      Utils::PrintException (e);
+      exitCode = 1;
+    }
+  catch (const exception & e)
     {
       Utils::PrintException (e);
       exitCode = 1;

@@ -12,7 +12,8 @@
 // Copyright 2008 Pino Toscano <pino@kde.org>
 // Copyright 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright 2009 Matthias Drochner <M.Drochner@fz-juelich.de>
-//
+// Copyright 2009 KDAB via Guillermo Amaral <gamaral@amaral.com.mx>
+// 
 //========================================================================
 
 #include <config.h>
@@ -266,6 +267,7 @@ void FormWidgetButton::loadDefaults ()
     //We didn't found the "on" state for the button
     if (!onStr) {
       error(-1, "FormWidgetButton:: unable to find the on state for the button\n");
+      onStr = new GooString(""); // TODO is this the best solution?
     }
   }
 
@@ -805,7 +807,7 @@ void FormField::fillChildrenSiblingsID()
 {
   if(terminal) return;
   for (int i=0; i<numChildren; i++) {
-    children[i]->loadChildrenDefaults();
+    children[i]->fillChildrenSiblingsID();
   }
 }
 

@@ -64,7 +64,7 @@ PropSheetPackageImpl::PropSheetPackageImpl
  /*[in]*/ CWnd *		pParentWnd,
  /*[in]*/ UINT			selectPage)
 {
-  Construct (CA2T(packageInfo.deploymentName.c_str()), pParentWnd, selectPage);
+  Construct (UT_(packageInfo.deploymentName.c_str()), pParentWnd, selectPage);
   pPage1 = new PropPagePackage (packageInfo);
   pPage2 = new PropPageFiles (packageInfo);
   AddPage (pPage1);

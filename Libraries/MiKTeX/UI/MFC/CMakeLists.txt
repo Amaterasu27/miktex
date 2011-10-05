@@ -37,14 +37,15 @@ configure_file(
 add_definitions(
   -D_AFXDLL
   -D_AFXEXT
-  -D_UNICODE
-  -DUNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(${ui_mfc_dll_name}_sources
   ConnectionSettingsDialog.cpp
   ConnectionSettingsDialog.h
   ErrorDialog.cpp
+  GiveBackDialog.cpp
+  GiveBackDialog.h
   InstallPackageDialog.cpp
   InstallPackageDialog.h
   PackageTreeCtrl.cpp

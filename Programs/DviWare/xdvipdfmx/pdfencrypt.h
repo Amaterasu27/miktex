@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.3 2007/04/03 05:25:50 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.5 2011/03/08 00:20:51 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -25,11 +25,14 @@
 
 #include "pdfobj.h"
 
+#define MAX_PWD_LEN 128
+
 extern void pdf_enc_set_verbose (void);
 extern pdf_obj *pdf_enc_id_array (void);
+extern void pdf_enc_compute_id_string (char *dviname, char *pdfname);
 extern void pdf_enc_set_label (unsigned long label);
 extern void pdf_enc_set_generation (unsigned generation);
-extern void pdf_enc_set_passwd (unsigned size, unsigned perm, char *dviname, char *pdfname);
+extern void pdf_enc_set_passwd (unsigned size, unsigned perm, const char *owner, const char *user);
 extern void pdf_encrypt_data (unsigned char *data, unsigned long len);
 extern pdf_obj *pdf_encrypt_obj (void);
 

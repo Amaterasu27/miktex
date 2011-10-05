@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,22 +21,31 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/lua51
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
 )
 
 add_definitions(
   -DAPPTAG=luatex
-
-  -DUSE_MIKTEX_EXIT
-
+  -DMIKTEX_LUATEX
   -DNO_DUMP_SHARE
-
   -DPDF_PARSER_ONLY
+  -DSYNCTEX_ENGINE_H="synctex-luatex.h"
+  -DUSE_MIKTEX_EXIT
   -DpdfTeX
+)
+
+add_definitions(
+  -D_UNICODE -DUNICODE
 )
 
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
+
+if(WITH_CONTEXT_SUPPORT)
+  add_definitions(-DWITH_CONTEXT_SUPPORT=1)
+endif(WITH_CONTEXT_SUPPORT)
+
 
 ###############################################################################
 ## luatex-lua51-static
@@ -217,17 +226,17 @@ target_link_libraries(${luatex_program_dll_name}
   ${zlib_dll_name}
   ${app_dll_name}
   ${core_dll_name}
-  ${fofi_lib_name}
-  ${goo_lib_name}
+  ${jpeg_dll_name}
   ${kpsemu_dll_name}
   ${md5_dll_name}
   ${mp_lib_name}
   ${obsdcompat_dll_name}
   ${png_dll_name}
-  ${xpdf_lib_name}
+  ${poppler_lib_name}
   ${zzip_dll_name}
 
   ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
   ${getopt_dll_name}
   ${w2cemu_dll_name}
   
@@ -284,17 +293,19 @@ merge_trustinfo_manifest(runtexlua asInvoker)
 install(TARGETS runtexlua DESTINATION "${miktex_internal_bindir}")
 
 ###############################################################################
-## runtexlua
+## runmtxrun
 ###############################################################################
 
-add_executable(runmtxrun runmtxrun.cpp)
+if(WITH_CONTEXT_SUPPORT)
+  add_executable(runmtxrun runmtxrun.cpp)
 
-target_link_libraries(runmtxrun
-  ${app_dll_name}
-  ${core_dll_name}
-  ${luatex_program_dll_name}
-)
+  target_link_libraries(runmtxrun
+    ${app_dll_name}
+    ${core_dll_name}
+    ${luatex_program_dll_name}
+  )
 
-merge_trustinfo_manifest(runmtxrun asInvoker)
+  merge_trustinfo_manifest(runmtxrun asInvoker)
 
-install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
+  install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
+endif(WITH_CONTEXT_SUPPORT)

@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -1093,11 +1093,24 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	{
 	  lpszOptArg = c4pargv[idx];
 	}
-      size_t len = StrLen(lpszOptArg);
-      for (size_t j = 0; j < len; ++ j)
+      if (sizeof(CharType) == sizeof(char))
+      {
+	size_t len = StrLen(lpszOptArg);
+	for (size_t j = 0; j < len; ++ j)
 	{
 	  pBuffer[last++] = lpszOptArg[j];
 	}
+      }
+      else
+      {
+	wstring optarg = Utils::UTF8ToWideChar(lpszOptArg);
+	size_t len = optarg.length();
+	for (size_t j = 0; j < len; ++ j)
+	{
+	  pBuffer[last++] = optarg[j];
+	}
+
+      }
     }
 
   // clear the command-line
@@ -1159,16 +1172,33 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 			/*[in]*/ const PathName &	transcriptFileName)
   const
 {
-  string commandLine;
-  commandLine.reserve (256);
+  string defaultEditor;
 
-  // <fixme>We use a non-standard section name. Instead, we should
-  // read the Registry directly.
-  string defaultEditor =
-    pSession->GetConfigValue(MIKTEX_REGKEY_YAP_SETTINGS,
-			     MIKTEX_REGVAL_EDITOR,
-			     "notepad.exe \"%f\"");
-  // </fixme>
+  PathName texworks;
+  if (SessionWrapper(true)->FindFile(MIKTEX_TEXWORKS_EXE, FileType::EXE, texworks))
+  {
+    defaultEditor = Q_(texworks);
+    defaultEditor += " -p=%l \"%f\"";
+  }
+  else
+  {
+    defaultEditor = "notepad \"%f\"";
+  }  
+
+  // read information from yap.ini
+  PathName yapIni = SessionWrapper(true)->GetSpecialPath(SpecialPath::UserConfigRoot);
+  yapIni += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
+  yapIni += MIKTEX_YAP_INI_FILENAME;
+  if (File::Exists(yapIni))
+  {
+    SmartPointer<Cfg> pCfg (Cfg::Create());
+    pCfg->Read (yapIni);
+    string yapEditor;
+    if (pCfg->TryGetValue("Settings", "Editor", yapEditor))
+    {
+      defaultEditor = yapEditor;
+    }
+  }
 
   string templ =
     pSession->GetConfigValue(0,
@@ -1176,6 +1206,28 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 			     defaultEditor.c_str());
 
   const char * lpszCommandLineTemplate = templ.c_str();
+
+  string fileName;
+
+  bool quoted = false;
+  
+  for (;
+    *lpszCommandLineTemplate != ' ' || (*lpszCommandLineTemplate != 0 && quoted);
+    ++ lpszCommandLineTemplate)
+  {
+    if (*lpszCommandLineTemplate == '"')
+    {
+      quoted = ! quoted;
+    }
+    else
+    {
+      fileName += *lpszCommandLineTemplate;
+    }
+  }
+
+  for (; *lpszCommandLineTemplate == ' '; ++ lpszCommandLineTemplate) ;
+
+  string arguments;
 
   while (*lpszCommandLineTemplate != 0)
     {
@@ -1187,7 +1239,7 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 	    default:
 	      break;
 	    case '%':
-	      commandLine += '%';
+	      arguments += '%';
 	      break;
 	    case 'f':
 	      {
@@ -1197,11 +1249,11 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 				       GetInputFileType(),
 				       path))
 		  {
-		    commandLine += path.Get();		    
+		    arguments += path.Get();		    
 		  }
 		else
 		  {
-		    commandLine += unmangled.Get();
+		    arguments += unmangled.Get();
 		  }
 		break;
 	      }
@@ -1209,10 +1261,10 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 	      /* <todo/> */
 	      break;
 	    case 't':
-	      commandLine += transcriptFileName.Get();
+	      arguments += transcriptFileName.Get();
 	      break;
 	    case 'l':
-	      commandLine += NUMTOSTR(editLineNumber);
+	      arguments += NUMTOSTR(editLineNumber);
 	      break;
 	    case 'm':
 	      /* <todo/> */
@@ -1222,12 +1274,12 @@ TeXMFApp::InvokeEditor (/*[in]*/ const PathName &	editFileName,
 	}
       else
 	{
-	  commandLine += *lpszCommandLineTemplate;
+	  arguments += *lpszCommandLineTemplate;
 	  ++ lpszCommandLineTemplate;
 	}
     }
 
-  Process::StartSystemCommand (commandLine.c_str());
+  Process::Start (fileName, arguments.c_str());
 }
 
 /* _________________________________________________________________________

@@ -1,6 +1,6 @@
 /* Remove.h:							-*- C++ -*-
 
-   Copyright (C) 2000-2007 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the Remove MiKTeX! Wizard.
 
@@ -89,6 +89,13 @@ protected:
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
+
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
 
 /* _________________________________________________________________________
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -25,6 +25,10 @@ add_definitions(
   -DHAVE_STRINGS_H
   -DHAVE_STRRCHR
   -UDEBUG
+)
+
+add_definitions(
+  -D_UNICODE -DUNICODE
 )
 
 if(NATIVE_WINDOWS)
@@ -76,6 +80,7 @@ target_link_libraries(${miktex_prefix}makeindex
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS ${miktex_prefix}makeindex DESTINATION ${bindir})
@@ -89,6 +94,7 @@ target_link_libraries(makeindex
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS makeindex DESTINATION ${bindir})

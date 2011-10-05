@@ -67,7 +67,7 @@ InstallPackageDialog::FormatControlText
   va_start (marker, lpszFormat);
   string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
-  pWnd->SetWindowText (CA2T(str.c_str()));
+  pWnd->SetWindowText (UT_(str.c_str()));
 }
 
 /* _________________________________________________________________________

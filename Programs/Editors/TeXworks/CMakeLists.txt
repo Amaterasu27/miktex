@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2010 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,8 +24,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_BINARY_DIR}/src
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/qt4/src
   ${CMAKE_SOURCE_DIR}/${rel_hunspell_dir}/src/hunspell
@@ -36,6 +37,7 @@ add_definitions(
 )
 
 set(texworks_sources
+  src/ClickableLabel.h
   src/CommandlineParser.cpp
   src/CommandlineParser.h
   src/CompletingEdit.cpp
@@ -43,6 +45,7 @@ set(texworks_sources
   src/ConfigurableApp.h
   src/ConfirmDelete.cpp
   src/ConfirmDelete.h
+  src/DefaultBinaryPathsWin.h
   src/FindDialog.cpp
   src/FindDialog.h
   src/HardWrapDialog.cpp
@@ -53,6 +56,8 @@ set(texworks_sources
   src/PDFDocument.h
   src/PrefsDialog.cpp
   src/PrefsDialog.h
+  src/ResourcesDialog.cpp
+  src/ResourcesDialog.h
   src/ScriptManager.cpp
   src/ScriptManager.h
   src/SvnRev.h
@@ -121,6 +126,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
+  src/ClickableLabel.h
   src/CompletingEdit.h
   src/ConfigurableApp.h
   src/ConfirmDelete.h
@@ -129,6 +135,7 @@ set(texworks_moc_sources
   src/PDFDocks.h
   src/PDFDocument.h
   src/PrefsDialog.h
+  src/ResourcesDialog.h
   src/ScriptManager.h
   src/TWApp.h
   src/TWScript.h
@@ -150,6 +157,7 @@ set(texworks_ui_files
   src/PDFFind.ui
   src/PrefsDialog.ui
   src/Replace.ui
+  src/ResourcesDialog.ui
   src/ScriptManager.ui
   src/SearchResults.ui
   src/TeXDocument.ui
@@ -176,6 +184,7 @@ if(LINK_EVERYTHING_STATICALLY)
 else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${core_dll_name}
+    ${zlib_dll_name}
     ${hunspell_dll_name}
     ${poppler_qt4_dll_name}
     ${QT_QTMAIN_LIBRARY}

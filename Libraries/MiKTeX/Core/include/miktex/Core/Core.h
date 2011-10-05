@@ -36,6 +36,8 @@
 #  pragma once
 #endif
 
+#define HAVE_MIKTEX_USER_INFO 1
+
 #if ! defined(A089FEF06254514BA063DED44B70E66F)
 #define A089FEF06254514BA063DED44B70E66F
 
@@ -226,7 +228,8 @@ MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut);
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
+MIKTEXDEPRECATED
 MIKTEXCEEAPI(char*)
 miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
 		     /*[in]*/ size_t		sizeAnsi,
@@ -333,6 +336,40 @@ public:
   {
     return (sizeOfStruct);
   }
+};
+
+/* _________________________________________________________________________
+   
+   MiKTeXUserInfo
+   _________________________________________________________________________ */
+
+struct MiKTeXUserInfo
+{
+  enum { Developer = 1, Contributor = 2, Sponsor = 4, KnownUser = 8 };
+  enum { Individual = 100 };
+  std::string id;
+  std::string name;
+  std::string organization;
+  std::string email;
+  int role;
+  int level;
+  time_t expirationDate;
+  MiKTeXUserInfo ()
+    : role (0),
+      level (0),
+      expirationDate (static_cast<time_t>(-1))
+  {
+  }
+  bool IsMember () const
+  {
+    return (level >= Individual
+            && expirationDate != static_cast<time_t>(-1)
+            && expirationDate >= time(0));
+  }
+  bool IsDeveloper () const { return (IsMember() && (role & Developer) != 0); }
+  bool IsContributor () const { return (IsMember() && (role & Contributor) != 0); }
+  bool IsSponsor () const { return (IsMember() && (role & Sponsor) != 0); }
+  bool IsKnownUser () const { return (IsMember() && (role & KnownUser) != 0); }
 };
 
 /* _________________________________________________________________________
@@ -1661,6 +1698,11 @@ public:
 
 public:
   static
+  MIKTEXCORECEEAPI(bool)
+  RunningOnAServer ();
+
+public:
+  static
   MIKTEXCORECEEAPI(void)
   UncompressFile (/*[in]*/ const char *	lpszPathIn,
 		  /*[out]*/ PathName &	pathOut);
@@ -1772,10 +1814,19 @@ public:
   MIKTEXCORECEEAPI(bool)
   IsMiKTeXDirectRoot (/*[in]*/ const PathName &	root);
 
+#if ! HAVE_MIKTEX_USER_INFO
 public:
   static
   MIKTEXCORECEEAPI(void)
   RegisterMiKTeXUser ();
+#endif
+
+#if ! HAVE_MIKTEX_USER_INFO
+public:
+  static
+  MIKTEXCORECEEAPI(bool)
+  IsRegisteredMiKTeXUser ();
+#endif
 
 public:
   static
@@ -1801,6 +1852,16 @@ public:
 public:
 #if defined(MIKTEX_WINDOWS)
   static
+  MIKTEXCORECEEAPI(std::wstring)
+  UTF8ToWideChar (/*[in]*/ const std::string & str)
+  {
+    return (UTF8ToWideChar(str.c_str()));
+  }
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+public:
+  static
   MIKTEXCORECEEAPI(std::string)
   WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
@@ -1809,14 +1870,25 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(char *)
+  WideCharToUTF8 (/*[in]*/ const wchar_t *  lpszWideChar,
+		  /*[in,out]*/ size_t &	    sizeUtf8,
+		  /*[out]*/ char *	    lpszUtf8);
+#endif
+
+#if 0 && defined(MIKTEX_WINDOWS)
+public:
+  static
+  MIKTEXDEPRECATED
+  MIKTEXCORECEEAPI(char *)
   WideCharToAnsi (/*[in]*/ const wchar_t *  lpszWideChar,
 		  /*[out]*/ char *	    lpszAnsi,
 		  /*[in]*/ size_t	    size);
 #endif
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXDEPRECATED
   MIKTEXCORECEEAPI(std::string)
   WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar);
 #endif
@@ -1854,9 +1926,10 @@ public:
 		     /*[in]*/ const PathName &	suffix_,
 		     /*[out]*/ PathName &	prefix);
 
-#if defined(MIKTEX_WINDOWS)
+#if 0 && defined(MIKTEX_WINDOWS)
 public:
   static
+  MIKTEXDEPRECATED
   std::string
   UTF8ToAnsi (/*[in]*/ const char * lpszUtf8)
   {
@@ -2235,7 +2308,16 @@ public:
       }
     else
       {
-	Reserve (StrLen(lpsz) + 1);
+	size_t requiredSize;
+	if (sizeof(CharType) < sizeof(OtherCharType))
+	{
+	  requiredSize = StrLen(lpsz) * 4 + 1; // worst case: wchar_t to UTF-8
+	}
+	else
+	{
+	  requiredSize = StrLen(lpsz) + 1;
+	}
+	Reserve (requiredSize);
 	Utils::CopyString (buffer, GetCapacity(), lpsz);
       }
   }
@@ -2890,9 +2972,7 @@ public:
   ToWideCharString ()
     const
   {
-    return (Utils::IsUTF8(Get())
-      ? Utils::UTF8ToWideChar(Get())
-      : Utils::AnsiToWideChar(Get()));
+    return (Utils::UTF8ToWideChar(Get()));
   }
 #endif
 
@@ -3684,6 +3764,24 @@ typedef EnumWrapper<SpecialPathEnum> SpecialPath;
    Callback Interfaces
    _________________________________________________________________________ */
 
+class
+MIKTEXNOVTABLE
+IPrivateKeyProvider
+{
+public:
+  virtual
+  PathName
+  MIKTEXTHISCALL
+  GetPrivateKeyFile ()
+    = 0;
+
+public:
+  virtual
+  bool
+  GetPassphrase (/*[out]*/ std::string & passphrase)
+    = 0;
+};
+
 /// Find file callback interface
 class
 MIKTEXNOVTABLE
@@ -3830,8 +3928,7 @@ public:
     LIG,
     LUA,
     MAP,
-    /// MetaPost memory files (*.mem).
-    MEM,
+    MEM, // OBSOLETE
     MF,
     MFPOOL,
     MFT,
@@ -3935,12 +4032,14 @@ public:
   GetDigest ()
     = 0;
 
+#if 1 // OBSOLETE
 public:
   virtual
   bool
   MIKTEXTHISCALL
   TryGetOriginalDigest (/*[out]*/ MD5 & originalDigest)
     = 0;
+#endif
 
   /// Gets a configuration value.
 public:
@@ -4099,6 +4198,31 @@ public:
 	       /*[in]*/ const char * lpszValueName)
     = 0;
 
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Read (/*[in]*/ const PathName &	path,
+        /*[in]*/ bool			mustBeSigned)
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  IsSigned ()
+    = 0;
+
+  /// Write configuration settings into a file and sign the file.
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  Write (/*[in]*/ const PathName & 	path,
+	 /*[in]*/ const char *		lpszHeader,
+	 /*[in]*/ IPrivateKeyProvider * pPrivateKeyProvider)
+    = 0;
+
 };				// class Cfg
 
 /* _________________________________________________________________________
@@ -4152,7 +4276,7 @@ public:
 public:
   static
   MIKTEXCORECEEAPI(void)
-  SetCurrentDirectory (/*[in]*/ const PathName &	path);
+  SetCurrentDirectoryA (/*[in]*/ const PathName &	path); // FIXME
 
   /// Deletes a directory.
 public:
@@ -6690,6 +6814,22 @@ public:
   SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo)
     = 0;
 
+#if HAVE_MIKTEX_USER_INFO
+public:
+  virtual
+  MiKTeXUserInfo
+  RegisterMiKTeXUser (/*[in]*/ const MiKTeXUserInfo & info)
+    = 0;
+#endif
+
+#if HAVE_MIKTEX_USER_INFO
+public:
+  virtual
+  bool
+  TryGetMiKTeXUserInfo (/*[out]*/ MiKTeXUserInfo & info)
+    = 0;
+#endif
+
 public:
   static
   MIKTEXCOREEXPORT
@@ -8196,6 +8336,40 @@ public:
 };
 
 typedef AutoResource<void *, free2_> AutoMemoryPointer2;
+
+/* _________________________________________________________________________
+
+   AutoUTF8ConsoleOutput
+   _________________________________________________________________________ */
+
+class AutoUTF8ConsoleOutput
+{
+public:
+  AutoUTF8ConsoleOutput ()
+  {
+ #if defined(MIKTEX_WINDOWS)
+    oldCodePage = GetConsoleOutputCP();
+    SetConsoleOutputCP (CP_UTF8);
+#endif
+  }
+  ~AutoUTF8ConsoleOutput ()
+  {
+#if defined(MIKTEX_WINDOWS)
+     SetConsoleOutputCP (oldCodePage);
+#endif
+  }
+#if defined(MIKTEX_WINDOWS)
+private:
+  UINT oldCodePage;
+#endif
+};
+
+#define MIKTEX_BEGIN_UTF8_CONSOLE_OUTPUT() \
+{ \
+  MiKTeX::Core::AutoUTF8ConsoleOutput miktex_auto_utf8_console_output_xxx;
+
+#define MIKTEX_END_UTF8_CONSOLE_OUTPUT() \
+}
 
 /* _________________________________________________________________________ */
 

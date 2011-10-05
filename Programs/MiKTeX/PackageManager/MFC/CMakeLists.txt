@@ -36,8 +36,7 @@ set(CMAKE_MFC_FLAG 2)
 
 add_definitions(
   -D_AFXDLL
-  -D_UNICODE
-  -DUNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(mpm_mfc_sources

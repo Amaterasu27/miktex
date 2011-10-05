@@ -1,6 +1,6 @@
 /* miktex/Core/Paths.h: hard-coded path names			-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -301,8 +301,6 @@
 #define MIKTEX_PATH_BASE_DIR "@rel_miktex_base_dir@"
 
 #define MIKTEX_PATH_FMT_DIR "@rel_miktex_fmt_dir@"
-
-#define MIKTEX_PATH_MEM_DIR "@rel_miktex_mem_dir@"
 
 #define MIKTEX_PATH_FORMATS_INI			\
   MIKTEX_PATH_MIKTEX_CONFIG_DIR			\
@@ -689,7 +687,6 @@
 #define MIKTEX_DVIPS_EXE "dvips" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAKEBASE_EXE MIKTEX_PREFIX "makebase" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAKEFMT_EXE MIKTEX_PREFIX "makefmt" MIKTEX_EXE_FILE_SUFFIX
-#define MIKTEX_MAKEMEM_EXE MIKTEX_PREFIX "makemem" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAKEMF_EXE MIKTEX_PREFIX "makemf" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAKEPK_EXE MIKTEX_PREFIX "makepk" MIKTEX_EXE_FILE_SUFFIX
 #define MIKTEX_MAKETFM_EXE MIKTEX_PREFIX "maketfm" MIKTEX_EXE_FILE_SUFFIX

@@ -1,6 +1,6 @@
 /* miktex/W2C/Emulation.h: Web2C emulation			-*- C++ -*-
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2011 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -114,7 +114,11 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define recorder_enabled miktex_web2c_recorder_enabled
 
-#define output_directory miktex_web2c_output_directory
+#if defined(THEAPP)
+#  define output_directory (THEAPP.GetOutputDirectory().Empty() ? 0 : THEAPP.GetOutputDirectory().Get())
+#else
+#  define output_directory miktex_web2c_output_directory
+#endif
 
 #define fullnameoffile miktex_web2c_fullnameoffile
 
@@ -128,6 +132,11 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define	secondsandmicros(s, m) \
   MiKTeX::Web2C::GetSecondsAndMicros(&(s), &(m))
+
+#if defined(THEAPP)
+#  define generic_synctex_get_current_name() \
+  xstrdup(THEAPP.GetFQNameOfFile())
+#endif
 
 /* _________________________________________________________________________
 
@@ -173,6 +182,8 @@ MIKTEX_END_EXTERN_C_BLOCK
 typedef double real;
 
 #define intcast(x) ((integer)(x))
+
+#define ucharcast(x) ((unsigned char)(x))
 
 /* _________________________________________________________________________
 

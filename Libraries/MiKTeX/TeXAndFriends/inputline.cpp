@@ -1,6 +1,6 @@
 /* inputline.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -293,9 +293,18 @@ bool
 WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 				 /*[in]*/ const char *		lpszPath,
 				 /*[in]*/ FileShare		share,
-				 /*[in]*/ bool			text)
+				 /*[in]*/ bool			text,
+				 /*[out]*/ PathName &		outPath)
 {
   MIKTEX_ASSERT_STRING (lpszPath);
+#if defined(MIKTEX_WINDOWS)
+  string utf8Path;
+  if (! Utils::IsUTF8(lpszPath))
+  {
+    utf8Path = Utils::AnsiToUTF8(lpszPath);
+    lpszPath = utf8Path.c_str();
+  }
+#endif
   FILE * pfile = 0;
   if (enablePipes && lpszPath[0] == '|')
     {
@@ -330,6 +339,10 @@ WebAppInputLine::OpenOutputFile (/*[in]*/ C4P::FileRoot &	f,
 			      FileAccess::Write,
 			      text,
 			      share);
+      if (pfile != 0)
+      {
+	outPath = lpszPath;
+      }
     }
   if (pfile == 0)
     {
@@ -349,6 +362,15 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 				/*[in]*/ const char *		lpszFileName)
 {
   MIKTEX_ASSERT_STRING (lpszFileName);
+
+#if defined(MIKTEX_WINDOWS)
+  string utf8FileName;
+  if (! Utils::IsUTF8(lpszFileName))
+  {
+    utf8FileName = Utils::AnsiToUTF8(lpszFileName);
+    lpszFileName = utf8FileName.c_str();
+  }
+#endif
 
   if (enablePipes && lpszFileName[0] == '|')
     {

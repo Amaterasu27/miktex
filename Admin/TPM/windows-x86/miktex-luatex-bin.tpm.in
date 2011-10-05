@@ -24,7 +24,6 @@ texmf/${rel_miktex_bin_dir}/${miktex_prefix}texluac.exe
 texmf/${rel_miktex_bin_dir}/luatex.exe
 texmf/${rel_miktex_bin_dir}/texlua.exe
 texmf/${rel_miktex_bin_dir}/texluac.exe
-texmf/${rel_miktex_internal_bin_dir}/runmtxrun.exe
 texmf/${rel_miktex_internal_bin_dir}/runtexlua.exe
     </TPM:RunFiles>
   </rdf:Description>

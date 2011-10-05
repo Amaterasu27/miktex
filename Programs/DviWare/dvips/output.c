@@ -130,13 +130,22 @@ copyfile_general(const char *s, struct header_list *cur_header)
       if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1;
 #ifdef VMCMS
       sprintf(errbuf,
-   "Couldn't find figure file %s with CMS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
+   "Couldn't find figure file %s with CMS name %s; continuing.", s, trunc_s);
+      if (secure == 2) {
+         strcat(errbuf, "\nNote that an absolute path or a relative path with .. are denied in -R2 mode.");
+      }
 #else /* VMCMS */
       sprintf(errbuf,
-    "Couldn't find figure file %s with MVS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
+    "Couldn't find figure file %s with MVS name %s; continuing.", s, trunc_s);
+      if (secure == 2) {
+         strcat(errbuf, "\nNote that an absolute path or a relative path with .. are denied in -R2 mode.");
+      }
 #endif /* VMCMS */
 #else /* VMCMS || MVSXA */
-      sprintf(errbuf, "Could not find figure file %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
+      sprintf(errbuf, "Could not find figure file %s; continuing.", s);
+      if (secure == 2) {
+         strcat(errbuf, "\nNote that an absolute path or a relative path with .. are denied in -R2 mode.");
+      }
 #endif /* VMCMS || MVSXA */
       break;
 #ifndef VMCMS
@@ -178,7 +187,10 @@ copyfile_general(const char *s, struct header_list *cur_header)
 	 if(f==NULL)
 	    f = search(figpath, s, READBIN);
       }
-      sprintf(errbuf, "! Could not find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
+      sprintf(errbuf, "! Could not find header file %s.", s);
+      if (secure == 2) {
+         strcat(errbuf, "\nNote that an absolute path or a relative path with .. are denied in -R2 mode.");
+      }
       break;
    }
    if (f==NULL)
@@ -1084,10 +1096,10 @@ hvpos(void)
             numout(hh);
             numout(vv);
             chrcmd('y');
-         } else if (rhh != hh) {
+         } else if (rhh != hh || jflag) {
             numout(hh);
             numout(vv);
-            chrcmd('a');
+            chrcmd('a') ;
          } else { /* hard to get this case, but it's there when you need it! */
             numout(vv - rvv);
             chrcmd('x');
@@ -1127,7 +1139,7 @@ hvpos(void)
             numout(vv);
             numout(-hh);
             chrcmd('y');
-         } else if (rvv != vv) {
+         } else if (rvv != vv || jflag) {
             numout(vv);
             numout(-hh);
             chrcmd('a');
@@ -1856,7 +1868,10 @@ drawchar(chardesctype *c, int cc)
    }
 
    if (curfnt->iswide == 0 && curfnt->codewidth == 2) {
+      Boolean savejflag = jflag;
+      jflag = 1;
       hvpos();
+      jflag = savejflag;
       if (lastfont != curfnt->psname)
          fontout(curfnt->psname);
 #if defined(MIKTEX)

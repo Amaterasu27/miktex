@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,6 +42,7 @@ set(app_dll_name	"${miktex_dll_prefix}-app")
 set(arctrl_dll_name	"${miktex_dll_prefix}-arctrl")
 set(bibtex_dll_name	"${miktex_dll_prefix}-bibtex")
 set(bmeps_dll_name	"${miktex_dll_prefix}-bmeps")
+set(botan_dll_name	"${miktex_dll_prefix}-botan")
 if(NOT USE_SYSTEM_BZIP2)
   set(bzip2_dll_name	"${miktex_dll_prefix}-bzip2")
 endif(NOT USE_SYSTEM_BZIP2)
@@ -117,6 +118,7 @@ set(twluaplugin_dll_name "${miktex_dll_prefix}-twluaplugin")
 set(ui_mfc_dll_name	"${miktex_dll_prefix}-ui-MFC")
 set(ui_qt_dll_name	"${miktex_dll_prefix}-ui-Qt")
 set(unxemu_dll_name	"${miktex_dll_prefix}-unxemu")
+set(utf8wrap_dll_name	"${miktex_dll_prefix}-utf8wrap")
 if(NOT USE_SYSTEM_URIPARSER)
   set(uriparser_dll_name "${miktex_dll_prefix}-uriparser")
 endif(NOT USE_SYSTEM_URIPARSER)
@@ -140,6 +142,7 @@ set(icuuc_dll_name	"icuuc")
 
 ## static library names
 set(app_lib_name	"app-static")
+set(botan_lib_name	"botan-static")
 if(NOT USE_SYSTEM_BZIP2)
   set(bzip2_lib_name	"bzip2-static")
 endif(NOT USE_SYSTEM_BZIP2)
@@ -151,9 +154,7 @@ if(NOT USE_SYSTEM_EXPAT)
   set(expat_lib_name	"expat-static")
 endif(NOT USE_SYSTEM_EXPAT)
 set(extractor_lib_name	"extractor-static")
-set(fofi_lib_name	"fofi-static")
 set(getopt_lib_name	"getopt-static")
-set(goo_lib_name	"goo-static")
 set(graphite_engine_lib_name	"graphite-engine-static")
 set(kpsemu_lib_name	"kpathsea-static")
 set(lua_lib_name	"lua51-static")
@@ -177,8 +178,8 @@ set(ui_qt_lib_name	"ui-Qt-static")
 if(NOT USE_SYSTEM_URIPARSER)
   set(uriparser_lib_name	"uriparser-static")
 endif(NOT USE_SYSTEM_URIPARSER)
+set(utf8wrap_lib_name	"utf8wrap-static")
 set(weave_lib_name	"weave-static")
-set(xpdf_lib_name	"xpdf-static")
 if(NOT USE_SYSTEM_ZLIB)
   set(zlib_lib_name	"zlib-static")
 endif(NOT USE_SYSTEM_ZLIB)

@@ -1,6 +1,6 @@
 /* miktex/UI/MFC/Prototypes.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2008 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -99,6 +99,19 @@ bool
 ProxyAuthenticationDialog ()
 {
   return (ProxyAuthenticationDialog (reinterpret_cast<CWnd*>(0)));
+}
+
+MIKTEXUIEXPORT
+bool
+MIKTEXCEECALL
+GiveBackDialog (/*[in]*/ CWnd * pWnd,
+		/*[in]*/ bool	force);
+
+inline
+bool
+GiveBackDialog (/*[in]*/ CWnd * pWnd)
+{
+  return (GiveBackDialog(pWnd, false));
 }
 
 MIKUI_MFC_END_NAMESPACE;

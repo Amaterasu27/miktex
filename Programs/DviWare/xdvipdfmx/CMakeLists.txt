@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,6 +23,8 @@ configure_file(
 )
 
 add_definitions(-DHAVE_CONFIG_H)
+
+add_definitions(-DUNICODE -D_UNICODE)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -119,6 +121,7 @@ target_link_libraries(xdvipdfmx
   ${freetype2_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
+  ${utf8wrap_dll_name}
   ${zlib_dll_name}
 )
 

@@ -52,3 +52,4 @@
 #include <miktex/PackageManager/PackageManager>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
+#include <miktex/Core/Urls>

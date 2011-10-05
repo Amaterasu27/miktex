@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -159,6 +159,12 @@ option(
 option(
   INSTALL_STATIC_LIBRARIES
   "Install static libraries."
+  FALSE
+)
+
+option(
+  WITH_CONTEXT_SUPPORT
+  "Enable ConTeXt support."
   FALSE
 )
 
@@ -618,8 +624,10 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${uriparser_lib_name}
   ${md5_lib_name}
   ${CURL_LIBRARIES}
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${popt_lib_name}
+  ${utf8wrap_lib_name}
 )
 
 if(QT4_FOUND)
@@ -673,6 +681,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/include
 )
 
 if(USE_SYSTEM_BZIP2)
@@ -738,6 +747,12 @@ endif(USE_SYSTEM_CURL)
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
+  )
+endif(NATIVE_WINDOWS)
+
+if(NATIVE_WINDOWS)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
   )
 endif(NATIVE_WINDOWS)
 
@@ -817,6 +832,10 @@ foreach(tpm ${tpms})
   )
 endforeach(tpm)
 
+if(NOT WITH_CONTEXT_SUPPORT)
+  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/miktex-context-config-${MIKTEX_SERIES_STR}.tpm")
+endif(NOT WITH_CONTEXT_SUPPORT)
+
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/${target_system_tag}/*.tpm.in")
 foreach(tpm ${tpms})
   get_filename_component(fn ${tpm} NAME_WE)
@@ -826,6 +845,10 @@ foreach(tpm ${tpms})
   )
 endforeach(tpm)
 
+if(NOT WITH_CONTEXT_SUPPORT)
+  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/miktex-context-bin-${MIKTEX_SERIES_STR}.tpm")
+endif(NOT WITH_CONTEXT_SUPPORT)
+
 if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
   configure_file(
     ${CMAKE_SOURCE_DIR}/miktexstartup.ini.debug.in
@@ -834,6 +857,11 @@ endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
 
 ###############################################################################
 ## add sub-directories
+
+if(NATIVE_WINDOWS)
+  add_subdirectory(${rel_utf8wrap_dir})
+  add_subdirectory(${rel_utf8wrap_dir}-static)
+endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_build_tools_etc_dir})
 
@@ -873,6 +901,14 @@ if(NOT USE_SYSTEM_EXPAT)
     add_subdirectory(${rel_expat_dir})
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_EXPAT)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_botan_dir}-static)
+endif(BUILDING_MIKTEX)
+
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_botan_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype2_dir})
@@ -944,9 +980,8 @@ if(NOT USE_SYSTEM_PNG)
   endif(NOT LINK_EVERYTHING_STATICALLY)
 endif(NOT USE_SYSTEM_PNG)
 
-add_subdirectory(${rel_xpdf_dir})
-
 if(BUILDING_MIKTEX)
+  set(POPPLER_VERSION "0.12.4")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 
@@ -1148,6 +1183,10 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex4ht_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_musixflx_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)

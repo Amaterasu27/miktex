@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -68,6 +68,8 @@ target_link_libraries(${poppler_qt4_dll_name}
   ${freetype2_dll_name}
   ${poppler_lib_name}
   ${jpeg_dll_name}
+  ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
   ${QT_LIBRARIES}
 )
 

@@ -1,6 +1,6 @@
 % luainit.w
 % 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -19,9 +19,6 @@
 
 @ @c
 #include "openbsd-compat.h"
-#ifdef HAVE_ASPRINTF            /* asprintf is not defined in openbsd-compat.h, but in stdio.h */
-#  include <stdio.h>
-#endif
 #include <kpathsea/c-stat.h>
 
 #include "lua/luatex-api.h"
@@ -32,7 +29,7 @@
 #endif
 
 static const char _svn_version[] =
-    "$Id: luainit.w 3621 2010-04-15 16:08:22Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luainit.w $";
+    "$Id: luainit.w 4260 2011-05-13 07:03:44Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/luainit.w $";
 
 @ 
 TH: TODO
@@ -47,7 +44,7 @@ does much more, making it hard to use for our purpose.
 
 In fact, it sets three C variables:
 
-  |program_invocation_name|  |program_invocation_short_name|  |kpse->program_name|
+  |kpse_invocation_name|  |kpse_invocation_short_name|  |kpse->program_name|
 
 and four environment variables:
 
@@ -369,7 +366,7 @@ static void parse_options(int argc, char **argv)
                  "the terms of the GNU General Public License, version 2. For more\n"
                  "information about these matters, see the file named COPYING and\n"
                  "the LuaTeX source.\n\n" 
-                 "Copyright 2009 Taco Hoekwater, the LuaTeX Team.\n");
+                 "Copyright 2011 Taco Hoekwater, the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
@@ -388,7 +385,7 @@ static void parse_options(int argc, char **argv)
                  "lua       by Roberto Ierusalimschy, Waldemar Celes,\n" 
                  "             Luiz Henrique de Figueiredo\n" 
                  "metapost  by John Hobby, Taco Hoekwater and friends.\n" 
-                 "xpdf      by Derek Noonburg (partial)\n" 
+                 "poppler   by Derek Noonburg, Kristian Høgsberg (partial)\n" 
                  "fontforge by George Williams (partial)\n\n" 
                  "Some extensions to lua and additional lua libraries are used, as well as\n" 
                  "libraries for graphic inclusion. More details can be found in the source.\n" 
@@ -510,7 +507,18 @@ static void init_kpse(void)
     }
     if (!user_progname) {
         if (ini_version) {
-            user_progname = input_name;
+            if (input_name) {
+                char *p = input_name + strlen(input_name) - 1;
+                while (p >= input_name) {
+                    if (IS_DIR_SEP (*p)) {
+                        p++;
+                        input_name = p;
+                        break;
+                    }
+                    p--;
+                }
+                user_progname = remove_suffix (input_name);
+            }
             if (!user_progname) {
                 user_progname = cleaned_invocation_name(argv[0]);
             }
@@ -780,26 +788,33 @@ void lua_initialize(int ac, char **av)
     argc = ac;
     argv = av;
 
+#if defined(MIKTEX)
+        if (asprintf(&banner, "This is LuaTeX, Version %s (%s)",
+                     luatex_version_string, MIKTEX_BANNER_STR) < 0) {
+            exit(EXIT_FAILURE);
+        }
+#else
     if (luatex_svn < 0) {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d%s",
-                     luatex_version_string, luatex_date_info, WEB2CVERSION) < 0) {
+        if (asprintf(&banner, "This is LuaTeX, Version %s-%d",
+                     luatex_version_string, luatex_date_info) < 0) {
             exit(EXIT_FAILURE);
         }
     } else {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d%s (rev %d)",
-                     luatex_version_string, luatex_date_info, WEB2CVERSION, luatex_svn) < 0) {
+        if (asprintf(&banner, "This is LuaTeX, Version %s-%d (rev %d)",
+                     luatex_version_string, luatex_date_info, luatex_svn) < 0) {
             exit(EXIT_FAILURE);
         }
     }
+#endif
     ptexbanner = banner;
 
-    program_invocation_name = cleaned_invocation_name(argv[0]);
+    kpse_invocation_name = cleaned_invocation_name(argv[0]);
 
     /* be 'luac' */
     if (argc > 1 &&
-        (STREQ(program_invocation_name, "texluac") ||
+        (STREQ(kpse_invocation_name, "texluac") ||
 #if defined(MIKTEX)
-		 STREQ(program_invocation_name, MIKTEX_PREFIX "texluac") ||
+		 STREQ(kpse_invocation_name, MIKTEX_PREFIX "texluac") ||
 #endif
          STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac"))) {
         exit(luac_main(ac, av));
@@ -869,7 +884,7 @@ void lua_initialize(int ac, char **av)
         if (!dump_name) {
             get_lua_string("texconfig", "formatname", &dump_name);
         }
-        if ((lua_only) || ((!input_name) && (!dump_name))) {
+        if (lua_only) {
             if (given_file)
                 free(given_file);
             /* this is not strictly needed but it pleases valgrind */

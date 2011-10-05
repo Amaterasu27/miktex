@@ -228,7 +228,7 @@ ParseYapCommandLine (/*[in]*/ const char *	lpszCommandLine,
 	      pathDvi = pathFileName;
 	    }
 	  
-	  cmdInfo.m_strFileName = pathDvi.Get();
+	  cmdInfo.m_strFileName = UT_(pathDvi.Get());
 
 	  if (cmdInfo.m_nShellCommand != CCommandLineInfo::FilePrint)
 	    {
@@ -260,7 +260,7 @@ END_MESSAGE_MAP();
 YapApplication::YapApplication ()
   : tracing (false)
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.Yap." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.Yap." MIKTEX_COMPONENT_VERSION_STR));
   EnableHtmlHelp ();
 }
 
@@ -308,6 +308,16 @@ YapApplication::RegisterWindowClass ()
 
 namespace {
   bool initialized = false;
+  const char * const COMMERCIAL_INVOKERS =
+    // yap invokers
+    "winedt"		  // http://www.winedt.com
+    ";" "Inlage 4"	  // http://www.inlage.com/
+    ";" "CodingStudio"	  // http://www.dfordsoft.com/
+#if 0
+    // latex invokers
+    ";" "aurora"	  // http://elevatorlady.ca/
+#endif
+    ;
 }
 
 BOOL
@@ -350,7 +360,7 @@ YapApplication::InitInstance ()
       
       // get command-line arguments
       YapCommandLineInfo cmdInfo;
-      ParseYapCommandLine (CT2A(m_lpCmdLine), cmdInfo);
+      ParseYapCommandLine (TU_(m_lpCmdLine), cmdInfo);
       
       // set trace flags
       if (! cmdInfo.traceFlags.empty())
@@ -360,7 +370,7 @@ YapApplication::InitInstance ()
 	  TraceStream::SetTraceFlags (cmdInfo.traceFlags.c_str());
 	}
       
-      YapLog (T_("Yap arguments: %s"), m_lpCmdLine);
+      YapLog (T_("Yap arguments: %s"), TU_(m_lpCmdLine));
       
       // return, if another application instance was found
       if (cmdInfo.singleInstance && ActivateFirstInstance(cmdInfo))
@@ -386,13 +396,13 @@ YapApplication::InitInstance ()
 	  MIKTEX_ASSERT (_CrtIsValidHeapPointer(m_pszHelpFilePath));
 	  free (reinterpret_cast<void*>
 		(const_cast<LPTSTR>(m_pszHelpFilePath)));
-	  m_pszHelpFilePath = _tcsdup(CA2T(helpFileName.Get()));
+	  m_pszHelpFilePath = _tcsdup(UT_(helpFileName.Get()));
 	}
       
       // change the registry key under which our settings are stored
       if (! pSession->IsMiKTeXPortable())
       {
-	SetRegistryKey (CA2T(MIKTEX_COMP_COMPANY_STR
+	SetRegistryKey (UT_(MIKTEX_COMP_COMPANY_STR
 	  "\\"
 	  MIKTEX_PRODUCTNAME_STR
 	  "\\"
@@ -444,7 +454,7 @@ YapApplication::InitInstance ()
 			       szClass,
 			       &size)
 	       == ERROR_SUCCESS)
-	      && ((StringCompare(CT2A(szClass),
+	      && ((StringCompare(TU_(szClass),
 				 Utils::MakeProgId("dvi").c_str(),
 				 true)
 		   != 0))
@@ -470,6 +480,27 @@ YapApplication::InitInstance ()
 	{
 	  return (FALSE);
 	}
+
+      unsigned showSplashWindow = 0;
+
+      vector<string> invokers = Process2::GetInvokerNames();
+      for (vector<string>::const_iterator it = invokers.begin(); it != invokers.end(); ++ it)
+      {
+	if (Utils::Contains(COMMERCIAL_INVOKERS, PathName(*it).GetFileNameWithoutExtension().Get()))
+	{
+	  showSplashWindow = 5;
+	}
+      }
+
+      if (! g_pYapConfig->showSplashWindow)
+      {
+	showSplashWindow = 0;
+      }
+
+      if (showSplashWindow > 0)
+      {
+	splashWindow.Show (showSplashWindow);
+      }
       
       // the main window has been initialized, so show and update it
       CWindowPlacement wp;
@@ -556,7 +587,7 @@ AboutDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
   if (! pDX->m_bSaveAndValidate)
   {
     CString str;
-    str.Format (T_(_T("Yet Another Previewer %s")), static_cast<LPTSTR>(CA2T((MIKTEX_COMPONENT_VERSION_STR))));
+    str.Format (T_(_T("Yet Another Previewer %s")), static_cast<LPTSTR>(UT_((MIKTEX_COMPONENT_VERSION_STR))));
     str += _T("\r\n");
     str += _T(MIKTEX_COMP_COPYRIGHT_STR);
     GetDlgItem(IDC_THE_NAME_OF_THE_GAME)->SetWindowText (str);
@@ -582,17 +613,25 @@ void
 AboutDialog::OnClickRegisterMiKTeX ()
 {
   try
-    {
-      Utils::RegisterMiKTeXUser ();
-    }
+  {
+#if HAVE_MIKTEX_USER_INFO
+    MiKTeXUserInfo info;
+    SessionWrapper(true)->RegisterMiKTeXUser (info);
+#else
+    Utils::RegisterMiKTeXUser ();
+#endif
+  }
+  catch (const OperationCancelledException &)
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (this, e);
-    }
+  {
+    ErrorDialog::DoModal (this, e);
+  }
 }
 
 /* _________________________________________________________________________
@@ -772,7 +811,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(result));
     }
   AutoDdeUninitialize autoDdeUninitialize (inst);
-  HSZ hszServer = DdeCreateStringHandle(inst, CA2T(lpszServer), CP_WINANSI);
+  HSZ hszServer = DdeCreateStringHandle(inst, UT_(lpszServer), CP_WINNEUTRAL);
   if (hszServer == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -780,7 +819,7 @@ DdeExecute (/*[in]*/ const char * lpszServer,
 			  NUMTOSTR(DdeGetLastError(inst)));
     }
   AutoDdeFreeStringHandle autoDdeFreeStringHandle1 (inst, hszServer);
-  HSZ hszTopic = DdeCreateStringHandle(inst, CA2T(lpszTopic), CP_WINANSI);
+  HSZ hszTopic = DdeCreateStringHandle(inst, UT_(lpszTopic), CP_WINNEUTRAL);
   if (hszTopic == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -797,11 +836,16 @@ DdeExecute (/*[in]*/ const char * lpszServer,
     }
   AutoDdeDisconnect autoDdeDisconnect (hconv);
   HDDEDATA hddedata;
-  hddedata =
-    DdeCreateDataHandle(inst,
-		reinterpret_cast<BYTE*>(const_cast<char *>(lpszCommand)),
-			static_cast<unsigned long>(strlen(lpszCommand) + 1),
-			0, 0, CF_TEXT, 0);
+#if defined(_UNICODE)
+  UINT fmt = CF_UNICODETEXT;
+#else
+  UINT fmt = CF_TEXT;
+#endif
+  hddedata = DdeCreateDataHandle(
+    inst,
+    reinterpret_cast<BYTE*>(static_cast<LPTSTR>(UT_(lpszCommand))),
+    static_cast<unsigned long>((strlen(lpszCommand) + 1) * sizeof(_TCHAR)),
+    0, 0, fmt, 0);
   if (hddedata == 0)
     {
       FATAL_MIKTEX_ERROR ("DdeExecute",
@@ -843,7 +887,7 @@ BOOL
 
   try
   {
-    YapLog ("OnDDECommand(\"%s\")", CT2A(lpszCommand));
+    YapLog ("OnDDECommand(\"%s\")", static_cast<const char *>(TU_(lpszCommand)));
 
     done = CWinApp::OnDDECommand(lpszCommand);
 
@@ -863,7 +907,7 @@ BOOL
 	  {
 	    ++ lpszFileName;
 	  }
-	  FindSrcSpecial (line, CT2A(lpszFileName));
+	  FindSrcSpecial (line, TU_(lpszFileName));
 	  done = TRUE;
 	}
       }
@@ -874,7 +918,7 @@ BOOL
 	if (i != -1)
 	{
 	  label = label.Left(i);
-	  GotoHyperLabel (CT2A(label));
+	  GotoHyperLabel (TU_(label));
 	  done = TRUE;
 	}
       }
@@ -1074,7 +1118,7 @@ StartEditor (/*[in]*/ const char *	lpszFileName,
   startupInfo.wShowWindow = SW_SHOWNORMAL;
   PROCESS_INFORMATION processInfo;
   if (! ::CreateProcess(0,
-			CA2T(commandLine.c_str()),
+			UT_(commandLine.c_str()),
 			0,
 			0,
 			FALSE,
@@ -1151,11 +1195,11 @@ YapApplication::OpenDocumentFile (/*[in]*/ LPCTSTR lpszFileName)
 {
   try
     {
-      PathName pathShort = CT2A(lpszFileName);
+      PathName pathShort (lpszFileName);
 #if defined(REMOVE_BLANKS_FROM_DOCUMENT_FILENAMES)
       Utils::RemoveBlanksFromPathName (pathShort);
 #endif
-      return (CWinApp::OpenDocumentFile(CA2T(pathShort.Get())));
+      return (CWinApp::OpenDocumentFile(UT_(pathShort.Get())));
     }
   catch (const MiKTeXException & e)
     {
@@ -1281,17 +1325,25 @@ void
 YapApplication::OnRegisterMiKTeX ()
 {
   try
-    {
-      Utils::RegisterMiKTeXUser ();
-    }
+  {
+#if HAVE_MIKTEX_USER_INFO
+    MiKTeXUserInfo info;
+    SessionWrapper(true)->RegisterMiKTeXUser (info);
+#else
+    Utils::RegisterMiKTeXUser ();
+#endif
+  }
+  catch (const OperationCancelledException &)
+  {
+  }
   catch (const MiKTeXException & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
   catch (const exception & e)
-    {
-      ErrorDialog::DoModal (0, e);
-    }
+  {
+    ErrorDialog::DoModal (0, e);
+  }
 }
 
 /* _________________________________________________________________________
@@ -1325,7 +1377,7 @@ AllowShellCommand (/*[in]*/ const char * lpszCommand)
 	message.Format ((T_(_T("The following script is embedded in the "))
 			 T_(_T("document:\n\n%s\n\n"))
 			 T_(_T("Do you allow to execute this script?"))),
-			 static_cast<LPTSTR>(CA2T(lpszCommand)));
+			 static_cast<LPTSTR>(UT_(lpszCommand)));
 	return (AfxMessageBox(message, MB_YESNO | MB_ICONQUESTION) == IDYES);
       }
     case YapConfig::SEC_SECURE_COMMANDS:

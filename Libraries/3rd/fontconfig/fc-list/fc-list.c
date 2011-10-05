@@ -24,6 +24,8 @@
 
 #if defined(MIKTEX)
 #  define main __cdecl Main
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
 #  if defined(MIKTEX_WINDOWS)
 #    include <io.h>
 #    include <fcntl.h>

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -43,7 +43,6 @@ set(${png_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngrutil.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngset.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngtrans.c
-  ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngvcrd.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngwio.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngwrite.c
   ${CMAKE_SOURCE_DIR}/${rel_png_dir}/pngwtran.c

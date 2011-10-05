@@ -43,6 +43,16 @@
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
+#define UW_(x) MiKTeX::Core::Utils::UTF8ToWideChar(x).c_str()
+#define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
+
 #if defined(MIKTEX_UNICODE)
 #  define tcout wcout
 #  define tcerr wcerr
@@ -105,7 +115,7 @@ public:
     path += T_("MiKTeX Setup");
     if (! Directory::Exists(path))
       {
-	if (! CreateDirectory(CA2T(path.Get()), 0))
+	if (! CreateDirectory(UT_(path.Get()), 0))
 	  {
 	    FATAL_WINDOWS_ERROR ("CreateDirectory", path.Get());
 	  }
@@ -208,7 +218,7 @@ public:
   PackageManagerPtr pManager;
 
 public:
-  string folderName;
+  PathName folderName;
 
 public:
   string paperSize;

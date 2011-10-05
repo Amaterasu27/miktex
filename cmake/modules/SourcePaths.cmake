@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,6 +24,7 @@ set(rel_arctrl_win_dir	"Programs/MiKTeX/arctrl/win")
 set(rel_bibtex8_dir	"Programs/Bibliography/bibtex8")
 set(rel_bibtex_dir	"Programs/Bibliography/bibtex")
 set(rel_bmeps_dir	"Libraries/3rd/libbmeps")
+set(rel_botan_dir	"Libraries/3rd/botan")
 set(rel_build_tools_etc_dir	"BuildUtilities/etc")
 set(rel_bzip2_dir	"Libraries/3rd/bzip2")
 set(rel_c4p_dir		"BuildUtilities/c4p")
@@ -89,6 +90,7 @@ set(rel_mspack_dir	"Libraries/3rd/libmspack")
 set(rel_mthelp_dir	"Programs/MiKTeX/mthelp")
 set(rel_mtprint_dir	"Programs/MiKTeX/mtprint")
 set(rel_mtrep_dir	"Libraries/MiKTeX/WebServiceClients/Repository")
+set(rel_musixflx_dir	"Programs/Converters/musixflx")
 set(rel_netpbm_dir	"Libraries/3rd/netpbm")
 set(rel_obsdcompat_dir	"Libraries/3rd/obsdcompat")
 set(rel_omega_dir	"Programs/TeXAndFriends/omega/omega")
@@ -127,6 +129,7 @@ set(rel_ui_qt_dir	"Libraries/MiKTeX/UI/Qt")
 set(rel_unxemu_dir	"Libraries/MiKTeX/UnxEmulation")
 set(rel_uriparser_dir	"Libraries/3rd/uriparser")
 set(rel_update_mfc_dir	"Programs/MiKTeX/Wizards/Update/MFC")
+set(rel_utf8wrap_dir	"Libraries/MiKTeX/UTF8Wrap")
 set(rel_w2cemu_dir	"Libraries/MiKTeX/Web2CEmulation")
 set(rel_web_dir		"Programs/TeXAndFriends/web")
 set(rel_xdvipdfmx_dir	"Programs/DviWare/xdvipdfmx")

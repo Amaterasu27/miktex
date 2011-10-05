@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.17 2008/10/13 19:42:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.18 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

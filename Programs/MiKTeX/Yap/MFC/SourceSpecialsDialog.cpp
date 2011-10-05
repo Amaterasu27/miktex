@@ -246,7 +246,7 @@ SourceSpecialsDialog::OnGoto ()
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
-      pView->GotoSrcSpecial (_ttoi(szLineNum), CT2A(szFileName));
+      pView->GotoSrcSpecial (_ttoi(szLineNum), TU_(szFileName));
     }
   catch (const MiKTeXException & e)
     {
@@ -289,24 +289,24 @@ SourceSpecialsDialog::OnEditSource ()
       int idx = listControl.GetNextItem(-1, LVNI_ALL | LVNI_SELECTED);
       MIKTEX_ASSERT (idx >= 0);
       LV_ITEM item;
-      char szFileName[BufferSizes::MaxPath];
-      char szLineNum[BufferSizes::MaxPath];
+      _TCHAR szFileName[BufferSizes::MaxPath];
+      _TCHAR szLineNum[BufferSizes::MaxPath];
       item.mask = LVIF_TEXT;
       item.cchTextMax = BufferSizes::MaxPath;
       item.iItem = idx;
       item.iSubItem = 1;
-      item.pszText = CA2T(szFileName);
+      item.pszText = szFileName;
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
       item.iSubItem = 2;
-      item.pszText = CA2T(szLineNum);
+      item.pszText = szLineNum;
       if (! listControl.GetItem(&item))
 	{
 	  FATAL_WINDOWS_ERROR ("CListCtrl::GetItem", 0);
 	}
-      StartEditor (szFileName, pDviDoc->GetDocDir().Get(), atoi(szLineNum));
+      StartEditor (TU_(szFileName), pDviDoc->GetDocDir().Get(), _ttoi(szLineNum));
     }
   catch (const MiKTeXException & e)
     {

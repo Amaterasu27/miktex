@@ -30,6 +30,13 @@ using namespace MiKTeX::Packages;
 
 IMPLEMENT_DYNCREATE(ConnectionSettingsDialog, CDialog);
 
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
 /* _________________________________________________________________________
 
    ConnectionSettingsDialog Message Map
@@ -81,11 +88,11 @@ ConnectionSettingsDialog::OnInitDialog ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   return (ret);
 }
@@ -122,11 +129,11 @@ ConnectionSettingsDialog::OnUseProxy ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -144,11 +151,11 @@ ConnectionSettingsDialog::OnChangeHost ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -166,11 +173,11 @@ ConnectionSettingsDialog::OnChangePort ()
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 
@@ -189,17 +196,17 @@ ConnectionSettingsDialog::OnOK ()
       proxySettings.useProxy = (useProxy ? true : false);
       proxySettings.authenticationRequired =
 	(proxyAuthenticationRequired ? true : false);
-      proxySettings.proxy = CT2A(static_cast<LPCTSTR>(proxyHost));
+      proxySettings.proxy = TU_(static_cast<LPCTSTR>(proxyHost));
       proxySettings.port = proxyPort;
       PackageManager::SetProxy (proxySettings);
     }
   catch (const MiKTeXException & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(e.what()), MB_OK | MB_ICONSTOP);
     }
 }
 

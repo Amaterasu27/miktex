@@ -1,6 +1,6 @@
 /* mikui.cpp:
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -26,6 +26,7 @@
 #include "internal.h"
 
 #include "InstallPackageDialog.h"
+#include "GiveBackDialog.h"
 #include "ProxyAuthenticationDialog.h"
 
 AFX_EXTENSION_MODULE MikuiDLL = { 0, 0 };
@@ -163,4 +164,37 @@ MiKTeX::UI::MFC::ProxyAuthenticationDialog (/*[in]*/ CWnd * pParent)
     }
 
   return (done);
+}
+
+/* _________________________________________________________________________
+   
+   MiKTeX::UI::MFC::GiveBackDialog
+   _________________________________________________________________________ */
+
+MIKTEXUIEXPORT
+bool
+MIKTEXCEECALL
+MiKTeX::UI::MFC::GiveBackDialog (/*[in]*/ CWnd *  pParent,
+				 /*[in]*/ bool	  force)
+{
+  bool bonus;
+#if HAVE_MIKTEX_USER_INFO
+  MiKTeXUserInfo info;
+  bonus =
+    SessionWrapper(true)->TryGetMiKTeXUserInfo(info)
+    && info.IsMember();
+#else
+  bonus = Utils::IsRegisteredMiKTeXUser();
+#endif
+  static time_t lastShowTime = 0;
+  if (force || (difftime(time(0), lastShowTime) > 3600) && ! bonus)
+  {
+    ::GiveBackDialog dlg (pParent);
+    lastShowTime = time(0);
+    return (dlg.DoModal() == IDOK);
+  }
+  else
+  {
+    return (true);
+  }
 }

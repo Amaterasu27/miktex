@@ -33,12 +33,13 @@
 #include <sys/stat.h>		/* for mkdir */
 #include <unistd.h>
 
-#ifdef _WIN32
-#if defined(MIKTEX)
-#define MKDIR(A,B) _mkdir(A)
-#else
-#define MKDIR(A,B) mkdir(A)
+#if defined(MIKTEX_WINDOWS)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
 #endif
+
+#ifdef _WIN32
+#define MKDIR(A,B) mkdir(A)
 #else
 #define MKDIR(A,B) mkdir(A,B)
 #endif

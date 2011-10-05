@@ -370,7 +370,7 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       // </fixme>
 
       // display the deployment name
-      listControl.SetItemText (idx, 0, CA2T(it->deploymentName.c_str()));
+      listControl.SetItemText (idx, 0, UT_(it->deploymentName.c_str()));
 
       // display the 'old' package time-stamp, if the package is known
       if (locallyKnown && oldPackageInfo.timeInstalled > 0)
@@ -680,6 +680,29 @@ PackageListPage::DoFindUpdates ()
     AfxMessageBox (T_(_T("There are currently no updates available.")),
 		   MB_OK | MB_ICONINFORMATION);
   }
+#if 0
+  else
+  {
+    RepositoryInfo repositoryInfo;
+    if (g_pManager->TryGetRepositoryInfo(repository, repositoryInfo))
+    {
+      struct tm * pTime1 = gmtime(&repositoryInfo.timeDate);
+      if (pTime1 == 0)
+      {
+	UNEXPECTED_CONDITION ("PackageListPage::OnFillList");
+      }
+      pTime1->tm_hour = 23;
+      pTime1->tm_min = 59;
+      pTime1->tm_sec = 59;
+      if (difftime(time(0), mktime(pTime1)) < 60 * 60 * 30)
+      {
+	AfxMessageBox (T_(_T("The repository contains untestet packages. It is recommended that you \
+wait a few days before updating.")),
+          MB_OK | MB_ICONEXCLAMATION);
+      }
+    }
+  }
+#endif
 }
 
 /* _________________________________________________________________________
@@ -705,7 +728,7 @@ PackageListPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   style |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  return (::MessageBoxW(0, CA2W(str.c_str()), 0, style) != IDCANCEL);
+  return (::MessageBoxW(0, UW_(str.c_str()), 0, style) != IDCANCEL);
 }
 
 /* _________________________________________________________________________
@@ -767,7 +790,7 @@ PackageListPage::SetProgressText (/*[in]*/ const char * lpszText)
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
   }
-  if (! listControl.SetItemText(0, 0, CA2T(lpszText)))
+  if (! listControl.SetItemText(0, 0, UT_(lpszText)))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }
@@ -788,9 +811,9 @@ PackageListPage::InsertColumn (/*[in]*/ int		colIdx,
 			       /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
   {

@@ -317,9 +317,10 @@ gettexstring (/*[in]*/ strnumber stringNumber)
 {
   int stringStart = MiKTeX::TeXAndFriends::GetTeXStringStart(stringNumber);
   int stringLength = MiKTeX::TeXAndFriends::GetTeXStringLength(stringNumber);
-  char * lpsz = reinterpret_cast<char*>(xmalloc(stringLength + 1));
+  size_t sizeUtf8 = stringLength * 4 + 1;
+  char * lpsz = reinterpret_cast<char*>(xmalloc(sizeUtf8));
   return (MiKTeX::TeXAndFriends::GetTeXString(lpsz,
-					      stringLength + 1,
+					      sizeUtf8,
 					      stringStart,
 					      stringLength));
 }

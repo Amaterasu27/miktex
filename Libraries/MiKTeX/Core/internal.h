@@ -213,9 +213,8 @@ namespace MiKTeXSessionLib = MAKE_CURVER_ID(MiKTeXSession);
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 #if defined(MIKTEX_WINDOWS)
-#  define WA_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
-#  define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
-#  define AW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+#  define WU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#  define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
 #endif
 
 #define MIKTEXINTERNALFUNC(type) type
@@ -368,11 +367,15 @@ GetWindowsFontsDirectory (/*[out]*/ PathName & path);
 const char *
 GetFileNameExtension (/*[in]*/ const char * lpszPath);
   
+Botan::Public_Key *
+LoadPublicKey ();
+
 bool
 HaveEnvironmentString (/*[in]*/ const char * lpszName);
 
-const char *
-GetEnvironmentString (/*[in]*/ const char * lpszName);
+bool
+GetEnvironmentString (/*[in]*/ const char * lpszName,
+                      /*[out]*/ string &    value);
   
 bool
 IsExplicitlyRelativePath (/*[in]*/ const char * lpszPath);
@@ -1540,6 +1543,20 @@ public:
   void
   SetLanguageInfo (/*[in]*/ const LanguageInfo &	languageInfo);
 
+#if HAVE_MIKTEX_USER_INFO
+public:
+  virtual
+  MiKTeXUserInfo
+  RegisterMiKTeXUser (/*[in]*/ const MiKTeXUserInfo & info);
+#endif
+
+#if HAVE_MIKTEX_USER_INFO
+public:
+  virtual
+  bool
+  TryGetMiKTeXUserInfo (/*[out]*/ MiKTeXUserInfo & info);
+#endif
+
   // -----------------------------------------------------------------------
   // *** public ***
 
@@ -2348,8 +2365,12 @@ public:
   {
     if (theNameOfTheGame.empty())
     {
-      const char * lpszEngine = GetEnvironmentString("engine");
-      return (lpszEngine == 0 ? "engine-not-set" : lpszEngine);
+      string engine;
+      if (! GetEnvironmentString("engine", engine))
+      {
+	engine = "engine-not-set";
+      }
+      return (engine);
     }
     else
     {
@@ -2516,22 +2537,33 @@ private:
    ToLower
    _________________________________________________________________________ */
 
-template<typename CharType>
 inline
-CharType
-ToLower (/*[in]*/ CharType ch)
+char
+ToLower (/*[in]*/ char ch)
+{
+  MIKTEX_ASSERT (static_cast<unsigned>(ch) < 128);
+  if (ch >= 'A' && ch <= 'Z')
+  {
+    ch = ch - 'A' + 'a';
+  }
+  return (ch);
+}
+
+inline
+wchar_t
+ToLower (/*[in]*/ wchar_t ch)
 {
   if (static_cast<unsigned>(ch) < 128)
+  {
+    if (ch >= L'A' && ch <= L'Z')
     {
-      if (ch >= 'A' && ch <= 'Z')
-	{
-	  ch = ch - 'A' + 'a';
-	}
+      ch = ch - L'A' + L'a';
     }
+  }
   else
-    {
-      ch = CTYPE_FACET.tolower(ch);
-    }
+  {
+    ch = CTYPE_FACET.tolower(ch);
+  }
   return (ch);
 }
 
@@ -2540,22 +2572,33 @@ ToLower (/*[in]*/ CharType ch)
    ToUpper
    _________________________________________________________________________ */
 
-template<typename CharType>
 inline
-CharType
-ToUpper (/*[in]*/ CharType ch)
+char
+ToUpper (/*[in]*/ char ch)
+{
+  MIKTEX_ASSERT (static_cast<unsigned>(ch) < 128);
+  if (ch >= 'a' && ch <= 'z')
+  {
+    ch = ch - 'a' + 'A';
+  }
+  return (ch);
+}
+
+inline
+wchar_t
+ToUpper (/*[in]*/ wchar_t ch)
 {
   if (static_cast<unsigned>(ch) < 128)
+  {
+    if (ch >= L'a' && ch <= L'z')
     {
-      if (ch >= 'a' && ch <= 'z')
-	{
-	  ch = ch - 'a' + 'A';
-	}
+      ch = ch - L'a' + L'A';
     }
+  }
   else
-    {
-      ch = CTYPE_FACET.toupper(ch);
-    }
+  {
+    ch = CTYPE_FACET.toupper(ch);
+  }
   return (ch);
 }
 
@@ -2569,18 +2612,22 @@ int
 CompareFileNameChars (/*[in]*/ char	ch1,
 		      /*[in]*/ char	ch2)
 {
+#if defined(MIKTEX_WINDOWS)
+  if (ch1 == ch2)
+  {
+    return (0);
+  }
   if (IsDirectoryDelimiter(ch1) && IsDirectoryDelimiter(ch2))
   {
     return (0);
   }
-#if defined(MIKTEX_WINDOWS)
-  int norm1 = ToLower(ch1);
-  int norm2 = ToLower(ch2);
-#else
-  int norm1 = ch1;
-  int norm2 = ch2;
+  if (static_cast<unsigned>(ch1) < 128 && static_cast<unsigned>(ch2) < 128)
+  {
+    ch1 = ToLower(ch1);
+    ch2 = ToLower(ch2);
+  }
 #endif
-  return (norm1 - norm2);
+  return (ch1 - ch2);
 }
 
 /* _________________________________________________________________________

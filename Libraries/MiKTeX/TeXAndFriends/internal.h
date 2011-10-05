@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -81,6 +81,8 @@ using namespace std;
    _________________________________________________________________________ */
 
 #define T_(x) MIKTEXTEXT(x)
+
+#define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
 
 /* _________________________________________________________________________
 

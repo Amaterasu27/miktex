@@ -46,8 +46,7 @@ include_directories(BEFORE
 set(CMAKE_MFC_FLAG 1)
 
 add_definitions(
-  -D_UNICODE
-  -DUNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(setup_mfc_sources
@@ -115,6 +114,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 target_link_libraries(setup
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${curl_lib_name}
@@ -126,6 +126,7 @@ target_link_libraries(setup
   ${mpm_lib_name}
   ${mspack_lib_name}
   ${uriparser_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 )
 

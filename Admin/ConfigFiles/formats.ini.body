@@ -14,7 +14,7 @@ compiler=pdftex
 description=Babel plain TeX
 input=bplain.ini
 
-!include formats-context.ini
+#!include formats-context.ini
 
 [cslatex]
 
@@ -89,13 +89,6 @@ compiler=luatex
 description=LuaTeX
 input=luatex.ini
 
-[metafun]
-
-attributes=exclude
-compiler=mpost
-description=
-input=metafun.mp
-
 [mex]
 
 arguments=-tcx=cp227.tcx
@@ -110,13 +103,6 @@ arguments=-tcx=cp227.tcx
 compiler=mf
 description=METAFONT default base file
 input=mf.ini
-
-[mfmp]
-
-attributes=exclude
-compiler=mpost
-description=METAFONT compatible mem file
-input=mfmp.ini
 
 [mllatex]
 
@@ -133,12 +119,6 @@ attributes=exclude
 compiler=pdftex
 description=MLTeX extensions (plain)
 input=mltex.ini
-
-[mpost]
-
-compiler=mpost
-description=MetaPost default mem file
-input=mpost.ini
 
 [mptopdf]
 

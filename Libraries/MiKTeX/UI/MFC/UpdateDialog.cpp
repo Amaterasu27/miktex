@@ -577,7 +577,7 @@ UpdateDialogImpl::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 UpdateDialogImpl::OnProgress (/*[in]*/ Notification	nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   bool visibleProgress =
     (nf == Notification::DownloadPackageEnd
      || nf == Notification::InstallFileEnd
@@ -715,13 +715,13 @@ UpdateDialogImpl::Report (/*[in]*/ bool		immediate,
 			  /*[in]*/		...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CString str;
+  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (CA2T(lpszFmt), args);
+  str.FormatV (lpszFmt, args);
   va_end (args);
   int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
     {
       if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')
@@ -782,7 +782,7 @@ UpdateDialogImpl::FormatControlText (/*[in]*/ UINT		ctrlId,
   va_start (marker, lpszFormat);
   string str = Utils::FormatString(lpszFormat, marker);
   va_end (marker);
-  GetControl(ctrlId)->SetWindowText (CA2T(str.c_str()));
+  GetControl(ctrlId)->SetWindowText (UT_(str.c_str()));
 }
 
 /* _________________________________________________________________________
@@ -810,6 +810,10 @@ UpdateDialog::DoModal (/*[in]*/ CWnd *			pParent,
 {
   BEGIN_USE_MY_RESOURCES()
     {
+      if (Utils::RunningOnAServer())
+      {
+	GiveBackDialog (pParent);
+      }
       string url;
       RepositoryType repositoryType (RepositoryType::Unknown);
       if (toBeInstalled.size() > 0

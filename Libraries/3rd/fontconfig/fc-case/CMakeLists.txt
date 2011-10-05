@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2010 Christian Schenk
+## Copyright (C) 2008-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,7 @@
 add_definitions(
   -DHAVE_CONFIG_H
   -DDONT_USE_MIKTEX_EXIT
+  -D_UNICODE -DUNICODE
 )
 
 include_directories(
@@ -38,6 +39,7 @@ target_link_libraries(fc-case
   ${app_dll_name}
   $(core_dll_name)
   ${getopt_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 get_target_property(fc-case_exe fc-case LOCATION)

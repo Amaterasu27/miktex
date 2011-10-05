@@ -1,6 +1,6 @@
 /* fndbmem.h: fndb file format					-*- C++ -*-
 
-   Copyright (C) 1996-2006 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -27,6 +27,9 @@
 #define MIKTEX__A0FEBF8A_9A7A_419B_B123_0D6A7C07C5FA__
 
 BEGIN_INTERNAL_NAMESPACE;
+
+const size_t FNDB_GRAN = 1024 * 1024;
+const size_t FNDB_EXTRA = 4 * FNDB_GRAN;
 
 /* _________________________________________________________________________
 

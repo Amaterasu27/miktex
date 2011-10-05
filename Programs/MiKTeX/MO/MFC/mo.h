@@ -1,6 +1,6 @@
 /* mo.h:							-*- C++ -*-
 
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of MiKTeX Options.
 
@@ -66,10 +66,22 @@ HasIE3 ();
 
 #define T_(x) MIKTEXTEXT(x)
 
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
+
 /* _________________________________________________________________________
 
    Error Macros
    _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+#  define WU_(x) MiKTeX::Core::CharBuffer<char>(x).Get()
+#  define UW_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).Get()
+#endif
 
 #define BUF_TOO_SMALL(function)						\
   FATAL_MIKTEX_ERROR (function,						\

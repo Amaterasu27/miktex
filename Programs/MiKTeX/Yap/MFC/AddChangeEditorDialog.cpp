@@ -136,14 +136,14 @@ AddChangeEditorDialog::DoDataExchange (/*[in]*/ CDataExchange * pDX)
 	   ++ idx)
 	{
 	  if (idx != currentIdx
-	      && StringCompare(editors[idx].name.c_str(), CT2A(name), true) == 0)
+	      && StringCompare(editors[idx].name.c_str(), TU_(name), true) == 0)
 	    {
 	      AfxMessageBox (T_(_T("The specified editor name already exists.")));
 	      pDX->Fail ();
 	    }
 	}
       pDX->PrepareEditCtrl (IDC_PATH);
-      if (! File::Exists(PathName(CT2A(program))))
+      if (! File::Exists(PathName(TU_(program))))
 	{
 	  AfxMessageBox (T_(_T("The specified program file does not exist.")));
 	  pDX->Fail ();
@@ -321,5 +321,5 @@ AddChangeEditorDialog::EnableButtons ()
 EditorInfo
 AddChangeEditorDialog::GetEditorInfo ()
 {
-  return (EditorInfo(CT2A(name), CT2A(program), CT2A(arguments)));
+  return (EditorInfo(TU_(name), TU_(program), TU_(arguments)));
 }

@@ -202,12 +202,12 @@ FinishPage::OnWizardFinish ()
 		{
 		  PathName pathRelNotes (theApp.GetInstallRoot(),
 					 MIKTEX_PATH_RELNOTES_HTML);
-		  if (ShellExecute(0,
-				   _T("open"),
-				   CA2T(pathRelNotes.Get()),
-				   0,
-				   0,
-				   SW_SHOWNORMAL)
+		  if (ShellExecuteW(0,
+				    L"open",
+				    UW_(pathRelNotes.Get()),
+				    0,
+				    0,
+				    SW_SHOWNORMAL)
 		      <= reinterpret_cast<HINSTANCE>(32))
 		    {
 		      FATAL_MIKTEX_ERROR ("FinishPage::OnWizardFinish",

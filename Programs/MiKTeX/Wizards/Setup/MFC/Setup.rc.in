@@ -9,9 +9,9 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#include "Setup-version.h"
 #endif
 #include "afxres.h"
-#include "Setup-version.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -60,9 +60,9 @@ END
 BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
+    "#include ""Setup-version.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
-    "#include ""Setup-version.h""\r\n"
     "\0"
 END
 
@@ -160,7 +160,7 @@ BEGIN
     LTEXT           "Completing the MiKTeX Setup Wizard",IDC_WELCOME,115,8,195,24
     LTEXT           "You have sucessfully completed the MiKTeX Setup Wizard.",IDC_STATUS,115,40,195,8
     CONTROL         "&Show the release notes",IDC_VIEW_RELNOTES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,133,195,10
-    LTEXT           "To exit the wizard, click Finish.",IDC_STATIC,115,178,195,8
+    LTEXT           "To exit the wizard, click Close.",IDC_STATIC,115,178,195,8
     LTEXT           "",IDC_MESSAGE,115,55,195,64
 END
 

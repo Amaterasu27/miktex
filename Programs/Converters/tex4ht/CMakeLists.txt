@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,40 +32,15 @@ add_definitions(
 if(NATIVE_WINDOWS)
   add_definitions(
     -DWIN32
+    -D_UNICODE -DUNICODE
   )
 endif(NATIVE_WINDOWS)
 
 set_source_files_properties(
-  htcmd.c
   t4ht.c
   tex4ht.c
   PROPERTIES LANGUAGE CXX
 )
-
-set(htcmd_sources
-  ${wrapper_cpp}
-  htcmd-version.h
-  htcmd.c
-)
-
-if(NATIVE_WINDOWS)
-  set(htcmd_sources ${htcmd_sources}
-    htcmd.rc
-  )
-endif(NATIVE_WINDOWS)
-
-add_executable(htcmd ${htcmd_sources})
-
-merge_trustinfo_manifest(htcmd asInvoker)
-
-target_link_libraries(htcmd
-  ${app_dll_name}
-  ${core_dll_name}
-  ${kpsemu_dll_name}
-  ${texmf_dll_name}
-)
-
-install(TARGETS htcmd DESTINATION ${bindir})
 
 set(t4ht_sources
   ${wrapper_cpp}
@@ -88,6 +63,7 @@ target_link_libraries(t4ht
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS t4ht DESTINATION ${bindir})
@@ -113,6 +89,8 @@ target_link_libraries(tex4ht
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS tex4ht DESTINATION ${bindir})

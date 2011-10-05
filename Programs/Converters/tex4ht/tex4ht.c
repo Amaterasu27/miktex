@@ -1,35 +1,28 @@
 
-/**********************************************************/
-/* tex4ht.c                              2009-01-31-07:33 */
-/* Copyright (C) 1996--2009    Eitan M. Gurari            */
-/*                                                        */
-/* This work may be distributed and/or modified under the */
-/* conditions of the LaTeX Project Public License, either */
-/* version 1.3 of this license or (at your option) any    */
-/* later version. The latest version of this license is   */
-/* in                                                     */
-/*   http://www.latex-project.org/lppl.txt                */
-/* and version 1.3 or later is part of all distributions  */
-/* of LaTeX version 2003/12/01 or later.                  */
-/*                                                        */
-/* This work has the LPPL maintenance status "maintained".*/
-/*                                                        */
-/* This Current Maintainer of this work                   */
-/* is Eitan M. Gurari.                                    */
-/*                                                        */
-/* If you modify this program your changing its signature */
-/* with a directive of the following form will be         */
-/* appreciated.                                           */
-/*      #define PLATFORM "signature"                      */
-/*                                                        */
-/*                             gurari@cse.ohio-state.edu  */
-/*                 http://www.cse.ohio-state.edu/~gurari  */
-/**********************************************************/
+/* tex4ht.c (2010-12-16-08:39), generated from tex4ht-c.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 1996-2009 Eitan M. Gurari
 
-/* **********************************************
-    Compiler options                            *
-    (uncommented | command line)                *
-------------------------------------------------*
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <http://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated.
+ */
+
+/* Compiler options (uncommented | command line), as comments:
+
        Classic C (CC)             default
 #define ANSI                      ansi-c, c++
 #define DOS_C
@@ -155,6 +148,12 @@
 #  endif
 #endif
 
+
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#  include <miktex/unxemu.h>
+#endif
 
 #include <stdio.h>   
 #include <stdlib.h>  
@@ -1535,7 +1534,7 @@ static void strct
 #endif
 {   U_CHAR * ch;
    ch = str1 + (int) strlen((char *) str1);
-   (IGNORED) strcpy((char *)  ch, (const char *) str2 );
+   (IGNORED) strcpy((char *)  ch, str2 );
 }
 
 
@@ -3443,7 +3442,7 @@ static char *get_env_dir
   p = (char *) malloc(i+12);
   if(p == NULL)  return NULL;      
   strncpy(p, progname, i+1);                        
-  (IGNORED) strcpy((char *) &p[i+1], (const char *) "tex4ht.env");       
+  (IGNORED) strcpy((char *) &p[i+1], "tex4ht.env"); 
   return p;
 }
 
@@ -3456,7 +3455,7 @@ static char* get_script
 #ifdef ANSI
 #define SEP ,
 (
-     U_CHAR * name SEP 
+     char * name SEP 
      const U_CHAR * inln SEP 
      int x
 
@@ -3465,7 +3464,7 @@ static char* get_script
 #else
 #define SEP ;
 (name, inln,x)
-     U_CHAR * name SEP 
+     char * name SEP 
      const U_CHAR * inln SEP 
      int x
 
@@ -3944,7 +3943,7 @@ static FILE* search_file
 #ifdef ANSI
 #define SEP ,
 (
-     const U_CHAR   *name SEP 
+     const char     *name SEP 
      const U_CHAR   *dir SEP 
      const U_CHAR   *flags
 
@@ -3953,7 +3952,7 @@ static FILE* search_file
 #else
 #define SEP ;
 ( name, dir, flags )
-     const U_CHAR   *name SEP 
+     const char     *name SEP 
      const U_CHAR   *dir SEP 
      const U_CHAR   *flags
 
@@ -4100,7 +4099,7 @@ static FILE* search_file_ext
 #ifdef ANSI
 #define SEP ,
 (
-    const U_CHAR   *name SEP 
+    const char     *name SEP 
     const U_CHAR   *dir SEP 
     const U_CHAR   *flags
 
@@ -4109,7 +4108,7 @@ static FILE* search_file_ext
 #else
 #define SEP ;
 ( name, dir, flags )
-    const U_CHAR   *name SEP 
+    const char     *name SEP 
     const U_CHAR   *dir SEP 
     const U_CHAR   *flags
 
@@ -4147,7 +4146,7 @@ static FILE* search_file_ext
     ) n++;
   str[n-1] = '\0';
 #ifndef NOSUBDIR
-#ifdef WIN32
+#if ! defined(MIKTEX) && defined(WIN32)
   
 {
     WIN32_FIND_DATA find_file_data;
@@ -4792,7 +4791,9 @@ gif_open[gif_flag] = m_alloc(char,
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
+           
 "<img src=\"+\" alt=\"+++++\" />+"
+
 );
 gif_alt[gif_flag] = gif_open[gif_flag]+11;
   *(gif_alt[gif_flag] - 1) = '\0';
@@ -5087,7 +5088,9 @@ gif_open[gif_flag] = m_alloc(char,
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
+           
 "<img src=\"+\" alt=\"+++++\" />+"
+
 );
 gif_alt[gif_flag] = gif_open[gif_flag]+11;
   *(gif_alt[gif_flag] - 1) = '\0';
@@ -5714,7 +5717,7 @@ static void warn_i_str
 #define SEP ,
 (
     int  n SEP 
-    const U_CHAR *str
+    const char *str
 
 )
 #undef SEP
@@ -5722,7 +5725,7 @@ static void warn_i_str
 #define SEP ;
 (n,str)
     int  n SEP 
-    const U_CHAR *str
+    const char *str
 
 ;
 #undef SEP
@@ -5740,8 +5743,8 @@ static void warn_i_str2
 #define SEP ,
 (
     int  n SEP 
-    const U_CHAR *str1 SEP 
-    const U_CHAR *str2
+    const char *str1 SEP 
+    const char *str2
 
 )
 #undef SEP
@@ -5749,8 +5752,8 @@ static void warn_i_str2
 #define SEP ;
 (n,str1,str2)
     int  n SEP 
-    const U_CHAR *str1 SEP 
-    const U_CHAR *str2
+    const char *str1 SEP 
+    const char *str2
 
 ;
 #undef SEP
@@ -5914,6 +5917,64 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 
 
    
+#ifdef WIN32
+  /* The idea here is to split options apart at spaces: a single argument
+     "-foo -bar" becomes the two options "-foo" and "-bar".  We need to
+     do this for Windows because mk4ht passes this sort of combined
+     option in one string to scripts like htlatex.{unix,bat}.  In the
+     Unix case, the shell resplits words when calling t4ht and tex4ht,
+     so the program see two options.  But this does not happen with the
+     .bat; %4, for instance, remains "-foo -bar".  So we fix it here.  */
+  if (argc > 2) {
+    int  i, nargc;
+    char **nargv, **pnargv, **pargv;
+
+    nargv = (char **) xmalloc (2 * argc * sizeof (char *));
+    pnargv = nargv;
+    pargv = argv;
+    *pnargv++ = xstrdup (*pargv++);
+    *pnargv++ = xstrdup (*pargv++);
+    nargc = 2;
+
+    for (i=2; i < argc; i++) {
+      char *p, *q, *r;
+      p = q = *pargv++;
+      while (*p == ' ' || *p == '\t') {
+        p++;
+        q++;
+      }
+      while (*p != ' ' && *p != '\t' && *p) {
+        p++;
+        if (*p == '\0') {
+          *pnargv++ = xstrdup(q);
+          nargc++;
+        } else if (*p == ' ' || *p == '\t') {
+          r = p;
+          while (*p == ' ' || *p == '\t')
+            p++;
+          if (*p == '-' || *p == '\0') {
+            *r = '\0';
+            *pnargv++ = xstrdup(q);
+            nargc++;
+            q = p;
+          }
+        }
+      }
+    }
+
+#if ! defined(MIKTEX)
+    for (i=0; i < argc; i++)
+      free (argv[i]);
+    free (argv);
+#endif
+    nargv[nargc] = NULL;
+    argv = nargv;
+    argc = nargc;
+  }
+#endif
+
+
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -5935,19 +5996,23 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-#  if defined(MIKTEX)
-   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 %s MiKTeX)\n",PLATFORM);
-#  else
-   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 %s)\n",PLATFORM);
-#endif
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2009-01-31-07:33)\n");
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 %s kpathsea)\n",PLATFORM);
+#  if defined(MIKTEX)
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s MiKTeX)\n",PLATFORM);
+#  else
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s kpathsea)\n",PLATFORM);
+#  endif
 #else
-   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 kpathsea)\n");
+#  if defined(MIKTEX)
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 MiKTeX)\n");
+#  else
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 kpathsea)\n");
+#  endif
 #endif
 #endif
 for(i=0; i<argc; i++){

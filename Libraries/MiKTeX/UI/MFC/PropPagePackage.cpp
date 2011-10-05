@@ -33,21 +33,21 @@
 static
 void
 MakeOneLine (/*[out]*/ CString &	dest,
-	     /*[in]*/ const string &	source)
+	     /*[in]*/ const wstring &	source)
 {
-  for (string::const_iterator it = source.begin();
+  for (wstring::const_iterator it = source.begin();
        it != source.end();
        ++ it)
+  {
+    if (*it == L'\n')
     {
-      if (*it == '\n')
-	{
-	  dest += ' ';
-	}
-      else
-	{
-	  dest += *it;
-	}
+      dest += L' ';
     }
+    else
+    {
+      dest += *it;
+    }
+  }
 }
 	     
 /* _________________________________________________________________________
@@ -60,13 +60,11 @@ PropPagePackage::PropPagePackage (/*[in]*/ const PackageInfo & packageInfo)
 {
   Construct (IDD_PROPPAGE_PACKAGE);
   m_psp.dwFlags &= ~ (PSP_HASHELP);
-  date =
-    CTime(packageInfo.timePackaged).Format(_T("%Y-%m-%d %H:%M:%S"));
-  MakeOneLine (description, packageInfo.description);
-  name = packageInfo.displayName.c_str();
-  MakeOneLine (title, packageInfo.title);
-  size.Format (T_(_T("%u Bytes")),
-	       static_cast<unsigned>(packageInfo.GetSize()));
+  date = CTime(packageInfo.timePackaged).Format(_T("%Y-%m-%d %H:%M:%S"));
+  MakeOneLine (description, Utils::UTF8ToWideChar(packageInfo.description));
+  name = Utils::UTF8ToWideChar(packageInfo.displayName).c_str();
+  MakeOneLine (title, Utils::UTF8ToWideChar(packageInfo.title));
+  size.Format (T_(_T("%u Bytes")), static_cast<unsigned>(packageInfo.GetSize()));
 }
 
 /* _________________________________________________________________________

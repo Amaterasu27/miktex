@@ -166,7 +166,7 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()));
+      AfxMessageBox (UT_(e.what()));
       return (-1);
     }
 }
@@ -191,7 +191,7 @@ ErrorDialog::DoModal (/*[in]*/ CWnd *			pParent,
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()));
+      AfxMessageBox (UT_(e.what()));
       return (-1);
     }
 }
@@ -247,7 +247,7 @@ The error report has been copied to the Clipboard.")));
     }
   catch (const exception & e)
     {
-      AfxMessageBox (CA2T(e.what()));
+      AfxMessageBox (UT_(e.what()));
     }
   if (hGlobal != 0)
     {

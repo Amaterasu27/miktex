@@ -1,6 +1,6 @@
 /* FileCopyPage.h:						-*- C++ -*-
 
-   Copyright (C) 1999-2007 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -227,6 +227,7 @@ private:
     int progress1Pos;
     int progress2Pos;
     string packageName;
+    string currentLine;
   };
 
 private:

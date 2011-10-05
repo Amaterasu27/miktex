@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,11 @@
 use_static_crt()
 use_static_libraries()
 
+add_definitions(
+  -D_UNICODE
+  -DUNICODE
+)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/res/dialog.manifest.in
   ${CMAKE_CURRENT_BINARY_DIR}/res/dialog.manifest
@@ -36,9 +41,11 @@ include_directories(BEFORE
 )
 
 set(libs
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 
   comctl32.lib

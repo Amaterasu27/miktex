@@ -321,9 +321,9 @@ RemotePage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  SetItemText (idx, 0, it->country.c_str());
 	  CString protUC (protocol.c_str());
 	  protUC.MakeUpper ();
-	  SetItemText (idx, 1, CT2A(protUC));
+	  SetItemText (idx, 1, TU_(protUC));
 	  SetItemText (idx, 2, host.c_str());
-      	  SetItemText (idx, 3, CT2A(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
+      	  SetItemText (idx, 3, TU_(CTime(it->timeDate).Format(_T("%d-%b-%y"))));
 #if SHOW_DESCRIPTION
 	  SetItemText (idx, 4, it->description.c_str());
 #endif
@@ -454,9 +454,9 @@ RemotePage::InsertColumn (/*[in]*/ int		colIdx,
 			  /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -474,7 +474,7 @@ RemotePage::SetItemText (/*[in]*/ int		itemIdx,
 			 /*[in]*/ int		colIdx,
 			 /*[in]*/ const char *	lpszText)
 {
-  if (! listControl.SetItemText(itemIdx, colIdx, CA2T(lpszText)))
+  if (! listControl.SetItemText(itemIdx, colIdx, UT_(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }
@@ -500,7 +500,7 @@ RemotePage::SetProgressText (/*[in]*/ const char * lpszText)
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::InsertItem", 0);
     }
-  if (! listControl.SetItemText(0, 0, CA2T(lpszText)))
+  if (! listControl.SetItemText(0, 0, UT_(lpszText)))
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
     }

@@ -183,12 +183,38 @@ executables.</para>
 <para>Suppress screen output.</para></listitem>
 </varlistentry>
 <varlistentry>
+<term><option>--register-root=<replaceable>dir</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--register-root</primary>
+</indexterm>
+<indexterm>
+<primary>&TEXMF; root</primary>
+<secondary>registering</secondary>
+</indexterm>
+<para>Register a &TEXMF; root directory.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
 <term><option>--report</option></term>
 <listitem>
 <indexterm>
 <primary>--report</primary>
 </indexterm>
 <para>Write a &MiKTeX; configuration report.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><option>--unregister-root=<replaceable>dir</replaceable></option></term>
+<listitem>
+<indexterm>
+<primary>--unregister-root</primary>
+</indexterm>
+<indexterm>
+<primary>&TEXMF; root</primary>
+<secondary>unregistering</secondary>
+</indexterm>
+<para>Unregister a &TEXMF; root directory.</para>
+</listitem>
 </varlistentry>
 <varlistentry>
 <term><option>--update-fndb</option></term>

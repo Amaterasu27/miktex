@@ -38,8 +38,7 @@ include_directories(BEFORE
 set(CMAKE_MFC_FLAG 1)
 
 add_definitions(
-  -D_UNICODE
-  -DUNICODE
+  -D_UNICODE -DUNICODE
 )
 
 set(remove_mfc_sources
@@ -58,6 +57,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 set(libs
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${curl_lib_name}
@@ -69,6 +69,7 @@ set(libs
   ${mpm_lib_name}
   ${mspack_lib_name}
   ${uriparser_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 )
 

@@ -919,7 +919,7 @@ Driver::~Driver ()
     {
       if (pOptions != 0 && pOptions->clean)
 	{
-	  Directory::SetCurrentDirectory (pOptions->startDirectory);
+	  Directory::SetCurrentDirectoryA (pOptions->startDirectory);
 	}
       if (madeTempDirectory)
 	{
@@ -1988,11 +1988,11 @@ Driver::RunViewer ()
   if (pOptions->viewerOptions.GetArgc() == 0)
     {
       pApplication->Verbose (T_("Opening %s..."), Q_(pathDest));
-      if (ShellExecute(0,
-		       "open",
-		       pathDest.Get(),
+      if (ShellExecuteW(0,
+		       L"open",
+		       pathDest.ToWideCharString().c_str(),
 		       0,
-		       pOptions->startDirectory.Get(),
+		       pOptions->startDirectory.ToWideCharString().c_str(),
 		       SW_SHOW)
 	  <= reinterpret_cast<HINSTANCE>(32))
 	{
@@ -2001,10 +2001,10 @@ Driver::RunViewer ()
     }
   else
     {
-      char szExecutable[BufferSizes::MaxPath];
-      if (FindExecutable(pathDest.Get(),
-			 pOptions->startDirectory.Get(),
-			 szExecutable)
+      wchar_t szExecutable[BufferSizes::MaxPath];
+      if (FindExecutableW(pathDest.ToWideCharString().c_str(),
+			  pOptions->startDirectory.ToWideCharString().c_str(),
+			  szExecutable)
 	  <= reinterpret_cast<HINSTANCE>(32))
 	{
 	  FatalError (T_("The viewer could not be located."));
@@ -2043,7 +2043,7 @@ Driver::Run ()
   if (pOptions->clean)
     {
       pApplication->Verbose ("cd %s", Q_(scratchDirectory));
-      Directory::SetCurrentDirectory (scratchDirectory);
+      Directory::SetCurrentDirectoryA (scratchDirectory);
     }
 
   for (int i = 0; i < pOptions->maxIterations; ++ i)

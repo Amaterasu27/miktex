@@ -22,6 +22,7 @@
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 // Copyright (C) 2009 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2009 William Bader <williambader@hotmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -828,6 +829,7 @@ SplashOutputDev::SplashOutputDev(SplashColorMode colorModeA,
   vectorAntialias = allowAntialias &&
 		      globalParams->getVectorAntialias() &&
 		      colorMode != splashModeMono1;
+  enableFreeTypeHinting = gFalse;
   setupScreenParams(72.0, 72.0);
   reverseVideo = reverseVideoA;
   if (paperColorA != NULL) {
@@ -937,7 +939,7 @@ void SplashOutputDev::startDoc(XRef *xrefA) {
 #endif
 #if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 				    globalParams->getEnableFreeType(),
-				    globalParams->getForceNoFTAutoHinting(),
+				    enableFreeTypeHinting,
 #endif
 				    allowAntialias &&
 				      globalParams->getAntialias() &&
@@ -1971,7 +1973,7 @@ void SplashOutputDev::endMaskClip(GfxState * state) {
 
 void SplashOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
 				    int width, int height, GBool invert,
-				    GBool inlineImg, GBool interpolate) {
+				    GBool interpolate, GBool inlineImg) {
   double *ctm;
   SplashCoord mat[6];
   SplashOutImageMaskData imgMaskData;
@@ -2988,10 +2990,10 @@ void SplashOutputDev::setSoftMask(GfxState * /*state*/, double * /*bbox*/,
   if (yMax + ty > bitmap->getHeight()) yMax = bitmap->getHeight() - ty;
   for (y = 0; y < yMax; ++y) {
     for (x = 0; x < xMax; ++x) {
-      tBitmap->getPixel(x, y, color);
       if (alpha) {
-	//~ unimplemented
+	p[x] = tBitmap->getAlpha(x, y);
       } else {
+	tBitmap->getPixel(x, y, color);
 	// convert to luminosity
 	switch (colorMode) {
 	case splashModeMono1:
@@ -3105,3 +3107,8 @@ void SplashOutputDev::setVectorAntialias(GBool vaa) {
   splash->setVectorAntialias(vaa);
 }
 #endif
+
+void SplashOutputDev::setFreeTypeHinting(GBool enable)
+{
+  enableFreeTypeHinting = enable;
+}

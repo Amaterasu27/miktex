@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebAppInputLine.inl:			-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -119,10 +119,17 @@ miktexopenoutputfile (/*[in]*/ FileType &		f,
   // must open with read/write sharing flags
   // cf. bug 2006511
   MiKTeX::Core::FileShare share = MiKTeX::Core::FileShare::ReadWrite;
-  return (THEAPP.OpenOutputFile(*static_cast<C4P::FileRoot*>(&f),
+  MiKTeX::Core::PathName outPath;
+  bool done = THEAPP.OpenOutputFile(*static_cast<C4P::FileRoot*>(&f),
 				THEAPP.GetNameOfFile().Get(),
 				share,
-				text));
+				text,
+				outPath);
+  if (done)
+  {
+    THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
+  }
+  return (done);
 }
 
 MIKTEXMF_END_NAMESPACE;

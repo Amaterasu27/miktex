@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -71,6 +71,10 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
+
+target_link_libraries(${zlib_dll_name}
+  ${utf8wrap_dll_name}
+)
 
 set_target_properties(${zlib_dll_name}
   PROPERTIES

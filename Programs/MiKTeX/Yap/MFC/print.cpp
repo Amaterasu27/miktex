@@ -185,7 +185,7 @@ DviView::OnFileDvips ()
 	  pr.nEvenOdd = PrintRange::OddOnly;
 	  break;
 	}
-      PrintPostScript (CT2A(pDoc->GetPathName()),
+      PrintPostScript (TU_(pDoc->GetPathName()),
 		       dlg.GetPrinterName(),
 		       pr);
       g_pYapConfig->Save ();

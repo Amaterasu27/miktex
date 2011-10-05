@@ -98,9 +98,9 @@ MpmView::InsertColumn (/*[in]*/ int		colIdx,
 {
   CListCtrl & listControl = GetListCtrl();
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -255,6 +255,10 @@ MpmView::FillListView ()
   sortOrder = 1;
   clickedColumn = 0;
   GetListCtrl().SortItems (CompareItems, reinterpret_cast<LPARAM>(this));
+  if (Utils::RunningOnAServer())
+  {
+    UI::MFC::GiveBackDialog (0);
+  }      
 }
 
 /* _________________________________________________________________________
@@ -444,8 +448,8 @@ MpmView::OnButtonSearchClicked ()
 	  // <todo>
 	  match =
 	    (searchWords.GetLength() == 0
-	     || (packageInfo.title.find(CT2A(searchWords)) != string::npos
-		 || (packageInfo.description.find(CT2A(searchWords))
+	     || (packageInfo.title.find(TU_(searchWords)) != string::npos
+		 || (packageInfo.description.find(TU_(searchWords))
 		     != string::npos)));
 	  // </todo>
 	  if (! match)
@@ -461,7 +465,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.docFiles.begin();
@@ -469,7 +473,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      for (it = packageInfo.sourceFiles.begin();
@@ -477,7 +481,7 @@ MpmView::OnButtonSearchClicked ()
 		   ++ it)
 		{
 		  found =
-		    PathName::Match(CT2A(fileNamePattern),
+		    PathName::Match(TU_(fileNamePattern),
 				    PathName(*it).RemoveDirectorySpec());
 		}
 	      match = found;
@@ -521,7 +525,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   lvitem.mask = LVIF_TEXT | LVIF_PARAM;
   lvitem.iSubItem = 0;
   lvitem.lParam = idx;
-  CString deploymentName (packageInfo.deploymentName.c_str());
+  CharBuffer<wchar_t> deploymentName = Utils::UTF8ToWideChar(packageInfo.deploymentName.c_str());
   lvitem.pszText = deploymentName.GetBuffer();
   if (listctrl.InsertItem(&lvitem) < 0)
     {
@@ -531,7 +535,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
   // column 1
   lvitem.mask = LVIF_TEXT;
   lvitem.iSubItem = 1;
-  CString str (pManager->GetContainerPath(packageInfo.deploymentName, true).c_str());
+  CharBuffer<wchar_t> str = Utils::UTF8ToWideChar(pManager->GetContainerPath(packageInfo.deploymentName, true).c_str());
   lvitem.pszText = str.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {
@@ -577,7 +581,7 @@ MpmView::InsertItem (/*[in]*/ int			idx,
 
   // column 5
   lvitem.iSubItem = 5;
-  CString title (packageInfo.title.c_str());
+  CharBuffer<wchar_t> title = Utils::UTF8ToWideChar(packageInfo.title.c_str());
   lvitem.pszText = title.GetBuffer();
   if (! listctrl.SetItem(&lvitem))
     {

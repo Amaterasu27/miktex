@@ -1,7 +1,7 @@
 /* miktex/KPSE/Emulation.h: kpathsea emulation			-*- C++ -*-
 
    Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2011 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -306,10 +306,12 @@ typedef struct kpathsea_instance
 
 #define kpse_make_tex_discard_errors kpse_def_inst.make_tex_discard_errors
 
-#if defined(program_invocation_name)
-#  undef program_invocation_name
+#define kpse_invocation_name kpse_def_inst.invocation_name
+
+#if 1 && ! defined(program_invocation_name)
+#  define program_invocation_name kpse_def_inst.invocation_name
 #endif
-#define program_invocation_name kpse_def_inst.invocation_name
+
 #endif
 
 #if defined(__cplusplus)
@@ -337,7 +339,7 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define START_FATAL()						\
   do {								\
-    fprintf (stderr, "%s: fatal: ", program_invocation_name);
+    fprintf (stderr, "%s: fatal: ", kpse_invocation_name);
 
 #define END_FATAL()				\
     fputs (".\n", stderr);			\
@@ -367,7 +369,7 @@ MIKTEX_END_EXTERN_C_BLOCK
 
 #define FATAL_PERROR(str)				\
   do {							\
-    fprintf (stderr, "%s: ", program_invocation_name);	\
+    fprintf (stderr, "%s: ", kpse_invocation_name);	\
     perror (str);					\
     miktex_exit (1);					\
   } while (0)
@@ -428,6 +430,8 @@ MIKTEX_END_EXTERN_C_BLOCK
 #if defined(KPSE_COMPAT_API)
 #  define xputenv(var, value) kpathsea_xputenv(kpse_def, var, value)
 #endif
+
+#define xgetcwd() miktex_xgetcwd()
 
 /* _________________________________________________________________________
 
@@ -880,8 +884,10 @@ miktex_kpathsea_xputenv (/*in*/ kpathsea	kpse,
 			 /*[in]*/ const char *	lpszVarName,
 			 /*[in]*/ const char *	lpszValue);
 
+#if WITH_CONTEXT_SUPPORT
 MIKTEXKPSCEEAPI(char *)
 miktex_kpsemu_create_texmf_cnf ();
+#endif
 
 MIKTEXKPSCEEAPI(char *)
 miktex_concatn (/*[in]*/ const char * lpsz1, ...);
@@ -949,6 +955,9 @@ miktex_xftello (/*[in]*/ FILE *		pfile,
 MIKTEXKPSCEEAPI(MIKTEX_INT64)
 miktex_xftello64 (/*[in]*/ FILE *	pfile,
 	          /*[in]*/ const char *	lpszFileName);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_xgetcwd ();
 
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK

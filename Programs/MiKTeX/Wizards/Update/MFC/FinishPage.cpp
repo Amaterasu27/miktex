@@ -46,6 +46,13 @@ FinishPage::FinishPage()
     visitWebSite (BST_CHECKED),
     pSheet (0)
 {
+#if HAVE_MIKTEX_USER_INFO
+  MiKTeXUserInfo info;
+  if (SessionWrapper(true)->TryGetMiKTeXUserInfo(info) && info.IsMember())
+  {
+    visitWebSite = BST_UNCHECKED;
+  }
+#endif
   m_psp.dwFlags |= PSP_HIDEHEADER;
 }
 

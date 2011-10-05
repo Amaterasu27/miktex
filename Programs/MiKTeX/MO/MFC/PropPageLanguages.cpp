@@ -92,9 +92,9 @@ PropPageLanguages::InsertColumn (/*[in]*/ int		colIdx,
 				 /*[in]*/ const char *	lpszLongest)
 {
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UT_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UT_(lpszLongest)),
 			       colIdx)
       < 0)
   {
@@ -521,12 +521,12 @@ PropPageLanguages::RefreshRow (/*[in]*/ int idx)
 
   int colIdx = 0;
 
-  if (! listControl.SetItemText(idx, colIdx ++, CA2T(lang.key.c_str())))
+  if (! listControl.SetItemText(idx, colIdx ++, UT_(lang.key.c_str())))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }
 
-  if (! listControl.SetItemText(idx, colIdx ++, CA2T(lang.synonyms.c_str())))
+  if (! listControl.SetItemText(idx, colIdx ++, UT_(lang.synonyms.c_str())))
   {
     FATAL_WINDOWS_ERROR ("CListCtrl::SetItemText", 0);
   }

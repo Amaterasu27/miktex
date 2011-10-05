@@ -218,9 +218,9 @@ InfoListPage::CreateReport ()
     {
     case SetupTask::Download:
       info += (T_(_T("Download ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + CA2T(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
-	       + TAB + CA2T(theApp.localPackageRepository.Get()));
+	       + TAB + UT_(theApp.localPackageRepository.Get()));
       break;
     case SetupTask::InstallFromCD:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from CD/DVD")));
@@ -229,21 +229,21 @@ InfoListPage::CreateReport ()
       if (theApp.prefabricated)
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" to ")) + CRLF
-		   + TAB + CA2T(theApp.GetInstallRoot().Get()));
+		   + TAB + UT_(theApp.GetInstallRoot().Get()));
 	}
       else
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-		   + TAB + CA2T(theApp.localPackageRepository.Get()) + CRLF
+		   + TAB + UT_(theApp.localPackageRepository.Get()) + CRLF
 		   + T_(_T(" to ")) + CRLF
-		   + TAB + CA2T(theApp.GetInstallRoot().Get()));
+		   + TAB + UT_(theApp.GetInstallRoot().Get()));
 	}
       break;
     case SetupTask::InstallFromRemoteRepository:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + CA2T(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
-	       + TAB + CA2T(theApp.GetInstallRoot().Get()));
+	       + TAB + UT_(theApp.GetInstallRoot().Get()));
       break;
     case SetupTask::PrepareMiKTeXDirect:
       info += T_("Prepare to run MiKTeX from ");

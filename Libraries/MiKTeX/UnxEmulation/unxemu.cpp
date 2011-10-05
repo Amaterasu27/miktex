@@ -1,6 +1,6 @@
 /* unxemu.cpp:
 
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2011 Christian Schenk
 
    This file is part of the MiKTeX UNXEMU Library.
 
@@ -32,8 +32,10 @@ struct DIR_
 {
   DirectoryLister * pLister;
   struct dirent direntry;
+  PathName path;
   DIR_ (/*[in]*/ const char * lpszPath)
-    : pLister (DirectoryLister::Open(lpszPath))
+    : path (lpszPath),
+      pLister (DirectoryLister::Open(lpszPath))
   {
   }
   ~DIR_ ()
@@ -52,8 +54,10 @@ struct WDIR_
 {
   DirectoryLister * pLister;
   struct wdirent direntry;
+  PathName path;
   WDIR_ (/*[in]*/ const wchar_t * lpszPath)
-    : pLister (DirectoryLister::Open(lpszPath))
+    : path (lpszPath),
+      pLister (DirectoryLister::Open(lpszPath))
   {
   }
   ~WDIR_ ()
@@ -173,6 +177,36 @@ wreaddir (/*[in]*/ WDIR * pDir)
 		      / sizeof(pDir->direntry.d_name[0])),
 		     directoryEntry.wname.c_str());
   return (&pDir->direntry);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   rewinddir
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(void)
+rewinddir (/*[in]*/ DIR * pDir)
+{
+  C_FUNC_BEGIN ();
+  pDir->pLister->Close ();
+  delete pDir->pLister;
+  pDir->pLister = DirectoryLister::Open(pDir->path);
+  C_FUNC_END ();
+}
+
+/* _________________________________________________________________________
+
+   wrewinddir
+   _________________________________________________________________________ */
+
+MIKTEXUNXCEEAPI(void)
+wrewinddir (/*[in]*/ WDIR * pDir)
+{
+  C_FUNC_BEGIN ();
+  pDir->pLister->Close ();
+  delete pDir->pLister;
+  pDir->pLister = DirectoryLister::Open(pDir->path);
   C_FUNC_END ();
 }
 

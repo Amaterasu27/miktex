@@ -577,10 +577,11 @@ PropPageTeXMFRoots::InsertColumn (/*[in]*/ int		colIdx,
 				  /*[in]*/ const char *	lpszLabel,
 				  /*[in]*/ const char *	lpszLongest)
 {
+  MIKTEX_ASSERT (_UNICODE);
   if (listControl.InsertColumn(colIdx,
-			       CA2T(lpszLabel),
+			       UW_(lpszLabel),
 			       LVCFMT_LEFT,
-			       listControl.GetStringWidth(CA2T(lpszLongest)),
+			       listControl.GetStringWidth(UW_(lpszLongest)),
 			       colIdx)
       < 0)
     {
@@ -765,7 +766,8 @@ PropPageTeXMFRoots::Refresh ()
     lvitem.mask = LVIF_TEXT | LVIF_PARAM;
     lvitem.iSubItem = 0;
     CString compacted;
-    if (! PathCompactPathEx(compacted.GetBuffer(BufferSizes::MaxPath), CA2T(root.Get()), 45, 0))
+    MIKTEX_ASSERT (_UNICODE);
+    if (! PathCompactPathEx(compacted.GetBuffer(BufferSizes::MaxPath), root.ToWideCharString().c_str(), 45, 0))
     {
       compacted = root.Get();
     }
@@ -1038,9 +1040,10 @@ when MiKTeX is updated.");
 	  info += T_("\r\n\r\n\
 This directory can be used for local additions.");
 	}
+      MIKTEX_ASSERT (_UNICODE);
       Utils::CopyString (pInfoTip->pszText,
 			 pInfoTip->cchTextMax,
-			 CA2T(info.c_str()));
+			 UW_(info.c_str()));
     }
   catch (const MiKTeXException & e)
     {

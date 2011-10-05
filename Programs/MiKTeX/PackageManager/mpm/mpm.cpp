@@ -1,6 +1,6 @@
 /* mpm.cpp: MiKTeX Package Manager (console version)
 
-   Copyright (C) 2003-2009 Christian Schenk
+   Copyright (C) 2003-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -668,7 +668,7 @@ Application::Message (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cout << Utils::FormatString(lpszFormat, arglist);
+  printf ("%s", Utils::FormatString(lpszFormat, arglist).c_str());
   va_end (arglist);
 }
 
@@ -687,7 +687,7 @@ Application::Verbose (/*[in]*/ const char *	lpszFormat,
     }
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cout << Utils::FormatString(lpszFormat, arglist);
+  printf ("%s", Utils::FormatString(lpszFormat, arglist).c_str());
   va_end (arglist);
 }
 
@@ -703,8 +703,7 @@ Application::Error (/*[in]*/ const char *		lpszFormat,
 {
   va_list arglist;
   va_start (arglist, lpszFormat);
-  cerr << "mpm" << ": "
-       << Utils::FormatString(lpszFormat, arglist) << endl;
+  fprintf (stderr, "mpm: %s\n", Utils::FormatString(lpszFormat, arglist).c_str());
   va_end (arglist);
   throw (1);
 }
@@ -890,12 +889,12 @@ Application::FindConflicts ()
     {
       if (it->second.size() > 1)
 	{
-	  cout << it->first << ":" << endl;
+	  printf ("%s:\n", it->first.c_str());
 	  for (vector<string>::const_iterator it2 = it->second.begin();
 	       it2 != it->second.end();
 	       ++ it2)
 	    {
-	      cout << "  " << *it2 << endl;
+	      printf ("  %s\n", it2->c_str());
 	    }
 	}
     }
@@ -1119,7 +1118,7 @@ Application::FindUpdates ()
 	   it != updates.end();
 	   ++ it)
 	{
-	  cout << it->deploymentName << '\n';
+	  printf ("%s\n", it->deploymentName.c_str());
 	}
     }
 }
@@ -1270,26 +1269,24 @@ Application::List (/*[in]*/ OutputFormat	outputFormat,
     {
       if (outputFormat == OutputFormat::Listing)
 	{
-	  cout << (it->IsInstalled() ? 'i' : '-')
-	       << "  " << setw(5) << static_cast<int>(it->GetNumFiles())
-	       << " "
-	       << setw(10) << left << static_cast<int>(it->GetSize())
-	       << resetiosflags(ios_base::left)
-	       << "  " << it->deploymentName
-	       << endl;
+	  printf ("%c %.5d %10d  %s\n", 
+	    it->IsInstalled() ? 'i' : '-',
+	    static_cast<int>(it->GetNumFiles()),
+	    static_cast<int>(it->GetSize()),
+	    it->deploymentName.c_str());
 	}
       else if (outputFormat == OutputFormat::CSV)
 	{
 	  string path =
 	    pPackageManager->GetContainerPath(it->deploymentName, false);
 	  string directories = GetDirectories(it->deploymentName);
-	  cout << path << '\\' << it->deploymentName << ','
-	       << directories << '\n';
+	  printf ("%s\\%s,%s\n",
+	    path.c_str(),
+	    it->deploymentName.c_str(), directories.c_str());
 	}
       else if (outputFormat == OutputFormat::DeploymentNames)
 	{
-	  cout << it->deploymentName
-	       << endl;
+	  printf ("%s\n", it->deploymentName.c_str());
 	}
     }
   pIter->Dispose ();
@@ -1315,7 +1312,7 @@ Application::ListRepositories (/*[in]*/ OutputFormat outputFormat)
        it != repositories.end();
        ++ it)
     {
-      cout << it->url << '\n';
+      printf ("%s\n", it->url.c_str());
     }
 }
 
@@ -1327,7 +1324,7 @@ Application::ListRepositories (/*[in]*/ OutputFormat outputFormat)
 void
 Application::PickRepositoryUrl ()
 {
-  cout << pPackageManager->PickRepositoryUrl() << endl;
+  printf ("%s\n", pPackageManager->PickRepositoryUrl().c_str());
 }
 
 /* _________________________________________________________________________
@@ -1349,7 +1346,7 @@ Application::PrintFiles (/*[in]*/ const vector<string> & files)
 	  disp = *it;
 	}
       path += disp;
-      cout << "  " << path.ToString() << '\n';
+      printf ("  %s\n", path.ToString().c_str());
     }
 }
 
@@ -1362,21 +1359,21 @@ void
 Application::PrintPackageInfo (/*[in]*/ const string & deploymentName)
 {
   PackageInfo packageInfo = pPackageManager->GetPackageInfo(deploymentName);
-  cout << T_("name: ") << packageInfo.deploymentName << '\n'
-       << T_("title: ") << packageInfo.title << '\n';
+  printf (T_("name: %s\n"), packageInfo.deploymentName.c_str());
+  printf (T_("title: %s\n"), packageInfo.title.c_str());
   if (packageInfo.runFiles.size() > 0)
     {
-      cout << T_("run-time files:\n");
+      printf (T_("run-time files:\n"));
       PrintFiles (packageInfo.runFiles);
     }
   if (packageInfo.docFiles.size() > 0)
     {
-      cout << T_("documentation files:\n");
+      printf (T_("documentation files:\n"));
       PrintFiles (packageInfo.docFiles);
     }
   if (packageInfo.sourceFiles.size() > 0)
     {
-      cout << T_("source files:\n");
+      printf (T_("source files:\n"));
       PrintFiles (packageInfo.sourceFiles);
     }
 }
@@ -1733,18 +1730,16 @@ Application::Main (/*[in]*/ int			argc,
 
   if (optVersion)
     {
-      cout
-	<< (Utils::MakeProgramVersionString
+      printf ("%s\n", Utils::MakeProgramVersionString
 	    (THE_NAME_OF_THE_GAME,
 	     VersionNumber(MIKTEX_MAJOR_VERSION,
 			   MIKTEX_MINOR_VERSION,
 			   MIKTEX_COMP_J2000_VERSION,
-			   0)))
-	<< T_("\n\
-Copyright (C) 2005-2009 Christian Schenk\n\
+			   0)).c_str());
+      printf (T_("\
+Copyright (C) 2005-2011 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
-	<< endl;
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       return;
     }
 
@@ -1947,24 +1942,41 @@ Application::SignalHandler (/*[in]*/ int signalToBeHandled)
    _________________________________________________________________________ */
 
 int
+#if defined(_UNICODE)
+wmain (/*[in]*/ int			argc,
+       /*[in]*/ const wchar_t **	argv)
+#else
 main (/*[in]*/ int		argc,
       /*[in]*/ const char **	argv)
+#endif
 {
 #if defined(MIKTEX_WINDOWS)
   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
   if (FAILED(hr))
     {
-      cerr << "mpm" << ": "
-	   << T_("The COM library could not be initialized.")
-	   << endl;
+      fprintf (stderr, T_("mpm: The COM library could not be initialized.\n"));
       return (1);
     }
 #endif
   int retCode = 0;
   try
     {
+      vector<string> utf8args;
+      utf8args.reserve (argc);
+      vector<const char *> newargv;
+      newargv.reserve (argc + 1);
+      for (int idx = 0; idx < argc; ++ idx)
+      {
+#if defined(_UNICODE)
+	utf8args.push_back (Utils::WideCharToUTF8(argv[idx]));
+#else
+	utf8args.push_back (Utils::AnsiToUTF8(argv[idx]));
+#endif
+	newargv.push_back (utf8args[idx].c_str());
+      }
+      newargv.push_back (0);
       Application app;
-      app.Main (argc, argv);
+      app.Main (argc, &newargv[0]);
     }
   catch (const MiKTeXException & e)
     {

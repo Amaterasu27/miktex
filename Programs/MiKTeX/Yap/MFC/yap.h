@@ -21,6 +21,7 @@
 #pragma once
 
 #include "resource.h"
+#include "SplashWindow.h"
 
 #define YAP_TRACE_FLAGS_LVL_1			\
   MIKTEX_TRACE_ERROR ","			\
@@ -143,6 +144,13 @@ const bool DEFAULT_bRenderGraphicsInBackground = true;
 #define T_(x) MIKTEXTEXT(x)
 
 #define Q_(x) MiKTeX::Core::Quoter<char>(x).Get()
+
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+
+#define TU_(x) MiKTeX::Core::CharBuffer<char>(x).GetBuffer()
+#define UT_(x) MiKTeX::Core::CharBuffer<wchar_t>(x).GetBuffer()
 
 /* _________________________________________________________________________
 
@@ -325,6 +333,9 @@ public:
 
 public:
   Units unit;
+
+public:
+  bool showSplashWindow;
 
 public:
   YapConfig ();
@@ -671,6 +682,9 @@ public:
 
 private:
   SessionWrapper pSession;
+
+private:
+  SplashWindow splashWindow;
 
 public:
   auto_ptr<TraceStream> trace_yap;

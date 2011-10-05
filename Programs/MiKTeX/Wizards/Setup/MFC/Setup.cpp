@@ -118,7 +118,7 @@ public:
    _________________________________________________________________________ */
 
 void
-AddArgument (/*[in]*/ const CString &	argument,
+AddArgument (/*[in]*/ const string &	argument,
 	     /*[in,out]*/ int &		argc,
 	     /*[in,out]*/ char ** &	argv,
 	     /*[in,out]*/ int &		argMax)
@@ -130,7 +130,7 @@ AddArgument (/*[in]*/ const CString &	argument,
 	reinterpret_cast<char**>(realloc(argv,
 					 argMax * sizeof(argv[0])));
     }
-  argv[ argc++ ] = strdup(CT2A(argument));
+  argv[ argc++ ] = strdup(argument.c_str());
 }
 
 /* _________________________________________________________________________
@@ -149,9 +149,9 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
 
   int argMax = 0;
 
-  AddArgument (CString(lpszExeName), argc, argv, argMax);
+  AddArgument (string(lpszExeName), argc, argv, argMax);
 
-  CString arg;
+  string arg;
 
   bool copying = false;
   bool inQuotedArg = false;
@@ -788,7 +788,7 @@ ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
   reader.Close ();
   int argc;
   char ** argv;
-  GetArguments (commandLine.c_str(), CT2A(AfxGetAppName()), argc, argv);
+  GetArguments (commandLine.c_str(), TU_(AfxGetAppName()), argc, argv);
   ParseSetupCommandLine (argc, argv, cmdinfo);
   FreeArguments (argc, argv);
   return (true);
@@ -817,7 +817,7 @@ SetupWizardApplication::SetupWizardApplication ()
     paperSize ("A4"),
     setupTask (SetupTask::None)
 {
-  SetAppID (CA2T("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
+  SetAppID (UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -1139,7 +1139,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 
   // startup menu item (default: "MiKTeX X.Y")
   theApp.folderName = cmdinfo.folderName;
-  if (theApp.folderName.empty())
+  if (theApp.folderName.Empty())
     {
       theApp.folderName =
 	MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
@@ -1364,11 +1364,11 @@ CloseLog (/*[in]*/ bool cancel)
   CTime t = CTime::GetCurrentTime();
   if (theApp.setupTask == SetupTask::Download)
     {
-      pathLogFile += CT2A(t.Format(_T("download-%Y-%m-%d-%H-%M")));
+      pathLogFile += TU_(t.Format(_T("download-%Y-%m-%d-%H-%M")));
     }
   else
     {
-      pathLogFile += CT2A(t.Format(_T("setup-%Y-%m-%d-%H-%M")));
+      pathLogFile += TU_(t.Format(_T("setup-%Y-%m-%d-%H-%M")));
     }
   pathLogFile.SetExtension (".log");
 
@@ -1506,7 +1506,7 @@ SetupWizardApplication::InitInstance ()
       // get command-line arguments
       int argc;
       char ** argv;
-      GetArguments (CT2A(m_lpCmdLine), CT2A(AfxGetAppName()), argc, argv);
+      GetArguments (TU_(m_lpCmdLine), TU_(AfxGetAppName()), argc, argv);
       SetupCommandLineInfo cmdinfo;
       wchar_t szSetupPath[BufferSizes::MaxPath];
       if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath)
@@ -1702,7 +1702,7 @@ IsPathRegistered (/*[in]*/ HKEY		hkeyRoot,
 		  /*[in]*/ const char *	lpszKey)
 {
   HKEY hkey;
-  LONG result = RegOpenKeyExW(hkeyRoot, CA2W(lpszKey), 0, KEY_QUERY_VALUE, &hkey);
+  LONG result = RegOpenKeyExW(hkeyRoot, UW_(lpszKey), 0, KEY_QUERY_VALUE, &hkey);
   bool found = false;
   if (result == ERROR_SUCCESS)
     {
@@ -1719,7 +1719,7 @@ IsPathRegistered (/*[in]*/ HKEY		hkeyRoot,
       RegCloseKey (hkey);
       if (result == ERROR_SUCCESS)
 	{
-	  found = ContainsBinDir(CW2A(value.Get()));
+	  found = ContainsBinDir(WU_(value.Get()));
 	}
     }
   return (found);
@@ -1834,18 +1834,18 @@ AddUninstallerRegValue (/*[in]*/ HKEY		hkey,
 			/*[in]*/ const char *	lpszValueName,
 			/*[in]*/ const char *	lpszValue)
 {
-  CA2W value (lpszValue);
+  CStringW value (UW_(lpszValue));
   LONG result =
     RegSetValueExW
     (hkey,
-    CA2T(lpszValueName),
+    UW_(lpszValueName),
     0,
     REG_SZ,
     reinterpret_cast<const BYTE *>(static_cast<const wchar_t *>(value)),
     static_cast<DWORD>((wcslen(value) + 1) * sizeof(wchar_t)));
   if (result != ERROR_SUCCESS)
   {
-    FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
+    FATAL_WINDOWS_ERROR_2 ("RegSetValueExW", result, 0);
   }
   ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
 }
@@ -1858,7 +1858,7 @@ AddUninstallerRegValue (/*[in]*/ HKEY		hkey,
   LONG result =
     RegSetValueExW
     (hkey,
-     CA2W(lpszValueName),
+     UW_(lpszValueName),
      0,
      REG_DWORD,
      reinterpret_cast<const BYTE *>(&value),
@@ -1920,7 +1920,7 @@ RegisterUninstaller ()
   DWORD disp;
   LONG result =
     RegCreateKeyExW(UNINST_HKEY_ROOT,
-		    CA2W(UNINST_REG_PATH),
+		    UW_(UNINST_REG_PATH),
 		    0,
 		    0,
 		    REG_OPTION_NON_VOLATILE,
@@ -2064,9 +2064,9 @@ RegisterPathNT ()
 
   HKEY hkey;
 
-  CA2W subkey (theApp.commonUserSetup
-    ? REGSTR_KEY_ENVIRONMENT_COMMON
-    : REGSTR_KEY_ENVIRONMENT_USER);
+  CStringW subkey (theApp.commonUserSetup
+    ? UW_(REGSTR_KEY_ENVIRONMENT_COMMON)
+    : UW_(REGSTR_KEY_ENVIRONMENT_USER));
 
   LONG result =
     RegOpenKeyExW((theApp.commonUserSetup
@@ -2194,16 +2194,16 @@ CreateProgramFolder ()
    Expand
    _________________________________________________________________________ */
 
-CString &
+CStringW &
 Expand (/*[in]*/ const char *	lpszSource,
-	/*[out]*/ CString &	dest)
+	/*[out]*/ CStringW &	dest)
 {
   dest = lpszSource;
   int pos;
-  while ((pos = dest.Find(_T("%MIKTEX_INSTALL%"))) >= 0)
+  while ((pos = dest.Find(L"%MIKTEX_INSTALL%")) >= 0)
     {
       dest.Delete (pos, 16);
-      dest.Insert (pos, CA2T(theApp.GetInstallRoot().Get()));
+      dest.Insert (pos, UW_(theApp.GetInstallRoot().Get()));
     }
   return (dest);
 }
@@ -2235,7 +2235,7 @@ CreateInternetShortcut (/*[in]*/ const PathName &	path,
       UNEXPECTED_CONDITION ("CreateInternetShortcut");
     }
 
-  hr = pURL->SetURL(CA2W(lpszUrl), 0);
+  hr = pURL->SetURL(UW_(lpszUrl), 0);
 
   if (FAILED(hr))
     {
@@ -2379,7 +2379,7 @@ CreateShellLink (/*[in]*/ const PathName &		pathFolder,
       
       if ((ld.flags & LD_USEDESC) != 0)
 	{
-	  hr = psl->SetDescription(CA2W(ld.lpszDescription));
+	  hr = psl->SetDescription(UW_(ld.lpszDescription));
 	  if (FAILED(hr))
 	    {
 	      Log (T_("IShellLinkW::SetDescription() failed (%08x)\n"), hr);
@@ -2535,11 +2535,11 @@ LogHeader ()
       UNEXPECTED_CONDITION ("LogHeader");
     }
   Log (T_("%s %s Report\n\n"),
-       static_cast<const char *>(CT2A(banner)),
+       static_cast<const char *>(TU_(banner)),
        MIKTEX_COMPONENT_VERSION_STR);
   CTime t = CTime::GetCurrentTime();
-  Log (T_("Date: %s\n"), static_cast<const char *>(CT2A(t.Format(_T("%A, %B %d, %Y")))));
-  Log (T_("Time: %s\n"), static_cast<const char *>(CT2A(t.Format(_T("%H:%M:%S")))));
+  Log (T_("Date: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%A, %B %d, %Y")))));
+  Log (T_("Time: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%H:%M:%S")))));
   Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
   if (IsWindowsNT())
     {
@@ -2654,7 +2654,7 @@ root directory %s does not exist.")),
   else
     {
       PathName uncRoot;
-      if (! Utils::GetUncRootFromPath(CT2A(str), uncRoot))
+      if (! Utils::GetUncRootFromPath(TU_(str), uncRoot))
 	{
 	  CString message;
 	  message.Format (T_(_T("The specified path is invalid because it is not \
@@ -2709,7 +2709,7 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 	  str += T_("Details: ");
 	  str += e.GetInfo();
 	}
-      AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
       Log (T_("\nAn error occurred:\n"));
       Log (T_("  source file: %s\n"), e.GetSourceFile().c_str());
       Log (T_("  source line: %d\n"), e.GetSourceLine());
@@ -2737,7 +2737,7 @@ ReportError (/*[in]*/ const exception & e)
       str += "\n\n";
       str += e.what();
       Log ("\n%s\n", str.c_str());
-      AfxMessageBox (CA2T(str.c_str()), MB_OK | MB_ICONSTOP);
+      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception &)
     {
@@ -2762,10 +2762,10 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.dwSchemeLength = 200;
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
-  if (! InternetCrackUrlW(CA2W(url.c_str()), 0, 0, &url_comp))
+  if (! InternetCrackUrlW(UW_(url.c_str()), 0, 0, &url_comp))
     {
       FATAL_WINDOWS_ERROR ("InternetCrackUrlW", 0);
     }
-  protocol = CW2A(szProtocol);
-  host = CW2A(szHost);
+  protocol = WU_(szProtocol);
+  host = WU_(szHost);
 }

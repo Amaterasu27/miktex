@@ -22,6 +22,11 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#if defined(MIKTEX)
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
+#endif
+
 #include "../fc-arch/fcarch.h"
 
 #ifdef HAVE_CONFIG_H
@@ -141,13 +146,6 @@ scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, 
      */
     while ((dir = FcStrListNext (list)))
     {
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-#  if ! defined(FC_MAX_FILE_LEN)
-#    define FC_MAX_FILE_LEN 4096
-#  endif
-	wchar_t wdirbuf[FC_MAX_FILE_LEN];
-        wchar_t * wdir = miktex_utf8_to_wide_char(dir, FC_MAX_FILE_LEN, wdirbuf);
-#endif
 	if (verbose)
 	{
 	    printf ("%s: ", dir);
@@ -168,11 +166,7 @@ scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, 
 	    continue;
 	}
 
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-	if (_wstat (wdir, &statb) == -1)
-#else
 	if (stat ((char *) dir, &statb) == -1)
-#endif
 	{
 	    switch (errno) {
 	    case ENOENT:
@@ -329,22 +323,8 @@ cleanCacheDirectory (FcConfig *config, FcChar8 *dir, FcBool verbose)
 	}
 	else
 	{
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-#  if ! defined(FC_MAX_FILE_LEN)
-#    define FC_MAX_FILE_LEN 4096
-#  endif
-	    wchar_t wdirbuf[FC_MAX_FILE_LEN];
-	    wchar_t * wdir;
-#endif
 	    target_dir = FcCacheDir (cache);
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-	    wdir = miktex_utf8_to_wide_char(target_dir, FC_MAX_FILE_LEN, wdirbuf);
-#endif
-#if defined(MIKTEX_WINDOWS) && MIKTEX_USE_UTF8_FILE_NAMES
-	    if (_wstat(wdir, &target_stat) < 0)
-#else
 	    if (stat ((char *) target_dir, &target_stat) < 0)
-#endif
 	    {
 		if (verbose)
 		    printf ("%s: %s: missing directory: %s \n",

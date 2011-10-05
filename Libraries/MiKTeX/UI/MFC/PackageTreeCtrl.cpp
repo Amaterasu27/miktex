@@ -639,7 +639,7 @@ PackageTreeCtrlImpl::DoContextMenu (/*[in]*/ CPoint	point,
 	PackageInfo packageInfo;
 	while (pIter->GetNext(packageInfo))
 	  {
-	    if (_tcsicmp(CA2T(packageInfo.displayName.c_str()),
+	    if (_tcsicmp(UT_(packageInfo.displayName.c_str()),
 			 dlg.GetName())
 		== 0)
 	      {

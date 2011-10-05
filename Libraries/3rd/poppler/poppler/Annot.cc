@@ -39,6 +39,7 @@
 #include <math.h>
 #include <assert.h>
 #include "goo/gmem.h"
+#include "goo/gstrtod.h"
 #include "GooList.h"
 #include "Error.h"
 #include "Object.h"
@@ -658,6 +659,9 @@ AnnotColor::AnnotColor(Array *array) {
       }
       obj1.free();
     }
+  } else {
+    values = NULL;
+    length = 0;
   }
 }
 
@@ -2228,8 +2232,6 @@ void AnnotWidget::layoutText(GooString *text, GooString *outBuf, int *i,
   int uLen, n;
   double dx, dy, ox, oy;
   GBool unicode = text->hasUnicodeMarker();
-  CharCodeToUnicode *ccToUnicode = font->getToUnicode();
-  ccToUnicode->decRefCnt();
   GBool spacePrev;              // previous character was a space
 
   // State for backtracking when more text has been processed than fits within
@@ -2293,19 +2295,28 @@ void AnnotWidget::layoutText(GooString *text, GooString *outBuf, int *i,
 
     if (noReencode) {
       outBuf->append(uChar);
-    } else if (ccToUnicode->mapToCharCode(&uChar, &c, 1)) {
-      if (font->isCIDFont()) {
-        // TODO: This assumes an identity CMap.  It should be extended to
-        // handle the general case.
-        outBuf->append((c >> 8) & 0xff);
-        outBuf->append(c & 0xff);
-      } else {
-        // 8-bit font
-        outBuf->append(c);
-      }
     } else {
-      fprintf(stderr,
-              "warning: layoutText: cannot convert U+%04X\n", uChar);
+      CharCodeToUnicode *ccToUnicode = font->getToUnicode();
+      if (!ccToUnicode) {
+        // This assumes an identity CMap.
+        outBuf->append((uChar >> 8) & 0xff);
+        outBuf->append(uChar & 0xff);
+      } else if (ccToUnicode->mapToCharCode(&uChar, &c, 1)) {
+        ccToUnicode->decRefCnt();
+        if (font->isCIDFont()) {
+          // TODO: This assumes an identity CMap.  It should be extended to
+          // handle the general case.
+          outBuf->append((c >> 8) & 0xff);
+          outBuf->append(c & 0xff);
+        } else {
+          // 8-bit font
+          outBuf->append(c);
+        }
+      } else {
+        ccToUnicode->decRefCnt();
+        fprintf(stderr,
+                "warning: layoutText: cannot convert U+%04X\n", uChar);
+      }
     }
 
     // If we see a space, then we have a linebreak opportunity.
@@ -2508,7 +2519,7 @@ void AnnotWidget::drawText(GooString *text, GooString *da, GfxFontDict *fontDict
       error(-1, "Invalid font name in 'Tf' operator in field's DA string");
     }
     tok = (GooString *)daToks->get(tfPos + 1);
-    fontSize = atof(tok->getCString());
+    fontSize = gatof(tok->getCString());
   } else {
     error(-1, "Missing 'Tf' operator in field's DA string");
   }
@@ -2867,7 +2878,7 @@ void AnnotWidget::drawListBox(GooString **text, GBool *selection,
       error(-1, "Invalid font name in 'Tf' operator in field's DA string");
     }
     tok = (GooString *)daToks->get(tfPos + 1);
-    fontSize = atof(tok->getCString());
+    fontSize = gatof(tok->getCString());
   } else {
     error(-1, "Missing 'Tf' operator in field's DA string");
   }
@@ -3525,18 +3536,23 @@ void AnnotMovie::initialize(XRef *xrefA, Catalog *catalog, Dict* dict) {
 
   if (dict->lookup("Movie", &movieDict)->isDict()) {
     Object obj2;
-    getFileSpecNameForPlatform(movieDict.dictLookup("F", &obj1), &obj2);
-    fileName = obj2.getString()->copy();
-    obj2.free();
+    if (getFileSpecNameForPlatform(movieDict.dictLookup("F", &obj1), &obj2)) {
+      fileName = obj2.getString()->copy();
+      obj2.free();
+    }
     obj1.free();
 
     if (movieDict.dictLookup("Aspect", &obj1)->isArray()) {
       Array* aspect = obj1.getArray();
       if (aspect->getLength() >= 2) {
 	Object tmp;
-	width = aspect->get(0, &tmp)->getInt();
+	if( aspect->get(0, &tmp)->isNum() ) {
+	  width = (int)floor( aspect->get(0, &tmp)->getNum() + 0.5 );
+	}
 	tmp.free();
-	height = aspect->get(1, &tmp)->getInt();
+	if( aspect->get(1, &tmp)->isNum() ) {
+	  height = (int)floor( aspect->get(1, &tmp)->getNum() + 0.5 );
+	}
 	tmp.free();
       }
     }

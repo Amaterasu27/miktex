@@ -56,7 +56,7 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 	  0,
 	  flags,
 	  szPath);
-  if (hr == E_INVALIDARG && (nFolder != nFallbackFolder))
+  if ((hr == E_FAIL || hr == E_INVALIDARG) && (nFolder != nFallbackFolder))
     {
       hr =
 	SHGetFolderPathW(0,
@@ -65,37 +65,31 @@ Utils::GetFolderPath (/*[in]*/ int	nFolder,
 	      flags,
 	      szPath);
     }
-  if (hr == S_FALSE)
+  if (hr == E_FAIL)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("A required file system folder does not exist."),
 			  NUMTOSTR(nFolder));
     }
   if (hr == E_INVALIDARG)
     {
-      FATAL_MIKTEX_ERROR ("Utils::GetFolderPathW",
+      FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("Unsupported Windows product."),
 			  NUMTOSTR(nFolder));
     }
+  if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+  {
+    FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
+      T_("A required file system folder cannot be accessed."),
+      NUMTOSTR(nFolder));
+  }
   if (hr != S_OK)
     {
       FATAL_MIKTEX_ERROR ("Utils::GetFolderPath",
 			  T_("A required file system path could not be retrieved."),
-			  NUMTOSTR(nFolder));
+			  (string(NUMTOSTR(nFolder)) + " (hr=" + NUMTOHEXSTR(hr) + ")").c_str());
     }
   return (szPath);
-}
-
-/* _________________________________________________________________________
-
-   MyGetFolderPath
-   _________________________________________________________________________ */
-
-MIKTEXSTATICFUNC(PathName)
-MyGetFolderPath (/*[in]*/ int	nFolder,
-		 /*[in]*/ bool	getCurrentPath)
-{
-  return (Utils::GetFolderPath(nFolder, nFolder, getCurrentPath));
 }
 
 /* _________________________________________________________________________
@@ -267,21 +261,34 @@ SessionImpl::DefaultConfig (/*[in]*/ MiKTeXConfiguration config,
     else
     {
       product = "MiKTeX";
-      ret.commonInstallRoot = MyGetFolderPath(CSIDL_PROGRAM_FILES, true);
-      ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+      wchar_t szProgramFiles[MAX_PATH];
+      if (SHGetFolderPathW(0, CSIDL_PROGRAM_FILES, 0, SHGFP_TYPE_CURRENT, szProgramFiles) == S_OK)
+      {
+	ret.commonInstallRoot = szProgramFiles;
+	ret.commonInstallRoot += "MiKTeX" " " MIKTEX_SERIES_STR;
+      }
     }
-    ret.commonDataRoot = MyGetFolderPath(CSIDL_COMMON_APPDATA, true);
-    ret.commonDataRoot += product;
-    ret.commonDataRoot += MIKTEX_SERIES_STR;
+    wchar_t szPath[MAX_PATH];
+    if (SHGetFolderPathW(0, CSIDL_COMMON_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.commonDataRoot =szPath;
+      ret.commonDataRoot += product;
+      ret.commonDataRoot += MIKTEX_SERIES_STR;
+    }
     ret.commonConfigRoot = ret.commonDataRoot;
-    ret.userDataRoot =
-      Utils::GetFolderPath(CSIDL_LOCAL_APPDATA, CSIDL_APPDATA, true);
-    ret.userDataRoot += product;
-    ret.userDataRoot += MIKTEX_SERIES_STR;
-    ret.userConfigRoot =
-      Utils::GetFolderPath(CSIDL_APPDATA, CSIDL_APPDATA, true);
-    ret.userConfigRoot += product;
-    ret.userConfigRoot += MIKTEX_SERIES_STR;
+    if (SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK
+        || SHGetFolderPathW(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.userDataRoot = szPath;
+      ret.userDataRoot += product;
+      ret.userDataRoot += MIKTEX_SERIES_STR;
+    }
+    if (SHGetFolderPathW(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, szPath) == S_OK)
+    {
+      ret.userConfigRoot = szPath;
+      ret.userConfigRoot += product;
+      ret.userConfigRoot += MIKTEX_SERIES_STR;
+    }
     ret.userInstallRoot = ret.userConfigRoot;
   }
   return (ret);
@@ -813,7 +820,7 @@ GetWindowsErrorMessage (/*[in]*/ unsigned long	functionResult,
     }
   AutoLocalMemory autoFree (pMessageBuffer);
   errorMessage =
-    Utils::WideCharToAnsi(reinterpret_cast<wchar_t *>(pMessageBuffer));
+    Utils::WideCharToUTF8(reinterpret_cast<wchar_t *>(pMessageBuffer));
   return (true);
 }
 
@@ -1297,8 +1304,8 @@ Utils::GetOSVersionString ()
        str += "Microsoft Windows";
        NeedBlank (str);
        if (osvi.dwMajorVersion == 6
-	   && (osvi.dwMinorVersion == 0
-	       || osvi.dwMinorVersion == 1))
+	   && (osvi.dwMinorVersion >= 0
+	       && osvi.dwMinorVersion <= 2))
 	 {
 	   if (osvi.wProductType == VER_NT_WORKSTATION)
 	     {
@@ -1310,6 +1317,10 @@ Utils::GetOSVersionString ()
 		 {
 		   str += "7";
 		 }
+	       else if (osvi.dwMinorVersion == 2)
+	       {
+		 str += "8";
+	       }
 	     }
 	   else
 	     {
@@ -1321,6 +1332,10 @@ Utils::GetOSVersionString ()
 		 {
 		   str += "Server 2008 R2";
 		 }
+	       else if (osvi.dwMinorVersion == 2)
+	       {
+		 str += "Server 8";
+	       }
 	     }
 	   PGPI pGPI =
 	     reinterpret_cast<PGPI>
@@ -1549,7 +1564,7 @@ Utils::GetOSVersionString ()
        if (osvi.szCSDVersion[0] != 0)
 	 {
 	   NeedBlank (str);
-	   str += Utils::WideCharToAnsi(osvi.szCSDVersion);
+	   str += Utils::WideCharToUTF8(osvi.szCSDVersion);
 	 }
 
        // build number
@@ -1579,6 +1594,24 @@ Utils::GetOSVersionString ()
      }
 
   return (str);
+}
+
+/* _________________________________________________________________________
+
+   Utils::RunningOnAServer
+   _________________________________________________________________________ */
+
+bool
+Utils::RunningOnAServer ()
+{
+  OSVERSIONINFOEXW osvi;
+  ZeroMemory (&osvi, sizeof(osvi));
+  osvi.dwOSVersionInfoSize = sizeof(osvi);
+  if (! GetVersionExW(reinterpret_cast<OSVERSIONINFOW*>(&osvi)))
+  {
+    UNSUPPORTED_PLATFORM ();
+  }
+  return (osvi.wProductType != VER_NT_WORKSTATION);
 }
 
 /* _________________________________________________________________________
@@ -1679,7 +1712,7 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	    {
 	      return (false);
 	    }
-	  Tokenizer tok (Utils::WideCharToAnsi(cBuffer).c_str(), ",");
+	  Tokenizer tok (Utils::WideCharToUTF8(cBuffer).c_str(), ",");
 	  if (tok.GetCurrent() == 0)
 	    {
 	      return (false);
@@ -1732,10 +1765,12 @@ SessionImpl::ShowManualPageAndWait (/*[in]*/ HWND		hWnd,
 PathName &
 PathName::SetToCurrentDirectory ()
 {
-  if (getcwd(GetBuffer(), static_cast<int>(GetCapacity())) == 0)
+  wchar_t buf[_MAX_PATH];
+  if (_wgetcwd(buf, _MAX_PATH) == 0)
     {
-      FATAL_CRT_ERROR ("getcwd", 0);
+      FATAL_CRT_ERROR ("_wgetcwd", 0);
     }
+  *this = buf;
   return (*this);
 }
 
@@ -2675,29 +2710,29 @@ void
 Utils::SetEnvironmentString (/*[in]*/ const char *	lpszValueName,
 			     /*[in]*/ const char *	lpszValue)
 {
-  const char * lpszOldValue = ::GetEnvironmentString(lpszValueName);
-  if (lpszOldValue != 0 && StringCompare(lpszOldValue, lpszValue, false) == 0)
-    {
-      return;
-    }
+  string oldValue;
+  if (::GetEnvironmentString(lpszValueName, oldValue) && StringCompare(oldValue.c_str(), lpszValue, false) == 0)
+  {
+    return;
+  }
   SessionImpl::GetSession()->trace_config->WriteFormattedLine
     ("core",
-     T_("setting env %s=%s"),
-     lpszValueName,
-     lpszValue);
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)
-  if (_putenv_s(lpszValueName, lpszValue) != 0)
-    {
-      FATAL_CRT_ERROR ("_putenv_s", lpszValueName);
-    }
+    T_("setting env %s=%s"),
+    lpszValueName,
+    lpszValue);
+#if defined(MIKTEX_WINDOWS) && defined(_MSC_VER)
+  if (_wputenv_s(UW_(lpszValueName), UW_(lpszValue)) != 0)
+  {
+    FATAL_CRT_ERROR ("_wputenv_s", lpszValueName);
+  }
 #else
   string str = lpszValueName;
   str += '=';
   str += lpszValue;
   if (putenv(str.c_str()) != 0)
-    {
-      FATAL_CRT_ERROR ("putenv", str.c_str());
-    }
+  {
+    FATAL_CRT_ERROR ("putenv", str.c_str());
+  }
 #endif
 }
 
@@ -2888,7 +2923,7 @@ Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
   HINSTANCE hInst =
     ShellExecuteURL(0,
 		    0,
-		    Utils::AnsiToWideChar(lpszUrl).c_str(),
+		    Utils::UTF8ToWideChar(lpszUrl).c_str(),
 		    0,
 		    0,
 		    SW_SHOWNORMAL);
@@ -2898,17 +2933,6 @@ Utils::ShowWebPage (/*[in]*/ const char * lpszUrl)
 			  T_("The web browser could not be started."),
 			  NUMTOSTR(reinterpret_cast<int>(hInst)));
     }
-}
-
-/* _________________________________________________________________________
-
-   Utils::RegisterMiKTeXUser
-   _________________________________________________________________________ */
-
-void
-Utils::RegisterMiKTeXUser ()
-{
-  ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
 }
 
 /* _________________________________________________________________________
@@ -3036,7 +3060,13 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
       0);
     if (len <= 0)
     {
-      FATAL_WINDOWS_ERROR ("MultiByteToWideChar", 0);
+      DWORD winError = GetLastError();
+      if (winError == ERROR_NO_UNICODE_TRANSLATION)
+      {
+	OutputDebugStringA ("Bad UTF8ToWideChar() input:");
+	OutputDebugStringA (lpszUtf8);
+      }
+      FATAL_WINDOWS_ERROR_2 ("MultiByteToWideChar", winError, 0);
     }
     sizeWideChar = len;
     return (0);
@@ -3061,13 +3091,13 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
 
 /* _________________________________________________________________________
 
-   WideCharToUTF8
+   Utils::WideCharToUTF8
    _________________________________________________________________________ */
 
-MIKTEXSTATICFUNC(char*)
-WideCharToUTF8 (/*[in]*/ const wchar_t *  lpszWideChar,
-		/*[in,out]*/ size_t &	  sizeUtf8,
-		/*[out]*/ char *	  lpszUtf8)
+char *
+Utils::WideCharToUTF8 (/*[in]*/ const wchar_t *	  lpszWideChar,
+		       /*[in,out]*/ size_t &	  sizeUtf8,
+		       /*[out]*/ char *		  lpszUtf8)
 {
   MIKTEX_ASSERT (sizeUtf8 == 0 || lpszUtf8 != 0);
   MIKTEX_ASSERT (sizeUtf8 != 0 || lpszUtf8 == 0);
@@ -3158,9 +3188,9 @@ string
 Utils::WideCharToUTF8 (/*[in]*/ const wchar_t * lpszWideChar)
 {
   size_t len = 0;
-  ::WideCharToUTF8 (lpszWideChar, len, 0);
+  WideCharToUTF8 (lpszWideChar, len, 0);
   CharBuffer<char, 200> buf (len);
-  ::WideCharToUTF8 (lpszWideChar, len, buf.GetBuffer());
+  WideCharToUTF8 (lpszWideChar, len, buf.GetBuffer());
   return (buf.Get());
 }
 
@@ -3175,7 +3205,7 @@ miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
 			  /*[out]*/ char *	    lpszUtf8)
 {
   C_FUNC_BEGIN();
-  return (WideCharToUTF8(lpszWideChar, sizeUtf8, lpszUtf8));
+  return (Utils::WideCharToUTF8(lpszWideChar, sizeUtf8, lpszUtf8));
   C_FUNC_END();
 }
 
@@ -3184,6 +3214,8 @@ miktex_wide_char_to_utf8 (/*[in]*/ const wchar_t *  lpszWideChar,
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 char *
 Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar,
 		       /*[out]*/ char *		lpszAnsi,
@@ -3212,18 +3244,22 @@ Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar,
     }
   return (lpszAnsi);
 }
+#endif
 
 /* _________________________________________________________________________
 
    Utils::WideCharToAnsi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 string
 Utils::WideCharToAnsi (/*[in]*/ const wchar_t * lpszWideChar)
 {
   CharBuffer<char, 512> buf (wcslen(lpszWideChar) + 1);
   return (WideCharToAnsi(lpszWideChar, buf.GetBuffer(), buf.GetCapacity()));
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -3332,6 +3368,8 @@ miktex_ansi_to_utf8 (/*[in]*/ const char *	lpszAnsi,
    miktex_utf8_to_ansi
    _________________________________________________________________________ */
 
+#if 0
+MIKTEXDEPRECATED
 MIKTEXCEEAPI(char*)
 miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
 		     /*[in]*/ size_t		sizeAnsi,
@@ -3343,6 +3381,7 @@ miktex_utf8_to_ansi (/*[in]*/ const char *	lpszUtf8,
   return (lpszAnsi);
   C_FUNC_END ();
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -3482,7 +3521,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 
   bool systemPathOkay = (
     ! Directory::Exists(commonBinDir)
-    || ::CheckPath(WA_(systemPath), commonBinDir, repairedSystemPath, systemPathCompetition));
+    || ::CheckPath(WU_(systemPath), commonBinDir, repairedSystemPath, systemPathCompetition));
 
   bool repaired = false;
 
@@ -3497,7 +3536,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	T_("Something is wrong with the system PATH:"));
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
-	WA_(systemPath.c_str()));
+	WU_(systemPath.c_str()));
     }
     else if (! systemPathOkay && repair)
     {
@@ -3507,7 +3546,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedSystemPath.c_str());
-      systemPath = AW_(repairedSystemPath.c_str());
+      systemPath = UW_(repairedSystemPath.c_str());
       winRegistry::SetRegistryValue (HKEY_LOCAL_MACHINE,
 				     REGSTR_KEY_ENVIRONMENT_COMMON,
 				     L"Path",
@@ -3522,7 +3561,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     {
       string repairedUserPath;
       bool userPathCompetition;
-      systemPathOkay = ::CheckPath(WA_(userPath), commonBinDir, repairedUserPath, userPathCompetition);
+      systemPathOkay = ::CheckPath(WU_(userPath), commonBinDir, repairedUserPath, userPathCompetition);
       if (! systemPathOkay && repair)
       {
 	SessionImpl::GetSession()->trace_error->WriteLine
@@ -3531,7 +3570,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
 	SessionImpl::GetSession()->trace_error->WriteLine
 	  ("core",
 	  repairedUserPath.c_str());
-	userPath = AW_(repairedUserPath);
+	userPath = UW_(repairedUserPath);
 	winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				       REGSTR_KEY_ENVIRONMENT_USER,
 				       L"Path",
@@ -3546,7 +3585,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
     bool userPathCompetition;
     userPathOkay = (
       ! Directory::Exists(userBinDir)
-      || ::CheckPath(WA_(userPath), userBinDir, repairedUserPath, userPathCompetition));
+      || ::CheckPath(WU_(userPath), userBinDir, repairedUserPath, userPathCompetition));
     if (! userPathOkay && repair)
     {
       SessionImpl::GetSession()->trace_error->WriteLine
@@ -3555,7 +3594,7 @@ Utils::CheckPath (/*[in]*/ bool repair)
       SessionImpl::GetSession()->trace_error->WriteLine
 	("core",
 	repairedUserPath.c_str());
-      userPath = AW_(repairedUserPath);
+      userPath = UW_(repairedUserPath);
       winRegistry::SetRegistryValue (HKEY_CURRENT_USER,
 				     REGSTR_KEY_ENVIRONMENT_USER,
 				     L"Path",

@@ -60,7 +60,7 @@ GotoPageDialog::OnInitDialog ()
     {
       for (int pageIdx = 0; pageIdx < pDviDoc->GetPageCount(); ++ pageIdx)
 	{
-	  pageComboBox.AddString (CA2T(pDviDoc->GetPageName(pageIdx)));
+	  pageComboBox.AddString (UT_(pDviDoc->GetPageName(pageIdx)));
 	}
       if (this->pageIdx >= 0)
 	{

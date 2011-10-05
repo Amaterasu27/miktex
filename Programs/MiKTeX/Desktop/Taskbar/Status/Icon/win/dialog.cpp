@@ -432,10 +432,10 @@ InitInstance (/*[in]*/ HINSTANCE	hInstance,
 
 int
 WINAPI
-WinMain (/*[in]*/ HINSTANCE	hInstance,
-	 /*[in]*/ HINSTANCE	hPrevInstance,
-	 /*[in]*/ char *	lpCmdLine,
-	 /*[in]*/ int		nCmdShow)
+wWinMain (/*[in]*/ HINSTANCE	hInstance,
+	  /*[in]*/ HINSTANCE	hPrevInstance,
+	  /*[in]*/ wchar_t *	lpCmdLine,
+	  /*[in]*/ int		nCmdShow)
 {
   try
     {

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,8 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-#add_definitions(
-#)
+add_definitions(
+  -D_UNICODE -DUNICODE
+)
 
 set (kpsewhich_sources
   kpsewhich.c
@@ -39,6 +40,7 @@ target_link_libraries(${miktex_prefix}kpsewhich
   ${core_dll_name}
   ${getopt_dll_name}
   ${kpsemu_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS ${miktex_prefix}kpsewhich DESTINATION ${bindir})
@@ -52,6 +54,7 @@ target_link_libraries(kpsewhich
   ${core_dll_name}
   ${getopt_dll_name}
   ${kpsemu_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS kpsewhich DESTINATION ${bindir})

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,9 +21,11 @@ use_static_crt()
 use_static_libraries()
 
 set(libs
+  ${botan_lib_name}
   ${bzip2_lib_name}
   ${core_lib_name}
   ${md5_lib_name}
+  ${utf8wrap_lib_name}
   ${zlib_lib_name}
 )
 

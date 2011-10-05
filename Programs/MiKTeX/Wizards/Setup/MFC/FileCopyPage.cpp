@@ -397,7 +397,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(CA2T(sharedData.packageName.c_str()));
+		(UW_(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 
@@ -512,7 +512,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
 
   bool visibleProgress = false;
 
@@ -960,10 +960,10 @@ FileCopyPage::ConfigureMiKTeX ()
 
   // refresh progress bar
   {
-    CSingleLock (&criticalSectionMonitor, TRUE);
+    CSingleLock singlelock (&criticalSectionMonitor, TRUE);
     CString str;
     VERIFY (str.LoadString(IDS_INITEXMF));
-    sharedData.packageName = CT2A(str);
+    sharedData.packageName = TU_(str);
     sharedData.newPackage = true;
     sharedData.progress1Pos = 0;
     if (! PostMessage (WM_PROGRESS))
@@ -1152,7 +1152,7 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
   if (! pSheet->GetCancelFlag())
     {
       completedIniTeXMFRuns += 1;
-      CSingleLock (&criticalSectionMonitor, TRUE);
+      CSingleLock singlelock (&criticalSectionMonitor, TRUE);
       sharedData.progress1Pos
 	= static_cast<int>(
 	  ((static_cast<double>(completedIniTeXMFRuns)
@@ -1205,7 +1205,7 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
   if (! pSheet->GetCancelFlag())
     {
       completedIniTeXMFRuns += 1;
-      CSingleLock (&criticalSectionMonitor, TRUE);
+      CSingleLock singlelock (&criticalSectionMonitor, TRUE);
       sharedData.progress1Pos
 	= static_cast<int>(
 	  ((static_cast<double>(completedIniTeXMFRuns)
@@ -1252,18 +1252,35 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  string str (Utils::FormatString(lpszFmt, args));
   va_end (args);
-  //int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
-  if (writeLog)
+  int len = str.length();
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
+  string lines;
+  for (int i = 0; i < len; ++ i)
+  {
+    if (str[i] == '\n' && i > 0 && str[i] != '\r')
     {
-      Log ("%s", static_cast<const char *>(str));
+      sharedData.currentLine += '\r';
     }
-  SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(CA2T(str))));
+    sharedData.currentLine += str[i];
+    if (str[i] == '\n')
+    {
+      lines += sharedData.currentLine;
+      sharedData.currentLine.clear ();
+    }
+  }
+  if (writeLog)
+  {
+    Log ("%s", str.c_str());
+  }
+  if (! lines.empty())
+  {
+    singlelock.Unlock ();
+    SendMessage (WM_REPORT, reinterpret_cast<WPARAM>(static_cast<LPCTSTR>(UT_(lines))));
+  }
 }
 
 /* _________________________________________________________________________
@@ -1349,6 +1366,15 @@ http://miktex.org.\n"),
 			     lpszPackageSet,
 			     setupExe.Get());
   stream.Close ();
+  RepositoryInfo repositoryInfo;
+  if (theApp.pManager->TryGetRepositoryInfo(theApp.remotePackageRepository, repositoryInfo))
+  {
+    StreamWriter stream (PathName(theApp.localPackageRepository, "pr.ini"));
+    stream.WriteFormattedLine ("[repository]");
+    stream.WriteFormattedLine ("date=%d", static_cast<int>(repositoryInfo.timeDate));
+    stream.WriteFormattedLine ("version=%u", static_cast<unsigned>(repositoryInfo.version));
+    stream.Close ();
+  }
 }
 
 /* _________________________________________________________________________

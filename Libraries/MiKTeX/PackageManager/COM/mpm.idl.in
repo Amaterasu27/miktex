@@ -1,6 +1,6 @@
 /* mpm.idl:							-*- IDL -*-
 
-   Copyright (C) 2006-2008 Christian Schenk
+   Copyright (C) 2006-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -82,6 +82,58 @@ typedef [uuid(22A5E6E6-04B3-4540-A122-6A612210F52E)] struct PackageInfo
   /// @brief Install flag.
   VARIANT_BOOL isInstalled;
 } PackageInfo;
+
+/* _________________________________________________________________________
+   
+   PackageInfo2
+   _________________________________________________________________________ */
+
+/// @brief Package information.
+typedef [uuid(EBFC451C-F457-4B26-9A70-4C61519B7F45)] struct PackageInfo2
+{
+  /// @brief Name of the package.
+  BSTR deploymentName;
+  /// @brief User-friendly name of the package.
+  BSTR displayName;
+  /// @brief One-line package description.
+  BSTR title;
+  /// @brief Package version number.
+  BSTR version;
+  /// @brief Package description.
+  BSTR description;
+  /// @brief Name of package creator.
+  BSTR creator;
+  /// @brief Total size (in bytes) of all run-time files.
+  DOUBLE sizeRunFiles;
+  /// @brief Total size (in bytes) of all documentation files.
+  DOUBLE sizeDocFiles;
+  /// @brief Total size (in bytes) of all source files.
+  DOUBLE sizeSourceFiles;
+  /// @brief Number of run-time files.
+  LONG numRunFiles;
+  /// @brief Number of documentation files.
+  LONG numDocFiles;
+  /// @brief Number of source files.
+  LONG numSourceFiles;
+  /// @brief Date/time the package was created.
+  DATE timePackaged;
+  /// @brief Date/time the package was installed.
+  DATE timeInstalled;
+  /// @brief Size of the package archive file.
+  LONG archiveFileSize;
+  /// @brief Package digest.
+  MD5 digest;
+  /// @brief Install flag.
+  VARIANT_BOOL isInstalled;
+  /// @brief Copyright owner.
+  BSTR copyrightOwner;
+  /// @brief Copyright year.
+  BSTR copyrightYear;
+  /// @brief licenseType
+  BSTR licenseType;
+  /// @brief CTAN directory path.
+  BSTR ctanPath;
+} PackageInfo2;
 
 /* _________________________________________________________________________
    
@@ -289,6 +341,58 @@ interface IPackageManager2 : IPackageManager
 
 /* _________________________________________________________________________
    
+   IPackageManager3
+   _________________________________________________________________________ */
+
+/// @brief Package manager interface (version 3).
+[
+  object,
+  uuid(78AD6D5E-2972-412F-9A58-E57DDDE739B2),
+  dual,
+  nonextensible,
+  helpstring("IPackageManager3 Interface"),
+  pointer_default(unique)
+]
+interface IPackageManager3 : IPackageManager2
+{
+  /// @brief Get information about a package.
+  /// @param[in] packageName Name of the package.
+  /// @return Returns the package information.
+  [
+    id(4),
+    helpstring("method GetPackageInfo2")
+  ]
+  HRESULT
+  GetPackageInfo2 ([in] BSTR			packageName,
+		   [out,retval] PackageInfo2 *	packageInfo);
+};
+
+/* _________________________________________________________________________
+   
+   IPackageIterator2
+   _________________________________________________________________________ */
+
+/// @brief Package iterator interface.
+[
+  object,
+  uuid(E29735B0-01A4-4903-910B-7AE1ECB01FF2),
+  helpstring("IPackageIterator Interface"),
+  pointer_default(unique)
+]
+interface IPackageIterator2 : IPackageIterator
+{
+  /// @brief Retrieve the next package info structure.
+  /// @return Returns the next structure.
+  [
+    helpstring("method GetNextPackageInfo2")
+  ]
+  HRESULT
+  GetNextPackageInfo2 ([out] PackageInfo2 * packageInfo,
+		       [out,retval] VARIANT_BOOL * done);
+};
+
+/* _________________________________________________________________________
+   
    MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
    _________________________________________________________________________ */
 
@@ -314,12 +418,15 @@ library MiKTeXPackageManager@MIKTEX_SERIES_ID_STR@
   coclass PackageManager@MIKTEX_SERIES_ID_STR@
   {
     interface IPackageManager;
-    [default] interface IPackageManager2;
+    interface IPackageManager2;
+    [default] interface IPackageManager3;
   };
 
   struct MD5;
   struct PackageInfo;
+  struct PackageInfo2;
   interface IPackageInstaller;
   interface IPackageInstallerCallback;
   interface IPackageIterator;
+  interface IPackageIterator2;
 };

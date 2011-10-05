@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -100,7 +100,27 @@ FatalSoapError (/*[in]*/ soap *		pSoap,
   else if (pSoap->error != SOAP_OK)
     {
       const char ** ppText = soap_faultstring(pSoap);
+      string text;
+      if (ppText != 0)
+      {
+#if defined(MIKTEX_WINDOWS)
+	// FIXME: gSoap returns Ansi text
+	text = Utils::AnsiToUTF8(*ppText);
+#else
+	text = *ppText;
+#endif
+      }
       const char ** ppDetail = soap_faultdetail(pSoap);
+      string detail;
+      if (ppDetail)
+      {
+#if defined(MIKTEX_WINDOWS)
+	// FIXME: gSoap returns Ansi text
+	detail = Utils::AnsiToUTF8(*ppDetail);
+#else
+	detail = *ppDetail;
+#endif
+      }
       switch (pSoap->error)
 	{
 	case 403:
@@ -112,8 +132,8 @@ address."),
 			      (ppDetail != 0 ? *ppDetail : 0));
 	default:
 	  Session::FatalMiKTeXError (0,
-				     (ppText != 0 ? *ppText : 0),
-				     (ppDetail != 0 ? *ppDetail : 0),
+				     text.c_str(),
+				     detail.c_str(),
 				     lpszFile,
 				     line);
 	}
@@ -1869,7 +1889,7 @@ public:
     : stream (stream),
       freshElement (false)
   {
-    FPutS ("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n", stream);
+    FPutS ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", stream);
   }
 
 public:
@@ -2120,6 +2140,31 @@ PackageManager::WritePackageDefinitionFile
   // create "TPM:MD5" node
   xml.StartElement ("TPM:MD5");
   xml.Text (packageInfo.digest.ToString());
+  xml.EndElement ();
+
+#if MIKTEX_EXTENDED_PACKAGEINFO
+  if (! packageInfo.ctanPath.empty())
+  {
+    xml.StartElement ("TPM:CTAN");
+    xml.AddAttribute ("path", packageInfo.ctanPath.c_str());
+    xml.EndElement ();
+  }
+
+  if (! (packageInfo.copyrightOwner.empty() && packageInfo.copyrightYear.empty()))
+  {
+    xml.StartElement ("TPM:Copyright");
+    xml.AddAttribute ("owner", packageInfo.copyrightOwner.c_str());
+    xml.AddAttribute ("year", packageInfo.copyrightYear.c_str());
+    xml.EndElement ();
+  }
+
+  if (! packageInfo.licenseType.empty())
+  {
+    xml.StartElement ("TPM:License");
+    xml.AddAttribute ("type", packageInfo.licenseType.c_str());
+    xml.EndElement ();
+  }
+#endif
 
   xml.EndAllElements ();
 
@@ -2328,33 +2373,51 @@ PackageManagerImpl::TryGetRepositoryInfo
   (/*[in]*/ const string &	url,
    /*[out]*/ RepositoryInfo &	repositoryInfo)
 {
-  MyRepositorySoapProxy repositorySoapProxy;
-  ProxySettings proxySettings;
-  if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
+  RepositoryType repositoryType = PackageManagerImpl::DetermineRepositoryType(url);
+  if (repositoryType == RepositoryType::Remote)
+  {
+    MyRepositorySoapProxy repositorySoapProxy;
+    ProxySettings proxySettings;
+    if (TryGetProxy(WEBSVCURL, proxySettings) && proxySettings.useProxy)
     {
       repositorySoapProxy.proxy_host = proxySettings.proxy.c_str();
       repositorySoapProxy.proxy_port = proxySettings.port;
       if (proxySettings.authenticationRequired)
-	{
-	  repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
-	  repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
-	}
+      {
+	repositorySoapProxy.proxy_userid = proxySettings.user.c_str();
+	repositorySoapProxy.proxy_passwd = proxySettings.password.c_str();
+      }
     }
-  ClientInfo<mtrep3__ClientInfo> clientInfo;
-  string url2 = url;
-  _mtrep3__TryGetRepositoryInfo2 arg;
-  arg.clientInfo = &clientInfo;
-  arg.url = &url2;
-  _mtrep3__TryGetRepositoryInfo2Response resp;
-  if (repositorySoapProxy.TryGetRepositoryInfo2(&arg, &resp) != SOAP_OK)
+    ClientInfo<mtrep3__ClientInfo> clientInfo;
+    string url2 = url;
+    _mtrep3__TryGetRepositoryInfo2 arg;
+    arg.clientInfo = &clientInfo;
+    arg.url = &url2;
+    _mtrep3__TryGetRepositoryInfo2Response resp;
+    if (repositorySoapProxy.TryGetRepositoryInfo2(&arg, &resp) != SOAP_OK)
     {
       FATAL_SOAP_ERROR (&repositorySoapProxy);
     }
-  if (resp.TryGetRepositoryInfo2Result)
+    if (resp.TryGetRepositoryInfo2Result)
     {
       repositoryInfo = MakeRepositoryInfo(resp.repositoryInfo);
     }
-  return (resp.TryGetRepositoryInfo2Result);
+    return (resp.TryGetRepositoryInfo2Result);
+  }
+  else if (repositoryType == RepositoryType::Local)
+  {
+    PathName configFile (url);
+    configFile += "pr.ini";
+    SmartPointer<Cfg> pConfig (Cfg::Create());
+    pConfig->Read (configFile);
+    string value = pConfig->GetValue("repository", "date");
+    repositoryInfo.timeDate = atoi(value.c_str());
+    return (true);
+  }
+  else
+  {
+    return (false);
+  }
 }
 
 /* _________________________________________________________________________

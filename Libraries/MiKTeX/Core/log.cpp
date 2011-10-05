@@ -265,7 +265,16 @@ TraceStreamImpl::Logger (/*[in]*/ const char *	lpszFacility,
       str += '\n';
     }
 #if defined(MIKTEX_WINDOWS)
-  OutputDebugStringW (Utils::AnsiToWideChar(str.c_str()).c_str());
+  wstring debstr;
+  try
+  {
+    debstr = Utils::UTF8ToWideChar(str);
+  }
+  catch (const exception &)
+  {
+    debstr = L"???";
+  }
+  OutputDebugStringW (debstr.c_str());
 #else
   if (stderr != 0)
     {

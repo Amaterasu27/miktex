@@ -1,30 +1,26 @@
 
-/**********************************************************/
-/* t4ht.c                                2009-01-31-07:34 */
-/* Copyright (C) 1998--2009    Eitan M. Gurari            */
-/*                                                        */
-/* This work may be distributed and/or modified under the */
-/* conditions of the LaTeX Project Public License, either */
-/* version 1.3 of this license or (at your option) any    */
-/* later version. The latest version of this license is   */
-/* in                                                     */
-/*   http://www.latex-project.org/lppl.txt                */
-/* and version 1.3 or later is part of all distributions  */
-/* of LaTeX version 2003/12/01 or later.                  */
-/*                                                        */
-/* This work has the LPPL maintenance status "maintained".*/
-/*                                                        */
-/* This Current Maintainer of this work                   */
-/* is Eitan M. Gurari.                                    */
-/*                                                        */
-/* If you modify this program your changing its signature */
-/* with a directive of the following form will be         */
-/* appreciated.                                           */
-/*      #define PLATFORM "signature"                      */
-/*                                                        */
-/*                             gurari@cse.ohio-state.edu  */
-/*                 http://www.cse.ohio-state.edu/~gurari  */
-/**********************************************************/
+/* t4ht.c (2010-12-16-08:47), generated from tex4ht-t4ht.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 1998-2009 Eitan M. Gurari
+
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <http://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated.
+
+*/
 
 /* **********************************************
     Compiler options                            *
@@ -110,6 +106,10 @@
 #endif
 
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
 
 #include <stdio.h>   
 #include <stdlib.h>  
@@ -500,7 +500,7 @@ static char *  abs_addr( ARG_II( U_CHAR *, U_CHAR *) );
 
 
 static void execute_script(
-  ARG_V(struct script_struct*,const Q_CHAR *,const char *,const Q_CHAR *,const Q_CHAR *) );
+  ARG_V(struct script_struct*,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *) );
 
 
 static struct script_struct  * filterGifScript(
@@ -523,7 +523,7 @@ static FILE* f_open( ARG_II(const char*,const char*) );
 static FILE* f_home_open( ARG_II(const char*,const char*) );
 
 
-static FILE* open_file( const ARG_II(C_CHAR *, const C_CHAR *) );
+static FILE* open_file( ARG_II(const C_CHAR *, const C_CHAR *) );
 
 
 static void err_i( ARG_I(int) );
@@ -746,22 +746,22 @@ static struct script_struct * filterGifScript
                                                    *old_script,
                                                    *new_script;
                                          Q_CHAR *command, *ext;
-   if( script == (struct script_struct *) 0 ){
-       return (struct script_struct *) 0;
-   }
+   filtered_script = NULL_SCRIPT;
+   if( script == NULL_SCRIPT )
+       return filtered_script;
    old_script = script;
    command = old_script->command;
    if( *command != '.' ){
       
-new_script = (struct script_struct *) 0;
-while( old_script != (struct script_struct *) 0 ){
+new_script = NULL_SCRIPT;
+while( old_script != NULL_SCRIPT ){
    command = old_script->command;
    if( *command == '.' ){ return filtered_script; }
    scr = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
    scr->command = old_script->command;
-   scr->next = (struct script_struct *) 0;
-   if( new_script == (struct script_struct *) 0 ){
+   scr->next = NULL_SCRIPT;
+   if( new_script == NULL_SCRIPT ){
      filtered_script = new_script = scr;
    } else {
      new_script = new_script->next = scr;
@@ -780,8 +780,8 @@ while( (*ext != '.') && (ext != file) ){ ext--; }
 
 
 while( TRUE ){
-  if( old_script == (struct script_struct *) 0 ){
-     return (struct script_struct *) 0;
+  if( old_script == NULL_SCRIPT ){
+     return NULL_SCRIPT;
   }
   command = old_script->command;
   if(*command != '.') {
@@ -794,15 +794,15 @@ while( TRUE ){
   }
 }
 
-new_script = (struct script_struct *) 0;
-while( old_script != (struct script_struct *) 0 ){
+new_script = NULL_SCRIPT;
+while( old_script != NULL_SCRIPT ){
    command = old_script->command;
    if( *command == '.' ){ return filtered_script; }
    scr = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
    scr->command = old_script->command;
-   scr->next = (struct script_struct *) 0;
-   if( new_script == (struct script_struct *) 0 ){
+   scr->next = NULL_SCRIPT;
+   if( new_script == NULL_SCRIPT ){
      filtered_script = new_script = scr;
    } else {
      new_script = new_script->next = scr;
@@ -835,7 +835,7 @@ void free_script
 #endif
 {
                                    struct script_struct *temp;
-  while( script != (struct script_struct *) 0 ){
+  while( script != NULL_SCRIPT ){
     temp = script;
     script = script->next;
     free( temp );
@@ -934,7 +934,7 @@ static char *get_env_dir
   if(p == NULL)  return NULL;     
   strncpy(p, progname, i+1);                         
   (IGNORED) strcpy((char *) &p[i+1],
-                   "tex4ht.env");            
+                   "tex4ht.env");                    
   return p;
 }
 
@@ -1003,13 +1003,13 @@ static FILE* open_file
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR *name SEP  const Q_CHAR *ext
+                         const C_CHAR *name SEP  const C_CHAR *ext
 )
 #undef SEP
 #else
 #define SEP ;
 (name,ext)
-                         const Q_CHAR *name SEP  const Q_CHAR *ext
+                         const C_CHAR *name SEP  const C_CHAR *ext
 ;
 #undef SEP
 #endif
@@ -1193,23 +1193,23 @@ static void strct
 #ifdef ANSI
 #define SEP ,
 (
-     Q_CHAR * str1 SEP 
-     const Q_CHAR * str2
+     C_CHAR * str1 SEP 
+     const C_CHAR * str2
 
 )
 #undef SEP
 #else
 #define SEP ;
 ( str1, str2 )
-     Q_CHAR * str1 SEP 
-     const Q_CHAR * str2
+     C_CHAR * str1 SEP 
+     const C_CHAR * str2
 
 ;
 #undef SEP
 #endif
 {   Q_CHAR * ch;
    ch = str1 + (int) strlen((char *) str1);
-   (IGNORED) strcpy((char *)  ch, (const char *) str2 );
+   (IGNORED) strcpy((char *)  ch, str2 );
 }
 
 
@@ -1285,7 +1285,7 @@ static BOOL  scan_until_end_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1294,7 +1294,7 @@ static BOOL  scan_until_end_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1327,7 +1327,7 @@ static BOOL  scan_until_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1336,7 +1336,7 @@ static BOOL  scan_until_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1370,7 +1370,7 @@ static BOOL  scan_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 )
@@ -1378,7 +1378,7 @@ static BOOL  scan_str
 #else
 #define SEP ;
 (str,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 ;
@@ -1440,6 +1440,58 @@ get_env_dir(argv[0])
 
 
    
+#ifdef WIN32
+  /* See comments in tex4ht */
+  if (argc > 2) {
+    int  i, nargc;
+    char **nargv, **pnargv, **pargv;
+
+    nargv = (char **) xmalloc (2 * argc * sizeof (char *));
+    pnargv = nargv;
+    pargv = argv;
+    *pnargv++ = xstrdup (*pargv++);
+    *pnargv++ = xstrdup (*pargv++);
+    nargc = 2;
+
+    for (i=2; i < argc; i++) {
+      char *p, *q, *r;
+      p = q = *pargv++;
+      while (*p == ' ' || *p == '\t') {
+        p++;
+        q++;
+      }
+      while (*p != ' ' && *p != '\t' && *p) {
+        p++;
+        if (*p == '\0') {
+          *pnargv++ = xstrdup(q);
+          nargc++;
+        } else if (*p == ' ' || *p == '\t') {
+          r = p;
+          while (*p == ' ' || *p == '\t')
+            p++;
+          if (*p == '-' || *p == '\0') {
+            *r = '\0';
+            *pnargv++ = xstrdup(q);
+            nargc++;
+            q = p;
+          }
+        }
+      }
+    }
+
+#if ! defined(MIKTEX)
+    for (i=0; i < argc; i++)
+      free (argv[i]);
+    free (argv);
+#endif
+    nargv[nargc] = NULL;
+    argv = nargv;
+    argc = nargc;
+  }
+#endif
+
+
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -1461,19 +1513,23 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34)\n");
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47)\n");
 #endif
 #else
 #ifdef PLATFORM
 #  if defined(MIKTEX)
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s MiKTeX)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s MiKTeX)\n",PLATFORM);
 #  else
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s kpathsea)\n",PLATFORM);
 #  endif
 #else
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 kpathsea)\n");
+#  if defined(MIKTEX)
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 MiKTeX)\n");
+#  else
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 kpathsea)\n");
+#  endif
 #endif
 #endif
 
@@ -1746,7 +1802,7 @@ if( !file ){
           (IGNORED) printf("C:/tex4ht.env?\n");
       }
       file = f_open("C:/tex4ht.env",READ_TEXT_FLAGS);
-       (IGNORED) strcpy((char *) &env_loc[0], (char *) "C:/tex4ht.env");
+       (IGNORED) strcpy((char *) &env_loc[0], "C:/tex4ht.env");
       if( debug && file ){
         (IGNORED) printf(".......Open: C:/tex4ht.env\n"); }
    }
@@ -2045,7 +2101,7 @@ if( check_tex4ht_c_err ){
   
 {     
 Q_CHAR *file_name, file_mode[5];
-int i, start_loc, end_loc, addr;
+int i, start_loc, end_loc, addr = 0;
 char rec_op, *ch;
 static struct files_rec *to_rec, *from_rec,
    *opened_files = (struct files_rec *) 0,
@@ -2114,6 +2170,7 @@ to_rec = from_rec;  from_rec = p;
   file_name = match[5];
   strcpy((char *) file_mode, 
 READ_BIN_FLAGS
+
 );
 }
 
@@ -2368,7 +2425,7 @@ if( status ){
 
 
       if( status ){            Q_CHAR *key, *body, *media;
-         body = key = match[1];
+         media = body = key = match[1];
          
 while( *body && (*body != ' ') ){ body++; }
 if( *body == ' ' ){ media = body; *(body++) = '\0'; }
@@ -2410,6 +2467,7 @@ if( debug ){
 }
 
  }
+#if 0 /* unreachable */
   else if( last_rec ){ 
 last_rec->body = (Q_CHAR *)  r_alloc((void *) last_rec->body,
       (size_t) strlen((char *) last_rec->body)
@@ -2422,6 +2480,7 @@ if( debug ){
 }
 
  }
+#endif /* 0, unreachable */
 }
 
 

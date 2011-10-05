@@ -1,6 +1,6 @@
 /* runbat.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2011 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -48,7 +48,7 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
   PathName scriptsIni = GetSpecialPath(SpecialPath::DistRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
-  pConfig->Read (scriptsIni);
+  pConfig->Read (scriptsIni, true);
   string relScriptPath;
   if (! pConfig->TryGetValue("bat", szName, relScriptPath))
   {
@@ -68,12 +68,9 @@ SessionImpl::RunBatch (/*[in]*/ int		argc,
 	 relScriptPath.c_str());
     }
   
-  // we cannot quote the command => remove all blanks from the script path
-  Utils::RemoveBlanksFromPathName (scriptPath);
-
   // build command line
   CommandLineBuilder batchCommandLine;
-  batchCommandLine.AppendUnquoted (scriptPath.Get());
+  batchCommandLine.AppendArgument (scriptPath.Get());
   if (argc > 1)
     {
       batchCommandLine.AppendArguments (argc - 1, &argv[1]);
@@ -101,7 +98,7 @@ SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
   PathName scriptsIni = GetSpecialPath(SpecialPath::DistRoot);
   scriptsIni += MIKTEX_PATH_SCRIPTS_INI;
   SmartPointer<Cfg> pConfig (Cfg::Create());
-  pConfig->Read (scriptsIni);
+  pConfig->Read (scriptsIni, true);
   string relScriptPath;
   if (! pConfig->TryGetValue("bat", lpszName, relScriptPath))
   {
@@ -121,12 +118,19 @@ SessionImpl::RunBatch (/*[in]*/ const char *	lpszName,
 	 relScriptPath.c_str());
     }
   
-  // we cannot quote the command => remove all blanks from the script path
-  Utils::RemoveBlanksFromPathName (scriptPath);
+  string batchCommandLine;
+  bool needQuotes = (strchr(scriptPath.Get(), ' ') != 0);
+  if (needQuotes)
+  {
+    batchCommandLine += '"';
+  }
+  batchCommandLine += scriptPath.Get();
+  if (needQuotes)
+  {
+    batchCommandLine += '"';
+  }
 
-  string batchCommandLine = scriptPath.Get();
-
-  if (lpszArguments != 0)
+  if (lpszArguments != 0 && *lpszArguments != 0)
     {
       batchCommandLine += ' ';
       batchCommandLine += lpszArguments;

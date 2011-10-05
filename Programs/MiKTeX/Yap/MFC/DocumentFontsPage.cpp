@@ -159,8 +159,8 @@ DocumentFontsPage::OnDoubleClick (/*[in]*/ NMHDR *	pNMHDR,
 	  return;
 	}
       CString title;
-      title.Format (T_(_T("%s Logbook")), static_cast<LPTSTR>(CA2T(info.name.c_str())));
-      TextViewerDialog::DoModal (this, CT2A(title), info.transcript.c_str());
+      title.Format (T_(_T("%s Logbook")), static_cast<LPTSTR>(UT_(info.name.c_str())));
+      TextViewerDialog::DoModal (this, TU_(title), info.transcript.c_str());
       *pResult = 0;
     }
 

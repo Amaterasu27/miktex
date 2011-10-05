@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,7 @@ add_definitions(
   -DHAVE_CONFIG_H
   -DKPATHSEA
   -DSUPPORT_8BIT
+  -D_UNICODE -DUNICODE
 )
 
 if(BIBTEX8_COMPILE_AS_CXX)
@@ -84,6 +85,7 @@ target_link_libraries(bibtex8
   ${core_dll_name}
   ${getopt_dll_name}
   ${kpsemu_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS bibtex8 DESTINATION ${bindir})

@@ -1007,7 +1007,7 @@ SessionImpl::GetSessionValue (/*[in]*/ const char *	lpszSectionName,
     {
       FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
-    value = Utils::WideCharToAnsi(szPath);
+    value = WU_(szPath);
     haveValue = true;
   }
 #endif
@@ -1520,12 +1520,6 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
 				      T_("Unknown variable."),
 				      name.c_str());
 		}
-#if defined(MIKTEX_WINDOWS)
-	      if (isUtf8)
-	      {
-		value = Utils::AnsiToUTF8(value.c_str());
-	      }
-#endif
 	      streamOut.Write (value.c_str(), value.length());
 	    }
 	  else
@@ -1638,6 +1632,7 @@ SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
 	    }
 	  else if (lpsz[1] == '(' || lpsz[1] == '{' || isalpha(lpsz[1]) || lpsz[1] == '_')
 	    {
+	      const char * lpszBegin = lpsz;
 	      char endChar = (lpsz[1] == '(' ? ')' : (lpsz[1] == '{' ? '}' : 0));
 	      valueName = "";
 	      if (endChar == 0)
@@ -1681,6 +1676,11 @@ SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
 	      if (haveValue)
 	      {
 		expansion += value;
+	      }
+	      else
+	      {
+		lpsz = lpszBegin;
+		expansion += *lpsz;
 	      }
 	      valuesBeingExpanded.erase (it);
 	    }

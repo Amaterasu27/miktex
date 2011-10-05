@@ -36,7 +36,7 @@ public:
   GetPrinterName ()
     const
   {
-    return (CT2A(m_strPrinterName));
+    return (TU_(m_strPrinterName));
   }
 
 public:

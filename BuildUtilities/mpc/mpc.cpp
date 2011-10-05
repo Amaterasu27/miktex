@@ -1,6 +1,6 @@
 /* mpc.cpp: creating MiKTeX packages
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MPC.
 
@@ -212,7 +212,7 @@ class PackageCreator
 public:
   PackageCreator ()
     : optVerbose (false),
-      timePackaged (static_cast<time_t>(-1)),
+      programStartTime (static_cast<time_t>(-1)),
       texmfPrefix ("texmf"),
       defaultLevel ('T'),
       miktexSeries (MIKTEX_SERIES_STR),
@@ -431,7 +431,15 @@ protected:
 protected:
   ArchiveFileType
   CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
-		     /*[in]*/ const PathName &		repository);
+		     /*[in]*/ const PathName &		repository,
+		     /*[in]*/ Cfg &			dblight);
+
+protected:
+  bool
+  HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
+			  /*[in]*/ const string &	deploymentName,
+			  /*[out]*/ PathName &		archiveFile,
+			  /*[out]*/ ArchiveFileType &	archiveFileType);
 
 protected:
   Cfg *
@@ -483,7 +491,7 @@ private:
 
 private:
   // value of "TPM:TimePackaged"
-  time_t timePackaged;
+  time_t programStartTime;
 
 private:
   string texmfPrefix;
@@ -1016,10 +1024,9 @@ PackageCreator::WriteDescriptionFile (/*[in]*/ const string &	description,
    _________________________________________________________________________ */
 
 void
-PackageCreator::InitializeStagingDirectory
-(/*[in]*/ const PackageInfo &	packageInfo,
- /*[in]*/ const MD5 &		digest,
- /*[in]*/ const PathName &	stagingDir)
+PackageCreator::InitializeStagingDirectory (/*[in]*/ const PackageInfo &  packageInfo,
+					    /*[in]*/ const MD5 &	  digest,
+					    /*[in]*/ const PathName &	  stagingDir)
 {
   // create staging directory
   Directory::Create (stagingDir);
@@ -1038,12 +1045,22 @@ PackageCreator::InitializeStagingDirectory
   fprintf (stream.Get(), "version=%s\n", packageInfo.version.c_str());
   fprintf (stream.Get(), "targetsystem=%s\n", packageInfo.targetSystem.c_str());
   fprintf (stream.Get(), "md5=%s\n", digest.ToString().c_str());
+#if defined(MIKTEX_EXTENDED_PACKAGEINFO)
+  fprintf (stream.Get(), "ctan_path=%s\n", packageInfo.ctanPath.c_str());
+  fprintf (stream.Get(), "copyright_owner=%s\n", packageInfo.copyrightOwner.c_str());
+  fprintf (stream.Get(), "copyright_year=%s\n", packageInfo.copyrightYear.c_str());
+  fprintf (stream.Get(), "license_type=%s\n", packageInfo.licenseType.c_str());
+#endif
   for (size_t i = 0; i < packageInfo.requiredPackages.size(); ++ i)
     {
-      if (i > 0)
-	{
-	  fputc (';', stream.Get());
-	}
+      if (i == 0)
+      {
+	fputs ("requires=", stream.Get());
+      }
+      else
+      {
+	fputc (';', stream.Get());
+      }
       fputs (packageInfo.requiredPackages[i].c_str(), stream.Get());
     }
 
@@ -1083,7 +1100,7 @@ PackageCreator::CopyPackage (/*[in]*/ const MpcPackageInfo &	packageinfo,
 	      packageinfo.deploymentName.c_str(),
 	      MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX),
      packageinfo,
-     timePackaged);
+     programStartTime);
 
   // copy files and calculate digests
   FileDigestTable fileDigests;
@@ -1193,10 +1210,17 @@ PackageCreator::InitializePackageInfo (/*[in]*/ const char * lpszStagingDir)
 
   // get TDS digest (optional value)
   string str;
-  if (pCfg->TryGetValue(0, "md5", str))
+  if (pCfg->TryGetValue(0, "MD5", str))
     {
       packageInfo.digest = MD5::Parse(str.c_str());
     }
+
+#if defined(MIKTEX_EXTENDED_PACKAGEINFO)
+  pCfg->TryGetValue(0, "ctan_path", packageInfo.ctanPath);
+  pCfg->TryGetValue(0, "copyright_owner", packageInfo.copyrightOwner);
+  pCfg->TryGetValue(0, "copyright_year", packageInfo.copyrightYear);
+  pCfg->TryGetValue(0, "license_type", packageInfo.licenseType);
+#endif
 
   // read extra description file
   ReadDescriptionFile (lpszStagingDir, packageInfo.description);
@@ -1230,6 +1254,7 @@ PackageCreator::GetPackageLevel (/*[in]*/ const MpcPackageInfo & packageInfo)
    PackageCreator::GetPackageArchiveFileType
    _________________________________________________________________________ */
 
+#if 0
 ArchiveFileType
 PackageCreator::GetPackageArchiveFileType
 (/*[in]*/ const MpcPackageInfo &	packageInfo)
@@ -1243,6 +1268,7 @@ PackageCreator::GetPackageArchiveFileType
     }
   return (it->second.archiveFileType);
 }
+#endif
 
 /* _________________________________________________________________________
 
@@ -1464,10 +1490,9 @@ PackageCreator::CollectPackages
    _________________________________________________________________________ */
 
 void
-PackageCreator::BuildTDS
-(/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
- /*[in]*/ const PathName &			destDir,
- /*[in,out]*/ Cfg &				dbLight)
+PackageCreator::BuildTDS (/*[in]*/ const map<string, MpcPackageInfo> &	packageTable,
+			  /*[in]*/ const PathName &			destDir,
+			  /*[in,out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::const_iterator it = packageTable.begin();
        it != packageTable.end();
@@ -1492,7 +1517,7 @@ PackageCreator::BuildTDS
 			it->second.digest.ToString().c_str());
       dbLight.PutValue (it->second.deploymentName.c_str(),
 			"TimePackaged",
-			NUMTOSTR(timePackaged));
+			NUMTOSTR(programStartTime));
       if (! it->second.version.empty())
 	{
 	  dbLight.PutValue (it->second.deploymentName.c_str(),
@@ -1683,9 +1708,9 @@ PackageCreator::CreateRepositoryInformationFile
       lastupd += it->deploymentName;
     }
   const time_t t2000 = 946681200;
-  int days = static_cast<int>((timePackaged - t2000) / (60 * 60 * 24));
+  int days = static_cast<int>((programStartTime - t2000) / (60 * 60 * 24));
   SmartPointer<Cfg> pCfg (Cfg::Create());
-  pCfg->PutValue ("repository", "date", NUMTOSTR(timePackaged));
+  pCfg->PutValue ("repository", "date", NUMTOSTR(programStartTime));
   pCfg->PutValue ("repository", "version", NUMTOSTR(days));
   pCfg->PutValue ("repository",
 		  "lstdigest",
@@ -2042,23 +2067,22 @@ PackageCreator::CompressArchive (/*[in]*/ const PathName &	toBeCompressed,
 
 /* _________________________________________________________________________
 
-   PackageCreator::CreateArchiveFile
+   PackageCreator::HavePackageArchiveFile
    _________________________________________________________________________ */
 
-ArchiveFileType
-PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
-				   /*[in]*/ const PathName &	repository)
+bool
+PackageCreator::HavePackageArchiveFile (/*[in]*/ const PathName &	repository,
+					/*[in]*/ const string &		deploymentName,
+					/*[out]*/ PathName &		archiveFile,
+					/*[out]*/ ArchiveFileType &	archiveFileType)
 {
-  PathName archiveFile;
+  PathName archiveFile2;
 
-  bool reuseExisting = false;
-
-  ArchiveFileType archiveFileType (ArchiveFileType::None);
+  archiveFileType = ArchiveFileType::None;
 
   // check to see whether a cabinet file exists
-  PathName archiveFile2;
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_CABINET_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2068,7 +2092,7 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 
   // check to see whether a .tar.bz2 file exists
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_TARBZIP2_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2078,7 +2102,7 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 
   // check to see whether a .tar.lzma file exists
   archiveFile2.Set (repository,
-		    packageInfo.deploymentName.c_str(),
+		    deploymentName.c_str(),
 		    MIKTEX_TARLZMA_FILE_SUFFIX);
   if (File::Exists(archiveFile2))
     {
@@ -2086,10 +2110,43 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
       archiveFileType = ArchiveFileType::TarLzma;
     }
 
-  if (archiveFileType != ArchiveFileType::None)
-    {
-      Verbose (T_("Checking %s..."), archiveFile.Get());
+  return (archiveFileType != ArchiveFileType::None);
+}
 
+/* _________________________________________________________________________
+
+   PackageCreator::CreateArchiveFile
+   _________________________________________________________________________ */
+
+ArchiveFileType
+PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo &	packageInfo,
+				   /*[in]*/ const PathName &		repository,
+				   /*[in]*/ Cfg &			dblight)
+{
+  PathName archiveFile;
+  ArchiveFileType archiveFileType (ArchiveFileType::None);
+
+  bool reuseExisting = false;
+
+  if (HavePackageArchiveFile(repository, packageInfo.deploymentName, archiveFile, archiveFileType))
+  {
+#if 0
+    Verbose (T_("Checking %s..."), Q_(archiveFile));
+#endif
+
+    // don't remake archive file if there are no changes
+    string strMD5;
+    string strTimePackaged;
+    if (dblight.TryGetValue(packageInfo.deploymentName.c_str(), "MD5", strMD5)
+      && MD5::Parse(strMD5.c_str()) == packageInfo.digest
+      && dblight.TryGetValue(packageInfo.deploymentName.c_str(), "TimePackaged", strTimePackaged))
+    {
+      packageInfo.timePackaged = atoi(strTimePackaged.c_str());
+      reuseExisting = true;
+    }
+#if 1
+    else
+    {
       // extract the package definition file
       PathName filter (texmfPrefix);
       filter += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
@@ -2100,115 +2157,137 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
 #endif
       TempFile packageDefinitionFile;
       ExtractFile (archiveFile,
-		   archiveFileType,
-		   filter, 
-		   packageDefinitionFile.GetPathName());
+	archiveFileType,
+	filter, 
+	packageDefinitionFile.GetPathName());
 
       // read the package definition file
       PackageInfo existingPackageInfo =
 	PackageManager::ReadPackageDefinitionFile
 	(packageDefinitionFile.GetPathName(),
-	 texmfPrefix.c_str());
-      
+	texmfPrefix.c_str());
+
       // check to see whether we can keep the existing file
       if (packageInfo.digest == existingPackageInfo.digest)
-	{
-	  reuseExisting = true;
-	  packageInfo.timePackaged = existingPackageInfo.timePackaged;
-	}
-      else
-	{
-	  archiveFileType = ArchiveFileType::None;
-	}
-    }
-
-  if (! reuseExisting)
-    {
-      archiveFileType = GetPackageArchiveFileType(packageInfo);
-
-      PathName packageArchiveFile (packageInfo.deploymentName.c_str());
-      packageArchiveFile.AppendExtension
-	(ArchiveFileType::GetFileNameExtension(archiveFileType.Get()));
-
-      Verbose (T_("Creating %s..."), packageArchiveFile.Get());
-
-      // create destination directory
-      Directory::Create (repository);
-      
-      // change into package directory, e.g.:
-      // /mypackages/a0poster/
-      Directory::SetCurrentDirectory (packageInfo.path);
-      
-      // path to package definition directory, e.g.:
-      // /mypackages/a0poster/Files/texmf/tpm/packages/
-      PathName packageDefinitionDir (packageInfo.path);
-      packageDefinitionDir += "Files";
-      packageDefinitionDir += texmfPrefix;
-      packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
-
-      // create package definition directory
-      Directory::Create (packageDefinitionDir);
-      
-      // path to package definition file, e.g.:
-      // /mypackages/a0poster/Files/texmf/tpm/packages/a0poster.tpm
-      PathName packageDefinitionFile
-	(packageDefinitionDir,
-	 packageInfo.deploymentName.c_str(),
-	 MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
-      
-      // create the package definition file
-      PackageManager::WritePackageDefinitionFile
-	(packageDefinitionFile,
-	 packageInfo,
-	 timePackaged);
-      
-      string command;
-      
-      // path to .tar file
-      PathName tarFile (repository,
-			packageInfo.deploymentName.c_str(),
-			MIKTEX_TAR_FILE_SUFFIX);
-      
-      // path to compressed .tar file
-      archiveFile.Set
-	(repository,
-	 packageInfo.deploymentName.c_str(),
-	 ArchiveFileType::GetFileNameExtension(archiveFileType.Get()));
-      
-#if defined(MIKTEX_WINDOWS)
-      tarFile.ToUnix ();
-      archiveFile.ToUnix ();
-#endif
-      
-      // create the .tar file
-      command = "tar --force-local -cf ";
-      command += tarFile.ToString();
-#if defined(MIKTEX_WINDOWS) && 0
-      command += " --files-from=nul";
-#else
-      command += " --files-from=/dev/null";
-#endif
-      ExecuteSystemCommand (command.c_str());
-      if (Directory::Exists("Files"))
-	{
-	  RestoreCurrentDirectory restoreCurrentDirectory ("Files");
-	  command = "tar --force-local -rf ";
-	  command += tarFile.ToString();
-	  command += " ";
-	  command += texmfPrefix;
-	  ExecuteSystemCommand (command.c_str());
-	}
-
-      // compress the tar file
       {
-	RestoreCurrentDirectory restoreCurrentDirectory (repository);
-	if (File::Exists(archiveFile))
-	  {
-	    File::Delete (archiveFile);
-	  }
-	CompressArchive (tarFile, archiveFileType, archiveFile);
+	reuseExisting = true;
+	packageInfo.timePackaged = existingPackageInfo.timePackaged;
+      }
+      else
+      {
+	archiveFileType = ArchiveFileType::None;
       }
     }
+#endif
+  }
+
+  if (! reuseExisting)
+  {
+#if 1
+    archiveFileType = defaultArchiveFileType;
+#else
+    archiveFileType = GetPackageArchiveFileType(packageInfo);
+#endif
+
+    PathName packageArchiveFile (packageInfo.deploymentName.c_str());
+    packageArchiveFile.AppendExtension
+      (ArchiveFileType::GetFileNameExtension(archiveFileType.Get()));
+
+    Verbose (T_("Creating %s..."), Q_(packageArchiveFile));
+
+    // create destination directory
+    Directory::Create (repository);
+
+    // change into package directory, e.g.:
+    // /mypackages/a0poster/
+    Directory::SetCurrentDirectory (packageInfo.path);
+
+    // path to package definition directory, e.g.:
+    // /mypackages/a0poster/Files/texmf/tpm/packages/
+    PathName packageDefinitionDir (packageInfo.path);
+    packageDefinitionDir += "Files";
+    packageDefinitionDir += texmfPrefix;
+    packageDefinitionDir += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+
+    // create package definition directory
+    Directory::Create (packageDefinitionDir);
+
+    // path to package definition file, e.g.:
+    // /mypackages/a0poster/Files/texmf/tpm/packages/a0poster.tpm
+    PathName packageDefinitionFile
+      (packageDefinitionDir,
+      packageInfo.deploymentName.c_str(),
+      MIKTEX_PACKAGE_DEFINITION_FILE_SUFFIX);
+
+#if 1
+    // keep the time-stamp, if possible
+    string strMD5;
+    string strTimePackaged;
+    if (dblight.TryGetValue(packageInfo.deploymentName.c_str(), "MD5", strMD5)
+      && MD5::Parse(strMD5.c_str()) == packageInfo.digest
+      && dblight.TryGetValue(packageInfo.deploymentName.c_str(), "TimePackaged", strTimePackaged))
+    {
+      packageInfo.timePackaged = atoi(strTimePackaged.c_str());
+    }
+    else
+    {
+      packageInfo.timePackaged = programStartTime;
+    }
+#endif
+
+    // create the package definition file
+    PackageManager::WritePackageDefinitionFile
+      (packageDefinitionFile,
+      packageInfo,
+      packageInfo.timePackaged);
+
+    string command;
+
+    // path to .tar file
+    PathName tarFile (repository,
+      packageInfo.deploymentName.c_str(),
+      MIKTEX_TAR_FILE_SUFFIX);
+
+    // path to compressed .tar file
+    archiveFile.Set
+      (repository,
+      packageInfo.deploymentName.c_str(),
+      ArchiveFileType::GetFileNameExtension(archiveFileType.Get()));
+
+#if defined(MIKTEX_WINDOWS)
+    tarFile.ToUnix ();
+    archiveFile.ToUnix ();
+#endif
+
+    // create the .tar file
+    command = "tar --force-local -cf ";
+    command += tarFile.ToString();
+#if defined(MIKTEX_WINDOWS) && 0
+    command += " --files-from=nul";
+#else
+    command += " --files-from=/dev/null";
+#endif
+    ExecuteSystemCommand (command.c_str());
+    if (Directory::Exists("Files"))
+    {
+      RestoreCurrentDirectory restoreCurrentDirectory ("Files");
+      command = "tar --force-local -rf ";
+      command += tarFile.ToString();
+      command += " ";
+      command += texmfPrefix;
+      ExecuteSystemCommand (command.c_str());
+    }
+
+    // compress the tar file
+    {
+      RestoreCurrentDirectory restoreCurrentDirectory (repository);
+      if (File::Exists(archiveFile))
+      {
+	File::Delete (archiveFile);
+      }
+      CompressArchive (tarFile, archiveFileType, archiveFile);
+    }
+  }
 
   // get size of archive file
   packageInfo.archiveFileSize = File::GetSize(archiveFile);
@@ -2216,13 +2295,11 @@ PackageCreator::CreateArchiveFile (/*[in,out]*/ MpcPackageInfo & packageInfo,
   // get MD5 of archive file
   packageInfo.archiveFileDigest = MD5::FromFile(archiveFile.Get());
 
-  if (! reuseExisting)
-    {
-      packageInfo.timePackaged = timePackaged;
-
-      // touch the new archive file
-      File::SetTimes (archiveFile, timePackaged, timePackaged, timePackaged);
-    }
+  // touch the new archive file
+  File::SetTimes (archiveFile,
+		  reuseExisting ? static_cast<time_t>(-1) : programStartTime,
+		  static_cast<time_t>(-1),
+		  packageInfo.timePackaged);
 
   return (archiveFileType);
 }
@@ -2338,10 +2415,9 @@ PackageCreator::LoadDbHeavy (/*[in]*/ const PathName & repository)
    _________________________________________________________________________ */
 
 void
-PackageCreator::UpdateRepository
-(/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
- /*[in]*/ const PathName &			repository,
- /*[out]*/ Cfg &				dbLight)
+PackageCreator::UpdateRepository (/*[out]*/ map<string, MpcPackageInfo> &	packageTable,
+				  /*[in]*/ const PathName &			repository,
+				  /*[out]*/ Cfg &				dbLight)
 {
   for (map<string, MpcPackageInfo>::iterator it = packageTable.begin();
        it != packageTable.end();
@@ -2380,12 +2456,16 @@ PackageCreator::UpdateRepository
 			"Level",
 			level.c_str());
 
+#if 0
       // get TDS digest of already existing package
       string str;
-      if (dbLight.TryGetValue(it->second.deploymentName.c_str(), "md5", str))
+      if (dbLight.TryGetValue(it->second.deploymentName.c_str(), "MD5", str))
 	{
 	  // don't remake archive file if there are no changes
-	  if (MD5::Parse(str.c_str()) == it->second.digest)
+	  PathName archiveFile;
+	  ArchiveFileType archiveFileType (ArchiveFileType::None);
+	  if (MD5::Parse(str.c_str()) == it->second.digest
+	    && HavePackageArchiveFile(repository, it->second.deploymentName, archiveFile, archiveFileType))
 	    {
 #if 0
 	      Verbose (T_("%s hasn't changed => skipping"),
@@ -2394,10 +2474,11 @@ PackageCreator::UpdateRepository
 	      continue;
 	    }
 	}
+#endif
 
       // create the archive file
       ArchiveFileType archiveFileType =
-	CreateArchiveFile(it->second, repository);
+	CreateArchiveFile(it->second, repository, dbLight);
 
       // update database records
       dbLight.PutValue (it->second.deploymentName.c_str(),
@@ -2422,13 +2503,33 @@ PackageCreator::UpdateRepository
 			       ? "TarLzma"
 			       : "unknown"))));
 			   
-      if (! it->second.version.empty())
+      if (it->second.version.empty())
+      {
+	string oldVersion;
+	if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
+			        "Version",
+				oldVersion))
 	{
+	  dbLight.DeleteValue(it->second.deploymentName.c_str(), "Version");
+	}
+      }
+      else
+        {
 	  dbLight.PutValue (it->second.deploymentName.c_str(),
 			    "Version",
 			    it->second.version.c_str());
 	}
-      if (! it->second.targetSystem.empty())
+      if (it->second.targetSystem.empty())
+      {
+	string oldTargetSystem;
+	if (dbLight.TryGetValue(it->second.deploymentName.c_str(),
+			        "TargetSystem",
+				oldTargetSystem))
+	{
+	  dbLight.DeleteValue(it->second.deploymentName.c_str(), "TargetSystem");
+	}
+      }
+      else
       {
 	dbLight.PutValue (it->second.deploymentName.c_str(),
 	  "TargetSystem",
@@ -2659,7 +2760,7 @@ PackageCreator::Run (/*[in]*/ int		argc,
   bool optVersion = false;
 
   optVerbose = false;
-  timePackaged = time(0);
+  programStartTime = time(0);
 
   Cpopt popt (argc, argv, options);
 
@@ -2715,7 +2816,7 @@ PackageCreator::Run (/*[in]*/ int		argc,
 	  texmfPrefix = lpszOptArg;
 	  break;
 	case OPT_TIME_PACKAGED:
-	  timePackaged = atoi(lpszOptArg);
+	  programStartTime = atoi(lpszOptArg);
 	  break;
 	case OPT_TPM_DIR:
 	  tpmDir = lpszOptArg;

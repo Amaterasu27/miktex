@@ -104,7 +104,7 @@ DvipsDialog::OnInitDialog ()
 		{
 #if 1
 		  TraceStream::TraceLastWin32Error ("OpenPrinter",
-						    CT2A(lppi1->pName),
+						    TU_(lppi1->pName),
 						    __FILE__,
 						    __LINE__);
 		  continue;
@@ -150,7 +150,7 @@ DvipsDialog::OnInitDialog ()
       size_t size = 300;
       if (Utils::GetDefPrinter(szDefaultPrinter, &size))
 	{
-	  if (m_comboPrinterName.SelectString(-1, CA2T(szDefaultPrinter)) < 0)
+	  if (m_comboPrinterName.SelectString(-1, UT_(szDefaultPrinter)) < 0)
 	    {
 	      UNEXPECTED_CONDITION ("DvipsDialog::OnInitDialog");
 	    }

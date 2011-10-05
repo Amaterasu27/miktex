@@ -81,7 +81,7 @@ DllProcBase::GetProc ()
     }
   if (hModule == 0)
     {
-      hModule = LoadLibraryW(Utils::AnsiToWideChar(dllName.c_str()).c_str());
+      hModule = LoadLibraryW(UW_(dllName.c_str()));
       if (hModule == 0)
 	{
 	  FATAL_WINDOWS_ERROR ("LoadLibraryW", dllName.c_str());

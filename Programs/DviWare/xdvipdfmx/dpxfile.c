@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.25 2009/03/12 19:29:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.27 2011/03/05 02:01:28 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -34,6 +34,23 @@
 #include "mfileio.h"
 
 #include "dpxfile.h"
+
+#include <kpathsea/lib.h>
+#include <string.h>
+#ifdef WIN32
+#include <io.h>
+#include <process.h>
+#else
+#if HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
+#ifndef WEXITSTATUS
+#define WEXITSTATUS(val) ((unsigned)(val) >> 8)
+#endif
+#ifndef WIFEXITED
+#define WIFEXITED(val) (((val) & 255) == 0)
+#endif
+#endif
 
 static int verbose = 0;
 
@@ -135,6 +152,105 @@ miktex_find_psheader_file (const char *filename, char *buf)
 static char  _tmpbuf[_MAX_PATH+1];
 #endif /* MIKTEX */
 
+static int exec_spawn (char *cmd)
+{
+  char **cmdv, **qv;
+  char *p, *pp;
+  char buf[1024];
+  int  i, ret = -1;
+
+  if (!cmd)
+    return -1;
+  while (*cmd == ' ' || *cmd == '\t')
+    cmd++;
+  if (*cmd == '\0')
+    return -1;
+  i = 0;
+  p = cmd;
+  while (*p) {
+    if (*p == ' ' || *p == '\t')
+      i++;
+    p++;
+  }
+  cmdv = xcalloc (i + 2, sizeof (char *));
+  p = cmd;
+  qv = cmdv;
+  while (*p) {
+    pp = buf;
+    if (*p == '"') {
+      p++;
+      while (*p != '"') {
+        if (*p == '\0') {
+          goto done;
+        }
+        *pp++ = *p++;
+      }
+      p++;
+    } else if (*p == '\'') {
+      p++;
+      while (*p != '\'') {
+        if (*p == '\0') {
+          goto done;
+        }
+        *pp++ = *p++;
+      }
+      p++;
+    } else {
+      while (*p != ' ' && *p != '\t' && *p) {
+        if (*p == '\'') {
+          p++;
+          while (*p != '\'') {
+             if (*p == '\0') {
+                 goto done;
+             }
+             *pp++ = *p++;
+          }
+          p++;
+        } else {
+          *pp++ = *p++;
+        }
+      }
+    }
+    *pp = '\0';
+#ifdef WIN32
+    if (strchr (buf, ' ') || strchr (buf, '\t'))
+      *qv = concat3 ("\"", buf, "\"");
+    else
+#endif
+      *qv = xstrdup (buf);
+/*
+    fprintf(stderr,"\n%s", *qv);
+*/
+    while (*p == ' ' || *p == '\t')
+      p++;
+    qv++;
+  }
+#ifdef WIN32
+  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+#else
+  i = fork ();
+  if (i < 0)
+    ret = -1;
+  else if (i == 0) {
+    if (execvp (*cmdv, cmdv))
+      _exit (-1);
+  } else {
+    if (wait (&ret) == i) {
+      ret = (WIFEXITED (ret) ? WEXITSTATUS (ret) : -1);
+    } else {
+      ret = -1;
+    }
+  }
+#endif
+done:
+  qv = cmdv;
+  while (*qv) {
+    free (*qv);
+    qv++;
+  }
+  free (cmdv);
+  return ret;
+}
 
 /* ensuresuffix() returns a copy of basename if sfx is "". */
 static char *
@@ -711,7 +827,6 @@ dpx_delete_temp_file (char *tmp)
   return;
 }
 
-#ifdef HAVE_SYSTEM
 /* dpx_file_apply_filter() is used for converting unsupported graphics
  * format to one of the formats that dvipdfmx can natively handle.
  * 'input' is the filename of the original file and 'output' is actually
@@ -719,6 +834,7 @@ dpx_delete_temp_file (char *tmp)
  * This should be system dependent. (MiKTeX may want something different)
  * Please modify as appropriate (see also pdfximage.c and dvipdfmx.c).
  */
+
 int
 dpx_file_apply_filter (const char *cmdtmpl,
                       const char *input, const char *output,
@@ -789,21 +905,13 @@ if ((l) + (n) >= (m)) { \
     return -1;
   }
 
-  error = system(cmd);
+  error = exec_spawn(cmd);
   if (error)
     WARN("Filtering file via command -->%s<-- failed.", cmd);
   RELEASE(cmd);
 
   return  error;
 }
-#else
-int
-dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *output)
-{
-  WARN("Your system does not have system().");
-  return  -1;
-}
-#endif /* HAVE_SYSTEM */
 
 static char _sbuf[128];
 /*

@@ -1,6 +1,6 @@
 /* comPackageManager.cpp:
 
-   Copyright (C) 2001-2009 Christian Schenk
+   Copyright (C) 2001-2011 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -93,7 +93,8 @@ comPackageManager::InterfaceSupportsErrorInfo (/*[in]*/ REFIID riid)
   static const IID* arr[] = 
     {
       &__uuidof(IPackageManager),
-      &__uuidof(IPackageManager2)
+      &__uuidof(IPackageManager2),
+      &__uuidof(IPackageManager3)
     };
   
   for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); ++ i)
@@ -166,9 +167,7 @@ comPackageManager::GetPackageInfo (/*[in]*/ BSTR		deploymentName,
 	}
       
       MiKTeX::Packages::PackageInfo packageInfo =
-	pManager->GetPackageInfo(static_cast<const char *>
-				 (CW2A(deploymentName)));
-
+	pManager->GetPackageInfo(Utils::WideCharToUTF8(deploymentName));
       CopyPackageInfo (*pPackageInfo, packageInfo);
 
       return (S_OK);
@@ -219,6 +218,41 @@ comPackageManager::CreatePackageIterator
   catch (const exception &)
     {
       *ppIter = 0;
+      return (E_FAIL);
+    }
+}
+
+/* _________________________________________________________________________
+
+   comPackageManager::GetPackageInfo2
+   _________________________________________________________________________ */
+
+STDMETHODIMP
+comPackageManager::GetPackageInfo2 (/*[in]*/ BSTR		deploymentName,
+				   /*[out,retval]*/ PackageInfo2 * pPackageInfo)
+{
+  PackageManagerImpl::localServer = true;
+  try
+    {
+      CreateSession ();
+
+      if (pManager.Get() == 0)
+	{
+	  pManager.Create ();
+	}
+      
+      MiKTeX::Packages::PackageInfo packageInfo =
+	pManager->GetPackageInfo(Utils::WideCharToUTF8(deploymentName));
+      CopyPackageInfo (*pPackageInfo, packageInfo);
+
+      return (S_OK);
+    }
+  catch (const _com_error & e)
+    {
+      return (e.Error());
+    }
+  catch (const exception &)
+    {
       return (E_FAIL);
     }
 }

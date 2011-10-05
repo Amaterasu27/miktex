@@ -1258,6 +1258,10 @@ public:
 
 private:
   void
+  NeedRepository ();
+
+private:
+  void
   UpdateMpmFndb
     (/*[in]*/ const std::vector<std::string> &	installedFiles,
      /*[in]*/ const std::vector<std::string> &	removedFiles,

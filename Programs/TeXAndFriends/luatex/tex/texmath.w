@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: texmath.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/texmath.w $";
+    "$Id: texmath.w 4170 2011-04-16 13:16:39Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/tex/texmath.w $";
 
 @ @c
 #define mode          cur_list.mode_field
@@ -715,20 +715,62 @@ void display_normal_noad(pointer p)
         }
         break;
     case accent_noad:
+       if (accent_chr(p) != null) {
+           if (bot_accent_chr(p) != null) {
+               tprint_esc("Umathaccent both");
+           } else {
+               tprint_esc("Umathaccent");
+           }
+       } else {
+           tprint_esc("Umathaccent bottom");
+       }
+       switch (subtype(p)) {
+       case 0:
         if (accent_chr(p) != null) {
             if (bot_accent_chr(p) != null) {
-                tprint_esc("Umathaccents");
                 print_fam_and_char(accent_chr(p));
                 print_fam_and_char(bot_accent_chr(p));
             } else {
-                tprint_esc("accent");
                 print_fam_and_char(accent_chr(p));
             }
         } else {
-            tprint_esc("Umathbotaccent");
             print_fam_and_char(bot_accent_chr(p));
         }
         break;
+       case 1:
+        if (accent_chr(p) != null) {
+            tprint(" fixed ");
+	    print_fam_and_char(accent_chr(p));
+            if (bot_accent_chr(p) != null) {
+                print_fam_and_char(bot_accent_chr(p));
+            }
+        } else {
+            confusion("display_accent_noad");
+        }
+        break;
+       case 2:
+        if (bot_accent_chr(p) != null) {
+            if (accent_chr(p) != null) {
+	       print_fam_and_char(accent_chr(p));
+            }
+	    tprint(" fixed ");
+            print_fam_and_char(bot_accent_chr(p));
+        } else{
+            confusion("display_accent_noad");
+        }
+        break;
+       case 3:
+        if (accent_chr(p) != null && bot_accent_chr(p) != null) {
+            tprint(" fixed ");
+            print_fam_and_char(accent_chr(p));
+	    tprint(" fixed ");
+            print_fam_and_char(bot_accent_chr(p));
+        } else {
+            confusion("display_accent_noad");
+        }
+        break;
+       }
+       break;
     }
     print_subsidiary_data(nucleus(p), '.');
     print_subsidiary_data(supscr(p), '^');
@@ -1556,10 +1598,31 @@ void math_ac(void)
     } else if (cur_chr == 1) {  /* \.{\\omathaccent} */
         t = scan_mathchar(aleph_mathcode);
     } else if (cur_chr == 2) {  /* \.{\\Umathaccent} */
-        t = scan_mathchar(xetex_mathcode);
-    } else if (cur_chr == 3) {  /* \.{\\Umathbotaccent} */
+	if (scan_keyword("fixed")) {
+           subtype(tail) = 1;
+	   t = scan_mathchar(xetex_mathcode);
+	} else if (scan_keyword("both")) {
+  	   if (scan_keyword("fixed")) {
+             subtype(tail) = 1;
+           }
+	   t = scan_mathchar(xetex_mathcode);
+  	   if (scan_keyword("fixed")) {
+             subtype(tail) += 2;
+           }
+	   b = scan_mathchar(xetex_mathcode);
+	} else if (scan_keyword("bottom")) {
+  	   if (scan_keyword("fixed")) {
+             subtype(tail) = 2;
+           }
+	   b = scan_mathchar(xetex_mathcode);
+	} else {
+	   t = scan_mathchar(xetex_mathcode);
+	}
+    } else if (cur_chr == 3) {  /* deprecated: \.{\\Umathbotaccent} */
+        pdftex_warn("\\Umathbotaccent is deprecated, please update to \\Umathaccent bottom");
         b = scan_mathchar(xetex_mathcode);
-    } else if (cur_chr == 4) {  /* \.{\\Umathaccents} */
+    } else if (cur_chr == 4) {  /* deprecated: \.{\\Umathaccents} */
+        pdftex_warn("\\Umathaccents is deprecated, please update to \\Umathaccent both");
         t = scan_mathchar(xetex_mathcode);
         b = scan_mathchar(xetex_mathcode);
     } else {
@@ -1988,7 +2051,7 @@ At this time we are in vertical mode (or internal vertical mode).
 
 
 @c
-static void finish_displayed_math(boolean l, pointer a, pointer p)
+static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
 {
     pointer eq_box;             /* box containing the equation */
     scaled eq_w;                /* width of the equation */
@@ -1998,12 +2061,12 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
     scaled line_s;              /* move the line right this much */
     scaled d;                   /* displacement of equation in the line */
     small_number g1, g2;        /* glue parameter codes for before and after */
-    pointer r;                  /* kern node used to position the display */
+    pointer r,s;                /* kern nodes used to position the display */
     pointer t;                  /* tail of adjustment list */
     pointer pre_t;              /* tail of pre-adjustment list */
     boolean swap_dir;           /* true if the math and surrounding text dirs are opposed */
     swap_dir = (int_par(pre_display_direction_code) < 0 ? true : false );
-    if (a != null && swap_dir) 
+    if (eqno_box != null && swap_dir) 
         l = !l;
 
     adjust_tail = adjust_head;
@@ -2017,11 +2080,11 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
     eq_w = width(eq_box);
     line_w = display_width;
     line_s = display_indent;
-    if (a == null) {
+    if (eqno_box == null) {
         eqno_w = 0;
         eqno_w2 = 0;
     } else {
-        eqno_w = width(a);
+        eqno_w = width(eqno_box);
         eqno_w2 = eqno_w + get_math_quad(text_size);
     }
     if (eq_w + eqno_w2 > line_w) {
@@ -2077,10 +2140,10 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
        displacement for all three potential lines of the display, even though
        `\.{\\parshape}' may specify them differently.
      */
-    if (a && l && (eqno_w == 0)) {   /* \.{\\leqno} on a forced single line due to |width=0| */
+    if (eqno_box && l && (eqno_w == 0)) {   /* \.{\\leqno} on a forced single line due to |width=0| */
         /* it follows that |type(a)=hlist_node| */
-        shift_amount(a) = line_s;
-        append_to_vlist(a);
+        shift_amount(eqno_box) = line_s;
+        append_to_vlist(eqno_box);
         tail_append(new_penalty(inf_penalty));
     } else {
         tail_append(new_param_glue(g1));
@@ -2088,33 +2151,76 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
 
     if (eqno_w != 0) {
         r = new_kern(line_w - eq_w - eqno_w - d);
+        s = new_kern(width(r) + eqno_w);
         if (l) {
-            vlink(a) = r;
-            vlink(r) = eq_box;
-            eq_box = a;
-            d = 0;
+            if (swap_dir) {
+                if (math_direction==dir_TLT) {
+                    /* TRT + TLT + \eqno,    (swap_dir=true,  math_direction=TLT, l=true)  */
+                    vlink(eqno_box) = r;
+                    vlink(r) = eq_box;
+                    vlink(eq_box) = s;
+                    eq_box = eqno_box;
+                } else {
+                    /* TLT + TRT + \eqno,    (swap_dir=true,  math_direction=TRT, l=true) */
+                    vlink(eqno_box) = r;
+                    vlink(r) = eq_box;
+                    vlink(eq_box) = s;
+                    eq_box = eqno_box;
+                }
+            } else {
+                if (math_direction==dir_TLT) {
+                    /* TLT + TLT + \leqno,   (swap_dir=false, math_direction=TLT, l=true) */ /* OK */
+                    vlink(eqno_box) = r;
+                    vlink(r) = eq_box;
+                    vlink(eq_box) = s;
+                    eq_box = eqno_box;
+                } else {
+                    /* TRT + TRT + \leqno,    (swap_dir=false, math_direction=TRT, l=true) */
+                    vlink(eqno_box) = r;
+                    vlink(r) = eq_box;
+                    vlink(eq_box) = s;
+                    eq_box = eqno_box;
+                }
+            }
         } else {
-            vlink(eq_box) = r;
-            vlink(r) = a;
+            if (swap_dir) {
+                if (math_direction==dir_TLT) {
+                    /* TRT + TLT + \leqno,   (swap_dir=true,  math_direction=TLT, l=false) */
+   	            vlink(eq_box) = r;
+                    vlink(r) = eqno_box;
+                } else {
+                    /* TLT + TRT + \leqno,   (swap_dir=true,  math_direction=TRT, l=false) */
+   	            vlink(eq_box) = r;
+                    vlink(r) = eqno_box;
+                }
+            } else {
+                if (math_direction==dir_TLT) {
+                    /*  TLT + TLT + \eqno,    (swap_dir=false, math_direction=TLT, l=false) */ /* OK */
+                    s = new_kern(d);
+                    vlink(s) = eq_box;
+   	            vlink(eq_box) = r;
+                    vlink(r) = eqno_box;
+                    eq_box = s;
+                } else {
+                    /* TRT + TRT + \eqno,   (swap_dir=false, math_direction=TRT, l=false) */
+                    vlink(s) = eq_box;
+   	            vlink(eq_box) = r;
+                    vlink(r) = eqno_box;
+                    eq_box = s;
+                }
+            }
         }
         eq_box = hpack(eq_box, 0, additional, -1);
-    }
-    if (a && math_direction == dir_TRT) 
-        if (l) {
-           r = new_kern(line_w - width(eq_box)); 
-           vlink(eq_box) = r;
-           eq_box = hpack(eq_box, 0, additional, -1);
-           shift_amount(eq_box) = 0;
-        } else
-           shift_amount(eq_box) = 0;
-    else
+        shift_amount(eq_box) = line_s;
+    } else {
         shift_amount(eq_box) = line_s + d;
+    }
     append_to_vlist(eq_box);
 
-    if ((a != null) && (eqno_w == 0) && !l) {
+    if ((eqno_box != null) && (eqno_w == 0) && !l) {
         tail_append(new_penalty(inf_penalty));
-        shift_amount(a) = line_s;
-        append_to_vlist(a);
+        shift_amount(eqno_box) = line_s;
+        append_to_vlist(eqno_box);
         g2 = 0;
     }
     if (t != adjust_head) {     /* migrating material comes after equation number */
@@ -2209,15 +2315,10 @@ resulting list, and with |aux_save| holding the |prev_depth| value.
 void finish_display_alignment(pointer p, pointer q, halfword saved_prevdepth)
 {
     do_assignments();
-    if (cur_cmd != math_shift_cmd) {
-        const char *hlp[] = {
-            "Displays can use special alignments (like \\eqalignno)",
-            "only if nothing but the alignment itself is between $$'s.",
-            NULL
-        };
-        back_error("Missing $$ inserted", hlp);
-    } else {
+    if (cur_cmd == math_shift_cmd) {
         check_second_math_shift();
+    } else {
+        check_display_math_end();
     }
     pop_nest();
     tail_append(new_penalty(int_par(pre_display_penalty_code)));

@@ -773,6 +773,19 @@ miktex_xfopen (/*[in]*/ const char *	lpszFileName,
 
 /* _________________________________________________________________________
 
+   miktex_xgetcwd
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_xgetcwd ()
+{
+  PathName path;
+  path.SetToCurrentDirectory ();
+  return (xstrdup(path.Get()));
+}
+
+/* _________________________________________________________________________
+
    miktex_kpse_bitmap_tolerance
 
    [KB] The tolerances change whether we base things on DPI1 or DPI2.
@@ -879,7 +892,9 @@ miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
   {
     MIKTEX_FREE (kpse->invocation_name);
   }
-  kpse->invocation_name = xstrdup(lpszArgv0);
+  PathName argv0 (lpszArgv0);
+  char szInvocationName[BufferSizes::MaxPath];
+  kpse->invocation_name = xstrdup(argv0.GetFileName(szInvocationName));
   std::string programName;
   if (lpszProgramName == 0)
   {
@@ -1457,6 +1472,7 @@ miktex_kpathsea_init_format (/*[in]*/ kpathsea pKpseInstance,
    miktex_kpsemu_create_texmf_cnf
    _________________________________________________________________________ */
 
+#if WITH_CONTEXT_SUPPORT
 MIKTEXKPSCEEAPI(char *)
 miktex_kpsemu_create_texmf_cnf ()
 {
@@ -1544,3 +1560,4 @@ miktex_kpsemu_create_texmf_cnf ()
   }
   return (xstrdup(texmfcnfdir.ToUnix().Get()));
 }
+#endif

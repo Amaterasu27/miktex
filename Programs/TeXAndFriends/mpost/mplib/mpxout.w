@@ -1,19 +1,7 @@
-% $Id: mpxout.w 1219 2010-04-01 09:05:51Z taco $
-%
-% Copyright 2008-2009 Taco Hoekwater.
-%
-% This program is free software: you can redistribute it and/or modify
-% it under the terms of the GNU Lesser General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU Lesser General Public License for more details.
-%
-% You should have received a copy of the GNU Lesser General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+% $Id: mpxout.w 1681 2011-05-30 07:15:22Z taco $
+% This file is part of MetaPost;
+% the MetaPost program is in the public domain.
+% See the <Show version...> code in mpost.w for more info.
 
 \def\title{Creating mpx files}
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -48,6 +36,8 @@ in order to prevent name clashes.
 @c
 #include <w2c/config.h>
 #if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
 #  include <miktex/unxemu.h>
 #endif
 #include <stdio.h>
@@ -459,6 +449,7 @@ whitespace corrections applied).
 
 @d VERBATIM_TEX 1
 @d B_TEX 2
+@d FIRST_VERBATIM_TEX 3
 
 @c
 static int mpx_getbta(MPX mpx, char *s) {
@@ -518,6 +509,7 @@ static void mpx_copy_mpto (MPX mpx, FILE *outfile, int textype) {
     char *t;            /* for finding start of last line */
     char c;
     char *res = NULL;
+    t = NULL;
     do {
       if (mpx->aa == NULL || *mpx->aa == 0) {
         if ((mpx->aa = mpx_getline(mpx,mpx->mpfile)) == NULL) {
@@ -554,12 +546,16 @@ static void mpx_copy_mpto (MPX mpx, FILE *outfile, int textype) {
       *s = c;
     } while (*(mpx->tt) != 'e');
     s = res;
-    if (textype != VERBATIM_TEX) {
+    if (textype == B_TEX) {
       /* whitespace at the end */
       for (s = res + strlen(res) - 1;
          s >= res && (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n'); s--);
       t = s;
       *(++s) = '\0';
+    } else {
+      t =s;
+    }
+    if (textype == B_TEX || textype == FIRST_VERBATIM_TEX) {
       /* whitespace at the start */
       for (s = res;
          s < (res + strlen(res)) && (*s == ' ' || *s == '\t' || *s == '\r'
@@ -567,7 +563,7 @@ static void mpx_copy_mpto (MPX mpx, FILE *outfile, int textype) {
       for (; *t != '\n' && t > s; t--);
     }
     fprintf(outfile,"%s", s);
-    if (textype != VERBATIM_TEX) {
+    if (textype == B_TEX) {
       /* put no |%| at end if it's only 1 line total, starting with |%|;
        * this covers the special case |%&format| in a single line. */
       if (t != s || *t != '%')
@@ -604,6 +600,7 @@ static const char *mpx_postverb[] = { "\n", "\n" } ;
 @ @c
 static void mpx_mpto(MPX mpx, char *tmpname, char *mptexpre) {
     FILE *outfile;
+    int verbatim_written = 0;
     int mode      = mpx->mode;
     char *mpname  = mpx->mpname; 
     if (mode==mpx_tex_mode) {
@@ -657,11 +654,15 @@ static void mpx_mpto(MPX mpx, char *tmpname, char *mptexpre) {
         fprintf(outfile,mpx_preverb1[mode], mpx->lnno, mpname);
       else
         fprintf(outfile,mpx_preverb[mode], mpx->lnno, mpname);
-      mpx_copy_mpto(mpx, outfile, VERBATIM_TEX);
+      if (!verbatim_written)
+         mpx_copy_mpto(mpx, outfile, FIRST_VERBATIM_TEX);
+      else
+         mpx_copy_mpto(mpx, outfile, VERBATIM_TEX);
       fprintf(outfile,"%s", mpx_postverb[mode]);
     } else {
       mpx_error(mpx,"unmatched etex");
     }
+    verbatim_written = 1;
   }
 }
 
@@ -1212,6 +1213,7 @@ static void mpx_in_TFM (MPX mpx,web_integer f) {
   @<Move the widths from |in_width| to |width|@>;
   mpx->fbase[f]=0; mpx->ftop[f]=0;
   mpx->info_ptr=wp;
+  mpx_fclose(mpx,mpx->tfm_file);
   return;
 }
 

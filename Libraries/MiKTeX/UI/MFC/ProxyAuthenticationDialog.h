@@ -48,7 +48,10 @@ public:
   GetName ()
     const
   {
-    return (std::string(CT2A(static_cast<LPCTSTR>(name))));
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+    return (std::string(MiKTeX::Core::CharBuffer<char>(static_cast<LPCTSTR>(name)).Get()));
   }
 
 public:
@@ -56,7 +59,10 @@ public:
   GetPassword ()
     const
   {
-    return (std::string(CT2A(static_cast<LPCTSTR>(password))));
+#if ! defined(UNICODE)
+#  error UNICODE required
+#endif
+    return (std::string(MiKTeX::Core::CharBuffer<char>(static_cast<LPCTSTR>(password)).Get()));
   }
 
 protected:

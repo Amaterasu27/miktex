@@ -144,18 +144,27 @@ PackageInstallerImpl::PackageInstallerImpl
   MIKTEX_ASSERT (PackageLevel::None < PackageLevel::Essential
 		 && PackageLevel::Essential < PackageLevel::Basic
 		 && PackageLevel::Basic < PackageLevel::Advanced
-		 && PackageLevel::Advanced < PackageLevel::Complete);
-  
-  // get the default remote repository URL
+		 && PackageLevel::Advanced < PackageLevel::Complete);  
+}
+
+/* _________________________________________________________________________
+
+   PackageInstallerImpl::NeedRepository
+   _________________________________________________________________________ */
+
+void
+PackageInstallerImpl::NeedRepository ()
+{
+  if (repositoryType != RepositoryType::Unknown)
+  {
+    return;
+  }
   string repository;
+  RepositoryType repositoryType (RepositoryType::Unknown);
   if (pManager->TryGetDefaultPackageRepository(repositoryType, repository))
-    {
-      trace_mpm->WriteFormattedLine
-	("libmpm",
-	 T_("using default package repository: %s"),
-	 repository.c_str());
-      SetRepository (repository);
-    }
+  {
+    SetRepository (repository);
+  }
 }
 
 /* _________________________________________________________________________
@@ -466,6 +475,7 @@ void
 PackageInstallerImpl::InstallDbLight ()
 {
   // we must have a package repository
+  NeedRepository ();
   if (repositoryType == RepositoryType::Unknown)
     {
       repository = pManager->PickRepositoryUrl();
@@ -578,10 +588,36 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
 {
   dbLight.Clear ();
 
+#if 1
   // path to mpm.ini
   PathName pathMpmIni (
     pSession->GetSpecialPath(SpecialPath::InstallRoot),
     MIKTEX_PATH_MPM_INI);
+#else
+  PathName commonMpmIni (
+    pSession->GetSpecialPath(SpecialPath::CommonInstallRoot),
+    MIKTEX_PATH_MPM_INI);
+
+  PathName userMpmIni (
+    pSession->GetSpecialPath(SpecialPath::UserInstallRoot),
+    MIKTEX_PATH_MPM_INI);
+
+  PathName pathMpmIni;
+
+  if (pSession->IsAdminMode()
+    || (
+      ! download
+      && userMpmIni != commonMpmIni
+      && File::Exists(commonMpmIni)
+      && (! File::Exists(userMpmIni) || File::GetLastWriteTime(commonMpmIni) > File::GetLastWriteTime(userMpmIni))))
+  {
+    pathMpmIni = commonMpmIni;
+  }
+  else
+  {
+    pathMpmIni = commonMpmIni;
+  }
+#endif
 
   // install (if necessary)
   if (download || ! File::Exists(pathMpmIni))
@@ -596,32 +632,6 @@ PackageInstallerImpl::LoadDbLight (/*[in]*/ bool download)
   MD5 md5 = MD5::FromFile(pathMpmIni.Get());
   ReportLine (T_("lightweight database digest: %s"),
 	      dbLight.GetDigest().ToString().c_str());
-}
-
-/* _________________________________________________________________________
-
-   CompareVersions
-   _________________________________________________________________________ */
-
-int
-CompareVersions (/*[in]*/ const string &	ver1,
-		 /*[in]*/ const string &	ver2)
-{
-  if (ver1.empty() || ver2.empty())
-    {
-      return (0);
-    }
-  VersionNumber verNum1;
-  VersionNumber verNum2;
-  if (VersionNumber::TryParse(ver1.c_str(), verNum1)
-      && VersionNumber::TryParse(ver2.c_str(), verNum2))
-    {
-      return (verNum1.CompareTo(verNum2));
-    }
-  else
-    {
-      return (-1);
-    }
 }
 
 /* _________________________________________________________________________
@@ -659,15 +669,22 @@ CompareSerieses (/*[in]*/ const string &	ver1,
    PackageInstallerImpl::FindUpdates
    _________________________________________________________________________ */
 
-#define MAVERICK T_("miktex-bin") "-" MIKTEX_SERIES_STR
+#if defined(MIKTEX_WINDOWS_64)
+#define MAVERICK "miktex-bin" "-" "x64" "-" MIKTEX_SERIES_STR
+#else
+#define MAVERICK "miktex-bin" "-" MIKTEX_SERIES_STR
+#endif
 
 void
 PackageInstallerImpl::FindUpdates ()
 {
   trace_mpm->WriteLine ("libmpm", T_("searching for updateable packages"));
 
-  // force a download of the lightweight database
-  LoadDbLight (true);
+  // install the package database
+  UpdateDb ();
+
+  // load lightweight database
+  LoadDbLight (false);
 
   updates.clear ();
 
@@ -777,38 +794,16 @@ PackageInstallerImpl::FindUpdates ()
 	    ("libmpm",
 	     T_("local digest: %s"),
 	     pPackageInfo->digest.ToString().c_str());
-	  int verCmp =
-	    CompareVersions(dbLight.GetPackageVersion(lpszPackage),
-			    pPackageInfo->version);
-	  if (verCmp < 0)
+	  // compare time stamps
+	  time_t timePackaged = dbLight.GetTimePackaged(lpszPackage);
+	  if (timePackaged <= pPackageInfo->timePackaged)
 	  {
-	    // server has a previous version => no update necessary
+	    // server has an older package => no update
+	    // necessary
 	    continue;
 	  }
-	  else if (verCmp == 0)
-	  {
-	    // the version numbers are equal => compare time stamps
-	    time_t timePackaged = dbLight.GetTimePackaged(lpszPackage);
-	    if (timePackaged <= pPackageInfo->timePackaged)
-	    {
-	      // server has an older package => no update
-	      // necessary
-	      continue;
-	    }
-	    // server has a newer package
-	    trace_mpm->WriteFormattedLine
-	      ("libmpm",
-	      T_("%s: server has new version"),
-	      lpszPackage);
-	  }
-	  else
-	  {
-	    // server has a newer version
-	    trace_mpm->WriteFormattedLine
-	      ("libmpm",
-	      T_("%s: server has new version"),
-	      lpszPackage);
-	  }
+	  // server has a newer package
+	  trace_mpm->WriteFormattedLine ("libmpm", T_("%s: server has new version"), lpszPackage);
 
 	  if (! pPackageInfo->isRemovable)
 	  {
@@ -1447,6 +1442,8 @@ PackageInstallerImpl::InstallPackage (/*[in]*/ const string &	deploymentName)
       FatalError (ERROR_UNKNOWN_PACKAGE, deploymentName.c_str());
     }
 
+  NeedRepository ();
+
   // initialize progress info
   MIKTEX_LOCK(ProgressIndicator)
     {
@@ -1641,6 +1638,8 @@ PackageInstallerImpl::DownloadPackage (/*[in]*/ const string & deploymentName)
 {
   size_t expectedSize;
 
+  NeedRepository ();
+
   // update progress info
   MIKTEX_LOCK(ProgressIndicator)
     {
@@ -1692,6 +1691,8 @@ PackageInstallerImpl::CalculateExpenditure (/*[in]*/ bool downloadOnly)
       packageInfo.cPackagesInstallTotal =
 	static_cast<unsigned long>(toBeInstalled.size());
     }
+
+  NeedRepository ();
 
   for (it = toBeInstalled.begin(); it != toBeInstalled.end(); ++ it)
     {
@@ -2238,6 +2239,8 @@ PackageInstallerImpl::CheckDependencies
 void
 PackageInstallerImpl::InstallRemove ()
 {
+  NeedRepository ();
+
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
     {
@@ -2561,6 +2564,8 @@ PackageInstallerImpl::Download (/*[in]*/ const PathName &	fileName,
 void
 PackageInstallerImpl::Download ()
 {
+  NeedRepository ();
+
   if (repositoryType == RepositoryType::Remote)
     {
       pManager->VerifyPackageRepository (repository);
@@ -2732,6 +2737,8 @@ PackageInstallerImpl::SetUpPackageDefinitionFiles
   // path to the database file
   PathName pathDatabase;
   
+  NeedRepository ();
+
   if (repositoryType == RepositoryType::Remote)
     {
       // download the database file
@@ -2907,6 +2914,8 @@ PackageInstallerImpl::HandleObsoletePackageDefinitionFiles
 void
 PackageInstallerImpl::UpdateDb ()
 {
+  NeedRepository ();
+
 #if defined(MIKTEX_WINDOWS) && USE_LOCAL_SERVER
   if (UseLocalServer())
     {
@@ -3021,6 +3030,7 @@ PackageInstallerImpl::UpdateDb ()
       PathName newPackageDefinitionFile (tempDir, name);
       tpmparser.Parse (newPackageDefinitionFile);
 
+#if 0
       PackageInfo currentPackageInfo;
       if (! IsPureContainer(szDeploymentName)
 	  && pManager->TryGetPackageInfo(szDeploymentName, currentPackageInfo)
@@ -3029,6 +3039,7 @@ PackageInstallerImpl::UpdateDb ()
 	// nothing new
 	continue;
       }
+#endif
       
       // move the new package definition file into the package
       // definition directory

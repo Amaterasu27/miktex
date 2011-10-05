@@ -12,6 +12,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/${rel_miktex_bin_dir}/${app_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${botan_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${bzip2_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${core_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${core_ps_dll_name}.dll
@@ -33,6 +34,7 @@ texmf/${rel_miktex_bin_dir}/${ui_mfc_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${ui_qt_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${unxemu_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${uriparser_dll_name}.dll
+texmf/${rel_miktex_bin_dir}/${utf8wrap_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${w2cemu_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${zlib_dll_name}.dll
 texmf/${rel_miktex_bin_dir}/${zzip_dll_name}.dll

@@ -173,6 +173,6 @@ RemoveWizard::SetNextText (/*[in]*/ const char * lpszText)
     }
   CString ret;
   pWnd->GetWindowText (ret);
-  pWnd->SetWindowText (CA2T(lpszText));
+  pWnd->SetWindowText (UT_(lpszText));
   return (ret);
 }

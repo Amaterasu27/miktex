@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QMap>
 #include <QPair>
+#include <QSettings>
 
 #include <hunspell.h>
 
@@ -59,7 +60,7 @@ public:
 	static bool isPostscriptFile(const QString& fileName);
 
 	// return the path to our "library" folder for resources like templates, completion lists, etc
-	static const QString getLibraryPath(const QString& subdir);
+	static const QString getLibraryPath(const QString& subdir, const bool updateOnDisk = true);
 	static void updateLibraryResources(const QDir& srcRootDir, const QDir& destRootDir, const QString& libPath);
 
 	static void insertHelpMenuItems(QMenu* helpMenu);
@@ -119,7 +120,7 @@ public:
 	
 	static const QString& cleanupPatterns();
 	
-	static void installCustomShortcuts(QWidget * widget, bool recursive = true);
+	static void installCustomShortcuts(QWidget * widget, bool recursive = true, QSettings * map = NULL);
 
 private:
 	TWUtils();

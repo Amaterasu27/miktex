@@ -194,7 +194,7 @@ FileCopyPage::OnKillActive ()
     {
       try
 	{
-	  CSingleLock (&criticalSectionMonitor, TRUE);
+	  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
 	  if (sharedData.pLogStream.get() != 0)
 	    {
 	      sharedData.pLogStream->Close ();
@@ -345,7 +345,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
       // update the report
       if (sharedData.reportUpdate)
 	{
-	  reportEditBox.SetWindowText (CA2T(sharedData.report.c_str()));
+	  reportEditBox.SetWindowText (UT_(sharedData.report.c_str()));
 	  reportEditBox.SetSel (100000, 100000);
 	  sharedData.reportUpdate = false;
 	}
@@ -395,7 +395,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  if (sharedData.newPackage)
 	    {
 	      GetControl(IDC_PACKAGE)->SetWindowText
-		(CA2T(sharedData.packageName.c_str()));
+		(UT_(sharedData.packageName.c_str()));
 	      sharedData.newPackage = false;
 	    }
 
@@ -486,7 +486,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
   uType |= MB_RETRYCANCEL;
   string str = lpszMessage;
   str += T_("  Then click Retry to complete the operation.");
-  UINT u = ::MessageBoxW(0, CA2W(str.c_str()), 0, uType);
+  UINT u = ::MessageBoxW(0, UW_(str.c_str()), 0, uType);
   return (u != IDCANCEL);
 }
 
@@ -498,7 +498,7 @@ FileCopyPage::OnRetryableError (/*[in]*/ const char * lpszMessage)
 bool
 FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
 {
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   bool visibleProgress = false;
   PackageInstaller::ProgressInfo progressInfo = pInstaller->GetProgressInfo();
   if (nf == Notification::InstallPackageStart
@@ -608,8 +608,10 @@ FileCopyPage::DoTheUpdate ()
   ULogOpen ();
   ULogAddFile (g_logFileName);
 
+#if 0 // already done that
   // update the package database
   pInstaller->UpdateDb ();
+#endif
 
   if (pSheet->GetCancelFlag())
     {
@@ -786,8 +788,8 @@ FileCopyPage::OpenLog ()
   // log general info
   Log (T_("MiKTeX Update Wizard Report\n\n"));
   Log (T_("Version: %s\n"), MIKTEX_COMPONENT_VERSION_STR);
-  Log (T_("Date: %s\n"), t.Format(T_("%A, %B %d, %Y")));
-  Log (T_("Time: %s\n"), t.Format("%H:%M:%S"));
+  Log (T_("Date: %s\n"), TU_(t.Format(T_("%A, %B %d, %Y"))));
+  Log (T_("Time: %s\n"), TU_(t.Format("%H:%M:%S")));
 }
 
 /* _________________________________________________________________________
@@ -821,33 +823,37 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
 		      /*[in]*/			...)
 {
   MIKTEX_ASSERT (lpszFmt != 0);
-  CStringA str;
   va_list args;
   va_start (args, lpszFmt);
-  str.FormatV (lpszFmt, args);
+  string str (Utils::FormatString(lpszFmt, args));
   va_end (args);
-  int len = str.GetLength();
-  CSingleLock (&criticalSectionMonitor, TRUE);
+  int len = str.length();
+  CSingleLock singlelock (&criticalSectionMonitor, TRUE);
   for (int i = 0; i < len; ++ i)
+  {
+    if (str[i] == '\n' && i > 0 && str[i] != '\r')
     {
-      if (str[i] == '\n' && i > 0 && sharedData.report[i - 1] != '\r')
-	{
-	  sharedData.report += '\r';
-	}
-      sharedData.report += str[i];
+      sharedData.currentLine += '\r';
     }
-  sharedData.reportUpdate = true;
-  if (writeLog)
+    sharedData.currentLine += str[i];
+    if (str[i] == '\n')
     {
-      Log ("%s", static_cast<const char *>(str));
+      sharedData.reportUpdate = true;
+      sharedData.report += sharedData.currentLine;
+      if (writeLog)
+      {
+	Log ("%s", sharedData.currentLine.c_str());
+      }
+      sharedData.currentLine.clear ();
     }
-  if (immediate)
+  }  
+  if (sharedData.reportUpdate && immediate)
+  {
+    if (! PostMessage(WM_PROGRESS))
     {
-      if (! PostMessage(WM_PROGRESS))
-	{
-	  FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
-	}
+      FATAL_WINDOWS_ERROR ("CWnd::PostMessage", 0);
     }
+  }
 }
 
 /* _________________________________________________________________________

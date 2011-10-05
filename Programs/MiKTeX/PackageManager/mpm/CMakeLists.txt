@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,6 +28,10 @@ set(mpm_sources
   mpm.cpp
 )
 
+add_definitions(
+  -D_UNICODE -DUNICODE
+)
+
 if(NATIVE_WINDOWS)
   set(mpm_sources ${mpm_sources} mpm.rc)
 endif(NATIVE_WINDOWS)
@@ -38,6 +42,7 @@ merge_trustinfo_manifest(mpm asInvoker)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpm
+    ${botan_lib_name}
     ${bzip2_lib_name}
     ${core_lib_name}
     ${curl_lib_name}
@@ -49,6 +54,7 @@ if(NATIVE_WINDOWS)
     ${mspack_lib_name}
     ${popt_lib_name}
     ${uriparser_lib_name}
+    ${utf8wrap_lib_name}
     ${zlib_lib_name}
   )
 else(NATIVE_WINDOWS)

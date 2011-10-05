@@ -29,6 +29,11 @@
 #  include <stdlib.h>
 #endif
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 #ifndef local
 #  define local static
 #endif
@@ -172,7 +177,11 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 #endif
 
 #ifndef F_OPEN
+#if defined(MIKTEX)
+#  define F_OPEN(name, mode) miktex_utf8_fopen((name), (mode))
+#else
 #  define F_OPEN(name, mode) fopen((name), (mode))
+#endif
 #endif
 
          /* functions */

@@ -58,7 +58,7 @@ authorization from the copyright holders.
 
 #if ! defined(MIKTEX)
 extern "C" {
-	void *xmalloc(unsigned);	// from kpathsea
+	void *xmalloc(size_t);	// from kpathsea
 };
 #endif
 

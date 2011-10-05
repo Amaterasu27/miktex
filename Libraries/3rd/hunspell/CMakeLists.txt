@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -74,6 +74,10 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${hunspell_dll_name} SHARED ${${hunspell_dll_name}_sources})
+
+target_link_libraries(${hunspell_dll_name}
+	${utf8wrap_dll_name}
+)
 
 set_target_properties(${hunspell_dll_name}
   PROPERTIES

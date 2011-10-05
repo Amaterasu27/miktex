@@ -153,7 +153,7 @@ SiteWizDrive::ShowDrives ()
 	  FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	}
 
-      drives.push_back (string(CT2A(szDrive)));
+      drives.push_back (string(TU_(szDrive)));
 
       noDriveFound = false;
     }

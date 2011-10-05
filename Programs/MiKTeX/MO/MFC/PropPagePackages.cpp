@@ -322,7 +322,8 @@ PropPagePackages::SetWindowText (/*[in]*/ UINT		controlId,
     {
       UNEXPECTED_CONDITION ("PropPagePackages::SetWindowText");
     }
-  pWnd->SetWindowText (CA2T(lpszText));
+  ::SetWindowTextW (pWnd->GetSafeHwnd(),
+    Utils::UTF8ToWideChar(lpszText).c_str());
 }
 
 /* _________________________________________________________________________
@@ -347,7 +348,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
       if (pPackageInfo->timeInstalled > 0)
 	{
 	  CTime timeInstall (pPackageInfo->timeInstalled);
-	  SetWindowText (IDC_INSTALLED, CT2A(timeInstall.Format(_T("%x %X"))));
+	  SetWindowText (IDC_INSTALLED, TU_(timeInstall.Format(_T("%x %X"))));
 	}
       else
 	{
@@ -356,7 +357,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
       if (! pPackageInfo->IsPureContainer() && pPackageInfo->timePackaged > 0)
 	{
     	  CTime timePackaged (pPackageInfo->timePackaged);
-	  SetWindowText (IDC_PACKED, CT2A(timePackaged.Format(_T("%x %X"))));
+	  SetWindowText (IDC_PACKED, TU_(timePackaged.Format(_T("%x %X"))));
 	}
       else
 	{
@@ -367,7 +368,7 @@ PropPagePackages::ShowPackageInfo (/*[in]*/ const PackageInfo * pPackageInfo)
 		   (pPackageInfo->sizeRunFiles
 		    + pPackageInfo->sizeDocFiles
 		    + pPackageInfo->sizeSourceFiles));
-      SetWindowText (IDC_PACKAGE_SIZE, CT2A(text));
+      SetWindowText (IDC_PACKAGE_SIZE, TU_(text));
     }
 }
 
@@ -402,7 +403,7 @@ PropPagePackages::OnChangeUrl ()
 	  RepositoryType repositoryType =
 	    pManager->GetDefaultPackageRepository(repository);
 	  this->url = repository.c_str();
-	  SetWindowText (IDC_URL, CT2A(this->url));
+	  SetWindowText (IDC_URL, TU_(this->url));
 	  Scan ();
 	}
     }
@@ -462,7 +463,7 @@ PropPagePackages::OnBnClickedPackageManager ()
   try
     {
       PathName path;
-      if (! SessionWrapper(true)->FindFile(MIKTEX_MPM_MFC_EXE,
+      if (! SessionWrapper(true)->FindFile( SessionWrapper(true)->IsAdminMode() ? MIKTEX_MPM_MFC_ADMIN_EXE : MIKTEX_MPM_MFC_EXE,
 					   FileType::EXE,
 					   path))
 	{
@@ -556,7 +557,7 @@ PropPagePackages::OnGetInfoTip (/*[in]*/ NMHDR *	pNMHDR,
 #endif
       _tcsncpy_s (pInfoTip->pszText,
 		  pInfoTip->cchTextMax,
-		  CA2T(info.c_str()),
+		  CW2T(Utils::UTF8ToWideChar(info.c_str()).c_str()),
 		  _TRUNCATE);
     }
   catch (const MiKTeXException & e)

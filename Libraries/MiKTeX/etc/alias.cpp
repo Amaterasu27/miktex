@@ -1,6 +1,6 @@
 /* alias.cpp: MiKTeX .exe alias
 
-   Copyright (C) 1999-2008 Christian Schenk
+   Copyright (C) 1999-2011 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -31,10 +31,10 @@
 #endif
 
 #include <miktex/Core/Definitions>
+#include <MiKTeX/Core/Core>
 
 #if ! IN_PROCESS
 #  include <process.h>
-#  include <MiKTeX/Core/Core>
 #  include <cerrno>
 #  include <cstdio>
 #endif
@@ -67,53 +67,34 @@ namespace {
 
 /* _________________________________________________________________________
 
-   main (in process)
+   MyMain (in process)
    _________________________________________________________________________ */
 
 #if IN_PROCESS
+static
 int
-MIKTEXCEECALL
-main (/*[in]*/ int		argc,
-      /*[in]*/ const char **	argv)
+MyMain (/*[in]*/ int		argc,
+        /*[in]*/ const char **	argv)
 {
-#if defined(PRE_ARGV)
-  int newargc = (argc + 1/*NULL*/) + pre_argc;
-  char ** newargv =
-    reinterpret_cast<char**>(_alloca(sizeof(char *) * newargc));
-  newargv[0] = const_cast<char*>(argv[0]);
-  size_t idx;
-  for (idx = 0; idx < pre_argc; ++ idx)
-    {
-      newargv[idx + 1] = const_cast<char*>(pre_argv[idx]);
-    }
-  for (idx = 1; idx <= argc; ++ idx)
-    {
-      newargv[idx + pre_argc] = const_cast<char*>(argv[idx]);
-    }
-#else // ! PRE_ARGV
-#  define newargc argc
-#  define newargv argv
-#endif // ! PRE_ARGV
-  return (DLLMAIN(newargc, newargv));
+  return (DLLMAIN(argc, argv));
 }
 #endif
 
 /* _________________________________________________________________________
 
-   main (out of process)
+   MyMain (out of process)
    _________________________________________________________________________ */
 
 #if ! IN_PROCESS
+static
 int
-MIKTEXCEECALL
-main (/*[in]*/ int		argc,
-      /*[in]*/ const char **	argv)
+MyMain (/*[in]*/ int		argc,
+        /*[in]*/ const char **	argv)
 {
   try
     {
       MiKTeX::Core::SessionWrapper pSession;
       pSession.CreateSession (MiKTeX::Core::Session::InitInfo(argv[0]));
-
       MiKTeX::Core::PathName prog;
       if (! pSession->FindFile(REAL_NAME,
 			       MiKTeX::Core::FileType::EXE,
@@ -124,36 +105,26 @@ main (/*[in]*/ int		argc,
 		   REAL_NAME);
 	  throw (1);
 	}
-
-#if defined(PRE_ARGV)
-      int newargc = (argc + 1/*NULL*/) + pre_argc;
-      char ** newargv =
-	reinterpret_cast<char**>(_alloca(sizeof(char *) * newargc));
-      newargv[0] = const_cast<char*>(argv[0]);
-      size_t idx;
-      for (idx = 0; idx < pre_argc; ++ idx)
-	{
-	  newargv[idx + 1] = const_cast<char*>(pre_argv[idx]);
-	}
-      for (idx = 1; idx <= argc; ++ idx)
-	{
-	  newargv[idx + pre_argc] = const_cast<char*>(argv[idx]);
-	}
-#else // ! PRE_ARGV
-#  define newargc argc
-#  define newargv argv
-#endif // ! PRE_ARGV
-
       pSession.Reset ();
-
-      int exitCode = _spawnv(_P_WAIT, prog.Get(), newargv);
-
+      std::vector<std::wstring> wargs;
+      wargs.reserve (argc);
+      for (int idx = 0; idx < argc; ++ idx)
+	{
+	  wargs.push_back (MiKTeX::Core::Utils::UTF8ToWideChar(argv[idx]));
+	}
+      std::vector<const wchar_t *> wargv;
+      wargv.reserve (wargs.size() + 1);
+      for (std::vector<std::wstring>::const_iterator it = wargs.begin(); it != wargs.end(); ++ it)
+	{
+	  wargv.push_back (it->c_str());
+	}
+      wargv.push_back (0);
+      int exitCode = _wspawnv(_P_WAIT, prog.ToWideCharString().c_str(), &wargv[0]);
       if (exitCode < 0 && errno > 0)
 	{
 	  perror (prog.Get());
 	  throw (1);
 	}
-
       return (exitCode);
     }
   catch (const MiKTeX::Core::MiKTeXException & e)
@@ -172,3 +143,54 @@ main (/*[in]*/ int		argc,
     }
 }
 #endif
+
+/* _________________________________________________________________________
+
+   [w]main
+   _________________________________________________________________________ */
+
+
+int
+MIKTEXCEECALL
+#if defined(_UNICODE)
+wmain (/*[in]*/ int			argc,
+       /*[in]*/ const wchar_t **	argv)
+#else
+main (/*[in]*/ int		argc,
+      /*[in]*/ const char **	argv)
+#endif
+{
+  std::vector<std::string> utf8args;
+#if defined(PRE_ARGV)
+  utf8args.reserve (argc + pre_argc);
+#else
+  utf8args.reserve (argc);
+#endif
+#if defined(_UNICODE)
+  utf8args.push_back (MiKTeX::Core::Utils::WideCharToUTF8(argv[0]));
+#else
+  utf8args.push_back (MiKTeX::Core::Utils::AnsiToUTF8(argv[0]));
+#endif
+#if defined(PRE_ARGV)
+  for (int idx = 0; idx < pre_argc; ++ idx)
+    {
+      utf8args.push_back (pre_argv[idx]);
+    }
+#endif
+  for (int idx = 1; idx < argc; ++ idx)
+    {
+#if defined(_UNICODE)
+      utf8args.push_back (MiKTeX::Core::Utils::WideCharToUTF8(argv[idx]));
+#else
+      utf8args.push_back (MiKTeX::Core::Utils::AnsiToUTF8(argv[idx]));
+#endif
+    }
+  std::vector<const char *> args;
+  args.reserve (utf8args.size() + 1);
+  for (std::vector<std::string>::const_iterator it = utf8args.begin(); it != utf8args.end(); ++ it)
+    {
+      args.push_back (it->c_str());
+    }
+  args.push_back (0);
+  return (MyMain(argc, &args[0]));
+}

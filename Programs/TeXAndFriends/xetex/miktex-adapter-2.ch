@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2010 Christian Schenk
+%% Copyright (C) 2007-2011 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -364,9 +364,15 @@ for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 
 @x
 for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length+1 to format_default_length do
+  append_to_name(xord[TEX_format_default[j]]);
 @y
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length+1 to format_default_length do
+  append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @z
 
 % _____________________________________________________________________________

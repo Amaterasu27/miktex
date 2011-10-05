@@ -70,7 +70,7 @@ DisplayOptionsPage::OnInitDialog ()
 	  modeString += " (";
 	  modeString += mode.szDescription;
 	  modeString += ")";
-	  if (modeComboBox.AddString(CA2T(modeString.c_str())) < 0)
+	  if (modeComboBox.AddString(UT_(modeString.c_str())) < 0)
 	    {
 	      FATAL_WINDOWS_ERROR ("CComboBox::AddString", 0);
 	    }
@@ -81,7 +81,7 @@ DisplayOptionsPage::OnInitDialog ()
 		  FATAL_WINDOWS_ERROR ("CComboBox::SetCurSel", 0);
 		}
 	      resolution = mode.iHorzRes;
-	      resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
+	      resolutionControl.SetWindowText (UT_(NUMTOSTR(resolution)));
 	    }
 	}
       int idx = -1;
@@ -238,7 +238,7 @@ DisplayOptionsPage::OnChangeMode ()
       if (SessionWrapper(true)->GetMETAFONTMode(idx, &mode))
 	{
 	  resolution = mode.iHorzRes;
-	  resolutionControl.SetWindowText (CA2T(NUMTOSTR(resolution)));
+	  resolutionControl.SetWindowText (UT_(NUMTOSTR(resolution)));
 	  metafontModeIdx = idx;
 	}
       SetModified (TRUE);

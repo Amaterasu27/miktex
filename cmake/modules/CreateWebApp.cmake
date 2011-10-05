@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -147,7 +147,7 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/${_short_name_l}wrapper.cpp
     PROPERTIES COMPILE_FLAGS
-      "-DDLLMAIN=MiKTeX_${_name_u} -DMIKTEX_${_name_u}"
+      "-DDLLMAIN=MiKTeX_${_name_u} -DMIKTEX_${_name_u} -D_UNICODE"
   )
 
   if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/dyn.sed)

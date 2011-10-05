@@ -74,6 +74,10 @@ quote_name (const char *name)
    This is a generic function; if we end up needing it in other
    programs, we should move it to kpathsea.  */
 
+#ifdef WIN32
+#include <kpathsea/concatn.h>
+#endif
+
 static char *
 selfautoloc_prog (const char *prog)
 {
@@ -91,14 +95,14 @@ selfautoloc_prog (const char *prog)
   while (*r && *r != ' ' && *r != '\t')
     r++;
   if (*r == '\0')
-    ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
+    ret = concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
   else {
     *r = '\0';
     r++;
     if (*r)
-      ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\" ", r, NULL);
+      ret = concatn ("\"", selfautoloc, "\\", q, "\" ", r, NULL);
     else
-      ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
+      ret = concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
   }
   free (q);
   free (selfautoloc);
@@ -181,6 +185,10 @@ search(kpse_file_format_type format, const char *file, const char *mode)
       char *prog = selfautoloc_prog (GUNZIP);
       cmd = concat3 (prog, " -c ", quoted_name);
       ret = popen (cmd, "r");
+      if (dd(D_FILES)) {
+        fprintf(stderr, "popen(%s) %s\n", cmd,
+                         ret == NULL ? "failed" : "succeeded");
+      }
       SET_BINARY(fileno(ret));
       to_close = USE_PCLOSE;
       free (cmd);

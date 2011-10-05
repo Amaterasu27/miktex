@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
+Copyright (c) 1996-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,8 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #if defined(MIKTEX)
@@ -44,6 +43,7 @@ int epdf_selected_page;
 int epdf_num_pages;
 int epdf_page_box;
 void *epdf_doc;
+int epdf_has_page_group;
 
 static integer new_image_entry(void)
 {
@@ -140,7 +140,7 @@ integer imagecolordepth(integer img)
 {
     switch (img_type(img)) {
     case IMAGE_TYPE_PNG:
-        return png_info(img)->bit_depth;
+        return png_get_bit_depth(png_ptr(img), png_info(img));
     case IMAGE_TYPE_JPG:
         return jpg_ptr(img)->bits_per_component;
     case IMAGE_TYPE_JBIG2:
@@ -325,6 +325,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
         pdf_ptr(img)->selected_page = page_num;
         pdf_ptr(img)->doc = epdf_doc;
+        img_group_ref(img) = epdf_has_page_group;
         break;
     case IMAGE_TYPE_PNG:
         img_pages(img) = 1;
@@ -396,7 +397,7 @@ void deleteimage(integer img)
         epdf_delete();
         break;
     case IMAGE_TYPE_PNG:
-        xfclose((FILE *) png_ptr(img)->io_ptr, cur_file_name);
+        xfclose((FILE *) png_get_io_ptr(png_ptr(img)), cur_file_name);
         png_destroy_read_struct(&(png_ptr(img)), &(png_info(img)), NULL);
         break;
     case IMAGE_TYPE_JPG:
@@ -488,7 +489,7 @@ void img_free(void)
       s = a ;					\
     } else { s = NULL; }			\
   } while (0)
-#endif
+#endif /* MIKTEX */
 
 
 

@@ -207,7 +207,6 @@ void initversionstring(char **versions)
 #ifdef XETEX_OTHER
 	int	fc_version = FcGetVersion();
 #endif
-	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
 	FT_Int	ftMajor, ftMinor, ftPatch;
 
 	const_string fmt =
@@ -3172,11 +3171,18 @@ open_dvi_output(/*out*/ bytefile & dviFile)
 {
   if (nopdfoutput)
     {
-      return (THEAPP.OpenOutputFile
-	      (*reinterpret_cast<C4P::FileRoot*>(&dviFile),
-	       THEAPP.GetNameOfFile().Get(),
-	       MiKTeX::Core::FileShare::Read,
-	       false));
+      MiKTeX::Core::PathName outPath;
+      bool done = THEAPP.OpenOutputFile
+	(*reinterpret_cast<C4P::FileRoot*>(&dviFile),
+	 THEAPP.GetNameOfFile().Get(),
+	 MiKTeX::Core::FileShare::Read,
+	 false,
+	 outPath);
+      if (done)
+	{
+	  THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
+	}
+      return (done);
     }
   else
     {
@@ -3196,6 +3202,7 @@ open_dvi_output(/*out*/ bytefile & dviFile)
       if (pFile != 0)
 	{
 	  dviFile.Attach (pFile, true);
+	  THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
 	}
       return (pFile != 0);
     }

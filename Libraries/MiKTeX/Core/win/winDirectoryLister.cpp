@@ -174,7 +174,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	      pathPattern += pattern.c_str();
 	    }
 	  handle = FindFirstFileExW(
-	    AW_(pathPattern.Get()),
+	    UW_(pathPattern.Get()),
 	    IsWindows7() ? FindExInfoBasic : FindExInfoStandard,
 	    &ffdat,
 	    (options & Options::DirectoriesOnly) != 0 ? FindExSearchLimitToDirectories : FindExSearchNameMatch,
@@ -208,7 +208,7 @@ winDirectoryLister::GetNext (/*[out]*/ DirectoryEntry2 & direntry2)
 	 || (((options & Options::FilesOnly) != 0)
 	     && ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)));
   direntry2.wname = ffdat.cFileName;
-  direntry2.name = WA_(ffdat.cFileName);
+  direntry2.name = WU_(ffdat.cFileName);
   direntry2.isDirectory =
     ((ffdat.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
   direntry2.size = ffdat.nFileSizeLow;

@@ -4,6 +4,7 @@
   <rdf:Description about="http://www.miktex.org/packages/miktex/">
     <TPM:Name>MiKTeX config</TPM:Name>
     <TPM:Title>MiKTeX configuration files</TPM:Title>
+    <TPM:Copyright owner="Christian Schenk" year="@MIKTEX_YEAR_VERSION@"/>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
@@ -11,13 +12,6 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/${rel_miktex_config_dir}/amstex.ini
-texmf/${rel_miktex_config_dir}/cont-de.ini
-texmf/${rel_miktex_config_dir}/cont-en.ini
-texmf/${rel_miktex_config_dir}/cont-fr.ini
-texmf/${rel_miktex_config_dir}/cont-it.ini
-texmf/${rel_miktex_config_dir}/cont-nl.ini
-texmf/${rel_miktex_config_dir}/cont-ro.ini
-texmf/${rel_miktex_config_dir}/context.ini
 texmf/${rel_miktex_config_dir}/cslatex.ini
 texmf/${rel_miktex_config_dir}/csplain.ini
 texmf/${rel_miktex_config_dir}/dvilualatex.ini
@@ -28,7 +22,6 @@ texmf/${rel_miktex_config_dir}/elatex.ini
 texmf/${rel_miktex_config_dir}/eplain.ini
 texmf/${rel_miktex_config_dir}/etex.ini
 texmf/${rel_miktex_config_dir}/fontinst.ini
-texmf/${rel_miktex_config_dir}/formats-context.ini
 texmf/${rel_miktex_config_dir}/formats.ini
 texmf/${rel_miktex_config_dir}/frlatex.ini
 texmf/${rel_miktex_config_dir}/frtex.ini

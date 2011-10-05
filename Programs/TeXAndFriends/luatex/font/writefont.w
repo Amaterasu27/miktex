@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writefont.w 3612 2010-04-13 09:29:42Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writefont.w $";
+    "$Id: writefont.w 4269 2011-05-16 06:08:10Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/font/writefont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -468,6 +468,7 @@ static void write_fontfile(PDF pdf, fd_entry * fd)
 
 @
 @c
+int cidset = 0;
 static void write_fontdescriptor(PDF pdf, fd_entry * fd)
 {
     static const int std_flags[] = {
@@ -494,7 +495,7 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
     struct avl_traverser t;
     int fd_flags;
     assert(fd != NULL && fd->fm != NULL);
-
+    cidset = 0; /* possibly updated by |write_fontfile| */
     if (is_fontfile(fd->fm) && is_included(fd->fm))
         write_fontfile(pdf, fd);        /* this will set |fd->ff_found| if font file is found */
     if (fd->fd_objnum == 0)
@@ -518,17 +519,17 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
     }
     pdf_printf(pdf, "/Flags %i\n", fd_flags);
     write_fontmetrics(pdf, fd);
-    if (is_cidkeyed(fd->fm)) {
-        if (is_type1(fd->fm))
-            pdf_printf(pdf, "/FontFile3 %i 0 R\n", (int) fd->ff_objnum);
-        else if (is_truetype(fd->fm))
-            pdf_printf(pdf, "/FontFile2 %i 0 R\n", (int) fd->ff_objnum);
-        else if (is_opentype(fd->fm))
-            pdf_printf(pdf, "/FontFile3 %i 0 R\n", (int) fd->ff_objnum);
-        else
-            assert(0);
-    } else {
-        if (fd->ff_found) {
+    if (fd->ff_found) {
+        if (is_cidkeyed(fd->fm)) {
+            if (is_type1(fd->fm))
+                pdf_printf(pdf, "/FontFile3 %i 0 R\n", (int) fd->ff_objnum);
+            else if (is_truetype(fd->fm))
+                pdf_printf(pdf, "/FontFile2 %i 0 R\n", (int) fd->ff_objnum);
+            else if (is_opentype(fd->fm))
+                pdf_printf(pdf, "/FontFile3 %i 0 R\n", (int) fd->ff_objnum);
+            else
+                assert(0);
+        } else {
             if (is_subsetted(fd->fm) && is_type1(fd->fm)) {
                 /* /CharSet is optional; names may appear in any order */
                 assert(fd->gl_tree != NULL);
@@ -549,14 +550,11 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
                 assert(0);
         }
     }
-    /* TODO: Optional keys for CID fonts.
-
-       The most interesting ones are
+    if (cidset !=0)
+        pdf_printf(pdf, "/CIDSet %i 0 R\n", cidset);
+    /* TODO: Other optional keys for CID fonts.
+       The most interesting one is
        \.{/Style << /Panose <12-byte string>>>}
-       and
-       \.{/CIDSET <stream>}
-       the latter can be used in subsets, to give the included CIDs
-       as a bitmap on the whole list.
      */
     pdf_end_dict(pdf);
 }

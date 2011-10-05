@@ -26,6 +26,7 @@
 #define IDD_INSTALL_PACKAGE             121
 #define IDD_SITEWIZ_DRIVE               122
 #define IDD_ERROR                       123
+#define IDD_GIVE_BACK                   130
 #define IDC_DATE                        1001
 #define IDC_USE_PROXY                   1002
 #define IDC_LIST_PACKAGES               1003
@@ -74,6 +75,7 @@
 #define IDC_LINE1                       1046
 #define IDC_PACKAGE_SIZE                1047
 #define IDC_LINE2                       1048
+#define IDC_SYSLINK_GIVE_BACK           1049
 #define ID_PROPERTIES                   32771
 #define ID_SEARCH_PACKAGE               32772
 
@@ -81,9 +83,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32773
-#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_CONTROL_VALUE         1050
 #define _APS_NEXT_SYMED_VALUE           124
 #endif
 #endif

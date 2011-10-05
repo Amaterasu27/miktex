@@ -293,7 +293,7 @@ winProcess::Create ()
 	}
 
       // set child handles
-      STARTUPINFOA siStartInfo;
+      STARTUPINFOW siStartInfo;
       ZeroMemory (&siStartInfo, sizeof(siStartInfo));
       siStartInfo.cb = sizeof(siStartInfo);
       siStartInfo.dwFlags = STARTF_USESTDHANDLES;
@@ -321,9 +321,16 @@ winProcess::Create ()
 
       // build command-line
       string commandLine;
-      commandLine = '"';
+      bool needQuotes = (startinfo.FileName.find(' ') != string::npos);
+      if (needQuotes)
+      {
+	commandLine = '"';
+      }
       commandLine += startinfo.FileName;
-      commandLine += '"';
+      if (needQuotes)
+      {
+	commandLine += '"';
+      }
       if (! startinfo.Arguments.empty())
 	{
 	  commandLine += ' ';
@@ -342,16 +349,16 @@ winProcess::Create ()
       // experimental
       SessionImpl::GetSession()->UnloadFilenameDatabase ();
 #endif
-      if (! CreateProcessA(fileName.Get(),
-			   STRDUP(commandLine.c_str()).GetBuffer(),
+      if (! CreateProcessW(UW_(fileName.Get()),
+			   UW_(commandLine),
 			   0,	// lpProcessAttributes
 			   0,	// lpThreadAttributes
 			   TRUE,	// bInheritHandles
 			   creationFlags, // dwCreationFlags
 			   0,	// lpEnvironment
-			   (startinfo.WorkingDirectory == ""
+			   (startinfo.WorkingDirectory == L""
 			    ? 0
-			    : startinfo.WorkingDirectory.c_str()),
+			    : UW_(startinfo.WorkingDirectory.c_str())),
 			   &siStartInfo,
 			   &processInformation))
 	{
@@ -705,7 +712,7 @@ Wrap (/*[in,out]*/ string &	arguments)
 #endif
     }
 
-  wrappedArguments += "/c ";
+  wrappedArguments += "/s /c \"";
 
   if (wrapped)
     {
@@ -727,6 +734,8 @@ Wrap (/*[in,out]*/ string &	arguments)
     {
       wrappedArguments += arguments;
     }
+
+  wrappedArguments += "\"";
 
   arguments = wrappedArguments;
 

@@ -18,6 +18,10 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if defined(MIKTEX)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
 
 
 #define IO_INPUT	1

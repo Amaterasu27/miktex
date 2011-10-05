@@ -93,11 +93,11 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
 		     MB_ICONEXCLAMATION);
       pDX->Fail ();
     }
-  if (PathName::Compare(CT2A(formatKey), originalFormatInfo.key.c_str())
+  if (PathName::Compare(TU_(formatKey), originalFormatInfo.key.c_str())
       != 0)
     {
       FormatInfo unused;
-      if (SessionWrapper(true)->TryGetFormatInfo(CT2A(formatKey), unused))
+      if (SessionWrapper(true)->TryGetFormatInfo(TU_(formatKey), unused))
 	{
 	  AfxMessageBox
 	    (T_(_T("A format with the given key already exists.")),
@@ -123,14 +123,14 @@ FormatDefinitionDialog::DoDataExchange (/*in]*/ CDataExchange * pDX)
       pDX->Fail ();
     }
 
-  formatInfo.key = CT2A(formatKey);
-  formatInfo.name = CT2A(formatName);
-  formatInfo.description = CT2A(description);
+  formatInfo.key = TU_(formatKey);
+  formatInfo.name = TU_(formatName);
+  formatInfo.description = TU_(description);
   formatInfo.exclude = (exclude ? true : false);
-  formatInfo.inputFile = CT2A(inputName);
-  formatInfo.outputFile = CT2A(outputName);
-  formatInfo.preloaded = CT2A(preloadedFormat);
-  formatInfo.compiler = CT2A(compiler);
+  formatInfo.inputFile = TU_(inputName);
+  formatInfo.outputFile = TU_(outputName);
+  formatInfo.preloaded = TU_(preloadedFormat);
+  formatInfo.compiler = TU_(compiler);
 }
 
 /* _________________________________________________________________________
@@ -216,17 +216,17 @@ FormatDefinitionDialog::OnInitDialog ()
 	   ++ idx)
 	{
 	  compilers.insert (formatInfo.compiler);
-	  if (PathName::Compare(formatInfo.key.c_str(), CT2A(formatKey)) == 0)
+	  if (PathName::Compare(formatInfo.key.c_str(), TU_(formatKey)) == 0)
 	    {
 	      continue;
 	    }
-	  preloadedFormatComboBox.AddString (CA2T(formatInfo.key.c_str()));
+	  preloadedFormatComboBox.AddString (UT_(formatInfo.key.c_str()));
 	}
       for (set<string>::const_iterator it = compilers.begin();
 	   it != compilers.end();
 	   ++ it)
 	{
-	  compilerComboBox.AddString (CA2T(it->c_str()));
+	  compilerComboBox.AddString (UT_(it->c_str()));
 	}
       UpdateData (FALSE);
     }

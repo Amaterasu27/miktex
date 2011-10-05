@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.25 2009/03/12 19:29:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.29 2011/03/09 07:55:19 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -34,6 +34,23 @@
 #include "mfileio.h"
 
 #include "dpxfile.h"
+
+#include <kpathsea/lib.h>
+#include <string.h>
+#ifdef WIN32
+#include <io.h>
+#include <process.h>
+#else
+#if HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
+#ifndef WEXITSTATUS
+#define WEXITSTATUS(val) ((unsigned)(val) >> 8)
+#endif
+#ifndef WIFEXITED
+#define WIFEXITED(val) (((val) & 255) == 0)
+#endif
+#endif
 
 static int verbose = 0;
 
@@ -133,6 +150,108 @@ miktex_find_psheader_file (const char *filename, char *buf)
 static char  _tmpbuf[_MAX_PATH+1];
 #endif /* MIKTEX */
 
+static int exec_spawn (char *cmd)
+{
+  char **cmdv, **qv;
+  char *p, *pp;
+  char buf[1024];
+  int  i, ret = -1;
+
+  if (!cmd)
+    return -1;
+  while (*cmd == ' ' || *cmd == '\t')
+    cmd++;
+  if (*cmd == '\0')
+    return -1;
+  i = 0;
+  p = cmd;
+  while (*p) {
+    if (*p == ' ' || *p == '\t')
+      i++;
+    p++;
+  }
+  cmdv = xcalloc (i + 2, sizeof (char *));
+  p = cmd;
+  qv = cmdv;
+  while (*p) {
+    pp = buf;
+    if (*p == '"') {
+      p++;
+      while (*p != '"') {
+        if (*p == '\0') {
+          goto done;
+        }
+        *pp++ = *p++;
+      }
+      p++;
+    } else if (*p == '\'') {
+      p++;
+      while (*p != '\'') {
+        if (*p == '\0') {
+          goto done;
+        }
+        *pp++ = *p++;
+      }
+      p++;
+    } else {
+      while (*p != ' ' && *p != '\t' && *p) {
+        if (*p == '\'') {
+          p++;
+          while (*p != '\'') {
+             if (*p == '\0') {
+                 goto done;
+             }
+             *pp++ = *p++;
+          }
+          p++;
+        } else {
+          *pp++ = *p++;
+        }
+      }
+    }
+    *pp = '\0';
+    if (strchr (buf, ' ') || strchr (buf, '\t')) {
+#ifdef WIN32
+      *qv = concat3 ("\"", buf, "\"");
+#else
+      *qv = concat3 ("'", buf, "'");
+#endif
+    } else {
+      *qv = xstrdup (buf);
+    }
+/*
+    fprintf(stderr,"\n%s", *qv);
+*/
+    while (*p == ' ' || *p == '\t')
+      p++;
+    qv++;
+  }
+#ifdef WIN32
+  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+#else
+  i = fork ();
+  if (i < 0)
+    ret = -1;
+  else if (i == 0) {
+    if (execvp (*cmdv, cmdv))
+      _exit (-1);
+  } else {
+    if (wait (&ret) == i) {
+      ret = (WIFEXITED (ret) ? WEXITSTATUS (ret) : -1);
+    } else {
+      ret = -1;
+    }
+  }
+#endif
+done:
+  qv = cmdv;
+  while (*qv) {
+    free (*qv);
+    qv++;
+  }
+  free (cmdv);
+  return ret;
+}
 
 /* ensuresuffix() returns a copy of basename if sfx is "". */
 static char *
@@ -187,7 +306,8 @@ dpx_foolsearch (const char  *foolname,
 
   return  fqpn;
 }
-#else /* !MIKTEX */
+#else /* TEXK */
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
 #  define TDS11DOC "http://www.tug.org/ftp/tex/tds-1.1/tds.html#Fonts"
 static void
 insistupdate (const char      *filename,
@@ -216,6 +336,7 @@ insistupdate (const char      *filename,
   WARN(">> Please read \"README\" file.");
 #endif
 }
+#endif /* TDS 1.1 */
 
 static char *
 dpx_find__app__xyz (const char *filename,
@@ -357,9 +478,11 @@ dpx_find_fontmap_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".map", 1);
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
+#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -381,9 +504,11 @@ dpx_find_agl_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
+#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -430,7 +555,9 @@ dpx_find_cmap_file (const char *filename)
     memset(_tmpbuf, 0, _MAX_PATH+1);
   }
 #else
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L  
   fqpn = kpse_find_file(filename, kpse_cmap_format, 0); 
+#endif  
 #endif
 
   /* Files found above are assumed to be CMap,
@@ -440,8 +567,10 @@ dpx_find_cmap_file (const char *filename)
     fqpn = dpx_foolsearch(fools[i], filename, 1);
     if (fqpn) {
 #ifndef  MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_cmap_format); 
+#endif
 #endif
       if (!qcheck_filetype(fqpn, DPX_RES_TYPE_CMAP)) {
         WARN("Found file \"%s\" for PostScript CMap but it doesn't look like a CMap...", fqpn);
@@ -473,15 +602,19 @@ dpx_find_sfd_file (const char *filename)
 
   q    = ensuresuffix(filename, ".sfd");
 #ifndef  MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_sfd_format, 0);
+#endif
 #endif /* !MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_sfd_format); 
+#endif
 #endif
   }
   RELEASE(q);
@@ -507,15 +640,21 @@ dpx_find_enc_file (const char *filename)
     strcpy(fqpn, _tmpbuf);
   }
 #else
+# if defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_enc_format, 0);
+# else
+  fqpn = kpse_find_file(q, kpse_tex_ps_header_format, 0);
+# endif
 #endif /* MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_enc_format); 
+#endif
 #endif
   }
   RELEASE(q);
@@ -562,15 +701,19 @@ dpx_find_opentype_file (const char *filename)
 
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
+#endif
     fqpn = dpx_foolsearch(PACKAGE, q, 0);
 #ifndef  MIKTEX_NO_KPATHSEA
+#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, PACKAGE,
                    kpse_program_binary_format, kpse_opentype_format); 
   }
+#endif
 #endif
   RELEASE(q);
 
@@ -638,7 +781,7 @@ dpx_create_temp_file (void)
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
-#  define TEMPLATE     "/dvipdfmx.XXXXXXX"
+#  define TEMPLATE     "/dvipdfmx.XXXXXX"
   {
     const char *_tmpd;
     int   _fd = -1;
@@ -687,7 +830,6 @@ dpx_delete_temp_file (char *tmp)
   return;
 }
 
-#ifdef HAVE_SYSTEM
 /* dpx_file_apply_filter() is used for converting unsupported graphics
  * format to one of the formats that dvipdfmx can natively handle.
  * 'input' is the filename of the original file and 'output' is actually
@@ -740,7 +882,7 @@ if ((l) + (n) >= (m)) { \
           strcpy(cmd + n, input); n += strlen(input);
         }
       case  'v': /* Version number, e.g. 1.4 */ {
-       char buf[6];
+       char buf[16];
        sprintf(buf, "1.%hu", (unsigned short) version);
        need(cmd, n, size, strlen(buf));
        strcpy(cmd + n, buf);  n += strlen(buf);
@@ -765,21 +907,13 @@ if ((l) + (n) >= (m)) { \
     return -1;
   }
 
-  error = system(cmd);
+  error = exec_spawn(cmd);
   if (error)
     WARN("Filtering file via command -->%s<-- failed.", cmd);
   RELEASE(cmd);
 
   return  error;
 }
-#else
-int
-dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *output)
-{
-  WARN("Your system does not have system().");
-  return  -1;
-}
-#endif /* HAVE_SYSTEM */
 
 static char _sbuf[128];
 /*

@@ -168,7 +168,7 @@ InstallDirPage::OnKillActive ()
     {
       try
 	{
-	  PathName dir (m_strInstallDir);
+	  PathName dir (static_cast<LPCTSTR>(m_strInstallDir));
 	  if (Directory::Exists(dir))
 	    {
 	      auto_ptr<DirectoryLister> pLister (DirectoryLister::Open(dir));
@@ -259,16 +259,15 @@ InstallDirPage::BrowseCallbackProc (/*[in]*/ HWND	hwnd,
 	      Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
 				   CSIDL_PROGRAM_FILES,
 				   true);
-	    CA2W lpszwRoot (root.Get());
+	    CStringW wroot (UW_(root.Get()));
 	    ::SendMessageW (hwnd,
 			    BFFM_SETSELECTION,
 			    TRUE,
-			    reinterpret_cast<LPARAM>(lpszwRoot.m_szBuffer));
+			    reinterpret_cast<LPARAM>(static_cast<LPCWSTR>(wroot)));
 	    ::SendMessageW (hwnd,
 			    BFFM_SETEXPANDED,
 			    TRUE,
-			    reinterpret_cast<LPARAM>(lpszwRoot.m_szBuffer));
-	    return (0);
+			    reinterpret_cast<LPARAM>(static_cast<LPCWSTR>(wroot)));
 	  }
 	default:
 	  return (0);

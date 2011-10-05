@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,6 +30,8 @@ set(initexmf_sources
 if(NATIVE_WINDOWS)
   set(initexmf_sources ${initexmf_sources} initexmf.rc)
 endif(NATIVE_WINDOWS)
+
+add_definitions(-D_UNICODE -DUNICODE)
 
 add_executable(initexmf ${initexmf_sources})
 

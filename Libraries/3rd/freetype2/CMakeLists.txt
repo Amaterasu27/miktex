@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2010 Christian Schenk
+## Copyright (C) 2007-2011 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -90,6 +90,10 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${freetype2_dll_name} SHARED ${${freetype2_dll_name}_sources})
+
+target_link_libraries(${freetype2_dll_name}
+  ${utf8wrap_dll_name}
+)
 
 set_target_properties(${freetype2_dll_name}
   PROPERTIES

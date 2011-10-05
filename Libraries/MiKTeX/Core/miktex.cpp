@@ -127,15 +127,17 @@ GetHomeDirectory ()
     {
       return (ret);
     }
-  unsigned int n = GetWindowsDirectoryA(ret.GetBuffer(), ret.GetCapacity());
+  wchar_t szWinDir[_MAX_PATH];
+  unsigned int n = GetWindowsDirectoryW(szWinDir, _MAX_PATH);
   if (n == 0)
     {
-      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryA", 0);
+      FATAL_WINDOWS_ERROR ("GetWindowsDirectoryW", 0);
     }
-  else if (n >= ret.GetCapacity())
+  else if (n >= _MAX_PATH)
     {
       BUF_TOO_SMALL ("GetHomeDirectory");
     }
+  ret = szWinDir;
   return (ret);
 #else
   UNEXPECTED_CONDITION ("GetHomeDirectory");
@@ -323,6 +325,154 @@ SessionImpl::GetMakeFontsFlag ()
 {
   return (makeFonts);
 }
+
+/* _________________________________________________________________________
+
+   SessionImpl::TryGetMiKTeXUserInfo
+   _________________________________________________________________________ */
+
+#if HAVE_MIKTEX_USER_INFO
+bool
+SessionImpl::TryGetMiKTeXUserInfo (/*[out]*/ MiKTeXUserInfo & info)
+{
+  static TriState haveResult = TriState::Undetermined;
+  static MiKTeXUserInfo result;
+  if (haveResult == TriState::Undetermined)
+  {
+    haveResult = TriState::False;
+    string userInfoFile;
+    if (! TryGetConfigValue(0, MIKTEX_REGVAL_USERINFO_FILE, userInfoFile))
+    {
+      return (false);
+    }
+    if (! File::Exists(userInfoFile))
+    {
+      return (false);
+    }
+    SmartPointer<Cfg> pcfg (Cfg::Create());
+    pcfg->Read (userInfoFile, true);
+    if (! pcfg->TryGetValue("user", "id", result.id))
+    {
+      return (false);
+    }
+    if (! pcfg->TryGetValue("user", "name", result.name))
+    {
+      return (false);
+    }
+    if (! pcfg->TryGetValue("user", "organization", result.organization))
+    {
+      result.organization = "";
+    }
+    if (! pcfg->TryGetValue("user", "email", result.email))
+    {
+      result.email = "";
+    }
+    string str;
+    if (pcfg->TryGetValue("membership", "expirationdate", str))
+    {
+      int year, month, day;
+      if (sscanf(str.c_str(), "%d-%d-%d", &year, &month, &day) == 3
+	  && year >= 1970
+	  && month >= 1 && month <= 12
+	  && day >= 1 || day <= 31)
+      {
+	struct tm date;
+	memset (&date, 0, sizeof(date));
+	date.tm_year = year - 1900;
+	date.tm_mon = month - 1;
+	date.tm_mday = day;
+	date.tm_hour = 23;
+	date.tm_min = 59;
+	date.tm_sec = 59;
+	date.tm_isdst = -1;
+	result.expirationDate = mktime(&date);
+      }
+    }
+    if (pcfg->TryGetValue("membership", "level", str))
+    {
+      if (StringCompare(str.c_str(), "individual", true) == 0)
+      {
+	result.level = MiKTeXUserInfo::Individual;
+      }
+      else
+      {
+	result.level = atoi(str.c_str());
+      }
+    }
+    if (pcfg->TryGetValue("membership", "role", str))
+    {
+      if (StringCompare(str.c_str(), "developer", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Developer;
+      }
+      else if (StringCompare(str.c_str(), "contributor", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Contributor;
+      }
+      else if (StringCompare(str.c_str(), "sponsor", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::Sponsor;
+      }
+      else if (StringCompare(str.c_str(), "knownuser", true) == 0)
+      {
+	result.role = MiKTeXUserInfo::KnownUser;
+      }
+      else
+      {
+	result.role = atoi(str.c_str());
+      }
+    }
+    haveResult = TriState::True;
+  }
+  if (haveResult == TriState::True)
+  {
+    info = result;
+    return (true);
+  }
+  return (false);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   SessionImpl::TryGetMiKTeXUserInfo
+   _________________________________________________________________________ */
+
+#if HAVE_MIKTEX_USER_INFO
+MiKTeXUserInfo
+SessionImpl::RegisterMiKTeXUser (/*[in]*/ const MiKTeXUserInfo & info)
+{
+  Utils::ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+  // TODO
+  throw new OperationCancelledException();
+}
+#endif
+
+/* _________________________________________________________________________
+
+   Utils::IsRegisteredMiKTeXUser
+   _________________________________________________________________________ */
+
+#if ! HAVE_MIKTEX_USER_INFO
+bool
+Utils::IsRegisteredMiKTeXUser ()
+{
+  return (false);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   Utils::RegisterMiKTeXUser
+   _________________________________________________________________________ */
+
+#if ! HAVE_MIKTEX_USER_INFO
+void
+Utils::RegisterMiKTeXUser ()
+{
+  ShowWebPage (MIKTEX_URL_WWW_GIVE_BACK);
+}
+#endif
 
 /* _________________________________________________________________________
 
@@ -630,20 +780,34 @@ Fndb::Search (/*[in]*/ const char *		lpszFileName,
 /* _________________________________________________________________________
 
    GetEnvironmentString
-
-   Fast but insecure.
    _________________________________________________________________________ */
 
-MIKTEXINTERNALFUNC(const char *)
-GetEnvironmentString (/*[in]*/ const char * lpszName)
+MIKTEXINTERNALFUNC(bool)
+GetEnvironmentString (/*[in]*/ const char * lpszName,
+		      /*[in]*/ string &	    value)
 {
-#if defined(_MSC_VER)
-#  pragma warning (push)
-#  pragma warning (disable: 4996)
-#endif
-  return (getenv(lpszName));
-#if defined(_MSC_VER)
-#  pragma warning (pop)
+#if defined(MIKTEX_WINDOWS)
+  wchar_t * lpszValue = _wgetenv(UW_(lpszName));
+  if (lpszValue == 0)
+  {
+    return (false);
+  }
+  else
+  {
+    value = WU_(lpszValue);
+    return (true);
+  }
+#else
+  const char * lpszValue = getenv(lpszName);
+  if (lpszValue == 0)
+  {
+    return (false);
+  }
+  else
+  {
+    value = lpszValue;
+    return (true);
+  }
 #endif
 }
 
@@ -656,13 +820,7 @@ bool
 Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 			     /*[out]*/ string &		str)
 {
-  bool haveValue = false;
-  const char * lpszOut = ::GetEnvironmentString(lpszName);
-  if (lpszOut != 0)
-    {
-      str = lpszOut;
-      haveValue = true;
-    }
+  bool haveValue = ::GetEnvironmentString(lpszName, str);
   if (SessionImpl::TryGetSession() != 0
       && SessionImpl::GetSession()->trace_env.get() != 0
       && SessionImpl::GetSession()->trace_env->IsEnabled())
@@ -704,30 +862,20 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 {
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
   size_t bufSize;
-  if (getenv_s(&bufSize,
-	       0,
-	       0,
-	       lpszName)
-      != 0)
-    {
-      return (false);
-    }
+  if (_wgetenv_s(&bufSize, 0, 0, UW_(lpszName)) != 0)
+  {
+    return (false);
+  }
   if (bufSize == 0)
-    {
-      return (false);
-    }
-  if (bufSize > sizeOut)
-    {
-      BUF_TOO_SMALL ("Utils::GetEnvironmentString");
-    }
-  if (getenv_s(&bufSize,
-	       lpszOut,
-	       bufSize,
-	       lpszName)
-      != 0)
-    {
-      FATAL_CRT_ERROR ("getenv_s", lpszName);
-    }
+  {
+    return (false);
+  }
+  CharBuffer<wchar_t> buf (bufSize);
+  if (_wgetenv_s(&bufSize, buf.GetBuffer(), bufSize, UW_(lpszName)) != 0)
+  {
+    FATAL_CRT_ERROR ("_wgetenv_s", lpszName);
+  }
+  Utils::CopyString (lpszOut, sizeOut, buf.Get());
   return (true);
 #else
   const char * lpsz = getenv(lpszName);
@@ -748,7 +896,26 @@ Utils::GetEnvironmentString (/*[in]*/ const char *	lpszName,
 MIKTEXINTERNALFUNC(bool)
 HaveEnvironmentString (/*[in]*/ const char * lpszName)
 {
-  return (GetEnvironmentString(lpszName) != 0);
+  string value;
+  return (GetEnvironmentString(lpszName, value));
+}
+
+/* _________________________________________________________________________
+
+   LoadPublicKey
+   _________________________________________________________________________ */
+
+namespace {
+#define PUBLIC_KEY_NAME DC13376B_CCAB_4B4B_B795_6AB245A77596
+#define miktex_der PUBLIC_KEY_NAME
+#include "miktex.der.h"
+}
+
+MIKTEXINTERNALFUNC(Botan::Public_Key *)
+LoadPublicKey ()
+{
+  return (Botan::X509::load_key(
+    Botan::MemoryVector<Botan::byte>(&PUBLIC_KEY_NAME[0], sizeof(PUBLIC_KEY_NAME))));
 }
 
 /* _________________________________________________________________________
@@ -1061,6 +1228,8 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
     }
 #endif
 
+  Botan::LibraryInitializer::initialize ();
+
   initialized = true;
 
   this->initInfo = initInfo;
@@ -1203,6 +1372,8 @@ SessionImpl::Uninitialize ()
       scratchDirectories.clear ();
       inputDirectories.clear ();
       UnregisterLibraryTraceStreams ();
+      configurationSettings.clear ();
+      Botan::LibraryInitializer::deinitialize ();
     }
   catch (const exception &)
     {
