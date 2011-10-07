@@ -30,6 +30,13 @@ IMPLEMENT_DYNCREATE(PackageListPage, CPropertyPage);
 
 const unsigned int WM_FILL_LIST = WM_APP + 1;
 
+const unsigned int ExtendedStyles = 0
+  | LVS_EX_CHECKBOXES
+  | LVS_EX_UNDERLINECOLD
+  | LVS_EX_UNDERLINEHOT
+  | LVS_EX_ONECLICKACTIVATE;
+
+
 /* _________________________________________________________________________
 
    PackageListPage Message Map
@@ -41,6 +48,7 @@ BEGIN_MESSAGE_MAP(PackageListPage, CPropertyPage)
   ON_MESSAGE(WM_FILL_LIST, OnFillList)
   ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST, OnItemChanged)
   ON_NOTIFY(LVN_ITEMCHANGING, IDC_LIST, OnItemChanging)
+  ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST, OnItemActivate)
 END_MESSAGE_MAP();
 
 /* _________________________________________________________________________
@@ -102,8 +110,7 @@ PackageListPage::OnInitDialog ()
   {
     MIKTEX_ASSERT (pInstaller.get() == 0);
     pInstaller = auto_ptr<PackageInstaller>(g_pManager->CreateInstaller());
-    listControl.SetExtendedStyle (listControl.GetExtendedStyle()
-      | LVS_EX_CHECKBOXES);
+    listControl.SetExtendedStyle (listControl.GetExtendedStyle() | ExtendedStyles);
     InsertColumn (0, T_("Name"), T_("xxxx yet another package"));
     InsertColumn (1, T_("Old"), T_("xxxx 19-December-2000"));
     InsertColumn (2, T_("New"), T_("xxxx 19-December-2000"));
@@ -147,6 +154,8 @@ PackageListPage::OnSetActive ()
       {
 	ready = false;
 	this->repository = repository;
+
+	listControl.SetExtendedStyle (listControl.GetExtendedStyle() & ~ ExtendedStyles);
 
 	// a kind of progress info
 	SetProgressText (T_("Searching..."));
@@ -327,6 +336,8 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
 
     AUTO_TOGGLE (fillingTheListView);
 
+    listControl.SetExtendedStyle (listControl.GetExtendedStyle() | ExtendedStyles);
+
     if (! listControl.DeleteAllItems())
     {
       FATAL_WINDOWS_ERROR ("CListCtrl::DeleteAllItems", 0);
@@ -469,8 +480,38 @@ PackageListPage::OnDeselectAll ()
 
 /* _________________________________________________________________________
 
+   PackageListPage::OnItemActivate
+   _________________________________________________________________________ */
+
+void
+PackageListPage::OnItemActivate (/*[in]*/ NMHDR *	pNMHDR,
+				 /*[in]*/ LRESULT *	pResult)
+{
+  LPNMITEMACTIVATE pInfo = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+  *pResult = FALSE;
+  if (fillingTheListView
+    || pInfo == 0
+    || pInfo->iItem < 0
+    || pInfo->iItem >= static_cast<int>(updates.size()))
+  {
+    return;
+  }
+  string url = MIKTEX_URL_WWW_PACKAGE_INFO_FORMAT;
+  string::size_type pos = url.find("%s");
+  MIKTEX_ASSERT (pos != string::npos);
+  url.replace(pos, strlen("%s"), updates[pInfo->iItem].deploymentName);
+  Utils::ShowWebPage (url.c_str());
+}
+
+/* _________________________________________________________________________
+
    PackageListPage::OnItemChanging
    _________________________________________________________________________ */
+
+inline int GetStateImageIndex (UINT state)
+{
+  return ((state & LVIS_STATEIMAGEMASK) >> 12);
+}
 
 void
 PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
@@ -478,65 +519,81 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
 {
   LPNMLISTVIEW pnmlv = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 
+  *pResult = FALSE;
+ 
   if (fillingTheListView
       || pnmlv == 0
       || pnmlv->iItem < 0
       || pnmlv->iItem >= static_cast<int>(updates.size()))
   {
-    *pResult = FALSE;
     return;
   }
 
+  int stateImageIndex = GetStateImageIndex(pnmlv->uNewState);
+
+  if ((pnmlv->uChanged & LVIF_STATE) == 0)
+  {
+    return;
+  }
+
+#if 0
+  if (stateImageIndex == 0 && (pnmlv->uNewState & LVIS_SELECTED) != 0)
+  {
+    *pResult = TRUE;
+    return;
+  }
+#endif
+
   const PackageInstaller::UpdateInfo & updateInfo = updates[pnmlv->iItem];
 
-  if (g_upgrading
+  bool beingUnchecked = (stateImageIndex == 1);
+
+  if (beingUnchecked)
+  {
+    if (g_upgrading
       && IsMiKTeXPackage(updateInfo.deploymentName))
-  {
-    AfxMessageBox (T_(_T("The MiKTeX upgrade operation must be executed \
-as a whole.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
-  {
-    AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can update this package.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepObsolete)
-  {
-    AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can remove this package.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
-  {
-    AfxMessageBox (T_(_T("This package cannot be updated rihgt now. \
-Let the wizard conclude. Then run the wizard again.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::Repair)
-  {
-    AfxMessageBox (T_(_T("This package needs to be repaired.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceRemove)
-  {
-    AfxMessageBox (T_(_T("This package must be removed.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceUpdate)
-  {
-    AfxMessageBox (T_(_T("This package has to be updated.")),
-		   MB_OK | MB_ICONEXCLAMATION);
-    *pResult = TRUE;
-  }
-  else
-  {
-    *pResult = FALSE;
+    {
+      AfxMessageBox (T_(_T("The MiKTeX upgrade operation must be executed as a whole.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepAdmin)
+    {
+      AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can update this package.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::KeepObsolete)
+    {
+      AfxMessageBox (T_(_T("This package is currently installed for all users. Only the admin variant of the wizard can remove this package.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
+    {
+      AfxMessageBox (T_(_T("This package cannot be updated rihgt now. \
+			   Let the wizard conclude. Then run the wizard again.")),
+			   MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::Repair)
+    {
+      AfxMessageBox (T_(_T("This package needs to be repaired.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceRemove)
+    {
+      AfxMessageBox (T_(_T("This package must be removed.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
+    else if (updateInfo.action == PackageInstaller::UpdateInfo::ForceUpdate)
+    {
+      AfxMessageBox (T_(_T("This package has to be updated.")),
+	MB_OK | MB_ICONEXCLAMATION);
+      *pResult = TRUE;
+    }
   }
 }
 
