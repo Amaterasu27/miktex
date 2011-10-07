@@ -607,8 +607,8 @@ PackageListPage::OnItemChanged (/*[in]*/ NMHDR *	pNMHDR,
 				/*[in]*/ LRESULT *	pResult)
 {
   UNUSED_ALWAYS (pNMHDR);
-  *pResult = 0;
-  if (fillingTheListView || pSheet->GetCancelFlag() || pSheet->GetErrorFlag())
+  *pResult = FALSE;
+  if (!ready || fillingTheListView || pSheet->GetCancelFlag() || pSheet->GetErrorFlag())
   {
     return;
   }
