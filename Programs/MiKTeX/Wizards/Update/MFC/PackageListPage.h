@@ -1,6 +1,6 @@
 /* PackageListPag.h:						-*- C++ -*-
 
-   Copyright (C) 2002-2006 Christian Schenk
+   Copyright (C) 2002-2011 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -93,6 +93,12 @@ protected:
   afx_msg
   void
   OnDeselectAll ();
+
+protected:
+  afx_msg
+  void
+  OnItemActivate (/*[in]*/ NMHDR *	pNMHDR,
+		  /*[in]*/ LRESULT *	pResult);
 
 protected:
   afx_msg

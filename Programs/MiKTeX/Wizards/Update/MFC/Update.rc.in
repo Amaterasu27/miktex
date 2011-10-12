@@ -9,9 +9,10 @@
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
+#include "Update-version.h"
 #endif
 #include "afxres.h"
-#include "Update-version.h"
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
