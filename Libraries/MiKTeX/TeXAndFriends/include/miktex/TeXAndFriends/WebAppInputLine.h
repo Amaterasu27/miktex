@@ -261,6 +261,7 @@ public:
 #if defined(MIKTEX_XETEX)
     MiKTeX::Core::Utils::CopyString (
       reinterpret_cast<char *>(THEDATA(nameoffile)), MiKTeX::Core::BufferSizes::MaxPath + 1, fileName.Get());
+    THEDATA(namelength) = fileName.GetLength();
 #else
     MiKTeX::Core::Utils::CopyString (
       THEDATA(nameoffile), MiKTeX::Core::BufferSizes::MaxPath + 1, fileName.Get());

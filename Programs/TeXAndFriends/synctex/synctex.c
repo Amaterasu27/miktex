@@ -786,14 +786,11 @@ void synctexterminate(boolean log_opened)
 #   endif
     if (log_opened && (tmp = SYNCTEX_GET_LOG_NAME())) {
         /* In version 1, the jobname was used but it caused problems regarding spaces in file names. */
-#if defined(MIKTEX) && 0 /* OBSOLETE */
+#if defined(MIKTEX) && defined(THEAPP)
         MiKTeX::Core::PathName path = THEAPP.GetOutputDirectory();
-	if (! path.Empty())
-	  {
-	    path += tmp;
-	    tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
-	    strcpy (tmp, path.Get());
-	  }
+	path += MiKTeX::Core::PathName(tmp).RemoveDirectorySpec();
+	tmp = (char*)xrealloc(tmp, path.GetLength() + 1);
+	strcpy (tmp, path.Get());
 #endif
 #if defined(MIKTEX)
 	/* C++: typecast needed */
