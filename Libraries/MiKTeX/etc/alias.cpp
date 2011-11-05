@@ -192,5 +192,5 @@ main (/*[in]*/ int		argc,
       args.push_back (it->c_str());
     }
   args.push_back (0);
-  return (MyMain(argc, &args[0]));
+  return (MyMain(utf8args.size(), &args[0]));
 }
