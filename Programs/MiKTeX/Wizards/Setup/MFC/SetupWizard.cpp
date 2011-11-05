@@ -136,21 +136,24 @@ SetupWizard::OnInitDialog ()
 	}
       else if (theApp.prefabricated)
 	{
+	  PathName configFile (theApp.localPackageRepository);
+	  configFile += "pr.ini";
+	  SmartPointer<Cfg> pConfig (Cfg::Create());
+	  pConfig->Read (configFile);
 	  CString prefix;
-	  CString version;
+	  CString version (MIKTEXTEXT(MIKTEX_SERIES_STR));
+	  version += MIKTEXTEXT('.');
+	  version += UT_(pConfig->GetValue("repository", "version").c_str());
 	  switch (theApp.packageLevel.Get())
 	    {
 	    case PackageLevel::Essential:
 	      prefix = T_("Essential ");
-	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    case PackageLevel::Basic:
 	      prefix = T_("Basic ");
-	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    case PackageLevel::Complete:
 	      prefix = "";
-	      version = MIKTEXTEXT(MIKTEX_FULL_VERSION_STR);
 	      break;
 	    default:
 	      MIKTEX_ASSERT (false);
