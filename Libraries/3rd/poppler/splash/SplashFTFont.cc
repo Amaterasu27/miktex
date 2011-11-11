@@ -253,6 +253,11 @@ GBool SplashFTFont::makeGlyph(int c, int xFrac, int yFrac,
   } else {
     rowSize = (bitmap->w + 7) >> 3;
   }
+#ifdef MIKTEX_TEXWORKS_PATCHES
+  if (rowSize == 0 || bitmap->h == 0) {
+    return gFalse;
+  }
+#endif
   bitmap->data = (Guchar *)gmallocn_checkoverflow(rowSize, bitmap->h);
   bitmap->freeData = gTrue;
   for (i = 0, p = bitmap->data, q = slot->bitmap.buffer;

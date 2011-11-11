@@ -560,6 +560,24 @@ Plugin::~Plugin() {
 GlobalParams::GlobalParams(const char *customPopplerDataDir)
   : popplerDataDir(customPopplerDataDir)
 {
+#if defined(MIKTEX)
+  if (popplerDataDir == 0)
+  {
+    static MiKTeX::Core::PathName path;
+    if (path.Empty())
+    {
+      MiKTeX::Core::SessionWrapper pSession (true);
+      path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::UserInstallRoot);
+      path += "poppler";
+      if (! MiKTeX::Core::Directory::Exists(path))
+      {
+	path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::CommonInstallRoot);
+	path += "poppler";
+      }
+    }
+    popplerDataDir = path.Get();
+  }
+#endif
   UnicodeMap *map;
   int i;
 

@@ -167,7 +167,7 @@ void TWApp::init()
 	}
 	// </Check for portable mode>
 
-#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN))
+#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN)) && ! defined(MIKTEX)
 	// for Mac and Windows, support "local" poppler-data directory
 	// (requires patched poppler-qt4 lib to be effective,
 	// otherwise the GlobalParams gets overwritten when a
@@ -175,31 +175,7 @@ void TWApp::init()
 #ifdef Q_WS_MAC
 	QDir popplerDataDir(applicationDirPath() + "/../poppler-data");
 #else
-#  if defined(MIKTEX)
-	QDir popplerDataDir;
-	MiKTeX::Core::SessionWrapper pSession (true);
-	MiKTeX::Core::PathName path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::UserInstallRoot);
-	path += "poppler";
-	if (MiKTeX::Core::Directory::Exists(path))
-	{
-	  popplerDataDir = path.Get();
-	}
-	else
-	{
-	  path = pSession->GetSpecialPath(MiKTeX::Core::SpecialPath::CommonInstallRoot);
-	  path += "poppler";
-	  if (MiKTeX::Core::Directory::Exists(path))
-	  {
-	    popplerDataDir = path.Get();
-	  }
-	  else
-	  {
-	    popplerDataDir = applicationDirPath() + "/poppler-data";
-	  }
-	}
-#  else
 	QDir popplerDataDir(applicationDirPath() + "/poppler-data");
-#  endif
 #endif
 	if (popplerDataDir.exists()) {
 		globalParams = new GlobalParams(popplerDataDir.canonicalPath().toUtf8().data());
