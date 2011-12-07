@@ -571,7 +571,7 @@ PackageListPage::OnItemChanging (/*[in]*/ NMHDR *	pNMHDR,
     }
     else if (updateInfo.action == PackageInstaller::UpdateInfo::Keep)
     {
-      AfxMessageBox (T_(_T("This package cannot be updated rihgt now. \
+      AfxMessageBox (T_(_T("This package cannot be updated right now. \
 			   Let the wizard conclude. Then run the wizard again.")),
 			   MB_OK | MB_ICONEXCLAMATION);
       *pResult = TRUE;
