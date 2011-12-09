@@ -98,7 +98,7 @@ public:
     THEDATA(maxbibfiles) = 20;
     THEDATA(maxentints) = 3000;
     THEDATA(maxentstrs) = 3000;
-    THEDATA(maxfields) = 5000;
+    THEDATA(maxfields) = 100000; //5000;
     THEDATA(poolsize) = 65000;
     THEDATA(wizfnspace) = 3000;
     Allocate (THEDATA(bibfile), THEDATA(maxbibfiles));
