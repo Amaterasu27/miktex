@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -455,6 +455,10 @@ private:
 
 private:
   void
+  ModifyPath ();
+
+private:
+  void
   MakeLink (/*[in]*/ const PathName & source,
             /*[in]*/ const PathName & dest,
 	    /*[in]*/ bool	      overwrite);
@@ -657,8 +661,9 @@ enum Option
   OPT_CSV,			// <experimental/>
   OPT_LIST_DIRECTORY,		// <experimental/>
   OPT_LIST_FORMATS,		// <experimental/>
-  OPT_REGISTER_SHELL_FILE_TYPES,	// <experimental/>
+  OPT_MODIFY_PATH,		// <experimental/>
   OPT_RECURSIVE,		// <experimental/>
+  OPT_REGISTER_SHELL_FILE_TYPES,	// <experimental/>
   OPT_REMOVE_FILE,		// <experimental/>
   OPT_SET_CONFIG_VALUE,		// <experimental/>
   OPT_SHOW_CONFIG_VALUE,		// <experimental/>
@@ -820,6 +825,14 @@ Open the specified configuration file in an editor.\
     OPT_MKMAPS,
     T_("Create font map files."),
     0
+  },
+
+  {
+    "modify-path", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MODIFY_PATH,
+    T_("Modify the environmaent variable PATH."),
+    0,
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1172,6 +1185,14 @@ Open the specified configuration file in an editor.\
     OPT_MKMAPS,
     T_("Create font map files."),
     0
+  },
+
+  {
+    "modify-path", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MODIFY_PATH,
+    T_("Modify the environmaent variable PATH."),
+    0,
   },
 
 #if defined(MIKTEX_WINDOWS)
@@ -1538,6 +1559,14 @@ Open the specified configuration file in an editor.\
     OPT_MKMAPS,
     T_("Create font map files."),
     0
+  },
+
+  {
+    "modify-path", 0,
+    POPT_ARG_NONE | POPT_ARGFLAG_DOC_HIDDEN, 0,
+    OPT_MODIFY_PATH,
+    T_("Modify the environmaent variable PATH."),
+    0,
   },
 
   {
@@ -2507,6 +2536,17 @@ IniTeXMFApp::RegisterShellFileTypes (/*[in]*/ bool	  reg)
   }
 }
 #endif
+
+/* _________________________________________________________________________
+     
+   IniTeXMFApp::ModifyPath
+   _________________________________________________________________________ */
+
+void
+IniTeXMFApp::ModifyPath ()
+{
+  Utils::CheckPath (true);
+}
 
 /* _________________________________________________________________________
      
@@ -3491,6 +3531,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 #endif
   bool optPortable = false;
   bool optRegisterShellFileTypes = false;
+  bool optModifyPath = false;
   bool optReport = false;
   bool optUnRegisterShellFileTypes = false;
   bool optUpdateFilenameDatabase = false;
@@ -3631,6 +3672,11 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  optMakeMaps = true;
 	  break;
 
+	case OPT_MODIFY_PATH:
+
+	  optModifyPath = true;
+	  break;
+
 #if defined(MIKTEX_WINDOWS)
 	case OPT_NO_REGISTRY:
 
@@ -3763,7 +3809,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
       printf ("%s\n", Utils::MakeProgramVersionString(TheNameOfTheGame,
 	MIKTEX_COMPONENT_VERSION_STR).c_str());
       printf (T_("\n\
-Copyright (C) 1996-2011 Christian Schenk\n\
+Copyright (C) 1996-2012 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       return;
@@ -3849,6 +3895,11 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     RegisterShellFileTypes (false);
   }
 #endif
+
+  if (optModifyPath)
+  {
+    ModifyPath ();
+  }
 
   if (optMakeLanguageDat)
   {

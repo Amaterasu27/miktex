@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2012 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -351,9 +351,6 @@ FindFile (/*[in]*/ const PathName &	fileName,
 bool
 FindDataDir (/*[out]*/ CString & strDir);
 
-bool
-IsPathRegistered ();
-
 void
 Log (/*[in]*/ const char *	lpsz,
      /*[in]*/				...);
@@ -371,14 +368,6 @@ LogHeader ();
 void LogV
 (/*[in]*/ const char *	lpsz,
  /*[in]*/ va_list		args);
-
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-void
-RegisterPath95 ();
-#endif
-
-void
-RegisterPathNT ();
 
 PackageLevel
 TestLocalRepository (/*[in]*/ const PathName &		pathRepository,

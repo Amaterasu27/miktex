@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -3038,7 +3038,7 @@ UTF8ToWideChar (/*[in]*/ const char * lpszUtf8,
 {
   MIKTEX_ASSERT (Utils::IsUTF8(lpszUtf8));
   MIKTEX_ASSERT (sizeWideChar == 0 || lpszWideChar != 0);
-  MIKTEX_ASSERT (sizeWideChar != 0 || lpszWideChar == 0);
+  MIKTEX_ASSERT (sizeWideChar != 0 || lpszWideChar == 0 || *lpszWideChar == 0);
   MIKTEX_ASSERT_CHAR_BUFFER_OR_NIL (lpszWideChar, sizeWideChar);
   if (*lpszUtf8 == 0)
     {
@@ -3400,6 +3400,9 @@ CheckPath (/*[in]*/ const string &	oldPath,
   newPath = "";
   PathName binDir = binDirArg;
   binDir.AppendDirectoryDelimiter ();
+#if defined(MIKTEX_WINDOWS)
+  binDir.ToDos ();
+#endif
   for (CSVList entry (oldPath.c_str(), PathName::PathNameDelimiter);
        entry.GetCurrent() != 0;
        ++ entry)
