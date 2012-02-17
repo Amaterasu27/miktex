@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2012 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -776,20 +776,9 @@ FileCopyPage::DoPrepareMiKTeXDirect ()
   }
 
   // register path
-  if (! theApp.portable && theApp.registerPath && ! IsPathRegistered())
+  if (! theApp.portable && theApp.registerPath)
     {
-      if (IsWindowsNT())
-	{
-	  RegisterPathNT ();
-	}
-      else
-	{
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	  RegisterPath95 ();
-#else
-	  UNSUPPORTED_PLATFORM ();
-#endif
-	}
+      Utils::CheckPath (true);
     }
 }
 
@@ -900,20 +889,9 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // register path
-  if (! theApp.portable && theApp.registerPath && ! IsPathRegistered())
+  if (! theApp.portable && theApp.registerPath)
     {
-      if (IsWindowsNT())
-	{
-	  RegisterPathNT ();
-	}
-      else
-	{
-#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
-	  RegisterPath95 ();
-#else
-	  UNSUPPORTED_PLATFORM ();
-#endif
-	}
+      Utils::CheckPath (true);
     }
 
   if (theApp.portable)
@@ -1107,6 +1085,11 @@ FileCopyPage::ConfigureMiKTeX ()
     RunIniTeXMF ("--register-shell-file-types");
   }
       
+  if (! theApp.portable && theApp.registerPath)
+  {
+    RunIniTeXMF ("--modify-path");
+  }
+
   // [8] create report
   RunIniTeXMF ("--report");
   if (pSheet->GetCancelFlag())
