@@ -24,6 +24,11 @@ static const char _svn_version[] =
 
 // define DEBUG
 
+#if defined(MIKTEX_WINDOWS)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 #include "epdf.h"
 
 // This file is mostly C and not very much C++; it's just used to interface
