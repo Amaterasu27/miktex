@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -426,15 +426,14 @@ Relativize (/*[in,out]*/ string &     paths,
     {
       result += PATH_DELIMITER;
     }
-    PathName relPath;
-    MIKTEX_ASSERT (relPath.GetCapacity() >= MAX_PATH);
-    if (PathRelativePathToA(relPath.GetBuffer(),
-			    relativeFrom.Get(),
+    wchar_t szRelPath[MAX_PATH];
+    if (PathRelativePathToW(szRelPath,
+			    relativeFrom.ToWideCharString().c_str(),
 			    FILE_ATTRIBUTE_DIRECTORY,
-			    path.GetCurrent(),
+			    UW_(path.GetCurrent()),
 			    FILE_ATTRIBUTE_DIRECTORY))
     {
-      result += relPath.Get();
+      result += WU_(szRelPath);
     }
     else
     {
