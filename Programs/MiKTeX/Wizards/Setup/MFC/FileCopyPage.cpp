@@ -900,6 +900,7 @@ FileCopyPage::DoTheInstallation ()
     fileName += "miktex-portable.cmd";
     StreamWriter starter (fileName);
     starter.WriteLine ("@echo off");
+    starter.WriteLine ("cd /d %~dp0");
     starter.WriteLine ("miktex\\bin\\miktex-taskbar-icon.exe");
     starter.Close ();
   }
