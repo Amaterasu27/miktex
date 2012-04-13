@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -82,6 +82,48 @@ RootDirectory::SetFndb (/*[in]*/ FileNameDatabase * pFndb)
    Register a TEXMF root.
    _________________________________________________________________________ */
 
+static
+string
+ExpandEnvironmentVariables (/*[in]*/ const char *	lpszToBeExpanded)
+{
+  const char * lpsz = lpszToBeExpanded;
+  string valueName;
+  string expansion;
+  expansion.reserve (strlen(lpsz));
+  for (; *lpsz != 0; ++ lpsz)
+  {
+    if (lpsz[0] == '<')
+    {
+      const char * lpszBegin = lpsz;
+      const char endChar = '>';
+      valueName = "";
+      for (lpsz += 1; *lpsz != 0 && *lpsz != endChar; ++ lpsz)
+      {
+	valueName += *lpsz;
+      }
+      if (*lpsz != endChar)
+      {
+	FATAL_MIKTEX_ERROR ("ExpandEnvironmentVariables", T_("Missing value name delimiter."), 0);
+      }
+      if (valueName.empty())
+      {
+	FATAL_MIKTEX_ERROR ("ExpandEnvironmentVariables", T_("Missing value name."), 0);
+      }
+      string value;
+      if (! Utils::GetEnvironmentString(valueName.c_str(), value))
+      {
+	FATAL_MIKTEX_ERROR ("ExpandEnvironmentVariables", T_("Environment variable not defined."), valueName.c_str());
+      }
+      expansion += value;
+    }
+    else
+    {
+      expansion += lpsz[0];
+    }
+  }
+  return (expansion);
+}
+
 unsigned
 SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root,
 				    /*[in]*/ bool	      common)
@@ -89,7 +131,7 @@ SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root,
   unsigned idx;
   for (idx = 0; idx < rootDirectories.size(); ++ idx)
     {
-      if (root == rootDirectories[idx].get_Path())
+      if (root == rootDirectories[idx].get_UnexpandedPath())
 	{
 	  // already registered
 	  if (common && ! rootDirectories[idx].IsCommon())
@@ -106,7 +148,7 @@ SessionImpl::RegisterRootDirectory (/*[in]*/ const PathName & root,
 				    T_("registering %s TEXMF root: %s"),
 				    common ? "common" : "user",
 				    root.Get());
-  RootDirectory rootDirectory (root);
+  RootDirectory rootDirectory (root, ExpandEnvironmentVariables(root.Get()));
   rootDirectory.set_Common (common);
   rootDirectories.reserve (10);
   rootDirectories.push_back (rootDirectory);
@@ -579,7 +621,7 @@ SessionImpl::SaveRootDirectories (
 	{
 	  startupConfig.commonRoots += PATH_DELIMITER;
 	}
-	startupConfig.commonRoots += rootDirectory.get_Path().Get();
+	startupConfig.commonRoots += rootDirectory.get_UnexpandedPath().Get();
       }
       else
       {
@@ -594,33 +636,33 @@ SessionImpl::SaveRootDirectories (
 	{
 	  startupConfig.userRoots += PATH_DELIMITER;
 	}
-	startupConfig.userRoots += rootDirectory.get_Path().Get();
+	startupConfig.userRoots += rootDirectory.get_UnexpandedPath().Get();
       }
     }
   if (commonInstallRootIndex != INVALID_ROOT_INDEX)
     {
       startupConfig.commonInstallRoot =
-	GetRootDirectory(commonInstallRootIndex);
+	this->rootDirectories[commonInstallRootIndex].get_UnexpandedPath();
     }
   if (userInstallRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.userInstallRoot = GetRootDirectory(userInstallRootIndex);
+      startupConfig.userInstallRoot = this->rootDirectories[userInstallRootIndex].get_UnexpandedPath();
     }
   if (commonDataRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.commonDataRoot = GetRootDirectory(commonDataRootIndex);
+      startupConfig.commonDataRoot = this->rootDirectories[commonDataRootIndex].get_UnexpandedPath();
     }
   if (userDataRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.userDataRoot = GetRootDirectory(userDataRootIndex);
+      startupConfig.userDataRoot = this->rootDirectories[userDataRootIndex].get_UnexpandedPath();
     }
   if (commonConfigRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.commonConfigRoot = GetRootDirectory(commonConfigRootIndex);
+      startupConfig.commonConfigRoot = this->rootDirectories[commonConfigRootIndex].get_UnexpandedPath();
     }
   if (userConfigRootIndex != INVALID_ROOT_INDEX)
     {
-      startupConfig.userConfigRoot = GetRootDirectory(userConfigRootIndex);
+      startupConfig.userConfigRoot = this->rootDirectories[userConfigRootIndex].get_UnexpandedPath();
     }
   if (IsAdminMode())
   {

@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -644,9 +644,11 @@ public:
   }
 
 public:
-  RootDirectory (/*[in]*/ const PathName &	path)
+  RootDirectory (/*[in]*/ const PathName &	unexpandedPath,
+		 /*[in]*/ const PathName &	path)
     : noFndb (false),
       pFndb (0),
+      unexpandedPath (unexpandedPath),
       path (path),
       common (false)
   {
@@ -656,6 +658,7 @@ public:
   RootDirectory (/*[in]*/ const RootDirectory & other)
     : noFndb (other.noFndb),
       pFndb (0),
+      unexpandedPath (other.unexpandedPath),
       path (other.path),
       common (other.common)
   {
@@ -670,10 +673,19 @@ public:
   operator= (/*[in]*/ const RootDirectory & rhs)
   {
     noFndb = rhs.noFndb;
+    unexpandedPath = rhs.unexpandedPath;
     path = rhs.path;
     common = rhs.common;
     SetFndb (rhs.GetFndb());
     return (*this);
+  }
+
+public:
+  const PathName &
+  get_UnexpandedPath ()
+    const
+  {
+    return (unexpandedPath);
   }
 
 public:
@@ -725,6 +737,9 @@ public:
   {
     return (pFndb);
   }
+
+private:
+  PathName unexpandedPath;
 
   // fully qualified path to root folder
 private:
