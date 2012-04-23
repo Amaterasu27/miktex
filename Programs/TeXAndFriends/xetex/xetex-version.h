@@ -1,6 +1,6 @@
 /* xetex-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4308
+#define MIKTEX_COMP_J2000_VERSION 4487
 #define MIKTEX_COMP_ORIG_VERSION_STR "0.9997.5"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 1994-2008 by SIL International, (C) 2009-2011 by Jonathan Kew"

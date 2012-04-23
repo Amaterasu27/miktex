@@ -333,10 +333,28 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 
 /*  This macro layer was added to take luatex into account as suggested by T. Hoekwater. */
 #   if !defined(SYNCTEX_GET_JOB_NAME)
+#     if defined(MIKTEX)
+inline char * SYNCTEX_GET_JOB_NAME ()
+{
+  char * lpsz = gettexstring(jobname);
+  strcpy (lpsz, MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(lpsz).Get());
+  return (lpsz);
+}
+#     else
 #       define SYNCTEX_GET_JOB_NAME() (gettexstring(jobname))
+#     endif
 #   endif
 #   if !defined(SYNCTEX_GET_LOG_NAME)
+#     if defined(MIKTEX)
+inline char * SYNCTEX_GET_LOG_NAME ()
+{
+  char * lpsz = gettexstring(texmflogname);
+  strcpy (lpsz, MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(lpsz).Get());
+  return (lpsz);
+}
+#     else
 #       define SYNCTEX_GET_LOG_NAME() (gettexstring(texmflogname))
+#     endif
 #   endif
 #   if !defined(SYNCTEX_CURRENT_TAG)
 #       define SYNCTEX_CURRENT_TAG (curinput.synctextagfield)
