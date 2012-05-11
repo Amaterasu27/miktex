@@ -1,6 +1,6 @@
-% This is the cweb file bg5conv.w of the CJK Package Ver. 4.8.0  22-May-2008
+% This is the cweb file bg5conv.w of the CJK Package Ver. 4.8.3  07-May-2012
 
-% Copyright (C) 1994-2008  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2012  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 % output rules (look at the position of braces below!) the author (it's me
 % too :-) prefer. Otherwise this file will be formatted traditionally.
 
-\def\title{bg5conv (CJK Version 4.8.0)}
+\def\title{bg5conv (CJK Version 4.8.3)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont bg5conv} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.8.0)}
+  \centerline{(CJK Version 4.8.3)}
   \vfill}
 
 \def\botofcontents{
@@ -89,17 +89,14 @@ which will see the output of \.{bg5conv} complains loudly if something is
 wrong.
 
 @d banner
-"bg5conv (CJK ver. 4.8.0)"
+"bg5conv (CJK ver. 4.8.3)"
 
 @c
 #include <stdio.h>
 #include <stdlib.h>@#
 
 
-int main(argc, argv)
-  int argc;
-  char *argv[];
-
+int main(int argc, char *argv[])
    {int ch;
 
     fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
