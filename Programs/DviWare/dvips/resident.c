@@ -783,6 +783,12 @@ case 't' :
 #endif
          }
          break;
+case 'c' :
+         if (sscanf(was_inline+1, "%s", PSname) != 1)
+           bad_config("missing arg to c");
+         else
+           getdefaults(PSname);
+         break;
 default:
          bad_config("strange line");
       }
@@ -895,7 +901,7 @@ getpsinfo(const char *name)
                      out what to do; couldn't do this above since we
                      want to check the suffix.  */
                   if (hdr_name) {
-                     char *suffix = find_suffix (hdr_name);
+                     const char *suffix = find_suffix (hdr_name);
 #if defined(MIKTEX)
 		     if (suffix == 0)
 		       suffix = "";
