@@ -153,12 +153,6 @@
  *  and *tex.web for details, the synctex_ prefix prevents name conflicts, it
  *  is some kind of namespace
  */
-#if defined(MIKTEX)
-/* #warning is a non-standard directive and MSVC does not understand
-   it */
-#else
-#   warning These structures MUST be kept in synchronization with the main program
-#endif /* MIKTEX */
 /*  synctexoption is a global integer variable defined in *tex.web
  *  it is set to 1 by texmfmp.c if the command line has the '-synctex=1'
  *  option.  */
@@ -360,7 +354,7 @@ inline char * SYNCTEX_GET_LOG_NAME ()
 #       define SYNCTEX_CURRENT_TAG (curinput.synctextagfield)
 #   endif
 #   if !defined(SYNCTEX_GET_CURRENT_NAME)
-#       define SYNCTEX_GET_CURRENT_NAME() (gettexstring(curinput.namefield))
+#       define SYNCTEX_GET_CURRENT_NAME() generic_synctex_get_current_name()
 #   endif
 #   if !defined(SYNCTEX_GET_TOTAL_PAGES)
 #       define SYNCTEX_GET_TOTAL_PAGES() (totalpages)
