@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	For links to further information, or to contact the authors,
+	see <http://www.tug.org/texworks/>.
 */
 
 #ifndef TWApp_H
@@ -54,6 +54,7 @@
 #else // MIKTEX
 #define TW_BUILD_ID_STR STRINGIFY(TW_BUILD_ID)
 #endif // MIKTEX
+#define DEFAULT_ENGINE_NAME "pdfLaTeX"
 
 class QString;
 class QMenu;
@@ -81,6 +82,7 @@ public:
 	int maxRecentFiles() const;
 	void setMaxRecentFiles(int value);
 	void addToRecentFiles(const QMap<QString,QVariant>& fileProperties);
+	void clearRecentFiles();
 
 	void emitHighlightLineOptionChanged();
 	
@@ -90,8 +92,8 @@ public:
 	void setEngineList(const QList<Engine>& engines);
 
 	const QStringList getBinaryPaths(QStringList& sysEnv);
-		// runtime paths, including $PATH;
-		// also modifies passed-in sysEnv to include paths from prefs
+	// runtime paths, including $PATH;
+	// also modifies passed-in sysEnv to include paths from prefs
 	QString findProgram(const QString& program, const QStringList& binPaths);
 
 	const QStringList getPrefsBinaryPaths(); // only paths from prefs
@@ -115,6 +117,8 @@ public:
 	QString getPortableLibPath() const { return portableLibPath; }
 
 	TWScriptManager* getScriptManager() { return scriptManager; }
+	
+	void notifyDictionaryListChanged() const { emit dictionaryListChanged(); }
 
 #ifdef Q_WS_WIN
 	void createMessageTarget(QWidget* aWindow);
@@ -148,6 +152,7 @@ public:
 	}
 
 	Q_INVOKABLE void setGlobal(const QString& key, const QVariant& val);
+	Q_INVOKABLE void unsetGlobal(const QString& key) { m_globals.remove(key); }
 	Q_INVOKABLE bool hasGlobal(const QString& key) const { return m_globals.contains(key); }
 	Q_INVOKABLE QVariant getGlobal(const QString& key) const { return m_globals[key]; }
 	
@@ -163,6 +168,7 @@ private:
 	QAction *actionPreferences;
 
 	QMenu *menuRecent;
+	QAction *actionClear_Recent_Files;
 	QList<QAction*> recentFileActions;
 
 	QMenu *menuHelp;
@@ -177,6 +183,8 @@ public slots:
 
 	// called by windows when they open/close/change name
 	void updateWindowMenus();
+
+	void reloadSpellchecker();
 
 	// called once when the app is first launched
 	void launchAction();
@@ -196,7 +204,7 @@ public slots:
 
 	void about();
 	void doResourcesDialog() const;
-	void newFile();
+	QObject * newFile() const;
 	void open();
 	void stackWindows();
 	void tileWindows();
@@ -221,6 +229,10 @@ signals:
 	
 	void scriptListChanged();
 	
+	// emitted when TWUtils::getDictionaryList reloads the dictionary list;
+	// windows can connect to it to rebuild, e.g., a spellchecking menu
+	void dictionaryListChanged() const;
+	
 	void syncPdf(const QString& sourceFile, int lineNo, bool activatePreview);
 
 	void hideFloatersExcept(QWidget* theWindow);
@@ -229,8 +241,8 @@ signals:
 
 	void highlightLineOptionChanged();
 
-private slots:	
-	void newFromTemplate();
+private slots:
+	QObject * newFromTemplate() const;
 	void openRecentFile();
 	void preferences();
 

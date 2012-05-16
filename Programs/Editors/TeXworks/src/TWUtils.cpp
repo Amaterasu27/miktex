@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	For links to further information, or to contact the authors,
+	see <http://www.tug.org/texworks/>.
 */
 
 #include "TWUtils.h"
@@ -43,6 +43,8 @@
 #include <QSignalMapper>
 #include <QCryptographicHash>
 #include <QTextStream>
+
+#include <hunspell.h>
 
 #pragma mark === TWUtils ===
 
@@ -482,6 +484,7 @@ QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /* = 
 	}
 #endif
 	
+	TWApp::instance()->notifyDictionaryListChanged();
 	return dictionaryList;
 }
 
@@ -503,8 +506,8 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 	QFileInfo affFile(dictPath + "/" + language + ".aff");
 	QFileInfo dicFile(dictPath + "/" + language + ".dic");
 	if (affFile.isReadable() && dicFile.isReadable()) {
-		h = Hunspell_create(affFile.canonicalFilePath().toUtf8().data(),
-							dicFile.canonicalFilePath().toUtf8().data());
+		h = Hunspell_create(affFile.canonicalFilePath().toLocal8Bit().data(),
+							dicFile.canonicalFilePath().toLocal8Bit().data());
 		(*dictionaries)[language] = h;
 	}
 
@@ -530,6 +533,31 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 	return h;
 }
 
+QString TWUtils::getLanguageForDictionary(const Hunhandle * pHunspell)
+{
+	if (!pHunspell || !dictionaries)
+		return QString();
+	
+	for (QHash<const QString,Hunhandle*>::const_iterator it = dictionaries->begin(); it != dictionaries->end(); ++it) {
+		if (it.value() == pHunspell)
+			return it.key();
+	}
+	return QString();
+}
+
+void TWUtils::clearDictionaries()
+{
+	if (!dictionaries)
+		return;
+	
+	for (QHash<const QString,Hunhandle*>::iterator it = dictionaries->begin(); it != dictionaries->end(); ++it) {
+		if (it.value())
+			Hunspell_destroy(it.value());
+	}
+	delete dictionaries;
+	dictionaries = NULL;
+}
+
 QStringList* TWUtils::filters;
 QStringList* TWUtils::filterList()
 {
@@ -540,11 +568,12 @@ void TWUtils::setDefaultFilters()
 {
 	*filters << QObject::tr("TeX documents (*.tex)");
 	*filters << QObject::tr("LaTeX documents (*.ltx)");
+	*filters << QObject::tr("Log files (*.log)");
 	*filters << QObject::tr("BibTeX databases (*.bib)");
 	*filters << QObject::tr("Style files (*.sty)");
 	*filters << QObject::tr("Class files (*.cls)");
 	*filters << QObject::tr("Documented macros (*.dtx)");
-	*filters << QObject::tr("Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)");
+	*filters << QObject::tr("Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)");
 	*filters << QObject::tr("Text files (*.txt)");
 	*filters << QObject::tr("PDF documents (*.pdf)");
 	*filters << QObject::tr("All files") + " (*)"; // this must not be "*.*", which causes an extension ".*" to be added on some systems
@@ -576,7 +605,7 @@ QString TWUtils::strippedName(const QString &fullFileName)
 	return QFileInfo(fullFileName).fileName();
 }
 
-void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu) /* static */
+void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu, QAction * clearAction) /* static */
 {
 	QSETTINGS_OBJECT(settings);
 	QStringList fileList;
@@ -604,13 +633,18 @@ void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions,
 	}
 	
 	int numRecentFiles = fileList.size();
+	
+	foreach(QAction * sep, menu->actions()) {
+		if (sep->isSeparator())
+			delete sep;
+	}
 
 	while (actions.size() < numRecentFiles) {
 		QAction *act = new QAction(parent);
 		act->setVisible(false);
 		QObject::connect(act, SIGNAL(triggered()), qApp, SLOT(openRecentFile()));
 		actions.append(act);
-		menu->addAction(act);
+		menu->insertAction(clearAction, act);
 	}
 
 	while (actions.size() > numRecentFiles) {
@@ -625,6 +659,11 @@ void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions,
 		actions[i]->setData(path);
 		actions[i]->setVisible(true);
 	}
+	
+	if (numRecentFiles > 0)
+		menu->insertSeparator(clearAction);
+	if (clearAction)
+		clearAction->setEnabled(numRecentFiles > 0);
 }
 
 void TWUtils::updateWindowMenu(QWidget *window, QMenu *menu) /* static */
