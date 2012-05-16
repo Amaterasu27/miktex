@@ -1,6 +1,6 @@
 % luainit.w
 % 
-% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -366,7 +366,7 @@ static void parse_options(int argc, char **argv)
                  "the terms of the GNU General Public License, version 2. For more\n"
                  "information about these matters, see the file named COPYING and\n"
                  "the LuaTeX source.\n\n" 
-                 "Copyright 2011 Taco Hoekwater, the LuaTeX Team.\n");
+                 "Copyright 2012 Taco Hoekwater, the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
@@ -789,21 +789,14 @@ void lua_initialize(int ac, char **av)
     argv = av;
 
 #if defined(MIKTEX)
-        if (asprintf(&banner, "This is LuaTeX, Version %s (%s)",
-                     luatex_version_string, MIKTEX_BANNER_STR) < 0) {
-            exit(EXIT_FAILURE);
-        }
+    if (asprintf(&banner, "This is LuaTeX, Version %s (%s)",
+                 luatex_version_string, MIKTEX_BANNER_STR) < 0) {
+        exit(EXIT_FAILURE);
+    }
 #else
-    if (luatex_svn < 0) {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d",
-                     luatex_version_string, luatex_date_info) < 0) {
-            exit(EXIT_FAILURE);
-        }
-    } else {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d (rev %d)",
-                     luatex_version_string, luatex_date_info, luatex_svn) < 0) {
-            exit(EXIT_FAILURE);
-        }
+    if (asprintf(&banner, "This is LuaTeX, Version %s-%d" WEB2CVERSION,
+                 luatex_version_string, luatex_date_info) < 0) {
+        exit(EXIT_FAILURE);
     }
 #endif
     ptexbanner = banner;

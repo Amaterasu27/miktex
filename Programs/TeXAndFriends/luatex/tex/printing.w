@@ -1,6 +1,6 @@
 % printing.w
 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -361,13 +361,9 @@ void print_banner(const char *v, int e, int ver)
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
 #if defined(MIKTEX)
-      fprintf(term_out, "This is LuaTeX, Version %s-%d (%s) ", v, e, MIKTEX_BANNER_STR);
+        fprintf(term_out, "This is LuaTeX, Version %s-%d (%s) ", v, e, MIKTEX_BANNER_STR);
 #else
-        if (ver < 0)
-            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
-        else
-            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
-                    ver);
+        fprintf(term_out, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
 #endif
         if (format_ident > 0)
             slow_print(format_ident);
@@ -396,10 +392,7 @@ void log_banner(const char *v, int e, int ver)
 #if defined(MIKTEX)
     fprintf(log_file, "This is LuaTeX, Version %s-%d (%s) ", v, e, MIKTEX_BANNER_STR);
 #else
-    if (ver < 0)
-        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
-    else
-        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
+    fprintf(log_file, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
 #endif
     slow_print(format_ident);
     print_char(' ');
@@ -954,7 +947,7 @@ void print_file_line(void)
         if (level == in_open)
             print_int(line);
         else
-            print_int(line_stack[iindex + 1 - (in_open - level)]);
+            print_int(line_stack[level + 1]);
         tprint(": ");
     }
 }
