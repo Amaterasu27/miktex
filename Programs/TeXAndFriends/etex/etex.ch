@@ -3,7 +3,7 @@
 % to be applied to tex.web in order to define the
 % e-TeX program.
  
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -29,7 +29,7 @@
 % TeX is a trademark of the American Mathematical Society.
 % METAFONT is a trademark of Addison-Wesley Publishing Company.
 @y
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -98,6 +98,7 @@
 %             some rearrangements to reduce interferences between
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
 %                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
+% Version 2.4 fixed an uninitialized line number bug, released in May 2012.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -183,8 +184,8 @@ known as `\eTeX'.
 @d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".3" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.3' {current \eTeX\ version}
+@d eTeX_revision==".4" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.4' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
@@ -871,10 +872,9 @@ corresponding token types must precede |write_text|.
 @x [22] m.313 l.6809 - e-TeX scan_tokens
 else  begin print_nl("l."); print_int(line);
 @y
-else if index<>in_open then {input from a pseudo file}
-  begin print_nl("l."); print_int(line_stack[index+1]);
-  end
-else  begin print_nl("l."); print_int(line);
+else  begin print_nl("l.");
+  if index=in_open then print_int(line)
+  else print_int(line_stack[index+1]); {input from a pseudo file}
 @z
 %---------------------------------------
 @x [22] m.314 l.6831 - e-TeX basic
@@ -4965,7 +4965,7 @@ f:=cur_val
 procedure@?scan_normal_glue; forward;@t\2@>@/
 procedure@?scan_mu_glue; forward;@t\2@>
 
-@ Here we declare to trivial procedures in order to avoid mutually
+@ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
 @<Declare procedures needed for expressions@>=
