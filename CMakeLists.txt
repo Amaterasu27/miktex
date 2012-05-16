@@ -981,7 +981,7 @@ if(NOT USE_SYSTEM_PNG)
 endif(NOT USE_SYSTEM_PNG)
 
 if(BUILDING_MIKTEX)
-  set(POPPLER_VERSION "0.12.4")
+  set(POPPLER_VERSION "0.20.0")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 

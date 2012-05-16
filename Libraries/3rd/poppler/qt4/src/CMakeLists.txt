@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2011 Christian Schenk
+## Copyright (C) 2009-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -50,8 +50,11 @@ set(${poppler_qt4_dll_name}_sources
   poppler-sound.cc
   poppler-textbox.cc
   poppler-page-transition.cc
+  poppler-media.cc
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ArthurOutputDev.cc
+
+  *.h
 )
 
 qt4_automoc(${${poppler_qt4_dll_name}_sources})

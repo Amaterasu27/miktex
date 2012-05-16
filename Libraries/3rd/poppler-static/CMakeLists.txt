@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2011 Christian Schenk
+## Copyright (C) 2009-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -54,6 +54,7 @@ configure_file(
 )
 
 set(${poppler_lib_name}_sources
+
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gfile.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmempp.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/GooHash.cc
@@ -63,16 +64,21 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmem.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/FixedPoint.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/PNGWriter.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/TiffWriter.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/JpegWriter.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/ImgWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gstrtod.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiBase.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiEncodings.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiTrueType.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiType1.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiType1C.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiIdentifier.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Annot.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Array.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/BuiltinFont.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/BuiltinFontTables.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/CachedFile.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Catalog.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/CharCodeToUnicode.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/CMap.cc
@@ -89,10 +95,13 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/GfxFont.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/GfxState.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/GlobalParams.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Hints.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/JArithmeticDecoder.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/JBIG2Stream.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Lexer.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Link.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Linearization.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/LocalPDFDocBuilder.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/NameToCharCode.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Object.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/OptionalContent.cc
@@ -103,11 +112,13 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Parser.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PDFDoc.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PDFDocEncoding.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PDFDocFactory.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PopplerCache.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ProfileData.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PreScanOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PSTokenizer.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/strtok_r.cpp
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeMap.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeTypeTable.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XRef.cc
@@ -115,35 +126,24 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/TextOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PageLabelInfo.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SecurityHandler.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StdinCachedFile.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StdinPDFDocBuilder.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Sound.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ViewerPreferences.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XpdfPluginAPI.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashBitmap.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashClip.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFont.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFont.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFileID.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPath.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPattern.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashScreen.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashState.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1Font.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPath.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPathScanner.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Rendition.cc
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/DCTStream.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/FlateStream.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/JPXStream.cc
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/GlobalParamsWin.cc
+
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/*.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/*.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/*.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/*.h
 )
 
 add_library(${poppler_lib_name} STATIC ${${poppler_lib_name}_sources})

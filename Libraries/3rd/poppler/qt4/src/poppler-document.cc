@@ -1,8 +1,10 @@
 /* poppler-document.cc: qt interface to poppler
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2005, 2008, Brad Hards <bradh@frogmouth.net>
- * Copyright (C) 2005-2009, Albert Astals Cid <aacid@kde.org>
- * Copyright (C) 2006-2009, Pino Toscano <pino@kde.org>
+ * Copyright (C) 2005-2010, Albert Astals Cid <aacid@kde.org>
+ * Copyright (C) 2006-2010, Pino Toscano <pino@kde.org>
+ * Copyright (C) 2010, 2011 Hib Eris <hib@hiberis.nl>
+ * Copyright (C) 2012 Koji Otani <sho@bbr.jp>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,19 +38,27 @@
 #include <QtCore/QByteArray>
 
 #include "poppler-private.h"
+#include "poppler-page-private.h"
 
 #if defined(USE_CMS)
+#if defined(USE_LCMS1)
 #include <lcms.h>
+#else
+#include <lcms2.h>
+#endif
 #endif
 
 namespace Poppler {
 
   int DocumentData::count = 0;
+#if defined(MIKTEX_TEXWORKS_PATCHES)
+  GBool DocumentData::ownGlobalParams = gFalse;
+#endif
 
   Document *Document::load(const QString &filePath, const QByteArray &ownerPassword,
 			   const QByteArray &userPassword)
     {
-	DocumentData *doc = new DocumentData(new GooString(QFile::encodeName(filePath)), 
+	DocumentData *doc = new DocumentData(filePath, 
 					     new GooString(ownerPassword.data()),
 					     new GooString(userPassword.data()));
 	return DocumentData::checkDocument(doc);
@@ -98,7 +108,13 @@ namespace Poppler {
 
     Page *Document::page(int index) const
     {
-	return new Page(m_doc, index);
+	Page *page = new Page(m_doc, index);
+	if (page->m_page->page == NULL) {
+	  delete page;
+	  return NULL;
+	}
+
+	return page;
     }
 
     bool Document::isLocked() const
@@ -120,7 +136,7 @@ namespace Poppler {
 	    }
 	    else
 	    {
-		doc2 = new DocumentData(new GooString(m_doc->doc->getFileName()),
+		doc2 = new DocumentData(m_doc->m_filePath,
 					new GooString(ownerPassword.data()),
 					new GooString(userPassword.data()));
 	    }
@@ -499,8 +515,8 @@ namespace Poppler {
         QSet<Document::RenderBackend> ret;
 #if defined(HAVE_SPLASH)
         ret << Document::SplashBackend;
-        ret << Document::ArthurBackend;
 #endif
+        ret << Document::ArthurBackend;
         return ret;
     }
 
@@ -574,6 +590,22 @@ namespace Poppler {
             }
         }
         return scripts;
+    }
+
+    bool Document::getPdfId(QByteArray *permanentId, QByteArray *updateId) const
+    {
+        GooString gooPermanentId;
+        GooString gooUpdateId;
+
+        if (!m_doc->doc->getID(permanentId ? &gooPermanentId : 0, updateId ? &gooUpdateId : 0))
+            return false;
+
+        if (permanentId)
+            *permanentId = gooPermanentId.getCString();
+        if (updateId)
+            *updateId = gooUpdateId.getCString();
+
+        return true;
     }
 
     QDateTime convertDate( char *dateString )

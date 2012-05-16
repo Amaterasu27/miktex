@@ -4,7 +4,8 @@
 //
 // A JPX stream decoder using OpenJPEG
 //
-// Copyright 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright 2008, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
 //
 // Licensed under GPLv2 or later
 //
@@ -31,7 +32,7 @@ public:
   virtual int getPos();
   virtual int getChar();
   virtual int lookChar();
-  virtual GooString *getPSFilter(int psLevel, char *indent);
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
   virtual GBool isBinary(GBool last = gTrue);
   virtual void getImageParams(int *bitsPerComponent, StreamColorSpaceMode *csMode);
 
@@ -39,9 +40,32 @@ private:
   void init();
   void init2(unsigned char *buf, int bufLen, OPJ_CODEC_FORMAT format);
 
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
+
+  inline int doGetChar() {
+    int result = doLookChar();
+    if (++ccounter == ncomps) {
+      ccounter = 0;
+      ++counter;
+    }
+    return result;
+  }
+
+  inline int doLookChar() {
+    if (unlikely(inited == gFalse)) init();
+
+    if (unlikely(counter >= npixels)) return EOF;
+
+    return ((unsigned char *)image->comps[ccounter].data)[counter];
+  }
+
   opj_image_t *image;
   opj_dinfo_t *dinfo;
   int counter;
+  int ccounter;
+  int npixels;
+  int ncomps;
   GBool inited;
 };
 
