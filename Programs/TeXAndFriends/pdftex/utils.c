@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -1111,7 +1111,7 @@ void getfiledump(strnumber s, int offset, int length)
         return;
     }
     recorder_record_input(file_name);
-    if (fseek(f, (off_t) offset, SEEK_SET) != 0) {
+    if (fseek(f, offset, SEEK_SET) != 0) {
         xfree(file_name);
         return;
     }

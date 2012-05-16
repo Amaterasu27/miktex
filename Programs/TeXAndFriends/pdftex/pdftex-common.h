@@ -1,5 +1,5 @@
 /*
-Copyright 2010-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 2010-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -42,7 +42,7 @@ extern integer pdfboxspectrim;
 extern integer pdfboxspecart;
 
 extern longinteger pdfstreamlength;
-extern longinteger pdfptr;
+extern integer pdfptr;
 extern integer poolptr;
 extern eightbits *pdfbuf;
 extern integer pdfbufsize;

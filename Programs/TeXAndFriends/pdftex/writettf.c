@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -580,7 +580,7 @@ static ttf_cmap_entry *ttf_read_cmap(char *ttf_name, int pid, int eid,
         return p;
 
     /* not found, have to read it */
-    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table vesrion number (=0) */
+    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table version number (=0) */
     ncmapsubtabs = get_ushort();
     cmap_offset = xftell(INFILE, cur_file_name) - 2 * TTF_USHORT_SIZE;
     cmap_tab = xtalloc(ncmapsubtabs, cmap_entry);
@@ -1020,6 +1020,7 @@ static void ttf_reindex_glyphs(void)
     ttfenc_entry *e;
     glyph_entry *glyph;
     int index;
+    int n;
     long *t;
     ttf_cmap_entry *cmap = NULL;
     boolean cmap_not_found = false;
@@ -1063,18 +1064,16 @@ static void ttf_reindex_glyphs(void)
         /* handle case of reencoded fonts */
         if (e->name == notdef)
             continue;
-        /* scan form `index123' */
-        if (sscanf(e->name, GLYPH_PREFIX_INDEX "%i", &index) == 1) {
-            if (index >= glyphs_count) {
-                pdftex_warn("`%s' out of valid range [0..%i)",
-                            e->name, glyphs_count);
-                continue;
-            }
-            glyph = glyph_tab + index;
-            goto append_new_glyph;
-        }
+
+        /* look up by name first */
+        for (glyph = glyph_tab; glyph - glyph_tab < glyphs_count; glyph++)
+            if (glyph->name != notdef && strcmp(glyph->name, e->name) == 0)
+                goto append_new_glyph;
+
         /* scan form `uniABCD' */
-        if (sscanf(e->name, GLYPH_PREFIX_UNICODE "%X", &index) == 1) {
+        n = -1;
+        sscanf(e->name, GLYPH_PREFIX_UNICODE "%X%n", &index, &n);
+        if (n == strlen(e->name)) {
             if (cmap == NULL && !cmap_not_found) {
                 /* need to read the unicode mapping, ie (pid,eid) = (3,1) or (0,3) */
                 cmap = ttf_read_cmap(fd_cur->fm->ff_name, 3, 1, false);
@@ -1105,14 +1104,24 @@ static void ttf_reindex_glyphs(void)
                 continue;
             }
         }
-        /* look up by name */
-        for (glyph = glyph_tab; glyph - glyph_tab < glyphs_count; glyph++)
-            if (glyph->name != notdef && strcmp(glyph->name, e->name) == 0)
-                break;
-        if (!(glyph - glyph_tab < glyphs_count)) {
-            pdftex_warn("glyph `%s' not found", e->name);
-            continue;
+
+        /* scan form `index123' */
+        n = -1;
+        sscanf(e->name, GLYPH_PREFIX_INDEX "%i%n", &index, &n);
+        if (n == strlen(e->name)) {
+            if (index >= glyphs_count) {
+                pdftex_warn("`%s' out of valid range [0..%i)",
+                            e->name, glyphs_count);
+                continue;
+            }
+            glyph = glyph_tab + index;
+            goto append_new_glyph;
         }
+
+        /* not found */
+        pdftex_warn("glyph `%s' not found", e->name);
+        continue;
+
       append_new_glyph:
         assert(glyph > glyph_tab && glyph - glyph_tab < glyphs_count);
         if (glyph->newindex < 0) {
