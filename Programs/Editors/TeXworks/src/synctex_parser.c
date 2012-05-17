@@ -130,7 +130,11 @@ typedef union _synctex_info_t {
 #       define SYNCTEX_DECLARE_CHAR_OFFSET synctex_charindex_t charindex_offset
 #       define SYNCTEX_IMPLEMENT_CHARINDEX(NODE,CORRECTION) NODE->char_index = (synctex_charindex_t)(scanner->charindex_offset+SYNCTEX_CUR-SYNCTEX_START+(CORRECTION));
 #   else
+#if defined(MIKTEX)
+#       define SYNCTEX_DECLARE_CHARINDEX int blabla
+#else
 #       define SYNCTEX_DECLARE_CHARINDEX
+#endif
 #       define SYNCTEX_CHARINDEX(NODE) 0
 #       define SYNCTEX_PRINT_CHARINDEX printf("\n")
 #       define SYNCTEX_DECLARE_CHAR_OFFSET synctex_charindex_t charindex_offset

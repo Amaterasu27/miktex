@@ -55,6 +55,7 @@
 #include <QPushButton>
 #include <QFileSystemWatcher>
 #include <QTextBrowser>
+#include <QAbstractTextDocumentLayout>
 #if defined(MIKTEX)
 // see http://code.google.com/p/texworks/issues/detail?id=78#c1
 #include <QPrinter>
@@ -2079,7 +2080,11 @@ void TeXDocument::setSyntaxColoringMode(const QString& mode)
 	QList<QAction*> actionList = menuSyntax_Coloring->actions();
 	
 	if (mode == "") {
+#if defined(MIKTEX)
+		Q_ASSERT(actionSyntaxColoring_None != NULL);
+#else
 		Q_ASSERT(actionSyntaxColoring != NULL);
+#endif
 		actionSyntaxColoring_None->trigger();
 		return;
 	}

@@ -44,6 +44,10 @@ Q_IMPORT_PLUGIN(TWLuaPlugin)
 Q_IMPORT_PLUGIN(TWPythonPlugin)
 #endif
 
+#if defined(MIKTEX)
+#include <iso646.h>
+#endif
+
 static
 QVariant convertValue(const QScriptValue& value)
 {
