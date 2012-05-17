@@ -31,6 +31,8 @@ include_directories(BEFORE
 
 )
 
+set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
+
 set(${poppler_qt4_dll_name}_sources
   poppler-annotation.cc
   poppler-document.cc
@@ -54,7 +56,24 @@ set(${poppler_qt4_dll_name}_sources
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ArthurOutputDev.cc
 
-  *.h
+  poppler-annotation-helper.h
+  poppler-annotation-private.h
+  poppler-annotation.h
+  poppler-converter-private.h
+  poppler-embeddedfile-private.h
+  poppler-export.h
+  poppler-form.h
+  poppler-link-extractor-private.h
+  poppler-link.h
+  poppler-media.h
+  poppler-optcontent-private.h
+  poppler-optcontent.h
+  poppler-page-private.h
+  poppler-page-transition-private.h
+  poppler-page-transition.h
+  poppler-private.h
+  poppler-qiodeviceoutstream-private.h
+  poppler-qt4.h
 )
 
 qt4_automoc(${${poppler_qt4_dll_name}_sources})

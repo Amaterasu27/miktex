@@ -83,7 +83,11 @@ namespace Poppler {
 		m_filePath = filePath;	
 
 #if defined(_WIN32)
+#if defined(MIKTEX)
+		wchar_t *fileName = new wchar_t[filePath.length()];
+#else
 		wchar_t *fileName = new WCHAR[filePath.length()];
+#endif
 		int length = filePath.toWCharArray(fileName); 
 		doc = new PDFDoc(fileName, length, ownerPassword, userPassword);
 		delete fileName;
