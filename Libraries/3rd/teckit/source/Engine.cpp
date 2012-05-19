@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
-Copyright (C) 2002-2004 SIL International. All rights reserved.
+Copyright (C) 2002-2011 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -50,7 +50,7 @@ Description:
 #	define WIN32_LEAN_AND_MEAN
 #	define NOSERVICE
 #	define NOMCX
-#	include <Windows.h>
+#	include <windows.h>
 
 	BOOL WINAPI
 	DllMain(HINSTANCE /*hInst*/, DWORD /*wDataSeg*/, LPVOID /*lpReserved*/)
@@ -76,13 +76,13 @@ int	traceLevel = 1;
 using namespace std;
 
 /* we apply READ to values read from the compiled table, to provide byte-swapping where needed */
-static inline UInt8
+inline UInt8
 READ(const UInt8 p)
 {
 	return p;
 }
 
-static inline UInt16
+inline UInt16
 READ(const UInt16 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -92,7 +92,7 @@ READ(const UInt16 p)
 #endif
 }
 
-static inline UInt32
+inline UInt32
 READ(const UInt32 p)
 {
 #ifdef WORDS_BIGENDIAN
@@ -1087,7 +1087,7 @@ if (traceLevel > 0) {
 			if (matchElems == 0 && allowInsertion == false)
 				continue;
 			patternLength = matchElems + READ(rule->postLength);
-			pattern = (MatchElem*)(rule + 1);	// point past the defined struct for the rule header
+			pattern = (const MatchElem*)(rule + 1);	// point past the defined struct for the rule header
 			direction = 1;
 			infoLimit = matchElems;
 
@@ -2185,7 +2185,7 @@ TECkit_GetMappingName(
 				status = kStatus_BadMappingVersion;
 			else {
 				const Byte*	namePtr;
-				if (getNamePtrFromTable((Byte*)fh, nameID, namePtr, *nameLength)) {
+				if (getNamePtrFromTable((const Byte*)fh, nameID, namePtr, *nameLength)) {
 					UInt16	copyBytes = *nameLength < bufferSize ? *nameLength : bufferSize;
 					if (copyBytes > 0)
 						memcpy(nameBuffer, namePtr, copyBytes);

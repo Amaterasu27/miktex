@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
-Copyright (C) 2002-2004 SIL International. All rights reserved.
+Copyright (C) 2002-2011 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -33,7 +33,9 @@ History:
 typedef unsigned char			UInt8;
 typedef unsigned short			UInt16;
 typedef unsigned int			UInt32;	/* NB: assumes int is 4 bytes */
+#ifndef ZCONF_H /* n.b. if also using zlib.h, it must precede TECkit headers */
 typedef UInt8					Byte;
+#endif
 typedef Byte*					BytePtr;
 typedef UInt16					UniChar;
 
