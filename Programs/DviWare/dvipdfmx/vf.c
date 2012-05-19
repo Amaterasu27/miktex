@@ -238,11 +238,11 @@ static void process_vf_file (FILE *vf_file, int thisfont)
 	ch = get_unsigned_quad (vf_file);
 	/* Skip over TFM width since we already know it */
 	get_unsigned_quad (vf_file);
-	if (ch < 65536L) 
+	if (ch < 0x1000000L) 
 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
 	else {
 	  fprintf (stderr, "char=%ld\n", ch);
-	  ERROR ("Long character (>16 bits) in VF file.\nI can't handle long characters!\n");
+	  ERROR ("Long character (>24 bits) in VF file.\nI can't handle long characters!\n");
 	}
 	break;
       }
@@ -455,6 +455,12 @@ static void vf_set2(unsigned char **start, unsigned char *end)
   return;
 }
 
+static void vf_set3(unsigned char **start, unsigned char *end) 
+{
+  vf_set (unsigned_triple(start, end));
+  return;
+}
+
 static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
 {
   SIGNED_QUAD width, height;
@@ -488,6 +494,12 @@ static void vf_put1(unsigned char **start, unsigned char *end)
 static void vf_put2(unsigned char **start, unsigned char *end)
 {
   dvi_put (unsigned_pair(start, end));
+  return;
+}
+
+static void vf_put3(unsigned char **start, unsigned char *end)
+{
+  dvi_put (unsigned_triple(start, end));
   return;
 }
 
@@ -851,8 +863,10 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_set2(&start, end);
 	  break;
 	case SET3:
+	  vf_set3(&start, end);
+	  break;
 	case SET4:
-	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
+	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
 	  break;
 	case SET_RULE:
 	  vf_setrule(&start, end, ptsize);
@@ -864,8 +878,10 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	  vf_put2(&start, end);
 	  break;
 	case PUT3:
+	  vf_put3(&start, end);
+	  break;
 	case PUT4:
-	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
+	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
 	  break;
 	case PUT_RULE:
 	  vf_putrule(&start, end, ptsize);

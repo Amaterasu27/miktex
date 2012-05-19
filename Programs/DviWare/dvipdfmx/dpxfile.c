@@ -210,15 +210,12 @@ static int exec_spawn (char *cmd)
       }
     }
     *pp = '\0';
-    if (strchr (buf, ' ') || strchr (buf, '\t')) {
 #ifdef WIN32
+    if (strchr (buf, ' ') || strchr (buf, '\t'))
       *qv = concat3 ("\"", buf, "\"");
-#else
-      *qv = concat3 ("'", buf, "'");
+    else
 #endif
-    } else {
       *qv = xstrdup (buf);
-    }
 /*
     fprintf(stderr,"\n%s", *qv);
 */
@@ -750,13 +747,8 @@ dpx_find_dfont_file (const char *filename)
 
 #ifdef  HAVE_MKSTEMP
 #  include <stdlib.h>
-/* extern int mkstemp(const char *); */
 #endif
 
-/* Please fix: GCC warning
- *   warning: implicit declaration of function `mkstemp'
- * mkstemp may not be declared in stdlib.h. 
- */
 char *
 dpx_create_temp_file (void)
 {

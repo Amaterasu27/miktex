@@ -58,6 +58,10 @@
 #define TEX_FONTS_ALLOC_SIZE 16u
 #define VF_NESTING_MAX       16u
 
+/* UTF-32 over U+FFFF -> UTF-16 surrogate pair */
+#define UTF32toUTF16HS(x)  (0xd800 + (((x-0x10000) >> 10) & 0x3ff))
+#define UTF32toUTF16LS(x)  (0xdc00 + (  x                 & 0x3ff))
+
 /* Interal Variables */
 static FILE          *dvi_file  = NULL;
 
@@ -650,19 +654,25 @@ static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
 
 void dvi_right (SIGNED_QUAD x)
 {
-  if (!dvi_state.d) {
-    dvi_state.h += x;
-  } else {
-    dvi_state.v += x;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += x; break;
+  case 1:
+    dvi_state.v += x; break;
+  case 3:
+    dvi_state.v -= x; break;
   }
 }
 
 void dvi_down (SIGNED_QUAD y)
 {
-  if (!dvi_state.d) {
-    dvi_state.v += y;
-  } else {
-    dvi_state.h -= y;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.v += y; break;
+  case 1:
+    dvi_state.h -= y; break;
+  case 3:
+    dvi_state.h += y; break;
   }
 }
 
@@ -717,10 +727,13 @@ do_string (unsigned char *s, int len)
     }
     dvi_pop();
   }
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -734,7 +747,7 @@ dvi_set (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
-  unsigned char       wbuf[2];
+  unsigned char       wbuf[4];
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -753,7 +766,14 @@ dvi_set (SIGNED_QUAD ch)
 
   switch (font->type) {
   case  PHYSICAL:
-    if (ch > 255) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -792,11 +812,13 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -805,7 +827,7 @@ dvi_put (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
-  unsigned char       wbuf[2];
+  unsigned char       wbuf[4];
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -821,7 +843,14 @@ dvi_put (SIGNED_QUAD ch)
     /* Treat a single character as a one byte string and use the
      * string routine.
      */
-    if (ch > 255) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -872,17 +901,24 @@ dvi_rule (SIGNED_QUAD width, SIGNED_QUAD height)
 {
   do_moveto(dvi_state.h, dvi_state.v);
 
-  if (!dvi_state.d) {
+  switch (dvi_state.d) {
+  case 0:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
-  } else { /* right ? */
+    break;
+  case 1:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+    break;
+  case 3: 
+    pdf_dev_set_rule(dvi_state.h - height, -dvi_state.v , height, width);
+    break;
   }
 }
 
 void
-dvi_dir (UNSIGNED_BYTE dir)
+dvi_dir (UNSIGNED_BYTE dir) /* how? */
 {
-  dvi_state.d = dir ? 1 : 0;
+  fprintf(stderr, "  > dvi_dir %d\n", dir);
+  dvi_state.d = dir;
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
 }
 
@@ -896,6 +932,12 @@ static void
 do_set2 (void)
 {
   dvi_set(get_unsigned_pair(dvi_file));
+}
+
+static void
+do_set3 (void)
+{
+  dvi_set(get_unsigned_triple(dvi_file));
 }
 
 static void
@@ -933,6 +975,12 @@ static void
 do_put2 (void)
 {
   dvi_put(get_unsigned_pair(dvi_file));
+}
+
+static void
+do_put3 (void)
+{
+  dvi_put(get_unsigned_triple(dvi_file));
 }
 
 void
@@ -1355,7 +1403,7 @@ do_eop (void)
 static void
 do_dir (void)
 {
-  dvi_state.d = get_unsigned_byte(dvi_file) ? 1 : 0;
+  dvi_state.d = get_unsigned_byte(dvi_file);
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
 }
 
@@ -1414,8 +1462,9 @@ dvi_do_page (unsigned n,
     switch (opcode) {
     case SET1: do_set1(); break;
     case SET2: do_set2(); break;
-    case SET3: case SET4:
-      ERROR("Multibyte (>16 bits) character not supported!");
+    case SET3: do_set3(); break;
+    case SET4:
+      ERROR("Multibyte (>24 bits) character not supported!");
       break;
 
     case SET_RULE:
@@ -1424,8 +1473,9 @@ dvi_do_page (unsigned n,
 
     case PUT1: do_put1(); break;
     case PUT2: do_put2(); break;
-    case PUT3: case PUT4:
-      ERROR ("Multibyte character (>16 bits) not supported!");
+    case PUT3: do_put3(); break;
+    case PUT4:
+      ERROR ("Multibyte character (>24 bits) not supported!");
       break;
 
     case PUT_RULE:
