@@ -33,7 +33,8 @@ struct ScriptTable
     le_uint16           langSysCount;
     LangSysRecord       langSysRecordArray[ANY_NUMBER];
 
-    /*MIKTEX*/U_LAYOUT_API const LangSysTable  *findLanguage(LETag languageTag, le_bool exactMatch = FALSE) const;
+    /*MIKTEX*/U_LAYOUT_API
+    const LangSysTable  *findLanguage(LETag languageTag, le_bool exactMatch = FALSE) const;
 };
 
 typedef TagAndOffsetRecord ScriptRecord;

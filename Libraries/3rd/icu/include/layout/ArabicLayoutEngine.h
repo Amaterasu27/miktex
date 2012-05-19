@@ -169,6 +169,7 @@ public:
      *
      * @internal
      */
+    /*MIKTEX*/U_LAYOUT_API
     UnicodeArabicOpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
 		le_int32 typoFlags, LEErrorCode &success);
 
