@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -417,8 +415,11 @@ bool GrCharStream::AtUnicodeCharBoundary(utf16 * prgchw, int cchw, int ichr, Utf
 	return true;
 */
 }
-
+#ifdef NDEBUG
+bool GrCharStream::AtUnicodeCharBoundary(utf8 * prgchs, int cchs, int ichs, UtfType /*utf*/)
+#else
 bool GrCharStream::AtUnicodeCharBoundary(utf8 * prgchs, int cchs, int ichs, UtfType utf)
+#endif
 {
 	Assert(ichs >= 0);
 	Assert(ichs <= cchs);

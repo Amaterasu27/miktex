@@ -38,20 +38,19 @@ struct Point
 	float x;
 	float y;
 
-	Point()
+	Point(float x_ = 0.0f, float y_ = 0.0f)
+		: x(x_), y(y_)
 	{
-		x = y = 0;
 	}
 
 #if defined(_WIN32)
-	Point(POINT & p)
+	Point(const POINT& p)
 	{
 		x = (float)p.x;
 		y = (float)p.y;
 	}
 #endif
 };
-
 
 struct Rect
 {
@@ -60,19 +59,19 @@ struct Rect
 	float left;
 	float right;
 
-	Rect()
+	Rect(float l = 0.0f, float t = 0.0f, float r = 0.0f, float b = 0.0f)
+		: top(t), bottom(b), left(l), right(r)
 	{
-		top = bottom = left = right = 0;
-	};
+	}
 
 #if defined(_WIN32)
-	Rect(RECT & r)
+	Rect(const RECT& r)
 	{
 		top = (float)r.top;
 		bottom = (float)r.bottom;
 		left = (float)r.left;
 		right = (float)r.right;
-	};
+	}
 #endif
 };
 
@@ -81,11 +80,6 @@ enum {
 	kttvForceOn = 1,
 	kttvInvert = 2
 };
-
-//typedef struct tagLgParaRenderProps
-//{
-//    int dummy;
-//} LgParaRenderProps;
 
 typedef enum tagSegEnd
 {	kestNoMore		= 0,
@@ -152,11 +146,6 @@ typedef enum tagFwTextColor
 	kclrRed		= 0x0000ff,
 	kclrGreen	= 0x00ff00,
 	kclrBlue	= 0xff0000,
-/*
-//	kclrYellow	= 0x00ffff,
-//	kclrMagenta	= 0xff00ff,
-//	kclrCyan	= 0xffff00,
- */
 	kclrReserved1	= 0x80000000,
 	kclrReserved2	= 0x80000001,
 	kclrTransparent	= 0xc0000000
@@ -198,25 +187,6 @@ typedef union {
 	short smallint[2];	// min = smallint[0], max = smallint[1]
     GrSlotState * pslot;
 } u_intslot;
-
-/*****
-#undef ATTACH_GUID_TO_CLASS
-#if defined(__cplusplus)
-#define ATTACH_GUID_TO_CLASS(type, guid, cls) \
-	type __declspec(uuid(#guid)) cls;
-#else // !defined(__cplusplus)
-#define ATTACH_GUID_TO_CLASS(type, guid, cls)
-#endif // !defined(__cplusplus)
-
-#ifndef DEFINE_COM_PTR
-#define DEFINE_COM_PTR(cls)
-#endif
-
-#undef GENERIC_DECLARE_SMART_INTERFACE_PTR
-#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \
-	ATTACH_GUID_TO_CLASS(interface, iid, cls); \
-	DEFINE_COM_PTR(cls);
-*****/
 
 } // namespace gr
 

@@ -22,8 +22,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -189,12 +187,16 @@ GrSlotState * GrSlotStream::Peek(int dislot)
 	stream position when the rule is being run.
 
 	@param dislot		- how far back to peek before the write position
-							when the rule started; a negative number
+							WHEN THE RULE STARTED; a negative number
 							(NOTE: the current write position is irrelevant)
 	@param fNullOkay	- true if it's okay to return NULL in the situation where we're asking
 							for something before the beginning of the stream
 ----------------------------------------------------------------------------------------------*/
+#ifdef NDEBUG
+GrSlotState * GrSlotStream::PeekBack(int dislot, bool)
+#else
 GrSlotState * GrSlotStream::PeekBack(int dislot, bool fNullOkay)
+#endif
 {
 	Assert(dislot < 0);
 	if (dislot < m_islotRuleStartWrite * -1)
@@ -351,6 +353,44 @@ int GrSlotStream::OldDirLevelRange(EngineState * pengst, int islotStart, int nTo
 			return -1;
 	}
 	return islot;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Return the end of the range that has the same feature settings as the current slot.
+	The recipient is functioning as the input stream.
+----------------------------------------------------------------------------------------------*/
+int GrSlotStream::FeatureRangeLim(GrSlotStream * psstrmOut)
+{
+	GrSlotState * pslot = RuleInputSlot(0, psstrmOut);
+	int islotResult = ReadPos();
+	while (true)
+	{
+		if (WritePos() < islotResult)
+			return WritePos();
+		islotResult++;
+		GrSlotState * pslotNext = Peek(islotResult - ReadPos() - 1); // Peek(0) means get the next
+		if (!pslotNext->SameFeatures(pslot))
+			break;
+	}
+	return islotResult;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Return true if the all the slots in the stream have the same feature settings.
+	Assumes the stream has been fully run.
+----------------------------------------------------------------------------------------------*/
+bool GrSlotStream::NoFeatureChanges()
+{
+	Assert(SlotsToReprocess() == 0);
+
+	GrSlotState * pslotFirst = SlotAt(0);
+	for (int islot = 1; islot < WritePos(); islot++)
+	{
+		GrSlotState * pslotAnother = SlotAt(islot);
+		if (!pslotFirst->SameFeatures(pslotAnother))
+			return false;
+	}
+	return true;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1094,7 +1134,7 @@ bool RightToLeftDir(DirCode dirc)
 	case kdircLRO:
 	case kdircLRE:
 	case kdircPdfL:
-    case kdircLlb:
+	case kdircLlb:
 		return false;
 
 	case kdircR:
@@ -1104,10 +1144,11 @@ bool RightToLeftDir(DirCode dirc)
 	case kdircRLO:
 	case kdircRLE:
 	case kdircPdfR:
+	case kdircRlb:
 		return true;
 
 	case kdircNeutral:
-    case kdircWhiteSpace:
+	case kdircWhiteSpace:
 	case kdircComSep:
 	case kdircEuroSep:
 	case kdircEuroTerm:
@@ -1212,7 +1253,7 @@ bool GrSlotStream::MoreSpace(GrTableManager * ptman,
 			return true;
 
 		float xsWidth, xsVisWidth;
-		ptman->CalcPositionsUpTo(m_ipass, NULL, &xsWidth, &xsVisWidth);
+		ptman->CalcPositionsUpTo(m_ipass, NULL, false, &xsWidth, &xsVisWidth);
 
 		*pxsWidth = (fIgnoreTrailingWS || twsh == ktwshOnlyWs) ? xsVisWidth : xsWidth;
         return (*pxsWidth < xsSpaceAllotted);
@@ -1322,7 +1363,7 @@ int GrSlotStream::InsertLineBreak(GrTableManager * ptman,
 	@param islotMin			- first slot that is officially part of the segment (after initial LB)
 ----------------------------------------------------------------------------------------------*/
 int GrSlotStream::MakeSegmentBreak(GrTableManager * ptman,
-	int islotPrevBreak, bool fInsertedLB, int islotStartTry,
+	int /*islotPrevBreak*/, bool /*fInsertedLB*/, int islotStartTry,
 	LineBrk lb, TrWsHandling twsh, int islotMin,
 	LineBrk * plbNextToTry)
 {
@@ -1404,6 +1445,11 @@ bool GrSlotStream::FindSegmentEnd(GrTableManager * ptman,
 			return false;
 		}
 		pslot = m_vpslot[*pislot];
+
+		if (*pislot == 0 && pslot->IsInitialLineBreak(ptman->LBGlyphID())) {
+			// Can't break after the initial LB; that would produce an empty segment.
+			return false;
+		}
 
 		if (int(*plbFound) <= 0 && ((int)*plbFound * -1) <= lb)
 		{
@@ -1576,7 +1622,11 @@ int GrSlotStream::MaxClusterSlot(int islotChunkMin, int islotChunkLim)
 	Return the break weight of the given slot, which should be a line-break.
 	OBSOLETE??
 ----------------------------------------------------------------------------------------------*/
+#ifdef NDEBUG
+LineBrk GrSlotStream::BreakWeightAt(gid16 /*chwLB*/, int islot)
+#else
 LineBrk GrSlotStream::BreakWeightAt(gid16 chwLB, int islot)
+#endif
 {	
 	GrSlotState * pslot = GetSlotAt(islot);
 	Assert(pslot->IsLineBreak(chwLB));
@@ -1769,7 +1819,7 @@ void GrSlotStream::UnwindOutput(int islotNewPos, bool fOutputOfPosPass)
 	@param fBackingUp		- this chunk results in the stream position moving backwards,
 								so clear anything we're backing over
 ----------------------------------------------------------------------------------------------*/
-void GrSlotStream::MapInputChunk(int islotInputMin, int islotOutputMin, int islotInputLim,
+void GrSlotStream::MapInputChunk(int islotInputMin, int islotOutputMin, int /*islotInputLim*/,
 	bool fSkipChunkStart, bool fBackingUp)
 {
 	Assert(AssertValid());
@@ -1828,7 +1878,7 @@ int GrSlotStream::LastNextChunkLength()
 	@param fBackingUp		- this chunk results in the stream position moving backwards,
 								so clear anything we're backing over
 ----------------------------------------------------------------------------------------------*/
-void GrSlotStream::MapOutputChunk(int islotOutputMin, int islotInputMin, int islotOutputLim,
+void GrSlotStream::MapOutputChunk(int islotOutputMin, int islotInputMin, int /*islotOutputLim*/,
 	bool fSkipChunkStart, int cslotReprocess, bool fBackingUp)
 {
 	Assert(AssertValid());
@@ -1863,7 +1913,11 @@ void GrSlotStream::MapOutputChunk(int islotOutputMin, int islotInputMin, int isl
 	Ensure that the chunk maps for a pair of streams match properly. The recipient is
 	the input stream.
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void GrSlotStream::AssertChunkMapsValid(GrSlotStream * psstrmOut)
+#else
+void GrSlotStream::AssertChunkMapsValid(GrSlotStream *)
+#endif
 {
 #ifdef _DEBUG
 	GrSlotStream * psstrmIn = this;
@@ -1915,7 +1969,11 @@ void GrSlotStream::AssertChunkMapsValid(GrSlotStream * psstrmOut)
 	Ensure that corresponding items in the streams of a positioning pass have matching
 	stream indices. The recipient is the output stream.
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void GrSlotStream::AssertStreamIndicesValid(GrSlotStream * psstrmIn)
+#else
+void GrSlotStream::AssertStreamIndicesValid(GrSlotStream *)
+#endif
 {
 #ifdef _DEBUG
 	if (!GotIndexOffset())
@@ -1939,7 +1997,11 @@ void GrSlotStream::AssertStreamIndicesValid(GrSlotStream * psstrmIn)
 	in the output stream. (Currently the compiler ensures this by making it an error
 	to write rules that don't do this.)
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void GrSlotStream::AssertAttachmentsInOutput(int islotMin, int islotLim)
+#else
+void GrSlotStream::AssertAttachmentsInOutput(int, int)
+#endif
 {
 #ifdef _DEBUG
 	for (int islot = islotMin; islot < islotLim; islot++)
@@ -2007,7 +2069,7 @@ void GrSlotStream::ResyncSkip(int cslot)
 	Record the number of slots in the stream that are previous to the official start of the
 	segment.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotStream::CalcIndexOffset(GrTableManager * ptman)
+void GrSlotStream::CalcIndexOffset(GrTableManager * /*ptman*/)
 {
 	if (GotIndexOffset())
 		return; // already figured it
@@ -2203,6 +2265,21 @@ GrSlotState * GrSlotStream::GetSlotAt(int islot)
 }
 
 /*----------------------------------------------------------------------------------------------
+	In the middle of running a pass, return the given slot to use in processing.
+	Read it from the reprocess buffer if appropriate, or for slots previous to the current
+	position, read from the output stream (psstrmNext).
+
+	psstrmNext may be NULL when processing is complete, therefore we only have one stream to
+	deal with.
+----------------------------------------------------------------------------------------------*/
+GrSlotState * GrSlotStream::MidPassSlotAt(int islot, GrSlotStream * psstrmNext)
+{
+	int islotInput = islot - ReadPosForNextGet() + 1; // +1 because RuleInputSlot takes 0 to mean the previously read slot
+	GrSlotState * pslot = RuleInputSlot(islotInput, psstrmNext);
+	return pslot;
+}
+
+/*----------------------------------------------------------------------------------------------
 	Return the "current" input item from the rule's perspective, ie, the last slot read.
 	So dislotOffset = 0 means not the slot at the read position but one slot earlier.
 
@@ -2214,7 +2291,6 @@ GrSlotState * GrSlotStream::GetSlotAt(int islot)
 	@param fNullOkay	- true if it's okay to return NULL in the situation where we're asking
 							for something before the beginning of the stream
 ----------------------------------------------------------------------------------------------*/
-
 GrSlotState * GrSlotStream::RuleInputSlot(int dislotOffset, GrSlotStream * psstrmOutput,
 	bool fNullOkay)
 {
@@ -2244,8 +2320,10 @@ GrSlotState * GrSlotStream::RuleInputSlot(int dislotOffset, GrSlotStream * psstr
 
 			if (cslotOffsetBack >= cslotPostReproc + cslotValidReproc)
 			{
-				// Read from the output stream.
-				int dislotTmp = dislotOffset - 1 + cslotPostReproc + cslotValidReproc;
+				// Read from the output stream. (Remember that PeekBack works relative to
+				// the rule-start write position, not the current write position.)
+				int dislotTmp = dislotOffset - 1 + cslotPostReproc
+					+ cslotValidReproc - SlotsToReprocess();
 				Assert(dislotTmp < 0);
 				return psstrmOutput->PeekBack(dislotTmp);
 			}
@@ -2253,7 +2331,7 @@ GrSlotState * GrSlotStream::RuleInputSlot(int dislotOffset, GrSlotStream * psstr
 			{
 				if (m_islotReprocPos > -1)
 				{
-					//	Current read pos is inside reprocess buffer.
+					//	Current read pos could be inside reprocess buffer.
 					Assert(cslotPostReproc == 0);
 					int islotStartReadReprocBuf = m_vpslotReproc.size() - cslotValidReproc;
 					Assert(islotStartReadReprocBuf >= 0);
@@ -2342,8 +2420,10 @@ void GrSlotStream::SetNeutralAssociations(gid16 chwLB)
 			else if (pslotAfter)
 				pslot->Associate(pslotAfter);
 			else
+			{
 				// Weird, but can happen with an empty segment.
 				Warn("No assocations");
+			}
 
 //			Assert(pslot->m_vpslotAssoc.Size() > 0);
 			pslot->m_fNeutralAssocs = true;

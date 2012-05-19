@@ -23,9 +23,6 @@ Description:
 #include <cstring>
 #include <math.h>
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:End Ignore
 
 //:>********************************************************************************************
@@ -75,8 +72,13 @@ namespace gr
 //#endif // TRACING
 //}
 
+#ifdef TRACING
 bool GrTableManager::WriteTransductionLog(std::ostream * pstrmLog,
 	GrCharStream * pchstrm, Segment * psegRet, int cbPrevSegDat, byte * pbPrevSegDat)
+#else
+bool GrTableManager::WriteTransductionLog(std::ostream *,GrCharStream *,
+                                          Segment *, int, byte *)
+#endif // !TRACING
 {
 #ifdef TRACING
 	if (!pstrmLog)
@@ -86,7 +88,7 @@ bool GrTableManager::WriteTransductionLog(std::ostream * pstrmLog,
 	return true;
 #else
 	return false;
-#endif // TRACING
+#endif // !TRACING
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -124,8 +126,13 @@ bool GrTableManager::WriteTransductionLog(std::ostream * pstrmLog,
 //}
 
 
+#ifdef TRACING
 bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
 	GrCharStream * pchstrm, Segment * psegRet)
+#else
+bool GrTableManager::WriteAssociationLog(std::ostream *,
+	GrCharStream *, Segment *)
+#endif
 {
 #ifdef TRACING
 	if (!pstrmLog)
@@ -175,7 +182,7 @@ bool GrTableManager::WriteAssociationLog(std::ostream * pstrmLog,
 	Output a file showing a log of the transduction process and the resulting segment.
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::WriteXductnLog(std::ostream & strmOut,
-	GrCharStream * pchstrm, Segment * psegRet,
+	GrCharStream * pchstrm, Segment * /*psegRet*/,
 	int cbPrevSegDat, byte * pbPrevSegDat)
 {
 	if (cbPrevSegDat == 0)
@@ -272,7 +279,7 @@ void GrTableManager::LogUnderlying(std::ostream & strmOut, GrCharStream * pchstr
 		else if (rgnChars[ichw] == knPDF)
 			strmOut << "<PDF>  ";
 		else
-			strmOut << "       ";
+			strmOut << ".      ";
 	}
 	strmOut << "\n";
 
@@ -297,7 +304,7 @@ void GrTableManager::LogUnderlying(std::ostream & strmOut, GrCharStream * pchstr
 			default: chw = 0;
 			}
 			if (chw == 0)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else
 				LogHexInTable(strmOut, chw);
 		}
@@ -315,7 +322,7 @@ void GrTableManager::LogUnderlying(std::ostream & strmOut, GrCharStream * pchstr
 			strmOut << "|" << crun << ((crun < 10) ? "     " : "    ");
 		}
 		else
-			strmOut << "       ";
+			strmOut << ".      ";
 	}
 	strmOut << "\n";
 
@@ -416,8 +423,8 @@ int GrCharStream::GetLogData(GrTableManager * ptman, int * rgchl, bool * rgfNewR
 	the raw (UTF-16 or UTF-8) chars for display. To do this we get the raw characters
 	directly from the text source.
 ----------------------------------------------------------------------------------------------*/
-void GrCharStream::GetLogDataRaw(GrTableManager * ptman, int cchl, int cchrBackup,
-	int cchrMaxRaw, int * prgchl,
+void GrCharStream::GetLogDataRaw(GrTableManager * /*ptman*/, int cchl, int cchrBackup,
+	int /*cchrMaxRaw*/, int * prgchl,
 	utf16 * prgchw2, utf16 * prgchw3, utf16 * prgchw4, utf16 * prgchw5, utf16 * prgchw6, 
 	int * prgcchr)
 {
@@ -441,7 +448,7 @@ void GrCharStream::GetLogDataRaw(GrTableManager * ptman, int cchl, int cchrBacku
 	case kutf8:
 		prgchsRunText8 = new utf8[cchrRange];
 		m_pgts->fetch(ichrMin, cchrRange, prgchsRunText8);
-		for (int ichr = 0; ichr < cchrRange; ichr++)
+		for (ichr = 0; ichr < cchrRange; ichr++)
 			prgchwRunText[ichr] = (utf16)prgchsRunText8[ichr];	// zero-extend into UTF-16 buffer
 		break;
 	case kutf16:
@@ -547,23 +554,22 @@ void GrTableManager::LogPassOutput(std::ostream & strmOut, int ipass, int cslotS
 	for (islot = 0; islot < psstrmOut->WritePos(); islot++)
 		psstrmOut->SlotAt(islot)->m_islotTmpOut = islot;
 
-	if (!dynamic_cast<GrBidiPass *>(ppass))
-		ppass->LogRulesFiredAndFailed(strmOut, psstrmIn);
+	ppass->LogRulesFiredAndFailed(strmOut, psstrmIn, m_ipassJust1);
 
 	strmOut << "\nOUTPUT OF PASS " << ipass;
-	if (dynamic_cast<GrBidiPass *>(ppass))
-		strmOut << " (bidi)";
-	else if (dynamic_cast<GrSubPass *>(ppass))
-	{
-		if (ipass >= m_ipassJust1)
-			strmOut << " (justification)";
-		else
-			strmOut << " (substitution)";
-	}
-	else if (dynamic_cast<GrPosPass *>(ppass))
-		strmOut << " (positioning)";
-	else if (dynamic_cast<GrLineBreakPass *>(ppass))
-		strmOut << " (linebreak)";
+	//if (dynamic_cast<GrBidiPass *>(ppass))
+	//	strmOut << " (bidi)";
+	//else if (dynamic_cast<GrSubPass *>(ppass))
+	//{
+	//	if (ipass >= m_ipassJust1)
+	//		strmOut << " (justification)";
+	//	else
+	//		strmOut << " (substitution)";
+	//}
+	//else if (dynamic_cast<GrPosPass *>(ppass))
+	//	strmOut << " (positioning)";
+	//else if (dynamic_cast<GrLineBreakPass *>(ppass))
+	//	strmOut << " (linebreak)";
 	strmOut << "\n";
 
 	ppass->LogInsertionsAndDeletions(strmOut, psstrmOut);
@@ -594,7 +600,7 @@ void GrTableManager::LogPassOutput(std::ostream & strmOut, int ipass, int cslotS
 			if (pslotTmp->GlyphID() != pslotTmp->ActualGlyphForOutput(this))
 				LogHexInTable(strmOut, pslotTmp->ActualGlyphForOutput(this));
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -629,15 +635,58 @@ void GrTableManager::LogPassOutput(std::ostream & strmOut, int ipass, int cslotS
 /*----------------------------------------------------------------------------------------------
 	Write the list of rules fired and failed for a given pass.
 ----------------------------------------------------------------------------------------------*/
-void GrPass::LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn)
+void GrPass::LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn, int ipassJust1)
 {
-	m_pzpst->LogRulesFiredAndFailed(strmOut, psstrmIn);
+	strmOut << "PASS " << m_ipass;
+	if (dynamic_cast<GrBidiPass *>(this))
+		strmOut << " (bidi)";
+	else if (dynamic_cast<GrSubPass *>(this))
+	{
+		if (m_ipass >= ipassJust1)
+			strmOut << " (justification)";
+		else
+			strmOut << " (substitution)";
+	}
+	else if (dynamic_cast<GrPosPass *>(this))
+		strmOut << " (positioning)";
+	else if (dynamic_cast<GrLineBreakPass *>(this))
+		strmOut << " (linebreak)";
+
+	strmOut << "\n\n" ;
+
+	if (m_cbPassConstraint > 0 && m_prgbPConstraintBlock != NULL)
+		m_pzpst->LogPassConstraints(strmOut);
+
+	if (!dynamic_cast<GrBidiPass *>(this))
+		m_pzpst->LogRulesFiredAndFailed(strmOut, psstrmIn);
 }
 
-void PassState::LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn)
+void PassState::LogPassConstraints(std::ostream & strmOut)
 {
+	if (m_crngrec == 0)
+	{}
+	else if (m_crngrec == 1)
+	{
+		if (m_rgrngrec[0].m_fSucceeds)
+			strmOut << "Pass constraint passed\n\n";
+		else
+			strmOut << "Pass constraint failed\n\n";
+	}
+	else
+	{
+		strmOut << "Pass constraint:\n";
+		for (int irngrec = 0; irngrec < m_crngrec; irngrec++)
+		{
+			strmOut << " " << m_rgrngrec[irngrec].m_islotMin << ".." << m_rgrngrec[irngrec].m_islotLim-1 << ": ";
+			strmOut << ((m_rgrngrec[irngrec].m_fSucceeds) ? "passed\n" : "failed\n");
+		}
+		strmOut << "\n";
+	}
+}
 
-	strmOut << "PASS " << m_ipass << "\n\n" << "Rules matched: ";
+void PassState::LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * /*psstrmIn*/)
+{
+	strmOut << "Rules matched: ";
 	if (m_crulrec == 0)
 		strmOut << "none";
 	strmOut << "\n";
@@ -715,7 +764,7 @@ void PassState::LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream *
 				strmOut << "  DEL  ";
 		}
 		else
-			strmOut << "       ";
+			strmOut << ".      ";
 	}
 
 	strmOut << "\n";
@@ -772,7 +821,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 		strmOut << "\n";
 
 		//	Log final direction level for bidi pass.
-		strmOut << "dir level      ";
+		strmOut << "dir level:     ";
 		for (islot = 0; islot < psstrm->WritePos(); islot++)
 		{
 			GrSlotState * pslot = psstrm->SlotAt(islot);
@@ -842,6 +891,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 					break;
 				case kslatShiftX:		strmOut << "shift.x        "; break;
 				case kslatShiftY:		strmOut << "shift.y        "; break;
+				case kslatSegsplit:		strmOut << "segsplit       "; break;
 				default:
 					if (kslatUserDefn <= slat &&
 						slat < kslatUserDefn + NumUserDefn())
@@ -913,7 +963,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 			if (pslot->m_islotTmpIn != pslot->m_islotTmpOut)
 				LogInTable(strmOut, pslot->m_islotTmpIn);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 
 		strmOut << "\n";
@@ -931,26 +981,26 @@ void GrTableManager::LogFinalPositions(std::ostream & strmOut)
 {
 	GrSlotStream * psstrm = OutputStream(m_cpass - 1);
 
-	strmOut << "x position     ";
+	strmOut << "x position:    ";
 	for (int islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslot = psstrm->SlotAt(islot);
 		if (pslot->IsLineBreak(LBGlyphID()))
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 			continue;
 		}
 		LogInTable(strmOut, pslot->XPosition());
 	}
 	strmOut << "\n";
 
-	strmOut << "y position     ";
+	strmOut << "y position:    ";
 	for (int islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslot = psstrm->SlotAt(islot);
 		if (pslot->IsLineBreak(LBGlyphID()))
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 			continue;
 		}
 		LogInTable(strmOut, pslot->YPosition());
@@ -962,8 +1012,13 @@ void GrTableManager::LogFinalPositions(std::ostream & strmOut)
 /*----------------------------------------------------------------------------------------------
 	Write out the final underlying-to-surface associations.
 ----------------------------------------------------------------------------------------------*/
+#ifdef TRACING
 void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strmOut,
 	GrCharStream * pchstrm)
+#else
+void Segment::LogUnderlyingToSurface(GrTableManager *, std::ostream &,
+	GrCharStream *)
+#endif
 {
 #ifdef TRACING
 	strmOut << "\n\nUNDERLYING TO SURFACE MAPPINGS\n\n";
@@ -1038,7 +1093,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		if (rgcchwRaw[ichw] == 1 && chwNext == 0 && chw < 0x0100) // ANSI
 			strmOut << (char)chw << "      ";	// 6 spaces
 		else
-			strmOut << "       "; // 7 spaces
+			strmOut << ".      "; // 7 spaces
 		if (chwNext == 0)
 			inUtf32++;
 	}
@@ -1071,7 +1126,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	{
 		if (rgcchwRaw[ichw] > 1)
 			// continuation of Unicode codepoint
-			strmOut << "       ";
+			strmOut << ".      ";
 		else if (m_prgisloutBefore[ichw] == kNegInfinity)
 			strmOut << "<--    ";
 		else if (m_prgisloutBefore[ichw] == kPosInfinity)
@@ -1091,13 +1146,13 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			std::vector<int> * pvislout = m_prgpvisloutAssocs[ichw];
 			if (pvislout == NULL)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (signed(pvislout->size()) <= ix)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if ((*pvislout)[ix] != m_prgisloutAfter[ichw])
 				ptman->LogInTable(strmOut, (*pvislout)[ix]);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1107,7 +1162,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	{
 		if (rgcchwRaw[ichw] > 1)
 			// continuation of Unicode codepoint
-			strmOut << "       ";
+			strmOut << ".      ";
 		else if (m_prgisloutAfter[ichw] == kNegInfinity)
 			strmOut << "<--    ";
 		else if (m_prgisloutAfter[ichw] == kPosInfinity)
@@ -1124,11 +1179,11 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			if (rgcchwRaw[ichw] > 1)
 				// continuation of Unicode codepoint
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (m_prgisloutLigature[ichw] != kNegInfinity)
 				ptman->LogInTable(strmOut, m_prgisloutLigature[ichw]);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 
@@ -1137,11 +1192,11 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			if (rgcchwRaw[ichw] > 1)
 				// continuation of Unicode codepoint
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (m_prgisloutLigature[ichw] != kNegInfinity)
 				ptman->LogInTable(strmOut, m_prgiComponent[ichw] + 1);	// 1-based
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1153,7 +1208,11 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 /*----------------------------------------------------------------------------------------------
 	Write out the final surface-to-underlying associations.
 ----------------------------------------------------------------------------------------------*/
+#ifdef TRACING
 void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strmOut)
+#else
+void Segment::LogSurfaceToUnderlying(GrTableManager *, std::ostream &)
+#endif
 {
 #ifdef TRACING
 	strmOut << "\nSURFACE TO UNDERLYING MAPPINGS\n\n";
@@ -1162,7 +1221,8 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 
 	int ccomp = 0;
 
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
+	strmOut << "      - hex    ";
 	int islout;
 	for (islout = 0; islout < m_cslout; islout++)
 	{
@@ -1171,6 +1231,23 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
 			strmOut << "#      ";
+		}
+		else
+		{
+			ptman->LogDecimalInTable(strmOut, psloutTmp->GlyphID());
+			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
+		}
+	}
+	strmOut << "\n";
+
+	strmOut << "        hex   ";
+	for (islout = 0; islout < m_cslout; islout++)
+	{
+		GrSlotOutput * psloutTmp = m_prgslout + islout;
+		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
+			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
+		{
+			strmOut << ".      ";
 		}
 		else
 		{
@@ -1193,13 +1270,13 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 	if (fAnyPseudos)
 	{
 		strmOut << "Actual glyphs: ";
-		for (int islout = 0; islout < m_cslout; islout++)
+		for (islout = 0; islout < m_cslout; islout++)
 		{
 			GrSlotOutput * psloutTmp = m_prgslout + islout;
 			if (psloutTmp->GlyphID() != psloutTmp->ActualGlyphForOutput(ptman))
 				ptman->LogHexInTable(strmOut, psloutTmp->ActualGlyphForOutput(ptman));
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1211,7 +1288,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 		}
 		else
 			ptman->LogInTable(strmOut, psloutTmp->BeforeAssoc());
@@ -1225,7 +1302,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 		}
 		else
 			ptman->LogInTable(strmOut, psloutTmp->AfterAssoc());
@@ -1242,7 +1319,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 			if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 				psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 			{
-				strmOut << "       ";
+				strmOut << ".      ";
 			}
 			else if (icomp < psloutTmp->NumberOfComponents())
 			{
@@ -1254,15 +1331,15 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 					std::string strTmp;
 					sprintf(rgch, "%d", psloutTmp->FirstUnderlyingComponent(icomp));
 					strTmp += rgch;
-					memset(rgch, 0, 10);
+					std::memset(rgch, 0, 10);
 					sprintf(rgch, "%d", psloutTmp->LastUnderlyingComponent(icomp));
 					strTmp += "/";
 					strTmp += rgch;
-					if (strlen(strTmp.c_str()) > SP_PER_SLOT-1)
+					if (std::strlen(strTmp.c_str()) > SP_PER_SLOT-1)
 						strmOut << "****** ";
 					else
 					{
-						while (strlen(strTmp.c_str()) < SP_PER_SLOT)  // pad with spaces
+						while (std::strlen(strTmp.c_str()) < SP_PER_SLOT)  // pad with spaces
 							strTmp += " ";
 						strmOut << strTmp;
 					}
@@ -1271,7 +1348,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 					ptman->LogInTable(strmOut, psloutTmp->FirstUnderlyingComponent(icomp)); // $$$$$
 			}
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1319,7 +1396,7 @@ void GrTableManager::LogUnderlyingHeader(std::ostream & strmOut, int iMin,
 	Write out the header lines for the slot contents.
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::LogSlotHeader(std::ostream & strmOut, int islotLim,
-	int cspPerSlot, int cspLeading, int islotMin)
+	int /*cspPerSlot*/, int cspLeading, int islotMin)
 {
 	islotLim = min(islotLim, MAX_SLOTS);
 
@@ -1400,13 +1477,24 @@ void GrTableManager::LogSlotHeader(std::ostream & strmOut, int islotLim,
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::LogSlotGlyphs(std::ostream & strmOut, GrSlotStream * psstrm)
 {
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
 	int islot;
 	for (islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
 		if (pslotTmp->IsLineBreak(LBGlyphID()))
 			strmOut << "#      ";
+		else
+			LogDecimalInTable(strmOut, pslotTmp->GlyphID());
+	}
+	strmOut << "\n";
+
+	strmOut << "      - hex    ";
+	for (islot = 0; islot < psstrm->WritePos(); islot++)
+	{
+		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
+		if (pslotTmp->IsLineBreak(LBGlyphID()))
+			strmOut << ".      ";
 		else
 			LogHexInTable(strmOut, pslotTmp->GlyphID());
 	}
@@ -1509,8 +1597,7 @@ void GrSlotState::SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp,
 			rgfMods[kslatJShrink] = true;
 		if (m_mJStep0 != kNotYetSet && m_mJStep0 != 0)
 			rgfMods[kslatJStep] = true;
-		if (m_nJWeight0 != byte(kNotYetSet) &&
-			m_nJWeight0 != 0 && m_nJWeight0 != 1)
+		if (m_nJWeight0 != 0 && m_nJWeight0 != 1)
 			rgfMods[kslatJWeight] = true;
 		if (m_mJWidth0 != kNotYetSet && m_mJWidth0 != 0)
 			rgfMods[kslatJWidth] = true;
@@ -1633,7 +1720,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 {
 	if (m_ipassModified != ipass && !fPreJust && !fPostJust)
 	{
-		strmOut << "       ";
+		strmOut << ".      ";
 		return;
 	}
 
@@ -1721,7 +1808,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 
 	case kslatAttAtX:	// always do these in pairs
 	case kslatAttAtY:
-		if (m_mAttachAtX != (pslotPrev ? pslotPrev->m_mAttachAtX : kNotYetSet) ||
+		if (m_mAttachAtX != (pslotPrev ? pslotPrev->m_mAttachAtX : static_cast<short>(kNotYetSet)) ||
 			m_mAttachAtY != (pslotPrev ? pslotPrev->m_mAttachAtY : 0))
 		{
 			ptman->LogInTable(strmOut,
@@ -1730,7 +1817,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 		}
 		break;
 	case kslatAttAtGpt:
-		if (m_nAttachAtGpoint != (pslotPrev ? pslotPrev->m_nAttachAtGpoint : kNotYetSet))
+		if (m_nAttachAtGpoint != (pslotPrev ? pslotPrev->m_nAttachAtGpoint : static_cast<short>(kNotYetSet)))
 		{
 			ptman->LogInTable(strmOut,
 				((m_nAttachAtGpoint == kGpointZero) ? 0 : m_nAttachAtGpoint));
@@ -1750,7 +1837,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 
 	case kslatAttWithX:	// always do these in pairs
 	case kslatAttWithY:
-		if (m_mAttachWithX != (pslotPrev ? pslotPrev->m_mAttachWithX : kNotYetSet) ||
+		if (m_mAttachWithX != (pslotPrev ? pslotPrev->m_mAttachWithX : static_cast<short>(kNotYetSet)) ||
 			m_mAttachWithY != (pslotPrev ? pslotPrev->m_mAttachWithY : 0))
 		{
 			ptman->LogInTable(strmOut,
@@ -1759,7 +1846,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 		}
 		break;
 	case kslatAttWithGpt:
-		if (m_nAttachWithGpoint != (pslotPrev ? pslotPrev->m_nAttachWithGpoint : kNotYetSet))
+		if (m_nAttachWithGpoint != (pslotPrev ? pslotPrev->m_nAttachWithGpoint : static_cast<short>(kNotYetSet)))
 		{
 			ptman->LogInTable(strmOut,
 				((m_nAttachWithGpoint == kGpointZero) ? 0 : m_nAttachWithGpoint));
@@ -1786,14 +1873,14 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 		break;
 
 	case kslatBreak:
-		if (m_lb != (pslotPrev ? pslotPrev->m_lb : kNotYetSet8))
+		if (m_lb != (pslotPrev ? pslotPrev->m_lb : static_cast<sdata8>(kNotYetSet8)))
 		{
 			ptman->LogBreakWeightInTable(strmOut, m_lb);
 			return;
 		}
 		break;
 	case kslatDir:
-		if (m_dirc != (pslotPrev ? pslotPrev->m_dirc : kNotYetSet8))
+		if (m_dirc != (pslotPrev ? pslotPrev->m_dirc : static_cast<sdata8>(kNotYetSet8)))
 		{
 			ptman->LogDirCodeInTable(strmOut, m_dirc);
 			return;
@@ -1852,7 +1939,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 			gAssert(false);
 	}
 
-	strmOut << "       ";
+	strmOut << ".      ";
 }
 	
 /*----------------------------------------------------------------------------------------------
@@ -1863,7 +1950,7 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 {
 	if (m_ipassModified != ipass)
 	{
-		strmOut << "       ";
+		strmOut << ".      ";
 		return;
 	}
 
@@ -1947,7 +2034,7 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 			strmOut << "??     ";
 	}
 	else
-		strmOut << "       ";
+		strmOut << ".      ";
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2056,6 +2143,25 @@ void GrTableManager::LogHexInTable(std::ostream & strmOut, utf16 chw, bool fPlus
 		strmOut << "+ ";
 	else
 		strmOut << "  ";
+}
+
+/*----------------------------------------------------------------------------------------------
+	Write a decimal value (a glyphID or Unicode codepoint) into the table.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::LogDecimalInTable(std::ostream & strmOut, utf16 chw)
+{
+	//char rgch[20];
+	int nSp = SP_PER_SLOT - 6;
+	if (chw < 100000) nSp++;
+	if (chw < 10000) nSp++;
+	if (chw < 1000) nSp++;
+	if (chw < 100) nSp++;
+	if (chw < 10) nSp++;
+    
+	strmOut << std::dec << chw;
+
+	for (int i = 0; i < nSp; i++)
+		strmOut << " ";
 }
 
 /*----------------------------------------------------------------------------------------------

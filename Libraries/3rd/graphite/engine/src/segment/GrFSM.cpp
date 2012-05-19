@@ -22,9 +22,6 @@ Description:
 #endif
 // any other headers (not precompiled)
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:End Ignore
 
 //:>********************************************************************************************
@@ -46,7 +43,7 @@ namespace gr
 	Fill in the FSM by reading from the font stream.
 	Assumes the stream is in the correct position.
 ----------------------------------------------------------------------------------------------*/
-bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
+bool GrFSM::ReadFromFont(GrIStream & grstrm, int /*fxdVersion*/, int crul, int cbSpace)
 {
 	short snTmp;
 	
@@ -67,19 +64,27 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	m_ccol = snTmp;
 
 	//	Sanity checks.
-	if (crowTransitional > m_crow || crowSuccess > m_crow)
-		return false; // bad table
 	//	TODO: add a sanity check for m_ccol.
+    if (m_crowFinal < 0 || m_crowNonAcpt < 0)
+        return false;
 
 	//	number of FSM glyph ranges and search constants
 	snTmp = grstrm.ReadShortFromFont();
 	m_cmcr = snTmp;
+    if (m_cmcr < 0 || m_cmcr > cbSpace)
+        return false;
 	snTmp = grstrm.ReadShortFromFont();
 	m_dimcrInit = snTmp;
+    if (m_dimcrInit > m_cmcr)
+        return false;
 	snTmp = grstrm.ReadShortFromFont();
 	m_cLoop = snTmp;
+    if (m_cLoop > m_dimcrInit)
+        return false;
 	snTmp = grstrm.ReadShortFromFont();
 	m_imcrStart = snTmp;
+    if (m_imcrStart != m_cmcr - m_dimcrInit)
+        return false;
 
 	m_prgmcr = new GrFSMClassRange[m_cmcr];
 	for (int imcr = 0; imcr < m_cmcr; imcr++)
@@ -93,14 +98,18 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	m_prgirulnMin = new data16[crowSuccess + 1];
 	data16 * pchw = m_prgirulnMin;
 	int i;
-	for (i = 0; i < (crowSuccess + 1); i++, pchw++)
+	for (i = 0; i <= crowSuccess; i++, pchw++)
 	{
 		*pchw = grstrm.ReadUShortFromFont();
+        if (i == 0 && *pchw != 0)
+            return false;
+        if (i > 0 && *pchw <= *(pchw - 1))
+            return false;
 	}
 
 	//	Last offset functions as the total length of the rule list.
 	//	Note that the number of rules in the map is not necessarily equal to the number of
-	//	rules in the pass; some rules may be listed multiply, if they are matched by more
+	//	rules in the pass; some rules may be listed multiple times, if they are matched by more
 	//	than one state.
 	int crulInMap = m_prgirulnMin[crowSuccess];
 	m_prgrulnMatched = new data16[crulInMap];
@@ -109,14 +118,20 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	for (i = 0; i < crulInMap; i++, pchw++)
 	{
 		*pchw = grstrm.ReadUShortFromFont();
+		if (*pchw > crul)
+			return false;	// bad font
 	}
 
 	//	min rule pre-context number of items
 	byte bTmp = grstrm.ReadByteFromFont();
 	m_critMinRulePreContext = bTmp;
+    if (m_critMinRulePreContext < 0)
+        return false;
 	//	max rule pre-context number of items
 	bTmp = grstrm.ReadByteFromFont();
 	m_critMaxRulePreContext = bTmp;
+    if (m_critMaxRulePreContext < m_critMinRulePreContext)
+        return false;
 
 	if (m_critMinRulePreContext > kMaxSlotsPerRule || m_critMaxRulePreContext > kMaxSlotsPerRule)
 		return false; // bad table
@@ -129,6 +144,8 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	for (int ic = 0; ic < cStartStates;	ic++, psn++)
 	{
 		*psn = grstrm.ReadShortFromFont();
+		if (*psn >= m_crow)
+			return false;	// bad table
 	}
 
 	return true;
@@ -138,7 +155,7 @@ bool GrFSM::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	Fill in the FSM's state table by reading from the font stream.
 	Assumes the stream is in the correct position.
 ----------------------------------------------------------------------------------------------*/
-bool GrFSM::ReadStateTableFromFont(GrIStream & grstrm, int fxdVersion)
+bool GrFSM::ReadStateTableFromFont(GrIStream & grstrm, int /*fxdVersion*/, int /*cbSpace*/)
 {
 	int cCells = ((m_crow - m_crowFinal) * m_ccol);
 	m_prgrowTransitions = new short[cCells];
@@ -146,6 +163,8 @@ bool GrFSM::ReadStateTableFromFont(GrIStream & grstrm, int fxdVersion)
 	for (int iCell = 0; iCell < cCells; iCell++, psn++)
 	{
 		*psn = grstrm.ReadShortFromFont();
+        if (*psn < 0 || *psn >= m_crow)
+            return false;
 	}
 
 	return true;
@@ -210,7 +229,7 @@ int GrFSM::GetRuleToApply(GrTableManager * ptman, GrPass * ppass,
 
 	//	Do a dumb insertion sort, ordering primarily by sort key (largest first)
 	//	and secondarily by the order in the original file (rule number).
-	//	Review: is this kind of sort fast enough? We assuming that we usually only
+	//	Review: is this kind of sort fast enough? We are assuming that we usually only
 	//	have a handful of matched rules.
 	int cmr = 0;
 	while (prow >= prgrowAccepting)
@@ -229,7 +248,7 @@ int GrFSM::GetRuleToApply(GrTableManager * ptman, GrPass * ppass,
 					(nSortKey == prgmr[imr].nSortKey && ruln < prgmr[imr].ruln))
 				{
 					//	Insert here.
-					memmove(prgmr+imr+1, prgmr+imr, (isizeof(MatchedRule) * (cmr - imr)));
+					memmove(prgmr+imr+1, prgmr+imr, (sizeof(MatchedRule) * (cmr - imr)));
 					prgmr[imr].ruln = ruln;
 					prgmr[imr].nSortKey = nSortKey;
 					prgmr[imr].cslot = cslot;

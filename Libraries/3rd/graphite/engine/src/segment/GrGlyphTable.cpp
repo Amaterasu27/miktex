@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -45,7 +43,7 @@ namespace gr
 ----------------------------------------------------------------------------------------------*/	
 bool GrGlyphTable::ReadFromFont(GrIStream & grstrmGloc, long lGlocStart, 
 	GrIStream & grstrmGlat, long lGlatStart, 
-	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
+	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
 	int fxdSilfVersion)
 {
 	//	Create the glyph sub-table for the single style.
@@ -66,16 +64,17 @@ bool GrGlyphTable::ReadFromFont(GrIStream & grstrmGloc, long lGlocStart,
 	unsigned short cAttrs = grstrmGloc.ReadUShortFromFont();
 
 	//	Create a single sub-table for the single style.
-	pgstbl->Initialize(fxdSilfVersion, snFlags, chwBWAttr, chwJStrAttr, data16(chwJStrAttr + cJLevels),
-		m_cglf, cAttrs, cnCompPerLig);
+	pgstbl->Initialize(fxdSilfVersion, snFlags,
+		chwBWAttr, chwJStrAttr, data16(chwJStrAttr + cJLevels),
+		m_cglf, cAttrs, nCompAttr1, cnCompPerLig);
 
 	SetSubTable(0, pgstbl);
 
-	return pgstbl->ReadFromFont(grstrmGloc, m_cglf, grstrmGlat, lGlatStart);
+	return pgstbl->ReadFromFont(grstrmGloc, m_cglf, grstrmGlat, lGlatStart, fxdSilfVersion);
 }
 
 bool GrGlyphSubTable::ReadFromFont(GrIStream & grstrmGloc, int cGlyphs,
-	GrIStream & grstrmGlat, long lGlatStart)
+	GrIStream & grstrmGlat, long lGlatStart, int fxdSilfVersion)
 {
 	//	attribute value offsets--slurp
 	if (m_fGlocShort)
@@ -92,9 +91,6 @@ bool GrGlyphSubTable::ReadFromFont(GrIStream & grstrmGloc, int cGlyphs,
 	
 	//	TODO: slurp debugger offsets: 'm_prgibBIGGlyphAttrDebug'
 
-	m_pgatbl = new GrGlyphAttrTable();
-	m_pgatbl->Initialize(m_fxdSilfVersion, cbBufLen);
-
 	//	Glat table
 	grstrmGlat.SetPositionInFont(lGlatStart);
 
@@ -102,6 +98,9 @@ bool GrGlyphSubTable::ReadFromFont(GrIStream & grstrmGloc, int cGlyphs,
 	int fxdGlatVersion = grstrmGlat.ReadIntFromFont();
 	if (fxdGlatVersion > kGlatVersion)
 		return false;
+
+	m_pgatbl = new GrGlyphAttrTable();
+	m_pgatbl->Initialize(fxdGlatVersion, fxdSilfVersion, cbBufLen);
 
 	//	Back up over the version number and include it right in the attribute value entry
 	//	buffer, since the offsets take it into account.
@@ -122,7 +121,7 @@ void GrGlyphTable::CreateEmpty()
 	GrGlyphSubTable * pgstbl = new GrGlyphSubTable();
 	
 	//	Create a single sub-table for the single style.
-	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0);
+	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0, 0);
 
 	SetSubTable(0, pgstbl);
 
@@ -132,7 +131,7 @@ void GrGlyphTable::CreateEmpty()
 void GrGlyphSubTable::CreateEmpty()
 {
 	m_pgatbl = new GrGlyphAttrTable();
-	m_pgatbl->Initialize(0, 0);
+	m_pgatbl->Initialize(0, 0, 0);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -140,7 +139,7 @@ void GrGlyphSubTable::CreateEmpty()
 ----------------------------------------------------------------------------------------------*/
 void GrGlyphSubTable::Initialize(int fxdSilfVersion, utf16 chwFlags,
 	data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
-	int cGlyphs, int cAttrs, int cnCompPerLig)
+	int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig)
 {
 	m_fxdSilfVersion = fxdSilfVersion;
 	m_fHasDebugStrings = HasAttrNames(chwFlags);
@@ -149,6 +148,8 @@ void GrGlyphSubTable::Initialize(int fxdSilfVersion, utf16 chwFlags,
 	m_chwJStrAttr = chwJStrAttr;
 	m_chwJStrHWAttr = chwJStrHWAttr;
 	m_fGlocShort = !LongFormat(chwFlags);
+
+	m_nCompAttr1 = nCompAttr1;
 
 	if (m_fGlocShort)
 	{ // item # cGlyphs holds length, which is convenient for dealing with last item
@@ -186,7 +187,7 @@ int GrGlyphSubTable::GlyphAttrValue(gid16 chwGlyphID, int nAttrID)
 		//	No attributes defined (eg, invalid font)
 		return 0;
 	}
-	if (nAttrID >= m_nAttrIDLim || nAttrID >= 0xFF)
+	if (nAttrID >= m_nAttrIDLim || nAttrID >= 0xFFFF)
 	{
 		gAssert(false);
 		return 0;
@@ -194,11 +195,11 @@ int GrGlyphSubTable::GlyphAttrValue(gid16 chwGlyphID, int nAttrID)
 	int ibMin = GlocLookup(chwGlyphID);		// where this glyph's attrs start
 	int	ibLim = GlocLookup(chwGlyphID + 1);	// where next glyph starts
 
-	int nRet = m_pgatbl->GlyphAttr16BitValue(ibMin, ibLim, byte(nAttrID));
+	int nRet = m_pgatbl->GlyphAttr16BitValue(ibMin, ibLim, data16(nAttrID));
 	if ((data16)nAttrID == m_chwJStrAttr)
 	{
 		//	For justify.stretch, which can be a 32-bit value, add on the high word.
-		unsigned int nRetHW = m_pgatbl->GlyphAttr16BitValue(ibMin, ibLim, byte(m_chwJStrHWAttr));
+		unsigned int nRetHW = m_pgatbl->GlyphAttr16BitValue(ibMin, ibLim, m_chwJStrHWAttr);
 		nRet = (nRetHW << 16) | nRet;
 	}
 	return ConvertValueForVersion(nRet, nAttrID);
@@ -248,31 +249,42 @@ int GrGlyphSubTable::ConvertValueForVersion(int nValue, int nAttrID, int nBWAttr
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return the attribute value a glyph. Loop through the attribute runs, looking
+	Return the attribute value for a glyph. Loop through the attribute runs, looking
 	for the one containing the given attribute. Assume the value is 0 if not found.
 
 	@param ibMin		- byte offset of first run for the glyph of interest
 	@param ibLim		- byte offset of first run for the following glyph
-	@param bAttrID		- attribute to find
+	@param nAttrID		- attribute to find
 ----------------------------------------------------------------------------------------------*/
-int GrGlyphAttrTable::GlyphAttr16BitValue(int ibMin, int ibLim, byte bAttrID)
+int GrGlyphAttrTable::GlyphAttr16BitValue(int ibMin, int ibLim, data16 nAttrID)
 {
 	GrGlyphAttrRun gatrun;
 	byte * pbBIGEnt = m_prgbBIGEntries + ibMin;
+
+	if (m_fxdGlatVersion < 0x00020000 && nAttrID >= 0xFF) {
+		gAssert(false);
+		return 0;
+	}
+
+	if (ibMin >= m_cbEntryBufLen || ibLim >= m_cbEntryBufLen)
+	{
+		// Invalid offset
+		return 0;
+	}
 
 	while (pbBIGEnt < m_prgbBIGEntries + ibLim)
 	{
 		//	Suck the run of attribute values into the instance, so we can see
 		//	what's there.
-		gatrun.CopyFrom(pbBIGEnt);
+		gatrun.CopyFrom(pbBIGEnt, m_fxdGlatVersion);
 
-		if (bAttrID < gatrun.m_bMinAttrID)
+		if (nAttrID < gatrun.m_suMinAttrID)
 			//	Attribute not found--assume value is 0.
 			return 0;
-		else if (gatrun.m_bMinAttrID + gatrun.m_cAttrs > bAttrID)
+		else if (gatrun.m_suMinAttrID + gatrun.m_cAttrs > nAttrID)
 		{
 			//	Found the value in this run.
-			data16 chw = lsbf(gatrun.m_rgchwBIGValues[bAttrID - gatrun.m_bMinAttrID]);
+			data16 chw = lsbf(gatrun.m_rgchwBIGValues[nAttrID - gatrun.m_suMinAttrID]);
 			if ((chw & 0x8000) == 0)
 				return (int)chw;
 			else
@@ -280,7 +292,7 @@ int GrGlyphAttrTable::GlyphAttr16BitValue(int ibMin, int ibLim, byte bAttrID)
 		}
 		else
 			//	Go to next run.
-			pbBIGEnt += gatrun.ByteCount();
+			pbBIGEnt += gatrun.ByteCount(m_fxdGlatVersion);
 	}
 
 	//	Attribute not found--assume value is 0;
@@ -432,8 +444,8 @@ int GrGlyphSubTable::CalculateDefinedComponents(gid16 chwGlyphID)
 	int iMin = iFlag + 1;	// first actual value; +1 in order to skip the flag
 	if (m_prgnDefinedComponents[iFlag] == 0)
 	{
-		int iTmp = iMin;	
-		for (int nCompID = 0; nCompID < m_cComponents; nCompID++)
+		int iTmp = iMin;
+		for (int nCompID = m_nCompAttr1; nCompID < m_nCompAttr1 + m_cComponents; nCompID++)
 		{
 			if (ComponentIsDefined(chwGlyphID, nCompID))
 				m_prgnDefinedComponents[iTmp++] = nCompID;
@@ -459,8 +471,9 @@ int GrGlyphSubTable::CalculateDefinedComponents(gid16 chwGlyphID)
 ----------------------------------------------------------------------------------------------*/
 bool GrGlyphSubTable::ComponentIsDefined(gid16 chwGlyphID, int nAttrID)
 {
-	gAssert(nAttrID < m_cComponents);
-	if (nAttrID >= m_cComponents)
+
+	gAssert(nAttrID - m_nCompAttr1 < m_cComponents);
+	if (nAttrID - m_nCompAttr1 >= m_cComponents)
 		return false;
 
 	return (GlyphAttrValue(chwGlyphID, nAttrID) != 0);
@@ -493,157 +506,6 @@ int GrGlyphSubTable::ComponentIndexForGlyph(gid16 chwGlyphID, int nCompID)
 //	int i = CalculateDefinedComponents(chwGlyphID);
 //	return m_pnComponents[i + 1 + n];
 //}
-
-
-//:>********************************************************************************************
-//:>	For test procedures
-//:>********************************************************************************************
-
-//:Ignore
-#ifdef OLD_TEST_STUFF
-
-void GrGlyphTable::SetUpTestData()
-{
-	SetNumberOfGlyphs(5);
-	SetNumberOfStyles(1);
-
-	GrGlyphSubTable * pgstbl = new GrGlyphSubTable();
-	gAssert(pgstbl);
-
-	pgstbl->Initialize(1, 0, 5, 10, 4);
-	SetSubTable(0, pgstbl);
-
-	pgstbl->SetUpTestData();
-}
-
-/***********************************************************************************************
-	TODO: This method is BROKEN because m_prgibBIGAttrValues has been changed. It is no
-	longer a utf16 *. The Gloc table can contain 16-bit or 32-bit entries and must be
-	accessed accordingly.
-***********************************************************************************************/
-void GrGlyphSubTable::SetUpTestData()
-{
-	m_pgatbl = new GrGlyphAttrTable();
-	m_pgatbl->Initialize(0, 48);
-
-	m_prgibBIGAttrValues[0] = byte(msbf(data16(0)));
-	m_prgibBIGAttrValues[1] = byte(msbf(data16(6))));
-	m_prgibBIGAttrValues[2] = byte(msbf(data16(20)));
-	m_prgibBIGAttrValues[3] = byte(msbf(data16(20)));
-	m_prgibBIGAttrValues[4] = byte(msbf(data16(40)));
-	m_prgibBIGAttrValues[5] = byte(msbf(data16(48)));
-
-	m_pgatbl->SetUpTestData();
-}
-
-void GrGlyphAttrTable::SetUpTestData()
-{
-	//	Glyph 0 (1 run; offset = 0):
-	//		1 = 11 = 0x0B
-	//		2 = 22 = 0x16
-	//							0102 000B 0016
-	//
-	//	Glyph 1 (2 runs; offset = 3*2 = 6):
-	//		0 = 5
-	//		1 = 6
-	//		2 = 7
-	//		8 = 8
-	//		9 = 9
-	//							0003 0005 0006 0007
-	//							0802 0008 0009
-	//
-	//	Glyph 2 (0 runs; offset = 6 + 7*2 = 20):
-	//		all values = 0
-	//
-	//	Glyph 3 (5 runs; offset = 20):
-	//		1 = 111 = 0x006F
-	//		3 = 333 = 0x00DE
-	//		5 = 555 = 0x022B
-	//		7 = 777 = 0x0309
-	//		9 = 999 = 0x03E7
-	//							0101 006F
-	//							0301 00DE
-	//							0501 022B
-	//							0701 0309
-	//							0901 03E7
-	//
-	//	Glyph 4 (1 run; offset = 20 + 10*2 = 40):
-	//		5 = 4
-	//		6 = 4
-	//		7 = 4
-	//							0503 0004 0004 0004
-	//
-	//	Glyph 5 (offset = 40 + 4*2 = 48)
-
-	byte * pbBIG = m_prgbBIGEntries;
-
-	GrGlyphAttrRun gatrun;
-
-	//	Glyph 0
-	gatrun.m_bMinAttrID = 1;
-	gatrun.m_cAttrs = 2;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(11));
-	gatrun.m_rgchwBIGValues[1] = msbf(data16(22));
-	memcpy(pbBIG, &gatrun, 6);
-	pbBIG += 6;
-
-	//	Glyph 1
-	gatrun.m_bMinAttrID = 0;
-	gatrun.m_cAttrs = 3;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(5));
-	gatrun.m_rgchwBIGValues[1] = msbf(data16(6));
-	gatrun.m_rgchwBIGValues[2] = msbf(data16(7));
-	memcpy(pbBIG, &gatrun, 8);
-	pbBIG += 8;
-	gatrun.m_bMinAttrID = 8;
-	gatrun.m_cAttrs = 2;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(8));
-	gatrun.m_rgchwBIGValues[1] = msbf(data16(9));
-	memcpy(pbBIG, &gatrun, 6);
-	pbBIG += 6;
-
-	//	Glyph 2: no data
-
-	//	Glyph 3
-	gatrun.m_bMinAttrID = 1;
-	gatrun.m_cAttrs = 1;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(111));
-	memcpy(pbBIG, &gatrun, 4);
-	pbBIG += 4;
-	gatrun.m_bMinAttrID = 3;
-	gatrun.m_cAttrs = 1;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(333));
-	memcpy(pbBIG, &gatrun, 4);
-	pbBIG += 4;
-	gatrun.m_bMinAttrID = 5;
-	gatrun.m_cAttrs = 1;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(555));
-	memcpy(pbBIG, &gatrun, 4);
-	pbBIG += 4;
-	gatrun.m_bMinAttrID = 7;
-	gatrun.m_cAttrs = 1;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(777));
-	memcpy(pbBIG, &gatrun, 4);
-	pbBIG += 4;
-	gatrun.m_bMinAttrID = 9;
-	gatrun.m_cAttrs = 1;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(999));
-	memcpy(pbBIG, &gatrun, 4);
-	pbBIG += 4;
-
-	//	Glyph 4
-	gatrun.m_bMinAttrID = 5;
-	gatrun.m_cAttrs = 3;
-	gatrun.m_rgchwBIGValues[0] = msbf(data16(4));
-	gatrun.m_rgchwBIGValues[1] = msbf(data16(4));
-	gatrun.m_rgchwBIGValues[2] = msbf(data16(4));
-	memcpy(pbBIG, &gatrun, 8);
-	pbBIG += 8;
-
-	gAssert(pbBIG == m_prgbBIGEntries + 48);
-}
-
-#endif // OLD_TEST_STUFF
 
 } // namespace gr
 

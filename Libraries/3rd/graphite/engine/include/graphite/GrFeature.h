@@ -178,7 +178,7 @@ protected:
 		data16 cbOffsetBIG;		// big endian
 	};
 	LangEntry * m_prglang;
-	int m_cbOffset0; // offset of first entry
+	int m_cbOffset0;	// offset of first entry
 
 	struct FeatSet
 	{
@@ -187,7 +187,7 @@ protected:
 		data16 padBIG;
 	};
 	FeatSet * m_prgfset;
-	int m_cfset;	// needed for memory instrumentation only
+	int m_cfset;		// needed for memory instrumentation and sanity checks
 
 	int FindIndex(isocode lgcode);
 };

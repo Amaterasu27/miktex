@@ -21,9 +21,6 @@ Description:
 #endif
 // any other headers (not precompiled)
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:End Ignore
 
 //:>********************************************************************************************
@@ -78,6 +75,7 @@ void Font::EnsureTablesCached()
 
 	size_t cbBogus;
 	m_pHead = getTable(TtfUtil::TableIdTag(ktiHead), &cbBogus);
+	m_pHhea = getTable(TtfUtil::TableIdTag(ktiHhea), &cbBogus);
 	m_pHmtx = getTable(TtfUtil::TableIdTag(ktiHmtx), &m_cbHmtxSize);
 	m_pGlyf = getTable(TtfUtil::TableIdTag(ktiGlyf), &cbBogus);
 	m_pLoca = getTable(TtfUtil::TableIdTag(ktiLoca), &m_cbLocaSize);
@@ -147,16 +145,11 @@ void Font::UniqueCacheInfo(std::wstring & stuFace, bool & fBold, bool & fItalic)
 		Assert(false);
 		return;
 	}
-	// byte * pvName = (byte *)pNameTbl + lOffset;
-	utf16 rgchwFace[128];
-	const size_t cchw = min(long(lSize / sizeof(utf16)), long(sizeof rgchwFace - 1));
-	const utf16 *src_start = reinterpret_cast<const utf16 *>(pNameTbl+ lOffset);
-	std::copy(src_start, src_start + cchw, rgchwFace);
-	rgchwFace[cchw] = 0;  // zero terminate
-	TtfUtil::SwapWString(rgchwFace, cchw);
-	for (size_t ich16 = 0; ich16 < cchw; ich16++)	// to handle situation where wchar_t is 4 bytes
-		stuFace.push_back(wchar_t(rgchwFace[ich16]));
-	///stuFace.assign(rgchwFace, rgchwFace + cchw);
+    
+	size_t cchw = long(lSize / sizeof(utf16));
+	const byte *src_start = pNameTbl + lOffset;
+	for ( ; cchw > 0; cchw--, src_start += 2)	// to handle situation where wchar_t is 4 bytes
+		stuFace.push_back((*src_start << 8) + src_start[1]);
 
 	const void * pOs2Tbl = getTable(TtfUtil::TableIdTag(ktiOs2), &cbSize);
 	TtfUtil::FontOs2Style(pOs2Tbl, fBold, fItalic);
@@ -181,6 +174,7 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 	if (m_pLoca == 0) return;
 
 	size_t cContours;
+	size_t cEndPoints;
 	size_t cPoints;
 
 	const size_t CONTOUR_BUF_SIZE = 16;
@@ -198,8 +192,9 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 		rgnEndPtHeapBuf = new int[cContours] : 
 		rgnEndPtFixedBuf;
 
+	cEndPoints = cContours;
 	if (!TtfUtil::GlyfContourEndPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 
-		prgnEndPt, cContours))
+		prgnEndPt, cEndPoints)) //cEndPonts will be zero on return
 	{
 		return;	// should have been caught above
 	}
@@ -210,7 +205,7 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 	int * prgnY       = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=       new int[cPoints]  : rgnYFixedBuf;
 
 	if (TtfUtil::GlyfPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 0, 0, 
-		prgnX, prgnY, prgfOnCurve, cPoints))
+		prgnX, prgnY, prgfOnCurve, cPoints)) //cPoints will be zero on return
 	{
 		float nPixEmSquare;
 		getFontMetrics(0, 0, &nPixEmSquare);
@@ -242,7 +237,7 @@ void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & ad
 	advances.x = 0;
 	advances.y = 0;
 
-	if (m_pHead == 0) return;
+	if (m_pHhea == 0) return;
 
 	// Calculate the number of design units per pixel.
 	float pixelEmSquare;
@@ -257,7 +252,7 @@ void Font::getGlyphMetrics(gid16 glyphID, gr::Rect & boundingBox, gr::Point & ad
 	// Use the Hmtx and Head tables to find the glyph advances.
 	int lsb;
 	unsigned int advance = 0;
-	if (TtfUtil::HorMetrics(glyphID, m_pHmtx, m_cbHmtxSize, m_pHead,
+	if (TtfUtil::HorMetrics(glyphID, m_pHmtx, m_cbHmtxSize, m_pHhea,
 			lsb, advance))
 	{
 		advances.x = (advance * pixelsPerDesignUnit);
@@ -626,14 +621,14 @@ FeatureIterator FeatureIterator::operator+=(int n)
 		Assert(false);
 		m_ifeat = m_cfeat;
 	}
-	else if (m_ifeat + n < 0)
+	else if (static_cast<int>(m_ifeat) + n < 0)
 	{
 		// Can't decrement.
 		Assert(false);
 		m_ifeat = 0;
 	}
 	else
-		m_ifeat += m_cfeat;
+		m_ifeat += n;
 
 	return *this;
 }
@@ -727,7 +722,7 @@ FeatureSettingIterator FeatureSettingIterator::operator+=(int n)
 		Assert(false);
 		m_ifset = m_cfset;
 	}
-	if (m_ifset + n < 0)
+	if (static_cast<int>(m_ifset) + n < 0)
 	{
 		// Can't decrement.
 		Assert(false);
@@ -820,14 +815,14 @@ FeatLabelLangIterator FeatLabelLangIterator::operator+=(int n)
 		Assert(false);
 		m_ilang = m_clang;
 	}
-	else if (m_ilang + n < 0)
+	else if (static_cast<int>(m_ilang) + n < 0)
 	{
 		// Can't decrement.
 		Assert(false);
 		m_ilang = 0;
 	}
 	else
-		m_ilang += m_clang;
+		m_ilang += n;
 
 	return *this;
 }
@@ -906,14 +901,14 @@ LanguageIterator LanguageIterator::operator+=(int n)
 		Assert(false);
 		m_ilang = m_clang;
 	}
-	else if (m_ilang + n < 0)
+	else if (static_cast<int>(m_ilang) + n < 0)
 	{
 		// Can't decrement.
 		Assert(false);
 		m_ilang = 0;
 	}
 	else
-		m_ilang += m_clang;
+		m_ilang += n;
 
 	return *this;
 }

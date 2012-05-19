@@ -26,9 +26,6 @@ Description:
 #include <stdlib.h>
 #endif
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************
@@ -353,7 +350,7 @@ void SegmentPainter::positionsOfIP(
 	@param bOn				- true if we are turning on (ignored in this implementation)
 ----------------------------------------------------------------------------------------------*/
 bool SegmentPainter::drawSelectionRange(int ichwAnchor, int ichwEnd,
-	float ydLineTop, float ydLineBottom, bool bOn)
+	float ydLineTop, float ydLineBottom, bool /*bOn*/)
 {
 	if (g_fDrawing)
 		return true;
@@ -993,7 +990,7 @@ size_t SegmentPainter::getUnderlinePlacement(int ichwMin, int ichwLim,
 								an I-beam (std selection)
 ----------------------------------------------------------------------------------------------*/
 void SegmentPainter::CalcOrDrawInsertionPoint(
-	int ichwIP, bool fAssocPrev, bool bOn, bool fForceSplit,
+	int ichwIP, bool fAssocPrev, bool /*bOn*/, bool fForceSplit,
 	Rect * prdPrimary, Rect * prdSecondary)
 {
 	GrResult res = kresOk;
@@ -1277,7 +1274,7 @@ void SegmentPainter::CalcOrDrawInsertionPoint(
 							if NULL, do the drawing
 ----------------------------------------------------------------------------------------------*/
 void SegmentPainter::InvertIBeam(float xs, float ysTop, float ysBottom,
-	bool fAssocPrev, Rect * prdRet)
+	bool /*fAssocPrev*/, Rect * prdRet)
 {
 	float xd = ScaleXToDest(xs);
 	float ydTop = ScaleYToDest(ysTop);
@@ -1307,8 +1304,8 @@ void SegmentPainter::InvertIBeam(float xs, float ysTop, float ysBottom,
 	}
 	else
 	{
-		InvertRect(xd-dxdLeftAdjust, ydTop,
-			xd+dxdRightAdjust, ydBottom);
+		InvertRect(xd - dxdLeftAdjust, ydTop,
+			xd + dxdRightAdjust, ydBottom);
 
 		//	To make a true I-beam:
 //		InvertRect(xd-dxdTwoXPixels, ydTop-dydOneYPixel,
@@ -1382,6 +1379,7 @@ void SegmentPainter::InvertSplitIP(float xs, float ysTop, float ysBottom,
 		yd1 = (fSecondary) ? ydMid : ydMid - 3;
 	}
 
+	// Draw the vertical bar.
 	if (prdRet)
 	{
 		prdRet->left = xdLeft;
@@ -1389,14 +1387,15 @@ void SegmentPainter::InvertSplitIP(float xs, float ysTop, float ysBottom,
 		// The most common reason for returning the positions of the IP is to scroll it into
 		// view, in which case we want to return the entire line height, not just the 
 		// height of the IP itself.
-		prdRet->top = ydTop; // yd1;
-		prdRet->bottom = ydBottom; // yd2;
+		prdRet->top = min(ydTop, yd1);
+		prdRet->bottom = max(ydBottom, yd2);
 	}
 	else
 	{
 		InvertRect(xdLeft, yd1, xdRight, yd2);
 	}
 
+	// Draw the horizontal hook.
 	if (fAssocRight)
 	{
 		if (prdRet)
@@ -1407,7 +1406,7 @@ void SegmentPainter::InvertSplitIP(float xs, float ysTop, float ysBottom,
 				InvertRect(xdRight, ydTop,
 					xdRight + dxdHookLen, ydTop + dydOneYPixel);
 			else
-				InvertRect(xdRight, ydBottom-dydOneYPixel,
+				InvertRect(xdRight, ydBottom - dydOneYPixel,
 					xdRight + dxdHookLen, ydBottom);
 		}
 	}
@@ -1675,7 +1674,7 @@ bool SegmentPainter::AtEdgeOfCluster(GrSlotOutput * pslout, int islout, bool fBe
 }
 
 bool SegmentPainter::AtEdgeOfCluster(GrSlotOutput * psloutBase, int isloutBase,
-	GrSlotOutput * pslout, int islout, bool fBefore)
+	GrSlotOutput * /*pslout*/, int islout, bool fBefore)
 {
 	//	Compare pslout to all the members of the cluster. If it is the minimum or maximum, it
 	//	is at an edge.
@@ -1778,12 +1777,12 @@ void SegmentPainter::CalcPartialLigatures(bool * prgfAllSelected,
 			}
 			for (icomp = 0; icomp < pslout->NumberOfComponents(); icomp++)
 			{
-				for (int ichw = pslout->FirstUnderlyingComponent(icomp) ; 
-					ichw <= pslout->LastUnderlyingComponent(icomp) ;
-					ichw++)
+				for (int ichw2 = pslout->FirstUnderlyingComponent(icomp) ; 
+					ichw2 <= pslout->LastUnderlyingComponent(icomp) ;
+					ichw2++)
 				{
-					if (m_pseg->m_prgiComponent[ichw - m_pseg->m_ichwAssocsMin] == icomp)
-						prgfAllSelected[ichw] = fAll;
+					if (m_pseg->m_prgiComponent[ichw2 - m_pseg->m_ichwAssocsMin] == icomp)
+						prgfAllSelected[ichw2] = fAll;
 				}
 			}
 		}
@@ -2304,7 +2303,11 @@ bool SegmentPainter::AdjustRectsToNotOverlap(std::vector<Rect> & vrect, int irec
 	Assert that there are no overlaps among all the rectangles in the array, which should
 	be the case if AdjustRectsToNotOverlap is working properly.
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void SegmentPainter::AssertNoOverlaps(std::vector<Rect> & vrect)
+#else
+void SegmentPainter::AssertNoOverlaps(std::vector<Rect> &)
+#endif
 {
 #ifdef _DEBUG
 	for (int irect1 = 0; irect1 < signed(vrect.size() - 1); irect1++)
@@ -2452,7 +2455,11 @@ bool SegmentPainter::AdjustLineSegsToNotOverlap(std::vector<LineSeg> & vls, int 
 	Assert that there are no overlaps among all the rectangles in the array, which should
 	be the case if AdjustRectsToNotOverlap is working properly.
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void SegmentPainter::AssertNoOverlaps(std::vector<LineSeg> & vls)
+#else
+void SegmentPainter::AssertNoOverlaps(std::vector<LineSeg> &)
+#endif
 {
 #ifdef _DEBUG
 	for (int ils1 = 0; ils1 < (int)vls.size() - 1; ils1++)
@@ -2492,8 +2499,8 @@ bool SegmentPainter::ArrowKeyPositionInternal(
 	int * pichw, bool * pfAssocPrev,
 	bool fRight, bool fAssocPrevMatch, bool fAssocPrevNeeded, int * pnNextOrPrevSeg)
 {
-	int kBefore = true;
-	int kAfter = false;
+	const bool kBefore = true;
+	const bool kAfter = false;
 
 	bool fResult = false;
 
@@ -2785,8 +2792,8 @@ LFixLigatures:
 bool SegmentPainter::AdjacentLigComponent(int * pichw, bool * pfAssocPrev,
 	bool fMovingRight, bool fMove)
 {
-	int kBefore = true;
-	int kAfter = false;
+	const bool kBefore = true;
+	const bool kAfter = false;
 
 	GrEngine * pgreng = m_pseg->EngineImpl();
 	GrGlyphTable * pgtbl = (pgreng) ? pgreng->GlyphTable() : NULL;
@@ -2884,7 +2891,7 @@ bool SegmentPainter::AdjacentLigComponent(int * pichw, bool * pfAssocPrev,
 	{
 		if (icompNext != icompCurr)
 		{
-			float xsHorizNext = (fIPOnRight) ? vxsRights[icompNext] : vxsLefts[icompNext];
+			xsHorizNext = (fIPOnRight) ? vxsRights[icompNext] : vxsLefts[icompNext];
 			if (fMovingRight && xsHorizNext > xsHorizCurr)
 				break;
 			else if (!fMovingRight && xsHorizNext < xsHorizCurr)
@@ -2996,7 +3003,7 @@ float SegmentPainter::ScaleY(float ys, Rect rs, Rect rd)
 /*----------------------------------------------------------------------------------------------
 	Make sure the font is set to use the character properties required by this segment.
 ----------------------------------------------------------------------------------------------*/
-void SegmentPainter::SetFontProps(unsigned long clrFore, unsigned long clrBack)
+void SegmentPainter::SetFontProps(unsigned long /*clrFore*/, unsigned long /*clrBack*/)
 {
 	return;
 }

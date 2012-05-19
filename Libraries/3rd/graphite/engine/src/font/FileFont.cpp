@@ -17,8 +17,9 @@ Description:
 
 #include "FontTableCache.h"
 #include "FileFont.h"
+#ifndef _MSC_VER
 #include <stdio.h>
-
+#endif
 
 // TBD do this properly
 #define FUDGE_FACTOR 72
@@ -189,7 +190,7 @@ FileFont::initializeFromFace()
 		}
 		Assert(lSize %2 == 0);// should be utf16
 		utf16 rgchwFace[128];
-		int cchw = (lSize / isizeof(utf16)) + 1;
+		int cchw = (lSize / sizeof(utf16)) + 1;
 		cchw = min(cchw, 128);
 		utf16 * pTable16 = reinterpret_cast<utf16*>(pTable + lOffset);
 		std::copy(pTable16, pTable16 + cchw - 1, rgchwFace);
@@ -208,10 +209,9 @@ FileFont::initializeFromFace()
 			}
 //		}
 #else
-		// m_stuFaceName.assign(rgchwFace);
-		// VS 2005, MinGW32, and AIX need this:
-		for (int cch16 = 0; cch16 < cchw; cch16++)
-			m_stuFaceName.push_back(rgchwFace[cch16]);
+		// could utf16 and wchar_t ever have different endianness?
+		Assert(sizeof(utf16) == sizeof(wchar_t));
+		m_stuFaceName.assign(reinterpret_cast<wchar_t*>(rgchwFace));
 #endif
 		pTable = readTable(ktiHead, lSize);
 		if (!m_fIsValid || !pTable) 
@@ -233,7 +233,7 @@ byte *
 FileFont::readTable(int /*TableId*/ tid, size_t & size)
 {
 	const TableId tableId = TableId(tid);
-	bool isValid = true;
+	bool isTableValid = true;
 	size_t lOffset = 0, lSize = 0;
 	if (!m_pTableCache)
 	{
@@ -245,9 +245,9 @@ FileFont::readTable(int /*TableId*/ tid, size_t & size)
 	size = m_pTableCache->getTableSize(tableId);
 	// check whether it is already in the cache
 	if (pTable) return pTable;
-	isValid &= TtfUtil::GetTableInfo(tableId, m_pHeader, m_pTableDir, 
+	isTableValid &= TtfUtil::GetTableInfo(tableId, m_pHeader, m_pTableDir, 
 			lOffset, lSize);
-	if (!isValid) 
+	if (!isTableValid) 
 		return NULL;
 	fseek(m_pfile, lOffset, SEEK_SET);
 	// only allocate if needed
@@ -255,16 +255,16 @@ FileFont::readTable(int /*TableId*/ tid, size_t & size)
 	
 	if (!pTable) 
 	{
-		isValid = false;
+		isTableValid = false;
 		return NULL;
 	}
 	size_t bytesRead = fread(pTable, 1, lSize, m_pfile);
-	isValid = bytesRead == lSize;
-	if (isValid)
+	isTableValid = bytesRead == lSize;
+	if (isTableValid)
 	{
-		isValid &= TtfUtil::CheckTable(tableId, pTable, lSize);
+		isTableValid &= TtfUtil::CheckTable(tableId, pTable, lSize);
 	}
-	if (!isValid) 
+	if (!isTableValid) 
 	{
 		return 0;
 	}
@@ -375,7 +375,7 @@ FileFont::getTable(fontTableId32 tableID, size_t * pcbSize)
 		// constructor automatically sets the font count to 1
 		m_pTableCache = new FontTableCache();
 	} 
-	TableId tid;
+	TableId tid = ktiCmap;// to prevent uninitialized warning
 	for (int i = 0; i<ktiLast; i++)
 	{
 		tid = static_cast<TableId>(i);

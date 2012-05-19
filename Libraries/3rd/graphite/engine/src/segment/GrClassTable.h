@@ -17,6 +17,8 @@ Description:
 #ifndef GR_CTABLE_INCLUDED
 #define GR_CTABLE_INCLUDED
 
+#include <cstring>
+
 //:End Ignore
 
 namespace gr
@@ -54,7 +56,11 @@ protected:
 	/*------------------------------------------------------------------------------------------
 		Copy the raw memory into the instance.
 	------------------------------------------------------------------------------------------*/
+#ifdef NDEBUG
+	void CopyFrom(data16 * pchwStart, int)
+#else
 	void CopyFrom(data16 * pchwStart, int cchw)
+#endif
 	{
 		m_cgixBIG = pchwStart[0];
 		m_digixBIGInit = pchwStart[1];
@@ -70,7 +76,7 @@ protected:
 		}
 		gAssert((4 + (cgix * 2)) == cchw);
 		#ifdef _DEBUG
-			memset(m_pgixFirst, 0, cgix * isizeof(GrGlyphIndexPair));
+			std::memset(m_pgixFirst, 0, cgix * sizeof(GrGlyphIndexPair));
 		#endif
 		Assert(sizeof(GrGlyphIndexPair) == sizeof(gid16) + sizeof(data16));
 		GrGlyphIndexPair * pgixStart = reinterpret_cast<GrGlyphIndexPair*>(pchwStart + 4);
@@ -165,21 +171,6 @@ protected:
 	//	uses BIG-ENDIAN format.
 	gid16 *	m_prgchwBIGGlyphList;
 
-//:Ignore
-#ifdef OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	void SetUpTestData();
-	void SetUpRuleActionTest();
-	void SetUpRuleAction2Test();
-	void SetUpAssocTest();
-	void SetUpAssoc2Test();
-	void SetUpDefaultAssocTest();
-	void SetUpFeatureTest();
-	void SetUpLigatureTest();
-	void SetUpLigature2Test();
-#endif // OLD_TEST_STUFF
-//:End Ignore
 };
 
 } // namespace gr

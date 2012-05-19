@@ -19,15 +19,22 @@ Description:
 
 //:End Ignore
 
+#define  GRAPHITE_VERSION_MAJOR   2
+#define  GRAPHITE_VERSION_MINOR   4
+#define  GRAPHITE_VERSION_BUGFIX  0
+
 namespace gr
 {
+
+void EngineVersion(int * nMajor, int * nMinor, int * nBugFix);
+
 
 // Maximum table versions handled by this engine:
 enum {
 
-	kSilfVersion		= 0x00030000,
-	kRuleVersion		= 0x00030000,
-	kGlatVersion		= 0x00010000,
+	kSilfVersion		= 0x00030001,
+	kRuleVersion		= 0x00030001,
+	kGlatVersion		= 0x00020000,
 	kGlocVersion		= 0x00010000,
 	kFeatVersion		= 0x00020000,
 	kSileVersion		= 0x00010000,
@@ -210,14 +217,18 @@ typedef enum SlotAttrName {
 	kslatUserDefnV1, // version 1.0 of the font tables
 	kslatMeasureSol,	kslatMeasureEol,
 	kslatJStretch,		kslatJShrink,	kslatJStep,		kslatJWeight,	kslatJWidth,
+
+	kslatSegsplit = kslatJStretch + 29,	// not used in this engine, but reserve for Graphite2
+
 	// this must be last:
 	kslatUserDefn = kslatJStretch + 30,
-	// I think 30 is somewhat arbitrary. We at least need to save 15 slots for more levels of
-	// justification attributes.
+	// I think 30 is somewhat arbitrary. We at least need to save 15 slots (5 attrs * 3 levels)
+	// for more levels of justification attributes.
 
 	kslatMax,
 
 	kslatNoEffect = kslatMax + 1	// for internal use
+
 } SlotAttrName;
 
 

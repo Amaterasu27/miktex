@@ -82,7 +82,7 @@ protected:
 	//	return ::SetBkColor(hdc, PALETTERGB(GetRValue(clr), GetGValue(clr), GetBValue(clr)));
 	//}
 
-	void WinSegmentPainter::paintAux();
+	void paintAux();
 
 protected:
 	// member variables:

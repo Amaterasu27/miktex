@@ -21,7 +21,7 @@
 #pragma warning(disable: 4512) // assignment operator could not be generated.
 #pragma warning(disable: 4610) // class 'xxx' can never be instantiated - user defined
                                // constructor required - caused by applying ComSmartPtr to a non-interface class.
-#pragma warning(disable: 4660) // template-class specialization is already instantiated.
+//#pragma warning(disable: 4660) // template-class specialization is already instantiated. - no longer used
 #pragma warning(disable: 4701) // local variable 'xxx' may be used without being initialized.
                                // We would like to keep this warning (4701) enabled but the compiler applies it in
                                // places that are obviously OK.
@@ -31,6 +31,9 @@
 #pragma warning(disable: 4710) // not inlined.
 #pragma warning(disable: 4786) // identifier truncated in debug info.
 #pragma warning(disable: 4800) // forcing value to bool 'true' or 'false' (performance warning).
+
+#pragma warning(disable: 4996) // std::copy unsafe
+
 #endif
 
 

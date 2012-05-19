@@ -106,7 +106,7 @@ public:
 	{
 		return DirCode(int(m_dirc));
 	}
-	int InsertBefore()
+	bool InsertBefore()
 	{
 		return m_fInsertBefore;
 	}
@@ -308,7 +308,11 @@ public:
 	{
 		return m_islotPosPass;
 	}
+#ifdef NDEBUG
+	void SetPosPassIndex(int islot, bool)
+#else
 	void SetPosPassIndex(int islot, bool fInputToPosPass1)
+#endif
 	{
 		// If we're resetting it, it should be to the same value as before:
 		Assert(fInputToPosPass1 || m_islotPosPass == kNotYetSet || m_islotPosPass == islot);
@@ -378,7 +382,7 @@ public:
 	{
 	}
 
-	int IsSpace(GrTableManager * ptman);
+	sdata8 IsSpace(GrTableManager * ptman);
 
 	// TODO: remove argument from these methods; it is no longer needed.
 	bool IsLineBreak(gid16 chwLB)
@@ -386,12 +390,12 @@ public:
 		return (IsInitialLineBreak(chwLB) || IsFinalLineBreak(chwLB));
 		//return (m_chwGlyphID == chwLB); // TODO: remove
 	}
-	bool IsInitialLineBreak(gid16 chwLB)
+	bool IsInitialLineBreak(gid16 /*chwLB*/)
 	{
 		return (m_spsl == kspslLbInitial);
 		//return (IsLineBreak(chwLB) && m_fInitialLB == true); // TODO: remove
 	}
-	bool IsFinalLineBreak(gid16 chwLB)
+	bool IsFinalLineBreak(gid16 /*chwLB*/)
 	{
 		return (m_spsl == kspslLbFinal);
 		//return (IsLineBreak(chwLB) && m_fInitialLB == false); // TODO: remove
@@ -475,7 +479,7 @@ public:
 		return m_mAttachAtX;
 	}
 
-	int AttachWithX(GrTableManager * ptman, GrSlotStream * psstrm)
+	int AttachWithX(GrTableManager * /*ptman*/, GrSlotStream * /*psstrm*/)
 	{
 		if (m_mAttachAtX == kNotYetSet)
 		{
@@ -615,7 +619,7 @@ public:
 		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut, int islotThis);
 
 	void CalcCompositeMetrics(GrTableManager * ptman, GrSlotStream * psstrm,
-		int nLevel, bool fThorough = false);
+		GrSlotStream * psstrmNext, int nLevel, bool fThorough = false);
 
 	void Position(GrTableManager * ptman,
 		GrSlotStream * psstrmOut, int * pmXPos, int * pmYPos);
@@ -646,7 +650,7 @@ public:
 	{
 		return ClusterBbLeft(psstrm) + xs;
 	}
-	float ClusterRsb(GrSlotStream * psstrm, float xs)
+	float ClusterRsb(GrSlotStream * /*psstrm*/, float xs)
 	{
 		return ClusterAdvWidthFrom(xs) - ClusterBbRightFrom(xs);
 	}
@@ -668,19 +672,19 @@ public:
 	{
 		return ClusterBbRightFrom(Base(psstrm)->ClusterRootOffset());
 	}
-	float ClusterBbTop(GrSlotStream * psstrm)
+	float ClusterBbTop(GrSlotStream * /*psstrm*/)
 	{
 		return m_ysClusterBbTop;
 	}
-	float ClusterBbBottom(GrSlotStream * psstrm)
+	float ClusterBbBottom(GrSlotStream * /*psstrm*/)
 	{
 		return m_ysClusterBbBottom;
 	}
-	float ClusterBbWidth(GrSlotStream * psstrm)
+	float ClusterBbWidth(GrSlotStream * /*psstrm*/)
 	{
 		return m_xsClusterBbRight - m_xsClusterBbLeft + 1;
 	}
-	float ClusterBbHeight(GrSlotStream * psstrm)
+	float ClusterBbHeight(GrSlotStream * /*psstrm*/)
 	{
 		return m_ysClusterBbTop - m_ysClusterBbBottom + 1;
 	}
@@ -862,6 +866,17 @@ public:
 			pfval->m_rgnFValues[i] = PFeatureBuf()[i].nValue;
 	}
 
+	// Return true if this slot has all the same features as the argument slot.
+	bool SameFeatures(GrSlotState * pslot)
+	{
+		for (size_t i = 0; i < m_cnFeat; i++)
+		{
+			if (FeatureValue(i) != pslot->FeatureValue(i))
+				return false;
+		}
+		return true;
+	}
+
 //	For transduction logging:
 #ifdef TRACING
 	void SlotAttrsModified(bool * rgfMods, bool fPreJust, int * pccomp, int * pcassoc);
@@ -990,7 +1005,8 @@ protected:
 	void InitMetrics(GrTableManager * ptman, GrSlotState * pslotRoot);
 	void InitLeafMetrics(GrTableManager * ptman, GrSlotState * pslotRoot);
 	void InitRootMetrics(GrTableManager * ptman);
-	void CalcRootMetrics(GrTableManager * ptman, GrSlotStream *, int nLevel);
+	void CalcRootMetrics(GrTableManager * ptman, GrSlotStream * psstrm,
+		GrSlotStream * psstrmNext, int nLevel);
 	void AttachToRoot(GrTableManager * ptman, GrSlotStream *, GrSlotState * pslotNewRoot);
 	void AttachLogUnits(GrTableManager * ptman,
 		GrSlotState * pslotRoot,

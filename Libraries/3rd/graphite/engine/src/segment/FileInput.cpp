@@ -36,8 +36,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -80,7 +78,7 @@ GrBufferIStream::~GrBufferIStream()
 #ifdef GR_FW
 bool GrBufferIStream::Open(std::wstring stuFileName, int kMode)
 #else
-bool GrBufferIStream::Open(const char * pcFileName, std::ios::openmode kMode)
+bool GrBufferIStream::Open(const char * /*pcFileName*/, std::ios::openmode /*kMode*/)
 #endif
 {
 	Assert(false); // use OpenBuffer
@@ -120,11 +118,10 @@ void GrBufferIStream::Close()
 ----------------------------------------------------------------------------------------------*/
 byte GrBufferIStream::ReadByteFromFont()
 {
-	byte bInput = *m_pbNext;
-	m_pbNext += isizeof(byte);
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
-	return bInput;
+    if (m_pbLim && m_pbNext >= m_pbLim)
+        THROW(kresReadFault);
+
+    return *m_pbNext++;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -133,11 +130,13 @@ byte GrBufferIStream::ReadByteFromFont()
 ----------------------------------------------------------------------------------------------*/
 short GrBufferIStream::ReadShortFromFont()
 {
-	short snInput = *(const short *)m_pbNext;
-	m_pbNext += isizeof(short);
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
-	snInput = lsbf(snInput);
+	short snInput;
+
+    if (m_pbLim && 2 > m_pbLim - m_pbNext)
+        THROW(kresReadFault);
+
+    snInput = (m_pbNext[0] << 8) + m_pbNext[1];
+	m_pbNext += 2;
 	return snInput;
 }
 
@@ -147,11 +146,13 @@ short GrBufferIStream::ReadShortFromFont()
 ----------------------------------------------------------------------------------------------*/
 utf16 GrBufferIStream::ReadUShortFromFont()
 {
-	utf16 chwInput = *(const utf16 *)m_pbNext;
-	m_pbNext += isizeof(utf16);
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
-	chwInput = lsbf(chwInput);
+	utf16 chwInput;
+
+    if (m_pbLim && 2 > m_pbLim - m_pbNext)
+        THROW(kresReadFault);
+
+    chwInput = (m_pbNext[0] << 8) + m_pbNext[1];
+	m_pbNext += 2;
 	return chwInput;
 }
 
@@ -161,11 +162,13 @@ utf16 GrBufferIStream::ReadUShortFromFont()
 ----------------------------------------------------------------------------------------------*/
 int GrBufferIStream::ReadIntFromFont()
 {
-	int nInput = *(const int *)m_pbNext;
-	m_pbNext += isizeof(int);
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
-	nInput = lsbf(nInput);
+	sdata32 nInput = 0;
+
+    if (m_pbLim && 4 > m_pbLim - m_pbNext)
+        THROW(kresReadFault);
+
+    nInput = (m_pbNext[0] << 24) + (m_pbNext[1] << 16) + (m_pbNext[2] << 8) + m_pbNext[3];
+	m_pbNext += 4;
 	return nInput;
 }
 
@@ -175,10 +178,10 @@ int GrBufferIStream::ReadIntFromFont()
 ----------------------------------------------------------------------------------------------*/
 void GrBufferIStream::ReadBlockFromFont(void * pvInput, int cb)
 {
+    if (m_pbLim && (cb < 0 || cb > m_pbLim - m_pbNext))
+        THROW(kresReadFault);
 	std::copy(m_pbNext, m_pbNext + cb, reinterpret_cast<byte*>(pvInput));
 	m_pbNext += cb;
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -197,9 +200,9 @@ void GrBufferIStream::GetPositionInFont(long * plPos)
 ----------------------------------------------------------------------------------------------*/
 void GrBufferIStream::SetPositionInFont(long lPos)
 {
+    if (m_pbLim && (lPos < 0 || lPos > m_pbLim - m_pbStart))
+        THROW(kresReadFault);
 	m_pbNext = m_pbStart + lPos;
-	if (m_pbLim && m_pbNext > m_pbLim)
-		THROW(kresReadFault);
 }
 
 

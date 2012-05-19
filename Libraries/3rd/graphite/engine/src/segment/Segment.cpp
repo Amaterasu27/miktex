@@ -26,9 +26,6 @@ Description:
 #include <stdlib.h>
 #endif
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************
@@ -246,6 +243,8 @@ void Segment::Initialize(ITextSource * pgts, int ichwMin, int ichwLim,
 
 	m_dxsVisibleWidth = -1;
 	m_dxsTotalWidth = -1;
+    m_ichwAssocsMin = 0;
+    m_ichwAssocsLim = 0;
 
 //	m_psstrm = NULL;
 	m_prgslout = NULL;
@@ -664,7 +663,7 @@ bool Segment::rightToLeft()
 	if (m_twsh == ktwshOnlyWs)
 	{
 		//	White-space-only segment: use main paragraph direction.
-		return (m_nDirDepth % 2);
+        return (m_nDirDepth % 2 != 0)? true : false;
 	}
 
 	GrEngine * pgreng = EngineImpl();
@@ -672,7 +671,7 @@ bool Segment::rightToLeft()
 	{
 		return pgreng->RightToLeft();
 	}
-	return (m_pgts->getRightToLeft(m_ichwMin));
+    return (m_pgts->getRightToLeft(m_ichwMin) != 0)? true : false;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -683,7 +682,16 @@ bool Segment::rightToLeft()
 int Segment::directionDepth(bool * pfWeak)
 {
 	if (pfWeak)
+	{
 		*pfWeak = (m_twsh == ktwshOnlyWs);
+		//if (*pfWeak && m_ichwMin > 0)
+		//{
+		//	utf16 chw;
+		//	m_pgts->fetch(m_ichwMin - 1, 1, &chw);
+		//	if (chw == 0x202E || chw==0x202D)	// overrides LRO & RLO
+		//		*pfWeak = false;
+		//}
+	}
 
 //	*pnDepth = m_pgts->getDirectionDepth(m_ichwLim);
 //	Assert(*pnDepth == m_nDirDepth);
@@ -1178,7 +1186,7 @@ LineBrk Segment::getBreakWeight(int ich, bool fBreakBefore)
 	part of the segment.
 ----------------------------------------------------------------------------------------------*/
 float Segment::getRangeWidth(int ichMin, int ichLim,
-	bool fStartLine, bool fEndLine, bool fSkipSpace)
+	bool /*fStartLine*/, bool /*fEndLine*/, bool fSkipSpace)
 {
 	if (m_dxsWidth < 0)
 	{
@@ -1535,11 +1543,13 @@ void Segment::ComputeOverhangs(float * pdysVisAscent, float * pdysNegVisDescent,
 {
 	for (int iginf = 0; iginf < m_cginf; iginf++)
 	{
-		*pdysVisAscent = max(*pdysVisAscent, m_prgginf[iginf].bb().top);
-		*pdysNegVisDescent = min(*pdysNegVisDescent, m_prgginf[iginf].bb().bottom);
+        Rect bbox = m_prgginf[iginf].bb();
 
-		*pdxsVisLeft = min(*pdxsVisLeft, m_prgginf[iginf].bb().left);
-		*pdxsVisRight = max(*pdxsVisRight, m_prgginf[iginf].bb().right);
+		*pdysVisAscent = max(*pdysVisAscent, bbox.top);
+		*pdysNegVisDescent = min(*pdysNegVisDescent, bbox.bottom);
+
+		*pdxsVisLeft = min(*pdxsVisLeft, bbox.left);
+		*pdxsVisRight = max(*pdxsVisRight, bbox.right);
 	}
 }
 
@@ -1549,7 +1559,12 @@ void Segment::ComputeOverhangs(float * pdysVisAscent, float * pdysNegVisDescent,
 void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	GrSlotStream * psstrmFinal,
 	int cchwInThisSeg, int csloutSurface, gid16 chwLB,
-	TrWsHandling twsh, bool fParaRtl, int nDirDepth, bool fEmpty)
+	TrWsHandling twsh, bool fParaRtl, int nDirDepth, 
+#ifdef NDEBUG
+    bool /*fEmpty*/)
+#else
+    bool fEmpty)
+#endif
 {
 	m_mFontEmUnits = EngineImpl()->GetFontEmUnits();
 
@@ -1706,11 +1721,6 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 
 	///AssertValidClusters(psstrmFinal);
 
-#ifdef OLD_TEST_STUFF
-	if (ptman->GlyphTable() == NULL)
-		return;	// test procedures
-#endif // OLD_TEST_STUFF
-
 	//	CalcPositionsUpTo() called on final pass already from Table Mgr
 	
 	//	Final output for draw routines.
@@ -1725,7 +1735,7 @@ void Segment::SetUpOutputArrays(Font * pfont, GrTableManager * ptman,
 	Set up the data structures that represent the actual rendered glyphs for the new segment.
 ----------------------------------------------------------------------------------------------*/
 void Segment::SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal,
-	gid16 chwLB, int nDirDepth, int islotMin, int cslot)
+	gid16 chwLB, int /*nDirDepth*/, int islotMin, int cslot)
 {
 	//int paraDirLevel = (ptman->State()->ParaRightToLeft()) ? 1 : 0;
 
@@ -1751,7 +1761,7 @@ void Segment::SetUpGlyphInfo(GrTableManager * ptman, GrSlotStream * psstrmFinal,
 
 	m_isloutGinf0 = -1;
 	int iginf = 0;
-	for (int islot = islotMin; islot < cslot; islot++)
+	for (islot = islotMin; islot < cslot; islot++)
 	{
 		GrSlotState * pslot = psstrmFinal->SlotAt(islot);
 
@@ -2160,7 +2170,7 @@ void Segment::RecordLigature(int ichwUnder, int islotSurface, int iComponent)
 	@param ichwUnder		- character index relative to the official beginning of the segment
 	@param islot			- processed glyph it maps to
 ----------------------------------------------------------------------------------------------*/
-void Segment::MarkSlotInPrevSeg(int ichwUnder, int islot)
+void Segment::MarkSlotInPrevSeg(int ichwUnder, int /*islot*/)
 {
 	if (ichwUnder >= m_ichwAssocsMin)
 		m_prgisloutBefore[ichwUnder - m_ichwAssocsMin] = kNegInfinity;
@@ -2174,7 +2184,7 @@ void Segment::MarkSlotInPrevSeg(int ichwUnder, int islot)
 	@param ichwUnder		- character index relative to the official beginning of the segment
 	@param islot			- processed glyph it maps to
 ----------------------------------------------------------------------------------------------*/
-void Segment::MarkSlotInNextSeg(int ichwUnder, int islot)
+void Segment::MarkSlotInNextSeg(int ichwUnder, int /*islot*/)
 {
 	if (ichwUnder < m_ichwAssocsLim)
 		m_prgisloutAfter[ichwUnder - m_ichwAssocsMin] = kPosInfinity;
@@ -2351,7 +2361,7 @@ void Segment::SetJustifier(IGrJustifier * pgjus)
 	@param pfAfter			- return true if they clicked on trailing side; possibly NULL
 ----------------------------------------------------------------------------------------------*/
 int Segment::LogicalSurfaceToUnderlying(int islout, float xsOffset, float ysClick,
-	float dxsGlyphWidth, float dysGlyphHeight, bool * pfAfter)
+	float dxsGlyphWidth, float /*dysGlyphHeight*/, bool * pfAfter)
 {
 	Assert(islout >= 0);
 	Assert(islout < m_cslout);
@@ -2529,31 +2539,31 @@ int Segment::UnderlyingToLogicalSurface(int ichw, bool fBefore)
 	else if (fBefore)
 	{
 		int isloutRet;
-		int ichw = ichwSegOffset;
+		int ichwBefore = ichwSegOffset;
 		//	If no association has been made, loop forward to the next slot
 		//	we are before. As a last resort, answer kPosInfinity, meaning we
 		//	aren't before anything.
 		do
 		{
-			isloutRet = m_prgisloutBefore[ichw - m_ichwAssocsMin];
-			do { ++ichw; }
-			while (!GrCharStream::AtUnicodeCharBoundary(m_pgts, ichw));
-		} while (isloutRet == kPosInfinity && ichw < m_ichwAssocsLim);
+			isloutRet = m_prgisloutBefore[ichwBefore - m_ichwAssocsMin];
+			do { ++ichwBefore; }
+			while (!GrCharStream::AtUnicodeCharBoundary(m_pgts, ichwBefore));
+		} while (isloutRet == kPosInfinity && ichwBefore < m_ichwAssocsLim);
 		return isloutRet;
 	}
 	else
 	{
 		int isloutRet;
-		int ichw = ichwSegOffset;
+		int ichwBetween = ichwSegOffset;
 		//	If no association has been made, loop backward to the previous slot
 		//	we are after. As a last resort, answer kNegInfinity, meaning we
 		//	aren't after anything.
 		do
 		{
-			isloutRet = m_prgisloutAfter[ichw - m_ichwAssocsMin];
-			do { --ichw; }
-			while (!GrCharStream::AtUnicodeCharBoundary(m_pgts, ichw));
-		} while (isloutRet == kNegInfinity && ichw >= 0);
+			isloutRet = m_prgisloutAfter[ichwBetween - m_ichwAssocsMin];
+			do { --ichwBetween; }
+			while (!GrCharStream::AtUnicodeCharBoundary(m_pgts, ichwBetween));
+		} while (isloutRet == kNegInfinity && ichwBetween >= 0);
 		return isloutRet;
 	}
 	Assert(false); // should never reach here
@@ -2616,8 +2626,8 @@ void Segment::UnderlyingToPhysicalAssocs(int ichw, std::vector<int> & viginf)
 
 /*----------------------------------------------------------------------------------------------
 	Given an underlying character position (relative to the beginning of the string),
-	return a pointer to the vector containing the logical surface locations of
-	all the associated surface glyphs.
+	returns a vector containing the logical surface locations of all the associated
+	surface glyphs.
 
 	Returns an empty vector (not something containing infinities) if the character is
 	"invisible."
@@ -2723,23 +2733,23 @@ int Segment::DirLevelOfChar(int ichw, bool fBefore)
 /*----------------------------------------------------------------------------------------------
 	Return whether the given character is right-to-left.
 ----------------------------------------------------------------------------------------------*/
-int Segment::CharIsRightToLeft(int ichw, bool fBefore)
+bool Segment::CharIsRightToLeft(int ichw, bool fBefore)
 {
 	int nDir = DirLevelOfChar(ichw, fBefore);
-	return ((nDir % 2) != 0);
+	return static_cast<bool>((nDir % 2) != 0);
 }
 
 /*----------------------------------------------------------------------------------------------
 	Return whether the given slot is right-to-left.
 ----------------------------------------------------------------------------------------------*/
-int Segment::SlotIsRightToLeft(GrSlotOutput * pslout)
+bool Segment::SlotIsRightToLeft(GrSlotOutput * pslout)
 {
 	if (m_twsh == ktwshOnlyWs)
-		return (m_nDirDepth % 2);
+        return (m_nDirDepth % 2 != 0)? true : false;
 	int nDir = pslout->DirLevel();
 	if (nDir == -1)
 		nDir = TopDirLevel();
-	return (nDir % 2);
+    return static_cast<bool>(nDir % 2 != 0)? true : false;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2748,7 +2758,11 @@ int Segment::SlotIsRightToLeft(GrSlotOutput * pslout)
 	that root glyph as one of its roots.
 	OBSOLETE
 ----------------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
 void Segment::AssertValidClusters(GrSlotStream * psstrm)
+#else
+void Segment::AssertValidClusters(GrSlotStream *)
+#endif
 {
 #ifdef _DEBUG
 	for (int islot = 0; islot < psstrm->WritePos(); islot++)
@@ -2881,7 +2895,10 @@ GrResult Segment::getUniscribeClusters(
 				{
 					// This glyph does not allow insertion before it; make its character part
 					// of the same cluster as the previous character.
-					MergeUniscribeCluster(visloutBefore, visloutAfter, ich - 1, ich);
+					if (ich > 0)
+					{
+						MergeUniscribeCluster(visloutBefore, visloutAfter, ich - 1, ich);
+					}
 /*
 +					// Keith Stribley's fix:
 +					// NOTE: this is NOT always the same as the previous character, so
@@ -2982,7 +2999,9 @@ GrResult Segment::getUniscribeClusters(
 
 
 // suppress GCC 4.3 warning for optimized min()/max() when called with (ich, ich+1) or similar
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wstrict-overflow"
+#endif
 
 /*----------------------------------------------------------------------------------------------
 	Merge the given characters into the same Uniscribe cluster. This means merging any

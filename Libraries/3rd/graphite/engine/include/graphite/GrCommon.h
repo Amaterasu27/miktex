@@ -8,16 +8,11 @@ File: GrCommon.h
 Responsibility: Sharon Correll
 Last reviewed:
 
-	Common generic header file.
-
-	This header file checks for the following compile time switches:
-
-		USING_MFC
+	Common Graphite header file.
 ----------------------------------------------------------------------------------------------*/
 
 #ifndef GRCOMMON_INCLUDED
 #define GRCOMMON_INCLUDED
-
 
 // Standard Headers.
 
@@ -25,7 +20,6 @@ Last reviewed:
 #include <cstdio>
 #include <cstdarg>
 #include <climits>
-//#include <exception>
 #include <new>
 
 #include <fstream>
@@ -33,6 +27,7 @@ Last reviewed:
 #include <vector>
 #include <algorithm>
 #include <string>
+///#include <stdexcept> -- possibly needed for std::string Xran and Xlen functions??
 
 // Uncomment this to allow multiple versions of gr to coexist
 // in the same program e.g. pangographite with gtk uses namespace gr
@@ -59,69 +54,37 @@ namespace gr
 
 
 /***********************************************************************************************
-	Simple types.
-***********************************************************************************************/
-typedef char	schar;
-
-// TODO ShonK: Make generic use these where appropriate.
-#ifdef UNICODE
-typedef utf16 	achar;
-#else // !UNICODE
-typedef schar	achar;
-#endif // UNICODE
-
-typedef achar 	*Psz;
-//typedef const achar * Pcsz;
-
-
-
-// This is to make a signed isizeof operator, otherwise we get tons of warnings about
-// signed / unsigned mismatches.
-#define isizeof(T) (sizeof(T))
-
-#define SizeOfArray(rgt) (isizeof(rgt) / isizeof(rgt[0]))
-
-
-/***********************************************************************************************
 	Tests for valid strings and pointers.
 ***********************************************************************************************/
 inline bool ValidPsz(const data16 *pszw)
 {
-	// TODO ShonK: Determine if IsBadStringPtrW is implemented on Win9x.
 	return pszw != 0 && !GrIsBadStringPtrW(pszw, 0x10000000);
 }
 
-inline bool ValidPsz(const schar *pszs)
+inline bool ValidPsz(const char *pszs)
 {
 	return pszs != 0 && !GrIsBadStringPtrA(pszs, 0x10000000);
 }
 
 template<typename T> inline bool ValidReadPtr(T *pt)
 {
-	return pt != 0 && !GrIsBadReadPtr(pt, isizeof(T));
+	return pt != 0 && !GrIsBadReadPtr(pt, sizeof(T));
 }
 
 template<typename T> inline bool ValidWritePtr(T *pt)
 {
-	return pt != 0 && !GrIsBadWritePtr(pt, isizeof(T));
+	return pt != 0 && !GrIsBadWritePtr(pt, sizeof(T));
 }
 
-inline bool ValidReadPtrSize(const void *pv, int cb)
+inline bool ValidReadPtrSize(const void *pv, size_t cb)
 {
-	if (cb < 0)	return false;
 	if (cb == 0)	return true;
 
 	return pv != 0 && !GrIsBadReadPtr(pv, cb);
 }
 
-inline bool ValidWritePtrSize(void *pv, int cb)
+inline bool ValidWritePtrSize(void *pv, size_t cb)
 {
-//	if (!bstr || ::IsBadReadPtr((byte *)bstr - isizeof(int), isizeof(int) + isizeof(OLECHAR)))
-//		return false;
-//	int cb = ((int *)bstr)[-1];
-//	if (::IsBadReadPtr((byte *)bstr - isizeof(int), isizeof(int) + isizeof(OLECHAR) + cb))
-//		return false;
-	if (cb < 0)	return false;
 	if (cb == 0)	return true;
 
 	return pv != 0 && !GrIsBadWritePtr(pv, cb);
@@ -129,13 +92,6 @@ inline bool ValidWritePtrSize(void *pv, int cb)
 
 
 } // namespace gr
-
-
-// TODO Remove these as soon as they are no longer needed by GrCompiler:
-//#include "UtilMem.h"
-//#include "UtilRect.h"
-//#include "UtilString.h"
-//#include "UtilVector.h"
 
 #if defined(GR_NO_NAMESPACE)
 using namespace gr;

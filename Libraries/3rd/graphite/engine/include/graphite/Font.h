@@ -396,6 +396,7 @@ private:
 
 	// Cache of common tables:
 	const void * m_pHead;
+	const void * m_pHhea;
 	const void * m_pHmtx;
 	const void * m_pLoca;
 	const void * m_pGlyf;

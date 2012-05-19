@@ -136,8 +136,8 @@ public:
 		delete[] m_prgrowStartStates;
 	}
 
-	bool ReadFromFont(GrIStream & grstrm, int fxdVersion);
-	bool ReadStateTableFromFont(GrIStream & grstrm, int fxdVersion);
+	bool ReadFromFont(GrIStream & grstrm, int fxdVersion, int crul, int cbSpace);
+	bool ReadStateTableFromFont(GrIStream & grstrm, int fxdVersion, int cbSpace);
 
 	int GetRuleToApply(GrTableManager *, GrPass * ppass,
 		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
@@ -220,22 +220,6 @@ protected:
 	//	are skipping; (max rule-precontext - min rule-precontext + 1) of these;
 	//	first always = zero
 	short *			m_prgrowStartStates;
-
-//:Ignore
-#if OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	void SetUpSimpleFSMTest();
-	void SetUpRuleActionTest();
-	void SetUpRuleAction2Test(int);
-	void SetUpAssocTest(int);
-	void SetUpAssoc2Test(int);
-	void SetUpDefaultAssocTest();
-	void SetUpFeatureTest();
-	void SetUpLigatureTest(int);
-	void SetUpLigature2Test(int);
-#endif // OLD_TEST_STUFF
-//:End Ignore
 
 };
 

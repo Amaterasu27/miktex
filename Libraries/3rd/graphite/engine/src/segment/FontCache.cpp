@@ -21,9 +21,6 @@ Description:
 #endif
 // any other headers (not precompiled)
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:End Ignore
 
 //:>********************************************************************************************

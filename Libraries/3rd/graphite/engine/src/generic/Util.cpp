@@ -79,7 +79,7 @@ LDone:
 ----------------------------------------------------------------------------------------------*/
 void FillShorts(void * pv, short sn, int csn)
 {
-	AssertPtrSize(pv, csn * isizeof(short));
+	AssertPtrSize(pv, csn * static_cast<int>(sizeof(short)));
 
 #ifdef NO_ASM
 
@@ -178,7 +178,7 @@ const static unsigned int g_rguPrimes[] = {
 ----------------------------------------------------------------------------------------------*/
 unsigned int GetPrimeNear(unsigned int u)
 {
-	int cu = isizeof(g_rguPrimes) / isizeof(unsigned int);
+	int cu = sizeof(g_rguPrimes) / sizeof(unsigned int);
 	int iuMin;
 	int iuLim;
 	int iu;
@@ -191,8 +191,8 @@ unsigned int GetPrimeNear(unsigned int u)
 		else
 			iuLim = iu;
 	}
-	Assert(iuMin == cu || iuMin < cu && u <= g_rguPrimes[iuMin]);
-	Assert(iuMin == 0 || iuMin > 0 && u > g_rguPrimes[iuMin - 1]);
+	Assert(iuMin == cu || (iuMin < cu && u <= g_rguPrimes[iuMin]));
+	Assert(iuMin == 0 || (iuMin > 0 && u > g_rguPrimes[iuMin - 1]));
 
 	if (!iuMin)
 		return g_rguPrimes[0];
@@ -209,7 +209,7 @@ unsigned int GetPrimeNear(unsigned int u)
 ----------------------------------------------------------------------------------------------*/
 unsigned int GetLargerPrime(unsigned int u)
 {
-	int cu = isizeof(g_rguPrimes) / isizeof(unsigned int);
+	int cu = sizeof(g_rguPrimes) / sizeof(unsigned int);
 	int iuMin;
 	int iuLim;
 	int iu;
@@ -222,8 +222,8 @@ unsigned int GetLargerPrime(unsigned int u)
 		else
 			iuLim = iu;
 	}
-	Assert(iuMin == cu || iuMin < cu && u < g_rguPrimes[iuMin]);
-	Assert(iuMin == 0 || iuMin > 0 && u >= g_rguPrimes[iuMin - 1]);
+	Assert(iuMin == cu || (iuMin < cu && u < g_rguPrimes[iuMin]));
+	Assert(iuMin == 0 || (iuMin > 0 && u >= g_rguPrimes[iuMin - 1]));
 
 	if (iuMin == cu)
 		return g_rguPrimes[cu - 1];
@@ -236,7 +236,7 @@ unsigned int GetLargerPrime(unsigned int u)
 ----------------------------------------------------------------------------------------------*/
 unsigned int GetSmallerPrime(unsigned int u)
 {
-	int cu = isizeof(g_rguPrimes) / isizeof(unsigned int);
+	int cu = sizeof(g_rguPrimes) / sizeof(unsigned int);
 	int iuMin;
 	int iuLim;
 	int iu;
@@ -249,8 +249,8 @@ unsigned int GetSmallerPrime(unsigned int u)
 		else
 			iuLim = iu;
 	}
-	Assert(iuMin == cu || iuMin < cu && u <= g_rguPrimes[iuMin]);
-	Assert(iuMin == 0 || iuMin > 0 && u > g_rguPrimes[iuMin - 1]);
+	Assert(iuMin == cu || (iuMin < cu && u <= g_rguPrimes[iuMin]));
+	Assert(iuMin == 0 || (iuMin > 0 && u > g_rguPrimes[iuMin - 1]));
 
 	if (!iuMin)
 		return g_rguPrimes[0];

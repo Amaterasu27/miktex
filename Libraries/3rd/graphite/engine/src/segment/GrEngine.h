@@ -308,6 +308,11 @@ public:
 		return m_cnUserDefn;
 	}
 
+	int FirstCompAttr()
+	{
+		return m_nCompAttr1;
+	}
+
 	int NumCompPerLig()
 	{
 		return m_cnCompPerLig;
@@ -471,6 +476,7 @@ protected:
 
 	int m_cComponents;		// number of glyph attributes at the beginning of the glyph table
 							// that actually represent ligature components
+	int m_nCompAttr1;		// first lig component attribute
 
 	int m_cnUserDefn;		// number of user-defined slot attributes
 	int m_cnCompPerLig;		// max number of components needed per ligature
@@ -501,9 +507,9 @@ protected:
 	////TableBuffer	m_tbufNameTbl;	// hold full name table; use Name() method to access
 	byte * m_pNameTbl;
 	bool m_fNameTblCopy;
-	int m_cbNameTbl;		// needed only for memory instrumentation
+	int m_cbNameTbl;		// needed only for memory instrumentation and sanity checks
 
-	bool m_fLogXductn;	// true if we want to log the transduction process
+	bool m_fLogXductn;		// true if we want to log the transduction process
 
 	bool m_fInErrorState;	// true if we are handling a rendering error
 
@@ -548,7 +554,7 @@ protected:
 	//bool ReadSileTable(GrIStream & grstrm, long lTableSTart,
 	//	int * pmFontEmUnits, bool * pfMismatchedBase);
 	bool ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable,
-		int * pchwMaxGlyphID, int * pfxdVersion);
+		long cbTableLen, int * pchwMaxGlyphID, int * pfxdVersion);
 	bool ReadGlocAndGlatTables(GrIStream & grstrm, long lGlocStart, GrIStream & glat_strm, long lGlatStart,
 		int chwMaxGlyphID, int fxdSilfVersion);
 	bool ReadFeatTable(GrIStream & grstrm, long lTableStart);
@@ -593,23 +599,6 @@ protected:
 
 	void SetUpFeatLangList();
 
-//:Ignore
-#ifdef OLD_TEST_STUFF
-	//	For test procedures:
-	void SetUpCrossLineContextTest();
-	void SetUpPseudoGlyphTest();
-	void SetUpRuleActionTest();
-	void SetUpRuleAction2Test();
-	void SetUpAssocTest();
-	void SetUpAssoc2Test();
-	void SetUpDefaultAssocTest();
-	void SetUpFeatureTest();
-	void SetUpLigatureTest();
-	void SetUpLigature2Test();
-
-	void InitFromControlFileTest();
-#endif // OLD_TEST_STUFF
-//:End Ignore
 };
 
 } // namespace gr

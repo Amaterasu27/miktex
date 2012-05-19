@@ -107,7 +107,7 @@ public:
 		ReleaseSlots(0, m_vpslot.size());
 	}
 
-	void ReleaseSlots(int islotMin, int islotLim)
+	void ReleaseSlots(int /*islotMin*/, int /*islotLim*/)
 	{
 		//	A slot stream is responsible for deleting the slot states that it created,
 		//	that is, the ones whose modified tag equals this stream's pass index.
@@ -182,6 +182,7 @@ public:
 		return Peek(islot - ReadPosForNextGet());
 	}
 
+	//	Return the functional read position, taking into account the reprocess buffer.
 	int ReadPosForNextGet()
 	{
 		return ReadPos() - SlotsToReprocess();
@@ -260,12 +261,16 @@ public:
 
 	void MarkFullyWritten();
 
+#ifdef NDEBUG
+	void SetSegMin(int islot, bool = false)
+#else
 	void SetSegMin(int islot, bool fAdjusting = false)
+#endif
 	{
 		Assert(fAdjusting || m_islotSegMin == -1 || m_islotSegMin == islot);
 		m_islotSegMin = islot;
 	}
-	void SetSegMinToWritePos(bool fMod = true)
+	void SetSegMinToWritePos(bool /*fMod*/ = true)
 	{
 		if (m_islotSegMin == -1)
 			m_islotSegMin = m_islotWritePos;
@@ -325,6 +330,9 @@ public:
 	{
 		m_islotReadPosMax = std::max(m_islotReadPosMax, islot);
 	}
+
+	int FeatureRangeLim(GrSlotStream * psstrmOut);
+	bool NoFeatureChanges();
 
 	int OldDirLevelRange(EngineState * pengst, int islotStart, int nTopDirection);
 	int DirLevelRange(EngineState * pengst, int islotStart, int nTopDirection,
@@ -456,6 +464,7 @@ public:
 		}
 	}
 
+	GrSlotState * MidPassSlotAt(int islot, GrSlotStream * psstrmNext = NULL);
 	GrSlotState * RuleInputSlot(int dislot = 0, GrSlotStream * psstrmOut = NULL,
 		bool fNullOkay = false);
 	GrSlotState * RuleOutputSlot(int dislot = 0);
