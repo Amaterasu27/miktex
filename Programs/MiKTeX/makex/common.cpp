@@ -1,6 +1,6 @@
 /* common.cpp: common stuff
 
-   Copyright (C) 1998-2009 Christian Schenk
+   Copyright (C) 1998-2012 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -137,7 +137,7 @@ MakeUtility::RunProcess (/*[in]*/ const char *	lpszExeName,
   PathName exe;
   if (! pSession->FindFile(lpszExeName, FileType::EXE, exe))
     {
-      FatalError (T_("The application file %s could not be found."), Q_(exe));
+      FatalError (T_("The application file %s could not be found."), Q_(lpszExeName));
     }
 
   Message (T_("Running %s...\n"), Q_(lpszExeName));
