@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2011 Christian Schenk
+## Copyright (C) 2008-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -74,7 +74,6 @@ set(xetex_post_ch_srcs_with_synctex
 
 set(miktex_tex_change_files
   ${mltex_miktex_ch}
-  ${enctex_miktex_ch}
   ${tex_miktex_ch}
   ${tex_miktex_hash_ch}
   ${tex_miktex_hyph_ch}
@@ -84,6 +83,7 @@ set(miktex_tex_change_files
   ${tex_miktex_stat_ch}
   ${tex_miktex_write18_ch}
   ${tex_miktex_web2c_ch}
+  ${tex_miktex_pool_ch}
 )
 
 set(pre_xetex_change_files
@@ -159,12 +159,14 @@ add_custom_command(
   OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   COMMAND
-	perl ${CMAKE_CURRENT_SOURCE_DIR}/pool2c.pl
+	${inipool_exe} 
 		${CMAKE_CURRENT_BINARY_DIR}/xetex.pool
-		${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
+		xetex-miktex.h
+		> ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
+        ${inipool_exe}
 	${CMAKE_CURRENT_BINARY_DIR}/xetex.pool
 )
 

@@ -1,6 +1,6 @@
 /* xetex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 2007-2010 Christian Schenk
+   Copyright (C) 2007-2012 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -28,6 +28,7 @@
 #include <miktex/TeXAndFriends/config.h>
 
 #include "xetexd.h"
+#include "XeTeXOTMath.h"
 
 #if ! defined(THEDATA)
 #  define THEDATA(x) C4P_VAR(x)
@@ -305,6 +306,10 @@ open_dvi_output(/*out*/ bytefile & dviFile);
 
 int
 dviclose (/*[in,out]*/ bytefile & dviFile);
+
+int miktexloadpoolstrings (int size);
+
+inline int loadpoolstrings (int size) { return (miktexloadpoolstrings(size)); }
 
 /* _________________________________________________________________________
 

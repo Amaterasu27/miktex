@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2011 Christian Schenk
+%% Copyright (C) 2007-2012 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -46,13 +46,35 @@
 
 % _____________________________________________________________________________
 %
+% [2.20]
+% _____________________________________________________________________________
+
+@x
+@!xord: array [text_char] of ASCII_code;
+  {specifies conversion of input characters}
+@!xchr: array [ASCII_code] of text_char;
+  {specifies conversion of output characters}
+@y
+@!xord: array [text_char] of ASCII_code;
+  {specifies conversion of input characters}
+xchr: array [ASCII_code] of text_char;
+   { specifies conversion of output characters }
+xprn: array [ASCII_code] of ASCII_code;
+   { non zero iff character is printable }
+@z
+
+% _____________________________________________________________________________
+%
 % [2.23]
 % _____________________________________________________________________________
 
 @x
-for i:=0 to 127 do mubyte_cswrite[i]:=null;
+for i:=0 to @'37 do xchr[i]:=' ';
+for i:=@'177 to @'377 do xchr[i]:=' ';
 @y
-for i:=0 to 128 do mubyte_cswrite[i]:=null;
+{Initialize |xchr| to the identity mapping.}
+for i:=0 to @'37 do xchr[i]:=i;
+for i:=@'177 to @'377 do xchr[i]:=i;
 @z
 
 % _____________________________________________________________________________
@@ -128,78 +150,6 @@ is considered an output file the file variable is |term_out|.
 
 % _____________________________________________________________________________
 %
-% [29.51]
-% _____________________________________________________________________________
-
-@x
-name_of_file:=pool_name; {we needn't set |name_length|}
-if a_open_in(pool_file) then
-  begin c:=false;
-  repeat @<Read one string, but return |false| if the
-    string memory space is getting too tight for comfort@>;
-  until c;
-  a_close(pool_file); get_strings_started:=true;
-  end
-else  bad_pool('! I can''t read TEX.POOL.')
-@.I can't read TEX.POOL@>
-@y
-name_length := strlen (pool_name);
-name_of_file := xmalloc_array (ASCII_code, name_length + 1);
-strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
-if a_open_in (pool_file, kpse_texpool_format) then
-  begin c:=false;
-  repeat @<Read one string, but return |false| if the
-    string memory space is getting too tight for comfort@>;
-  until c;
-  a_close(pool_file); get_strings_started:=true;
-  end
-else  bad_pool('! I can''t read ', pool_name, '; bad path?')
-@.I can't read TEX.POOL@>
-@z
-
-% _____________________________________________________________________________
-%
-% [4.52]
-% _____________________________________________________________________________
-
-@x
-begin if eof(pool_file) then bad_pool('! TEX.POOL has no check sum.');
-@y
-begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
-@z
-
-@x
-read(pool_file,m,n); {read two digits of string length}
-@y
-read(pool_file,m); read(pool_file,n); {read two digits of string length}
-@z
-
-@x
-    bad_pool('! TEX.POOL line doesn''t begin with two digits.');
-@y
-    bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
-@z
-
-% _____________________________________________________________________________
-%
-% [4.53]
-% _____________________________________________________________________________
-
-@x
-  bad_pool('! TEX.POOL check sum doesn''t have nine digits.');
-@y
-  bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
-@z
-
-@x
-done: if a<>@$ then bad_pool('! TEX.POOL doesn''t match; TANGLE me again.');
-@y
-done: if a<>@$ then
-  bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
-@z
-
-% _____________________________________________________________________________
-%
 % [5.61]
 % _____________________________________________________________________________
 
@@ -217,6 +167,19 @@ if translate_filename then begin
   wterm_ln(')');
 end;
 @z
+
+
+% _____________________________________________________________________________
+%
+% [5.71]
+% _____________________________________________________________________________
+
+@x
+if last<>first then for k:=first to last-1 do print(buffer[k]);
+@y
+k:=first; while k < last do begin print_buffer(k) end;
+@z
+
 
 % _____________________________________________________________________________
 %
@@ -237,23 +200,10 @@ end;
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
-% _____________________________________________________________________________
-%
-% [17.236]
-% _____________________________________________________________________________
-
 @x
-@d mubyte_in_code=miktex_int_base+3 {if positive then reading mubytes is active}
-@d mubyte_out_code=miktex_int_base+4 {if positive then printing mubytes is active}
-@d mubyte_log_code=miktex_int_base+5 {if positive then print mubytes to log and terminal}
-@d spec_out_code=miktex_int_base+6 {if positive then print specials by mubytes}
-@d miktex_int_pars=miktex_int_base+7 {total number of \MiKTeX's integer parameters}
+@d miktex_int_pars=miktex_int_base+3 {total number of \MiKTeX's integer parameters}
 @y
-@d mubyte_in_code=web2c_int_base+3 {if positive then reading mubytes is active}
-@d mubyte_out_code=web2c_int_base+4 {if positive then printing mubytes is active}
-@d mubyte_log_code=web2c_int_base+5 {if positive then print mubytes to log and terminal}
-@d spec_out_code=web2c_int_base+6 {if positive then print specials by mubytes}
-@d web2c_int_pars=web2c_int_base+7 {total number of web2c's integer parameters}
+@d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
 @z
 
 % _____________________________________________________________________________
@@ -276,17 +226,6 @@ end;
 @!input_file : array[1..sup_max_in_open] of alpha_file;
 @y
 @!input_file : ^alpha_file;
-@z
-
-% _____________________________________________________________________________
-%
-% [24.341]
-% _____________________________________________________________________________
-
-@x
-@!i,@!j: 0..sup_buf_size; {more indexes for encTeX}
-@y
-@!i,@!j: 0..buf_size; {more indexes for encTeX}
 @z
 
 % _____________________________________________________________________________
@@ -364,14 +303,14 @@ for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 
 @x
 for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=format_default_length-format_ext_length+1 to format_default_length do
-  append_to_name(xord[TEX_format_default[j]]);
 @y
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
 for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=format_default_length-format_ext_length+1 to format_default_length do
+@z
+
+@x
+  append_to_name(xord[TEX_format_default[j]]);
+@y
   append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @z
 
@@ -384,17 +323,6 @@ for j:=format_default_length-format_ext_length+1 to format_default_length do
   while (not miktex_open_dvi_file (dvi_file)) do
 @y
   while not b_open_out(dvi_file) do
-@z
-
-% _____________________________________________________________________________
-%
-% [29.534]
-% _____________________________________________________________________________
-
-@x
-    if miktex_have_tcx_file_name then
-@y
-    if translate_filename then
 @z
 
 % _____________________________________________________________________________
@@ -469,6 +397,29 @@ if not b_open_in(tfm_file) then abort;
 
 % _____________________________________________________________________________
 %
+% [47.1135]
+% _____________________________________________________________________________
+
+@x
+begin print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+help1("I'm ignoring this, since I wasn't doing a \csname.");
+@y
+begin
+if cur_chr = 10 then 
+begin
+  print_err("Extra "); print_esc("endmubyte");
+@.Extra \\endmubyte@>
+  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
+end else begin
+  print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+  help1("I'm ignoring this, since I wasn't doing a \csname.");
+end;  
+@z
+
+% _____________________________________________________________________________
+%
 % [49.1275]
 % _____________________________________________________________________________
 
@@ -496,10 +447,14 @@ if not b_open_in(tfm_file) then abort;
 % [50.1303]
 % _____________________________________________________________________________
 
-@x
+%
+@x [50.1303] l.23722
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;
+@!dummy_xord: ASCII_code;
+@!dummy_xchr: text_char;
+@!dummy_xprn: ASCII_code;
 @z
 
 % _____________________________________________________________________________
@@ -584,12 +539,6 @@ miktex_allocate_memory;
 % _____________________________________________________________________________
 
 @x
-    if miktex_have_tcx_file_name then begin
-@y
-    if translate_filename then begin
-@z
-
-@x
 @!init
 if trie_not_ready then begin {initex without format loaded}
   trie_root:=0; trie_c[0]:=si(0); trie_ptr:=0;
@@ -609,17 +558,6 @@ tini@/
 
 % _____________________________________________________________________________
 %
-% [53.1370]
-% _____________________________________________________________________________
-
- @x
-      miktex_write18(miktex_get_string_at(str_start[str_ptr]));
- @y
-      system(conststringcast(address_of(str_pool[str_start[str_ptr]])));
- @z
-
-% _____________________________________________________________________________
-%
 % [58.1618]
 % _____________________________________________________________________________
 
@@ -633,34 +571,4 @@ if translate_filename then begin
   if miktex_enable_eightbit_chars_p then
 @y
   if eight_bit_p then
-@z
-
-@x
-@ The boolean variable |enctex_p| is set by \MiKTeX\ according to the given
-@y
-@ The boolean variable |enctex_p| is set by web2c according to the given
-@z
-
-% _____________________________________________________________________________
-%
-% [55.1633]
-% _____________________________________________________________________________
-
-@x
-@ Declare system-dependent enctex functions.
-@<Declare \MiKTeX\ functions@>=
-function miktex_enctex_p : boolean; forward;
-function miktex_have_tcx_file_name : boolean; forward;
-
-@y
-@z
-
-% _____________________________________________________________________________
-%
-% [55.1634]
-% _____________________________________________________________________________
-
-@x
-enctex_p:=miktex_enctex_p;
-@y
 @z
