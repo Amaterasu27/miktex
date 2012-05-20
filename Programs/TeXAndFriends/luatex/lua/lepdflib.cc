@@ -350,6 +350,9 @@ static int m_Annot__gc(lua_State * L)
     printf("\n===== Annot GC ===== uin=<%p>\n", uin);
 #endif
     if (uin->atype == ALLOC_LEPDF)
+#if defined(MIKTEX)
+#  define HAVE_ANNOTDECREFCNT 1
+#endif
 #ifdef HAVE_ANNOTDECREFCNT
         ((Annot *) uin->d)->decRefCnt();
 #else
