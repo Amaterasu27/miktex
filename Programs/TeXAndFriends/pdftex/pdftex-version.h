@@ -17,16 +17,16 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4519
+#define MIKTEX_COMP_J2000_VERSION 4523
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.40.13"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "\
 Copyright (C) 1982 D. E. Knuth, \
-(C) 1996-2011 Han The Thanh"
+(C) 1996-2012 Han The Thanh"
 
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "\
 © 1982 D. E. Knuth, \
-© 1996-2011 Han The Thanh"
+© 1996-2012 Han The Thanh"
 
 #define MIKTEX_COMP_TM_STR "\
 TeX is a trademark of the American Mathematical Society."
