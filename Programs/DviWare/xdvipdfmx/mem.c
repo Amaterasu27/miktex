@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.5 2007/11/17 18:08:58 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.8 2009/09/18 23:56:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -33,7 +33,7 @@
 
 #include "dpxutil.h"
 
-#define MEM_LINE   128
+#define MEM_LINE   180
 
 static struct ht_table *mem_ht;
 static long int mem_event;
@@ -83,9 +83,10 @@ mem_error (void *vp)
 
 void *mem_add(void *ptr, const char *file, const char *function, int line) {
   if (ptr && !mem_internal) {
+    char **p;
     mem_internal = 1;
     mem_str = malloc(MEM_LINE);
-    char **p = malloc(sizeof(ptr));
+    p = malloc(sizeof(ptr));
     *p = ptr;
     snprintf(mem_str, MEM_LINE, "(0x%08lx) %s (%s, %d)"
 #ifdef __GNUC__
@@ -137,7 +138,8 @@ void mem_debug_init(void)
 void mem_debug_check(void)
 {
   if (mem_count)
-    WARN("%ld memory objects still allocated\n", mem_count);
+    WARN("%ld memory objects still allocated\n"
+         "You may want to report this to tex-k@tug.org\n", mem_count);
 }
 
 void *mem_add(void *ptr) {
@@ -169,10 +171,15 @@ void *new (size_t size)
 
 void *renew (void *mem, size_t size)
 {
-  void *result = realloc (mem, size);
-  if (!result) {
-    ERROR("Out of memory - asked for %lu bytes\n", (unsigned long) size);
+  if (size) {
+    void *result = realloc (mem, size);
+    if (!result) {
+      ERROR("Out of memory - asked for %lu bytes\n", (unsigned long) size);
+    }
+    return result;
+  } else {
+    /* realloc may not return NULL if size == 0 */
+    free(mem);
+    return NULL;
   }
-
-  return result;
 }

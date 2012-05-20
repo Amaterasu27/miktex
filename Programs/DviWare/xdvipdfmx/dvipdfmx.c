@@ -63,7 +63,9 @@
 
 #include "xbb.h"
 
-extern void error_cleanup (void);
+#include "tt_aux.h"
+
+#include "error.h"
 
 static int verbose = 0;
 
@@ -103,6 +105,9 @@ static double y_offset = 72.0;
 int always_embed = 0; /* always embed fonts, regardless of licensing flags */
 
 char *dvi_filename = NULL, *pdf_filename = NULL;
+
+static void
+read_config_file (const char *config);
 
 static void
 set_default_pdf_filename(void)
@@ -451,6 +456,11 @@ do_args (int argc, char *argv[])
           pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_APPEND);
         else
           pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_REPLACE);
+        POP_ARG();
+        break;
+      case 'i':
+        CHECK_ARG(1, "subsidiary config file");
+        read_config_file(argv[1]);
         POP_ARG();
         break;
       case 'e':
@@ -957,8 +967,7 @@ main (int argc, char *argv[])
   miktex_uninitialize ();
 #endif
 
-  if (verbose)
-    mem_debug_check();
+  mem_debug_check();
 
   return 0;
 }
