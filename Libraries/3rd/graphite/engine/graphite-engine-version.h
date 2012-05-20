@@ -18,7 +18,7 @@
    USA.  */
 
 #define MIKTEX_COMP_J2000_VERSION 4522
-#define MIKTEX_COMP_ORIG_VERSION_STR "2.4 texlive svn 26397"
+#define MIKTEX_COMP_ORIG_VERSION_STR "2.4"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1999-2008, SIL International"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1999-2008, SIL International"
