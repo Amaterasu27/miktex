@@ -74,6 +74,9 @@ typedef int integer;
 
 typedef MIKTEX_INT64 longinteger;
 
+#define LONGINTEGER_TYPE long long
+#define LONGINTEGER_PRId "lld"
+
 MIKTEXW2CEXPORT MIKTEXNORETURN void MIKTEXCEECALL
 miktex_uexit (int status);
 
