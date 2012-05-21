@@ -47,6 +47,7 @@ authorization from the copyright holders.
 #if defined(MIKTEX)
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
+#include <unistd.h>
 extern "C" {
   extern void set_cp_code(int fontNum, unsigned int code, int side, int value);
   extern int get_cp_code(int fontNum, unsigned int code, int side);
