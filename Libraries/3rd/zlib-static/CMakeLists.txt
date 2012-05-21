@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -41,7 +41,11 @@ set(${zlib_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/crc32.h
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/deflate.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/deflate.h
-  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzio.c
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzclose.c
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzguts.h
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzlib.c
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzread.c
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/gzwrite.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/infback.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/inffast.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/inffast.h
@@ -53,9 +57,6 @@ set(${zlib_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/trees.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/trees.h
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/uncompr.c
-  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zconf.h
-  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zlib-version.h
-  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zlib.h
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.h
 )
