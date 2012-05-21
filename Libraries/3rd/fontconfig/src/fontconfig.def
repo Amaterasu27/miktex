@@ -69,7 +69,6 @@ EXPORTS
 	FcDirCacheValid
 	FcDirSave
 	FcDirScan
-	FcError
 	FcFileIsDir
 	FcFileScan
 	FcFini

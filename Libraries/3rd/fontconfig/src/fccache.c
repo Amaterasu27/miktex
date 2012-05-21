@@ -59,8 +59,7 @@ static void MD5Transform(FcChar32 buf[4], FcChar32 in[16]);
 
 #define CACHEBASE_LEN (1 + 32 + 1 + sizeof (FC_ARCHITECTURE) + sizeof (FC_CACHE_SUFFIX))
 
-#if ! defined(MIKTEX) || defined(USE_FCSTAT)
-#ifdef _WIN32
+#if defined(_WIN32) && ! defined(MIKTEX)
 
 #include <windows.h>
 
@@ -147,7 +146,6 @@ FcStat (const FcChar8 *file, struct stat *statb)
 }
 
 #endif
-#endif /* ! MiKTeX */
 
 static const char bin2hex[] = { '0', '1', '2', '3',
 				'4', '5', '6', '7',
