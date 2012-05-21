@@ -7,9 +7,9 @@
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Keith Packard not be used in
+ * documentation, and that the name of the author(s) not be used in
  * advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.  Keith Packard makes no
+ * specific, written prior permission.  The authors make no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
@@ -27,7 +27,7 @@
 #include <miktex/utf8wrap.h>
 #endif
 
-#include "../fc-arch/fcarch.h"
+#include "../src/fcarch.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -129,7 +129,7 @@ usage (char *program, int error)
 static FcStrSet *processed_dirs;
 
 static int
-scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, FcBool verbose)
+scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, FcBool verbose, int *changed)
 {
     int		    ret = 0;
     const FcChar8   *dir;
@@ -202,6 +202,7 @@ scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, 
 	
 	if (!cache)
 	{
+	    (*changed)++;
 	    cache = FcDirCacheRead (dir, FcTrue, config);
 	    if (!cache)
 	    {
@@ -253,7 +254,7 @@ scanDirs (FcStrList *list, FcConfig *config, FcBool force, FcBool really_force, 
 	    continue;
 	}
 	FcStrSetAdd (processed_dirs, dir);
-	ret += scanDirs (sublist, config, force, really_force, verbose);
+	ret += scanDirs (sublist, config, force, really_force, verbose, changed);
     }
     FcStrListDone (list);
     return ret;
@@ -381,6 +382,7 @@ main (int argc, char **argv)
     FcBool	systemOnly = FcFalse;
     FcConfig	*config;
     int		i;
+    int		changed;
     int		ret;
 #if HAVE_GETOPT_LONG || HAVE_GETOPT
     int		c;
@@ -458,7 +460,8 @@ main (int argc, char **argv)
 	return 1;
     }
 	
-    ret = scanDirs (list, config, force, really_force, verbose);
+    changed = 0;
+    ret = scanDirs (list, config, force, really_force, verbose, &changed);
 
     FcStrSetDestroy (processed_dirs);
 
@@ -473,7 +476,8 @@ main (int argc, char **argv)
      */
     FcConfigDestroy (config);
     FcFini ();
-    sleep (2);
+    if (changed)
+	sleep (2);
     if (verbose)
 	printf ("%s: %s\n", argv[0], ret ? "failed" : "succeeded");
     return ret;

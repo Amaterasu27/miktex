@@ -21,6 +21,7 @@ EXPORTS
 	FcCharSetCount
 	FcCharSetCoverage
 	FcCharSetCreate
+	FcCharSetDelChar
 	FcCharSetDestroy
 	FcCharSetEqual
 	FcCharSetFirstPage
@@ -28,6 +29,7 @@ EXPORTS
 	FcCharSetIntersect
 	FcCharSetIntersectCount
 	FcCharSetIsSubset
+	FcCharSetMerge
 	FcCharSetNew
 	FcCharSetNextPage
 	FcCharSetSubtract
@@ -49,11 +51,12 @@ EXPORTS
 	FcConfigGetCurrent
 	FcConfigGetFontDirs
 	FcConfigGetFonts
-	FcConfigGetRescanInverval
+	FcConfigGetRescanInterval
 	FcConfigHome
 	FcConfigParseAndLoad
+	FcConfigReference
 	FcConfigSetCurrent
-	FcConfigSetRescanInverval
+	FcConfigSetRescanInterval
 	FcConfigSubstitute
 	FcConfigSubstituteWithPat
 	FcConfigUptoDate
@@ -66,6 +69,7 @@ EXPORTS
 	FcDirCacheValid
 	FcDirSave
 	FcDirScan
+	FcError
 	FcFileIsDir
 	FcFileScan
 	FcFini
@@ -86,21 +90,27 @@ EXPORTS
 	FcFreeTypeCharSetAndSpacing
 	FcFreeTypeQuery
 	FcFreeTypeQueryFace
+	FcGetLangs
 	FcGetVersion
 	FcInit
 	FcInitBringUptoDate
 	FcInitLoadConfig
 	FcInitLoadConfigAndFonts
 	FcInitReinitialize
+	FcLangGetCharSet
 	FcLangSetAdd
 	FcLangSetCompare
 	FcLangSetContains
 	FcLangSetCopy
 	FcLangSetCreate
+	FcLangSetDel
 	FcLangSetDestroy
 	FcLangSetEqual
+	FcLangSetGetLangs
 	FcLangSetHash
 	FcLangSetHasLang
+	FcLangSetSubtract
+	FcLangSetUnion
 	FcMatrixCopy
 	FcMatrixEqual
 	FcMatrixMultiply
@@ -138,6 +148,8 @@ EXPORTS
 	FcPatternDuplicate
 	FcPatternEqual
 	FcPatternEqualSubset
+	FcPatternFilter
+	FcPatternFormat
 	FcPatternGet
 	FcPatternGetBool
 	FcPatternGetCharSet
@@ -182,10 +194,3 @@ EXPORTS
 	FcValueEqual
 	FcValuePrint
 	FcValueSave
-	FcConfigReference
-	FcCharSetMerge
-	FcLangSetGetLangs
-	FcPatternFilter
-	FcPatternVaBuild
-	FcPatternBuild
-	FcPatternFormat

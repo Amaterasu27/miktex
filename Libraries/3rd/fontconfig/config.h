@@ -1,5 +1,11 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
+/* The normal alignment of `double', in bytes. */
+#undef ALIGNOF_DOUBLE
+
 /* Font configuration directory */
 #undef CONFDIR
 
@@ -8,6 +14,9 @@
 
 /* Additional font directories */
 #undef FC_ADD_FONTS
+
+/* Architecture prefix to use for cache file names */
+#undef FC_ARCHITECTURE
 
 /* System font directory */
 #undef FC_DEFAULT_FONTS
@@ -103,6 +112,12 @@
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
 
+/* Define to 1 if you have the `random_r' function. */
+#undef HAVE_RANDOM_R
+
+/* Define to 1 if you have the `rand_r' function. */
+#undef HAVE_RAND_R
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
@@ -134,6 +149,9 @@
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
 #undef HAVE_SYS_NDIR_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
@@ -175,8 +193,14 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* The size of `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
@@ -186,6 +210,18 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

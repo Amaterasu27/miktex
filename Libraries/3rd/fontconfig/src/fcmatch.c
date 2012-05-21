@@ -7,9 +7,9 @@
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Keith Packard not be used in
+ * documentation, and that the name of the author(s) not be used in
  * advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.  Keith Packard makes no
+ * specific, written prior permission.  The authors make no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
@@ -23,6 +23,7 @@
  */
 
 #include "fcint.h"
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -31,7 +32,7 @@ static double
 FcCompareNumber (FcValue *value1, FcValue *value2)
 {
     double  v1, v2, v;
-    
+
     switch (value1->type) {
     case FcTypeInteger:
 	v1 = (double) value1->u.i;
@@ -67,7 +68,7 @@ FcCompareString (FcValue *v1, FcValue *v2)
 static double
 FcCompareFamily (FcValue *v1, FcValue *v2)
 {
-    /* rely on the guarantee in FcPatternAddWithBinding that
+    /* rely on the guarantee in FcPatternObjectAddWithBinding that
      * families are always FcTypeString. */
     const FcChar8* v1_string = FcValueString(v1);
     const FcChar8* v2_string = FcValueString(v2);
@@ -84,7 +85,7 @@ FcCompareLang (FcValue *v1, FcValue *v2)
 {
     FcLangResult    result;
     FcValue value1 = FcValueCanonicalize(v1), value2 = FcValueCanonicalize(v2);
-    
+
     switch (value1.type) {
     case FcTypeLangSet:
 	switch (value2.type) {
@@ -92,7 +93,7 @@ FcCompareLang (FcValue *v1, FcValue *v2)
 	    result = FcLangSetCompare (value1.u.l, value2.u.l);
 	    break;
 	case FcTypeString:
-	    result = FcLangSetHasLang (value1.u.l, 
+	    result = FcLangSetHasLang (value1.u.l,
 				       value2.u.s);
 	    break;
 	default:
@@ -105,7 +106,7 @@ FcCompareLang (FcValue *v1, FcValue *v2)
 	    result = FcLangSetHasLang (value2.u.l, value1.u.s);
 	    break;
 	case FcTypeString:
-	    result = FcLangCompare (value1.u.s, 
+	    result = FcLangCompare (value1.u.s,
 				    value2.u.s);
 	    break;
 	default:
@@ -354,10 +355,10 @@ FcCompare (FcPattern	*pat,
 	   FcResult	*result)
 {
     int		    i, i1, i2;
-    
+
     for (i = 0; i < NUM_MATCH_VALUES; i++)
 	value[i] = 0.0;
-    
+
     i1 = 0;
     i2 = 0;
     while (i1 < pat->num && i2 < fnt->num)
@@ -394,7 +395,10 @@ FcFontRenderPrepare (FcConfig	    *config,
     FcPatternElt    *fe, *pe;
     FcValue	    v;
     FcResult	    result;
-    
+
+    assert (pat != NULL);
+    assert (font != NULL);
+
     new = FcPatternCreate ();
     if (!new)
 	return 0;
@@ -404,7 +408,7 @@ FcFontRenderPrepare (FcConfig	    *config,
 	pe = FcPatternObjectFindElt (pat, fe->object);
 	if (pe)
 	{
-	    if (!FcCompareValueList (pe->object, FcPatternEltValues(pe), 
+	    if (!FcCompareValueList (pe->object, FcPatternEltValues(pe),
 				     FcPatternEltValues(fe), &v, 0, &result))
 	    {
 		FcPatternDestroy (new);
@@ -514,6 +518,10 @@ FcFontSetMatch (FcConfig    *config,
 {
     FcPattern	    *best;
 
+    assert (sets != NULL);
+    assert (p != NULL);
+    assert (result != NULL);
+
     if (!config)
     {
 	config = FcConfigGetCurrent ();
@@ -529,12 +537,15 @@ FcFontSetMatch (FcConfig    *config,
 
 FcPattern *
 FcFontMatch (FcConfig	*config,
-	     FcPattern	*p, 
+	     FcPattern	*p,
 	     FcResult	*result)
 {
     FcFontSet	*sets[2];
     int		nsets;
     FcPattern   *best;
+
+    assert (p != NULL);
+    assert (result != NULL);
 
     if (!config)
     {
@@ -672,6 +683,19 @@ FcFontSetSort (FcConfig	    *config,
     FcBool    	    *patternLangSat;
     FcValue	    patternLang;
 
+    assert (sets != NULL);
+    assert (p != NULL);
+    assert (result != NULL);
+
+    /* There are some implementation that relying on the result of
+     * "result" to check if the return value of FcFontSetSort
+     * is valid or not.
+     * So we should initialize it to the conservative way since
+     * this function doesn't return NULL anymore.
+     */
+    if (result)
+	*result = FcResultNoMatch;
+
     if (FcDebug () & FC_DBG_MATCH)
     {
 	printf ("Sort ");
@@ -686,22 +710,22 @@ FcFontSetSort (FcConfig	    *config,
 	nnodes += s->nfont;
     }
     if (!nnodes)
-	goto bail0;
-    
+	return FcFontSetCreate ();
+
     for (nPatternLang = 0;
 	 FcPatternGet (p, FC_LANG, nPatternLang, &patternLang) == FcResultMatch;
 	 nPatternLang++)
 	;
 	
     /* freed below */
-    nodes = malloc (nnodes * sizeof (FcSortNode) + 
+    nodes = malloc (nnodes * sizeof (FcSortNode) +
 		    nnodes * sizeof (FcSortNode *) +
 		    nPatternLang * sizeof (FcBool));
     if (!nodes)
 	goto bail0;
     nodeps = (FcSortNode **) (nodes + nnodes);
     patternLangSat = (FcBool *) (nodeps + nnodes);
-    
+
     new = nodes;
     nodep = nodeps;
     for (set = 0; set < nsets; set++)
@@ -735,13 +759,13 @@ FcFontSetSort (FcConfig	    *config,
     }
 
     nnodes = new - nodes;
-    
+
     qsort (nodeps, nnodes, sizeof (FcSortNode *),
 	   FcSortCompare);
-    
+
     for (i = 0; i < nPatternLang; i++)
 	patternLangSat[i] = FcFalse;
-    
+
     for (f = 0; f < nnodes; f++)
     {
 	FcBool	satisfies = FcFalse;
@@ -749,7 +773,7 @@ FcFontSetSort (FcConfig	    *config,
 	 * If this node matches any language, go check
 	 * which ones and satisfy those entries
 	 */
-	if (nodeps[f]->score[MATCH_LANG_INDEX] < 200)
+	if (nodeps[f]->score[MATCH_LANG_INDEX] < 2000)
 	{
 	    for (i = 0; i < nPatternLang; i++)
 	    {
@@ -814,13 +838,16 @@ bail0:
 
 FcFontSet *
 FcFontSort (FcConfig	*config,
-	    FcPattern	*p, 
+	    FcPattern	*p,
 	    FcBool	trim,
 	    FcCharSet	**csp,
 	    FcResult	*result)
 {
     FcFontSet	*sets[2];
     int		nsets;
+
+    assert (p != NULL);
+    assert (result != NULL);
 
     if (!config)
     {
