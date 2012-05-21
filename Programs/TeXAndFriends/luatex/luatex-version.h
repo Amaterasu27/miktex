@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4523
+#define MIKTEX_COMP_J2000_VERSION 4524
 #define MIKTEX_COMP_ORIG_VERSION_STR "0.70.2"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 2012 Taco Hoekwater, the LuaTeX Team"

@@ -21,8 +21,8 @@
 #include "openbsd-compat.h"
 #include <kpathsea/c-stat.h>
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 #if defined(MIKTEX)
 #  include <miktex/Core/Paths.h> // MIKTEX_PREFIX
