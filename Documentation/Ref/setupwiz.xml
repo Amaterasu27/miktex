@@ -84,19 +84,22 @@ In a second step, a complete &MiKTeX; system is installed.</para>
 <varlistentry>
 <term><option>--common-config=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the common configuration directory.
-This option requires administrator privileges.</para></listitem>
+This option requires administrator privileges.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
 <term><option>--common-data=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the common data directory.
-This option requires administrator privileges.</para></listitem>
+This option requires administrator privileges.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
 <term><option>--common-install=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the common installation directory.
-This option requires administrator privileges.</para></listitem>
+This option requires administrator privileges.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -104,7 +107,8 @@ This option requires administrator privileges.</para></listitem>
 <listitem><para>Register additional directories for all users.
 <replaceable>dirs</replaceable> must be a semicolon-separated list of
 fully qualified path names. This option requires administrator
-privileges.</para></listitem>
+privileges.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
@@ -207,29 +211,49 @@ requires administrator privileges.</para></listitem>
 <varlistentry>
 <term><option>--user-config=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the configuration directory for
-the current user.</para></listitem>
+the current user.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used. See the example below.</para></listitem>
 </varlistentry>
 	
 <varlistentry>
 <term><option>--user-data=<replaceable>dir</replaceable></option></term>
 <listitem><para>Set the location of the data directory for
-the current user.</para></listitem>
+the current user.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used. See the example below.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--user-install=<replaceable>dir</replaceable></option></term>
-<listitem><para>Set the user installation directory.</para></listitem>
+<listitem><para>Set the user installation directory.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used. See the example below.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--user-roots=<replaceable>dirs</replaceable></option></term>
 <listitem><para>Register additional directories for the current user.
 <replaceable>dirs</replaceable> must be a semicolon-separated list of fully
-qualified path names.</para></listitem>
+qualified path names.</para>
+<para>Environment variables (&lt;VARNAME&gt;) can be used.</para></listitem>
 </varlistentry>
 	
 </variablelist>
       
+</refsect1>
+
+<refsect1>
+
+<title>Examples</title>
+
+<para>In this example, &MiKTeX; is installed from a network share (<filename>\\server\miktex\repository</filename>). User
+directories are specified by using environment variables (&lt;VARNAME&gt;) which are expanded at run-time.</para>
+
+<screen><prompt>&prompt;</prompt><userinput>setupwiz --install-from-local-repository ^
+  --local-package-repository==\\server\miktex\repository ^
+  --package-set=complete ^
+  --user-config=&lt;APPDATA&gt;\MiKTeX\2.9 ^
+  --user-data=&lt;LOCALAPPDATA&gt;\MiKTeX\2.9 ^
+  --user-install=&lt;APPDATA&gt;\MiKTeX\2.9</userinput></screen>
+
 </refsect1>
 
 </refentry>
