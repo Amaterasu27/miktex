@@ -23,11 +23,15 @@
 
 #ifndef EPDF_H
 #  define EPDF_H
+# if ! defined(MIKTEX)
 extern "C" {
+#endif
 #ifdef HAVE_CONFIG_H
 #include <w2c/config.h>
 #endif
+# if ! defined(MIKTEX)
 }
+#endif
 #  include <stdlib.h>
 #  include <math.h>
 #  include <stddef.h>
