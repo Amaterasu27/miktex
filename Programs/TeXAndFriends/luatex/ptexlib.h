@@ -18,10 +18,14 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: ptexlib.h 22094 2011-04-16 12:06:54Z peter $ */
+/* $Id: ptexlib.h 26566 2012-05-22 10:53:47Z thoekwater $ */
 
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
+
+#ifdef HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
 
 #if defined(MIKTEX)
 #  if defined(_MSC_VER)
