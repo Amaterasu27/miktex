@@ -2,11 +2,11 @@
 #ifndef BOTAN_BUILD_CONFIG_H__
 #define BOTAN_BUILD_CONFIG_H__
 
-/* This file was automatically generated Wed Apr 13 14:48:10 2011 UTC */
+/* This file was automatically generated Wed May 23 17:59:10 2012 UTC */
 
 #define BOTAN_VERSION_MAJOR 1
 #define BOTAN_VERSION_MINOR 8
-#define BOTAN_VERSION_PATCH 11
+#define BOTAN_VERSION_PATCH 13
 
 #ifndef BOTAN_DLL
   #define BOTAN_DLL __declspec(dllimport)
