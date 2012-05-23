@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -36,7 +36,8 @@ typedef enum {
   SSH_NO_STATE = -1,  /* Used for "nextState" so say there is none */
   SSH_STOP = 0,       /* do nothing state, stops the state machine */
 
-  SSH_S_STARTUP,      /* Session startup, First state in SSH-CONNECT */
+  SSH_INIT,           /* First state in SSH-CONNECT */
+  SSH_S_STARTUP,      /* Session startup */
   SSH_HOSTKEY,        /* verify hostkey */
   SSH_AUTHLIST,
   SSH_AUTH_PKEY_INIT,
@@ -114,6 +115,8 @@ struct ssh_conn {
   char *quote_path1;          /* two generic pointers for the QUOTE stuff */
   char *quote_path2;
   LIBSSH2_SFTP_ATTRIBUTES quote_attrs; /* used by the SFTP_QUOTE state */
+  bool acceptfail;            /* used by the SFTP_QUOTE (continue if
+                                 quote command fails) */
   char *homedir;              /* when doing SFTP we figure out home dir in the
                                  connect phase */
 
@@ -151,11 +154,15 @@ struct ssh_conn {
 #endif
 
 #if defined(LIBSSH2_VERSION_NUM) && (LIBSSH2_VERSION_NUM >= 0x010000)
-/* libssh2_sftp_seek64() has only ever been provided by libssh2 1.0 or
-   later */
 #  define HAVE_LIBSSH2_SFTP_SEEK64 1
 #else
 #  undef HAVE_LIBSSH2_SFTP_SEEK64
+#endif
+
+#if defined(LIBSSH2_VERSION_NUM) && (LIBSSH2_VERSION_NUM >= 0x010206)
+#  define HAVE_LIBSSH2_SCP_SEND64 1
+#else
+#  undef HAVE_LIBSSH2_SCP_SEND64
 #endif
 
 
