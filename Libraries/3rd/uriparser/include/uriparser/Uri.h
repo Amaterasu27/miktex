@@ -50,12 +50,16 @@
 #include "UriDefsConfig.h"
 #if (!defined(URI_PASS_ANSI) && !defined(URI_PASS_UNICODE))
 /* Include SELF twice */
-# define URI_PASS_ANSI 1
-# include "Uri.h"
-# undef URI_PASS_ANSI
-# define URI_PASS_UNICODE 1
-# include "Uri.h"
-# undef URI_PASS_UNICODE
+# ifdef URI_ENABLE_ANSI
+#  define URI_PASS_ANSI 1
+#  include "Uri.h"
+#  undef URI_PASS_ANSI
+# endif
+# ifdef URI_ENABLE_UNICODE
+#  define URI_PASS_UNICODE 1
+#  include "Uri.h"
+#  undef URI_PASS_UNICODE
+# endif
 /* Only one pass for each encoding */
 #elif (defined(URI_PASS_ANSI) && !defined(URI_H_ANSI) \
 	&& defined(URI_ENABLE_ANSI)) || (defined(URI_PASS_UNICODE) \
@@ -271,7 +275,7 @@ URI_CHAR * URI_FUNC(EscapeEx)(const URI_CHAR * inFirst,
  * writes the encoded version to the output string.
  * Be sure to allocate <b>3 times</b> the space of the input buffer for
  * the output buffer for <c>normalizeBreaks == URI_FALSE</c> and <b>6 times</b>
- * the space for <c>normalizeBreaks == URI_FALSE</c>
+ * the space for <c>normalizeBreaks == URI_TRUE</c>
  * (since e.g. "\x0d" becomes "%0D%0A" in that case)
  *
  * @param in                <b>IN</b>: Text source
