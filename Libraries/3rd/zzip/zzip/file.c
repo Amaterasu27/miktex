@@ -717,6 +717,9 @@ zzip_open(zzip_char_t * filename, int o_flags)
  *
  * This function returns a new zzip-handle (use => zzip_close to return
  * it). On error this function will return null setting => errno(3).
+ * 
+ * If any ext_io handlers were used then the referenced structure
+ * should be static as the allocated ZZIP_FILE does not copy them.
  */
 ZZIP_FILE *
 zzip_open_ext_io(zzip_char_t * filename, int o_flags, int o_modes,
@@ -768,7 +771,7 @@ zzip_open_shared_io(ZZIP_FILE * stream,
     {
         zzip_plugin_io_t os = (o_modes & ZZIP_ALLOWREAL)
             ? zzip_get_default_io() : io;
-        int fd = os->fd.open(filename, o_flags);        /* io->fd.open */
+        int fd = (os->fd.open)(filename, o_flags);        /* io->fd.open */
 
         if (fd != -1)
         {
@@ -1122,6 +1125,52 @@ zzip_tell(ZZIP_FILE * fp)
 
     /* current uncompressed offset is uncompressed size - data left */
     return (fp->usize - fp->restlen);
+}
+
+#ifndef EOVERFLOW
+#define EOVERFLOW EFBIG
+#endif
+
+/** => zzip_tell
+ * This function is provided for users who can not use any largefile-mode.
+ */
+long
+zzip_tell32(ZZIP_FILE * fp)
+{
+    if (sizeof(zzip_off_t) == sizeof(long))
+    {
+        return zzip_tell(fp);
+    } else
+    {
+        off_t off = zzip_tell(fp);
+        if (off >= 0) {
+            register long off32 = off;
+            if (off32 == off) return off32;
+            errno = EOVERFLOW;
+        }
+        return -1;
+    }
+}
+
+/** => zzip_seek
+ * This function is provided for users who can not use any largefile-mode.
+ */
+long
+zzip_seek32(ZZIP_FILE * fp, long offset, int whence)
+{
+    if (sizeof(zzip_off_t) == sizeof(long))
+    {
+        return zzip_seek(fp, offset, whence);
+    } else
+    {
+        off_t off = zzip_seek(fp, offset, whence);
+        if (off >= 0) {
+            register long off32 = off;
+            if (off32 == off) return off32;
+            errno = EOVERFLOW;
+        }
+        return -1;
+    }
 }
 
 /*
