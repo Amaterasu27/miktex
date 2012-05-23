@@ -2209,11 +2209,18 @@ BEGIN
     if (Max_Cites > Max_Strings)
         bad = 10 * bad + 8;
 
-    if (Ent_Str_Size > Buf_Size)
-        bad = 10 * bad + 9;
-
-    if (Glob_Str_Size > Buf_Size)
-        bad = 100 * bad + 11;
+    /*
+    ** The following checks have been removed because
+    ** Buf_Size can be dynamically changed, whereas
+    ** Ent_Str_Size and Glob_Str_Size are maximum values
+    ** which are constants.
+    **
+    **    if (Ent_Str_Size > Buf_Size)
+    **        bad = 10 * bad + 9;
+    **
+    **    if (Glob_Str_Size > Buf_Size)
+    **        bad = 100 * bad + 11;
+    */
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 17 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
