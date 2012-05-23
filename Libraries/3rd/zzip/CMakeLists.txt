@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -23,6 +23,7 @@ include_directories(
 )
 
 add_definitions(
+  -DZZIP_HAVE_STDINT_H=1
   -DZZIP_EXPORTS=1
 )
 
@@ -53,7 +54,7 @@ set(${zzip_dll_name}_sources
 
 foreach(hdr _msvc.h conf.h fetch.h file.h format.h fseeko.h
             info.h lib.h memdisk.h mmapped.h plugin.h
-	    stdint.h types.h write.h zzip.h)
+	    stdint.h types.h write.h zzip.h zzip32.h)
   configure_file(
      ${CMAKE_CURRENT_SOURCE_DIR}/zzip/${hdr}
      ${CMAKE_CURRENT_BINARY_DIR}/include/zzip/${hdr}
