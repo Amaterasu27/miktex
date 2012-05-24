@@ -138,7 +138,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
     if (extract_xref_table) {
+#if defined(MIKTEX)
+      int size = xref->getNumObjects();
+#else
         int size = xref->getSize();
+#endif
         int i;
         for (i = 0; i < size; i++) {
             if (xref->getEntry(i)->offset == 0xffffffff)
