@@ -357,7 +357,12 @@ Q_INVOKABLE
 QMap<QString, QVariant> TWScriptAPI::getDictionaryList(const bool forceReload /* = false */)
 {
 	QMap<QString, QVariant> retVal;
+#if defined(MIKTEX)
+	// not possible (under Windows) to call TWUtils methods
+	const QHash<QString, QString> * h = new QHash<QString, QString>();
+#else
 	const QHash<QString, QString> * h = TWUtils::getDictionaryList(forceReload);
+#endif
 	for (QHash<QString, QString>::const_iterator it = h->begin(); it != h->end(); ++it) {
 		if (!retVal.contains(it.value()))
 			retVal[it.value()] = QVariant::fromValue((QList<QVariant>() << it.key()));
