@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,6 +28,7 @@ set(tex_changefiles
   ${CMAKE_CURRENT_SOURCE_DIR}/mltex-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/enctex-miktex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-misc.ch
+  ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-enctex.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hash.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-hyph.ch
   ${CMAKE_CURRENT_SOURCE_DIR}/tex-miktex-pool.ch
