@@ -304,7 +304,7 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
       if(pi) { 
 #if HAVE_SETJMP_H
 #  if defined(MIKTEX)
-	if(setjmp(pp->png_jmpbuf) == 0) {
+	if(setjmp(pp->longjmp_buffer) == 0) {
 #  else
         if(setjmp(pp->jmpbuf) == 0) {
 #  endif
