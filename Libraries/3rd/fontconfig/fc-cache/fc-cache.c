@@ -27,7 +27,9 @@
 #include <miktex/utf8wrap.h>
 #endif
 
+#if ! defined(MIKTEX)
 #include "../src/fcarch.h"
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -36,6 +38,10 @@
 #define HAVE_GETOPT_LONG 1
 #endif
 #define HAVE_GETOPT 1
+#endif
+
+#if defined(MIKTEX)
+#include "../src/fcarch.h"
 #endif
 
 #if defined(MIKTEX)
