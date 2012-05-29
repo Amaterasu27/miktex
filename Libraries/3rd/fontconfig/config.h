@@ -1,10 +1,16 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+#pragma once
+
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
 /* The normal alignment of `double', in bytes. */
+#if defined(MIKTEX_WINDOWS)
+#define ALIGNOF_DOUBLE 8
+#else
 #undef ALIGNOF_DOUBLE
+#endif
 
 /* Font configuration directory */
 #undef CONFDIR
@@ -200,7 +206,15 @@
 #undef PACKAGE_VERSION
 
 /* The size of `void *', as computed by sizeof. */
+#if defined(MIKTEX_WINDOWS)
+#if defined(_WIN64)
+#  define SIZEOF_VOID_P 8
+#else
+#  define SIZEOF_VOID_P 4
+#endif
+#else
 #undef SIZEOF_VOID_P
+#endif
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
