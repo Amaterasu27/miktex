@@ -75,6 +75,7 @@ set(synctex_pdftex_ch_srcs_on
 )
 
 set(pdftosrc_sources
+  ${wrapper_cpp}
   pdftosrc.cc
   pdftosrc-version.h
 )

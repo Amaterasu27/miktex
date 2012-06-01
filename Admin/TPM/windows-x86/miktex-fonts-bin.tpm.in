@@ -17,7 +17,6 @@ texmf/miktex/bin/getafm.exe
 texmf/miktex/bin/${vftovp_dll_name}.dll
 texmf/miktex/bin/${vptovf_dll_name}.dll
 texmf/miktex/bin/t1asm.exe
-texmf/miktex/bin/ttf2afm.exe
 texmf/miktex/bin/vftovp.exe
 texmf/miktex/bin/vptovf.exe
     </TPM:RunFiles>

@@ -32,10 +32,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <goo/gfile.h>
 #else
 #include <aconf.h>
-#if defined(MIKTEX)
-#include <miktex/Core/Core>
-#define assert MIKTEX_ASSERT
-#endif
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
@@ -56,9 +52,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GlobalParams.h"
 #include "Error.h"
 
+#if defined(MIKTEX)
+#include <miktex/Core/Core>
+#undef assert
+#define assert MIKTEX_ASSERT
+#define exit(status) throw(status)
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
+#endif
+
 static XRef *xref = 0;
 
+#if defined(MIKTEX)
+int __cdecl Main(int argc, char ** argv)
+#else
 int main(int argc, char *argv[])
+#endif
 {
     char *p, buf[1024];
     PDFDoc *doc;
@@ -210,4 +219,7 @@ int main(int argc, char *argv[])
     catalogDict.free();
     delete doc;
     delete globalParams;
+#if defined(MIKTEX)
+    return (0);
+#endif
 }

@@ -14,6 +14,8 @@
 texmf/miktex/bin/x64/${miktex_prefix}pdftex.exe
 texmf/miktex/bin/x64/${pdftex_dll_name}.dll
 texmf/miktex/bin/x64/pdftex.exe
+texmf/miktex/bin/x64/pdftosrc.exe
+texmf/miktex/bin/x64/ttf2afm.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>
