@@ -1,6 +1,6 @@
 /* File.cpp: file operations
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -55,6 +55,16 @@ Directory::SetCurrentDirectoryA (/*[in]*/ const PathName &	path)
    Directory::Exists
    _________________________________________________________________________ */
 
+static unsigned long GetFileAttributes_harmlessErrors[] = {
+  ERROR_FILE_NOT_FOUND, // 2
+  ERROR_PATH_NOT_FOUND, // 3
+  ERROR_NOT_READY, // 21
+  ERROR_BAD_NETPATH, // 53
+  ERROR_BAD_NET_NAME, // 67
+  ERROR_INVALID_NAME, // 123
+  ERROR_BAD_PATHNAME, // 161
+};
+
 bool
 Directory::Exists (/*[in]*/ const PathName &	path)
 {
@@ -72,10 +82,15 @@ Directory::Exists (/*[in]*/ const PathName &	path)
       return (true);
     }
   unsigned long error = ::GetLastError();
-  if (! (error == ERROR_FILE_NOT_FOUND
-	 || error == ERROR_INVALID_NAME
-	 || error == ERROR_BAD_NETPATH
-	 || error == ERROR_PATH_NOT_FOUND))
+  for (int idx = 0; idx < sizeof(GetFileAttributes_harmlessErrors) / sizeof(GetFileAttributes_harmlessErrors[0]); ++ idx)
+  {
+    if (error == GetFileAttributes_harmlessErrors[idx])
+    {
+      error = ERROR_SUCCESS;
+      break;
+    }
+  }
+  if (error != ERROR_SUCCESS)
     {
       FATAL_WINDOWS_ERROR ("GetFileAttributesW", path.Get());
     }
@@ -127,9 +142,15 @@ File::Exists (/*[in]*/ const PathName &	path)
       return (true);
     }
   unsigned long error = ::GetLastError();
-  if (! (error == ERROR_FILE_NOT_FOUND
-	 || error == ERROR_INVALID_NAME
-	 || error == ERROR_PATH_NOT_FOUND))
+  for (int idx = 0; idx < sizeof(GetFileAttributes_harmlessErrors) / sizeof(GetFileAttributes_harmlessErrors[0]); ++ idx)
+  {
+    if (error == GetFileAttributes_harmlessErrors[idx])
+    {
+      error = ERROR_SUCCESS;
+      break;
+    }
+  }
+  if (error != ERROR_SUCCESS)
     {
       FATAL_WINDOWS_ERROR ("GetFileAttributesW", path.Get());
     }

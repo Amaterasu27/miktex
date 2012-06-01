@@ -3407,7 +3407,16 @@ CheckPath (/*[in]*/ const string &	oldPath,
        entry.GetCurrent() != 0;
        ++ entry)
     {
-      PathName dir (entry.GetCurrent());
+      string str1 = entry.GetCurrent();
+      string str2;
+      for (string::const_iterator it = str1.begin(); it != str1.end(); ++ it)
+      {
+	if (*it != '"' && *it != '<' && *it != '>' && *it != '|')
+	{
+	  str2 += *it;
+	}
+      }
+      PathName dir (str2);      
       dir.AppendDirectoryDelimiter ();
       if (binDir == dir)
 	{
