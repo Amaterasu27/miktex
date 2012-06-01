@@ -493,7 +493,7 @@ void TWApp::writeToMailingList()
 	QString address("texworks@tug.org");
 #if defined(MIKTEX)
 	QMessageBox::information(0, "Email",
-	  "Thank you for taking the time to write an email to the TeXworks mailing list. Please read the instructions below carefully as following them will greatly facilitate the communication.\n\nInstructions:\n-) Please write your message in English (it's in your own best interest; otherwise, many people will not be able to understand it and therefore will not answer).\n\n-) Please type something meaningful in the subject line.\n\n-) If you are having a problem, please describe it step-by-step in detail.",
+	  "Thank you for taking the time to write an email to the TeXworks mailing list. Please read the instructions below carefully as following them will greatly facilitate the communication.\n\nInstructions:\n\nPlease write your message in English (it's in your own best interest; otherwise, many people will not be able to understand it and therefore will not answer).\n\nPlease type something meaningful in the subject line.\n\nIf you are having a problem, please describe it step-by-step in detail.",
 	  QMessageBox::Ok, QMessageBox::Ok);
 	QString body = "\n\n\n\n----- configuration info -----\n";
 #else
