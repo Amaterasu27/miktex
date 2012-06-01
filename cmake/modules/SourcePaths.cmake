@@ -234,3 +234,4 @@ set(trapmf_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}trapmf${exe_suffix
 set(triptex_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}triptex${exe_suffix}")
 set(webn_exe "${outdir}/${CMAKE_CFG_INTDIR}/web-n${exe_suffix}")
 set(mkdllbases_exe "${outdir}/${CMAKE_CFG_INTDIR}/mkdllbases${exe_suffix}")
+set(putj2000version_cmd "${CMAKE_BINARY_DIR}/Admin/Scripts/putj2000version.cmd")

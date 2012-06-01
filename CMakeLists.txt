@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -810,6 +810,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
 
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/produce.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/produce.cmd)
+
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/putj2000version.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/putj2000version.cmd)
 
 configure_file(${CMAKE_SOURCE_DIR}/Resources/Manifests/Common-Controls.manifest.in
 	       ${CMAKE_BINARY_DIR}/Resources/Manifests/Common-Controls.manifest)
