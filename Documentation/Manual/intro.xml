@@ -26,7 +26,7 @@ url="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=tutorials*">Internet</ulink>
 </indexterm>
 
 <para>The &MiKTeX; distribution can be downloaded from the Internet.
-And it is available on &CDR;/&DVDdashR;.</para>
+And it is available on &DVDdashR;.</para>
 
 <section>
 
@@ -53,18 +53,14 @@ in this manual (see <xref linkend="installing"/>).</para>
 
 <section id="miktexcdr">
 
-<title>&MiKTeX; on &CDRDVDdashR;</title>
+<title>&MiKTeX; on &DVDdashR;</title>
 
-<para>The &MiKTeX; &CDRDVDdashR; allows you to install &MiKTeX; on the
+<para>The &MiKTeX; &DVDdashR; allows you to install &MiKTeX; on the
 hard-disk or to run the programs directly from the &DVDdashR;.</para>
 
 <para>If you wish to obtain a copy of
-the &MiKTeX; &CDRDVDdashR;, visit <ulink url="http://miktex.org/CD/">the
-&CDRDVDdashR; info page</ulink>.
-<indexterm>
-<primary>CD-R</primary>
-<secondary>obtaining</secondary>
-</indexterm>
+the &MiKTeX; &DVDdashR;, visit <ulink url="http://miktex.org/dvd">the
+&DVDdashR; info page</ulink>.
 <indexterm>
 <primary>DVD-R</primary>
 <secondary>obtaining</secondary>
@@ -74,14 +70,7 @@ the &MiKTeX; &CDRDVDdashR;, visit <ulink url="http://miktex.org/CD/">the
 <secondary>running MiKTeX from the</secondary>
 </indexterm>
 <indexterm>
-<primary>MiKTeX CD-R</primary>
-</indexterm>
-<indexterm>
 <primary>MiKTeX DVD-R</primary>
-</indexterm>
-<indexterm>
-<primary>MiKTeX</primary>
-<secondary>CD-R</secondary>
 </indexterm>
 <indexterm>
 <primary>MiKTeX</primary>
@@ -101,7 +90,7 @@ please become an esteemed &MiKTeX; user by giving back something. It
 encourages me to continue, and is the perfect way to say thank you!</para>
 
 <para>Visit <ulink
-url="http://www.miktex.org/giveback.aspx">the &MiKTeX; Give Back page</ulink>,
+url="http://miktex.org/giveback">the &MiKTeX; Give Back page</ulink>,
 for more information.
 <indexterm>
 <primary>MiKTeX project</primary>
@@ -124,7 +113,7 @@ for more information.
 
 <title>The &MiKTeX; Project Page</title>
 
-<para>The <ulink url="http://www.miktex.org">&MiKTeX; Project Page</ulink>
+<para>The <ulink url="http://miktex.org">&MiKTeX; Project Page</ulink>
 is the address to turn to for &MiKTeX; related news &amp; information.
 <indexterm>
 <primary>project page</primary>
