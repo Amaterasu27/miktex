@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4518
+#define MIKTEX_COMP_J2000_VERSION 4535
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.14"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 2002-2010 Jan-Ake Larsson"

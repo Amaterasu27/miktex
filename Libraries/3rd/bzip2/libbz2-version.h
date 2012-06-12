@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4525
+#define MIKTEX_COMP_J2000_VERSION 4535
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.0.6"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1996-2010 Julian R Seward"

@@ -12,11 +12,8 @@
       getafm, t1asm, ttf2afm, vftovp, vptovf.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/afm2tfm.exe
-texmf/miktex/bin/getafm.exe
 texmf/miktex/bin/${vftovp_dll_name}.dll
 texmf/miktex/bin/${vptovf_dll_name}.dll
-texmf/miktex/bin/t1asm.exe
 texmf/miktex/bin/vftovp.exe
 texmf/miktex/bin/vptovf.exe
     </TPM:RunFiles>

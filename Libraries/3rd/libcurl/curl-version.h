@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4526
-#define MIKTEX_COMP_ORIG_VERSION_STR "7.25.0"
+#define MIKTEX_COMP_J2000_VERSION 4535
+#define MIKTEX_COMP_ORIG_VERSION_STR "7.26.0"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1998 - 2012, Daniel Stenberg, et al."
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1998 - 2012, Daniel Stenberg, et al."
