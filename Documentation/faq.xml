@@ -6,9 +6,9 @@
 <!ENTITY % version.ent SYSTEM "version.ent">
 %version.ent;
 %entities.ent;
-<!ENTITY rev "2.8.3477">
-<!ENTITY date "July 09, 2009">
-<!ENTITY month "July 2009">
+<!ENTITY rev "2.9.4533">
+<!ENTITY date "May 29, 2012">
+<!ENTITY month "May 2012">
 ]>
 
 <article>
@@ -25,7 +25,7 @@
 </author>
 
 <copyright>
-<year>2001&ndash;2009</year>
+<year>2001&ndash;2012</year>
 <holder>Christian Schenk</holder>
 </copyright>
 
@@ -89,7 +89,7 @@ section</para></listitem>
 </question>
 <answer>
 <para>Yes.  The official project page is <ulink
-url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
+url="http://miktex.org">http://miktex.org</ulink>.</para>
 </answer>
 </qandaentry>
 
@@ -99,26 +99,29 @@ url="http://www.miktex.org">http://www.miktex.org</ulink>.</para>
 &MiKTeX;?</para>
 </question>
 <answer>
-<para>&MiKTeX; requires one of the following &Windows; operating
+<para>&MiKTeXCurrentSeries; requires one of the following &Windows; operating
 systems:</para>
 <itemizedlist>
 <listitem>
 <para>&Windows7;</para>
 </listitem>
 <listitem>
-<para>&WindowsServer2008;</para>
+<para>&WindowsVistaServicePack2; (all editions except Starter Edition)</para>
 </listitem>
 <listitem>
-<para>&WindowsVista;</para>
+<para>&WindowsXPServicePack3; (all editions except Starter Edition)</para>
 </listitem>
 <listitem>
-<para>&WindowsServer2003;</para>
+<para>&WindowsServer2008R2;</para>
 </listitem>
 <listitem>
-<para>&WindowsXP;</para>
+<para>&WindowsServer2008ServicePack2;</para>
 </listitem>
 <listitem>
-<para>&Windows2000;</para>
+<para>&WindowsServer2003R2;</para>
+</listitem>
+<listitem>
+<para>&WindowsServer2003ServicePack2;</para>
 </listitem>
 </itemizedlist>
 </answer>
@@ -228,11 +231,11 @@ archive files to your computer.</para></listitem>
 <para>Is &MiKTeX; available on &CD; or &DVD;?</para>
 </question>
 <answer>
-<para>Yes, &MiKTeX; is available on &CDRDVDdashR; (see <ulink
-url="http://miktex.org/cd/">this page</ulink>).</para>
-<para>The &CDRDVDdashR; contains a live &MiKTeX; system,
-which makes it possible to run &MiKTeX; directly from the &CDRDVDdashR;.
-Alternatively, the &CDRDVDdashR; allows you to install &MiKTeX;
+<para>Yes, &MiKTeX; is available on &DVDdashR; (see <ulink
+url="http://miktex.org/dvd">this page</ulink>).</para>
+<para>The &DVDdashR; contains a live &MiKTeX; system,
+which makes it possible to run &MiKTeX; directly from the &DVDdashR;.
+Alternatively, the &DVDdashR; allows you to install &MiKTeX;
 on your hard-disk.</para>
 </answer>
 </qandaentry>
@@ -262,7 +265,7 @@ directory <filename>systems/win32/miktex</filename>.</para>
 <qandaentry>
 <question><para>How do I get support?</para></question>
 <answer>
-<para>Please visit <ulink url="http://www.miktex.org/support"></ulink>,
+<para>Please visit <ulink url="http://miktex.org/support"></ulink>,
 for an overview of available support options.</para>
 </answer>
 </qandaentry>
@@ -714,9 +717,8 @@ if you specify suitable trace options.
 <para>How do I use the &DebugView; window?</para>
 </question>
 <answer>
-<para>First of all, you will need the &DebugView; utility.
-To download &DebugView;, visit the <ulink url="http://www.microsoft.com/technet/sysinternals/utilities/DebugView.mspx">&DebugView; page</ulink> and follow the
-download/installation instructions.</para>
+<para>First of all, you will need the &DebugView; utilitt, which is a part of the &WindowsSysinternals; suite. To download.
+To download &DebugView;, visit the <ulink url="http://technet.microsoft.com/en-us/sysinternals">&WindowsSysinternals; page</ulink>.</para>
 </answer>
 </qandaentry>
 

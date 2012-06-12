@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:>********************************************************************************************
 //:>	Forward declarations
@@ -218,6 +216,7 @@ void GrSlotState::CopyFrom(GrSlotState * pslot, bool fCopyEverything)
 	m_fAttachMod = pslot->m_fAttachMod;
 	m_fShiftMod = pslot->m_fShiftMod;
 	m_fIgnoreAdvance = pslot->m_fIgnoreAdvance;
+	m_fHasComponents = pslot->m_fHasComponents;
 
 	m_nCompositeLevel = kNegInfinity;	// uncalculated, so don't need to copy the positions??
 }
@@ -261,7 +260,7 @@ gid16 GrSlotAbstract::ActualGlyphForOutput(GrTableManager * ptman)
 	root or attached leaf slots.
 	OBSOLETE
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::FixAttachmentTree(GrSlotState * pslotOld)
+void GrSlotState::FixAttachmentTree(GrSlotState * /*pslotOld*/)
 {
 #if 0
 	pslotOld->m_vpslotAttLeaves.CopyTo(m_vpslotAttLeaves);
@@ -524,13 +523,13 @@ void GrSlotState::AllComponentRefs(std::vector<int> & vichw, std::vector<int> & 
 		GrSlotState * pslot;
 		if (HasComponents())
 		{
-			for (int iComponent = 0; iComponent < m_cnCompPerLig; iComponent++)
+			for (int jComponent = 0; jComponent < m_cnCompPerLig; jComponent++)
 			{
-				pslot = CompRefSlot(iComponent);
+				pslot = CompRefSlot(jComponent);
 				if (pslot)
 				{
 					Assert(PassModified() >= pslot->PassModified());
-					pslot->AllComponentRefs(vichw, vicomp, iComponent);
+					pslot->AllComponentRefs(vichw, vicomp, jComponent);
 				}
 			}
 		}
@@ -670,11 +669,6 @@ float GrSlotState::GlyphAttrValueLogUnits(GrTableManager * ptman, int nAttrID)
 ----------------------------------------------------------------------------------------------*/
 float GrSlotState::GlyphMetricLogUnits(GrTableManager * ptman, int nMetricID)
 {
-#ifdef OLD_TEST_STUFF
-	if (ptman->GlyphTable() == NULL)
-		return 0;
-#endif // OLD_TEST_STUFF
-
 #ifdef _DEBUG
 	if (IsLineBreak(ptman->LBGlyphID()))
 	{
@@ -877,7 +871,7 @@ void GrSlotAbstract::GetGlyphMetricAux(Font * pfont, gid16 chwGlyphID,
 /*----------------------------------------------------------------------------------------------
 	Test the glyph id to see if it is a white space glyph.
 ----------------------------------------------------------------------------------------------*/
-int GrSlotState::IsSpace(GrTableManager * ptman)
+sdata8 GrSlotState::IsSpace(GrTableManager * ptman)
 {
 	gid16 gidActual = ActualGlyphForOutput(ptman);
 
@@ -913,7 +907,7 @@ int GrSlotState::IsSpace(GrTableManager * ptman)
 bool GrSlotOutput::IsSpace()
 {
 	Assert(m_bIsSpace == 0 || m_bIsSpace == 1);
-	return m_bIsSpace;
+    return (m_bIsSpace != 0)? true : false;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1024,7 +1018,7 @@ void GrSlotState::EnsureLocalAttachmentTree(GrTableManager * ptman,
 	NOTE: the caller is responsible to zap the cached positions of following glyphs
 	in the stream.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::AttachToRoot(GrTableManager * ptman, GrSlotStream * psstrm,
+void GrSlotState::AttachToRoot(GrTableManager * /*ptman*/, GrSlotStream * psstrm,
 	GrSlotState * pslotNewRoot)
 {
 	GrSlotState * pslotOldRoot = (m_dislotRootFixed == 0) ?
@@ -1063,7 +1057,7 @@ void GrSlotState::Position(GrTableManager * ptman,
 
 	float xsWidth, xsVisWidth;
 	if (m_xsPositionX == kNegInfFloat || m_ysPositionY == kNegInfFloat)
-		ptman->CalcPositionsUpTo(psstrmOut->m_ipass, this, &xsWidth, &xsVisWidth);
+		ptman->CalcPositionsUpTo(psstrmOut->m_ipass, this, true, &xsWidth, &xsVisWidth);
 
 	*pmXPos = ptman->LogToEmUnits(m_xsPositionX);
 	*pmYPos = ptman->LogToEmUnits(m_ysPositionY);
@@ -1077,7 +1071,7 @@ void GrSlotState::AdjustRootMetrics(GrTableManager * ptman, GrSlotStream * psstr
 {
 	Assert(m_dislotRootFixed == m_srAttachTo);
 	GrSlotState * pslotRoot = AttachRoot(psstrm);
-	CalcRootMetrics(ptman, psstrm, kPosInfinity);
+	CalcRootMetrics(ptman, psstrm, NULL, kPosInfinity);
 	if (pslotRoot)
 		pslotRoot->AdjustRootMetrics(ptman, psstrm);
 }
@@ -1086,13 +1080,15 @@ void GrSlotState::AdjustRootMetrics(GrTableManager * ptman, GrSlotStream * psstr
 	Calculate the composite metrics for this slot.
 
 	@param psstrm			- stream for which we are calculating it
+	@param psstrmNext		- because when processing in the middle of a pass, we may need to
+								get the slot from the following (output) stream
 	@param nLevel			- attachment level we are asking for; kPosInifinity means all levels
 	@param fThorough		- true: do a thorough recalculation; false: don't recalculate
 								metrics for leaves (are they assumed to be accurate???)
 								--currently not used
 ----------------------------------------------------------------------------------------------*/
 void GrSlotState::CalcCompositeMetrics(GrTableManager * ptman, GrSlotStream * psstrm,
-	int nLevel, bool fThorough)
+	GrSlotStream * psstrmNext, int nLevel, bool fThorough)
 {
 	if (m_nCompositeLevel == nLevel)
 		return;
@@ -1101,19 +1097,38 @@ void GrSlotState::CalcCompositeMetrics(GrTableManager * ptman, GrSlotStream * ps
 	{
 		Assert(m_dislotRootFixed == m_srAttachTo);
 		GrSlotState * pslotRoot = AttachRoot(psstrm);
+		// Kludge to handle the fact that we might have gotten the root from the wrong stream.
+		// Calling MidPassSlotAt finds the right one.
+		if (psstrmNext && pslotRoot)
+		{
+			int islotRoot = pslotRoot->PosPassIndex();
+			pslotRoot = psstrm->MidPassSlotAt(islotRoot, psstrmNext);
+		}
 
 		InitMetrics(ptman, pslotRoot);
 
 		for (size_t islot = 0; islot < m_vdislotAttLeaves.size(); islot++)
 		{
-			GrSlotState * pslotLeaf = SlotAtOffset(psstrm, m_vdislotAttLeaves[islot]);
+			GrSlotState * pslotLeaf;
+			if (psstrmNext)
+			{
+				// Calculating a position in the middle of processing a pass.
+				pslotLeaf = psstrm->MidPassSlotAt(PosPassIndex() + m_vdislotAttLeaves[islot],
+					psstrmNext);
+			}
+			else
+			{
+				// Calculating the final position.
+				pslotLeaf = SlotAtOffset(psstrm, m_vdislotAttLeaves[islot]);
+			}
+
 			if (pslotLeaf->AttachLevel() <= nLevel)
-				pslotLeaf->CalcCompositeMetrics(ptman, psstrm, nLevel, fThorough);
+				pslotLeaf->CalcCompositeMetrics(ptman, psstrm, psstrmNext, nLevel, fThorough);
 			else
 				//	this slot will be ignored in the composite metrics
 				pslotLeaf->ZapRootMetrics();
 		}
-		CalcRootMetrics(ptman, psstrm, nLevel);
+		CalcRootMetrics(ptman, psstrm, psstrmNext, nLevel);
 
 		m_nCompositeLevel = nLevel;
 	}
@@ -1129,25 +1144,33 @@ void GrSlotState::CalcCompositeMetrics(GrTableManager * ptman, GrSlotStream * ps
 /*----------------------------------------------------------------------------------------------
 	Calculate the metrics for this node and all its leaf nodes.
 ----------------------------------------------------------------------------------------------*/
-void GrSlotState::CalcRootMetrics(GrTableManager * ptman, GrSlotStream * psstrm, int nLevel)
+void GrSlotState::CalcRootMetrics(GrTableManager * /*ptman*/, GrSlotStream * psstrm,
+	GrSlotStream * psstrmNext, int nLevel)
 {
 	for (size_t idislot = 0; idislot < m_vdislotAttLeaves.size(); idislot++)
 	{
-		GrSlotState * pslot = SlotAtOffset(psstrm, m_vdislotAttLeaves[idislot]);
-		if (pslot->AttachLevel() > nLevel)
+		GrSlotState * pslotLeaf = SlotAtOffset(psstrm, m_vdislotAttLeaves[idislot]);
+		// Kludge to handle the fact that we might have gotten the leaf from the wrong stream.
+		// Calling MidPassSlotAt finds the right one.
+		if (psstrmNext)
+		{
+			int islot = pslotLeaf->PosPassIndex();
+			pslotLeaf = psstrm->MidPassSlotAt(islot, psstrmNext);
+		}
+		if (pslotLeaf->AttachLevel() > nLevel)
 			continue;
 
-		m_xsClusterXOffset = min(m_xsClusterXOffset, pslot->m_xsClusterXOffset);
-		if (!pslot->m_fIgnoreAdvance)
+		m_xsClusterXOffset = min(m_xsClusterXOffset, pslotLeaf->m_xsClusterXOffset);
+		if (!pslotLeaf->m_fIgnoreAdvance)
 		{
 			m_xsClusterAdv = max(
 				m_xsClusterAdv,
-				pslot->m_xsClusterAdv + m_xsRootShiftX);
+				pslotLeaf->m_xsClusterAdv + m_xsRootShiftX);
 		}
-		m_xsClusterBbLeft = min(m_xsClusterBbLeft, pslot->m_xsClusterBbLeft);
-		m_xsClusterBbRight = max(m_xsClusterBbRight, pslot->m_xsClusterBbRight);
-		m_ysClusterBbTop = max(m_ysClusterBbTop, pslot->m_ysClusterBbTop);
-		m_ysClusterBbBottom = min(m_ysClusterBbBottom, pslot->m_ysClusterBbBottom);
+		m_xsClusterBbLeft = min(m_xsClusterBbLeft, pslotLeaf->m_xsClusterBbLeft);
+		m_xsClusterBbRight = max(m_xsClusterBbRight, pslotLeaf->m_xsClusterBbRight);
+		m_ysClusterBbTop = max(m_ysClusterBbTop, pslotLeaf->m_ysClusterBbTop);
+		m_ysClusterBbBottom = min(m_ysClusterBbBottom, pslotLeaf->m_ysClusterBbBottom);
 	}
 }
 
@@ -1263,7 +1286,7 @@ float GrSlotState::GlyphXOffset(GrSlotStream * psstrm, float fakeItalicRatio)
 /*----------------------------------------------------------------------------------------------
 	Y-offsets of a single glyph relative to the previous advance position.
 ----------------------------------------------------------------------------------------------*/
-float GrSlotState::GlyphYOffset(GrSlotStream * psstrm)
+float GrSlotState::GlyphYOffset(GrSlotStream * /*psstrm*/)
 {
 	return m_ysOffsetY;
 }

@@ -22,9 +22,6 @@ Description: Contains the implementation of the GrEngine class.
 #endif
 // any other headers (not precompiled)
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:End Ignore
 
 namespace gr
@@ -42,6 +39,14 @@ namespace gr
 //:>********************************************************************************************
 //:>	   General functions
 //:>********************************************************************************************
+
+// Stand-alone function:
+void EngineVersion(int * nMajor, int * nMinor, int * nBugFix)
+{
+	*nMajor = GRAPHITE_VERSION_MAJOR;
+	*nMinor = GRAPHITE_VERSION_MINOR;
+	*nBugFix = GRAPHITE_VERSION_BUGFIX;
+}
 
 bool compareCmap(const byte *lhs, const byte *rhs)
 {
@@ -417,7 +422,7 @@ GrResult GrEngine::get_SegDatMaxLength(int * pcb)
 	@return The supported script direction(s). If more than one, the application is
 	responsible for choosing the most appropriate.
 ----------------------------------------------------------------------------------------------*/
-GrResult GrEngine::get_ScriptDirection(unsigned int * pgrfsdc, OLECHAR * prgchwErrMsg, int cchMaxErrMsg)
+GrResult GrEngine::get_ScriptDirection(unsigned int * pgrfsdc, OLECHAR * /*prgchwErrMsg*/, int /*cchMaxErrMsg*/)
 {
 	ChkGrOutPtr(pgrfsdc);
 	ChkGrArrayArg(prgchwErrMsg, cchMaxErrMsg);
@@ -588,6 +593,8 @@ void GrEngine::MakeSegment(
 	else if (dxMaxWidth < kPosInfFloat)
 		segmode = ksegmodeBreak;	// find break point
 
+	bool fFeatureVariations = pgts->featureVariations();
+
 	// Temporary:
 	if (!this->m_ptman)
 	{
@@ -692,7 +699,7 @@ void GrEngine::MakeSegment(
 				((pjus) ? kjmodiCanShrink : kjmodiNormal),
 				layout,
 				ichSegLim, dxMaxWidth, 0,
-				fBacktracking, fMoreText, ichFontLim, fInfiniteWidth, false,
+				fBacktracking, fMoreText, fFeatureVariations, ichFontLim, fInfiniteWidth, false,
 				ichCallerBtLim,
 				nDirDepth, estJ);
 		}
@@ -721,7 +728,7 @@ void GrEngine::MakeSegment(
 		m_ptman->Run(psegNew, pfont, pchstrm, pjus, kjmodiJustify, layout,
 			ichSegLim,
 			dxJustifiedWidthJ, dxMaxWidth,
-			false, false,	// not used
+			false, false, false,	// not used
 			ichFontLim,
 			true,	// infinite width
 			false,  // kludge
@@ -780,7 +787,7 @@ void GrEngine::RecordFontLoadError(OLECHAR * prgchwErrMsg, int cchMax)
 		stuMessage.append(m_stuInitError);
 	}
 
-	std::fill_n(prgchwErrMsg, cchMax, 0);
+	std::fill_n(prgchwErrMsg, cchMax, L'\0');
 	std::copy(stuMessage.data(), stuMessage.data() + min(cchMax - 1, signed(stuMessage.size())),
 				prgchwErrMsg);
 }
@@ -789,7 +796,7 @@ void GrEngine::RecordFontLoadError(OLECHAR * prgchwErrMsg, int cchMax)
 	Record a system error indicating a bad error in rendering using a supposedly valid font.
 	OBSOLETE
 ----------------------------------------------------------------------------------------------*/
-void GrEngine::RecordFontRunError(OLECHAR * prgchwErrMsg, int cchMax, GrResult res)
+void GrEngine::RecordFontRunError(OLECHAR * prgchwErrMsg, int cchMax, GrResult /*res*/)
 {
 	if (prgchwErrMsg == NULL || cchMax == 0)
 		return;
@@ -805,7 +812,7 @@ void GrEngine::RecordFontRunError(OLECHAR * prgchwErrMsg, int cchMax, GrResult r
 	else
 		stuMessage.append(L"\"");
 
-	std::fill_n(prgchwErrMsg, cchMax, 0);
+	std::fill_n(prgchwErrMsg, cchMax, L'\0');
 	std::copy(stuMessage.data(), stuMessage.data() + min(cchMax - 1, signed(stuMessage.size())),
 			 prgchwErrMsg);
 }
@@ -817,7 +824,7 @@ void GrEngine::RecordFontRunError(OLECHAR * prgchwErrMsg, int cchMax, GrResult r
 ----------------------------------------------------------------------------------------------*/
 void GrEngine::ClearFontError(OLECHAR * prgchwErrMsg, int cchMaxErrMsg)
 {
-	std::fill_n(prgchwErrMsg, cchMaxErrMsg, 0);
+	std::fill_n(prgchwErrMsg, cchMaxErrMsg, L'\0');
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -825,15 +832,6 @@ void GrEngine::ClearFontError(OLECHAR * prgchwErrMsg, int cchMaxErrMsg)
 ----------------------------------------------------------------------------------------------*/
 void GrEngine::GetWritingSystemDirection(ITextSource * pgts, int ichwMin)
 {
-#ifdef OLD_TEST_STUFF
-	//	for test procedures:
-	if (m_stuInitialize == "RightToLeftLayout")
-	{
-		m_fRightToLeft = true;
-		return;
-	}
-#endif // OLD_TEST_STUFF
-
 	m_fRightToLeft = pgts->getRightToLeft(ichwMin);
 }
 
@@ -896,21 +894,21 @@ bool GrEngine::CheckTableVersions(GrIStream * pgrstrm,
 		const byte *pFeatTbl, int lFeatStart,
 		int * pfxdBadVersion)
 {
-	pgrstrm->OpenBuffer(pSilfTbl, isizeof(int));
+	pgrstrm->OpenBuffer(pSilfTbl, sizeof(int));
     pgrstrm->SetPositionInFont(lSilfStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
 	if (*pfxdBadVersion > kSilfVersion)
 		return false;
 
-	pgrstrm->OpenBuffer(pGlobTbl, lGlocStart + isizeof(int));
+	pgrstrm->OpenBuffer(pGlobTbl, lGlocStart + sizeof(int));
 	pgrstrm->SetPositionInFont(lGlocStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
 	if (*pfxdBadVersion > kGlocVersion)
 		return false;
 
-	pgrstrm->OpenBuffer(pFeatTbl, isizeof(int));
+	pgrstrm->OpenBuffer(pFeatTbl, sizeof(int));
 	pgrstrm->SetPositionInFont(lFeatStart);
 	*pfxdBadVersion = ReadVersion(*pgrstrm);
 	pgrstrm->CloseBuffer();
@@ -935,42 +933,9 @@ int GrEngine::ReadVersion(GrIStream & grstrm)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Initialize the engine from the test file. Used for test procedures.
-----------------------------------------------------------------------------------------------*/
-//:Ignore
-#ifdef OLD_TEST_STUFF
-void GrEngine::InitFromControlFileTest()
-{
-	IStreamPtr qstrm;
-	FileStream::Create(m_stuCtrlFile, STGM_READ, &qstrm);
-
-	int nSilfOffset, nGlocOffset, nGlatOffset, nFeatOffset;
-
-	nSilfOffset = ReadIntFromFont(qstrm);
-	nGlocOffset = ReadIntFromFont(qstrm);
-	nGlatOffset = ReadIntFromFont(qstrm);
-	nFeatOffset = ReadIntFromFont(qstrm);
-	nSill
-
-	//	Read the "Silf" table.
-	int chwMaxGlyphID;
-	int fxdVersion;
-	ReadSilfTable(qstrm, nSilOffset, 0, &chwMaxGlyphID, &fxdVersion);
-
-	//	Read the "Gloc" and "Glat" tables.
-	ReadGlocAndGlatTables(qstrm, nGlocOffset, qstrm, nGlatOffset, chwMaxGlyphID, fxdVersion);
-
-	//	Read the "Feat" table.
-	ReadFeatTable(qstrm, nFeatOffset);
-}
-#endif // OLD_TEST_STUFF
-//:End Ignore
-
-
-/*----------------------------------------------------------------------------------------------
 	Return whether the text is asking for bold and/or italic text.
 ----------------------------------------------------------------------------------------------*/
-void GrEngine::GetStyles(Font * pfont, int ichwMin, bool * pfBold, bool * pfItalic)
+void GrEngine::GetStyles(Font * pfont, int /*ichwMin*/, bool * pfBold, bool * pfItalic)
 {
 	*pfBold = pfont->bold();
 	*pfItalic = pfont->italic();
@@ -981,7 +946,11 @@ void GrEngine::GetStyles(Font * pfont, int ichwMin, bool * pfBold, bool * pfItal
 	Should only be called when we know we are using a base font, or when we are reading
 	the base font to see if it is valid.
 ----------------------------------------------------------------------------------------------*/
+#ifdef NDEBUG
+void GrEngine::SwitchGraphicsFont(bool)
+#else
 void GrEngine::SwitchGraphicsFont(bool fBase)
+#endif
 {
 	Assert(!fBase || m_stuBaseFaceName.size() > 0);
 
@@ -1009,7 +978,7 @@ void GrEngine::SwitchGraphicsFont(bool fBase)
 	CreateEmpty().
 ----------------------------------------------------------------------------------------------*/
 bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable,
-	int * pchwMaxGlyphID, int * pfxdSilfVersion)
+	long cbTableLen, int * pchwMaxGlyphID, int * pfxdSilfVersion)
 {
 	grstrm.SetPositionInFont(lTableStart);
 
@@ -1020,31 +989,47 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 		return false;
 
 	if (*pfxdSilfVersion >= 0x00030000)
-		 // compiler version
-		grstrm.ReadIntFromFont();
+	{
+		//	compiler version--more accurately, the level of semantics needed to handle
+		//	this font
+		int fxdCompilerVersion = ReadVersion(grstrm);
+        if (fxdCompilerVersion > 0x00040000)
+            return false;
+    }
 
 	//	number of tables
 	unsigned short cSubTables = grstrm.ReadUShortFromFont();
 	Assert(cSubTables == 1);	// for now
 	Assert(cSubTables <= kMaxSubTablesInFont);
 	if (cSubTables != 1 || cSubTables > kMaxSubTablesInFont)
-		return false;
+		return false;	// bad font
 
     if (*pfxdSilfVersion >= 0x00020000)
 		// reserved
 		grstrm.ReadShortFromFont();
 
-	//	subtable offsets
-	int nSubTableOffsets[kMaxSubTablesInFont];
+	//	subtable offsets and lengths
+	int nSubTableOffsets[kMaxSubTablesInFont+1];
+	int cbSubTableLengths[kMaxSubTablesInFont];
+	nSubTableOffsets[cSubTables] = cbTableLen;
 	int i;
 	for (i = 0; i < cSubTables; i++)
 	{
 		nSubTableOffsets[i] = grstrm.ReadIntFromFont();
+        if (nSubTableOffsets[i] < 0 || nSubTableOffsets[i] > cbTableLen)
+            return false;
+		if (i > 0)
+        {
+			cbSubTableLengths[i-1] = nSubTableOffsets[i] - nSubTableOffsets[i-1];
+            if (cbSubTableLengths[i-1] < 40)
+                return false;
+        }
 	}
+	cbSubTableLengths[cSubTables-1] = nSubTableOffsets[cSubTables] - nSubTableOffsets[cSubTables-1];
 
 	grstrm.SetPositionInFont(lTableStart + nSubTableOffsets[iSubTable]);
 
-	//	Now we are at the beginning of the desired sub-table.
+	//	Now the stream is at the beginning of the desired sub-table.
 
 	//	Get the position of the start of the table.
 	long lSubTableStart;
@@ -1059,8 +1044,14 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	long lPseudosPos = -1;
 	if (*pfxdSilfVersion >= 0x00030000)
 	{
-		lPassBlockPos = grstrm.ReadUShortFromFont() + lSubTableStart;
-		lPseudosPos = grstrm.ReadUShortFromFont() + lSubTableStart;
+		lPassBlockPos = grstrm.ReadUShortFromFont();
+		if (lPassBlockPos > cbSubTableLengths[iSubTable])
+			return false;	// bad table
+        lPassBlockPos += lSubTableStart;
+		lPseudosPos = grstrm.ReadUShortFromFont();
+		if (lPseudosPos > cbSubTableLengths[iSubTable])
+			return false;	// bad table
+        lPseudosPos += lSubTableStart;
 	}
 
 	//	maximum glyph ID
@@ -1085,6 +1076,8 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	byte ipassJust1 = grstrm.ReadByteFromFont();
 	//	index of first reordered pass, or 0xFF if no reordering
 	byte ipassReordered1 = grstrm.ReadByteFromFont();
+    if (ipassReordered1 != 0xFF && ipassReordered1 > cPasses)
+        return false;
 	if (*pfxdSilfVersion < 0x00020000)
 	{
 		Assert(ipassJust1 == cPasses || ipassJust1 == ipassPos1);
@@ -1092,14 +1085,15 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	}
 
 	//	Sanity checks.
-	if (cPasses > kMaxPasses || ipassSub1 > cPasses || ipassPos1 > cPasses)
+	if (cPasses >= kMaxPasses || ipassSub1 > ipassPos1 || ipassPos1 > ipassJust1 || ipassJust1 > cPasses)
 		return false; // bad table
 	
 	//	line-break flag
 	int nLineBreak = grstrm.ReadByteFromFont();
-	if (nLineBreak != 0 && nLineBreak != 1)
+	if (nLineBreak > 3)
 		return false; // bad table
-	m_fLineBreak = (bool)nLineBreak;
+    m_fLineBreak = ((nLineBreak & 0x0001) == 0)? false : true;
+	// ignore other flag
 
 	//	range of possible cross-line-boundary contextualization
 	m_cchwPreXlbContext = grstrm.ReadByteFromFont();
@@ -1122,8 +1116,22 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 
 	if (*pfxdSilfVersion >= 0x00020000)
 	{
+		bTmp = grstrm.ReadByteFromFont();
+		if (bTmp != 0)
+			// The mirror attributes are defined, so first component is 5.
+			m_nCompAttr1 = 5;
+		else if (m_chwPseudoAttr < 3)
+		{
+			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
+			gAssert(m_chwBWAttr < 3);
+			gAssert(m_chwDirAttr < 3);
+			m_nCompAttr1 = 3;
+		}
+		else
+			// The component attributes are first.
+			m_nCompAttr1 = 0;
+
 		// reserved
-		grstrm.ReadByteFromFont();
 		grstrm.ReadByteFromFont();
 
 		//	justification levels
@@ -1135,7 +1143,7 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 		m_chwJShrink0 = 0xffff;
 		m_chwJStep0 = 0xffff;
 		m_chwJWeight0 = 0xffff;
-		for (int i = 0; i < m_cJLevels; i++)
+		for (i = 0; i < m_cJLevels; i++)
 		{
 			//	justification glyph attribute IDs
 			bTmp = grstrm.ReadByteFromFont();
@@ -1165,6 +1173,14 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 		m_chwJShrink0 = 0xffff;
 		m_chwJStep0 = 0xffff;
 		m_chwJWeight0 = 0xffff;
+
+		if (m_chwPseudoAttr == 0)
+			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
+			m_nCompAttr1 = 3;
+		else
+			// The component attributes are first.
+			m_nCompAttr1 = 0;
+
 	}
 
 	//	number of component attributes
@@ -1209,11 +1225,13 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	}
 
 	//	rendering behaviors--ignore for now
-	byte cBehaviors = grstrm.ReadByteFromFont();
-	unsigned int nBehaviors[kMaxRenderingBehavior];
-	for (i = 0; i < cBehaviors; i++)
+	byte cScripts = grstrm.ReadByteFromFont();
+	int nTmp;
+	//unsigned int nBehaviors[kMaxRenderingBehavior]; -- this big buffer causes a stack overflow in Multiscribe; rework eventually
+	for (i = 0; i < cScripts; i++)
 	{
-		nBehaviors[i] = unsigned(grstrm.ReadIntFromFont());
+		//nBehaviors[i] = unsigned(grstrm.ReadIntFromFont());
+		nTmp = unsigned(grstrm.ReadIntFromFont());
 	}
 
 	//	linebreak glyph ID
@@ -1229,9 +1247,18 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	//	offsets to passes, relative to the start of this subtable;
 	//	note that we read (cPasses + 1) of these
 	int nPassOffsets[kMaxPasses];
+	int cbPassLengths[kMaxPasses];
 	for (i = 0; i <= cPasses; i++)
 	{
 		nPassOffsets[i] = grstrm.ReadIntFromFont();
+		if (nPassOffsets[i] > cbSubTableLengths[iSubTable])
+			return false;	// bad table (note that the "last" bogus pass's offset will = the table length)
+		if (i > 0)
+        {
+			cbPassLengths[i-1] = nPassOffsets[i] - nPassOffsets[i-1];
+            if (cbPassLengths[i-1] < 44)
+                return false;
+        }
 	}
 
 	//	Jump to the beginning of the pseudo-glyph info block, if we have this information.
@@ -1242,15 +1269,18 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 		Assert(lPseudosPos == -1);
 
 	//	number of pseudo-glyphs and search constants
-	short snTmp;
-	snTmp = grstrm.ReadShortFromFont();
+	unsigned short snTmp;
+	snTmp = grstrm.ReadUShortFromFont();
 	m_cpsd = snTmp;
-	snTmp = grstrm.ReadShortFromFont();
+	snTmp = grstrm.ReadUShortFromFont();
 	m_dipsdInit = snTmp;
-	snTmp = grstrm.ReadShortFromFont();
+	snTmp = grstrm.ReadUShortFromFont();
 	m_cPsdLoop = snTmp;
-	snTmp = grstrm.ReadShortFromFont();
+	snTmp = grstrm.ReadUShortFromFont();
 	m_ipsdStart = snTmp;
+
+    if (m_dipsdInit > m_cpsd || m_cPsdLoop > m_cpsd || m_ipsdStart > m_cpsd)
+        return false;
 
 	//	unicode-to-pseudo map
 	m_prgpsd = new GrPseudoMap[m_cpsd];
@@ -1277,7 +1307,7 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 
 	//	passes
 	return m_ptman->CreateAndReadPasses(grstrm, *pfxdSilfVersion, fxdRuleVersion,
-		cPasses, lSubTableStart, nPassOffsets,
+		cPasses, lSubTableStart, nPassOffsets, cbPassLengths,
 		ipassSub1, ipassPos1, ipassJust1, ipassReordered1);
 }
 
@@ -1303,6 +1333,7 @@ void GrEngine::CreateEmpty()
 	m_chwDirAttr = 3;		// directionality
 
 	m_cComponents = 0;		//	number of component attributes
+	m_nCompAttr1 = 5;		//  component attribute
 
 	m_cnUserDefn = 0;		// number of user-defined slot attributes
 	m_cnCompPerLig = 0;		// max number of ligature components
@@ -1365,7 +1396,8 @@ bool GrEngine::ReadGlocAndGlatTables(GrIStream & grstrmGloc, long lGlocStart,
 	m_pgtbl->SetNumberOfStyles(1);	// for now
 
 	return m_pgtbl->ReadFromFont(grstrmGloc, lGlocStart, grstrmGlat, lGlatStart,
-		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_cnCompPerLig, fxdSilfVersion);
+		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_nCompAttr1, m_cnCompPerLig,
+		fxdSilfVersion);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1532,7 +1564,7 @@ GrResult GrEngine::RunUsingEmpty(Segment * psegNew, Font * pfont,
 	{
 		m_ptman->Run(psegNew, pfont, pchstrm, NULL, kjmodiNormal, layout,
 			ichStop, dxMaxWidth, 0,
-			fNeedFinalBreak, fMoreText, -1, fInfiniteWidth, false,
+			fNeedFinalBreak, fMoreText, false, -1, fInfiniteWidth, false,
 			ichwCallerBtLim,
 			nDirDepth, estJ);
 	}
@@ -1586,12 +1618,6 @@ gid16 GrEngine::GetGlyphIDFromUnicode(int nUnicode)
 	gid16 chwGlyphID = MapToPseudo(nUnicode);
 	if (chwGlyphID != 0)
 		return chwGlyphID;	// return a pseudo-glyph
-
-#ifdef OLD_TEST_STUFF
-	if (!m_pCmap31)
-		// test procedures
-		return chwUnicode;
-#endif // OLD_TEST_STUFF
 
 	//	Otherwise, get the glyph ID from the font's cmap.
 
@@ -1944,61 +1970,13 @@ size_t GrEngine::NumberOfGlyphsInClass(int nClass)
 
 int GrEngine::GlyphAttrValue(gid16 chwGlyphID, int nAttrID)
 {
-#ifdef OLD_TEST_STUFF
-	if (!m_pgtbl) // test procedures
-		return 0;
-#endif // OLD_TEST_STUFF
-
 	return m_pgtbl->GlyphAttrValue(chwGlyphID, nAttrID);
 }
 
 int GrEngine::ComponentIndexForGlyph(gid16 chwGlyphID, int nCompID)
 {
-#ifdef OLD_TEST_STUFF
-	if (!m_pgtbl) // test procedures
-		return -1;
-#endif // OLD_TEST_STUFF
-
 	return m_pgtbl->ComponentIndexForGlyph(chwGlyphID, nCompID);
 }
-
-
-//:>********************************************************************************************
-//:>	   For test procedures
-//:>********************************************************************************************
-
-//:Ignore
-
-#ifdef OLD_TEST_STUFF
-
-void GrEngine::SetUpPseudoGlyphTest()
-{
-	m_cpsd = 5;
-
-	m_prgpsd = new GrPseudoMap[m_cpsd];
-
-	m_prgpsd[0].SetUnicode(65);
-	m_prgpsd[0].SetPseudoGlyph(1065);
-
-	m_prgpsd[1].SetUnicode(66);
-	m_prgpsd[1].SetPseudoGlyph(1066);
-
-	m_prgpsd[2].SetUnicode(67);
-	m_prgpsd[2].SetPseudoGlyph(1067);
-
-	m_prgpsd[3].SetUnicode(68);
-	m_prgpsd[3].SetPseudoGlyph(1068);
-
-	m_prgpsd[4].SetUnicode(69);
-	m_prgpsd[4].SetPseudoGlyph(1069);
-
-	m_dipsdInit = 4;
-	m_cPsdLoop = 2;
-	m_ipsdStart = 1;
-}
-
-#endif // OLD_TEST_STUFF
-
 
 //:>********************************************************************************************
 //:>	New interface

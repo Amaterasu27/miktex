@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -187,6 +187,7 @@ set(etex_miktex_post_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-post.ch
 set(etex_miktex_pre_ch "${CMAKE_SOURCE_DIR}/${rel_etex_dir}/etex-miktex-pre.ch")
 set(mltex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/mltex-miktex.ch")
 set(tex_miktex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-misc.ch")
+set(tex_miktex_enctex_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-enctex.ch")
 set(tex_miktex_hash_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hash.ch")
 set(tex_miktex_hyph_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-hyph.ch")
 set(tex_miktex_pool_ch "${CMAKE_SOURCE_DIR}/${rel_tex_dir}/tex-miktex-pool.ch")
@@ -233,3 +234,4 @@ set(trapmf_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}trapmf${exe_suffix
 set(triptex_exe "${outdir}/${CMAKE_CFG_INTDIR}/${miktex_prefix}triptex${exe_suffix}")
 set(webn_exe "${outdir}/${CMAKE_CFG_INTDIR}/web-n${exe_suffix}")
 set(mkdllbases_exe "${outdir}/${CMAKE_CFG_INTDIR}/mkdllbases${exe_suffix}")
+set(putj2000version_cmd "${CMAKE_BINARY_DIR}/Admin/Scripts/putj2000version.cmd")

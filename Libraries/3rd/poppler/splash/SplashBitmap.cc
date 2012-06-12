@@ -11,8 +11,15 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2009, 2010, 2012 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Ilmari Heikkinen <ilmari.heikkinen@gmail.com>
+// Copyright (C) 2009 Shen Liang <shenzhuxi@gmail.com>
+// Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
+// Copyright (C) 2010 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2010 Harry Roberts <harry.roberts@midnight-labs.org>
+// Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
+// Copyright (C) 2010 William Bader <williambader@hotmail.com>
+// Copyright (C) 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -26,10 +33,17 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
 #include "goo/gmem.h"
 #include "SplashErrorCodes.h"
 #include "SplashBitmap.h"
-
+#include "poppler/Error.h"
+#include "goo/JpegWriter.h"
+#include "goo/PNGWriter.h"
+#include "goo/TiffWriter.h"
+#include "goo/ImgWriter.h"
 #if defined(MIKTEX)
 #  define MIKTEX_UTF8_WRAP_ALL 1
 #  include <miktex/utf8wrap.h>
@@ -39,34 +53,57 @@
 // SplashBitmap
 //------------------------------------------------------------------------
 
-SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
+SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPadA,
 			   SplashColorMode modeA, GBool alphaA,
 			   GBool topDown) {
   width = widthA;
   height = heightA;
   mode = modeA;
+  rowPad = rowPadA;
   switch (mode) {
   case splashModeMono1:
-    rowSize = (width + 7) >> 3;
+    if (width > 0) {
+      rowSize = (width + 7) >> 3;
+    } else {
+      rowSize = -1;
+    }
     break;
   case splashModeMono8:
-    rowSize = width;
+    if (width > 0) {
+      rowSize = width;
+    } else {
+      rowSize = -1;
+    }
     break;
   case splashModeRGB8:
   case splashModeBGR8:
-    rowSize = width * 3;
+    if (width > 0 && width <= INT_MAX / 3) {
+      rowSize = width * 3;
+    } else {
+      rowSize = -1;
+    }
     break;
   case splashModeXBGR8:
-    rowSize = width * 4;
+    if (width > 0 && width <= INT_MAX / 4) {
+      rowSize = width * 4;
+    } else {
+      rowSize = -1;
+    }
     break;
 #if SPLASH_CMYK
   case splashModeCMYK8:
-    rowSize = width * 4;
+    if (width > 0 && width <= INT_MAX / 4) {
+      rowSize = width * 4;
+    } else {
+      rowSize = -1;
+    }
     break;
 #endif
   }
-  rowSize += rowPad - 1;
-  rowSize -= rowSize % rowPad;
+  if (rowSize > 0) {
+    rowSize += rowPad - 1;
+    rowSize -= rowSize % rowPad;
+  }
   data = (SplashColorPtr)gmallocn(rowSize, height);
   if (!topDown) {
     data += (height - 1) * rowSize;
@@ -79,12 +116,33 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
   }
 }
 
+SplashBitmap *SplashBitmap::copy(SplashBitmap *src) {
+  SplashBitmap *result = new SplashBitmap(src->getWidth(), src->getHeight(), src->getRowPad(), 
+        src->getMode(), src->getAlphaPtr() != NULL, src->getRowSize() >= 0);
+  Guchar *dataSource = src->getDataPtr();
+  Guchar *dataDest = result->getDataPtr();
+  int amount = src->getRowSize();
+  if (amount < 0) {
+    dataSource = dataSource + (src->getHeight() - 1) * amount;
+    dataDest = dataDest + (src->getHeight() - 1) * amount;
+    amount *= -src->getHeight();
+  } else {
+    amount *= src->getHeight();
+  }
+  memcpy(dataDest, dataSource, amount);
+  if (src->getAlphaPtr() != NULL) {
+    memcpy(result->getAlphaPtr(), src->getAlphaPtr(), src->getWidth() * src->getHeight());
+  }
+  return result;
+}
 
 SplashBitmap::~SplashBitmap() {
-  if (rowSize < 0) {
-    gfree(data + (height - 1) * rowSize);
-  } else {
-    gfree(data);
+  if (data) {
+    if (rowSize < 0) {
+      gfree(data + (height - 1) * rowSize);
+    } else {
+      gfree(data);
+    }
   }
   gfree(alpha);
 }
@@ -128,11 +186,7 @@ SplashError SplashBitmap::writePNMFile(FILE *f) {
     fprintf(f, "P5\n%d %d\n255\n", width, height);
     row = data;
     for (y = 0; y < height; ++y) {
-      p = row;
-      for (x = 0; x < width; ++x) {
-	fputc(*p, f);
-	++p;
-      }
+      fwrite(row, 1, width, f);
       row += rowSize;
     }
     break;
@@ -141,13 +195,7 @@ SplashError SplashBitmap::writePNMFile(FILE *f) {
     fprintf(f, "P6\n%d %d\n255\n", width, height);
     row = data;
     for (y = 0; y < height; ++y) {
-      p = row;
-      for (x = 0; x < width; ++x) {
-	fputc(splashRGB8R(p), f);
-	fputc(splashRGB8G(p), f);
-	fputc(splashRGB8B(p), f);
-	p += 3;
-      }
+      fwrite(row, 1, 3 * width, f);
       row += rowSize;
     }
     break;
@@ -186,12 +234,28 @@ SplashError SplashBitmap::writePNMFile(FILE *f) {
 #if SPLASH_CMYK
   case splashModeCMYK8:
     // PNM doesn't support CMYK
+    error(errInternal, -1, "unsupported SplashBitmap mode");
+    return splashErrGeneric;
     break;
 #endif
   }
   return splashOk;
 }
 
+SplashError SplashBitmap::writeAlphaPGMFile(char *fileName) {
+  FILE *f;
+
+  if (!alpha) {
+    return splashErrModeMismatch;
+  }
+  if (!(f = fopen(fileName, "wb"))) {
+    return splashErrOpenFile;
+  }
+  fprintf(f, "P5\n%d %d\n255\n", width, height);
+  fwrite(alpha, 1, width * height, f);
+  fclose(f);
+  return splashOk;
+}
 
 void SplashBitmap::getPixel(int x, int y, SplashColorPtr pixel) {
   SplashColorPtr p;
@@ -241,4 +305,227 @@ void SplashBitmap::getPixel(int x, int y, SplashColorPtr pixel) {
 
 Guchar SplashBitmap::getAlpha(int x, int y) {
   return alpha[y * width + x];
+}
+
+SplashColorPtr SplashBitmap::takeData() {
+  SplashColorPtr data2;
+
+  data2 = data;
+  data = NULL;
+  return data2;
+}
+
+SplashError SplashBitmap::writeImgFile(SplashImageFileFormat format, char *fileName, int hDPI, int vDPI, const char *compressionString) {
+  FILE *f;
+  SplashError e;
+
+  if (!(f = fopen(fileName, "wb"))) {
+    return splashErrOpenFile;
+  }
+
+  e = writeImgFile(format, f, hDPI, vDPI, compressionString);
+  
+  fclose(f);
+  return e;
+}
+
+SplashError SplashBitmap::writeImgFile(SplashImageFileFormat format, FILE *f, int hDPI, int vDPI, const char *compressionString) {
+  ImgWriter *writer;
+	SplashError e;
+  
+  switch (format) {
+    #ifdef ENABLE_LIBPNG
+    case splashFormatPng:
+	  writer = new PNGWriter();
+      break;
+    #endif
+
+    #ifdef ENABLE_LIBJPEG
+    #ifdef SPLASH_CMYK
+    case splashFormatJpegCMYK:
+      writer = new JpegWriter(JCS_CMYK);
+      break;
+    #endif
+    case splashFormatJpeg:
+      writer = new JpegWriter();
+      break;
+    #endif
+	
+    #ifdef ENABLE_LIBTIFF
+    case splashFormatTiff:
+      writer = new TiffWriter();
+      if (writer) {
+        ((TiffWriter *)writer)->setCompressionString(compressionString);
+        ((TiffWriter *)writer)->setSplashMode(mode);
+      }
+      break;
+    #endif
+
+    default:
+      // Not the greatest error message, but users of this function should
+      // have already checked whether their desired format is compiled in.
+      error(errInternal, -1, "Support for this image type not compiled in");
+      return splashErrGeneric;
+  }
+
+	e = writeImgFile(writer, f, hDPI, vDPI);
+	delete writer;
+	return e;
+}
+
+#include "poppler/GfxState_helpers.h"
+
+void SplashBitmap::getRGBLine(int yl, SplashColorPtr line) {
+  SplashColor col;
+  double c, m, y, k, c1, m1, y1, k1, r, g, b;
+
+  for (int x = 0; x < width; x++) {
+    getPixel(x, yl, col);
+    c = byteToDbl(col[0]);
+    m = byteToDbl(col[1]);
+    y = byteToDbl(col[2]);
+    k = byteToDbl(col[3]);
+    c1 = 1 - c;
+    m1 = 1 - m;
+    y1 = 1 - y;
+    k1 = 1 - k;
+    cmykToRGBMatrixMultiplication(c, m, y, k, c1, m1, y1, k1, r, g, b);
+    *line++ = dblToByte(clip01(r));
+    *line++ = dblToByte(clip01(g));
+    *line++ = dblToByte(clip01(b));
+  }
+}
+
+SplashError SplashBitmap::writeImgFile(ImgWriter *writer, FILE *f, int hDPI, int vDPI) {
+  if (mode != splashModeRGB8 && mode != splashModeMono8 && mode != splashModeMono1 && mode != splashModeXBGR8
+#if SPLASH_CMYK
+      && mode != splashModeCMYK8
+#endif
+     ) {
+    error(errInternal, -1, "unsupported SplashBitmap mode");
+    return splashErrGeneric;
+  }
+
+  if (!writer->init(f, width, height, hDPI, vDPI)) {
+    return splashErrGeneric;
+  }
+
+  switch (mode) {
+#if SPLASH_CMYK
+    case splashModeCMYK8:
+      if (writer->supportCMYK()) {
+        SplashColorPtr row;
+        unsigned char **row_pointers = new unsigned char*[height];
+        row = data;
+
+        for (int y = 0; y < height; ++y) {
+          row_pointers[y] = row;
+          row += rowSize;
+        }
+        if (!writer->writePointers(row_pointers, height)) {
+          delete[] row_pointers;
+          return splashErrGeneric;
+        }
+        delete[] row_pointers;
+      } else {
+        unsigned char *row = new unsigned char[3 * width];
+        for (int y = 0; y < height; y++) {
+          getRGBLine(y, row);
+          if (!writer->writeRow(&row)) {
+            delete[] row;
+            return splashErrGeneric;
+          }
+        }
+        delete[] row;
+      }
+    break;
+#endif
+    case splashModeRGB8:
+    {
+      SplashColorPtr row;
+      unsigned char **row_pointers = new unsigned char*[height];
+      row = data;
+
+      for (int y = 0; y < height; ++y) {
+        row_pointers[y] = row;
+        row += rowSize;
+      }
+      if (!writer->writePointers(row_pointers, height)) {
+        delete[] row_pointers;
+        return splashErrGeneric;
+      }
+      delete[] row_pointers;
+    }
+    break;
+    
+    case splashModeXBGR8:
+    {
+      unsigned char *row = new unsigned char[3 * width];
+      for (int y = 0; y < height; y++) {
+        // Convert into a PNG row
+        for (int x = 0; x < width; x++) {
+          row[3*x] = data[y * rowSize + x * 4 + 2];
+          row[3*x+1] = data[y * rowSize + x * 4 + 1];
+          row[3*x+2] = data[y * rowSize + x * 4];
+        }
+
+        if (!writer->writeRow(&row)) {
+          delete[] row;
+          return splashErrGeneric;
+        }
+      }
+      delete[] row;
+    }
+    break;
+    
+    case splashModeMono8:
+    {
+      unsigned char *row = new unsigned char[3 * width];
+      for (int y = 0; y < height; y++) {
+        // Convert into a PNG row
+        for (int x = 0; x < width; x++) {
+          row[3*x] = data[y * rowSize + x];
+          row[3*x+1] = data[y * rowSize + x];
+          row[3*x+2] = data[y * rowSize + x];
+        }
+
+        if (!writer->writeRow(&row)) {
+          delete[] row;
+          return splashErrGeneric;
+        }
+      }
+      delete[] row;
+    }
+    break;
+    
+    case splashModeMono1:
+    {
+      unsigned char *row = new unsigned char[3 * width];
+      for (int y = 0; y < height; y++) {
+        // Convert into a PNG row
+        for (int x = 0; x < width; x++) {
+          getPixel(x, y, &row[3*x]);
+          row[3*x+1] = row[3*x];
+          row[3*x+2] = row[3*x];
+        }
+
+        if (!writer->writeRow(&row)) {
+          delete[] row;
+          return splashErrGeneric;
+        }
+      }
+      delete[] row;
+    }
+    break;
+    
+    default:
+    // can't happen
+    break;
+  }
+  
+  if (writer->close()) {
+    return splashErrGeneric;
+  }
+
+  return splashOk;
 }

@@ -7,9 +7,9 @@
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Keith Packard not be used in
+ * documentation, and that the name of the author(s) not be used in
  * advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.  Keith Packard makes no
+ * specific, written prior permission.  The authors make no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
@@ -50,14 +50,16 @@ FcStrCopy (const FcChar8 *s)
 FcChar8 *
 FcStrPlus (const FcChar8 *s1, const FcChar8 *s2)
 {
-    int	    l = strlen ((char *)s1) + strlen ((char *) s2) + 1;
+    int	    s1l = strlen ((char *) s1);
+    int	    s2l = strlen ((char *) s2);
+    int	    l = s1l + s2l + 1;
     FcChar8 *s = malloc (l);
 
     if (!s)
 	return 0;
     FcMemAlloc (FC_MEM_STRING, l);
-    strcpy ((char *) s, (char *) s1);
-    strcat ((char *) s, (char *) s2);
+    memcpy (s, s1, s1l);
+    memcpy (s + s1l, s2, s2l + 1);
     return s;
 }
 
@@ -109,7 +111,7 @@ FcStrCaseWalkerLong (FcCaseWalker *w, FcChar8 r)
 	    int		mid = (min + max) >> 1;
 	    FcChar32    low = fcCaseFold[mid].upper;
 	    FcChar32    high = low + FcCaseFoldUpperCount (&fcCaseFold[mid]);
-	    
+	
 	    if (high <= ucs4)
 		min = mid + 1;
 	    else if (ucs4 < low)
@@ -158,7 +160,7 @@ FcStrCaseWalkerNext (FcCaseWalker *w)
 	w->read = 0;
     }
     r = *w->src++;
-    
+
     if ((r & 0xc0) == 0xc0)
 	return FcStrCaseWalkerLong (w, r);
     if ('A' <= r && r <= 'Z')
@@ -181,7 +183,7 @@ FcStrCaseWalkerNextIgnoreBlanks (FcCaseWalker *w)
     {
 	r = *w->src++;
     } while (r == ' ');
-    
+
     if ((r & 0xc0) == 0xc0)
 	return FcStrCaseWalkerLong (w, r);
     if ('A' <= r && r <= 'Z')
@@ -215,11 +217,11 @@ FcStrCmpIgnoreCase (const FcChar8 *s1, const FcChar8 *s2)
     FcChar8	    c1, c2;
 
     if (s1 == s2) return 0;
-    
+
     FcStrCaseWalkerInit (s1, &w1);
     FcStrCaseWalkerInit (s2, &w2);
-    
-    for (;;) 
+
+    for (;;)
     {
 	c1 = FcStrCaseWalkerNext (&w1);
 	c2 = FcStrCaseWalkerNext (&w2);
@@ -236,11 +238,11 @@ FcStrCmpIgnoreBlanksAndCase (const FcChar8 *s1, const FcChar8 *s2)
     FcChar8	    c1, c2;
 
     if (s1 == s2) return 0;
-    
+
     FcStrCaseWalkerInit (s1, &w1);
     FcStrCaseWalkerInit (s2, &w2);
-    
-    for (;;) 
+
+    for (;;)
     {
 	c1 = FcStrCaseWalkerNextIgnoreBlanks (&w1);
 	c2 = FcStrCaseWalkerNextIgnoreBlanks (&w2);
@@ -254,10 +256,10 @@ int
 FcStrCmp (const FcChar8 *s1, const FcChar8 *s2)
 {
     FcChar8 c1, c2;
-    
+
     if (s1 == s2)
 	return 0;
-    for (;;) 
+    for (;;)
     {
 	c1 = *s1++;
 	c2 = *s2++;
@@ -296,8 +298,8 @@ FcStrIsAtIgnoreBlanksAndCase (const FcChar8 *s1, const FcChar8 *s2)
 
     FcStrCaseWalkerInit (s1, &w1);
     FcStrCaseWalkerInit (s2, &w2);
-    
-    for (;;) 
+
+    for (;;)
     {
 	c1 = FcStrCaseWalkerNextIgnoreBlanks (&w1);
 	c2 = FcStrCaseWalkerNextIgnoreBlanks (&w2);
@@ -355,8 +357,8 @@ FcStrIsAtIgnoreCase (const FcChar8 *s1, const FcChar8 *s2)
 
     FcStrCaseWalkerInit (s1, &w1);
     FcStrCaseWalkerInit (s2, &w2);
-    
-    for (;;) 
+
+    for (;;)
     {
 	c1 = FcStrCaseWalkerNext (&w1);
 	c2 = FcStrCaseWalkerNext (&w2);
@@ -395,7 +397,7 @@ FcStrContainsWord (const FcChar8 *s1, const FcChar8 *s2)
 	
     while (s1len >= s2len)
     {
-	if (wordStart && 
+	if (wordStart &&
 	    FcStrIsAtIgnoreCase (s1, s2) &&
 	    (s1len == s2len || FcCharIsPunct (s1[s2len])))
 	{
@@ -422,12 +424,12 @@ FcStrStrIgnoreCase (const FcChar8 *s1, const FcChar8 *s2)
 
     if (s1 == s2)
 	return s1;
-    
+
     FcStrCaseWalkerInit (s1, &w1);
     FcStrCaseWalkerInit (s2, &w2);
-    
+
     c2 = FcStrCaseWalkerNext (&w2);
-    
+
     for (;;)
     {
 	cur = w1.src;
@@ -474,7 +476,7 @@ again:
     if (!c2)
 	return 0;
 
-    for (;;) 
+    for (;;)
     {
 	p = s1;
 	c1 = *s1++;
@@ -517,15 +519,15 @@ FcUtf8ToUcs4 (const FcChar8 *src_orig,
 
     if (len == 0)
 	return 0;
-    
+
     s = *src++;
     len--;
-    
+
     if (!(s & 0x80))
     {
 	result = s;
 	extra = 0;
-    } 
+    }
     else if (!(s & 0x40))
     {
 	return -1;
@@ -561,7 +563,7 @@ FcUtf8ToUcs4 (const FcChar8 *src_orig,
     }
     if (extra > len)
 	return -1;
-    
+
     while (extra--)
     {
 	result <<= 6;
@@ -586,7 +588,7 @@ FcUtf8Len (const FcChar8    *string,
     int		clen;
     FcChar32	c;
     FcChar32	max;
-    
+
     n = 0;
     max = 0;
     while (len)
@@ -616,7 +618,7 @@ FcUcs4ToUtf8 (FcChar32	ucs4,
 {
     int	bits;
     FcChar8 *d = dest;
-    
+
     if      (ucs4 <       0x80) {  *d++=  ucs4;                         bits= -6; }
     else if (ucs4 <      0x800) {  *d++= ((ucs4 >>  6) & 0x1F) | 0xC0;  bits=  0; }
     else if (ucs4 <    0x10000) {  *d++= ((ucs4 >> 12) & 0x0F) | 0xE0;  bits=  6; }
@@ -647,11 +649,11 @@ FcUtf16ToUcs4 (const FcChar8	*src_orig,
 
     if (len < 2)
 	return 0;
-    
+
     a = GetUtf16 (src, endian); src += 2; len -= 2;
-    
-    /* 
-     * Check for surrogate 
+
+    /*
+     * Check for surrogate
      */
     if ((a & 0xfc00) == 0xd800)
     {
@@ -683,7 +685,7 @@ FcUtf16Len (const FcChar8   *string,
     int		clen;
     FcChar32	c;
     FcChar32	max;
-    
+
     n = 0;
     max = 0;
     while (len)
@@ -835,7 +837,7 @@ FcChar8 *
 FcStrCopyFilename (const FcChar8 *s)
 {
     FcChar8 *new;
-    
+
     if (*s == '~')
     {
 	FcChar8	*home = FcConfigHome ();
@@ -875,7 +877,7 @@ FcStrLastSlash (const FcChar8  *path)
 
     return slash;
 }
-  
+
 FcChar8 *
 FcStrDirname (const FcChar8 *file)
 {
@@ -954,10 +956,10 @@ FcStrCanonAbsoluteFilename (const FcChar8 *s)
     }
     return file;
 }
- 
+
 #ifdef _WIN32
 /*
- * Convert '\\' to '/' , remove double '/' 
+ * Convert '\\' to '/' , remove double '/'
  */
 static void
 FcConvertDosPath (char *str)
@@ -998,22 +1000,11 @@ FcStrCanonFilename (const FcChar8 *s)
 {
 #ifdef _WIN32
     FcChar8 full[FC_MAX_FILE_LEN + 2];
-#if defined(MIKTEX)
-    wchar_t wbuf1[FC_MAX_FILE_LEN + 2];
-    wchar_t wbuf2[FC_MAX_FILE_LEN + 2];
-    if (_wfullpath(wbuf1, miktex_utf8_to_wide_char(s, FC_MAX_FILE_LEN + 2, wbuf2), FC_MAX_FILE_LEN + 2) == 0)
-    {
-      // fixme
-      return (0);
-    }
-    miktex_wide_char_to_utf8(wbuf1, FC_MAX_FILE_LEN + 2, full);
-#else
     int size = GetFullPathName (s, sizeof (full) -1,
 				full, NULL);
 
     if (size == 0)
 	perror ("GetFullPathName");
-#endif
 
     FcConvertDosPath (full);
     return FcStrCanonAbsoluteFilename (full);
@@ -1146,7 +1137,7 @@ FcStrSetDel (FcStrSet *set, const FcChar8 *s)
 	     * copy remaining string pointers and trailing
 	     * NULL
 	     */
-	    memmove (&set->strs[i], &set->strs[i+1], 
+	    memmove (&set->strs[i], &set->strs[i+1],
 		     (set->num - i) * sizeof (FcChar8 *));
 	    set->num--;
 	    return FcTrue;
@@ -1160,7 +1151,7 @@ FcStrSetDestroy (FcStrSet *set)
     if (--set->ref == 0)
     {
 	int	i;
-    
+
 	for (i = 0; i < set->num; i++)
 	    FcStrFree (set->strs[i]);
 	if (set->strs)

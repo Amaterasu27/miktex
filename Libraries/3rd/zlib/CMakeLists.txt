@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -34,29 +34,30 @@ endif()
 hide_symbols()
 
 set(${zlib_dll_name}_sources
-  adler32.c
-  compress.c
-  crc32.c
-  crc32.h
-  deflate.c
-  deflate.h
-  gzio.c
-  infback.c
-  inffast.c
-  inffast.h
-  inffixed.h
-  inflate.c
-  inflate.h
-  inftrees.c
-  inftrees.h
-  trees.c
-  trees.h
-  uncompr.c
-  zconf.h
-  zlib-version.h
-  zlib.h
-  zutil.c
-  zutil.h
+    adler32.c
+    compress.c
+    crc32.c
+    crc32.h
+    deflate.c
+    deflate.h
+    gzclose.c
+    gzguts.h
+    gzlib.c
+    gzread.c
+    gzwrite.c
+    infback.c
+    inffast.c
+    inffast.h
+    inffixed.h
+    inflate.c
+    inflate.h
+    inftrees.c
+    inftrees.h
+    trees.c
+    trees.h
+    uncompr.c
+    zutil.c
+    zutil.h
 )
 
 if(NATIVE_WINDOWS)

@@ -18,11 +18,9 @@ Description: Contains the implementation of the FontFace class.
 #include <functional>
 #ifdef _MSC_VER
 #pragma hdrstop
+#pragma warning (disable: 4706) // assignment within conditional expression
 #endif
 // any other headers (not precompiled)
-
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -279,10 +277,10 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		if (vbName[lnNameOff + 1] == (unsigned char)0xF0) // 1 - Unicode id is big endian
 			ReturnResult(kresFail);
 	}
-	if (!TtfUtil::SwapWString(vbName.Begin() + lnNameOff, lnNameSz / isizeof(utf16)))
+	if (!TtfUtil::SwapWString(vbName.Begin() + lnNameOff, lnNameSz / sizeof(utf16)))
 		ReturnResult(kresFail);
 
-	m_stuFaceName = std::wstring((utf16 *)(vbName.begin() + lnNameOff), lnNameSz / isizeof(utf16));
+	m_stuFaceName = std::wstring((utf16 *)(vbName.begin() + lnNameOff), lnNameSz / sizeof(utf16));
 	****/
 
 	// Silf
@@ -378,7 +376,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		// Parse the "Silf" table.
 		grstrm.OpenBuffer((const byte*)pSilfTbl, cbSilfSz);
 		int chwGlyphIDMax, fxdVersion;
-		bool f = ReadSilfTable(grstrm, 0, 0, &chwGlyphIDMax, &fxdVersion);
+		bool f = ReadSilfTable(grstrm, 0, 0, cbSilfSz, &chwGlyphIDMax, &fxdVersion);
 		grstrm.Close();
 		if (!f)
 		{
@@ -418,7 +416,7 @@ GrResult GrEngine::ReadFontTables(Font * pfont, bool fItalic)
 		//	Parse the "Sill" table.
 		if (pSillTbl)
 		{
-			grstrm.OpenBuffer((const byte *)pSillTbl, cbFeatSz);
+			grstrm.OpenBuffer((const byte *)pSillTbl, cbSillSz);
 			f = ReadSillTable(grstrm, 0);
 			grstrm.Close();
 			if (!f)

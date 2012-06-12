@@ -13,6 +13,8 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/x64/${freetype_dll_name}.dll
+texmf/miktex/bin/x64/getafm.exe
+texmf/miktex/bin/x64/t1asm.exe
 texmf/miktex/bin/x64/ttf2pfb.exe
 texmf/miktex/bin/x64/ttf2pk.exe
 texmf/miktex/bin/x64/ttf2tfm.exe

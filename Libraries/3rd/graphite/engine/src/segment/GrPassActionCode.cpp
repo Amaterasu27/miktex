@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -632,8 +630,13 @@ GrPass::StackMachineFlag GrPass::CheckStack(std::vector<int> & vnStack, int cn)
 /*----------------------------------------------------------------------------------------------
 	We are finished processing a slot; go on to the next slot, or possibly go backwards.
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoNext(GrTableManager * ptman,
-	int cslot, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
+void GrPass::DoNext(GrTableManager * /*ptman*/,
+#ifdef NDEBUG
+    int,
+#else
+	int cslot, 
+#endif
+    GrSlotStream * /*psstrmIn*/, GrSlotStream * /*psstrmOut*/)
 {
 	gAssert(cslot == 1);	// for now anyway
 }
@@ -690,6 +693,7 @@ void GrPass::DoPutGlyph(GrTableManager * ptman, bool fInserting, int nReplacemen
 		psstrmOut->SetSegMinToWritePos(false);
 	if (fSetSegLim)
 		psstrmOut->SetSegLimToWritePos(false);
+	//gid16 chw; chw = pslotNew->GlyphID();
 	psstrmOut->NextPut(pslotNew);
 }
 
@@ -729,6 +733,7 @@ void GrPass::DoPutCopy(GrTableManager * ptman, bool fInserting, int cslotCopyFro
 		psstrmOut->SetSegMinToWritePos(false);
 	if (fSetSegLim)
 		psstrmOut->SetSegLimToWritePos(false);
+	//gid16 chw; chw = pslotNew->GlyphID();
 	psstrmOut->NextPut(pslotNew);
 }
 
@@ -825,7 +830,7 @@ void GrPass::DoPutSubs2(GrTableManager * ptman, bool fInserting,
 	@param psstrmIn / Out		- input/output streams
 ----------------------------------------------------------------------------------------------*/
 void GrPass::DoPutSubs3(GrTableManager * ptman, bool fInserting,
-	int cslotSel1, int nSelClass1, int cslotSel2, int nSelClass2, int cslotSel3, int nSelClass3,
+	int cslotSel1, int nSelClass1, int cslotSel2, int nSelClass2, int /*cslotSel3*/, int nSelClass3,
 	int nReplacementClass,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -888,7 +893,7 @@ void GrPass::DoPutSubsInit(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut, bo
 	Common part of all the DoPutSubs... methods.
 ----------------------------------------------------------------------------------------------*/
 void GrPass::DoPutSubsAux(GrTableManager * ptman, bool fInserting, gid16 nGlyphReplacement,
-	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut, GrSlotState * pslotNextInput,
+	GrSlotStream * /*psstrmIn*/, GrSlotStream * psstrmOut, GrSlotState * pslotNextInput,
 	bool fAtSegMin, bool fAtSegLim)
 {
 	EngineState * pengst = ptman->State();
@@ -915,6 +920,7 @@ void GrPass::DoPutSubsAux(GrTableManager * ptman, bool fInserting, gid16 nGlyphR
 		psstrmOut->SetSegMinToWritePos(false);
 	if (fSetSegLim)
 		psstrmOut->SetSegLimToWritePos(false);
+	//gid16 chw; chw = pslotNew->GlyphID();
 	psstrmOut->NextPut(pslotNew);
 }
 
@@ -924,7 +930,7 @@ void GrPass::DoPutSubsAux(GrTableManager * ptman, bool fInserting, gid16 nGlyphR
 	and its after-assoc to the slot before it. This makes it basically unselectable.
 	OBSOLETE - handled by slot initialization code
 ----------------------------------------------------------------------------------------------*/
-void GrPass::SetNeutralAssocs(GrSlotState * pslotNew, GrSlotStream * psstrmIn)
+void GrPass::SetNeutralAssocs(GrSlotState * pslotNew, GrSlotStream * /*psstrmIn*/)
 {
 	pslotNew->ClearAssocs();
 }
@@ -943,6 +949,7 @@ void GrPass::DoDelete(GrTableManager * ptman, GrSlotStream * psstrmIn, GrSlotStr
 		psstrmOut->SetSegLimToWritePos();
 
 	GrSlotState * pslot = psstrmIn->NextGet();
+	//gid16 chw; chw = pslotNew->GlyphID();
 	pslot->MarkDeleted();
 
 	if (ptman->LoggingTransduction())
@@ -957,7 +964,7 @@ void GrPass::DoDelete(GrTableManager * ptman, GrSlotStream * psstrmIn, GrSlotStr
 	@param fInserting			- whether current slot was inserted
 	@param psstrmIn / Out		- input/output streams
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoAssoc(int cnAssocs, std::vector<int> & vnAssocs, bool fInserting,
+void GrPass::DoAssoc(int cnAssocs, std::vector<int> & vnAssocs, bool /*fInserting*/,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
 	gAssert((unsigned)cnAssocs == vnAssocs.size());
@@ -997,7 +1004,11 @@ void GrPass::DoAssoc(int cnAssocs, std::vector<int> & vnAssocs, bool fInserting,
 	@param vnStack				- stack to read value from
 	@param psstrmIn / Out		- input/output streams
 ----------------------------------------------------------------------------------------------*/
+#ifdef NDEBUG
+void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool /*fInserting*/,
+#else
 void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting,
+#endif
 	SlotAttrName slat, int slati, std::vector<int> & vnStack,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -1072,6 +1083,8 @@ void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting
 		case kslatAttLevel:		nOldVal = pslotIn->AttachLevel();		break;
 		case kslatBreak:		nOldVal = pslotIn->BreakWeight();		break;
 		case kslatDir:			nOldVal = pslotIn->Directionality();	break;
+
+		case kslatSegsplit:		nOldVal = 0;	break;
 
 		default:
 			//	Kind of attribute that it makes no sense to increment.
@@ -1168,7 +1181,9 @@ void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting
 
 	case kslatBreak:		pslotOut->SetBreakWeight(nVal);				break;
 	case kslatDir:			pslotOut->SetDirectionality(DirCode(nVal)); break;
-	case kslatInsert:		pslotOut->SetInsertBefore(bool(nVal));		break;
+    case kslatInsert:		pslotOut->SetInsertBefore((nVal != 0)? true : false);		break;
+
+	case kslatSegsplit:		break;	// not handled
 
 	case kslatNoEffect:
 		// Do nothing.
@@ -1192,7 +1207,7 @@ void GrPass::DoSetAttr(GrTableManager * ptman, ActionCommand op, bool fInserting
 	@param psstrmIn				- input stream
 ----------------------------------------------------------------------------------------------*/
 void GrPass::DoPushSlotAttr(GrTableManager * ptman,
-	int nSlotRef, bool fInserting,
+	int nSlotRef, bool /*fInserting*/,
 	SlotAttrName slat, int slati, std::vector<int> & vnStack,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -1231,21 +1246,21 @@ void GrPass::DoPushSlotAttr(GrTableManager * ptman,
 	case kslatShiftX:		nVal = pslot->ShiftX();				break;
 	case kslatShiftY:		nVal = pslot->ShiftY();				break;
 
-	case kslatPosX:	pslot->Position(ptman, psstrmIn, &nVal, &xyBogus); 	break;
-	case kslatPosY:	pslot->Position(ptman, psstrmIn, &xyBogus, &nVal); 	break;
+	case kslatPosX:			pslot->Position(ptman, psstrmIn, &nVal, &xyBogus); 	break;
+	case kslatPosY:			pslot->Position(ptman, psstrmIn, &xyBogus, &nVal); 	break;
 
 	case kslatAttTo:		nVal = pslot->AttachTo();			break;
 	case kslatAttLevel:		nVal = pslot->AttachLevel();		break;
-	case kslatAttAtX:		nVal = pslot->AttachAtX(ptman, psstrmIn); break;
 	case kslatAttAtY:		nVal = pslot->AttachAtY();			break;
 	case kslatAttAtGpt:		nVal = pslot->AttachAtGpoint();		break;
 	case kslatAttAtXoff:	nVal = pslot->AttachAtXOffset();	break;
 	case kslatAttAtYoff:	nVal = pslot->AttachAtYOffset();	break;
-	case kslatAttWithX:		nVal = pslot->AttachWithX(ptman, psstrmIn); break;
 	case kslatAttWithY:		nVal = pslot->AttachWithY();		break;
 	case kslatAttWithGpt:	nVal = pslot->AttachWithGpoint();	break;
 	case kslatAttWithXoff:	nVal = pslot->AttachWithXOffset();	break;
 	case kslatAttWithYoff:	nVal = pslot->AttachWithYOffset();	break;
+	case kslatAttAtX:		nVal = pslot->AttachAtX(ptman, psstrmIn);	break;
+	case kslatAttWithX:		nVal = pslot->AttachWithX(ptman, psstrmIn);	break;
 
 	case kslatMeasureSol:	nVal = pslot->MeasureSol();			break;
 	case kslatMeasureEol:	nVal = pslot->MeasureEol();			break;
@@ -1259,6 +1274,8 @@ void GrPass::DoPushSlotAttr(GrTableManager * ptman,
 	case kslatBreak:		nVal = pslot->BreakWeight();		break;
 	case kslatDir:			nVal = pslot->Directionality();		break;
 	case kslatInsert:		nVal = pslot->InsertBefore();		break;
+
+	case kslatSegsplit:		nVal = 0;							break;	// not used in this engine
 
 	case kslatUserDefn:		nVal = pslot->UserDefn(slati);		break;
 
@@ -1282,7 +1299,7 @@ void GrPass::DoPushSlotAttr(GrTableManager * ptman,
 	@param vnStack				- stack to push onto
 	@param psstrmIn				- input stream
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoPushGlyphAttr(GrTableManager * ptman, int nSlotRef, bool fInserting,
+void GrPass::DoPushGlyphAttr(GrTableManager * ptman, int nSlotRef, bool /*fInserting*/,
 	int nGlyphAttr,
 	std::vector<int> & vnStack, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -1307,7 +1324,7 @@ void GrPass::DoPushGlyphAttr(GrTableManager * ptman, int nSlotRef, bool fInserti
 	@param vnStack				- stack to push onto
 	@param psstrmIn				- input stream
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoPushAttToGlyphAttr(GrTableManager * ptman, int nSlotRef, bool fInserting,
+void GrPass::DoPushAttToGlyphAttr(GrTableManager * ptman, int nSlotRef, bool /*fInserting*/,
 	int nGlyphAttr, std::vector<int> & vnStack,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -1337,7 +1354,7 @@ void GrPass::DoPushAttToGlyphAttr(GrTableManager * ptman, int nSlotRef, bool fIn
 	@param vnStack				- stack to push onto
 	@param psstrmIn				- input stream
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoPushGlyphMetric(GrTableManager * ptman, int nSlotRef, bool fInserting,
+void GrPass::DoPushGlyphMetric(GrTableManager * ptman, int nSlotRef, bool /*fInserting*/,
 	int nGlyphAttr, int nAttLevel,
 	std::vector<int> & vnStack, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
@@ -1364,7 +1381,7 @@ void GrPass::DoPushGlyphMetric(GrTableManager * ptman, int nSlotRef, bool fInser
 	@param psstrmIn				- input stream
 	@param psstrmOut			- output stream
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoPushAttToGlyphMetric(GrTableManager * ptman, int nSlotRef, bool fInserting,
+void GrPass::DoPushAttToGlyphMetric(GrTableManager * ptman, int nSlotRef, bool /*fInserting*/,
 	int nGlyphAttr, int nAttLevel,
 	std::vector<int> & vnStack,
 	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
@@ -1399,7 +1416,7 @@ void GrPass::DoPushGlyphMetricAux(GrTableManager * ptman,
 	}
 	else
 	{
-		pslot->CalcCompositeMetrics(ptman, psstrmIn, nAttLevel, true);
+		pslot->CalcCompositeMetrics(ptman, psstrmIn, NULL, nAttLevel, true);
 
 		float xy;
 		switch (gmet)
@@ -1435,7 +1452,11 @@ void GrPass::DoPushGlyphMetricAux(GrTableManager * ptman,
 	@param psstrmIn				- input stream
 	@param psstrmOut			- output stream
 ----------------------------------------------------------------------------------------------*/
-void GrPass::DoPushFeatValue(GrTableManager * ptman, int nSlotRef, bool fInserting,
+#ifdef NDEBUG
+void GrPass::DoPushFeatValue(GrTableManager * /*ptman*/, int nSlotRef, bool /*fInserting*/,
+#else
+void GrPass::DoPushFeatValue(GrTableManager * /*ptman*/, int nSlotRef, bool fInserting,
+#endif
 	int nFeat, std::vector<int> & vnStack, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
 {
 	gAssert(!fInserting);

@@ -19,6 +19,8 @@ Description:
 #pragma hdrstop
 // any other headers (not precompiled)
 
+#include "GrDebug.h"
+
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
@@ -70,6 +72,7 @@ WinFont::WinFont(HDC hdc)
 	// But don't store m_hfont, because we don't really "own" it; the client is
 	// responsible for releasing it.
 	m_hfont = 0;
+    m_pGlyphMetricMap = NULL;
 	memset(&m_fpropSet, 0, sizeof(m_fpropSet));
 
 	m_pbCmapTbl = NULL;
@@ -196,6 +199,7 @@ WinFont::WinFont(WinFont & font)
 	m_hdc = 0;
 	m_hfont = 0;
 	m_hfontClient = 0;
+    m_pGlyphMetricMap = NULL;
 	memset(&m_fpropSet, 0, sizeof(FontProps));
 
 	m_pbCmapTbl = NULL;
@@ -408,7 +412,7 @@ void WinFont::getGlyphPoint(gid16 gid, unsigned int nPoint, gr::Point & xyReturn
 					if (pPolyCurve->wType == TT_PRIM_QSPLINE &&
 						// test if this is the last curve
 						pPolyHdr->cb - (int)((byte *)(&pPolyCurve->apfx[j]) - (byte *)(pPolyHdr))
-							== sizeof POINTFX &&
+							== sizeof (POINTFX) &&
 						// and the two points are identical
 						CompareFixed(pPolyCurve->apfx[j].x, pPolyHdr->pfxStart.x) &&
 						CompareFixed(pPolyCurve->apfx[j].y, pPolyHdr->pfxStart.y))
@@ -457,6 +461,16 @@ void WinFont::getGlyphPoint(gid16 gid, unsigned int nPoint, gr::Point & xyReturn
 ----------------------------------------------------------------------------------------------*/
 void WinFont::getGlyphMetrics(gid16 chw, gr::Rect & boundingBox, gr::Point & advances)
 {
+    if (m_pGlyphMetricMap)
+    {
+        GlyphMetricMap::iterator i = m_pGlyphMetricMap->find(chw);
+        if (i != m_pGlyphMetricMap->end())
+        {
+            boundingBox = i->second.first;
+            advances = i->second.second;
+            return;
+        }
+    }
 	GLYPHMETRICS gm;
 	const MAT2 mat2 = {{0,1}, {0,0}, {0,0}, {0,1}};
 	if (GDI_ERROR == ::GetGlyphOutline(m_hdc, chw, GGO_GLYPH_INDEX | GGO_METRICS,
@@ -474,6 +488,10 @@ void WinFont::getGlyphMetrics(gid16 chw, gr::Rect & boundingBox, gr::Point & adv
 	boundingBox.bottom = (float)gm.gmptGlyphOrigin.y - gm.gmBlackBoxY;
 	advances.x = gm.gmCellIncX;
 	advances.y = gm.gmCellIncY;
+    if (m_pGlyphMetricMap)
+    {
+        (*m_pGlyphMetricMap)[chw] = std::pair<gr::Rect,gr::Point>(boundingBox, advances);
+    }
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -570,7 +588,7 @@ GrResult WinFont::SetInternalFont(unsigned long clrFore, unsigned long clrBack)
 		// the font we want is different (except we don't care about color)
 		|| memcmp(((byte *)&m_fpropDef) + cbFontOffset,
 					((byte *)&m_fpropSet) + cbFontOffset,
-					isizeof(FontProps) - cbFontOffset))
+					sizeof(FontProps) - cbFontOffset))
 	{
 		// Change the font.
 		Assert(!m_hfont || m_hfont == m_hfontClient);
@@ -618,7 +636,10 @@ GrResult WinFont::SetInternalFont(unsigned long clrFore, unsigned long clrBack)
 
 		static int cCreateFontCalls = 0;
 		static int cCreateFontZero = 0;
-		HFONT hfont = g_fhc.GetFont(lf);
+        FontHandleCache::FontCacheValue cache = g_fhc.GetCache(lf);
+        HFONT hfont = cache.hfont;
+        m_pGlyphMetricMap = cache.pGlyphMetricMap;
+		//HFONT hfont = g_fhc.GetFont(lf);
 		//char ch1[200];
 		//if (hfont == 0)
 		//{
@@ -731,7 +752,7 @@ WinFont::FontHandleCache::~FontHandleCache()
 	@param lf LOGFONT value that describes the desired font
 	@return Font handle
 ----------------------------------------------------------------------------------------------*/
-HFONT WinFont::FontHandleCache::GetFont(LOGFONT & lf)
+WinFont::FontHandleCache::FontCacheValue WinFont::FontHandleCache::GetCache(LOGFONT & lf)
 {
 	FontCacheValue fcv;
 	FontHandleHashMap::iterator itFound = m_hmlffcv.find(lf);
@@ -752,11 +773,12 @@ HFONT WinFont::FontHandleCache::GetFont(LOGFONT & lf)
 			THROW(kresFail);
 
 		fcv.nRefs = 1;
+        fcv.pGlyphMetricMap = new GlyphMetricMap();
 
 		m_hmlffcv.insert(std::pair<LOGFONT, FontCacheValue>(lf, fcv));
 	}
 
-	return fcv.hfont;
+	return fcv;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -782,6 +804,8 @@ void WinFont::FontHandleCache::DeleteFont(HFONT hfont)
 			{
 				// delete font
 				::DeleteObject(hfont);
+                if (fcv.pGlyphMetricMap)
+                    delete fcv.pGlyphMetricMap;
 				m_hmlffcv.erase(it);
 			}
 			else
@@ -832,7 +856,8 @@ size_t WinFont::LogFontHashFuncs::operator() (const WinFont::LogFontWrapper & ke
 bool WinFont::LogFontHashFuncs::operator() (const WinFont::LogFontWrapper & key1,
 	const WinFont::LogFontWrapper & key2) const
 {
-	return (key1 == key2);
+    // return true if key1 should be ordered before key2
+    return (operator()(key1) < operator()(key2));
 }
 
 /*--------------------------------------------------------------------------------------
@@ -846,8 +871,7 @@ bool WinFont::LogFontWrapper::operator==(const WinFont::LogFontWrapper & lfw) co
 
 } // namespace gr
 
-template stdext::hash_map<
+template class stdext::hash_map<
 	gr::WinFont::LogFontWrapper,
 	gr::WinFont::FontHandleCache::FontCacheValue,
 	gr::WinFont::LogFontHashFuncs>;
-

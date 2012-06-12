@@ -24,11 +24,11 @@ typedef wchar_t  OLECHAR;
 
 typedef signed long	    HRESULT;
 
-inline const long InterlockedIncrement(long *const intr_lck) {
+inline long InterlockedIncrement(long *const intr_lck) {
 	return ++*intr_lck;
 }
 
-inline const long InterlockedDecrement(long *const intr_lck) {
+inline long InterlockedDecrement(long *const intr_lck) {
 	return --*intr_lck;
 }
 

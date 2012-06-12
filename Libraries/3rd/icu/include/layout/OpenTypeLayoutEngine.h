@@ -176,7 +176,6 @@ protected:
      * @internal
      */
     const FeatureMap *fFeatureMap;
-    const le_int32 *fFeatureParamList;
 
     /**
      * The length of the feature map.
@@ -193,6 +192,13 @@ protected:
      * @internal
      */
     le_bool fFeatureOrder;
+
+    /**
+     * The list of what? FIXME..
+     *
+     * @internal
+     */
+    const le_int32 *fFeatureParamList;
 
     /**
      * The address of the GSUB table.

@@ -1,6 +1,6 @@
 /* graphite-engine-version.h:					-*- C++ -*-
 
-   Copyright (C) 2007-2010 Christian Schenk
+   Copyright (C) 2007-2012 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 3812
-#define MIKTEX_COMP_ORIG_VERSION_STR "2.3.1 texlive svn 17602"
+#define MIKTEX_COMP_J2000_VERSION 4522
+#define MIKTEX_COMP_ORIG_VERSION_STR "2.4"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1999-2008, SIL International"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1999-2008, SIL International"

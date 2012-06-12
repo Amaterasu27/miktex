@@ -893,9 +893,9 @@ static struct option dvitomp_options[]
 {
 char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "\n" "This is dvitomp %s\n", s);
+  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION "\n", s);
 else
-  fprintf(stdout, "\n" "This is MetaPost %s\n", s);
+  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION "\n", s);
 mpost_xfree(s);
 fprintf(stdout,
 "\n"
@@ -943,9 +943,9 @@ fprintf(stdout,
 {
 char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "\n" "This is dvitomp %s\n", s);
+  fprintf(stdout, "This is dvitomp %s" WEB2CVERSION "\n", s);
 else
-  fprintf(stdout, "\n" "This is MetaPost %s\n", s);
+  fprintf(stdout, "This is MetaPost %s" WEB2CVERSION "\n", s);
 mpost_xfree(s);
 fprintf(stdout,
 "\n"
@@ -970,9 +970,9 @@ fprintf(stdout,
 {
   char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "\n" "dvitomp (MetaPost) %s\n", s);
+  fprintf(stdout, "dvitomp (MetaPost) %s" WEB2CVERSION "\n", s);
 else
-  fprintf(stdout, "\n" "MetaPost %s\n", s);
+  fprintf(stdout, "MetaPost %s" WEB2CVERSION "\n", s);
 fprintf(stdout, 
 "The MetaPost source code in the public domain.\n"
 "MetaPost also uses code available under the\n"

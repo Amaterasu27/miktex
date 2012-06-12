@@ -27,9 +27,6 @@ Description:
 #include <stdlib.h>
 #endif
 
-#undef THIS_FILE
-DEFINE_THIS_FILE
-
 //:>********************************************************************************************
 //:>	   Forward declarations
 //:>********************************************************************************************
@@ -247,8 +244,7 @@ GlyphIterator::GlyphIterator(const GlyphSetIterator & sit)
 GlyphSetIterator::reference GlyphSetIterator::operator*() const
 {
 	assert(m_pseg != 0);
-	assert(m_vit != std::vector<int>::const_iterator());
-														// in the case of a non-contiguous list
+
 	return m_pseg->m_prgginf[(*m_vit) - m_pseg->m_isloutGinf0];
 }
 

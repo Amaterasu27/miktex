@@ -3,6 +3,7 @@
  *  This file is part of
  *	MakeIndex - A formatter and format independent index processor
  *
+ *  Copyright (C) 1998-2011 by the TeX Live project.
  *  Copyright (C) 1989 by Chen & Harrison International Systems, Inc.
  *  Copyright (C) 1988 by Olivetti Research Center
  *  Copyright (C) 1987 by Regents of the University of California
@@ -12,7 +13,6 @@
  *	Chen & Harrison International Systems, Inc.
  *	Palo Alto, California
  *	USA
- *	(phc@renoir.berkeley.edu or chen@orc.olivetti.com)
  *
  *  Contributors:
  *	Please refer to the CONTRIB file that comes with this release
@@ -126,8 +126,14 @@ make_entry(int n)
 		break;
 	if (level < FIELD_MAX)
 	    new_entry();
-	else
+
+        /* Repeat test from just below to see if we are already in an
+           open range.  If so, we don't want to output anything.  (It
+           ends up being output as an erroneous \(.  See
+           tests/nested-range-bb.tex.)  */           
+	else if (! (*curr->encap == idx_ropen && in_range)) {
 	    old_entry();
+	}
     }
 
     if (*curr->encap == idx_ropen)
@@ -222,7 +228,7 @@ static unsigned char
 first_letter(char *term)
 {
     if (thai_sort)
-        return strchr("אבגדה", term[0]) ? term[1] : term[0];
+        return strchr("\340\341\342\343\344", term[0]) ? term[1] : term[0];
 
     return TOLOWER(term[0]);
 }

@@ -1,6 +1,6 @@
 % printing.w
 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -18,8 +18,8 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "lua/luatex-api.h"     /* for ptexbanner */
 #include "ptexlib.h"
+#include "lua/luatex-api.h"     /* for ptexbanner */
 
 static const char _svn_version[] =
     "$Id: printing.w 3885 2010-09-14 19:24:08Z oneiros $"
@@ -360,11 +360,11 @@ void print_banner(const char *v, int e, int ver)
     int callback_id;
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
-        if (ver < 0)
-            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
-        else
-            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
-                    ver);
+#if defined(MIKTEX)
+        fprintf(term_out, "This is LuaTeX, Version %s-%d (%s) ", v, e, MIKTEX_BANNER_STR);
+#else
+        fprintf(term_out, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
+#endif
         if (format_ident > 0)
             slow_print(format_ident);
         print_ln();
@@ -389,10 +389,11 @@ void log_banner(const char *v, int e, int ver)
     unsigned month = (unsigned) int_par(month_code);
     if (month > 12)
         month = 0;
-    if (ver < 0)
-        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
-    else
-        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
+#if defined(MIKTEX)
+    fprintf(log_file, "This is LuaTeX, Version %s-%d (%s) ", v, e, MIKTEX_BANNER_STR);
+#else
+    fprintf(log_file, "This is LuaTeX, Version %s-%d" WEB2CVERSION, v, e);
+#endif
     slow_print(format_ident);
     print_char(' ');
     print_char(' ');
@@ -946,7 +947,7 @@ void print_file_line(void)
         if (level == in_open)
             print_int(line);
         else
-            print_int(line_stack[iindex + 1 - (in_open - level)]);
+            print_int(line_stack[level + 1]);
         tprint(": ");
     }
 }

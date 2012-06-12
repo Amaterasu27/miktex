@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_LIB_SETUP_H
-#define HEADER_CURL_LIB_SETUP_H
+#ifndef HEADER_CURL_SETUP_H
+#define HEADER_CURL_SETUP_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -26,7 +26,8 @@
  * Define WIN32 when build target is Win32 API
  */
 
-#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32) && !defined(__SYMBIAN32__)
+#if (defined(_WIN32) || defined(__WIN32__)) && !defined(WIN32) && \
+    !defined(__SYMBIAN32__)
 #define WIN32
 #endif
 
@@ -53,8 +54,12 @@
 #  include "config-mac.h"
 #endif
 
+#ifdef __riscos__
+#  include "config-riscos.h"
+#endif
+
 #ifdef __AMIGA__
-#  include "amigaos.h"
+#  include "config-amigaos.h"
 #endif
 
 #ifdef __SYMBIAN32__
@@ -162,13 +167,27 @@
  */
 
 #ifdef HTTP_ONLY
-#  define CURL_DISABLE_TFTP
-#  define CURL_DISABLE_FTP
-#  define CURL_DISABLE_LDAP
-#  define CURL_DISABLE_TELNET
-#  define CURL_DISABLE_DICT
-#  define CURL_DISABLE_FILE
-#  define CURL_DISABLE_RTSP
+#  ifndef CURL_DISABLE_TFTP
+#    define CURL_DISABLE_TFTP
+#  endif
+#  ifndef CURL_DISABLE_FTP
+#    define CURL_DISABLE_FTP
+#  endif
+#  ifndef CURL_DISABLE_LDAP
+#    define CURL_DISABLE_LDAP
+#  endif
+#  ifndef CURL_DISABLE_TELNET
+#    define CURL_DISABLE_TELNET
+#  endif
+#  ifndef CURL_DISABLE_DICT
+#    define CURL_DISABLE_DICT
+#  endif
+#  ifndef CURL_DISABLE_FILE
+#    define CURL_DISABLE_FILE
+#  endif
+#  ifndef CURL_DISABLE_RTSP
+#    define CURL_DISABLE_RTSP
+#  endif
 #endif
 
 /*
@@ -236,6 +255,12 @@
 #  endif
 #endif
 
+#ifdef USE_LWIPSOCK
+#  include <lwip/init.h>
+#  include <lwip/sockets.h>
+#  include <lwip/netdb.h>
+#endif
+
 #ifdef HAVE_EXTRA_STRICMP_H
 #  include <extra/stricmp.h>
 #endif
@@ -260,11 +285,20 @@
 #  include <ioLib.h>      /* for basic I/O interface functions */
 #endif
 
+#ifdef __AMIGA__
+#  ifndef __ixemul__
+#    include <exec/types.h>
+#    include <exec/execbase.h>
+#    include <proto/exec.h>
+#    include <proto/dos.h>
+#    define select(a,b,c,d,e) WaitSelect(a,b,c,d,e,0)
+#  endif
+#endif
+
 #include <stdio.h>
 #ifdef HAVE_ASSERT_H
 #include <assert.h>
 #endif
-#include <errno.h>
 
 #ifdef __TANDEM /* for nsr-tandem-nsk systems */
 #include <floss.h>
@@ -299,6 +333,7 @@
 #  include <io.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  undef  lseek
 #  define lseek(fdes,offset,whence)  _lseeki64(fdes, offset, whence)
 #  define fstat(fdes,stp)            _fstati64(fdes, stp)
 #  define stat(fname,stp)            _stati64(fname, stp)
@@ -314,6 +349,7 @@
 #  include <io.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  undef  lseek
 #  define lseek(fdes,offset,whence)  _lseek(fdes, (long)offset, whence)
 #  define fstat(fdes,stp)            _fstat(fdes, stp)
 #  define stat(fname,stp)            _stat(fname, stp)
@@ -353,6 +389,18 @@
 #  endif
 #  ifndef SIZEOF_OFF_T
 #    define SIZEOF_OFF_T 4
+#  endif
+#endif
+
+/*
+ * Arg 2 type for gethostname in case it hasn't been defined in config file.
+ */
+
+#ifndef GETHOSTNAME_TYPE_ARG2
+#  ifdef USE_WINSOCK
+#    define GETHOSTNAME_TYPE_ARG2 int
+#  else
+#    define GETHOSTNAME_TYPE_ARG2 size_t
 #  endif
 #endif
 
@@ -453,6 +501,9 @@
 #ifdef USE_ARES
 #  define CURLRES_ASYNCH
 #  define CURLRES_ARES
+/* now undef the stock libc functions just to avoid them being used */
+#  undef HAVE_GETADDRINFO
+#  undef HAVE_GETHOSTBYNAME
 #elif defined(USE_THREADS_POSIX) || defined(USE_THREADS_WIN32)
 #  define CURLRES_ASYNCH
 #  define CURLRES_THREADED
@@ -497,7 +548,8 @@
 #if defined(_MSC_VER) && !defined(__POCC__)
 #  if !defined(HAVE_WINDOWS_H) || ((_MSC_VER < 1300) && !defined(_FILETIME_))
 #    if !defined(ALLOW_MSVC6_WITHOUT_PSDK)
-#      error MSVC 6.0 requires "February 2003 Platform SDK" a.k.a. "Windows Server 2003 PSDK"
+#      error MSVC 6.0 requires "February 2003 Platform SDK" a.k.a. \
+             "Windows Server 2003 PSDK"
 #    else
 #      define CURL_DISABLE_LDAP 1
 #    endif
@@ -525,12 +577,20 @@ int netware_init(void);
 
 #define LIBIDN_REQUIRED_VERSION "0.4.1"
 
-#if defined(USE_GNUTLS) || defined(USE_SSLEAY) || defined(USE_NSS) || defined(USE_QSOSSL) || defined(USE_POLARSSL)
+#if defined(USE_GNUTLS) || defined(USE_SSLEAY) || defined(USE_NSS) || \
+    defined(USE_QSOSSL) || defined(USE_POLARSSL) || defined(USE_AXTLS) || \
+    defined(USE_CYASSL)
 #define USE_SSL    /* SSL support has been enabled */
 #endif
 
+#if defined(HAVE_GSSAPI) || defined(USE_WINDOWS_SSPI)
+#define USE_HTTP_NEGOTIATE
+#endif
+
+/* Single point where USE_NTLM definition might be done */
 #if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_NTLM)
-#if defined(USE_SSLEAY) || defined(USE_WINDOWS_SSPI) || defined(USE_GNUTLS)
+#if defined(USE_SSLEAY) || defined(USE_WINDOWS_SSPI) || \
+   defined(USE_GNUTLS) || defined(USE_NSS)
 #define USE_NTLM
 #endif
 #endif
@@ -538,6 +598,24 @@ int netware_init(void);
 /* non-configure builds may define CURL_WANTS_CA_BUNDLE_ENV */
 #if defined(CURL_WANTS_CA_BUNDLE_ENV) && !defined(CURL_CA_BUNDLE)
 #define CURL_CA_BUNDLE getenv("CURL_CA_BUNDLE")
+#endif
+
+/* Define S_ISREG if not defined by system headers, f.e. MSVC */
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+
+/*
+ * Provide a mechanism to silence picky compilers, such as gcc 4.6+.
+ * Parameters should of course normally not be unused, but for example when
+ * we have multiple implementations of the same interface it may happen.
+ */
+
+#if defined(__GNUC__) && ((__GNUC__ >= 3) || \
+  ((__GNUC__ == 2) && defined(__GNUC_MINOR__) && (__GNUC_MINOR__ >= 7)))
+#  define UNUSED_PARAM __attribute__((__unused__))
+#else
+#  define UNUSED_PARAM /*NOTHING*/
 #endif
 
 /*
@@ -548,4 +626,36 @@ int netware_init(void);
 #include "setup_once.h"
 #endif
 
-#endif /* HEADER_CURL_LIB_SETUP_H */
+/*
+ * Definition of our NOP statement Object-like macro
+ */
+
+#ifndef Curl_nop_stmt
+#  define Curl_nop_stmt do { } WHILE_FALSE
+#endif
+
+/*
+ * Ensure that Winsock and lwIP TCP/IP stacks are not mixed.
+ */
+
+#if defined(__LWIP_OPT_H__)
+#  if defined(SOCKET) || \
+     defined(USE_WINSOCK) || \
+     defined(HAVE_WINSOCK_H) || \
+     defined(HAVE_WINSOCK2_H) || \
+     defined(HAVE_WS2TCPIP_H)
+#    error "Winsock and lwIP TCP/IP stack definitions shall not coexist!"
+#  endif
+#endif
+
+/*
+ * Portable symbolic names for Winsock shutdown() mode flags.
+ */
+
+#ifdef USE_WINSOCK
+#  define SHUT_RD   0x00
+#  define SHUT_WR   0x01
+#  define SHUT_RDWR 0x02
+#endif
+
+#endif /* HEADER_CURL_SETUP_H */

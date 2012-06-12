@@ -1,4 +1,4 @@
-% Copyright (c) 1996-2011 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
+% Copyright (c) 1996-2012 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
 % <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
@@ -15,7 +15,7 @@
 % You should have received a copy of the GNU General Public License along with
 % this program.  If not, see <http://www.gnu.org/licenses/>.
 
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -109,6 +109,7 @@
 %             some rearrangements to reduce interferences between
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
 %                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
+% Version 2.4 fixed an uninitialized line number bug, released in May 2012.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -289,15 +290,15 @@ helping to determine whether a particular implementation deserves to be
 known as `\eTeX'.
 
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".3" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.3' {current \eTeX\ version}
+@d eTeX_revision==".4" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.4' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="12" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.12' {current \pdfTeX\ version}
+@d pdftex_revision=="13" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.13' {current \pdfTeX\ version}
 @#
 @d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',eTeX_version_string,pdftex_version_string
    {printed when \pdfTeX\ starts}
@@ -5674,8 +5675,10 @@ that will be defined later.
 @d pdf_append_kern_code      = pdftex_first_integer_code + 23 {append kern before certain characters?}
 @d pdf_gen_tounicode_code    = pdftex_first_integer_code + 24 {generate ToUnicode for fonts?}
 @d pdf_draftmode_code        = pdftex_first_integer_code + 25 {switch on draftmode if positive}
-@d pdf_inclusion_copy_font_code     = pdftex_first_integer_code + 26 {generate ToUnicode for fonts?}
-@d pdf_int_pars=pdftex_first_integer_code + 27 {total number of \pdfTeX's integer parameters}
+@d pdf_inclusion_copy_font_code = pdftex_first_integer_code + 26 {generate ToUnicode for fonts?}
+@d pdf_suppress_warning_dup_dest_code    = pdftex_first_integer_code + 27 {suppress warning about duplicated destinations}
+@d pdf_suppress_warning_dup_map_code     = pdftex_first_integer_code + 28 {suppress warning about duplicated map lines}
+@d pdf_int_pars=pdftex_first_integer_code + 29 {total number of \pdfTeX's integer parameters}
 @#
 @d etex_int_base=pdf_int_pars {base for \eTeX's integer parameters}
 @d tracing_assigns_code=etex_int_base {show assignments}
@@ -5781,6 +5784,8 @@ that will be defined later.
 @d pdf_image_apply_gamma == int_par(pdf_image_apply_gamma_code)
 @d pdf_draftmode        == int_par(pdf_draftmode_code)
 @d pdf_inclusion_copy_font == int_par(pdf_inclusion_copy_font_code)
+@d pdf_suppress_warning_dup_dest == int_par(pdf_suppress_warning_dup_dest_code)
+@d pdf_suppress_warning_dup_map == int_par(pdf_suppress_warning_dup_map_code)
 @#
 @d tracing_assigns==int_par(tracing_assigns_code)
 @d tracing_groups==int_par(tracing_groups_code)
@@ -5882,7 +5887,9 @@ pdf_prepend_kern_code:    print_esc("pdfprependkern");
 pdf_append_kern_code:    print_esc("pdfappendkern");
 pdf_gen_tounicode_code:    print_esc("pdfgentounicode");
 pdf_draftmode_code:        print_esc("pdfdraftmode");
-pdf_inclusion_copy_font_code:    print_esc("pdfinclusioncopyfonts");
+pdf_inclusion_copy_font_code:   print_esc("pdfinclusioncopyfonts");
+pdf_suppress_warning_dup_dest_code:  print_esc("pdfsuppresswarningdupdest");
+pdf_suppress_warning_dup_map_code:   print_esc("pdfsuppresswarningdupmap");
 @/@<Cases for |print_param|@>@/
 othercases print("[unknown integer parameter!]")
 endcases;
@@ -6060,6 +6067,10 @@ primitive("pdfdraftmode",assign_int,int_base+pdf_draftmode_code);@/
 @!@:pdf_draftmode_}{\.{\\pdfdraftmode} primitive@>
 primitive("pdfinclusioncopyfonts",assign_int,int_base+pdf_inclusion_copy_font_code);@/
 @!@:pdf_inclusion_copy_font_}{\.{\\pdfinclusioncopyfonts} primitive@>
+primitive("pdfsuppresswarningdupdest",assign_int,int_base+pdf_suppress_warning_dup_dest_code);@/
+@!@:pdf_suppress_warning_dup_dest_}{\.{\\pdfsuppresswarningdupdest} primitive@>
+primitive("pdfsuppresswarningdupmap",assign_int,int_base+pdf_suppress_warning_dup_map_code);@/
+@!@:pdf_suppress_warning_dup_map_}{\.{\\pdfsuppresswarningdupmap} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
 assign_int: if chr_code<count_base then print_param(chr_code-int_base)
@@ -14977,6 +14988,12 @@ begin
     get_pdf_compress_level := pdf_compress_level;
 end;
 
+function get_pdf_suppress_warning_dup_map: integer;
+begin
+    get_pdf_suppress_warning_dup_map := pdf_suppress_warning_dup_map;
+end;
+
+
 function get_nullfont: internal_font_number;
 begin
     get_nullfont := null_font;
@@ -15192,7 +15209,7 @@ end
 @!pdf_file: byte_file; {the PDF output file}
 @!pdf_buf: ^eight_bits; {pointer to the PDF output buffer or PDF object stream buffer}
 @!pdf_buf_size: integer; {end of PDF output buffer or PDF object stream buffer}
-@!pdf_ptr: longinteger; {pointer to the first unused byte in the PDF buffer or object stream buffer}
+@!pdf_ptr: integer; {pointer to the first unused byte in the PDF buffer or object stream buffer}
 @!pdf_op_buf: ^eight_bits; {the PDF output buffer}
 @!pdf_os_buf: ^eight_bits; {the PDF object stream buffer}
 @!pdf_os_buf_size: integer; {current size of the PDF object stream buffer, grows dynamically}
@@ -34417,6 +34434,8 @@ with the same identifier already exists and give a warning if needed.
 @<Declare procedures needed in |pdf_hlist_out|, |pdf_vlist_out|@>=
 procedure warn_dest_dup(id: integer; byname: small_number; s1, s2: str_number);
 begin
+    if pdf_suppress_warning_dup_dest > 0 then
+        return;
     pdf_warning(s1, "destination with the same identifier (", false, false);
     if byname > 0 then begin
         print("name");
@@ -36045,7 +36064,7 @@ begin
         pdf_append_list(pdf_ximage_objnum(p))(pdf_ximage_list);
     if not is_pdf_image(image) then begin
         if is_png_image(image) then begin
-            groupref := image_group_ref(image);
+            groupref := get_image_group_ref(image);
             if (groupref > 0) and (pdf_page_group_val = 0) then 
                 pdf_page_group_val := groupref;
         end;
@@ -36060,9 +36079,14 @@ begin
     end
     else begin
         {for pdf images we generate the page group object number here}
-        groupref := image_group_ref(image); {this is only a flag whether page group is present}
-        if (groupref > 0) and (pdf_page_group_val = 0) then begin
-            pdf_page_group_val := pdf_new_objnum;
+        groupref := get_image_group_ref(image); {0: no group, -1: to be generated; >0: already written}
+        if (groupref <> 0) and (pdf_page_group_val = 0) then begin
+            if groupref = -1 then begin
+                pdf_page_group_val := pdf_new_objnum;
+                set_image_group_ref(image, pdf_page_group_val);
+            end
+            else { groupref > 0 }
+                pdf_page_group_val := groupref;
         end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], img_w), 6);
@@ -38261,7 +38285,7 @@ f:=cur_val
 procedure@?scan_normal_glue; forward;@t\2@>@/
 procedure@?scan_mu_glue; forward;@t\2@>
 
-@ Here we declare to trivial procedures in order to avoid mutually
+@ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
 @<Declare procedures needed for expressions@>=

@@ -273,32 +273,59 @@ public:
 	// Forward iterator requirements.
 	reference			operator*() const;
 	pointer				operator->() const		{ return &(operator*()); }
-	GlyphSetIterator &	operator++() throw()	{ ++m_vit; return *this; }
+	GlyphSetIterator &	operator++() throw()	{ assert(m_pseg); assert(m_qvislout); ++m_vit; return *this; }
 	GlyphSetIterator	operator++(int) throw()	{ GlyphSetIterator tmp = *this; operator++(); return tmp; }
 
 	// Bidirectional iterator requirements
-	GlyphSetIterator &	operator--() throw()	{ --m_vit; return *this; }
+	GlyphSetIterator &	operator--() throw()	{ assert(m_pseg); assert(m_qvislout); --m_vit; return *this; }
 	GlyphSetIterator	operator--(int) throw()	{ GlyphSetIterator tmp = *this; operator--(); return tmp; }
 
 	// Random access iterator requirements
 	reference			operator[](difference_type n) const			{ return *operator+(n); }
-	GlyphSetIterator &	operator+=(difference_type n) throw()		{ m_vit += n; return *this; }
+	GlyphSetIterator &	operator+=(difference_type n) throw()		{ assert(m_pseg); assert(m_qvislout); m_vit += n; return *this; }
 	GlyphSetIterator	operator+(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += n; }
 	GlyphSetIterator &	operator-=(difference_type n) throw()		{ operator+=(-n); return *this; }
 	GlyphSetIterator	operator-(difference_type n) const throw()	{ GlyphSetIterator r = *this; return r += -n; }
  
 	// Relational operators.
   	// Forward iterator requirements
-	bool operator==(const GlyphSetIterator & rhs) const throw()	{ return m_vit == rhs.m_vit; }
+	bool operator==(const GlyphSetIterator & rhs) const throw()
+	{
+		assert(m_pseg == rhs.m_pseg);
+		if (!m_pseg || !rhs.m_pseg)
+		{
+			// For an empty set, the range will be empty so any two iterators will be equal.
+			return true;
+		}
+		assert(m_qvislout == rhs.m_qvislout);
+		return (m_vit == rhs.m_vit);
+	}
 	bool operator!=(const GlyphSetIterator & rhs) const throw()	{ return !(*this == rhs); }
 
 	// Random access iterator requirements
-	bool operator<(const GlyphSetIterator & rhs) const throw()	{ return m_vit < rhs.m_vit; }
-	bool operator>(const GlyphSetIterator & rhs) const throw()	{ return m_vit > rhs.m_vit; }
+	bool operator<(const GlyphSetIterator & rhs) const throw()
+	{
+		assert(m_pseg == rhs.m_pseg);
+		if (!m_pseg || !rhs.m_pseg)
+		{
+			// For an empty set, the range will be empty so any two iterators will be equal.
+			return false;
+		}
+		assert(m_qvislout == rhs.m_qvislout);
+		return (m_vit < rhs.m_vit);
+	}
+	bool operator>(const GlyphSetIterator & rhs) const throw()	{ return rhs < *this; }
 	bool operator<=(const GlyphSetIterator & rhs) const throw()	{ return !(*this > rhs); }
 	bool operator>=(const GlyphSetIterator & rhs) const throw()	{ return !(*this < rhs); }
 
-	difference_type operator-(const GlyphSetIterator & rhs) const throw()	{ return m_vit - rhs.m_vit; }
+	difference_type operator-(const GlyphSetIterator & rhs) const throw()
+	{
+		assert(m_pseg == rhs.m_pseg);
+		if (!m_pseg || !rhs.m_pseg)
+			return 0;	// empty set
+		assert(m_qvislout == rhs.m_qvislout);
+		return (m_vit - rhs.m_vit);
+	}
 };
 
 inline GlyphSetIterator operator+(const GlyphSetIterator::difference_type n, const GlyphSetIterator & rhs)

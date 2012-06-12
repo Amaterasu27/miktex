@@ -13,6 +13,9 @@
 //
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
+// Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
+// Copyright (C) 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -66,7 +69,8 @@ SplashFontEngine::SplashFontEngine(
 #endif
 #if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 				   GBool enableFreeType,
-				   GBool noah,
+				   GBool enableFreeTypeHinting,
+				   GBool enableSlightHinting,
 #endif
 				   GBool aa) {
   int i;
@@ -84,7 +88,7 @@ SplashFontEngine::SplashFontEngine(
 #endif
 #if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
   if (enableFreeType) {
-    ftEngine = SplashFTFontEngine::init(aa, noah);
+    ftEngine = SplashFTFontEngine::init(aa, enableFreeTypeHinting, enableSlightHinting);
   } else {
     ftEngine = NULL;
   }
@@ -129,7 +133,7 @@ SplashFontFile *SplashFontEngine::getFontFile(SplashFontFileID *id) {
 
 SplashFontFile *SplashFontEngine::loadType1Font(SplashFontFileID *idA,
 						SplashFontSrc *src,
-						char **enc) {
+						const char **enc) {
   SplashFontFile *fontFile;
 
   fontFile = NULL;
@@ -144,7 +148,7 @@ SplashFontFile *SplashFontEngine::loadType1Font(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
@@ -158,7 +162,7 @@ SplashFontFile *SplashFontEngine::loadType1Font(SplashFontFileID *idA,
 
 SplashFontFile *SplashFontEngine::loadType1CFont(SplashFontFileID *idA,
 						 SplashFontSrc *src,
-						 char **enc) {
+						 const char **enc) {
   SplashFontFile *fontFile;
 
   fontFile = NULL;
@@ -173,7 +177,7 @@ SplashFontFile *SplashFontEngine::loadType1CFont(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
@@ -187,7 +191,7 @@ SplashFontFile *SplashFontEngine::loadType1CFont(SplashFontFileID *idA,
 
 SplashFontFile *SplashFontEngine::loadOpenTypeT1CFont(SplashFontFileID *idA,
 						      SplashFontSrc *src,
-						      char **enc) {
+						      const char **enc) {
   SplashFontFile *fontFile;
 
   fontFile = NULL;
@@ -218,7 +222,7 @@ SplashFontFile *SplashFontEngine::loadCIDFont(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
@@ -231,13 +235,15 @@ SplashFontFile *SplashFontEngine::loadCIDFont(SplashFontFileID *idA,
 }
 
 SplashFontFile *SplashFontEngine::loadOpenTypeCFFFont(SplashFontFileID *idA,
-						      SplashFontSrc *src) {
+						      SplashFontSrc *src,
+                                                      int *codeToGID,
+                                                      int codeToGIDLen) {
   SplashFontFile *fontFile;
 
   fontFile = NULL;
 #if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
   if (!fontFile && ftEngine) {
-    fontFile = ftEngine->loadOpenTypeCFFFont(idA, src);
+    fontFile = ftEngine->loadOpenTypeCFFFont(idA, src, codeToGID, codeToGIDLen);
   }
 #endif
 
@@ -253,7 +259,7 @@ SplashFontFile *SplashFontEngine::loadOpenTypeCFFFont(SplashFontFileID *idA,
 
 SplashFontFile *SplashFontEngine::loadTrueTypeFont(SplashFontFileID *idA,
 						   SplashFontSrc *src,
-						   Gushort *codeToGID,
+						   int *codeToGID,
 						   int codeToGIDLen,
 						   int faceIndex) {
   SplashFontFile *fontFile;
@@ -270,7 +276,7 @@ SplashFontFile *SplashFontEngine::loadTrueTypeFont(SplashFontFileID *idA,
     gfree(codeToGID);
   }
 
-#ifndef WIN32
+#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
@@ -293,7 +299,7 @@ SplashFont *SplashFontEngine::getFont(SplashFontFile *fontFile,
   mat[1] = -(textMat[0] * ctm[1] + textMat[1] * ctm[3]);
   mat[2] = textMat[2] * ctm[0] + textMat[3] * ctm[2];
   mat[3] = -(textMat[2] * ctm[1] + textMat[3] * ctm[3]);
-  if (splashAbs(mat[0] * mat[3] - mat[1] * mat[2]) < 0.01) {
+  if (!splashCheckDet(mat[0], mat[1], mat[2], mat[3], 0.01)) {
     // avoid a singular (or close-to-singular) matrix
     mat[0] = 0.01;  mat[1] = 0;
     mat[2] = 0;     mat[3] = 0.01;

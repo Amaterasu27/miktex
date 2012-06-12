@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2011 Christian Schenk
+## Copyright (C) 2007-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -59,6 +59,7 @@ set(ft_sources
   src/autofit/autofit.c
   src/bdf/bdf.c
   src/cff/cff.c
+  src/bzip2/ftbzip2.c
   src/base/ftbase.c
   src/base/ftbitmap.c
   src/cache/ftcache.c

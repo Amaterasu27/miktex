@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex.h 17973 2010-04-23 10:54:26Z thoekwater $ */
+/* $Id: luatex.h 25318 2012-02-06 14:51:33Z peter $ */
 
 #ifndef LUATEX_H
 #  define LUATEX_H
@@ -90,13 +90,7 @@ extern void ipcpage(int);
 #  endif                        /* IPC */
 
 
-/* How to output to the GF or DVI file.  */
-#  define	WRITE_OUT(a, b)							\
-  if (fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),		\
-                 (int) ((b) - (a) + 1), OUT_FILE) 			\
-      != (int) ((b) - (a) + 1))						\
-    FATAL_PERROR ("fwrite");
-
+/* How to flush the DVI file.  */
 #  define flush_out() fflush (OUT_FILE)
 
 /* Read a line of input as quickly as possible.  */

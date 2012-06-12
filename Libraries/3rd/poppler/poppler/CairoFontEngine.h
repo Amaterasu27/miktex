@@ -17,7 +17,7 @@
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2006 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2006, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -36,7 +36,7 @@
 #include <cairo-ft.h>
 
 #include "GfxFont.h"
-#include "Catalog.h"
+#include "PDFDoc.h"
 
 class CairoFontEngine;
 
@@ -44,8 +44,8 @@ class CairoFont {
 public:
   CairoFont(Ref ref,
 	    cairo_font_face_t *face,
-	    Gushort *codeToGID,
-	    int codeToGIDLen,
+	    int *codeToGID,
+	    Guint codeToGIDLen,
 	    GBool substitute,
 	    GBool printing);
   virtual ~CairoFont();
@@ -60,8 +60,8 @@ protected:
   Ref ref;
   cairo_font_face_t *cairo_font_face;
 
-  Gushort *codeToGID;
-  int codeToGIDLen;
+  int *codeToGID;
+  Guint codeToGIDLen;
 
   GBool substitute;
   GBool printing;
@@ -75,29 +75,27 @@ public:
   virtual ~CairoFreeTypeFont();
 
 private:
-  CairoFreeTypeFont(Ref ref, cairo_font_face_t *cairo_font_face, FT_Face face,
-	    Gushort *codeToGID, int codeToGIDLen, GBool substitute);
-  FT_Face face;
+  CairoFreeTypeFont(Ref ref, cairo_font_face_t *cairo_font_face,
+	    int *codeToGID, Guint codeToGIDLen, GBool substitute);
 };
 
 //------------------------------------------------------------------------
 
 class CairoType3Font : public CairoFont {
 public:
-  static CairoType3Font *create(GfxFont *gfxFont, XRef *xref,
-				Catalog *catalog, CairoFontEngine *fontEngine,
+  static CairoType3Font *create(GfxFont *gfxFont, PDFDoc *doc,
+				CairoFontEngine *fontEngine,
 				GBool printing);
   virtual ~CairoType3Font();
 
   virtual GBool matches(Ref &other, GBool printing);
 
 private:
-  CairoType3Font(Ref ref, XRef *xref, Catalog *catalog,
+  CairoType3Font(Ref ref, PDFDoc *doc,
 		 cairo_font_face_t *cairo_font_face,
-		 Gushort *codeToGID, int codeToGIDLen,
+		 int *codeToGID, Guint codeToGIDLen,
 		 GBool printing);
-  XRef *xref;
-  Catalog *catalog;
+  PDFDoc *doc;
 };
 
 //------------------------------------------------------------------------
@@ -115,7 +113,7 @@ public:
   CairoFontEngine(FT_Library libA);
   ~CairoFontEngine();
 
-  CairoFont *getFont(GfxFont *gfxFont, XRef *xref, Catalog *catalog, GBool printing);
+  CairoFont *getFont(GfxFont *gfxFont, PDFDoc *doc, GBool printing);
 
 private:
   CairoFont *fontCache[cairoFontCacheSize];

@@ -293,7 +293,7 @@ static const char *helparr[] = {
 "-m*  Manual feed                     -M*  Don't make fonts",
 "-mode s Metafont device name",
 "-n # Maximum number of pages         -N*  No structured comments",
-"-noomega  Disable Omega and pTeX extensions",
+"-noomega  Disable Omega extensions",
 "-noptex   Disable pTeX extensions",
 "-o f Output file                     -O c Set/change paper offset",
 #if defined(MSDOS) || defined(OS2)
@@ -678,7 +678,7 @@ main(int argc, char **argv)
       } else if (strcmp (argv[1], "--version") == 0) {
         puts (BANNER);
         puts (kpathsea_version_string);
-        puts ("Copyright 2011 Radical Eye Software.\n\
+        puts ("Copyright 2012 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -704,15 +704,13 @@ Primary author of Dvips: T. Rokicki.");
 #endif
    dvips_debug_flag = 0;
    { /* for compilers incompatible with c99 */
-      char *s = (char *)getenv ("DVIPSDEBUG");
+      char *s = getenv ("DVIPSDEBUG");
       if (s) {
          dvips_debug_flag = 1;
-         free (s);
       } else {
-         s = (char *) getenv ("KPATHSEA_DEBUG");
+         s = getenv ("KPATHSEA_DEBUG");
          if (s) {
            dvips_debug_flag = 1;
-           free (s);
          }
       }
    }
@@ -885,7 +883,7 @@ case 'm' :
                break;
 case 'n' :
                if (STREQ (p, "oomega")) {
-                 noomega = noptex = 1;
+                 noomega = 1;
                } else if (STREQ (p, "optex")) {
                  noptex = 1;
                } else {

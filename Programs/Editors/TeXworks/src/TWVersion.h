@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,11 +15,11 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	For links to further information, or to contact the authors,
+	see <http://www.tug.org/texworks/>.
 */
 
 #define VER_MAJOR			0
 #define VER_MINOR			4
-#define VER_BUGFIX			3
-#define TEXWORKS_VERSION	"0.4.3"
+#define VER_BUGFIX			4
+#define TEXWORKS_VERSION	"0.4.4"

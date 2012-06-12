@@ -12,6 +12,14 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2007 Ilmari Heikkinen <ilmari.heikkinen@gmail.com>
+// Copyright (C) 2009 Shen Liang <shenzhuxi@gmail.com>
+// Copyright (C) 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
+// Copyright (C) 2010 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2010 Harry Roberts <harry.roberts@midnight-labs.org>
+// Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
+// Copyright (C) 2010 William Bader <williambader@hotmail.com>
+// Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -28,6 +36,8 @@
 #include "SplashTypes.h"
 #include <stdio.h>
 
+class ImgWriter;
+
 //------------------------------------------------------------------------
 // SplashBitmap
 //------------------------------------------------------------------------
@@ -42,6 +52,7 @@ public:
   SplashBitmap(int widthA, int heightA, int rowPad,
 	       SplashColorMode modeA, GBool alphaA,
 	       GBool topDown = gTrue);
+  static SplashBitmap *copy(SplashBitmap *src);
 
   ~SplashBitmap();
 
@@ -49,19 +60,32 @@ public:
   int getHeight() { return height; }
   int getRowSize() { return rowSize; }
   int getAlphaRowSize() { return width; }
+  int getRowPad() { return rowPad; }
   SplashColorMode getMode() { return mode; }
   SplashColorPtr getDataPtr() { return data; }
   Guchar *getAlphaPtr() { return alpha; }
 
   SplashError writePNMFile(char *fileName);
   SplashError writePNMFile(FILE *f);
+  SplashError writeAlphaPGMFile(char *fileName);
+  
+  SplashError writeImgFile(SplashImageFileFormat format, char *fileName, int hDPI, int vDPI, const char *compressionString = "");
+  SplashError writeImgFile(SplashImageFileFormat format, FILE *f, int hDPI, int vDPI, const char *compressionString = "");
+  SplashError writeImgFile(ImgWriter *writer, FILE *f, int hDPI, int vDPI);
 
   void getPixel(int x, int y, SplashColorPtr pixel);
+  void getRGBLine(int y, SplashColorPtr line);
   Guchar getAlpha(int x, int y);
+
+  // Caller takes ownership of the bitmap data.  The SplashBitmap
+  // object is no longer valid -- the next call should be to the
+  // destructor.
+  SplashColorPtr takeData();
 
 private:
 
   int width, height;		// size of bitmap
+  int rowPad;
   int rowSize;			// size of one row of data, in bytes
 				//   - negative for bottom-up bitmaps
   SplashColorMode mode;		// color mode

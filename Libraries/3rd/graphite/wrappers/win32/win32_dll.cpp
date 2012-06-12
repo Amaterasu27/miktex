@@ -1,6 +1,8 @@
 
 #include <windows.h>
+#ifdef _MSC_VER
 #include <crtdbg.h>
+#endif
 #include <malloc.h>
 
 HMODULE s_hmod;
@@ -14,7 +16,7 @@ HMODULE Win32DllGetModuleHandle()
 	DllMain. This is the main DLL entry point for a non-MFC DLL. For an MFC DLL, DllMain is
 		in DllModul.cpp. Both DllMains call ModuleEntry::DllMain.
 ----------------------------------------------------------------------------------------------*/
-extern "C" BOOL WINAPI DllMain(HMODULE hmod, DWORD dwReason, PVOID pvReserved)
+extern "C" BOOL WINAPI DllMain(HMODULE hmod, DWORD dwReason, PVOID /*pvReserved*/)
 {
 	bool fRet = true;
 

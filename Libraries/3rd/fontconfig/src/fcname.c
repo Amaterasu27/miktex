@@ -7,9 +7,9 @@
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Keith Packard not be used in
+ * documentation, and that the name of the author(s) not be used in
  * advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.  Keith Packard makes no
+ * specific, written prior permission.  The authors make no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
@@ -28,9 +28,9 @@
 #include <string.h>
 #include <stdio.h>
 
-/* 
+/*
  * Please do not change this list, it is used to initialize the object
- * list in this order to match the FC_foo_OBJECT constants. Those 
+ * list in this order to match the FC_foo_OBJECT constants. Those
  * constants are written into cache files.
  */
 
@@ -169,7 +169,7 @@ FcObjectFindByName (const char *object, FcBool insert)
      * Hook it into the hash chain
      */
     b = malloc (sizeof(FcObjectBucket));
-    if (!b) 
+    if (!b)
 	return NULL;
     object = (const char *) FcStrCopy ((FcChar8 *) object);
     if (!object) {
@@ -212,7 +212,7 @@ FcObjectHashInsert (const FcObjectType *object, FcBool copy)
      * Hook it into the hash chain
      */
     b = malloc (sizeof(FcObjectBucket));
-    if (!b) 
+    if (!b)
 	return FcFalse;
     if (copy)
     {
@@ -296,8 +296,6 @@ FcObjectValidType (FcObject object, FcType type)
 
     if (t) {
 	switch (t->type) {
-	case -1:
-	    return FcTrue;
 	case FcTypeDouble:
 	case FcTypeInteger:
 	    if (type == FcTypeDouble || type == FcTypeInteger)
@@ -308,7 +306,7 @@ FcObjectValidType (FcObject object, FcType type)
 		return FcTrue;
 	    break;
 	default:
-	    if (type == t->type)
+	    if (t->type == -1 || type == t->type)
 		return FcTrue;
 	    break;
 	}
@@ -421,7 +419,7 @@ static const FcConstant _FcBaseConstants[] = {
     { (FcChar8 *) "expanded",	    "width",	FC_WIDTH_EXPANDED },
     { (FcChar8 *) "extraexpanded",  "width",	FC_WIDTH_EXTRAEXPANDED },
     { (FcChar8 *) "ultraexpanded",  "width",	FC_WIDTH_ULTRAEXPANDED },
-    
+
     { (FcChar8 *) "proportional",   "spacing",  FC_PROPORTIONAL, },
     { (FcChar8 *) "dual",	    "spacing",  FC_DUAL, },
     { (FcChar8 *) "mono",	    "spacing",  FC_MONO, },
@@ -495,8 +493,8 @@ FcNameUnregisterConstants (const FcConstant *consts, int nconsts)
 {
     const FcConstantList	*l, **prev;
 
-    for (prev = &_FcConstants; 
-	 (l = *prev); 
+    for (prev = &_FcConstants;
+	 (l = *prev);
 	 prev = (const FcConstantList **) &(l->next))
     {
 	if (l->consts == consts && l->nconsts == nconsts)
@@ -511,7 +509,7 @@ FcNameUnregisterConstants (const FcConstant *consts, int nconsts)
 }
 
 const FcConstant *
-FcNameGetConstant (FcChar8 *string)
+FcNameGetConstant (const FcChar8 *string)
 {
     const FcConstantList    *l;
     int			    i;
@@ -526,7 +524,7 @@ FcNameGetConstant (FcChar8 *string)
 }
 
 FcBool
-FcNameConstant (FcChar8 *string, int *result)
+FcNameConstant (const FcChar8 *string, int *result)
 {
     const FcConstant	*c;
 
@@ -620,7 +618,7 @@ static const FcChar8 *
 FcNameFindNext (const FcChar8 *cur, const char *delim, FcChar8 *save, FcChar8 *last)
 {
     FcChar8    c;
-    
+
     while ((c = *cur))
     {
 	if (c == '\\')
@@ -765,7 +763,7 @@ bail0:
     return 0;
 }
 static FcBool
-FcNameUnparseString (FcStrBuf	    *buf, 
+FcNameUnparseString (FcStrBuf	    *buf,
 		     const FcChar8  *string,
 		     const FcChar8  *escape)
 {
@@ -790,7 +788,7 @@ FcNameUnparseValue (FcStrBuf	*buf,
 {
     FcChar8	temp[1024];
     FcValue v = FcValueCanonicalize(v0);
-    
+
     switch (v.type) {
     case FcTypeVoid:
 	return FcTrue;
@@ -805,7 +803,7 @@ FcNameUnparseValue (FcStrBuf	*buf,
     case FcTypeBool:
 	return FcNameUnparseString (buf, v.u.b ? (FcChar8 *) "True" : (FcChar8 *) "False", 0);
     case FcTypeMatrix:
-	sprintf ((char *) temp, "%g %g %g %g", 
+	sprintf ((char *) temp, "%g %g %g %g",
 		 v.u.m->xx, v.u.m->xy, v.u.m->yx, v.u.m->yy);
 	return FcNameUnparseString (buf, temp, 0);
     case FcTypeCharSet:
@@ -873,11 +871,10 @@ FcNameUnparseEscaped (FcPattern *pat, FcBool escape)
 	for (i = 0; i < l->ntypes; i++)
 	{
 	    o = &l->types[i];
-	    if (!strcmp (o->object, FC_FAMILY) || 
-		!strcmp (o->object, FC_SIZE) ||
-		!strcmp (o->object, FC_FILE))
+	    if (!strcmp (o->object, FC_FAMILY) ||
+		!strcmp (o->object, FC_SIZE))
 		continue;
-	    
+	
 	    e = FcPatternObjectFindElt (pat, FcObjectFromName (o->object));
 	    if (e)
 	    {
@@ -887,7 +884,7 @@ FcNameUnparseEscaped (FcPattern *pat, FcBool escape)
 		    goto bail0;
 		if (!FcNameUnparseString (&buf, (FcChar8 *) "=", 0))
 		    goto bail0;
-		if (!FcNameUnparseValueList (&buf, FcPatternEltValues(e), escape ? 
+		if (!FcNameUnparseValueList (&buf, FcPatternEltValues(e), escape ?
 					     (FcChar8 *) FC_ESCAPE_VARIABLE : 0))
 		    goto bail0;
 	    }

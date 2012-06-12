@@ -259,7 +259,7 @@ FILE *tfp;
   }
 
 #if defined(MIKTEX)
-  if (setjmp (png_ptr->png_jmpbuf)) {
+  if (setjmp (png_ptr->longjmp_buffer)) {
 #else
   if (setjmp (png_ptr->jmpbuf)) {
 #endif
@@ -759,7 +759,7 @@ FILE *tfp;
   /* now write the file */
 
 #if defined(MIKTEX)
-  if (setjmp (png_ptr->png_jmpbuf)) {
+  if (setjmp (png_ptr->longjmp_buffer)) {
 #else
   if (setjmp (png_ptr->jmpbuf)) {
 #endif

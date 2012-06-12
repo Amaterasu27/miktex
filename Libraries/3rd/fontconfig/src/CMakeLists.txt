@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2011 Christian Schenk
+## Copyright (C) 2007-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,7 +28,6 @@ add_definitions(
 )
 
 set(${fontconfig_dll_name}_sources
-  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-case/fccase.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-glyphname/fcglyphname.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-lang/fclang.h
@@ -68,7 +67,6 @@ set(${fontconfig_dll_name}_sources
 )
 
 set_source_files_properties(
-  ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-case/fccase.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-glyphname/fcglyphname.h
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-lang/fclang.h
@@ -108,7 +106,6 @@ target_link_libraries(${fontconfig_dll_name}
 )
 
 add_dependencies(${fontconfig_dll_name}
-	fcarch_h
 	fccase_h
 	fcglyphname_h
 	fclang_h
@@ -137,6 +134,8 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/fcftaliastail.h
   VERBATIM
 )
+
+add_executable(fcarch fcarch.c)
 
 install(TARGETS ${fontconfig_dll_name}
   RUNTIME DESTINATION "${bindir}"

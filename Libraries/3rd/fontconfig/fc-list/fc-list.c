@@ -7,9 +7,9 @@
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Keith Packard not be used in
+ * documentation, and that the name of the author(s) not be used in
  * advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.  Keith Packard makes no
+ * specific, written prior permission.  The authors make no
  * representations about the suitability of this software for any purpose.  It
  * is provided "as is" without express or implied warranty.
  *
@@ -104,16 +104,16 @@ usage (char *program, int error)
 int
 main (int argc, char **argv)
 {
-    int		verbose = 0;
-    int		quiet = 0;
-    FcChar8     *format = NULL;
-    int		nfont = 0;
-    int		i;
-    FcObjectSet *os = 0;
-    FcFontSet	*fs;
-    FcPattern   *pat;
+    int			verbose = 0;
+    int			quiet = 0;
+    const FcChar8	*format = NULL;
+    int			nfont = 0;
+    int			i;
+    FcObjectSet		*os = 0;
+    FcFontSet		*fs;
+    FcPattern		*pat;
 #if HAVE_GETOPT_LONG || HAVE_GETOPT
-    int		c;
+    int			c;
 
 #if HAVE_GETOPT_LONG
     while ((c = getopt_long (argc, argv, "vf:qVh", longopts, NULL)) != -1)
@@ -166,7 +166,9 @@ main (int argc, char **argv)
     if (quiet && !os)
 	os = FcObjectSetCreate ();
     if (!verbose && !format && !os)
-	os = FcObjectSetBuild (FC_FAMILY, FC_STYLE, (char *) 0);
+	os = FcObjectSetBuild (FC_FAMILY, FC_STYLE, FC_FILE, (char *) 0);
+    if (!format)
+        format = (const FcChar8 *) "%{=fclist}\n";
     fs = FcFontList (0, pat, os);
     if (os)
 	FcObjectSetDestroy (os);
@@ -187,7 +189,7 @@ main (int argc, char **argv)
 	    {
 		FcPatternPrint (fs->fonts[j]);
 	    }
-	    else if (format)
+	    else
 	    {
 	        FcChar8 *s;
 
@@ -197,17 +199,6 @@ main (int argc, char **argv)
 		    printf ("%s", s);
 		    free (s);
 		}
-	    }
-	    else
-	    {
-		FcChar8 *str;
-		FcChar8 *file;
-
-		str = FcNameUnparse (fs->fonts[j]);
-		if (FcPatternGetString (fs->fonts[j], FC_FILE, 0, &file) == FcResultMatch)
-		    printf ("%s: ", file);
-		printf ("%s\n", str);
-		free (str);
 	    }
 	}
     }

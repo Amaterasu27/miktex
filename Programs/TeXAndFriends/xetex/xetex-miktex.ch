@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2011 Christian Schenk
+%% Copyright (C) 2007-2012 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -56,7 +56,7 @@
 % _____________________________________________________________________________
 
  @x
-name_of_file := xmalloc_array (UTF8_code, name_length + 1);
+name_of_file := xmalloc_array (ASCII_code, name_length + 1);
  @y
  @z
 
@@ -476,11 +476,11 @@ font_ec:=xmalloc_array(UTF16_code, font_max);
 % [50.1338]
 % _____________________________________________________________________________
 
-@x
+ @x
 if not w_eof(fmt_file) then goto bad_fmt
-@y
+ @y
 if not eof(fmt_file) then goto bad_fmt
-@z
+ @z
 
 % _____________________________________________________________________________
 %

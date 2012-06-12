@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -76,12 +74,16 @@ void PassState::InitForNewSegment(int ipass, int nMaxChunk)
 	m_nMaxChunk = nMaxChunk;
 	m_cslotSkipToResync = 0;
 	m_fDidResyncSkip = false;
+	m_islotPConstraintLim = -1;
+	m_nPConstraintResult = -1;
+
 	InitializeLogInfo();
 }
 
 void PassState::InitializeLogInfo()
 {
 	m_crulrec = 0;
+	m_crngrec = 0;
 	std::fill_n(m_rgcslotDeletions, 128, 0);
 	std::fill_n(m_rgfInsertion, 128, false);
 }
@@ -114,7 +116,7 @@ GrPass::~GrPass()
 	Fill in the pass by reading from the font stream.
 ----------------------------------------------------------------------------------------------*/
 bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVersion,
-	int nOffset)
+	int nOffset, int cbPassLength)
 {
 	long lPassInfoStart;
 	grstrm.GetPositionInFont(&lPassInfoStart);
@@ -128,6 +130,8 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	{
 		grstrm.SetPositionInFont(nOffset);
 	}
+
+	int nPassMax = nOffset + cbPassLength;
 
 	//	flags - ignore for now
 	//byte bTmp = grstrm.ReadByteFromFont();
@@ -156,27 +160,41 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 		else
 			grstrm.ReadShortFromFont();	// pad bytes
 		nPConstraintOffset = grstrm.ReadIntFromFont();
+		if (nPConstraintOffset >= nPassMax)
+			return false;	// bad font
 	}
 	//	offset to rule constraint code, relative to start of subtable
-	//int nConstraintOffset = grstrm.ReadIntFromFont();
-    grstrm.ReadIntFromFont();
-	//	offset to action code, relative to start of subtable
-	//int nActionOffset = grstrm.ReadIntFromFont();
-    grstrm.ReadIntFromFont();
-	//	offset to debug strings; 0 if stripped
-	//int nDebugOffset = grstrm.ReadIntFromFont();
-    grstrm.ReadIntFromFont();
-	
+	long nConstraintOffset = grstrm.ReadIntFromFont();
+    //	offset to action code, relative to start of subtable
+	long nActionOffset = grstrm.ReadIntFromFont();
+    //	offset to debug strings; 0 if stripped
+	long nDebugOffset = grstrm.ReadIntFromFont();
+	int cbConstraintLength = nActionOffset - nConstraintOffset;
+    if (cbConstraintLength < 0)
+        return false;
+	int cbActionLength = ((nDebugOffset == 0) ? nPassMax : nDebugOffset) - nActionOffset;
+    if (cbActionLength < 0)
+        return false;
+	//int cbDebugLength = nPassMax - nDebugOffset;
+    	
 	//	Jump to beginning of FSM, if we have this information.
 	if (fxdSilfVersion >= 0x00030000)
+    {
+        if (lFsmPos < nOffset || lFsmPos >= nPassMax)
+            return false;
 		grstrm.SetPositionInFont(lFsmPos);
+    }
 	else
+    {
 		// Otherwise assume that's where we are!
 		Assert(lFsmPos == -1);
+        grstrm.GetPositionInFont(&lFsmPos);
+    }
 
 	m_pfsm = new GrFSM();
 
-	m_pfsm->ReadFromFont(grstrm, fxdSilfVersion);
+	if (!m_pfsm->ReadFromFont(grstrm, fxdSilfVersion, m_crul, nPassMax - lFsmPos))
+		return false;	// bad font
 
 	//	rule sort keys
 	m_prgchwRuleSortKeys = new data16[m_crul];
@@ -185,6 +203,9 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	for (irul = 0; irul < m_crul; irul++, pchw++)
 	{
 		*pchw = grstrm.ReadUShortFromFont();
+		//if (*pchw > m_crul)
+		//	return false;	// probably a bad font--but this is recoverable
+							// @todo: figure out a better check here
 	}
 
 	//	rule pre-mod-context item counts
@@ -193,6 +214,8 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	for (irul = 0; irul < m_crul; irul++, pb++)
 	{
 		*pb = grstrm.ReadByteFromFont();
+        if (*pb > m_nMaxRuleContext)
+            return false;
 	}
 
 	//	constraint offset for pass-level constraints
@@ -200,8 +223,9 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	{
 		// reserved - pad byte
 		grstrm.ReadByteFromFont();
-		// Note: pass constraints have not been fully implemented.
 		m_cbPassConstraint = grstrm.ReadUShortFromFont();
+		if (m_cbPassConstraint > nConstraintOffset - nPConstraintOffset)
+			return false;	// bad font
 	}
 	else
 		m_cbPassConstraint = 0;
@@ -212,6 +236,8 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	for (irul = 0; irul <= m_crul; irul++, pchw++)
 	{
 		*pchw = grstrm.ReadUShortFromFont();
+		if (*pchw > cbConstraintLength)
+			return false;	// bad font
 	}
 
 	m_prgibActionStart = new data16[m_crul + 1];
@@ -219,22 +245,26 @@ bool GrPass::ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVer
 	for (irul = 0; irul <= m_crul; irul++, pchw++)
 	{
 		*pchw = grstrm.ReadUShortFromFont();
+		if (*pchw > cbActionLength)
+			return false;	// bad font
 	}
 
 	//	FSM state table
-	m_pfsm->ReadStateTableFromFont(grstrm, fxdSilfVersion);
+    grstrm.GetPositionInFont(&lFsmPos);
+	if (!m_pfsm->ReadStateTableFromFont(grstrm, fxdSilfVersion, nOffset + nConstraintOffset - lFsmPos))
+        return false;
 
 	if (fxdSilfVersion >= 0x00020000)
 		// reserved - pad byte
 		grstrm.ReadByteFromFont();
 
 	//	Constraint and action blocks
-	int cb = m_cbPassConstraint;
+	int cb = m_cbPassConstraint;			// pass constraints
 	m_prgbPConstraintBlock = new byte[cb];
 	grstrm.ReadBlockFromFont(m_prgbPConstraintBlock, cb);
 	m_cbConstraints = cb;
 
-	cb = m_prgibConstraintStart[m_crul];
+	cb = m_prgibConstraintStart[m_crul];	// rule constraints
 	m_prgbConstraintBlock = new byte[cb];
 	grstrm.ReadBlockFromFont(m_prgbConstraintBlock, cb);
 	m_cbConstraints += cb;
@@ -279,9 +309,10 @@ void GrPass::InitializeWithNoRules()
 	@param twsh					- how we are handling trailing white-space
 	@param pnRet				- return value
 	@param pcslotGot			- return the number of slots gotten
-	@param pislotFinalBreak		- return the index of the final slot, when we are removing
-									the trailing white-space and so the end of the segment
-									will be before the any actual line-break slot
+	@param pislotFinalBreak		- index of the final slot (LB or actual glyph), or -1;
+									adjusted when we are removing the trailing white-space and
+									so the end of the segment will be before the any actual
+									line-break slot
 
 	@return kNextPass if we were able to generated the number requested, or processing is
 		complete; otherwise return the number of slots needed from the previous pass.
@@ -420,9 +451,12 @@ void GrPass::ExtendOutput(GrTableManager * ptman,
 		psstrmOut->SetRuleStartWritePos();
 
 		int ruln = -1;
-		if (m_pfsm)
-			ruln = m_pfsm->GetRuleToApply(ptman, this, psstrmIn, psstrmOut);
-		ruln = CheckRuleValidity(ruln);
+		if (m_pzpst->PassConstraintSucceeds(ptman, this, psstrmIn, psstrmOut))
+		{
+			if (m_pfsm)
+				ruln = m_pfsm->GetRuleToApply(ptman, this, psstrmIn, psstrmOut);
+			ruln = CheckRuleValidity(ruln);
+		}
 		RunRule(ptman, ruln, psstrmIn, psstrmOut);
 
 		cslotGot = psstrmOut->WritePos() - islotInitWritePos;
@@ -465,7 +499,7 @@ void GrPass::ExtendOutput(GrTableManager * ptman,
 void GrBidiPass::ExtendOutput(GrTableManager * ptman,
 	GrSlotStream* psstrmIn, GrSlotStream* psstrmOut,
 	int cslotNeededByNext, TrWsHandling twsh,
-	int * pnRet, int * pcslotGot, int * pislotFinalBreak)
+	int * pnRet, int * pcslotGot, int * /*pislotFinalBreak*/)
 {
 	Assert(psstrmIn->SlotsToReprocess() == 0);
 
@@ -716,6 +750,10 @@ int GrPass::ExtendGlyphIDOutput(GrTableManager * ptman,
 			if (pchstrm->AtEnd())
 			{
 				psstrmOut->MarkFullyWritten();
+				// If all the characters use the same feature settings, tell the table-manager
+				// in order to optimize running pass constraints.
+				if (psstrmOut->NoFeatureChanges())
+					ptman->SetFeatureVariations(false);
 				return kNextPass;
 			}
 			// otherwise we may need a few more characters for line-boundary contextualization.
@@ -776,7 +814,7 @@ int GrPass::ExtendGlyphIDOutput(GrTableManager * ptman,
 int GrPass::ExtendFinalOutput(GrTableManager * ptman,
 	GrSlotStream * psstrmInput, GrSlotStream * psstrmOutput,
 	float xsSpaceAllotted, bool fWidthIsCharCount, bool fInfiniteWidth,
-	bool fHaveLineBreak, bool fMustBacktrack, LineBrk lbMax, TrWsHandling twsh,
+	bool fHaveLineBreak, bool fMustBacktrack, LineBrk /*lbMax*/, TrWsHandling twsh,
 	int * pislotLB, float * pxsWidth)
 {
 	EngineState * pengst = ptman->State();
@@ -897,7 +935,11 @@ int GrPass::ExtendFinalOutput(GrTableManager * ptman,
 	Remove undesirable trailing white-space.
 ----------------------------------------------------------------------------------------------*/
 int GrPass::RemoveTrailingWhiteSpace(GrTableManager * ptman, GrSlotStream * psstrmOut,
+#ifdef NDEBUG
+	TrWsHandling /*twsh*/, int * pislotFinalBreak)
+#else
 	TrWsHandling twsh, int * pislotFinalBreak)
+#endif
 {
 	EngineState * pengst = ptman->State();
 
@@ -944,7 +986,7 @@ int GrPass::RemoveTrailingWhiteSpace(GrTableManager * ptman, GrSlotStream * psst
 	should never be necessary if they've set up their tables right.
 ----------------------------------------------------------------------------------------------*/
 void GrPass::CheckInputProgress(GrSlotStream * psstrmInput, GrSlotStream * psstrmOutput,
-	int islotOrigInput)
+	int /*islotOrigInput*/)
 {
 	int islotInput = psstrmInput->ReadPosForNextGet();
 //	Assert(islotInput >= islotOrigInput); -- no longer true now that we can back up
@@ -1251,6 +1293,62 @@ bool GrPass::RunConstraint(GrTableManager * ptman, int ruln,
 }
 
 /*----------------------------------------------------------------------------------------------
+	See if pass-level constraints are succeeding, or if we need to run them.
+
+	@param ptman				- table manager
+	@param ppass				- this PassState's pass
+	@param psstrmIn				- input stream
+	@param psstrmOut			- for accessing items in the pre-context
+----------------------------------------------------------------------------------------------*/
+bool PassState::PassConstraintSucceeds(GrTableManager * ptman, GrPass * ppass,
+	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
+{
+	if (m_islotPConstraintLim > psstrmIn->ReadPos() && m_nPConstraintResult != -1)
+	{
+		// Constraint result is known for this slot.
+        return (m_nPConstraintResult > 0)? true : false;
+	}
+
+	m_nPConstraintResult = ppass->RunPassConstraint(ptman, psstrmIn, psstrmOut);
+
+	if (!ptman->FeatureVariations())
+	{
+		m_islotPConstraintLim = 100000;
+	}
+	else
+	{
+		// Determine the range of slots that have the same features as the current slot,
+		// and set the slot index to the end of that range.
+		m_islotPConstraintLim = psstrmIn->FeatureRangeLim(psstrmOut);
+	}
+
+	RecordPassRange(psstrmIn->ReadPos(), m_islotPConstraintLim, (m_nPConstraintResult != 0));
+
+    return (m_nPConstraintResult != 0)? true : false;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Run a pass-level constraint for this pass.
+
+	@param psstrmIn				- input stream
+	@param psstrmOut			- for accessing items in the pre-context
+----------------------------------------------------------------------------------------------*/
+bool GrPass::RunPassConstraint(GrTableManager * ptman,
+	GrSlotStream * psstrmIn, GrSlotStream * psstrmOut)
+{
+	int nRet = 0;
+
+	if (m_cbPassConstraint == 0)		// no test
+		return true;
+	if (m_prgbPConstraintBlock == NULL)	// no test
+		return true;
+	
+	nRet = RunCommandCode(ptman, m_prgbPConstraintBlock, true, psstrmIn, psstrmOut, 0);
+
+	return (nRet != 0);
+}
+
+/*----------------------------------------------------------------------------------------------
 	Check that we can interpret all the commands in the rule. If not, return -1 indicating
 	that we don't want to run a rule after all. This can happen when the version of the compiler
 	that generated the font is later than this engine.
@@ -1401,7 +1499,7 @@ int GrPass::CheckRuleValidity(int ruln)
 			break;
 		case kopPushGlyphAttr:
 		case kopPushAttToGlyphAttr:
-			*pbNext += 3;
+			pbNext += 3;
 			break;
 		case kopPushGlyphMetric:
 		case kopPushAttToGlyphMetric:
@@ -1453,35 +1551,17 @@ void GrLineBreakPass::RunRule(GrTableManager * ptman, int ruln,
 
 	if (ruln == -1)
 	{
-#ifdef OLD_TEST_STUFF
-		if (RunTestRules(ptman, ruln, psstrmIn, psstrmOut))
-#else
-		if (false)
-#endif // OLD_TEST_STUFF
-		{}
-		else
 		//	Just pass one glyph through.
-		{
-			psstrmOut->CopyOneSlotFrom(psstrmIn);
-			psstrmOut->SetPosForNextRule(0, psstrmIn, false);
-		}
+		psstrmOut->CopyOneSlotFrom(psstrmIn);
+		psstrmOut->SetPosForNextRule(0, psstrmIn, false);
 	}
 	else
 	{
 		//	Run the rule.
-#ifdef OLD_TEST_STUFF
-		if (RunTestRules(ptman, ruln, psstrmIn, psstrmOut))
-#else
-		if (false)
-#endif // OLD_TEST_STUFF
-		{}
-		else
-		{
-			int biStart = m_prgibActionStart[ruln];
-			int iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
-				psstrmIn, psstrmOut, 0);
-			psstrmOut->SetPosForNextRule(iResult, psstrmIn, false);
-		}
+		int biStart = m_prgibActionStart[ruln];
+		int iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
+			psstrmIn, psstrmOut, 0);
+		psstrmOut->SetPosForNextRule(iResult, psstrmIn, false);
 	}
 
 	CheckInputProgress(psstrmIn, psstrmOut, islotIn);
@@ -1508,39 +1588,19 @@ void GrSubPass::RunRule(GrTableManager * ptman, int ruln,
 
 	if (ruln == -1)
 	{
-#ifdef OLD_TEST_STUFF
-		if (RunTestRules(ptman, ruln, psstrmIn, psstrmOut))
-#else
-		if (false)
-#endif // OLD_TEST_STUFF
-		{}
-		else
 		//	Just pass one glyph through.
-		{
-			psstrmOut->CopyOneSlotFrom(psstrmIn);
-			psstrmOut->SetPosForNextRule(0, psstrmIn, false);
-		}
+		psstrmOut->CopyOneSlotFrom(psstrmIn);
+		psstrmOut->SetPosForNextRule(0, psstrmIn, false);
 	}
 	else
 	{
 		//	Run the rule.
-#ifdef OLD_TEST_STUFF
-		if (RunTestRules(ptman, ruln, psstrmIn, psstrmOut))
-#else
-		if (false)
-#endif // OLD_TEST_STUFF
-		{}
-		else
-		/****************************/
-		{
-			int biStart = m_prgibActionStart[ruln];
-			int iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
-				psstrmIn, psstrmOut, 0);
-			psstrmOut->SetPosForNextRule(iResult, psstrmIn, false);
-
-			// Restore if we need line-boundary contextualization based on physical locations
-			////psstrmOut->SetLBContextFlag(ptman, islotOut);
-		}
+		int biStart = m_prgibActionStart[ruln];
+		int iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
+			psstrmIn, psstrmOut, 0);
+		psstrmOut->SetPosForNextRule(iResult, psstrmIn, false);
+		// Restore if we need line-boundary contextualization based on physical locations
+		////psstrmOut->SetLBContextFlag(ptman, islotOut);
 	}
 
 	CheckInputProgress(psstrmIn, psstrmOut, islotIn);
@@ -1581,18 +1641,9 @@ void GrPosPass::RunRule(GrTableManager * ptman, int ruln,
 	else
 	{
 		//	Run the rule.
-#ifdef OLD_TEST_STUFF
-		if (RunTestRules(ptman, ruln, psstrmIn, psstrmOut))
-#else
-		if (false)
-#endif // OLD_TEST_STUFF
-		{}
-		else
-		{
-			int biStart = m_prgibActionStart[ruln];
-			iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
-				psstrmIn, psstrmOut, 0);
-		}
+		int biStart = m_prgibActionStart[ruln];
+		iResult = RunCommandCode(ptman, m_prgbActionBlock + biStart, false,
+			psstrmIn, psstrmOut, 0);
 	}
 
 	//	Make sure an entire cluster is present in the output stream. Actually there might be
@@ -1752,7 +1803,7 @@ int GrBidiPass::Reverse(GrTableManager * ptman,
 ----------------------------------------------------------------------------------------------*/
 int GrPass::Unwind(GrTableManager * ptman,
 	int islotChanged, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
-	bool fFirst)
+	bool /*fFirst*/)
 {
 	//	Back up the number of slots required for the longest rule context,
 	//	but if we land in the middle of a chunk, go forward to its boundary.
@@ -1801,6 +1852,8 @@ int GrPass::Unwind(GrTableManager * ptman,
 	psstrmIn->UnwindInput(islotIn, PreBidiPass());
 	psstrmOut->UnwindOutput(islotOut, IsPosPass());
 
+	m_pzpst->ZapPConstraintInfo();
+
 	if (psstrmIn->ReadPos() < psstrmIn->SlotsSkippedToResync())
 	{
 		ptman->Pass(m_ipass - 1)->UndoResyncSkip();
@@ -1824,7 +1877,7 @@ int GrPass::Unwind(GrTableManager * ptman,
 ----------------------------------------------------------------------------------------------*/
 int GrBidiPass::Unwind(GrTableManager * ptman,
 	int islotChanged, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
-	bool fFirst)
+	bool /*fFirst*/)
 {
 	int islotIn;
 	int islotOut;
@@ -1835,11 +1888,11 @@ int GrBidiPass::Unwind(GrTableManager * ptman,
 		islotOut = 0;
 	}
 	else {
-		islotIn = min(islotChanged, psstrmIn->ReadPos());
+		islotIn = min(islotChanged, psstrmIn->WritePos());
 		islotIn = max(islotIn - 1, 0);
 		while (islotIn > 0 && !StrongDir(psstrmIn->SlotAt(islotIn)->Directionality()))
 		{
-			// Slightly redundant with ZapCalculatedDirLevels, but possibly needed for slots
+			// Slightly redundant with ZapCalculatedDirLevels, but can be needed for slots
 			// that have been modified by the substitution passes.
 			psstrmIn->SlotAt(islotIn)->ZapDirLevel();
 			islotIn--;
@@ -1884,6 +1937,16 @@ void PassState::UnwindLogInfo(int islotIn, int islotOut)
 		m_rgrulrec[m_crulrec].m_fFired = false;
 	}
 
+	while (m_crngrec > 0 && m_rgrngrec[m_crngrec-1].m_islotMin >= islotIn)
+	{
+		m_crngrec--;
+		m_rgrngrec[m_crngrec].m_islotMin = 0;
+		m_rgrngrec[m_crngrec].m_islotLim = 0;
+		m_rgrngrec[m_crngrec].m_fSucceeds = false;
+	}
+	if (m_crngrec > 0 && m_rgrngrec[m_crngrec-1].m_islotLim > islotIn)
+		m_rgrngrec[m_crngrec-1].m_islotLim = islotIn;
+
 	for (int islot = islotOut; islot < 128; islot++)
 	{
 		m_rgcslotDeletions[islot] = 0;
@@ -1901,8 +1964,8 @@ void PassState::UnwindLogInfo(int islotIn, int islotOut)
 	OBSOLETE
 ----------------------------------------------------------------------------------------------*/
 //:Ignore
-void GrPosPass::Unattach(GrSlotStream * psstrmIn, int islotIn,
-	GrSlotStream * psstrmOut, int islotOut, int islotLB)
+void GrPosPass::Unattach(GrSlotStream * /*psstrmIn*/, int /*islotIn*/,
+	GrSlotStream * /*psstrmOut*/, int /*islotOut*/, int /*islotLB*/)
 {
 	//	Because this is a positioning pass, there is a one-to-one correspondence between
 	//	the slots in the input and the slots in the output. Thus we can make simplifying
@@ -1956,7 +2019,6 @@ void GrPass::RecordRuleFailed(int islot, int irul)
 	m_pzpst->RecordRule(islot, irul, false);
 }
 
-
 /*----------------------------------------------------------------------------------------------
 	Record the fact that the given rule fired, for the purpose of logging
 	the transduction process.
@@ -1964,6 +2026,14 @@ void GrPass::RecordRuleFailed(int islot, int irul)
 void GrPass::RecordRuleFired(int islot, int irul)
 {
 	m_pzpst->RecordRule(islot, irul, true);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Record the result of running a pass constraint for a range of slots.
+----------------------------------------------------------------------------------------------*/
+void GrPass::RecordPassConstraintRange(int islotMin, int islotLim, bool fSuccess)
+{
+	m_pzpst->RecordPassRange(islotMin, islotLim, fSuccess);
 }
 
 
@@ -1999,11 +2069,24 @@ void PassState::RecordRule(int islot, int irul, bool fFired)
 
 	m_rgrulrec[m_crulrec].m_irul = irul;
 	m_rgrulrec[m_crulrec].m_islot = islot;
-	m_rgrulrec[m_crulrec].m_fFired = true;
+	//m_rgrulrec[m_crulrec].m_fFired = true;
 	m_rgrulrec[m_crulrec].m_fFired = fFired;
 	m_crulrec++;
 }
 
+/*----------------------------------------------------------------------------------------------
+	Record the running of a pass constraint over a range of slots.
+----------------------------------------------------------------------------------------------*/
+void PassState::RecordPassRange(int islotMin, int islotLim, bool fSucceeds)
+{
+	if (m_crngrec >= 64)
+		return;
+
+	m_rgrngrec[m_crngrec].m_islotMin = islotMin;
+	m_rgrngrec[m_crngrec].m_islotLim = islotLim;
+	m_rgrngrec[m_crngrec].m_fSucceeds = fSucceeds;
+	m_crngrec++;
+}
 
 /*----------------------------------------------------------------------------------------------
 	Record the fact that a slot was deleted before the given slot (in the output).

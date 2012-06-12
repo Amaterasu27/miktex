@@ -1238,7 +1238,7 @@ static void setup_bound_variable (Integer_T *var, const char *name,
 {
 #ifdef KPATHSEA
     char *expansion = kpse_var_value (name);
-    const char *me = program_invocation_name;
+    const char *me = kpse_invocation_name;
     const char *src = " or texmf.cnf";
 #else
     char *expansion = getenv (name);
@@ -1778,11 +1778,11 @@ int c8read_csf (void)
     */
     free (name_of_file);
     name_of_file = (unsigned char *) mymalloc (strlen (Str_csfile) + 5, "name_of_file");
-    strcpy (name_of_file, Str_csfile);
+    strcpy ((char *)name_of_file, Str_csfile);
 
-    if (strchr (name_of_file, '.') == NULL)
-        strcat (name_of_file, ".csf");
-    name_length = strlen (name_of_file);
+    if (strchr ((char *)name_of_file, '.') == NULL)
+        strcat ((char *)name_of_file, ".csf");
+    name_length = strlen ((char *)name_of_file);
 
     debug_msg (DBG_CSF, "c8read_csf: trying to open CS file `%s' ...",
                name_of_file);

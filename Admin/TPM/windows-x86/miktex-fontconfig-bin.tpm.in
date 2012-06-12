@@ -16,6 +16,7 @@ texmf/miktex/bin/fc-cache.exe
 texmf/miktex/bin/fc-cat.exe
 texmf/miktex/bin/fc-list.exe
 texmf/miktex/bin/fc-match.exe
+texmf/miktex/bin/fc-pattern.exe
 texmf/miktex/bin/fc-query.exe
 texmf/miktex/bin/fc-scan.exe
     </TPM:RunFiles>

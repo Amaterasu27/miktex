@@ -1,6 +1,6 @@
-% This is the cweb file cefconv.w of the CJK Package Ver. 4.8.0  22-May-2008
+% This is the cweb file cefconv.w of the CJK Package Ver. 4.8.3  07-May-2012
 
-% Copyright (C) 1994-2008  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2012  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 % output rules (look at the position of braces below!) the author (it's me
 % too :-) prefer. Otherwise this file will be formatted traditionally.
 
-\def\title{cefconv (CJK Version 4.8.0)}
+\def\title{cefconv (CJK Version 4.8.3)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont cefconv} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.8.0)}
+  \centerline{(CJK Version 4.8.3)}
   \vfill}
 
 \def\botofcontents{
@@ -80,7 +80,7 @@ the CNS planes 1--7, C0 for Big~5 encoding, an encoding CX reserved for
 IRIZ, a private encoding CY, and U for Unicode encoding; \.{yyzz} is a
 hexadecimal representation of the code point in this plane) with
 \medskip
-\quad\.{\char94 \char94 7f72\char94 \char94 ffXX\char94 \char94 7f%
+\quad\.{\char94 \char94 7f72\char94 \char94 7fXX\char94 \char94 7f%
 \char94 \char94 7f"0yy\char94 \char94 7f"0zz\char94 \char94 7f}\quad.
 \medskip
 \.{XX} is the corresponding CJK encoding of \.{xx}; the number `72'
@@ -95,7 +95,7 @@ which will see the output of \.{cefconv} complains loudly if something is
 wrong.
 
 @d banner
-"cefconv (CJK ver. 4.8.0)"
+"cefconv (CJK ver. 4.8.3)"
 
 @c
 #include <ctype.h>
@@ -103,10 +103,7 @@ wrong.
 #include <stdlib.h>@#
 
 
-int main(argc, argv)
-  int argc;
-  char *argv[];
-
+int main(int argc, char *argv[])
    {int ch, i;
     unsigned char in[16];
     unsigned char out[32];

@@ -17,7 +17,7 @@
 //
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
-// Copyright (C) 2008, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008-2010, 2012 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -31,6 +31,7 @@
 #pragma interface
 #endif
 
+#include <limits.h> // for LLONG_MAX and ULLONG_MAX
 #include <stdarg.h>
 #include <stdlib.h> // for NULL
 #include "gtypes.h"
@@ -42,7 +43,7 @@ public:
   GooString();
 
   // Create a string from a C string.
-  GooString(const char *sA);
+  explicit GooString(const char *sA);
 
   // Create a string from <lengthA> chars at <sA>.  This string
   // can contain null characters.
@@ -58,8 +59,8 @@ public:
   GooString* Set(const char *s1, int s1Len=CALC_STRING_LEN, const char *s2=NULL, int s2Len=CALC_STRING_LEN);
 
   // Copy a string.
-  GooString(GooString *str);
-  GooString *copy() { return new GooString(this); }
+  explicit GooString(const GooString *str);
+  GooString *copy() const { return new GooString(this); }
 
   // Concatenate two strings.
   GooString(GooString *str1, GooString *str2);
@@ -82,14 +83,16 @@ public:
   //     d, x, o, b -- int in decimal, hex, octal, binary
   //     ud, ux, uo, ub -- unsigned int
   //     ld, lx, lo, lb, uld, ulx, ulo, ulb -- long, unsigned long
+  //     lld, llx, llo, llb, ulld, ullx, ullo, ullb
+  //         -- long long, unsigned long long
   //     f, g -- double
   //     c -- char
   //     s -- string (char *)
   //     t -- GooString *
   //     w -- blank space; arg determines width
   // To get literal curly braces, use {{ or }}.
-  static GooString *format(char *fmt, ...);
-  static GooString *formatv(char *fmt, va_list argList);
+  static GooString *format(const char *fmt, ...);
+  static GooString *formatv(const char *fmt, va_list argList);
 
   // Destructor.
   ~GooString();
@@ -98,7 +101,7 @@ public:
   int getLength() { return length; }
 
   // Get C string.
-  char *getCString() { return s; }
+  char *getCString() const { return s; }
 
   // Get <i>th character.
   char getChar(int i) { return s[i]; }
@@ -115,8 +118,8 @@ public:
   GooString *append(const char *str, int lengthA=CALC_STRING_LEN);
 
   // Append a formatted string.
-  GooString *appendf(char *fmt, ...);
-  GooString *appendfv(char *fmt, va_list argList);
+  GooString *appendf(const char *fmt, ...);
+  GooString *appendfv(const char *fmt, va_list argList);
 
   // Insert a character or string.
   GooString *insert(int i, char c);
@@ -131,10 +134,10 @@ public:
   GooString *lowerCase();
 
   // Compare two strings:  -1:<  0:=  +1:>
-  int cmp(GooString *str);
-  int cmpN(GooString *str, int n);
-  int cmp(const char *sA);
-  int cmpN(const char *sA, int n);
+  int cmp(GooString *str) const;
+  int cmpN(GooString *str, int n) const;
+  int cmp(const char *sA) const;
+  int cmpN(const char *sA, int n) const;
 
   GBool hasUnicodeMarker(void);
 
@@ -145,6 +148,9 @@ public:
   GooString *sanitizedName(GBool psmode);
 
 private:
+  GooString(const GooString &other);
+  GooString& operator=(const GooString &other);
+
   // you can tweak this number for a different speed/memory usage tradeoffs.
   // In libc malloc() rounding is 16 so it's best to choose a value that
   // results in sizeof(GooString) be a multiple of 16.
@@ -161,12 +167,24 @@ private:
   char *s;
 
   void resize(int newLength);
+#ifdef LLONG_MAX
+  static void formatInt(long long x, char *buf, int bufSize,
+			GBool zeroFill, int width, int base,
+			char **p, int *len);
+#else
   static void formatInt(long x, char *buf, int bufSize,
 			GBool zeroFill, int width, int base,
 			char **p, int *len);
+#endif
+#ifdef ULLONG_MAX
+  static void formatUInt(unsigned long long x, char *buf, int bufSize,
+			 GBool zeroFill, int width, int base,
+			 char **p, int *len);
+#else
   static void formatUInt(Gulong x, char *buf, int bufSize,
 			 GBool zeroFill, int width, int base,
 			 char **p, int *len);
+#endif
   static void formatDouble(double x, char *buf, int bufSize, int prec,
 			   GBool trim, char **p, int *len);
   static void formatDoubleSmallAware(double x, char *buf, int bufSize, int prec,

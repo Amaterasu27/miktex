@@ -41,12 +41,16 @@
 #include <uriparser/UriDefsConfig.h>
 #if (!defined(URI_PASS_ANSI) && !defined(URI_PASS_UNICODE))
 /* Include SELF twice */
-# define URI_PASS_ANSI 1
-# include "UriQuery.c"
-# undef URI_PASS_ANSI
-# define URI_PASS_UNICODE 1
-# include "UriQuery.c"
-# undef URI_PASS_UNICODE
+# ifdef URI_ENABLE_ANSI
+#  define URI_PASS_ANSI 1
+#  include "UriQuery.c"
+#  undef URI_PASS_ANSI
+# endif
+# ifdef URI_ENABLE_UNICODE
+#  define URI_PASS_UNICODE 1
+#  include "UriQuery.c"
+#  undef URI_PASS_UNICODE
+# endif
 #else
 # ifdef URI_PASS_ANSI
 #  include <uriparser/UriDefsAnsi.h>
@@ -336,8 +340,8 @@ UriBool URI_FUNC(AppendQueryItem)(URI_TYPE(QueryList) ** prevNext,
 void URI_FUNC(FreeQueryList)(URI_TYPE(QueryList) * queryList) {
 	while (queryList != NULL) {
 		URI_TYPE(QueryList) * nextBackup = queryList->next;
-		free(queryList->key);
-		free(queryList->value);
+		free((URI_CHAR *)queryList->key); /* const cast */
+		free((URI_CHAR *)queryList->value); /* const cast */
 		free(queryList);
 		queryList = nextBackup;
 	}

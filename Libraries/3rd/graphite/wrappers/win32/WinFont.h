@@ -19,18 +19,36 @@ Description:
 #define WINFONT_INCLUDED
 
 //:End Ignore
-
+#ifdef _MSC_VER
 #pragma warning(disable: 4702) // unreachable code
-
+#pragma warning( push )
+#pragma warning(disable: 4555) // expression has no effect - found in list
+#endif
+#ifdef __MINGW32__
+#define _BACKWARD_BACKWARD_WARNING_H
+#endif
 #include <hash_map>
-#include "GrDebug.h"
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+#include <map>
+#include <cstring>
 #include "GrClient.h"
 #include "Font.h"
+
+#ifdef __MINGW32__
+namespace stdext = __gnu_cxx;
+#endif
+#ifdef _STLPORT_VERSION
+namespace stdext = _STLP_STD;
+#endif
 
 namespace gr
 {
 
 class FontFace;
+
+typedef std::map<gid16, std::pair<gr::Rect, gr::Point> > GlyphMetricMap;
 
 /*----------------------------------------------------------------------------------------------
 	WinFont class.
@@ -100,6 +118,7 @@ protected:
 	HFONT m_hfontClient;	// need to replace this HFONT into the DC when we are finished
 							// with it
 
+    GlyphMetricMap * m_pGlyphMetricMap;
 	// Debugging:
 	//OLECHAR m_rgchTemp[32];
 
@@ -162,7 +181,7 @@ protected:
 		}
 		LogFontWrapper()	// default constructor
 		{
-			memset(&m_lf, 0, sizeof(LOGFONT));
+			std::memset(&m_lf, 0, sizeof(LOGFONT));
 		}
 
 		// This class exists to make it possible to compare two LOGFONT objects:
@@ -185,10 +204,12 @@ protected:
 	class FontHandleCache // hungarian: fhc
 	{
 	public:
-		struct FontCacheValue
+        struct FontCacheValue
 		{
 			int nRefs;   // reference count
 			HFONT hfont; // font handle
+
+            GlyphMetricMap * pGlyphMetricMap; // glyph metrics
 
 			bool operator==(const FontCacheValue & val) const
 			{
@@ -199,7 +220,8 @@ protected:
         FontHandleCache() : m_bValid(true) {};
 		~FontHandleCache();
 
-		HFONT GetFont(LOGFONT & lf);
+		//HFONT GetFont(LOGFONT & lf);
+        FontCacheValue GetCache(LOGFONT & lf);
 		void DeleteFont(HFONT hfont);
 
 		typedef stdext::hash_map<LogFontWrapper, FontCacheValue, LogFontHashFuncs> FontHandleHashMap;

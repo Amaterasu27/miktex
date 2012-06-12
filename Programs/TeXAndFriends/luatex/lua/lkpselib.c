@@ -17,8 +17,8 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 #include <kpathsea/expand.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/tex-glyph.h>
@@ -26,6 +26,7 @@
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/str-list.h>
 #include <kpathsea/tex-file.h>
+#include <kpathsea/paths.h>
 
 static const char _svn_version[] =
     "$Id: lkpselib.c 4020 2010-11-30 13:43:25Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lkpselib.c $";
@@ -240,6 +241,12 @@ static int lua_kpathsea_find_file(lua_State * L)
 
 }
 
+static int show_texmfcnf(lua_State * L)
+{
+    lua_pushstring(L, DEFAULT_TEXMFCNF);
+    return 1;
+}
+
 static int show_path(lua_State * L)
 {
     int op = luaL_checkoption(L, -1, "tex", filetypenames);
@@ -331,7 +338,7 @@ static int lua_kpathsea_var_value(lua_State * L)
 static unsigned find_dpi(const_string s)
 {
     unsigned dpi_number = 0;
-    string extension = find_suffix(s);
+    const_string extension = find_suffix(s);
 
     if (extension != NULL)
         sscanf(extension, "%u", &dpi_number);
@@ -622,13 +629,16 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         case kpse_any_glyph_format:
             {
                 kpse_glyph_file_type glyph_ret;
+                string temp = remove_suffix (name);
                 /* Try to extract the resolution from the name.  */
                 unsigned local_dpi = find_dpi(name);
                 if (!local_dpi)
                     local_dpi = (unsigned) dpi;
                 ret =
-                    kpathsea_find_glyph(kpse, remove_suffix(name), local_dpi,
+                    kpathsea_find_glyph(kpse, temp, local_dpi,
                                         fmt, &glyph_ret);
+                if (temp != name)
+                    free (temp);
             }
             break;
 
@@ -803,6 +813,7 @@ static const struct luaL_reg kpselib_m[] = {
     {"show_path", lua_kpathsea_show_path},
     {"lookup", lua_kpathsea_lookup},
     {"version", lua_kpse_version},
+    {"default_texmfcnf", show_texmfcnf},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -819,6 +830,7 @@ static const struct luaL_reg kpselib_l[] = {
     {"show_path", show_path},
     {"lookup", lua_kpse_lookup},
     {"version", lua_kpse_version},
+    {"default_texmfcnf", show_texmfcnf},
     {NULL, NULL}                /* sentinel */
 };
 

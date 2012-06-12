@@ -35,10 +35,12 @@ UNSIGNED_BYTE get_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
+#if 0
 UNSIGNED_BYTE sget_unsigned_byte (char *s)
 {
   return *((unsigned char *) s);
 }
+#endif
 
 SIGNED_BYTE get_signed_byte (FILE *file)
 {
@@ -168,6 +170,7 @@ SIGNED_QUAD sqxfw (SIGNED_QUAD sq, fixword fw)
   return (sign > 0) ? result : result * -1L;
 }
 
+#if 0
 SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide)
 {
   int sign = 1;
@@ -221,4 +224,5 @@ SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide)
     result += 1;
   return (sign>0)?result:-result;
 }
+#endif
 

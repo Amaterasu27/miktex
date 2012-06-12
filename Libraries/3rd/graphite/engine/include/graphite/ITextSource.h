@@ -46,6 +46,7 @@ public:
 	virtual std::pair<toffset, toffset> propertyRange(toffset ich) = 0;
 	virtual size_t getFontFeatures(toffset ich, FeatureSetting * prgfset) = 0;
 	virtual bool sameSegment(toffset ich1, toffset ich2) = 0;
+	virtual bool featureVariations() = 0;
 };
 
 

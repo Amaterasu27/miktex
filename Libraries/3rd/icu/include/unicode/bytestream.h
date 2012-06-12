@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2010, International Business Machines
+// Copyright (C) 2009-2012, International Business Machines
 // Corporation and others. All Rights Reserved.
 //
 // Copyright 2007 Google Inc. All Rights Reserved.
@@ -31,7 +31,7 @@
 #define __BYTESTREAM_H__
 
 /**
- * \file 
+ * \file
  * \brief C++ API: Interface for writing bytes, and implementation classes.
  */
 
@@ -41,7 +41,7 @@
 
 U_NAMESPACE_BEGIN
 
-/** 
+/**
  * A ByteSink can be filled with bytes.
  * @stable ICU 4.2
  */
@@ -55,8 +55,8 @@ public:
   /**
    * Virtual destructor.
    * @stable ICU 4.2
-   */    
-  virtual ~ByteSink() { }
+   */
+  virtual ~ByteSink();
 
   /**
    * Append "bytes[0,n-1]" to this.
@@ -65,7 +65,7 @@ public:
    * @stable ICU 4.2
    */
   virtual void Append(const char* bytes, int32_t n) = 0;
- 
+
   /**
    * Returns a writable buffer for appending and writes the buffer's capacity to
    * *result_capacity. Guarantees *result_capacity>=min_capacity.
@@ -117,6 +117,7 @@ public:
    * Flush internal buffers.
    * Some byte sinks use internal buffers or provide buffering
    * and require calling Flush() at the end of the stream.
+   * The ByteSink should be ready for further Append() calls after Flush().
    * The default implementation of Flush() does nothing.
    * @stable ICU 4.2
    */
@@ -148,6 +149,20 @@ public:
    * @stable ICU 4.2
    */
   CheckedArrayByteSink(char* outbuf, int32_t capacity);
+  /**
+   * Destructor.
+   * @stable ICU 4.2
+   */
+  virtual ~CheckedArrayByteSink();
+  /**
+   * Returns the sink to its original state, without modifying the buffer.
+   * Useful for reusing both the buffer and the sink for multiple streams.
+   * Resets the state to NumberOfBytesWritten()=NumberOfBytesAppended()=0
+   * and Overflowed()=FALSE.
+   * @return *this
+   * @stable ICU 4.6
+   */
+  virtual CheckedArrayByteSink& Reset();
   /**
    * Append "bytes[0,n-1]" to this.
    * @param bytes the pointer to the bytes
@@ -186,11 +201,20 @@ public:
    * @stable ICU 4.2
    */
   UBool Overflowed() const { return overflowed_; }
+  /**
+   * Returns the number of bytes appended to the sink.
+   * If Overflowed() then NumberOfBytesAppended()>NumberOfBytesWritten()
+   * else they return the same number.
+   * @return number of bytes written to the buffer
+   * @stable ICU 4.6
+   */
+  int32_t NumberOfBytesAppended() const { return appended_; }
 private:
   char* outbuf_;
   const int32_t capacity_;
   int32_t size_;
-  bool overflowed_;
+  int32_t appended_;
+  UBool overflowed_;
   CheckedArrayByteSink(); ///< default constructor not implemented 
   CheckedArrayByteSink(const CheckedArrayByteSink &); ///< copy constructor not implemented
   CheckedArrayByteSink &operator=(const CheckedArrayByteSink &); ///< assignment operator not implemented

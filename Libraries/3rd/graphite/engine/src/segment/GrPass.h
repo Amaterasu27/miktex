@@ -78,11 +78,22 @@ public:
 		m_fDidResyncSkip = false;
 	}
 
+	bool PassConstraintSucceeds(GrTableManager * ptman, GrPass * ppass,
+		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
+
+	void ZapPConstraintInfo()
+	{
+		m_islotPConstraintLim = -1;
+		m_nPConstraintResult = -1;
+	}
+
 	void UnwindLogInfo(int islotIn, int islotOut);
 	void RecordRule(int islot, int irul, bool fFired = false);
+	void RecordPassRange(int islotMin, int islotLim, bool fSuccess);
 	void RecordDeletionBefore(int islot);
 	void RecordInsertionAt(int islot);
 #ifdef TRACING
+	void LogPassConstraints(std::ostream & strmOut);
 	void LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn);
 	void LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream * psstrmOut);
 #endif // TRACING
@@ -115,7 +126,21 @@ protected:
 		kHitMaxRuleLoop = -2
 	};
 
-	//	For logging transduction process: record of one rule matched or fired
+	int m_islotPConstraintLim;	// end of range to which m_nPConstraintResult applies
+	int m_nPConstraintResult;	// 0 = fail, 1 = success, -1 = unknown
+
+	//	For logging transduction process: 
+	//	record of range for which pass constraint is tested
+	struct PassRangeRecord
+	{
+		int m_islotMin;
+		int m_islotLim;
+		bool m_fSucceeds;
+	};
+	PassRangeRecord m_rgrngrec[64];
+	int m_crngrec;
+	
+	//	record of one rule matched or fired
 	struct RuleRecord
 	{
 		int m_irul;		// rule index, or kHitMaxBackup or kHitMaxRuleLoop
@@ -194,10 +219,11 @@ public:
 
 	int PassNumber() { return m_ipass; }
 
-	bool ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVersion, int nOffset);
+	bool ReadFromFont(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVersion,
+		int nOffset, int cbPassLength);
 	void InitializeWithNoRules();
 
-	virtual void SetTopDirLevel(int n)
+	virtual void SetTopDirLevel(int /*n*/)
 	{	// only GrBidiPass does anything interesting
 	}
 
@@ -253,13 +279,13 @@ public:
 		m_pzpst->SetResyncSkip(n);
 	}
 
-	virtual void DoCleanUpSegMin(GrTableManager * ptman,
-		GrSlotStream * psstrmIn, int islotInitReadPos, GrSlotStream * psstrmOut)
+	virtual void DoCleanUpSegMin(GrTableManager * /*ptman*/,
+		GrSlotStream * /*psstrmIn*/, int /*islotInitReadPos*/, GrSlotStream * /*psstrmOut*/)
 	{
 	}
 
-	virtual void DoCleanUpSegLim(GrTableManager * ptman, GrSlotStream * psstrmOut,
-		TrWsHandling twsh)
+	virtual void DoCleanUpSegLim(GrTableManager * /*ptman*/, GrSlotStream * /*psstrmOut*/,
+		TrWsHandling /*twsh*/)
 	{
 	}
 
@@ -273,6 +299,9 @@ public:
 	bool RunConstraint(GrTableManager *, int ruln,
 		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 		int cslotPreModContext, int cslotMatched);
+
+	bool RunPassConstraint(GrTableManager * ptman,
+		GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
 
 	int RunCommandCode(GrTableManager * ptman,
 		byte * pbStart, bool fConstraints,
@@ -364,10 +393,11 @@ public:
 
 	void RecordRuleFailed(int islot, int irul);
 	void RecordRuleFired(int islot, int irul);
+	void RecordPassConstraintRange(int islotMin, int islotLim, bool fSuccess);
 	void RecordHitMaxRuleLoop(int islot);
 	void RecordHitMaxBackup(int islot);
 #ifdef TRACING
-	void LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn);
+	void LogRulesFiredAndFailed(std::ostream & strmOut, GrSlotStream * psstrmIn, int ipassJust);
 	void LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream * psstrmOut);
 #endif // TRACING
 
@@ -383,8 +413,8 @@ protected:
 	void MapChunks(GrSlotStream * psstrmIn, GrSlotStream * psstrmOut,
 		int islotChunkI, int islotChunkO, int cslotReprocessed);
 
-	virtual void Unattach(GrSlotStream * psstrmIn, int islotIn,	// GrPosPass overrides
-		GrSlotStream * psstrmOut, int islotOut, int islotLB)
+	virtual void Unattach(GrSlotStream * /*psstrmIn*/, int /*islotIn*/,	// GrPosPass overrides
+		GrSlotStream * /*psstrmOut*/, int /*islotOut*/, int /*islotLB*/)
 	{
 	}
 
@@ -421,7 +451,7 @@ protected:
 	//	that the constraints need to be tested on
 	byte * m_prgcritRulePreModContext;
 
-	//	offset for pass-level constraints; just 1 of these
+	//	byte count for pass-level constraints; just 1 of these
 	data16 m_cbPassConstraint;
 	//	offsets for constraint and action code; m_crul+1 of each of these (the last
 	//	indicates the total byte count)
@@ -449,33 +479,6 @@ protected:
 	//	state of process for this pass
 	PassState * m_pzpst;
 
-public:
-#ifdef OLD_TEST_STUFF
-	//	For test procedures:
-	StrAnsi	m_staBehavior;
-
-	virtual void SetUpTestData();
-
-	// overridden on appropriate subclasses:
-	virtual void SetUpReverseNumbersTest()				{ Assert(false); }
-	virtual void SetUpBidiNumbersTest()					{ Assert(false); }
-
-	virtual void SetUpCrossLineContextTest()			{ Assert(false); }
-	virtual void SetUpReprocessTest()					{ Assert(false); }
-	virtual void SetUpLineEdgeContextTest(int ipass)	{ Assert(false); }
-	virtual void SetUpBidiAlgorithmTest()				{ Assert(false); }
-	virtual void SetUpPseudoGlyphsTest()				{ Assert(false); }
-	virtual void SetUpSimpleFSMTest()					{ Assert(false); }
-	virtual void SetUpRuleActionTest()					{ Assert(false); }
-	virtual void SetUpRuleAction2Test()					{ Assert(false); }
-	virtual void SetUpAssocTest()						{ Assert(false); }
-	virtual void SetUpAssoc2Test()						{ Assert(false); }
-	virtual void SetUpDefaultAssocTest()				{ Assert(false); }
-	virtual void SetUpFeatureTest()						{ Assert(false); }
-	virtual void SetUpLigatureTest()					{ Assert(false); }
-	virtual void SetUpLigature2Test()					{ Assert(false); }
-#endif // OLD_TEST_STUFF
-
 };	// end of class GrPass
 
 
@@ -500,8 +503,8 @@ public:
 
 protected:
 	//	Irrelevant when generating glyphs.
-	virtual void RunRule(GrTableManager *, int ruln,
-		GrSlotStream * psstrmInput, GrSlotStream * psstrmOutput)
+	virtual void RunRule(GrTableManager *, int /*ruln*/,
+		GrSlotStream * /*psstrmInput*/, GrSlotStream * /*psstrmOutput*/)
 	{
 		Assert(false);
 	}
@@ -531,24 +534,6 @@ public:
 protected:
 	virtual void RunRule(GrTableManager *, int ruln,
 		GrSlotStream * psstrmInput, GrSlotStream * psstrmOutput);
-
-public:
-#ifdef OLD_TEST_STUFF
-	//	For test procedures:
-	bool RunTestRules(GrTableManager *, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
-	bool RunTestRules(GrTableManager *, int ruln, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpCrossLineContextTest();
-	bool RunCrossLineContextTest(GrTableManager*, GrSlotStream* psstrmIn,
-		GrSlotStream* psstrmOut);
-
-	virtual void SetUpReprocessTest();
-	bool RunReprocessTest(GrTableManager *, GrSlotStream * psstrmIn, GrSlotStream * psstrmOut);
-
-	virtual void SetUpAssocTest();
-	virtual void SetUpLigatureTest();
-#endif // OLD_TEST_STUFF
 
 };	// end of class GrLineBreakPass
 
@@ -580,55 +565,6 @@ protected:
 		GrSlotStream * psstrmIn, int islotInitReadPos, GrSlotStream * psstrmOut);
 	virtual void DoCleanUpSegLim(GrTableManager * ptman, GrSlotStream * psstrmOut,
 		TrWsHandling twsh);
-
-public:
-#ifdef OLD_TEST_STUFF
-	//	For test procedures:
-	bool RunTestRules(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-	bool RunTestRules(GrTableManager *, int ruln, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpReverseNumbersTest();
-	bool RunReverseNumbersTest(GrTableManager*, GrSlotStream* psstrmIn,
-		GrSlotStream* psstrmOut);
-
-	virtual void SetUpBidiNumbersTest();
-	bool RunBidiNumbersTest(GrTableManager*, GrSlotStream* psstrmIn,
-		GrSlotStream* psstrmOut);
-
-	virtual void SetUpCrossLineContextTest();
-	bool RunCrossLineContextTest(GrTableManager*, GrSlotStream* psstrmIn,
-		GrSlotStream* psstrmOut);
-
-	virtual void SetUpReprocessTest();
-	bool RunReprocessTest(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpLineEdgeContextTest(int ipass);
-	bool RunLineEdgeContextTest(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpBidiAlgorithmTest();
-	bool RunBidiAlgorithmTest(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpPseudoGlyphsTest();
-	bool RunPseudoGlyphsTest(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-
-	virtual void SetUpSimpleFSMTest();
-	bool RunSimpleFSMTest(GrTableManager *, int ruln, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-	virtual void SetUpRuleActionTest();
-	virtual void SetUpRuleAction2Test();
-	virtual void SetUpAssocTest();
-	virtual void SetUpAssoc2Test();
-	virtual void SetUpDefaultAssocTest();
-	virtual void SetUpFeatureTest();
-	virtual void SetUpLigatureTest();
-	virtual void SetUpLigature2Test();
-#endif // OLD_TEST_STUFF
 
 };	// end of class GrSubPass
 
@@ -688,14 +624,6 @@ protected:
 	int m_nTopDirection;	// 0 for LTR, 1 for RTL -- CURRENTLY NOT USED; need to
 							// initialize it when we set the writing system direction
 
-#ifdef OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	////virtual void SetUpTestData();
-	virtual void SetUpBidiNumbersTest();
-	virtual void SetUpBidiAlgorithmTest();
-#endif // OLD_TEST_STUFF
-
 };	// end of class GrBidiPass
 
 
@@ -729,15 +657,6 @@ protected:
 
 	virtual void Unattach(GrSlotStream * psstrmIn, int islotIn,
 		GrSlotStream * psstrmOut, int islotOut, int islotLB);
-
-public:
-#ifdef OLD_TEST_STUFF
-	//	For test procedures:
-	bool RunTestRules(GrTableManager *, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-	bool RunTestRules(GrTableManager *, int ruln, GrSlotStream * psstrmIn,
-		GrSlotStream * psstrmOut);
-#endif // OLD_TEST_STUFF
 
 };	// end of class GrPosPass
 

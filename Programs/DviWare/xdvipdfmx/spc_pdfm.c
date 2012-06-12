@@ -1142,10 +1142,14 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     pdf_release_obj(name);
     return  -1;
   }
-
+#ifdef  ENABLE_TOUNICODE
+  error = maybe_reencode_utf8(name);
+  if (error < 0)
+    WARN("Failed to convert input string to UTF16...");
+#endif
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
-    spc_warn(spe, "No destination not specified for pdf:dest.");
+    spc_warn(spe, "Destination not specified for pdf:dest.");
     pdf_release_obj(name);
     return  -1;
   } else if (!PDF_OBJ_ARRAYTYPE(array)) {
@@ -1465,7 +1469,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
 {
   pdf_obj *fstream;
   long     nb_read;
-  char    *ident, *instring;
+  char    *ident, *instring, *fullname;
   pdf_obj *tmp;
   FILE    *fp;
 
@@ -1501,11 +1505,19 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
       RELEASE(ident);
       return  -1;
     }
-    fp = DPXFOPEN(instring, DPX_RES_TYPE_BINARY);
+    fullname = kpse_find_pict(instring);
+    if (!fullname) {
+      spc_warn(spe, "File \"%s\" not found.", instring);
+      pdf_release_obj(tmp);
+      RELEASE(ident);
+      return  -1;
+    }
+    fp = DPXFOPEN(fullname, DPX_RES_TYPE_BINARY);
     if (!fp) {
       spc_warn(spe, "Could not open file: %s", instring);
       pdf_release_obj(tmp);
       RELEASE(ident);
+      RELEASE(fullname);
       return -1;
     }
     fstream = pdf_new_stream(STREAM_COMPRESS);
@@ -1513,6 +1525,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
 	    fread(work_buffer, sizeof(char), WORK_BUFFER_SIZE, fp)) > 0)
       pdf_add_stream(fstream, work_buffer, nb_read);
     MFCLOSE(fp);
+    RELEASE(fullname);
     break;
   case STRING_STREAM:
     fstream = pdf_new_stream(STREAM_COMPRESS);

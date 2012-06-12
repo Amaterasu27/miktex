@@ -496,8 +496,8 @@ protected:
 	float GlyphLeftEdge(int iginf);
 
 	int DirLevelOfChar(int ichw, bool fBefore);
-	int CharIsRightToLeft(int ichw, bool fBefore);
-	int SlotIsRightToLeft(GrSlotOutput * pslout);
+	bool CharIsRightToLeft(int ichw, bool fBefore);
+	bool SlotIsRightToLeft(GrSlotOutput * pslout);
 	int TopDirLevel()
 	{
 		if (m_fWsRtl)

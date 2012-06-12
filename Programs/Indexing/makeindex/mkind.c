@@ -3,6 +3,7 @@
  *  This file is part of
  *	MakeIndex - A formatter and format independent index processor
  *
+ *  Copyright (C) 1998-2011 by the TeX Live project.
  *  Copyright (C) 1989 by Chen & Harrison International Systems, Inc.
  *  Copyright (C) 1988 by Olivetti Research Center
  *  Copyright (C) 1987 by Regents of the University of California
@@ -12,7 +13,6 @@
  *	Chen & Harrison International Systems, Inc.
  *	Palo Alto, California
  *	USA
- *	(phc@renoir.berkeley.edu or chen@orc.olivetti.com)
  *
  *  Contributors:
  *	Please refer to the CONTRIB file that comes with this release
@@ -78,6 +78,22 @@ static	void	process_idx (char * *fn,int use_stdin,int sty_given,
 long totmem = 0L;			/* for debugging memory usage */
 #endif /* DEBUG */
 
+/* |mk_getc|: accept either Unix or Windows line endings */
+
+static int lookahead = -2; /* because you can't ungetc(EOF) */
+
+int
+mk_getc(FILE *stream)
+{
+    int ch = (lookahead != -2 ? lookahead : getc(stream));
+    lookahead = (ch == '\r' ? getc(stream) : -2);
+    if (lookahead == LFD) {
+	ch = lookahead;
+	lookahead = -2;
+    }
+    return ch;
+}
+
 #if defined(MIKTEX)
 #  define main __cdecl Main
 int
@@ -95,6 +111,10 @@ main(int argc, char *argv[])
     int     ilg_given = FALSE;
     int     log_given = FALSE;
 
+#if USE_KPATHSEA
+    kpse_set_program_name (*argv, NULL);
+#endif
+
     /* determine program name */
     pgm_fn = strrchr(*argv, DIR_DELIM);
 #ifdef ALT_DIR_DELIM
@@ -109,11 +129,6 @@ main(int argc, char *argv[])
 	pgm_fn = *argv;
     else
 	pgm_fn++;
-
-#if USE_KPATHSEA
-    kpse_set_program_name (pgm_fn, NULL);  /* use the same name as the intro message */
-#endif
-
 
     /* process command line options */
     while (--argc > 0) {

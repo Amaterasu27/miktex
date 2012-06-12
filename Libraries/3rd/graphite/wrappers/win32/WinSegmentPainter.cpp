@@ -414,7 +414,7 @@ void WinSegmentPainter::SetUpFromSegment()
 	//	Sort y offsets based on difference from zero; offset closest to baseline should be
 	//	first. Hit testing depends on this sort order to find BB with smallest offset from 
 	//	baseline.
-//	::qsort(vgsk.Begin(), vgsk.Size(), isizeof(int), GlyphKeySort); -- doesn't work with structs
+//	::qsort(vgsk.Begin(), vgsk.Size(), sizeof(int), GlyphKeySort); -- doesn't work with structs
 
 	for (int igsk1 = 0; igsk1 < signed(vgsk.size()) - 1; igsk1++)
 	{
@@ -466,7 +466,7 @@ void WinSegmentPainter::SetUpFromSegment()
 
 	//	Sort GlyphBb array with left x coor primary key and top y coor secondary key.
 	//	Hit testing depends on this sort order.
-	::qsort(m_prggbb, m_cgbb, isizeof(GlyphBb), GlyphBbSort);
+	::qsort(m_prggbb, m_cgbb, sizeof(GlyphBb), GlyphBbSort);
 
 	//	Iterate over GlyphBb array, assigning each to a GlyphStrm.
 	int * rgxsLast = new int[m_cgstrm]; // store last x coor for each glyph strm; use ints

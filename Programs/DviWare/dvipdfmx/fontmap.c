@@ -566,13 +566,17 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
   skip_blank(&p, endptr);
 
   /* The first field (after TFM name) must be PostScript name. */
-  if (p < endptr) {
-    q = parse_string_value(&p, endptr);
-    if (q) RELEASE(q);
-    skip_blank(&p, endptr);
-  } else {
-    WARN("Missing a PostScript font name.");
-    return -1;
+  /* However, pdftex.map allows a line without PostScript name. */
+
+  if (*p != '"' && *p != '<') {
+    if (p < endptr) {
+      q = parse_string_value(&p, endptr);
+      if (q) RELEASE(q);
+      skip_blank(&p, endptr);
+    } else {
+      WARN("Missing a PostScript font name.");
+      return -1;
+    }
   }
 
   if (p >= endptr) return 0;
@@ -604,7 +608,7 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
             if ((t = parse_string_value(&r, e))) {
               if (strcmp(t, "SlantFont") == 0)
                 mrec->opt.slant = atof(s);
-              else if (strcmp(r, "ExtendFont") == 0)
+              else if (strcmp(t, "ExtendFont") == 0)
                 mrec->opt.extend = atof(s);
               RELEASE(t);
             }

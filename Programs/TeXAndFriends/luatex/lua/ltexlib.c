@@ -17,8 +17,8 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 #if defined(MIKTEX)
 #  include <math.h> /* floor.h */
@@ -264,6 +264,9 @@ void luacstring_close(int n)
             free(next->text);
         t = next;
         next = next->next;
+	if (t==read_spindle.tail) {
+	    read_spindle.tail = NULL; /* prevent double free */
+	}
         free(t);
     }
     read_spindle.head = NULL;

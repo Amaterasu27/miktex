@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -32,19 +32,16 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <goo/gfile.h>
 #else
 #include <aconf.h>
-#if defined(MIKTEX)
-#include <miktex/Core/Core>
-#define assert MIKTEX_ASSERT
-#else
-#include <assert.h>
-#endif
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
 #endif
+#include <assert.h>
 
 #include "Object.h"
 #include "Stream.h"
+#include "Lexer.h"
+#include "Parser.h"
 #include "Array.h"
 #include "Dict.h"
 #include "XRef.h"
@@ -55,9 +52,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GlobalParams.h"
 #include "Error.h"
 
+#if defined(MIKTEX)
+#include <miktex/Core/Core>
+#undef assert
+#define assert MIKTEX_ASSERT
+#define exit(status) throw(status)
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
+#endif
+
 static XRef *xref = 0;
 
+#if defined(MIKTEX)
+int __cdecl Main(int argc, char ** argv)
+#else
 int main(int argc, char *argv[])
+#endif
 {
     char *p, buf[1024];
     PDFDoc *doc;
@@ -137,7 +147,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
     if (extract_xref_table) {
+#if defined(MIKTEX)
+      int size = xref->getNumObjects();
+#else
         int size = xref->getSize();
+#endif
         int i;
         for (i = 0; i < size; i++) {
             if (xref->getEntry(i)->offset == 0xffffffff)
@@ -153,26 +167,39 @@ int main(int argc, char *argv[])
                         (long unsigned) e->offset, e->gen,
                         (e->type == xrefEntryFree ? "f" : "n"));
             else {              // e->offset is the object number of the object stream
-#ifdef POPPLER_VERSION
-                fprintf(stderr, "warning: this version of pdftosrc doesn't support object stream (use pdftosrc from TeX Live if you need it)\n");
-#else
-                // e->gen is the local index inside that object stream
-                //int objStrOffset = xref->getEntry(e->offset)->offset;
-                Object tmpObj;
+                Stream *str;
+                Parser *parser;
+                Object objStr, obj1, obj2;
+                int nObjects, first, n;
+                int localOffset = 0;
+                Guint firstOffset;
 
-                xref->fetch(i, e->gen, &tmpObj);        // to ensure xref->objStr is set
-                ObjectStream *objStr = xref->getObjStr();
-                assert(objStr != NULL);
-                int *localOffsets = objStr->getOffsets();
-                assert(localOffsets != NULL);
-//                 fprintf(outfile, "%0.10lu %i n\n",
-//                         (long unsigned) (objStrOffset), e->gen);
+                assert(xref->fetch(e->offset, 0, &objStr)->isStream());
+                nObjects = objStr.streamGetDict()->lookup("N", &obj1)->getInt();
+                obj1.free();
+                first = objStr.streamGetDict()->lookup("First", &obj1)->getInt();
+                obj1.free();
+                firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
+
+                // parse the header: object numbers and offsets
+                objStr.streamReset();
+                obj1.initNull();
+                str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
+                parser = new Parser(xref, new Lexer(xref, str), gFalse);
+                for (n = 0; n < nObjects; ++n) {
+                    parser->getObj(&obj1);
+                    parser->getObj(&obj2);
+                    if (n == e->gen)
+                        localOffset = obj2.getInt();
+                    obj1.free();
+                    obj2.free();
+                }
+                while (str->getChar() != EOF) ;
+                delete parser;
+                objStr.free();
+
                 fprintf(outfile, "%.10lu 00000 n\n",
-                        (long unsigned) (objStr->getFirstOffset() +
-                                         localOffsets[e->gen]));
-//                         (long unsigned) (objStrOffset + objStr->getStart() + localOffsets[e->gen]));
-                tmpObj.free();
-#endif
+                        (long unsigned)(firstOffset + localOffset));
             }
         }
     } else {
@@ -192,4 +219,7 @@ int main(int argc, char *argv[])
     catalogDict.free();
     delete doc;
     delete globalParams;
+#if defined(MIKTEX)
+    return (0);
+#endif
 }

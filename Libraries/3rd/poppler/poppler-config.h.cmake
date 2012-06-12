@@ -2,7 +2,7 @@
 //
 // poppler-config.h
 //
-// Copyright 1996-2004 Glyph & Cog, LLC
+// Copyright 1996-2011 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -14,19 +14,24 @@
 // around #undef look odd, but it's to silence warnings about
 // redefining those symbols.
 
+/* Defines the poppler version */
+#ifndef POPPLER_VERSION
+#define POPPLER_VERSION "${POPPLER_VERSION}"
+#endif
+
 /* Enable multithreading support. */
 #ifndef MULTITHREADED
 #cmakedefine MULTITHREADED 1
 #endif
 
-/* Enable exceptions. */
-#ifndef USE_EXCEPTIONS
-#cmakedefine USE_EXCEPTIONS 1
-#endif
-
 /* Use fixedpoint. */
 #ifndef USE_FIXEDPOINT
 #cmakedefine USE_FIXEDPOINT 1
+#endif
+
+/* Use single precision arithmetic in the Splash backend */
+#ifndef USE_FLOAT
+#cmakedefine USE_FLOAT 1
 #endif
 
 /* Include support for OPI comments. */
@@ -39,20 +44,91 @@
 #cmakedefine TEXTOUT_WORD_LIST 1
 #endif
 
-// Also, there's a couple of preprocessor symbols in the header files
-// that are used but never defined: DISABLE_OUTLINE, DEBUG_MEM and
+/* Use fontconfig font configuration backend */
+#ifndef WITH_FONTCONFIGURATION_FONTCONFIG
+#cmakedefine WITH_FONTCONFIGURATION_FONTCONFIG 1
+#endif
+
+/* Use win32 font configuration backend */
+#ifndef WITH_FONTCONFIGURATION_WIN32
+#cmakedefine WITH_FONTCONFIGURATION_WIN32 1
+#endif
+
+/* Support for curl is compiled in. */
+#ifndef POPPLER_HAS_CURL_SUPPORT
+#cmakedefine POPPLER_HAS_CURL_SUPPORT 1
+#endif
+
+/* Use libjpeg instead of builtin jpeg decoder. */
+#ifndef ENABLE_LIBJPEG
+#cmakedefine ENABLE_LIBJPEG 1
+#endif
+
+/* Build against libtiff. */
+#ifndef ENABLE_LIBTIFF
+#cmakedefine ENABLE_LIBTIFF 1
+#endif
+
+/* Build against libpng. */
+#ifndef ENABLE_LIBPNG
+#cmakedefine ENABLE_LIBPNG 1
+#endif
+
+/* Use zlib instead of builtin zlib decoder. */
+#ifndef ENABLE_ZLIB
+#cmakedefine ENABLE_ZLIB 1
+#endif
+
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
+#ifndef HAVE_DIRENT_H
+#cmakedefine HAVE_DIRENT_H 1
+#endif
+
+/* Defines if gettimeofday is available on your system */
+#ifndef HAVE_GETTIMEOFDAY
+#cmakedefine HAVE_GETTIMEOFDAY 1
+#endif
+
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+#ifndef HAVE_NDIR_H
+#cmakedefine HAVE_NDIR_H 1
+#endif
+
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
+#ifndef HAVE_SYS_DIR_H
+#cmakedefine HAVE_SYS_DIR_H 1
+#endif
+
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
+#ifndef HAVE_SYS_NDIR_H
+#cmakedefine HAVE_SYS_NDIR_H 1
+#endif
+
+/* Have FreeType2 include files */
+#ifndef HAVE_FREETYPE_H
+#cmakedefine HAVE_FREETYPE_H 1
+#endif
+
+/* Defines if use cms */
+#ifndef USE_CMS
+#cmakedefine USE_CMS 1
+#endif
+
+// Also, there are preprocessor symbols in the header files
+// that are used but never defined when building poppler using configure
+// or cmake: DISABLE_OUTLINE, DEBUG_MEM, SPLASH_CMYK, HAVE_T1LIB_H,
+// ENABLE_PLUGINS, DEBUG_FORMS, HAVE_FREETYPE_FREETYPE_H
 
 //------------------------------------------------------------------------
 // version
 //------------------------------------------------------------------------
 
 // copyright notice
-#define popplerCopyright "Copyright 2005-2009 The Poppler Developers - http://poppler.freedesktop.org"
-#define xpdfCopyright "Copyright 1996-2004 Glyph & Cog, LLC"
-
-#if defined(MIKTEX) && ! defined(POPPLER_VERSION)
-#cmakedefine POPPLER_VERSION "${POPPLER_VERSION}"
-#endif
+#define popplerCopyright "Copyright 2005-2012 The Poppler Developers - http://poppler.freedesktop.org"
+#define xpdfCopyright "Copyright 1996-2011 Glyph & Cog, LLC"
 
 //------------------------------------------------------------------------
 // popen
@@ -79,6 +155,14 @@
 #define CDECL
 #endif
 
+#if defined(_WIN32)
+#ifdef _MSC_VER
+#define strtok_r strtok_s
+#elif __MINGW32__
+char * strtok_r (char *s, const char *delim, char **save_ptr);
+#endif
+#endif
+
 #if defined(MIKTEX)
 #  define MIKTEX_TEXWORKS_PATCHES
 #endif
@@ -92,6 +176,16 @@
 	__attribute__((__format__(__printf__, fmt_index, va_index)))
 #else
 #define GCC_PRINTF_FORMAT(fmt_index, va_index)
+#endif
+
+#if defined(_MSC_VER)
+#if defined(MIKTEX)
+#define fmax(a, b) std::max(a, b)
+#define fmin(a, b) std::min(a, b)
+#else
+#define fmax(a, b) max(a, b)
+#define fmin(a, b) min(a, b)
+#endif
 #endif
 
 

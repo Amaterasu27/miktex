@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ copyright (c) 2009, 2011 by Jonathan Kew
 
  Written by Jonathan Kew
 
@@ -354,9 +354,9 @@ b := is_in_csname; is_in_csname := true;
 
 % \ifincsname
 @x
-if (cur_cmd<>end_cs_name) or (cur_chr<>0) then @<Complain about missing \.{\\endcsname}@>;
+if cur_cmd<>end_cs_name then @<Complain about missing \.{\\endcsname}@>;
 @y
-if (cur_cmd<>end_cs_name) or (cur_chr<>0) then @<Complain about missing \.{\\endcsname}@>;
+if cur_cmd<>end_cs_name then @<Complain about missing \.{\\endcsname}@>;
 is_in_csname := b;
 @z
 

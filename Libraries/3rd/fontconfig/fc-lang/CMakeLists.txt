@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2011 Christian Schenk
+## Copyright (C) 2008-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -44,6 +44,7 @@ set(orth_files
   bn.orth
   bo.orth
   br.orth
+  brx.orth
   bs.orth
   bua.orth
   byn.orth
@@ -61,6 +62,7 @@ set(orth_files
   cy.orth
   da.orth
   de.orth
+  doi.orth
   dv.orth
   dz.orth
   ee.orth
@@ -151,6 +153,7 @@ set(orth_files
   ml.orth
   mn_cn.orth
   mn_mn.orth
+  mni.orth
   mo.orth
   mr.orth
   ms.orth
@@ -164,6 +167,7 @@ set(orth_files
   nl.orth
   nn.orth
   no.orth
+  nqo.orth
   nr.orth
   nso.orth
   nv.orth
@@ -189,6 +193,7 @@ set(orth_files
   rw.orth
   sa.orth
   sah.orth
+  sat.orth
   sc.orth
   sco.orth
   sd.orth

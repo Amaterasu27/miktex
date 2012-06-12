@@ -1,6 +1,6 @@
-% This is the cweb file cefsconv.w of the CJK Package Ver. 4.8.0  22-May-2008
+% This is the cweb file cefsconv.w of the CJK Package Ver. 4.8.3  07-May-2012
 
-% Copyright (C) 1994-2008  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2012  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 % output rules (look at the position of braces below!) the author (it's me
 % too :-) prefer. Otherwise this file will be formatted traditionally.
 
-\def\title{cefsconv (CJK Version 4.8.0)}
+\def\title{cefsconv (CJK Version 4.8.3)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont cefsconv} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.8.0)}
+  \centerline{(CJK Version 4.8.3)}
   \vfill}
 
 \def\botofcontents{
@@ -102,8 +102,11 @@ The following code is very simple. No error detection is done because \TeX\
 which will see the output of \.{cefsconv} complains loudly if something is
 wrong.
 
+Note that the user-defined character area of SJIS (with the first bytes in
+the range 0xF0--0xFC) is not supported because it is not portable.
+
 @d banner
-"cefsconv (CJK ver. 4.8.0)"
+"cefsconv (CJK ver. 4.8.3)"
 
 @c
 #include <ctype.h>
@@ -111,10 +114,7 @@ wrong.
 #include <stdlib.h>@#
 
 
-int main(argc, argv)
-  int argc;
-  char *argv[];
-
+int main(int argc, char *argv[])
    {int ch, i;
     unsigned char in[16];
     unsigned char out[32];
@@ -175,6 +175,7 @@ int main(argc, argv)
                 goto no_macro;@#
 
             *(outp++) = '\177';
+            *(outp++) = '\177';
             *(outp++) = '\"';
             *(outp++) = '0';@#
 
@@ -190,7 +191,6 @@ int main(argc, argv)
             else
                 goto no_macro;@#
 
-            *(outp++) = '\177';
             *(outp++) = '\177';
             *(outp++) = '\"';
             *(outp++) = '0';@#

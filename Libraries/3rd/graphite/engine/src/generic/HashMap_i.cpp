@@ -120,7 +120,7 @@ template<class K, class T, class H, class Eq>
 	if (!m_cBuckets)
 	{
 		int cBuckets = GetPrimeNear(10);
-		m_prgihsndBuckets = (int *)malloc(cBuckets * isizeof(int));
+		m_prgihsndBuckets = (int *)malloc(cBuckets * sizeof(int));
 		if (!m_prgihsndBuckets)
 			ThrowHr(WarnHr(E_OUTOFMEMORY));
 		std::fill_n(m_prgihsndBuckets, cBuckets, -1);
@@ -129,7 +129,7 @@ template<class K, class T, class H, class Eq>
 	if (!m_ihsndMax)
 	{
 		int iMax = 32;
-		m_prghsnd = (HashNode *)malloc(iMax * isizeof(HashNode));
+		m_prghsnd = (HashNode *)malloc(iMax * sizeof(HashNode));
 		if (!m_prghsnd)
 			ThrowHr(WarnHr(E_OUTOFMEMORY));
 		std::fill_n(m_prghsnd, iMax, 0);
@@ -142,12 +142,12 @@ template<class K, class T, class H, class Eq>
 	H hasher;
 	Eq equal;
 	int ihsnd;
-	int nHash = hasher(&key, isizeof(K));
+	int nHash = hasher(&key, sizeof(K));
 	int ie = (unsigned)nHash % m_cBuckets;
 	for (ihsnd = m_prgihsndBuckets[ie]; ihsnd != -1; ihsnd = m_prghsnd[ihsnd].GetNext())
 	{
 		if ((nHash == m_prghsnd[ihsnd].GetHash()) &&
-			equal(&key, &m_prghsnd[ihsnd].GetKey(), isizeof(K)))
+			equal(&key, &m_prghsnd[ihsnd].GetKey(), sizeof(K)))
 		{
 			if (fOverwrite)
 			{
@@ -176,7 +176,7 @@ template<class K, class T, class H, class Eq>
 		int cNewBuckets = GetPrimeNear(4 * m_cBuckets);
 		if (cNewBuckets && cNewBuckets > m_cBuckets)
 		{
-			int * pNewBuckets = (int *)realloc(m_prgihsndBuckets, cNewBuckets * isizeof(int));
+			int * pNewBuckets = (int *)realloc(m_prgihsndBuckets, cNewBuckets * sizeof(int));
 			if (pNewBuckets)
 			{
 				std::fill_n(pNewBuckets, cNewBuckets, -1);
@@ -209,11 +209,11 @@ template<class K, class T, class H, class Eq>
 	else
 	{
 		int iNewMax = (!m_ihsndMax) ? 32 : 2 * m_ihsndMax;
-		HashNode * pNewNodes = (HashNode *)realloc(m_prghsnd, iNewMax * isizeof(HashNode));
+		HashNode * pNewNodes = (HashNode *)realloc(m_prghsnd, iNewMax * sizeof(HashNode));
 		if (!pNewNodes && iNewMax > 32)
 		{
 			iNewMax = m_ihsndMax + (m_ihsndMax / 2);
-			pNewNodes = (HashNode *)realloc(m_prghsnd, iNewMax * isizeof(HashNode));
+			pNewNodes = (HashNode *)realloc(m_prghsnd, iNewMax * sizeof(HashNode));
 			if (!pNewNodes)
 				ThrowHr(WarnHr(E_OUTOFMEMORY));
 		}
@@ -248,13 +248,13 @@ template<class K, class T, class H, class Eq>
 		return false;
 	H hasher;
 	Eq equal;
-	int nHash = hasher(&key, isizeof(K));
+	int nHash = hasher(&key, sizeof(K));
 	int ie = (unsigned)nHash % m_cBuckets;
 	int ihsnd;
 	for (ihsnd = m_prgihsndBuckets[ie]; ihsnd != -1; ihsnd = m_prghsnd[ihsnd].GetNext())
 	{
 		if ((nHash == m_prghsnd[ihsnd].GetHash()) &&
-			equal(&key, &m_prghsnd[ihsnd].GetKey(), isizeof(K)))
+			equal(&key, &m_prghsnd[ihsnd].GetKey(), sizeof(K)))
 		{
 			if (pvalueRet)
 				*pvalueRet = m_prghsnd[ihsnd].GetValue();
@@ -281,21 +281,21 @@ template<class K, class T, class H, class Eq>
 		return false;
 	H hasher;
 	Eq equal;
-	int nHash = hasher(&key, isizeof(K));
+	int nHash = hasher(&key, sizeof(K));
 	int ie = (unsigned)nHash % m_cBuckets;
 	int ihsnd;
 	int ihsndPrev = -1;
 	for (ihsnd = m_prgihsndBuckets[ie]; ihsnd != -1; ihsnd = m_prghsnd[ihsnd].GetNext())
 	{
 		if ((nHash == m_prghsnd[ihsnd].GetHash()) &&
-			equal(&key, &m_prghsnd[ihsnd].GetKey(), isizeof(K)))
+			equal(&key, &m_prghsnd[ihsnd].GetKey(), sizeof(K)))
 		{
 			if (ihsndPrev == -1)
 				m_prgihsndBuckets[ie] = m_prghsnd[ihsnd].GetNext();
 			else
 				m_prghsnd[ihsndPrev].PutNext(m_prghsnd[ihsnd].GetNext());
 			m_prghsnd[ihsnd].~HashNode();		// Ensure member destructors are called.
-			memset(&m_prghsnd[ihsnd], 0, isizeof(HashNode));
+			memset(&m_prghsnd[ihsnd], 0, sizeof(HashNode));
 			m_prghsnd[ihsnd].PutNext(m_ihsndFirstFree);
 			m_ihsndFirstFree = FreeListIdx(ihsnd);
 			AssertObj(this);
@@ -384,13 +384,13 @@ template<class K, class T, class H, class Eq>
 		return false;
 	H hasher;
 	Eq equal;
-	int nHash = hasher(&key, isizeof(K));
+	int nHash = hasher(&key, sizeof(K));
 	int ie = (unsigned)nHash % m_cBuckets;
 	int ihsnd;
 	for (ihsnd = m_prgihsndBuckets[ie]; ihsnd != -1; ihsnd = m_prghsnd[ihsnd].GetNext())
 	{
 		if ((nHash == m_prghsnd[ihsnd].GetHash()) &&
-			equal(&key, &m_prghsnd[ihsnd].GetKey(), isizeof(K)))
+			equal(&key, &m_prghsnd[ihsnd].GetKey(), sizeof(K)))
 		{
 			if (pihsndRet)
 				*pihsndRet = ihsnd;

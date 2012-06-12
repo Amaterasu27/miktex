@@ -1,6 +1,6 @@
 /* FileStream.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -73,11 +73,15 @@ FileStream::Close ()
 {
   if (pFile != 0)
     {
-      if (pFile != stdin && pFile != stdout && pFile != stderr)
-	{
-	  fclose (pFile);
-	}
+      FILE * pFile_ = pFile;
       pFile = 0;
+      if (pFile_ != stdin && pFile_ != stdout && pFile_ != stderr)
+	{
+	  if (fclose(pFile_) != 0)
+	  {
+	    FATAL_CRT_ERROR ("fclose", 0);
+	  }
+	}
     }
 }
 

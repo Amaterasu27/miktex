@@ -354,7 +354,6 @@ CheckStartupConfig (/*[in,out]*/ StartupConfig & startupConfig)
     {
       continue;
     }
-    path.MakeAbsolute ();
     if (startupConfig.commonConfigRoot == path)
     {
       FATAL_MIKTEX_ERROR ("CheckStartupConfig",
@@ -421,7 +420,6 @@ Improper options: \
     {
       continue;
     }
-    path.MakeAbsolute ();
     if (Utils::Contains(startupConfig.commonRoots.c_str(), path.Get(), ";", true))
     {
       FATAL_MIKTEX_ERROR ("CheckStartupConfig",
@@ -551,7 +549,6 @@ a common configuration directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonConfigRoot = optarg;
-	  cmdinfo.startupConfig.commonConfigRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_DATA:
@@ -566,7 +563,6 @@ a common data directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonDataRoot = optarg;
-	  cmdinfo.startupConfig.commonDataRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_INSTALL:
@@ -581,7 +577,6 @@ a common installation directory."),
 		 0);
 	    }
 	  cmdinfo.startupConfig.commonInstallRoot = optarg;
-	  cmdinfo.startupConfig.commonInstallRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_COMMON_ROOTS:
@@ -711,17 +706,14 @@ a shared MiKTeX system."),
 
 	case OPT_USER_CONFIG:
 	  cmdinfo.startupConfig.userConfigRoot = optarg;
-	  cmdinfo.startupConfig.userConfigRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_DATA:
 	  cmdinfo.startupConfig.userDataRoot = optarg;
-	  cmdinfo.startupConfig.userDataRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_INSTALL:
 	  cmdinfo.startupConfig.userInstallRoot = optarg;
-	  cmdinfo.startupConfig.userInstallRoot.MakeAbsolute ();
 	  break;
 
 	case OPT_USER_ROOTS:

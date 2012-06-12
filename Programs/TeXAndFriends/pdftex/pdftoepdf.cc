@@ -731,7 +731,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
     PdfDocument *pdf_doc;
     Page *page;
     PDFRectangle *pagebox;
-#ifdef HAVE_GETPDFMAJORVERSION
+#ifdef POPPLER_VERSION
     int pdf_major_version_found, pdf_minor_version_found;
 #else
     float pdf_version_found, pdf_version_wanted;
@@ -750,7 +750,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
-#ifdef HAVE_GETPDFMAJORVERSION
+#ifdef POPPLER_VERSION
     pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
     pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
     if ((pdf_major_version_found > 1)
@@ -825,6 +825,8 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
         epdf_has_page_group = 1;    // only flag that page group is present;
                                     // the actual object number will be
                                     // generated in pdftex.web
+    else
+        epdf_has_page_group = 0;    // no page group present
 
     pdf_doc->xref = pdf_doc->doc->getXRef();
     return page_num;
@@ -955,11 +957,16 @@ void write_epdf(void)
         if (pdfpagegroupval == 0) { 
             // another pdf with page group was included earlier on the same page;
             // copy the Group entry as is
+            pdftex_warn
+                ("PDF inclusion: multiple pdfs with page group included in a single page");
             pdf_newline();
             pdf_puts("/Group ");
             copyObject(&dictObj);
         } else {
             // write Group dict as a separate object, since the Page dict also refers to it
+            pageDict->lookup((char *) "Group", &dictObj);
+            if (!dictObj->isDict())
+                pdftex_fail("PDF inclusion: /Group dict missing");
             writeSepGroup = true;
             initDictFromDict(groupDict, page->getGroup());
             pdf_printf("/Group %d 0 R\n", pdfpagegroupval);

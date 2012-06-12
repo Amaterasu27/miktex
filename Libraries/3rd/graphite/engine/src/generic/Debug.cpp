@@ -21,8 +21,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //#include "ModuleEntry.h"
 #include <stdio.h>
@@ -65,7 +63,7 @@ OLECHAR * DebugWatch::WatchNV()
 	// JT: we need this, otherwise if dealing with a deleted object or null pointer
 	// we may try to call a virtual function where there is no valid VTABLE pointer.
 	// In the debugger we can't be sure of not dereferencing a bad pointer.
-	if (!::_CrtIsValidPointer(this, isizeof(this), TRUE ))
+	if (!::_CrtIsValidPointer(this, sizeof(this), TRUE ))
 		return L"A very bad object pointer";
 	// We could also be referencing memory that is trashed (e.g., the object has
 	// been deleted, or deleted and replaced by something else).

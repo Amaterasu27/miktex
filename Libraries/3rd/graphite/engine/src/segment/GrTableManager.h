@@ -271,6 +271,8 @@ protected:
 	TrWsHandling m_twsh;	// white-space handling
 	bool m_fParaRtl;		// paragraph direction
 
+	bool m_fFeatureVariations;	// can features vary over the course of the segment?
+
 	float m_dxsShrinkPossible;
 
 	//	The final positioning pass is where we are going to do most of the positioning.
@@ -328,7 +330,7 @@ public:
 	~GrTableManager();
 
 	bool CreateAndReadPasses(GrIStream & grstrm, int fxdSilfVersion, int fxdRuleVersion,
-		int cpassFont, long lSubTableStart, int * rgnPassOffsets,
+		int cpassFont, long lSubTableStart, int * rgnPassOffsets, int * rgcbPassLengths,
 		int ipassSub1Font, int ipassPos1Font, int ipassJust1Font, byte ipassPostBidiFont);
 
 	void CreateEmpty();
@@ -340,7 +342,7 @@ public:
 		IGrJustifier * pgjus, int jmodi,
 		LayoutEnvironment & layout,
 		int ichStop, float dxWidth, float dxUnjustified,
-		bool fNeedFinalBreak, bool fMoreText, int ichFontLim,
+		bool fNeedFinalBreak, bool fMoreText, bool fFeatureVariations, int ichFontLim,
 		bool fInfiniteWidth, bool fWidthIsCharCount,
 		int ichwCallerBtLim,
 		int nDirDepth, SegEnd estJ);
@@ -396,6 +398,15 @@ public:
 		return (m_engst.m_jmodi != kjmodiNormal);
 	}
 
+	bool FeatureVariations()
+	{
+		return (m_engst.m_fFeatureVariations);
+	}
+	void SetFeatureVariations(bool f)
+	{
+		m_engst.m_fFeatureVariations = f;
+	}
+
 	int PrevPassMaxBackup(int ipass)
 	{
 		if (ipass == 0)
@@ -442,7 +453,7 @@ public:
 	int LogToEmUnits(float xys);
 	bool GPointToXY(gid16 chwGlyphID, int nGPoint, float * xs, float * ys);
 
-	void CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
+	void CalcPositionsUpTo(int ipass, GrSlotState * pslotLast, bool fMidPass,
 		float * pxsWidth, float * pxsVisibleWidth);
 
 	void InitPosCache()
@@ -478,6 +489,7 @@ public:
 	void LogInTable(std::ostream & strmOut, int n);
 	void LogInTable(std::ostream & strmOut, float n);
 	void LogHexInTable(std::ostream & strmOut, gid16 chw, bool fPlus = false);
+	void LogDecimalInTable(std::ostream & strmOut, utf16 chw);
 	void LogDirCodeInTable(std::ostream & strmOut, int dirc);
 	void LogBreakWeightInTable(std::ostream & strmOut, int lb);
 #endif // TRACING

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -74,7 +74,7 @@ else(LINK_EVERYTHING_STATICALLY)
   )
 endif(LINK_EVERYTHING_STATICALLY)
 
-add_library(${twluaplugin_dll_name} SHARED
+add_library(${twluaplugin_dll_name} MODULE
   ${twluaplugin_sources}
   ${twluaplugin_mocs}
 )

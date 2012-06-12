@@ -98,6 +98,7 @@
 <!ENTITY WindowsServer2008 "<application>Windows Server&nbsp;2008</application>">
 <!ENTITY WindowsServer2008ServicePack2 "<application>Windows Server&nbsp;2008 with Service Pack&nbsp;2</application>">
 <!ENTITY WindowsServer2008R2 "<application>Windows Server&nbsp;2008&nbsp;R2</application>">
+<!ENTITY WindowsSysinternals "<application>Windows Sysinternals</application>">
 <!ENTITY WindowsXP "<application>Windows&nbsp;XP</application>">
 <!ENTITY WindowsXPServicePack3 "<application>Windows&nbsp;XP with Service Pack&nbsp;3</application>">
 <!ENTITY WindowsVista "<application>Windows&nbsp;Vista</application>">

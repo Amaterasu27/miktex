@@ -20,8 +20,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:End Ignore
 
@@ -93,7 +91,7 @@ bool GrClassTable::ReadFromFont(GrIStream & grstrm, int fxdVersion)
 	if (!m_prgchwBIGGlyphList)
 		return false; // bad table
 	grstrm.ReadBlockFromFont(m_prgchwBIGGlyphList,
-		m_prgichwOffsets[m_ccls] * isizeof(data16));
+		m_prgichwOffsets[m_ccls] * sizeof(data16));
 
 	return true;
 }
@@ -264,117 +262,6 @@ int GrClassTable::NumberOfGlyphsInClass(int icls)
 		return ichwLim - ichwMin;
 	}
 }
-
-//:>********************************************************************************************
-//:>	For test procedures
-//:>********************************************************************************************
-
-//:Ignore
-
-#ifdef OLD_TEST_STUFF
-/*----------------------------------------------------------------------------------------------
-	General test of class table.
-----------------------------------------------------------------------------------------------*/
-void GrClassTable::SetUpTestData()
-{
-	m_ccls = 7;				// number of classes
-	m_cclsLinear = 4;		// number of classes in linear format
-
-	m_prgchwBIGGlyphList = new gid16[100];
-
-	m_prgichwOffsets = new data16[7+1];
-
-	gid16 * pchw = m_prgchwBIGGlyphList;
-
-	//	Output class 0: uppercase consonants B - H
-	m_prgichwOffsets[0] = 0;
-	*pchw++ = msbf(gid16(66));	*pchw++ = msbf(utf16(67));	*pchw++ = msbf(utf16(68));
-	*pchw++ = msbf(gid16(70));	*pchw++ = msbf(utf16(71));	*pchw++ = msbf(utf16(72));
-
-	//	Output class 1: grave vowels
-	m_prgichwOffsets[1] = 6;
-	*pchw++ = msbf(gid16(192));	// A
-	*pchw++ = msbf(gid16(224));	// a
-	*pchw++ = msbf(gid16(200));	// E
-	*pchw++ = msbf(gid16(232));	// e
-	*pchw++ = msbf(gid16(204));	// I
-	*pchw++ = msbf(gid16(236));	// i
-	*pchw++ = msbf(gid16(210));	// O
-	*pchw++ = msbf(gid16(243));	// o
-	*pchw++ = msbf(gid16(217));	// U
-	*pchw++ = msbf(gid16(249));	// u
-	
-	//	Output class 2: circumflex vowels
-	m_prgichwOffsets[2] = 6 + 10;
-	*pchw++ = msbf(gid16(194));	// A
-	*pchw++ = msbf(gid16(226));	// a
-	*pchw++ = msbf(gid16(202));	// E
-	*pchw++ = msbf(gid16(234));	// e
-	*pchw++ = msbf(gid16(206));	// I
-	*pchw++ = msbf(gid16(238));	// i
-	*pchw++ = msbf(gid16(212));	// O
-	*pchw++ = msbf(gid16(244));	// o
-	*pchw++ = msbf(gid16(219));	// U
-	*pchw++ = msbf(gid16(251));	// u
-	
-	//	Output class 3: diaeresis vowels, uppercase
-	m_prgichwOffsets[3] = 16 + 10;
-	*pchw++ = msbf(gid16(196));	// A
-	*pchw++ = msbf(gid16(196));	// A
-	*pchw++ = msbf(gid16(203));	// E
-	*pchw++ = msbf(gid16(203));	// E
-	*pchw++ = msbf(gid16(207));	// I
-	*pchw++ = msbf(gid16(207));	// I
-	*pchw++ = msbf(gid16(214));	// O
-	*pchw++ = msbf(gid16(214));	// O
-	*pchw++ = msbf(gid16(220));	// U
-	*pchw++ = msbf(gid16(220));	// U
-
-	//	Input class 4: lowercase consonants b - h
-	m_prgichwOffsets[4] = 26 + 10;	// = 36
-	*pchw++ = msbf(gid16(6));
-	*pchw++ = msbf(gid16(4));		*pchw++ = msbf(gid16(2)); *pchw++ = msbf(gid16(6-4));
-	*pchw++ = msbf(gid16(98));	*pchw++ = msbf(gid16(0));
-	*pchw++ = msbf(gid16(99));	*pchw++ = msbf(gid16(1));
-	*pchw++ = msbf(gid16(100));	*pchw++ = msbf(gid16(2));
-	*pchw++ = msbf(gid16(102));	*pchw++ = msbf(gid16(3));
-	*pchw++ = msbf(gid16(103));	*pchw++ = msbf(gid16(4));
-	*pchw++ = msbf(gid16(104));	*pchw++ = msbf(gid16(5));
-
-	//	Input class 5: vowels
-	m_prgichwOffsets[5] = 36 + 4 + 6*2;	// = 52
-	*pchw++ = msbf(gid16(10));
-	*pchw++ = msbf(gid16(8));		*pchw++ = msbf(utf16(3)); *pchw++ = msbf(utf16(10-8));
-	*pchw++ = msbf(gid16(65));	*pchw++ = msbf(gid16(0));	// A
-	*pchw++ = msbf(gid16(69));	*pchw++ = msbf(gid16(2));	// E
-	*pchw++ = msbf(gid16(73));	*pchw++ = msbf(gid16(4));	// I
-	*pchw++ = msbf(gid16(79));	*pchw++ = msbf(gid16(6));	// O
-	*pchw++ = msbf(gid16(85));	*pchw++ = msbf(gid16(8));	// U
-	*pchw++ = msbf(gid16(97));	*pchw++ = msbf(gid16(1));	// a
-	*pchw++ = msbf(gid16(101));	*pchw++ = msbf(gid16(3));	// e
-	*pchw++ = msbf(gid16(105));	*pchw++ = msbf(gid16(5));	// i
-	*pchw++ = msbf(gid16(111));	*pchw++ = msbf(gid16(7));	// o
-	*pchw++ = msbf(gid16(117));	*pchw++ = msbf(gid16(9));	// u
-
-	//	Input class 6: acute vowels
-	m_prgichwOffsets[6] = 52 + 4 + 10*2;	// = 76
-	*pchw++ = msbf(gid16(10));
-	*pchw++ = msbf(gid16(8));		*pchw++ = msbf(gid16(3)); *pchw++ = msbf(gid16(10-8));
-	*pchw++ = msbf(gid16(193));	*pchw++ = msbf(gid16(0));	// A
-	*pchw++ = msbf(gid16(201));	*pchw++ = msbf(gid16(2));	// E
-	*pchw++ = msbf(gid16(205));	*pchw++ = msbf(gid16(4));	// I
-	*pchw++ = msbf(gid16(211));	*pchw++ = msbf(gid16(6));	// O
-	*pchw++ = msbf(gid16(218));	*pchw++ = msbf(gid16(8));	// U
-	*pchw++ = msbf(gid16(225));	*pchw++ = msbf(gid16(1));	// a
-	*pchw++ = msbf(gid16(233));	*pchw++ = msbf(gid16(3));	// e
-	*pchw++ = msbf(gid16(237));	*pchw++ = msbf(gid16(5));	// i
-	*pchw++ = msbf(gid16(243));	*pchw++ = msbf(gid16(7));	// o
-	*pchw++ = msbf(gid16(250));	*pchw++ = msbf(gid16(9));	// u
-
-	m_prgichwOffsets[7] = 76 + 4 + 10*2;	// = 100
-};
-
-#endif // OLD_TEST_STUFF
 
 } // namespace gr
 

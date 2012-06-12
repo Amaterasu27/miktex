@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -75,6 +75,7 @@ set(synctex_pdftex_ch_srcs_on
 )
 
 set(pdftosrc_sources
+  ${wrapper_cpp}
   pdftosrc.cc
   pdftosrc-version.h
 )
@@ -158,6 +159,7 @@ set(miktex_tex_change_files
   ${mltex_miktex_ch}
   ${enctex_miktex_ch}
   ${tex_miktex_ch}
+  ${tex_miktex_enctex_ch}
   ${tex_miktex_hash_ch}
   ${tex_miktex_hyph_ch}
   ${tex_miktex_pool_ch}

@@ -61,10 +61,23 @@ class GrGlyphAttrRun
 		reflect the format of the "Glat_entry" as it is stored in the file and slurped into
 		memory.
 	------------------------------------------------------------------------------------------*/
-	void CopyFrom(byte * pbBIGEnt)
+	void CopyFrom(byte * pbBIGEnt, int fxdGlatVersion)
 	{
-		m_bMinAttrID = *pbBIGEnt;
-		m_cAttrs = *(pbBIGEnt + 1);
+		if (fxdGlatVersion >= 0x00020000)
+		{
+			// 16-bit attribute number and number of attributes
+			unsigned short * su = (unsigned short *)pbBIGEnt;
+			m_suMinAttrID = lsbf(*su);
+			su = (unsigned short *)(pbBIGEnt + 2);
+			m_cAttrs = lsbf(*su);
+		} 
+		else
+		{
+			// 8-bit attribute number and number of attributes
+			m_suMinAttrID = *pbBIGEnt;	// first attribute number
+			m_cAttrs = *(pbBIGEnt + 1);	// number of attributes
+		}
+
 		if (m_cAttrs >= kMaxAttrsPerRun)
 		{
 			gAssert(false);
@@ -73,21 +86,29 @@ class GrGlyphAttrRun
 		#ifdef _DEBUG
 		// Probably not strictly necessary to zero the array, but convenient for debugging.
 		// Removed from release build for optimization
-		std::fill(m_rgchwBIGValues, m_rgchwBIGValues + kMaxAttrsPerRun, 0);
+		std::fill(m_rgchwBIGValues, m_rgchwBIGValues + kMaxAttrsPerRun, L'\0');
 		#endif
 		// this is mixing types of data16 and byte pointers!
-		const data16 * prgchw = reinterpret_cast<const data16*>(pbBIGEnt + 2);
+		const data16 * prgchw = reinterpret_cast<const data16*>(pbBIGEnt + ByteCountHeader(fxdGlatVersion));
 		std::copy(prgchw, prgchw + m_cAttrs, m_rgchwBIGValues);
 	}
 
-	int ByteCount()
+	int ByteCount(int fxdGlatVersion)
 	{
-		return (2 + (m_cAttrs * isizeof(data16)));
+		return (ByteCountHeader(fxdGlatVersion) + (m_cAttrs * sizeof(data16)));
+	}
+
+	int ByteCountHeader(int fxdGlatVersion)
+	{
+		if (fxdGlatVersion >= 0x00020000)
+			return 4;	// 2 16-bit words
+		else
+			return 2;	// 2 8-bit words
 	}
 
 protected:
-	byte m_bMinAttrID;	// ID of first attribute in the run
-	byte m_cAttrs;		// number of attributes in the run
+	unsigned short m_suMinAttrID;	// ID of first attribute in the run
+	unsigned short m_cAttrs;		// number of attributes in the run
 	data16 m_rgchwBIGValues[kMaxAttrsPerRun];
 };
 
@@ -118,8 +139,9 @@ protected:
 	}
 
 	//	Initialization:
-	void Initialize(int fxdSilfVersion, int cbBufLen)
+	void Initialize(int fxdGlatVersion, int fxdSilfVersion, int cbBufLen)
 	{
+		m_fxdGlatVersion = fxdGlatVersion;
 		m_fxdSilfVersion = fxdSilfVersion;
 		m_cbEntryBufLen = cbBufLen;
 		m_prgbBIGEntries = new byte[cbBufLen];
@@ -127,9 +149,11 @@ protected:
 		//	the byte array from the file.
 	}
 
-	int GlyphAttr16BitValue(int ibMin, int ibLim, byte bAttrID);
+	int GlyphAttr16BitValue(int ibMin, int ibLim, data16 bAttrID);
 
 protected:
+	int m_fxdGlatVersion;		// for interpreting the attribute-run headers
+
 	int m_fxdSilfVersion;		// version number of the Silf table, which is used
 								// to interpret the attribute values
 
@@ -139,19 +163,8 @@ protected:
 	//	font. Instead, we set up a single instance in the method that accesses the values;
 	//	having this instance will help debugging. Eventually we may want to do without it,
 	//	if it would help efficiency.
-	int m_cbEntryBufLen;	// needed only for memory instrumentation
+	int m_cbEntryBufLen;		// needed for memory instrumentation and sanity checking
 	byte * m_prgbBIGEntries;
-
-//:Ignore
-#ifdef OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	void SetUpTestData();
-	void SetUpLigatureTest();
-	void SetUpLigature2Test();
-#endif // OLD_TEST_STUFF
-
-//:End Ignore
 
 };
 
@@ -192,10 +205,10 @@ public:
 
 	//	Initialization:
 	bool ReadFromFont(GrIStream & gloc_strm, int cGlyphs, 
-		GrIStream & glat_strm, long lGlatStart);
+		GrIStream & glat_strm, long lGlatStart, int fxdSilVersion);
 	void Initialize(int fxdSilfVersion, data16 chwFlags,
 		data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
-		int cGlyphs, int cAttrs, int cnCompPerLig);
+		int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig);
 
 	void CreateEmpty();
 
@@ -253,6 +266,7 @@ protected:
 	bool m_fHasDebugStrings;	// are debugging strings loaded into memory?
 
 	int m_nAttrIDLim;		// number of glyph attributes
+	int m_nCompAttr1;		// first component attribute
 	int m_cComponents;		// number of initial glyph attributes that
 							// represent ligature components
 	int m_cnCompPerLig;
@@ -272,17 +286,6 @@ protected:
 
 	int * m_prgnDefinedComponents;	// for each glyph, cache list of component attributes that
 									// are defined
-
-//:Ignore
-#ifdef OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	void SetUpTestData();
-	void SetUpLigatureTest();
-	void SetUpLigature2Test();
-#endif // OLD_TEST_STUFF
-
-//:End Ignore
 };
 
 /*----------------------------------------------------------------------------------------------
@@ -315,7 +318,7 @@ public:
 
 	bool ReadFromFont(GrIStream & gloc_strm, long lGlocStart, 
 		GrIStream & glat_strm, long lGlatStart, 
-		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
+		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
 		int fxdSilfVersion);
 
 	void CreateEmpty();
@@ -411,16 +414,6 @@ protected:
 						// for now there is only one
 
 	std::vector<GrGlyphSubTable *> m_vpgstbl;
-
-//:Ignore
-#ifdef OLD_TEST_STUFF
-public:
-	//	For test procedures:
-	void SetUpTestData();
-	void SetUpLigatureTest();
-	void SetUpLigature2Test();
-#endif // OLD_TEST_STUFF
-//:End Ignore
 
 };
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2011 Christian Schenk
+## Copyright (C) 2009-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -59,7 +59,6 @@ set(${hunspell_dll_name}_sources
   src/hunspell/replist.hxx
   src/hunspell/suggestmgr.cxx
   src/hunspell/suggestmgr.hxx
-  src/hunspell/utf_info.cxx
   src/hunspell/w_char.hxx
 )
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -811,6 +811,9 @@ configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/makesrc.cmd.in
 configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/produce.cmd.in
 	       ${CMAKE_BINARY_DIR}/Admin/Scripts/produce.cmd)
 
+configure_file(${CMAKE_SOURCE_DIR}/Admin/Scripts/putj2000version.cmd.in
+	       ${CMAKE_BINARY_DIR}/Admin/Scripts/putj2000version.cmd)
+
 configure_file(${CMAKE_SOURCE_DIR}/Resources/Manifests/Common-Controls.manifest.in
 	       ${CMAKE_BINARY_DIR}/Resources/Manifests/Common-Controls.manifest)
 
@@ -981,7 +984,7 @@ if(NOT USE_SYSTEM_PNG)
 endif(NOT USE_SYSTEM_PNG)
 
 if(BUILDING_MIKTEX)
-  set(POPPLER_VERSION "0.12.4")
+  set(POPPLER_VERSION "0.20.0")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 

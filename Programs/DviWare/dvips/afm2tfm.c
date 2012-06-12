@@ -1,4 +1,4 @@
-/*   $Id: afm2tfm.c 22194 2011-04-25 00:06:10Z karl $  */
+/*   $Id: afm2tfm.c 26287 2012-05-10 13:53:02Z karl $  */
 
 /*   Public domain, originally written by Tom Rokicki.
  *   This program converts AFM files to TeX TFM files, and optionally
@@ -1505,9 +1505,9 @@ writevpl(void)
 static void
 version(FILE *f)
 {
-  fputs ("afm2tfm(k) (dvips(k) 5.991) 8.1\n", f);
+  fputs ("afm2tfm(k) (dvips(k) 5.992) 8.2\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
-  fputs ("Copyright 2011 Radical Eye Software.\n\
+  fputs ("Copyright 2012 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -1567,7 +1567,7 @@ openfiles(int argc, char **argv)
    const char *q;
 #endif
    register int i;
-   char *p;
+   const char *p;
    int arginc;
 
    tfmout = (FILE *)NULL;
@@ -1699,7 +1699,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
 
 #ifdef KPATHSEA
    if ((p = find_suffix(outname)) != NULL)
-      *(p-1) = 0;
+      outname[p-outname-1] = 0;
    strcat(outname, ".tfm");
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
       error("! can't open tfm output file");
@@ -1709,7 +1709,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
  */
    if (p == NULL)
      p = find_suffix(outname);
-   *(p-1) = 0;
+   outname[p-outname-1] = 0;
 
    q = xbasename(outname);
    strcpy(tmpstr, q);        /* be careful, q and outname are overlapping */

@@ -18,6 +18,12 @@ Description:
 #ifndef TTFUTIL_H
 #define TTFUTIL_H
 
+// I don't know why I need to duplicate these there when they are in GrPlatform.h:
+#ifdef _MSC_VER
+#pragma warning(disable: 4127) // conditional expression is constant
+#pragma warning(disable: 4290) // exception specification ignored.
+#endif
+
 #include <cstddef>
 #include <stdexcept>
 #include "GrPlatform.h"
@@ -133,10 +139,10 @@ namespace TtfUtil
 	bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
 		size_t lLocaSize, const void *pHead, size_t & cnContours);
 	bool GlyfContourEndPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
-		size_t lLocaSize,	const void * pHead, int * prgnContourEndPoint, size_t cnPoints); 
+		size_t lLocaSize,	const void * pHead, int * prgnContourEndPoint, size_t & cnPoints); 
 	bool GlyfPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
 		size_t lLocaSize, const void * pHead, const int * prgnContourEndPoint, size_t cnEndPoints, 
-		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t cnPoints);
+		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t & cnPoints);
 
 	// utitily method used by high-level GlyfPoints 
 	bool SimplifyFlags(char * prgbFlags, int cnPoints);

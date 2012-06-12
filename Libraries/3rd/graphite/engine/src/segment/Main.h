@@ -26,6 +26,9 @@ Description:
 #define _CRT_SECURE_NO_DEPRECATE
 #pragma warning(disable: 4996) // warning: function was declared deprecated
 #pragma warning(disable: 4702) // unreachable code
+#pragma warning(push)
+#pragma warning(disable: 4548) // expression has no effect
+
 #endif
 
 #include "GrCommon.h"
@@ -55,6 +58,10 @@ float fabsf(float x);
 ////#include <algorithm>
 #include <string>
 #include <cstring>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 // gAssert should be used for any kind of assertions that can be caused by a corrupted font,
 // particularly those that won't be caught when loading the tables.

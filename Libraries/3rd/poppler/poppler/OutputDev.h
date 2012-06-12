@@ -16,10 +16,12 @@
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2006 Thorkild Stray <thorkild@ifi.uio.no>
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2007 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2009 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2007, 2011 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2009-2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2009, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
+// Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -38,19 +40,25 @@
 #include "CharTypes.h"
 #include "Object.h"
 
+class Annot;
 class Dict;
 class GooHash;
 class GooString;
 class GfxState;
+class Gfx;
 struct GfxColor;
 class GfxColorSpace;
 class GfxImageColorMap;
 class GfxFunctionShading;
 class GfxAxialShading;
+class GfxGouraudTriangleShading;
+class GfxPatchMeshShading;
 class GfxRadialShading;
+class GfxGouraudTriangleShading;
+class GfxPatchMeshShading;
 class Stream;
 class Links;
-class Link;
+class AnnotLink;
 class Catalog;
 class Page;
 class Function;
@@ -82,10 +90,9 @@ public:
   // operations.
   virtual GBool useTilingPatternFill() { return gFalse; }
 
-  // Does this device use functionShadedFill(), axialShadedFill(), and
-  // radialShadedFill()?  If this returns false, these shaded fills
-  // will be reduced to a series of other drawing operations.
-  virtual GBool useShadedFills() { return gFalse; }
+  // Does this device support specific shading types?
+  // see gouraudTriangleShadedFill() and patchMeshShadedFill()
+  virtual GBool useShadedFills(int type) { return gFalse; }
 
   // Does this device use FillColorStop()?
   virtual GBool useFillColorStop() { return gFalse; }
@@ -101,16 +108,9 @@ public:
   // Does this device need non-text content?
   virtual GBool needNonText() { return gTrue; }
 
-  // If current colorspace ist pattern,
-  // does this device support text in pattern colorspace?
-  // Default is false
-  virtual GBool supportTextCSPattern(GfxState * /*state*/) { return gFalse; }
-
-  // If current colorspace ist pattern,
-  // need this device special handling for masks in pattern colorspace?
-  // Default is false
-  virtual GBool fillMaskCSPattern(GfxState * /*state*/) { return gFalse; }
-  virtual void endMaskClip(GfxState * /*state*/) {}
+  // Does this device require incCharCount to be called for text on
+  // non-shown layers?
+  virtual GBool needCharCount() { return gFalse; }
 
   //----- initialization and control
 
@@ -124,9 +124,11 @@ public:
   virtual GBool checkPageSlice(Page *page, double hDPI, double vDPI,
 			       int rotate, GBool useMediaBox, GBool crop,
 			       int sliceX, int sliceY, int sliceW, int sliceH,
-			       GBool printing, Catalog * catalog,
+			       GBool printing,
 			       GBool (* abortCheckCbk)(void *data) = NULL,
-			       void * abortCheckCbkData = NULL)
+			       void * abortCheckCbkData = NULL,
+			       GBool (*annotDisplayDecideCbk)(Annot *annot, void *user_data) = NULL,
+			       void *annotDisplayDecideCbkData = NULL)
     { return gTrue; }
 
   // Start a page.
@@ -173,6 +175,7 @@ public:
   virtual void updateStrokeOpacity(GfxState * /*state*/) {}
   virtual void updateFillOverprint(GfxState * /*state*/) {}
   virtual void updateStrokeOverprint(GfxState * /*state*/) {}
+  virtual void updateOverprintMode(GfxState * /*state*/) {}
   virtual void updateTransfer(GfxState * /*state*/) {}
   virtual void updateFillColorStop(GfxState * /*state*/, double /*offset*/) {}
 
@@ -186,13 +189,15 @@ public:
   virtual void updateHorizScaling(GfxState * /*state*/) {}
   virtual void updateTextPos(GfxState * /*state*/) {}
   virtual void updateTextShift(GfxState * /*state*/, double /*shift*/) {}
+  virtual void saveTextPos(GfxState * /*state*/) {}
+  virtual void restoreTextPos(GfxState * /*state*/) {}
 
   //----- path painting
   virtual void stroke(GfxState * /*state*/) {}
   virtual void fill(GfxState * /*state*/) {}
   virtual void eoFill(GfxState * /*state*/) {}
-  virtual GBool tilingPatternFill(GfxState * /*state*/, Object * /*str*/,
-				  int /*paintType*/, Dict * /*resDict*/,
+  virtual GBool tilingPatternFill(GfxState * /*state*/, Gfx * /*gfx*/, Catalog * /*cat*/, Object * /*str*/,
+				  double * /*pmat*/, int /*paintType*/, int /*tilingType*/, Dict * /*resDict*/,
 				  double * /*mat*/, double * /*bbox*/,
 				  int /*x0*/, int /*y0*/, int /*x1*/, int /*y1*/,
 				  double /*xStep*/, double /*yStep*/)
@@ -207,6 +212,10 @@ public:
   virtual GBool radialShadedFill(GfxState * /*state*/, GfxRadialShading * /*shading*/, double /*sMin*/, double /*sMax*/)
     { return gFalse; }
   virtual GBool radialShadedSupportExtend(GfxState * /*state*/, GfxRadialShading * /*shading*/)
+    { return gFalse; }
+  virtual GBool gouraudTriangleShadedFill(GfxState *state, GfxGouraudTriangleShading *shading)
+    { return gFalse; }
+  virtual GBool patchMeshShadedFill(GfxState *state, GfxPatchMeshShading *shading)
     { return gFalse; }
 
   //----- path clipping
@@ -231,11 +240,19 @@ public:
   virtual void beginTextObject(GfxState * /*state*/) {}
   virtual GBool deviceHasTextClip(GfxState * /*state*/) { return gFalse; }
   virtual void endTextObject(GfxState * /*state*/) {}
+  virtual void incCharCount(int /*nChars*/) {}
+  virtual void beginActualText(GfxState * /*state*/, GooString * /*text*/ ) {}
+  virtual void endActualText(GfxState * /*state*/) {}
 
   //----- image drawing
   virtual void drawImageMask(GfxState *state, Object *ref, Stream *str,
 			     int width, int height, GBool invert, GBool interpolate,
 			     GBool inlineImg);
+  virtual void setSoftMaskFromImageMask(GfxState *state,
+					Object *ref, Stream *str,
+					int width, int height, GBool invert,
+					GBool inlineImg, double *baseMatrix);
+  virtual void unsetSoftMaskFromImageMask(GfxState *state, double *baseMatrix);
   virtual void drawImage(GfxState *state, Object *ref, Stream *str,
 			 int width, int height, GfxImageColorMap *colorMap,
 			 GBool interpolate, int *maskColors, GBool inlineImg);
@@ -259,8 +276,8 @@ public:
   virtual void beginMarkedContent(char *name, Dict *properties);
   virtual void markPoint(char *name);
   virtual void markPoint(char *name, Dict *properties);
-  
-  
+
+
 
 #if OPI_SUPPORT
   //----- OPI functions
@@ -296,7 +313,7 @@ public:
   virtual void clearSoftMask(GfxState * /*state*/) {}
 
   //----- links
-  virtual void processLink(Link * /*link*/, Catalog * /*catalog*/) {}
+  virtual void processLink(AnnotLink * /*link*/) {}
 
 #if 1 //~tmp: turn off anti-aliasing temporarily
   virtual GBool getVectorAntialias() { return gFalse; }

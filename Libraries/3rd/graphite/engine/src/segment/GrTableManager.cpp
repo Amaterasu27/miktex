@@ -20,10 +20,7 @@ Description:
 
 #ifdef _MSC_VER
 #pragma hdrstop
-#endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
-#ifndef _WIN32
+#else
 #include <stdlib.h>
 #endif
 #include <math.h>
@@ -134,7 +131,7 @@ void EngineState::DestroySlotBlocks()
 ----------------------------------------------------------------------------------------------*/	
 bool GrTableManager::CreateAndReadPasses(GrIStream & grstrm,
 	int fxdSilfVersion, int fxdRuleVersion,
-	int cpassFont, long lSubTableStart, int * rgnPassOffsets,
+	int cpassFont, long lSubTableStart, int * rgnPassOffsets, int * rgcbPassLengths,
 	int ipassSub1Font, int ipassPos1Font, int ipassJust1Font, byte ipassPostBidiFont)
 {
 	Assert(ipassSub1Font <= ipassJust1Font);
@@ -179,19 +176,23 @@ bool GrTableManager::CreateAndReadPasses(GrIStream & grstrm,
 
 	m_prgppass = new GrPass*[m_cpass + 1];
 	m_prgppass[0] = new GrGlyphGenPass(0);
+	int ipass;
+	for (ipass = 1; ipass < m_cpass; ipass++ )
+		m_prgppass[ipass] = NULL;	// clear so that if loading a pass fails, we can delete the table-manager
 
-	int ipass = 1;
-	int ipassFont = 0;
 	m_cpassLB = 0;
 	m_ipassJust1 = 1;
 	m_ipassPos1 = 1;
+	bool f = true;
+	ipass = 1;
+	int ipassFont = 0;
 	for ( ; ipass < m_cpass; ipass++, ipassFont++)
 	{
 		if (ipass < ipassSub1)
 		{
 			m_prgppass[ipass] = new GrLineBreakPass(ipass);
-			m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
-				lSubTableStart + rgnPassOffsets[ipassFont]);
+			f = m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
+				lSubTableStart + rgnPassOffsets[ipassFont], rgcbPassLengths[ipassFont]);
 			m_cpassLB++;
 			m_ipassJust1++;
 			m_ipassPos1++;
@@ -199,8 +200,8 @@ bool GrTableManager::CreateAndReadPasses(GrIStream & grstrm,
 		else if (ipassSub1 <= ipass && ipass < ipassBidi)
 		{
 			m_prgppass[ipass] = new GrSubPass(ipass);
-			m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
-				lSubTableStart + rgnPassOffsets[ipassFont]);
+			f = m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
+				lSubTableStart + rgnPassOffsets[ipassFont], rgcbPassLengths[ipassFont]);
 			m_ipassJust1++;
 			m_ipassPos1++;
 		}
@@ -211,13 +212,14 @@ bool GrTableManager::CreateAndReadPasses(GrIStream & grstrm,
 			ipassFont--;	// no corresponding pass in font
 			m_ipassJust1++;
 			m_ipassPos1++;
+			f = true;
 		}
 		else if (ipassJust1 <= ipass && ipass < ipassPos1)
 		{
 			//	A justification pass is, in essence, a substitution pass.
 			m_prgppass[ipass] = new GrSubPass(ipass);
-			m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
-				lSubTableStart + rgnPassOffsets[ipassFont]);
+			f = m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
+				lSubTableStart + rgnPassOffsets[ipassFont], rgcbPassLengths[ipassFont]);
 			m_ipassPos1++;
 		}
 		else if (ipassPos1 <= ipass)
@@ -225,20 +227,24 @@ bool GrTableManager::CreateAndReadPasses(GrIStream & grstrm,
 			m_prgppass[ipass] = new GrPosPass(ipass);
 			if (ipassFont < cpassFont)
 			{
-				m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
-					lSubTableStart + rgnPassOffsets[ipassFont]);
+				f = m_prgppass[ipass]->ReadFromFont(grstrm, fxdSilfVersion, fxdRuleVersion,
+					lSubTableStart + rgnPassOffsets[ipassFont], rgcbPassLengths[ipassFont]);
 			}
 			else
 			{
 				//	No positioning pass in font: create a bogus one.
 				m_prgppass[ipass]->InitializeWithNoRules();
+				f = true;
 			}
 		}
 		else
 		{
 			Assert(false);
-			return false; // bad table
+			f = false;	// bad table
 		}
+
+		if (!f)
+			return false;	// bad table
 	}
 
 	return true;
@@ -323,7 +329,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 	LayoutEnvironment & layout,
 	int ichSegLim,
 	float dxWidthRequested, float dxUnjustifiedWidth,
-	bool fNeedFinalBreak, bool fMoreText, int ichFontLim,
+	bool fNeedFinalBreak, bool fMoreText, bool fFeatureVariations, int ichFontLim,
 	bool fInfiniteWidth, bool fWidthIsCharCount,
 	int ichwCallerBtLim,
 	int nDirDepth, SegEnd estJ)
@@ -344,6 +350,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 	m_engst.m_twsh = twsh;
 	m_engst.m_fParaRtl = fParaRtl;
 	m_engst.m_dxsShrinkPossible = GrSlotState::kNotYetSet;
+	m_engst.m_fFeatureVariations = fFeatureVariations;
 	m_fLogging = (pstrmLog != NULL);
 
 	int cbPrev;
@@ -572,7 +579,7 @@ void GrTableManager::Run(Segment * psegNew, Font * pfont,
 		else
 		{
 			Assert(!m_engst.m_fInsertedLB);
-			Assert(islotUnderBreak == -1 || m_engst.m_fFinalLB);
+			//Assert(islotUnderBreak == -1 || m_engst.m_fFinalLB); -- no, ExtendGlyphIDOutput clearly sets islotUnderBreak regardless
 		}
 		int islotTmp = OutputStream(m_cpass - 1)->WritePos();
 		GrSlotState * pslotTmp;
@@ -931,7 +938,7 @@ void GrTableManager::InitSegmentAsEmpty(Segment * psegNew, Font * pfont,
 	@param plbFound			- kind of line-break created
 ----------------------------------------------------------------------------------------------*/
 bool GrTableManager::Backtrack(int * pislotPrevBreak,
-	LineBrk * plbMin, LineBrk lbMax, TrWsHandling twsh, bool fMoreText,
+	LineBrk * plbMin, LineBrk lbMax, TrWsHandling twsh, bool /*fMoreText*/,
 	int ichwCallerBtLim, bool fEndLine,
 	LineBrk * plbFound)
 {
@@ -1343,7 +1350,7 @@ LBackupPC:
 	Calculate the associations, and record the output slots in the segment.
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::RecordAssocsAndOutput(Font * pfont,
-	Segment * pseg, bool fWidthIsCharCount,
+	Segment * pseg, bool /*fWidthIsCharCount*/,
 	TrWsHandling twsh, bool fParaRtl, int nDirDepth)
 {
 	int cchwUnderlying = pseg->stopCharacter() - pseg->startCharacter();
@@ -1355,14 +1362,8 @@ void GrTableManager::RecordAssocsAndOutput(Font * pfont,
 
 	float xsTotalWidth, xsVisWidth;
 
-#ifdef OLD_TEST_STUFF
-	if (fWidthIsCharCount)
-		xsTotalWidth = xsVisWidth = 0;
-	else
-#endif // OLD_TEST_STUFF
-
 	//	Make sure the final positions are set for every glyph.
-	CalcPositionsUpTo(m_cpass-1, reinterpret_cast<GrSlotState *>(NULL),
+	CalcPositionsUpTo(m_cpass-1, reinterpret_cast<GrSlotState *>(NULL), false,
 		&xsTotalWidth, &xsVisWidth); 
 	pseg->SetWidths(xsVisWidth, xsTotalWidth);
 
@@ -1377,7 +1378,7 @@ void GrTableManager::RecordAssocsAndOutput(Font * pfont,
 	Calculate the underlying-to-surface associations and ligature mappings.
 	Assumes the arrays have been properly initialized.
 ----------------------------------------------------------------------------------------------*/
-void GrTableManager::CalculateAssociations(Segment * pseg, int csloutSurface)
+void GrTableManager::CalculateAssociations(Segment * pseg, int /*csloutSurface*/)
 {
 	GrSlotStream * psstrmFinal = OutputStream(m_cpass-1);
 
@@ -2350,18 +2351,20 @@ bool GrTableManager::LoggingTransduction()
 								final pass, but it could be another if positions are
 								requested by the rules themselves
 	@param pslotLast		- last slot that needs to be positioned, or NULL
+	@param fMidPass			- calculating the position of some slot in the middle of the pass
 	@param pxsWidth			- return the total width used so far
 	@param psxVisibleWidth	- return the visible width so far
 
 	MOVE to EngineState
 ----------------------------------------------------------------------------------------------*/
-void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
+void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast, bool fMidPass,
 	float * pxsWidth, float * pxsVisibleWidth)
 {
 	Assert(ipass >= m_ipassPos1 - 1);
 
 	int isstrm = ipass;
 	GrSlotStream * psstrm = OutputStream(isstrm);
+	GrSlotStream * psstrmNext = (isstrm >= m_cpass - 1) ? NULL : OutputStream(isstrm + 1);
 	Assert(psstrm->GotIndexOffset());
 	if (psstrm->WritePos() <= psstrm->IndexOffset())
 	{
@@ -2399,7 +2402,9 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 	//	to be later in the stream than the last actual slot passed in.
 	if (!psstrm->HasSlotAtPosPassIndex(pslotLast->AttachRootPosPassIndex()))
 		return;
-	GrSlotState * pslotLastBase = pslotLast->Base(psstrm);
+	GrSlotState * pslotLastBase = (fMidPass && pslotLast->PosPassIndex() < psstrm->WritePos())
+		? pslotLast->Base(psstrmNext)
+		: pslotLast->Base(psstrm);
 
 	if (ipass == m_cpass - 1 && m_engst.m_islotPosNext > -1)
 	{
@@ -2428,6 +2433,7 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 	}
 
 	std::vector<GrSlotState *> vpslotAttached;
+	std::vector<GrSlotStream *> vpsstrmAttached;
 
 	bool fRtl = RightToLeft();
 
@@ -2435,13 +2441,24 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 	{
 		Assert(islot < psstrm->SlotsPresent());
 
-		pslot = (isstrm == ipass) ?	psstrm->SlotAt(islot) :	psstrm->OutputSlotAt(islot);
+		GrSlotStream * psstrmThis = psstrm;
+		if (fMidPass && islot < psstrm->WritePos())
+		{
+			pslot = psstrm->MidPassSlotAt(islot, psstrmNext);
+			psstrmThis = psstrmNext;
+		}
+		else
+		{
+			//pslot = (isstrm == ipass) ?	psstrm->SlotAt(islot) :	psstrm->OutputSlotAt(islot);
+			pslot = psstrm->SlotAt(islot);
+		}
 
 		if (!pslot->IsBase())
 		{
 			//	This slot is attached to another; it will be positioned strictly
 			//	relative to that one. This happens in the loop below.
 			vpslotAttached.push_back(pslot);
+			vpsstrmAttached.push_back(psstrmThis);
 		}
 		else
 		{
@@ -2455,7 +2472,7 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 			}
 
 			//	Make sure the metrics are the complete ones.
-			pslot->CalcCompositeMetrics(this, psstrm, kPosInfinity, true);
+			pslot->CalcCompositeMetrics(this, psstrm, psstrmNext, kPosInfinity, true);
 
 			float xsInc = pslot->GlyphXOffset(psstrm, fakeItalicRatio);
 			float ysInc = pslot->GlyphYOffset(psstrm);
@@ -2514,8 +2531,9 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 
 	for (size_t ipslot = 0; ipslot < vpslotAttached.size(); ipslot++)
 	{
-		GrSlotState * pslot = vpslotAttached[ipslot];
-		GrSlotState * pslotBase = pslot->Base(psstrm);
+		GrSlotState * pslotAtt = vpslotAttached[ipslot];
+		GrSlotStream * psstrmAtt = vpsstrmAttached[ipslot];
+		GrSlotState * pslotBase = pslotAtt->Base(psstrmAtt);
 		if (pslotBase->XPosition() == kNegInfinity || pslotBase->YPosition() == kNegInfinity)
 		{
 			Assert(false);
@@ -2523,10 +2541,10 @@ void GrTableManager::CalcPositionsUpTo(int ipass, GrSlotState * pslotLast,
 		}
 		float xsCluster = pslotBase->XPosition() - pslotBase->GlyphXOffset(psstrm, fakeItalicRatio);
 		float ysCluster = pslotBase->YPosition() - pslotBase->GlyphYOffset(psstrm);
-		float xsInc = pslot->GlyphXOffset(psstrm, fakeItalicRatio);
-		float ysInc = pslot->GlyphYOffset(psstrm);
-		pslot->SetXPos(xsCluster + xsInc);
-		pslot->SetYPos(ysCluster + ysInc);
+		float xsInc = pslotAtt->GlyphXOffset(psstrm, fakeItalicRatio);
+		float ysInc = pslotAtt->GlyphYOffset(psstrm);
+		pslotAtt->SetXPos(xsCluster + xsInc);
+		pslotAtt->SetYPos(ysCluster + ysInc);
 
 		//	My theory is that we don't need to adjust *pxsWidth here, because the width of
 		//	any non-base slots should be factored into the advance width of their cluster
@@ -2541,7 +2559,7 @@ bool GrTableManager::IsWhiteSpace(GrSlotState * pslot)
 {
 	if (pslot->IsLineBreak(LBGlyphID()))
 		return true;
-	return pslot->IsSpace(this);
+    return (pslot->IsSpace(this) != 0)? true : false;
 }
 
 /*----------------------------------------------------------------------------------------------

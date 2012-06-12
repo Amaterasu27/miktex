@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
-Copyright (C) 2002 SIL International. All rights reserved.
+Copyright (C) 2002-2011 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -117,7 +117,7 @@ protected:
 
 	UInt32				match(int index, int repeats, int textLoc);
 								// returns 0 for no match, 1 for match, or kNeedMoreInput/kInvalidChar
-	MatchElem*			pattern;
+	const MatchElem*			pattern;
 	int					patternLength;
 	int					direction;
 	MatchInfo			info[256];

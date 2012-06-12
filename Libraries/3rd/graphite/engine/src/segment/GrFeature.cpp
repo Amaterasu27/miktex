@@ -21,8 +21,6 @@ Description:
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-#undef THIS_FILE
-DEFINE_THIS_FILE
 
 //:>********************************************************************************************
 //:>	Forward declarations
@@ -186,7 +184,7 @@ std::wstring GrFeature::NthSettingLabel(GrEngine * pgreng, int ifset, int nLang)
 /*----------------------------------------------------------------------------------------------
 	Read the languages from the font.
 ----------------------------------------------------------------------------------------------*/
-bool GrLangTable::ReadFromFont(GrIStream * pgrstrm, int fxdVersion)
+bool GrLangTable::ReadFromFont(GrIStream * pgrstrm, int /*fxdVersion*/)
 {
 	GrIStream & grstrm = *pgrstrm;
 	
@@ -208,7 +206,13 @@ bool GrLangTable::ReadFromFont(GrIStream * pgrstrm, int fxdVersion)
 
 	Assert((lsbf)(m_prglang[m_clang].cFeaturesBIG) == 0); // bogus entry has no settings
 	cb = (lsbf)(m_prglang[m_clang].cbOffsetBIG) - m_cbOffset0;
-	Assert(cb % sizeof(FeatSet) == 0); // # of bytes fits nicely into FeatSet class
+	
+	if (cb % sizeof(FeatSet) != 0)
+	{
+		// # of bytes does not fit nicely into FeatSet class--probably a corrupt font.
+		Assert(cb % sizeof(FeatSet) == 0); 
+		return false;
+	}
 	int cfset = cb / sizeof(FeatSet);
 	m_prgfset = new FeatSet[cfset];
 	m_cfset = cfset;
@@ -248,6 +252,9 @@ void GrLangTable::LanguageFeatureSettings(isocode lgcode,
 	LangEntry * plang = m_prglang + ilang;
 	int cbOffset = lsbf(plang->cbOffsetBIG) - m_cbOffset0;
 	Assert(cbOffset % sizeof(FeatSet) == 0);
+	if (cbOffset >= signed(m_cfset * sizeof(FeatSet)))
+		return;	// bad offset
+
 	byte * pbFeatSet = reinterpret_cast<byte*>(m_prgfset) + cbOffset;
 	FeatSet * pfset = reinterpret_cast<FeatSet*>(pbFeatSet);
 	for (int ifset = 0; ifset < lsbf(plang->cFeaturesBIG); ifset++)
