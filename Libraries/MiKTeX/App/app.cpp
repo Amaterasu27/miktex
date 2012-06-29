@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2011 Christian Schenk
+   Copyright (C) 2005-2012 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -164,38 +164,34 @@ Application::Init (/*[in]*/ const Session::InitInfo & initInfo)
 				       TriState(TriState::Undetermined));
   InstallSignalHandler (SIGINT);
   InstallSignalHandler (SIGTERM);
-  bool mustRefreshFndb = false;
+  time_t lastAdminMaintenance = static_cast<time_t>(
+    _atoi64(pSession->GetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, "0").c_str()));
   PathName mpmDatabasePath (pSession->GetMpmDatabasePathName());
-  if (! File::Exists(mpmDatabasePath))
+  bool mustRefreshFndb = ! File::Exists(mpmDatabasePath)
+    || (! pSession->IsAdminMode() && lastAdminMaintenance + 30 > File::GetLastWriteTime(mpmDatabasePath));
+  PathName userLanguageDat = pSession->GetSpecialPath(SpecialPath::UserConfigRoot);
+  userLanguageDat += MIKTEX_PATH_LANGUAGE_DAT;
+  bool mustRefreshUserLanguageDat = ! pSession->IsAdminMode()
+    && File::Exists(userLanguageDat) && lastAdminMaintenance + 30 > File::GetLastWriteTime(userLanguageDat);
+  PathName initexmf;
+  if ((mustRefreshFndb || mustRefreshUserLanguageDat) && pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
   {
-    mustRefreshFndb = true;
-  }
-  else if (! pSession->IsAdminMode())
-  {
-    string value;
-    if (pSession->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_LAST_ADMIN_MAINTENANCE, value))
-    {
-      if (static_cast<time_t>(_atoi64(value.c_str())) > File::GetLastWriteTime(mpmDatabasePath))
-      {
-	mustRefreshFndb = true;
-      }
-    }
-  }
-  if (mustRefreshFndb)
-  {
-    // create file name database files
-    PathName initexmf;
-    if (pSession->FindFile(MIKTEX_INITEXMF_EXE, FileType::EXE, initexmf))
+    if (mustRefreshFndb)
     {
       SessionWrapper(true)->UnloadFilenameDatabase ();
       if (pSession->IsAdminMode())
-	{
-	  Process::Run (initexmf, "--admin --quiet --update-fndb");
-	}
+      {
+	Process::Run (initexmf, "--admin --quiet --update-fndb");
+      }
       else
-	{
-	  Process::Run (initexmf, "--quiet --update-fndb");
-	}
+      {
+	Process::Run (initexmf, "--quiet --update-fndb");
+      }
+    }
+    if (mustRefreshUserLanguageDat)
+    {
+      MIKTEX_ASSERT (! pSession->IsAdminMode());
+      Process::Run (initexmf, "--quiet --mklangs");
     }
   }
 }
