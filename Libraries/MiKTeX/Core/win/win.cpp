@@ -1334,7 +1334,7 @@ Utils::GetOSVersionString ()
 		 }
 	       else if (osvi.dwMinorVersion == 2)
 	       {
-		 str += "Server 8";
+		 str += "Server 2012";
 	       }
 	     }
 	   PGPI pGPI =
