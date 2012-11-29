@@ -1,6 +1,6 @@
 /* arctrl.cpp: control Acrobat Reader
 
-   Copyright (C) 2006-2011 Christian Schenk
+   Copyright (C) 2006-2012 Christian Schenk
 */
 
 /* This program (arctrl) is based on public domain work by Fabrice
@@ -504,6 +504,7 @@ ArCtrl::DdeCallback (/*[in]*/ UINT	uType,
    _________________________________________________________________________ */
 
 const char * const ServiceNames[] = {
+  "acroviewR11",
   "acroviewR10",
   "acroview"
 };
