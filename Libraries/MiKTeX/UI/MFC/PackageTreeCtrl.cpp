@@ -1,6 +1,6 @@
 /* PackageTreeCtrl.cpp:
 
-   Copyright (C) 2000-2011 Christian Schenk
+   Copyright (C) 2000-2012 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -243,9 +243,7 @@ PackageTreeCtrlImpl::Refresh ()
       FATAL_WINDOWS_ERROR ("CTreeCtrl::InsertItem", 0);
     }
   packageNames[hRoot] = rootPackageInfo.deploymentName;
-  treeItems.insert
-    (make_pair<string, HTREEITEM>(rootPackageInfo.deploymentName,
-				   hRoot));
+  treeItems.insert (make_pair(rootPackageInfo.deploymentName, hRoot));
   treeItemStates[hRoot] = ITEMSTATE_UNDETERMINED;
 
   // let the tree grow
@@ -295,8 +293,7 @@ PackageTreeCtrlImpl::AddPackage (/*[in]*/ HTREEITEM		hParent,
       FATAL_WINDOWS_ERROR ("CTreeCtrl::InsertItem", 0);
     }
   packageNames[hItem] = packageInfo.deploymentName;
-  treeItems.insert (make_pair<string, HTREEITEM>(packageInfo.deploymentName,
-						  hItem));
+  treeItems.insert (make_pair(packageInfo.deploymentName, hItem));
   treeItemStates[hItem] = state;
   
   // insert sub-packages

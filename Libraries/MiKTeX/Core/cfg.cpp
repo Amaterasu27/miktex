@@ -1,6 +1,6 @@
 /* cfg.cpp: configuration files
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1025,8 +1025,7 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
   CfgKey cfgkey;
   cfgkey.name = lpszKey;
 
-  pair<KeyMap::iterator, bool> pair1
-    = keyMap.insert(make_pair<string, CfgKey>(lpszKey, cfgkey));
+  pair<KeyMap::iterator, bool> pair1 = keyMap.insert(make_pair(cfgkey.name, cfgkey));
 
   KeyMap::iterator itstrkey = pair1.first;
   MIKTEX_ASSERT (itstrkey != keyMap.end());
@@ -1037,9 +1036,8 @@ CfgImpl::PutValue (/*[in]*/ const char *	lpszKey,
   cfgvalue.documentation = (lpszDocumentation == 0 ? "" : lpszDocumentation);
   cfgvalue.commentedOut = commentedOut;
 
-  pair<ValueMap::iterator, bool> pair2
-    = (itstrkey->second.valueMap
-       .insert(make_pair<string, CfgValue>(lpszValueName, cfgvalue)));
+  pair<ValueMap::iterator, bool> pair2 =
+	  (itstrkey->second.valueMap.insert(make_pair(lpszValueName, cfgvalue)));
 
   if (! pair2.second)
     {

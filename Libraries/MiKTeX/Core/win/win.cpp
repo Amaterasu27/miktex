@@ -1626,10 +1626,11 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 		      /*[in,out]*/ size_t *	pBufferSize)
 {
   OSVERSIONINFOW osv;
-  osv.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+  osv.dwOSVersionInfoSize = sizeof(OSVERSIONINFOW);
   GetVersionExW (&osv);
   if (osv.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
     {
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
       unsigned long dwNeeded, dwReturned;
       EnumPrintersW (PRINTER_ENUM_DEFAULT,
 		     0,
@@ -1668,6 +1669,9 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
       Utils::CopyString (pPrinterName, *pBufferSize, ppi2->pPrinterName);
       *pBufferSize = l + 1;
       return (true);
+#else
+      UNSUPPORTED_PLATFORM ();
+#endif
     }
   else
     {
@@ -1702,6 +1706,7 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	}
       else
 	{
+#if defined(MIKTEX_SUPPORT_LEGACY_WINDOWS)
 	  wchar_t cBuffer[4096];
 	  if (GetProfileStringW(L"windows",
 			        L"device",
@@ -1727,6 +1732,9 @@ Utils::GetDefPrinter (/*[out]*/ char *		pPrinterName,
 	  Utils::CopyString (pPrinterName, *pBufferSize, tok.GetCurrent());
 	  *pBufferSize = l + 1;
 	  return (true);
+#else
+	  UNSUPPORTED_PLATFORM ();
+#endif
 	}
     }
 }
@@ -2817,15 +2825,22 @@ BOOL ShellExecuteURLExInternal(LPSHELLEXECUTEINFOW lpExecInfo)
                 if(SUCCEEDED(hr))
                 {
                     /* Is the ProgId really an URL scheme? */
-                    dwErr = RegQueryValueExW
-                    (
-                        hkeyClass,
-                        L"URL Protocol",
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL
-                    );
+		    if (IsWindows8())
+		    {
+		      dwErr = NO_ERROR;
+		    }
+		    else
+		    {
+		      dwErr = RegQueryValueExW
+			(
+			hkeyClass,
+			L"URL Protocol",
+			NULL,
+			NULL,
+			NULL,
+			NULL
+			);
+		    }
  
                     /* All clear! */
                     if(dwErr == NO_ERROR || dwErr == ERROR_MORE_DATA)

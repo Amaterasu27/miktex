@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2012 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -62,7 +62,6 @@ endif(NATIVE_WINDOWS)
 if(NATIVE_WINDOWS)
   target_link_libraries(mpc
     Wldap32
-    fdi
     shlwapi
     version
     wininet

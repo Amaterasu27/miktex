@@ -1,6 +1,6 @@
 /* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2012 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -311,6 +311,23 @@ IsWindows7 ()
   unsigned major = LOBYTE(LOWORD(windowsVersion));
   unsigned minor = HIBYTE(LOWORD(windowsVersion));
   return (major > 6 || major == 6 && minor >= 1);
+}
+#endif
+
+/* _________________________________________________________________________
+
+   IsWindows8
+   _________________________________________________________________________ */
+
+#if defined(MIKTEX_WINDOWS)
+inline
+bool
+IsWindows8 ()
+{
+  DWORD windowsVersion = GetVersion();
+  unsigned major = LOBYTE(LOWORD(windowsVersion));
+  unsigned minor = HIBYTE(LOWORD(windowsVersion));
+  return (major > 6 || major == 6 && minor >= 2);
 }
 #endif
 
