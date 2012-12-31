@@ -161,12 +161,12 @@ for more information</para>
 <answer>
 <para>It is recommended that you download the
 <ulink
-url="http://miktex.org/current/setup"><quote>&BasicMiKTeXInstaller;</quote></ulink>.
+url="http://miktex.org/download"><quote>&BasicMiKTeXInstaller;</quote></ulink>.
 This allows you set up a basic &MiKTeX; system
 (see <xref linkend="basicmiktex"/>).</para>
 <para>Download the
 <ulink
-url="http://miktex.org/current/setup"><quote>&MiKTeXNetInstaller;</quote></ulink>, if you want
+url="http://miktex.org/download"><quote>&MiKTeXNetInstaller;</quote></ulink>, if you want
 to set up a complete &MiKTeX; system
 (see <xref linkend="netinstaller"/>).</para>
 </answer>
