@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2011 Christian Schenk
+   Copyright (C) 2001-2012 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -629,7 +629,7 @@ PackageManagerImpl::DefinePackage
 {
   pair<PackageDefinitionTable::iterator, bool> p =
     packageTable.insert
-    (make_pair<string, PackageInfo>(deploymentName, packageInfo));
+    (make_pair(deploymentName, packageInfo));
   p.first->second.deploymentName = deploymentName;
   if (pSession->IsMiKTeXDirect())
   {
