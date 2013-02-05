@@ -569,6 +569,7 @@
       list->field[1] = (char*)empty;
       list->field[2] = (char*)empty;
       list->field[3] = (char*)empty;
+      list->field[4] = (char*)empty;
     }
 
     /* If the line is empty, then simply return. */
@@ -769,11 +770,11 @@
       /* XXX: Use encoding independent value for 0x1a */
       if ( buf[start] != '#' && buf[start] != 0x1a && end > start )
       {
-        error = (*cb)( buf + start, end - start, lineno,
+        error = (*cb)( buf + start, (unsigned long)( end - start ), lineno,
                        (void*)&cb, client_data );
         /* Redo if we have encountered CHARS without properties. */
         if ( error == -1 )
-          error = (*cb)( buf + start, end - start, lineno,
+          error = (*cb)( buf + start, (unsigned long)( end - start ), lineno,
                          (void*)&cb, client_data );
         if ( error )
           break;
@@ -841,9 +842,6 @@
   };
 
 
-#define isdigok( m, d )  (m[(d) >> 3] & ( 1 << ( (d) & 7 ) ) )
-
-
   /* Routine to convert an ASCII string into an unsigned long integer. */
   static unsigned long
   _bdf_atoul( char*   s,
@@ -881,7 +879,7 @@
       s   += 2;
     }
 
-    for ( v = 0; isdigok( dmap, *s ); s++ )
+    for ( v = 0; sbitset( dmap, *s ); s++ )
       v = v * base + a2i[(int)*s];
 
     if ( end != 0 )
@@ -936,7 +934,7 @@
       s   += 2;
     }
 
-    for ( v = 0; isdigok( dmap, *s ); s++ )
+    for ( v = 0; sbitset( dmap, *s ); s++ )
       v = v * base + a2i[(int)*s];
 
     if ( end != 0 )
@@ -991,7 +989,7 @@
       s   += 2;
     }
 
-    for ( v = 0; isdigok( dmap, *s ); s++ )
+    for ( v = 0; sbitset( dmap, *s ); s++ )
       v = (short)( v * base + a2i[(int)*s] );
 
     if ( end != 0 )
@@ -1626,12 +1624,16 @@
       if ( p->glyph_enc == -1 && p->list.used > 2 )
         p->glyph_enc = _bdf_atol( p->list.field[2], 0, 10 );
 
+      if ( p->glyph_enc < -1 )
+        p->glyph_enc = -1;
+
       FT_TRACE4(( DBGMSG2, p->glyph_enc ));
 
       /* Check that the encoding is in the Unicode range because  */
       /* otherwise p->have (a bitmap with static size) overflows. */
-      if ( p->glyph_enc > 0                               &&
-           (size_t)p->glyph_enc >= sizeof ( p->have ) * 8 )
+      if ( p->glyph_enc > 0                                      &&
+           (size_t)p->glyph_enc >= sizeof ( p->have ) /
+                                   sizeof ( unsigned long ) * 32 )
       {
         FT_ERROR(( "_bdf_parse_glyphs: " ERRMSG5, lineno, "ENCODING" ));
         error = BDF_Err_Invalid_File_Format;
@@ -1746,7 +1748,7 @@
       for ( i = 0; i < nibbles; i++ )
       {
         c = line[i];
-        if ( !isdigok( hdigits, c ) )
+        if ( !sbitset( hdigits, c ) )
           break;
         *bp = (FT_Byte)( ( *bp << 4 ) + a2i[c] );
         if ( i + 1 < nibbles && ( i & 1 ) )
@@ -1770,7 +1772,7 @@
 
       /* If any line has extra columns, indicate they have been removed. */
       if ( i == nibbles                           &&
-           isdigok( hdigits, line[nibbles] )      &&
+           sbitset( hdigits, line[nibbles] )      &&
            !( p->flags & _BDF_GLYPH_WIDTH_CHECK ) )
       {
         FT_TRACE2(( "_bdf_parse_glyphs: " ACMSG14, glyph->encoding ));
@@ -2171,7 +2173,10 @@
       p->cnt = p->font->props_size = _bdf_atoul( p->list.field[1], 0, 10 );
 
       if ( FT_NEW_ARRAY( p->font->props, p->cnt ) )
+      {
+        p->font->props_size = 0;
         goto Exit;
+      }
 
       p->flags |= _BDF_PROPS;
       *next     = _bdf_parse_properties;

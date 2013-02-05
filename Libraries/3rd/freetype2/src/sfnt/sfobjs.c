@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    SFNT object management (base).                                       */
 /*                                                                         */
-/*  Copyright 1996-2008, 2010-2011 by                                      */
+/*  Copyright 1996-2008, 2010-2012 by                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -64,13 +64,17 @@
     for ( n = 0; n < len; n++ )
     {
       code = FT_NEXT_USHORT( read );
+
+      if ( code == 0 )
+        break;
+
       if ( code < 32 || code > 127 )
         code = '?';
 
       string[n] = (char)code;
     }
 
-    string[len] = 0;
+    string[n] = 0;
 
     return string;
   }
@@ -95,13 +99,17 @@
     for ( n = 0; n < len; n++ )
     {
       code = *read++;
+
+      if ( code == 0 )
+        break;
+
       if ( code < 32 || code > 127 )
         code = '?';
 
       string[n] = (char)code;
     }
 
-    string[len] = 0;
+    string[n] = 0;
 
     return string;
   }
@@ -500,7 +508,7 @@
     FT_TRACE2(( "`" #x "' " ));                               \
     FT_TRACE3(( "-->\n" ));                                   \
                                                               \
-    error = sfnt->load_##x( face, stream );                   \
+    error = sfnt->load_ ## x( face, stream );                 \
                                                               \
     FT_TRACE2(( "%s\n", ( !error )                            \
                         ? "loaded"                            \
@@ -516,7 +524,7 @@
                 vertical ? "vertical " : "" ));               \
     FT_TRACE3(( "-->\n" ));                                   \
                                                               \
-    error = sfnt->load_##x( face, stream, vertical );         \
+    error = sfnt->load_ ## x( face, stream, vertical );       \
                                                               \
     FT_TRACE2(( "%s\n", ( !error )                            \
                         ? "loaded"                            \
@@ -526,11 +534,11 @@
     FT_TRACE3(( "\n" ));                                      \
   } while ( 0 )
 
-#define GET_NAME( id, field )                                 \
-  do {                                                        \
-    error = tt_face_get_name( face, TT_NAME_ID_##id, field ); \
-    if ( error )                                              \
-      goto Exit;                                              \
+#define GET_NAME( id, field )                                   \
+  do {                                                          \
+    error = tt_face_get_name( face, TT_NAME_ID_ ## id, field ); \
+    if ( error )                                                \
+      goto Exit;                                                \
   } while ( 0 )
 
 
@@ -547,12 +555,13 @@
 #endif
     FT_Bool       has_outline;
     FT_Bool       is_apple_sbit;
-    FT_Bool       ignore_preferred_family = FALSE;
+    FT_Bool       ignore_preferred_family    = FALSE;
     FT_Bool       ignore_preferred_subfamily = FALSE;
 
     SFNT_Service  sfnt = (SFNT_Service)face->sfnt;
 
     FT_UNUSED( face_index );
+
 
     /* Check parameters */
 
@@ -659,7 +668,7 @@
                  get_glyph_metrics                                 )
           {
             face->horizontal.number_Of_HMetrics = 0;
-            error = SFNT_Err_Ok;
+            error                               = SFNT_Err_Ok;
           }
 #endif
         }
@@ -686,7 +695,7 @@
                  get_glyph_metrics                                 )
           {
             face->horizontal.number_Of_HMetrics = 0;
-            error = SFNT_Err_Ok;
+            error                               = SFNT_Err_Ok;
           }
 #endif
 
