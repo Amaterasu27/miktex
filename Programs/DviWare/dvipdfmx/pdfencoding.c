@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.c,v 1.13 2011/03/06 03:14:14 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2008-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -287,7 +287,7 @@ load_encoding_file (const char *filename)
   pdf_obj *encoding_array = NULL;
   char    *wbuf;
   const char *p, *endptr;
-  char    *enc_vec[256];
+  const char *enc_vec[256];
   int      code, fsize, enc_id;
 
   if (!filename)
@@ -339,7 +339,7 @@ load_encoding_file (const char *filename)
     enc_vec[code] = pdf_name_value(pdf_get_array(encoding_array, code));
   }
   enc_id = pdf_encoding_new_encoding(enc_name ? pdf_name_value(enc_name) : NULL,
-				     filename, (const char **) enc_vec, NULL, 0);
+				     filename, enc_vec, NULL, 0);
 
   if (enc_name) {
     if (verbose > 1)

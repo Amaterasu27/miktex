@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_post.c,v 1.4 2011/03/06 03:14:15 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,26 +38,40 @@ static const char *macglyphorder[258];
 static int
 read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
 {
-  USHORT i, idx, *indices;
+  USHORT i, idx, *indices, maxidx;
   int    len;
 
   post->numberOfGlyphs = sfnt_get_ushort(sfont);
 
   indices     = NEW(post->numberOfGlyphs, USHORT);
-  post->count = 0;
+  maxidx = 257;
   for (i = 0;
        i < post->numberOfGlyphs; i++) {
     idx = sfnt_get_ushort(sfont);
     if (idx >= 258) {
+      if (idx > maxidx)
+        maxidx = idx;
       if (idx > 32767) {
-	WARN("TrueTypes post table name index %u > 32767", idx);
+	/* Although this is strictly speaking out of spec, it seems to work
+	   and there are real-life fonts that use it.
+           We show a warning only once, instead of thousands of times */
+	static char warning_issued = 0;
+	if (!warning_issued) {
+	  WARN("TrueType post table name index %u > 32767", idx);
+          warning_issued = 1;
+        }
+        /* In a real-life large font, (x)dvipdfmx crashes if we use
+           nonvanishing idx in the case of idx > 32767.
+           If we set idx = 0, (x)dvipdfmx works fine for the font and
+           created pdf seems fine. The post table may not be important
+           in such a case */
 	idx = 0;
       }
-      post->count++;
     }
     indices[i] = idx;
   }
 
+  post->count = maxidx - 257;
   if (post->count < 1) {
     post->names = NULL;
   } else {
@@ -97,9 +111,8 @@ struct tt_post_table *
 tt_read_post_table (sfnt *sfont)
 {
   struct tt_post_table *post;
-  ULONG  offset;
 
-  offset = sfnt_locate_table(sfont, "post");
+  /* offset = */ sfnt_locate_table(sfont, "post");
 
   post   = NEW(1, struct tt_post_table);
 
@@ -174,7 +187,7 @@ tt_release_post_table (struct tt_post_table *post)
   ASSERT(post);
 
   if (post->glyphNamePtr && post->Version != 0x00010000UL)
-    RELEASE(post->glyphNamePtr);
+    RELEASE((void *)post->glyphNamePtr);
   if (post->names) {
     for (i = 0; i < post->count; i++) {
       if (post->names[i])

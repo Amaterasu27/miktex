@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pkfont.c,v 1.19 2008/11/03 22:18:52 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -480,7 +480,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
 {
   pdf_obj  *stream; /* charproc */
   long      llx, lly, urx, ury;
-  int       len, error = 0;
+  int       len;
 
   llx = -pkh->bm_hoff;
   lly =  pkh->bm_voff - pkh->bm_ht;
@@ -517,12 +517,12 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
     pdf_add_stream(stream, work_buffer, len);
     /* Add bitmap data */
     if (pkh->dyn_f == 14) /* bitmap */
-      error = pk_decode_bitmap(stream,
+              pk_decode_bitmap(stream,
                                pkh->bm_wd, pkh->bm_ht,
                                pkh->dyn_f, pkh->run_color,
                                pkt_ptr,    pkt_len);
     else
-      error = pk_decode_packed(stream,
+              pk_decode_packed(stream,
                                pkh->bm_wd, pkh->bm_ht,
                                pkh->dyn_f, pkh->run_color,
                                pkt_ptr,    pkt_len);

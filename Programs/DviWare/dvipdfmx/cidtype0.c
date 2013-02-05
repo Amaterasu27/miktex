@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.40 2011/03/06 03:14:13 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -161,7 +161,10 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
 		 struct tt_head_table *head, struct tt_longMetrics *hmtx)
 {
   pdf_obj *w2_array, *an_array = NULL;
-  long cid, prev, start;
+  long cid;
+#if 0
+  long prev = 0, start = 0;
+#endif
   struct tt_VORG_table *vorg;
   struct tt_vhea_table *vhea  = NULL;
   struct tt_longMetrics *vmtx = NULL;
@@ -197,7 +200,6 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
   }
 
   w2_array = pdf_new_array();
-  start = prev = 0;
   for (cid = 0; cid <= last_cid; cid++) {
     USHORT i, gid;
     double advanceHeight, vertOriginX, vertOriginY;
@@ -542,7 +544,7 @@ CIDFont_type0_dofont (CIDFont *font)
   cid = 0; last_cid = 0; num_glyphs = 0;
   for (cid = 0; cid <= CID_MAX; cid++) {
     if (is_used_char2(used_chars, cid)) {
-      gid = cff_charsets_lookup(cffont, cid);
+      gid = cff_charsets_lookup(cffont, (card16)cid);
       if (cid != 0 && gid == 0) {
 	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
 	used_chars[cid/8] &= ~(1 << (7 - (cid % 8)));
@@ -609,7 +611,7 @@ CIDFont_type0_dofont (CIDFont *font)
   fdselect->data.ranges = NEW(num_glyphs, cff_range3);
 
   /* New CharStrings INDEX */
-  charstrings = cff_new_index(num_glyphs+1);
+  charstrings = cff_new_index((card16)(num_glyphs+1));
   max_len = 2 * CS_STR_LEN_MAX;
   charstrings->data = NEW(max_len, card8);
   charstring_len = 0;
@@ -1015,7 +1017,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
     ERROR("No valid charstring data found.");
 
   /* New CharStrings INDEX */
-  charstrings = cff_new_index(num_glyphs+1);
+  charstrings = cff_new_index((card16)(num_glyphs+1));
   max_len = 2 * CS_STR_LEN_MAX;
   charstrings->data = NEW(max_len, card8);
   charstring_len = 0;
@@ -1954,7 +1956,7 @@ CIDFont_type0_t1dofont (CIDFont *font)
     widths = NEW(num_glyphs, double);
     memset(w_stat, 0, sizeof(int)*1001);
     offset  = 0L;
-    cstring = cff_new_index(num_glyphs);
+    cstring = cff_new_index((card16)num_glyphs);
     cstring->data = NULL;
     cstring->offset[0] = 1;
     gid = 0;

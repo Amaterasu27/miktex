@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.54 2011/03/08 00:20:51 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -392,7 +392,7 @@ reencodestring (CMap *cmap, pdf_obj *instring)
 #define WBUF_SIZE 4096
   unsigned char  wbuf[WBUF_SIZE];
   unsigned char *obufcur;
-  unsigned char *inbufcur;
+  const unsigned char *inbufcur;
   long inbufleft, obufleft;
 
   if (!cmap || !instring)
@@ -407,7 +407,7 @@ reencodestring (CMap *cmap, pdf_obj *instring)
   obufleft = WBUF_SIZE - 2;
 
   CMap_decode(cmap,
-	      (const unsigned char **)&inbufcur, &inbufleft,
+	      &inbufcur, &inbufleft,
 	      &obufcur, &obufleft);
 
   if (inbufleft > 0) {
@@ -1026,7 +1026,6 @@ static int
 spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_obj  *name, *array;
-  int       error = 0;
 
   skip_white(&args->curptr, args->endptr);
 
@@ -1052,7 +1051,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  error = pdf_doc_add_names("Dests",
+  pdf_doc_add_names("Dests",
                             pdf_string_value (name),
                             pdf_string_length(name),
                             array);

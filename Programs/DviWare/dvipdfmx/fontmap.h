@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.23 2008/11/30 21:12:27 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -37,6 +37,14 @@
 #define FONTMAP_STYLE_ITALIC     2
 #define FONTMAP_STYLE_BOLDITALIC 3
 
+#ifdef XETEX
+#include "ft2build.h"
+#include FT_FREETYPE_H
+
+/* globals initialized by fontmap.c when it opens freetype */
+extern FT_Int ft_major, ft_minor, ft_patch;
+#endif
+
 /* Options */
 typedef struct fontmap_opt {
   /* Synthetic font */
@@ -53,6 +61,10 @@ typedef struct fontmap_opt {
   int    index;       /* TTC index */
   int    style;       /* ,Bold, etc. */
   int    stemv;       /* StemV value especially for CJK fonts */
+#ifdef XETEX
+  FT_Face ft_face;
+  unsigned short *glyph_widths;
+#endif
 } fontmap_opt;
 
 typedef struct fontmap_rec {
@@ -92,5 +104,11 @@ extern int          pdf_insert_fontmap_record (const char  *kp, const fontmap_re
 extern fontmap_rec *pdf_lookup_fontmap_record (const char  *kp);
 
 extern int          is_pdfm_mapline           (const char  *mline);
+
+#ifdef XETEX
+extern int          pdf_load_native_font      (const char *ps_name,
+                                               const char *fam_name, const char *sty_name,
+                                               int layout_dir, int extend, int slant, int embolden);
+#endif
 
 #endif /* _FONTMAP_H_ */

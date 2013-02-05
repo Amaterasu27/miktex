@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.11 2009/05/02 12:16:32 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ tt_read_hhea_table (sfnt *sfont)
   }
   table->metricDataFormat = sfnt_get_short(sfont);
   if (table->metricDataFormat != 0)
-    ERROR("unknown metricDaraFormat");
+    ERROR("unknown metricDataFormat");
   table->numOfLongHorMetrics = sfnt_get_ushort(sfont);
 
   len = sfnt_find_table_len(sfont, "hmtx");

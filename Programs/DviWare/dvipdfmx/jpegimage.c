@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.11 2009/05/10 17:04:54 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -569,9 +569,7 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 static unsigned short
 read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 {
-  unsigned char extension_code;
-
-  extension_code = get_unsigned_byte(fp);
+  get_unsigned_byte(fp);
   /* Extension Code:
    *
    * 0x10: Thumbnail coded using JPEG

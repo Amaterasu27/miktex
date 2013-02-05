@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.29 2011/03/09 07:55:19 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -303,8 +303,7 @@ dpx_foolsearch (const char  *foolname,
 
   return  fqpn;
 }
-#else /* TEXK */
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
+#else /* !MIKTEX */
 #  define TDS11DOC "http://www.tug.org/ftp/tex/tds-1.1/tds.html#Fonts"
 static void
 insistupdate (const char      *filename,
@@ -333,7 +332,6 @@ insistupdate (const char      *filename,
   WARN(">> Please read \"README\" file.");
 #endif
 }
-#endif /* TDS 1.1 */
 
 static char *
 dpx_find__app__xyz (const char *filename,
@@ -475,11 +473,9 @@ dpx_find_fontmap_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".map", 1);
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
-#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -501,11 +497,9 @@ dpx_find_agl_file (const char *filename)
   fqpn = kpse_find_file(q, kpse_fontmap_format, 0);
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(q, fqpn, PACKAGE,
                    kpse_program_text_format, kpse_fontmap_format); 
-#endif
   }
 #endif /* MIKETEX */
   RELEASE(q);
@@ -552,10 +546,8 @@ dpx_find_cmap_file (const char *filename)
     memset(_tmpbuf, 0, _MAX_PATH+1);
   }
 #else
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L  
   fqpn = kpse_find_file(filename, kpse_cmap_format, 0); 
 #endif  
-#endif
 
   /* Files found above are assumed to be CMap,
    * if it's not really CMap it will cause an error.
@@ -564,10 +556,8 @@ dpx_find_cmap_file (const char *filename)
     fqpn = dpx_foolsearch(fools[i], filename, 1);
     if (fqpn) {
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_cmap_format); 
-#endif
 #endif
       if (!qcheck_filetype(fqpn, DPX_RES_TYPE_CMAP)) {
         WARN("Found file \"%s\" for PostScript CMap but it doesn't look like a CMap...", fqpn);
@@ -599,19 +589,15 @@ dpx_find_sfd_file (const char *filename)
 
   q    = ensuresuffix(filename, ".sfd");
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_sfd_format, 0);
-#endif
 #endif /* !MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_sfd_format); 
-#endif
 #endif
   }
   RELEASE(q);
@@ -637,21 +623,15 @@ dpx_find_enc_file (const char *filename)
     strcpy(fqpn, _tmpbuf);
   }
 #else
-# if defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_enc_format, 0);
-# else
-  fqpn = kpse_find_file(q, kpse_tex_ps_header_format, 0);
-# endif
 #endif /* MIKTEX */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, fools[i],
                    kpse_program_text_format, kpse_enc_format); 
-#endif
 #endif
   }
   RELEASE(q);
@@ -698,19 +678,15 @@ dpx_find_opentype_file (const char *filename)
 
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
   fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
-#endif
     fqpn = dpx_foolsearch(PACKAGE, q, 0);
 #ifndef  MIKTEX_NO_KPATHSEA
-#if  defined(__TDS_VERSION__) && __TDS_VERSION__ >= 0x200406L
     if (fqpn)
       insistupdate(filename, fqpn, PACKAGE,
                    kpse_program_binary_format, kpse_opentype_format); 
   }
-#endif
 #endif
   RELEASE(q);
 

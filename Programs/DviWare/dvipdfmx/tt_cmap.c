@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.27 2009/09/18 23:56:02 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -452,13 +452,13 @@ tt_cmap_read (sfnt *sfont, USHORT platform, USHORT encoding)
 {
   tt_cmap *cmap = NULL;
   ULONG    offset, length = 0;
-  USHORT   version, p_id, e_id;
+  USHORT   p_id, e_id;
   USHORT   i, n_subtabs;
 
   ASSERT(sfont);
 
   offset    = sfnt_locate_table(sfont, "cmap");
-  version   = sfnt_get_ushort(sfont);
+  (void)      sfnt_get_ushort(sfont);
   n_subtabs = sfnt_get_ushort(sfont);
 
   for (i = 0; i < n_subtabs; i++) {
@@ -848,7 +848,8 @@ handle_subst_glyphs (CMap *cmap,
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
     long  len, inbytesleft, outbytesleft;
-    unsigned char *inbuf, *outbuf;
+    const unsigned char *inbuf;
+    unsigned char *outbuf;
 
     if (used_glyphs[i] == 0)
       continue;
@@ -866,10 +867,10 @@ handle_subst_glyphs (CMap *cmap,
 	wbuf[1] =  gid & 0xff;
 	inbuf        = wbuf;
 	inbytesleft  = 2;
-	outbuf       = inbuf + 2;
+	outbuf       = wbuf + 2;
 	outbytesleft = WBUF_SIZE - 2;
 	CMap_decode(cmap_add,
-		    (const unsigned char **) &inbuf , &inbytesleft,
+		    &inbuf , &inbytesleft,
 		    &outbuf, &outbytesleft);
 	if (inbytesleft != 0) {
 	  WARN("CMap conversion failed...");
@@ -1028,14 +1029,27 @@ otf_create_ToUnicode_stream (const char *font_name,
   CMap       *cmap_add;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
+  char       *normalized_font_name;
   char       *cmap_name;
   FILE       *fp = NULL;
   sfnt       *sfont;
   long        offset = 0;
+  int         i;
 
+
+  /* replace slash in map name with dash to make the output cmap name valid,
+   * happens when XeTeX embeds full font path
+   * https://sourceforge.net/p/xetex/bugs/52/
+   */
+  normalized_font_name = NEW(strlen(font_name)+1, char);
+  strcpy(normalized_font_name, font_name);
+  for (i = 0; i < strlen(font_name); ++i) {
+    if (normalized_font_name[i] == '/')
+		normalized_font_name[i] = '-';
+  }
 
   cmap_name = NEW(strlen(font_name)+strlen("-UTF16")+5, char);
-  sprintf(cmap_name, "%s,%03d-UTF16", font_name, ttc_index);
+  sprintf(cmap_name, "%s,%03d-UTF16", normalized_font_name, ttc_index);
 
   res_id = pdf_findresource("CMap", cmap_name);
   if (res_id >= 0) {
@@ -1399,7 +1413,7 @@ handle_assign (pdf_obj *dst, pdf_obj *src, int flag,
   }
 
   rv = otl_gsub_apply_lig(gsub_list,
-			  gid_in, n_unicodes, &lig);
+			  gid_in, (USHORT)n_unicodes, &lig);
   if (rv < 0) {
     if (flag == 'p')
       WARN("No ligature found...");
@@ -1797,22 +1811,18 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
       }
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       load_gsub(opt_conf, gsub_list, sfont);
     }
 
-#if defined(MIKTEX)
     ht_init_table(&unencoded, hval_free);
-#else
-    ht_init_table(&unencoded);
-#endif
 
     handle_gsub(conf, ttcmap, gsub_list, &unencoded);
     if (opt_tag) {
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       handle_gsub(opt_conf, ttcmap, gsub_list, &unencoded);
     }
