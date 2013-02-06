@@ -25,7 +25,7 @@
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 // Copyright (C) 2009, 2011, 2012 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
-// Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
+// Copyright (C) 2010, 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de>
 // Copyright (C) 2010 Jakub Wilk <ubanus@users.sf.net>
 // Copyright (C) 2011 Pino Toscano <pino@kde.org>
@@ -166,7 +166,7 @@ DllMain (HINSTANCE hinstDLL,
 }
 }
 
-static char *
+static const char *
 get_poppler_datadir (void)
 {
   static char retval[MAX_PATH];
@@ -214,9 +214,10 @@ public:
   GooString *path;
   SysFontType type;
   int fontNum;			// for TrueType collections
+  GooString *substituteName;
 
   SysFontInfo(GooString *nameA, GBool boldA, GBool italicA, GBool obliqueA, GBool fixedWidthA,
-	      GooString *pathA, SysFontType typeA, int fontNumA);
+	      GooString *pathA, SysFontType typeA, int fontNumA, GooString *substituteNameA);
   ~SysFontInfo();
   GBool match(SysFontInfo *fi);
   GBool match(GooString *nameA, GBool boldA, GBool italicA, GBool obliqueA, GBool fixedWidthA);
@@ -224,7 +225,7 @@ public:
 };
 
 SysFontInfo::SysFontInfo(GooString *nameA, GBool boldA, GBool italicA, GBool obliqueA, GBool fixedWidthA,
-			 GooString *pathA, SysFontType typeA, int fontNumA) {
+			 GooString *pathA, SysFontType typeA, int fontNumA, GooString *substituteNameA) {
   name = nameA;
   bold = boldA;
   italic = italicA;
@@ -233,11 +234,13 @@ SysFontInfo::SysFontInfo(GooString *nameA, GBool boldA, GBool italicA, GBool obl
   path = pathA;
   type = typeA;
   fontNum = fontNumA;
+  substituteName = substituteNameA;
 }
 
 SysFontInfo::~SysFontInfo() {
   delete name;
   delete path;
+  delete substituteName;
 }
 
 GBool SysFontInfo::match(SysFontInfo *fi) {
@@ -436,7 +439,7 @@ Plugin *Plugin::load(char *type, char *name) {
   void *dlA;
 #endif
 
-  path = globalParams->getBaseDir();
+  path = new GooString(POPPLER_DATADIR);
   appendToPath(path, "plugins");
   appendToPath(path, type);
   appendToPath(path, name);
@@ -571,11 +574,7 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   }
 
 #ifdef _WIN32
-  // baseDir will be set by a call to setBaseDir
-  baseDir = new GooString();
   substFiles = new GooHash(gTrue);
-#else
-  baseDir = appendToPath(getHomeDir(), ".xpdf");
 #endif
   nameToUnicode = new NameToCharCode();
   cidToUnicodes = new GooHash(gTrue);
@@ -797,7 +796,6 @@ GlobalParams::~GlobalParams() {
 
   delete macRomanReverseMap;
 
-  delete baseDir;
   delete nameToUnicode;
   deleteGooHash(cidToUnicodes, GooString);
   deleteGooHash(unicodeToUnicodes, GooString);
@@ -847,28 +845,12 @@ GlobalParams::~GlobalParams() {
 }
 
 //------------------------------------------------------------------------
-
-void GlobalParams::setBaseDir(const char *dir) {
-  delete baseDir;
-  baseDir = new GooString(dir);
-}
-
-//------------------------------------------------------------------------
 // accessors
 //------------------------------------------------------------------------
 
 CharCode GlobalParams::getMacRomanCharCode(char *charName) {
   // no need to lock - macRomanReverseMap is constant
   return macRomanReverseMap->lookup(charName);
-}
-
-GooString *GlobalParams::getBaseDir() {
-  GooString *s;
-
-  lockGlobalParams;
-  s = baseDir->copy();
-  unlockGlobalParams;
-  return s;
 }
 
 Unicode GlobalParams::mapNameToUnicode(const char *charName) {
@@ -1184,6 +1166,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
   FcPattern *p=0;
   GooString *path = NULL;
   GooString *fontName = font->getName();
+  GooString substituteName;
   if (!fontName) return NULL;
   lockGlobalParams;
 
@@ -1191,6 +1174,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     path = fi->path->copy();
     *type = fi->type;
     *fontNum = fi->fontNum;
+    substituteName.Set(fi->substituteName->getCString());
   } else {
     FcChar8* s;
     char * ext;
@@ -1235,28 +1219,26 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 	  }
 	}
 	FcChar8* s2;
-	if (substituteFontName) {
 	  res = FcPatternGetString(set->fonts[i], FC_FULLNAME, 0, &s2);
 	  if (res == FcResultMatch && s2) {
-	    substituteFontName->Set((char*)s2);
+          substituteName.Set((char*)s2);
 	  } else {
 	    // fontconfig does not extract fullname for some fonts
 	    // create the fullname from family and style
 	    res = FcPatternGetString(set->fonts[i], FC_FAMILY, 0, &s2);
 	    if (res == FcResultMatch && s2) {
-	      substituteFontName->Set((char*)s2);
+            substituteName.Set((char*)s2);
 	      res = FcPatternGetString(set->fonts[i], FC_STYLE, 0, &s2);
 	      if (res == FcResultMatch && s2) {
 		GooString *style = new GooString((char*)s2);
 		if (style->cmp("Regular") != 0) {
-		  substituteFontName->append(" ");
-		  substituteFontName->append(style);
+                substituteName.append(" ");
+                substituteName.append(style);
 		}
 		delete style;
 	      }
 	    }
 	  }
-	}
 	ext = strrchr((char*)s,'.');
 	if (!ext)
 	  continue;
@@ -1281,7 +1263,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 	  *type = (!strncasecmp(ext,".ttc",4)) ? sysFontTTC : sysFontTTF;
 	  FcPatternGetInteger(set->fonts[i], FC_INDEX, 0, fontNum);
 	  fi = new SysFontInfo(fontName->copy(), bold, italic, oblique, font->isFixedWidth(),
-			       new GooString((char*)s), *type, *fontNum);
+			       new GooString((char*)s), *type, *fontNum, substituteName.copy());
 	  sysFonts->addFcFont(fi);
 	  path = new GooString((char*)s);
 	}
@@ -1306,7 +1288,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 	  *type = (!strncasecmp(ext,".pfa",4)) ? sysFontPFA : sysFontPFB;
 	  FcPatternGetInteger(set->fonts[i], FC_INDEX, 0, fontNum);
 	  fi = new SysFontInfo(fontName->copy(), bold, italic, oblique, font->isFixedWidth(),
-			       new GooString((char*)s), *type, *fontNum);
+			       new GooString((char*)s), *type, *fontNum, substituteName.copy());
 	  sysFonts->addFcFont(fi);
 	  path = new GooString((char*)s);
 	}
@@ -1328,6 +1310,9 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     path = fi->path->copy();
     *type = fi->type;
     *fontNum = fi->fontNum;
+  }
+  if (substituteFontName) {
+    substituteFontName->Set(substituteName.getCString());
   }
 fin:
   if (p)

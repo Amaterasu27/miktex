@@ -16,7 +16,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2009, 2011 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2011, 2012 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 //
 // To see a description of the changes please see the Changelog file that
@@ -27,7 +27,7 @@
 #ifndef GFILE_H
 #define GFILE_H
 
-#include "poppler/poppler-config.h"
+#include "poppler-config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -75,9 +75,6 @@ class GooString;
 
 //------------------------------------------------------------------------
 
-// Get home directory path.
-extern GooString *getHomeDir();
-
 // Get current directory.
 extern GooString *getCurrentDir();
 
@@ -92,10 +89,6 @@ extern GooString *grabPath(char *fileName);
 // Is this an absolute path or file name?
 extern GBool isAbsolutePath(char *path);
 
-// Make this path absolute by prepending current directory (if path is
-// relative) or prepending user's directory (if path starts with '~').
-extern GooString *makePathAbsolute(GooString *path);
-
 // Get the modification time for <fileName>.  Returns 0 if there is an
 // error.
 extern time_t getModTime(char *fileName);
@@ -107,9 +100,6 @@ extern time_t getModTime(char *fileName);
 // reopened later for reading, but not for writing.  The <mode> string
 // should be "w" or "wb".  Returns true on success.
 extern GBool openTempFile(GooString **name, FILE **f, const char *mode);
-
-// Execute <command>.  Returns true on success.
-extern GBool executeCommand(char *cmd);
 
 #if ! defined(MIKTEX)
 #ifdef WIN32
@@ -144,6 +134,8 @@ public:
   GBool isDir() { return dir; }
 
 private:
+  GDirEntry(const GDirEntry &other);
+  GDirEntry& operator=(const GDirEntry &other);
 
   GooString *name;		// dir/file name
   GooString *fullPath;
@@ -159,6 +151,8 @@ public:
   void rewind();
 
 private:
+  GDir(const GDir &other);
+  GDir& operator=(const GDir &other);
 
   GooString *path;		// directory path
   GBool doStat;			// call stat() for each entry?
