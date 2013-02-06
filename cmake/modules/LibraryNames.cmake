@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -70,6 +70,7 @@ set(getopt_dll_name	"${miktex_dll_prefix}-getopt")
 set(gftodvi_dll_name	"${miktex_dll_prefix}-gftodvi")
 set(gftopk_dll_name	"${miktex_dll_prefix}-gftopk")
 set(gftype_dll_name	"${miktex_dll_prefix}-gftype")
+set(graphite2_dll_name	"${miktex_dll_prefix}-graphite2")
 set(graphite_engine_dll_name	"${miktex_dll_prefix}-graphite-engine")
 set(hunspell_dll_name	"${miktex_dll_prefix}-hunspell")
 set(jpeg_dll_name	"${miktex_dll_prefix}-jpeg")
@@ -155,6 +156,7 @@ if(NOT USE_SYSTEM_EXPAT)
 endif(NOT USE_SYSTEM_EXPAT)
 set(extractor_lib_name	"extractor-static")
 set(getopt_lib_name	"getopt-static")
+set(graphite2_lib_name	"graphite2-static")
 set(graphite_engine_lib_name	"graphite-engine-static")
 set(kpsemu_lib_name	"kpathsea-static")
 set(lua_lib_name	"lua51-static")

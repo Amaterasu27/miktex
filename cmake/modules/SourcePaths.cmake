@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -57,6 +57,7 @@ set(rel_freetype_dir	"Programs/FontUtilities/freetype")
 set(rel_gd_dir		"Libraries/3rd/libgd")
 set(rel_getopt_dir	"Libraries/3rd/getopt")
 set(rel_graphite_dir	"Libraries/3rd/graphite")
+set(rel_graphite2_dir	"Libraries/3rd/graphite2")
 set(rel_graphite_engine_dir "Libraries/3rd/graphite/engine")
 set(rel_gsf2pk_dir	"Programs/MiKTeX/gsf2pk")
 set(rel_gsoap_dir	"Libraries/3rd/gsoap")
