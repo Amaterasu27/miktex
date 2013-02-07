@@ -1844,6 +1844,10 @@ PackageInstallerImpl::ConnectToServer ()
 {
   const char * MSG_CANNOT_START_SERVER =
     T_("Cannot start MiKTeX package manager.");
+  if (! pSession->UnloadFilenameDatabase())
+  {
+    // ignore for now
+  }
   if (localServer.pInstaller == 0)
     {
       if (localServer.pManager == 0)
