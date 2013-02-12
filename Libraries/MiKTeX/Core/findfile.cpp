@@ -199,11 +199,14 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
 	AutoFndbRelease autoRelease (pFndb);
 	vector<PathName> paths;
 	vector<string> fileNameInfo;
-	if (pFndb->Search(lpszFileName,
+	bool found = pFndb->Search(lpszFileName,
 	  it->Get(),
 	  firstMatchOnly,
 	  paths,
-	  fileNameInfo))
+	  fileNameInfo);
+	// we must release the FNDB handle since CheckCandidate() might request an unload of the FNDB
+	autoRelease.Reset ();
+	if (found)
 	{
 	  for (int idx = 0; idx < paths.size(); ++ idx)
 	  {
