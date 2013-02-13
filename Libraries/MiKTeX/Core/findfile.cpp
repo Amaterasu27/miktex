@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -199,14 +199,14 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
 	AutoFndbRelease autoRelease (pFndb);
 	vector<PathName> paths;
 	vector<string> fileNameInfo;
-	bool found = pFndb->Search(lpszFileName,
+	bool foundInFndb = pFndb->Search(lpszFileName,
 	  it->Get(),
 	  firstMatchOnly,
 	  paths,
 	  fileNameInfo);
 	// we must release the FNDB handle since CheckCandidate() might request an unload of the FNDB
 	autoRelease.Reset ();
-	if (found)
+	if (foundInFndb)
 	{
 	  for (int idx = 0; idx < paths.size(); ++ idx)
 	  {
@@ -270,7 +270,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
    _________________________________________________________________________ */
 
 inline
- bool
+bool
 IsNewer (/*[in]*/ const PathName & path1,
 	 /*[in]*/ const PathName & path2)
 {
