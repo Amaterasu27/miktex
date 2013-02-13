@@ -3203,7 +3203,7 @@ open_dvi_output(/*out*/ bytefile & dviFile)
       processStartInfo.Arguments = args.Get();
       processStartInfo.RedirectStandardInput = true;
       outputdriverprocess = MiKTeX::Core::Process::Start(processStartInfo);
-      dviFile.Attach (processStartInfo.StandardInput, true);
+      dviFile.Attach (outputdriverprocess->get_StandardInput(), true);
       THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
       return (1);
     }
