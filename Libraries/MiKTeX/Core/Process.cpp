@@ -224,8 +224,11 @@ public:
 		   /*[in]*/ size_t		n)
   {
     n = min(n, capacity - offset);
-    memcpy (reinterpret_cast<char*>(pBuffer) + offset, pOutput, n);
-    offset += n;
+    if (n > 0)
+    {
+      memcpy (reinterpret_cast<char*>(pBuffer) + offset, pOutput, n);
+      offset += n;
+    }
     return (true);
   }
 };
