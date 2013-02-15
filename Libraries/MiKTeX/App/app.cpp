@@ -1,6 +1,6 @@
 /* app.cpp:
 
-   Copyright (C) 2005-2012 Christian Schenk
+   Copyright (C) 2005-2013 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -367,8 +367,13 @@ Application::InstallPackage (/*[in]*/ const char * lpszPackageName,
     }
   string url;
   RepositoryType repositoryType (RepositoryType::Unknown);
+  ProxySettings proxySettings;
   if (PackageManager::TryGetDefaultPackageRepository(repositoryType, url)
-      && repositoryType == RepositoryType::Remote)
+      && repositoryType == RepositoryType::Remote
+      && PackageManager::TryGetProxy(proxySettings)
+      && proxySettings.useProxy
+      && proxySettings.authenticationRequired
+      && proxySettings.user.empty())
     {
       if (! initUiFrameworkDone)
 	{
