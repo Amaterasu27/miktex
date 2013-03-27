@@ -930,6 +930,10 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_graphite_engine_dir})
 endif(BUILDING_MIKTEX)
 
+if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_harfbuzz_dir}-static)
+endif(BUILDING_MIKTEX)
+
 if(NOT HAVE_GETOPT_H)
   add_subdirectory(${rel_getopt_dir})
   add_subdirectory(${rel_getopt_dir}-static)
