@@ -1,7 +1,8 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2009 by SIL International
- written by Jonathan Kew
+ Copyright (c) 1994-2009 by SIL International
+
+ SIL Author(s): Jonathan Kew
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -125,8 +126,8 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->bits_per_component = 0;
   j_info->num_components = 0;
 
-  j_info->xdpi = 0;
-  j_info->ydpi = 0;
+  j_info->xdpi = 72.0;
+  j_info->ydpi = 72.0;
 
   j_info->flags    = 0;
   j_info->num_appn = 0;
