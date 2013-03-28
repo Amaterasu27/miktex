@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,6 +73,12 @@ set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/cweb.h
   PROPERTIES
    GENERATED TRUE
+)
+
+set_source_files_properties(
+  ${CMAKE_CURRENT_BINARY_DIR}/common.c
+  ${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
+  PROPERTIES
    LANGUAGE CXX
 )
 

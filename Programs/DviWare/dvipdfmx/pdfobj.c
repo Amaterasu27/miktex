@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.75 2011/03/06 03:14:14 chofchof Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -539,12 +539,11 @@ void pdf_out_char (FILE *file, char c)
   }
 }
 
+static char xchar[] = "0123456789abcdef";
+
 #define pdf_out_xchar(f,c) do {\
-  int __tmpnum;\
-  __tmpnum = ((c) >> 4) & 0x0f;\
-  pdf_out_char((f), (((__tmpnum) >= 10) ? (__tmpnum)+'W' : (__tmpnum)+'0'));\
-  __tmpnum = (c) & 0x0f;\
-  pdf_out_char((f), (((__tmpnum) >= 10) ? (__tmpnum)+'W' : (__tmpnum)+'0'));\
+  pdf_out_char((f), xchar[((c) >> 4) & 0x0f]);\
+  pdf_out_char((f), xchar[(c) & 0x0f]);\
 } while (0)
 
 static

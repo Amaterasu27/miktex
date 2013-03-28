@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.30 2011/03/06 03:14:15 chofchof Exp $
+/*  
 
     This is extractbb, a bounding box extraction program.
 
-    Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz
+    Copyright (C) 2009-2012 by Jin-Hwan Cho and Matthias Franz
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,8 +66,13 @@ static void show_usage(void)
   fprintf(stdout, "\t-v\tBe verbose\n");
   fprintf(stdout, "\t-q\tBe quiet\n");
   fprintf(stdout, "\t-O\tWrite output to stdout\n");
+  if(compat_mode) {
+    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
+    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
+  } else {
   fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
   fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  }
 }
 
 static void usage(void)
@@ -137,6 +142,9 @@ static void write_xbb(char *fname,
     }
   } else {
     fp = stdout;
+#ifdef WIN32
+    setmode(fileno(fp), _O_BINARY);
+#endif
   }
 
   if (verbose) {
@@ -232,8 +240,6 @@ static void do_pdf (FILE *fp, char *filename)
 
 int extractbb (int argc, char *argv[]) 
 {
-  mem_debug_init();
-
   pdf_files_init();
 
   pdf_set_version(5);
@@ -332,8 +338,6 @@ int extractbb (int argc, char *argv[])
   }
 
   pdf_files_close();
-
-  mem_debug_check();
 
   return 0;
 }

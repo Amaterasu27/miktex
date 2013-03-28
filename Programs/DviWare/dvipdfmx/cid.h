@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.h,v 1.14 2008/11/30 21:12:27 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,11 @@
 
 #ifndef _CID_H_
 #define _CID_H_
+
+#ifdef XETEX
+#include "ft2build.h"
+#include FT_FREETYPE_H
+#endif
 
 /* CIDFont types */
 #define CIDFONT_TYPE0 1
@@ -63,6 +68,10 @@ extern char       *CIDFont_get_fontname   (CIDFont *font);
 
 extern char       *CIDFont_get_ident      (CIDFont *font); /* FIXME */
 extern int         CIDFont_get_opt_index  (CIDFont *font); /* FIXME */
+#ifdef XETEX
+extern FT_Face     CIDFont_get_ft_face    (CIDFont *font);
+extern unsigned short *CIDFont_get_ft_to_gid(CIDFont *font);
+#endif
 
 extern int         CIDFont_get_flag       (CIDFont *font, int mask);
 

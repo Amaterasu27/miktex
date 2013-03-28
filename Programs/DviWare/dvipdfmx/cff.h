@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff.h,v 1.11 2011/03/06 03:14:13 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -137,6 +137,7 @@ extern long  cff_read_private (cff_font *cff);
 extern int   cff_match_string  (cff_font *cff, const char *str, s_SID sid);
 extern char *cff_get_string    (cff_font *cff, s_SID id);
 extern long  cff_get_sid       (cff_font *cff, const char *str);
+extern long  cff_get_seac_sid  (cff_font *cff, const char *str);
 extern s_SID cff_add_string    (cff_font *cff, const char *str, int unique);
 extern void  cff_update_string (cff_font *cff);
 

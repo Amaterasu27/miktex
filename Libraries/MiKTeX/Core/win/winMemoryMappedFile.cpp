@@ -1,6 +1,6 @@
 /* winMemoryMappedFile.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -193,7 +193,7 @@ winMemoryMappedFile::OpenFile ()
     ("core",
      T_("opening memory-mapped file %s for %s"),
      Q_(path),
-     (readWrite ? T_("reading/writing") : "reading"));
+     (readWrite ? T_("reading/writing") : T_("reading")));
     
   hFile =
     CreateFileW(UW_(path.c_str()),
@@ -263,7 +263,7 @@ winMemoryMappedFile::CreateMapping (/*[in]*/ size_t maximumFileSize)
 		  maximumFileSize);
   if (ptr == 0)
     {
-      FATAL_WINDOWS_ERROR ("CreateFileMapping", name.c_str());
+      FATAL_WINDOWS_ERROR ("MapViewOfFile", name.c_str());
     }
 }
 

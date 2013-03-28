@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Martin Kretzschmar <martink@gnome.org>
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2006-2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2008, 2012 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Brad Hards <bradh@kde.org>
 // Copyright (C) 2009-2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Till Kamppeter <till.kamppeter@gmail.com>
@@ -151,6 +151,8 @@ public:
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
   virtual GBool interpretType3Chars() { return gFalse; }
+
+  virtual GBool needClipToCropBox() { return mode == psModeEPS; }
 
   //----- header/trailer (used only if manualCtrl is true)
 
@@ -378,7 +380,7 @@ private:
   void opiTransform(GfxState *state, double x0, double y0,
 		    double *x1, double *y1);
 #endif
-  void cvtFunction(Function *func);
+  void cvtFunction(Function *func, GBool invertPSFunction = gFalse);
   GooString *filterPSName(GooString *name);
 
   // Write the document-level setup.

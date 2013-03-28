@@ -19,7 +19,7 @@
 	
 class ImgWriter
 {
-	public:
+public:
 		virtual ~ImgWriter();
 		virtual bool init(FILE *f, int width, int height, int hDPI, int vDPI) = 0;
 		

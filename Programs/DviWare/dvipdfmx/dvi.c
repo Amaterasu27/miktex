@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.44 2011/03/08 20:25:52 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -280,14 +280,14 @@ static void
 read_font_record (SIGNED_QUAD tex_id)
 {
   UNSIGNED_BYTE dir_length, name_length;
-  UNSIGNED_QUAD checksum, point_size, design_size;
+  UNSIGNED_QUAD point_size, design_size;
   char         *directory, *font_name;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
     def_fonts = RENEW (def_fonts, max_def_fonts, struct font_def);
   }
-  checksum    = get_unsigned_quad(dvi_file);
+                get_unsigned_quad(dvi_file);
   point_size  = get_unsigned_quad(dvi_file);
   design_size = get_unsigned_quad(dvi_file);
   dir_length  = get_unsigned_byte(dvi_file);

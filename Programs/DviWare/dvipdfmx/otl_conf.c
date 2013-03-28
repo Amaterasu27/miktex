@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/otl_conf.c,v 1.9 2011/03/06 03:14:14 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -461,6 +461,7 @@ otl_read_conf (const char *conf_name)
   pdf_obj *gclass;
   FILE    *fp;
   char    *filename, *wbuf, *p, *endptr;
+  const char *pp;
   long     size, len;
 
   filename = NEW(strlen(conf_name)+strlen(".otl")+1, char);
@@ -493,9 +494,9 @@ otl_read_conf (const char *conf_name)
     size -= len;
   }
   
-  p      = wbuf;
+  pp     = wbuf;
   gclass = pdf_new_dict();
-  rule   = parse_block(gclass, (const char **) &p, endptr);
+  rule   = parse_block(gclass, &pp, endptr);
   pdf_release_obj(gclass);
 
   RELEASE(wbuf);

@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_aux.c,v 1.9 2008/05/17 04:18:47 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 
 ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 {
-  LONG version;
   ULONG offset = 0, num_dirs = 0;
   
   if (sfont == NULL || sfont->stream == NULL)
@@ -49,7 +48,7 @@ ULONG ttc_read_offset (sfnt *sfont, int ttc_idx)
 
   sfnt_seek_set (sfont, 4); /* skip version tag */
 
-  version = sfnt_get_ulong(sfont);
+  /* version = */ sfnt_get_ulong(sfont);
   num_dirs = sfnt_get_ulong(sfont);
   if (ttc_idx < 0 || ttc_idx > num_dirs - 1)
     ERROR("Invalid TTC index number");

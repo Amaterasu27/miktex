@@ -215,6 +215,8 @@ public:
   virtual void updateMiterLimit(GfxState *state);
   virtual void updateLineWidth(GfxState *state);
   virtual void updateStrokeAdjust(GfxState *state);
+  virtual void updateFillColorSpace(GfxState *state);
+  virtual void updateStrokeColorSpace(GfxState *state);
   virtual void updateFillColor(GfxState *state);
   virtual void updateStrokeColor(GfxState *state);
   virtual void updateBlendMode(GfxState *state);
@@ -292,6 +294,7 @@ public:
 		       double llx, double lly, double urx, double ury);
 
   //----- transparency groups and soft masks
+  virtual GBool checkTransparencyGroup(GfxState *state, GBool knockout);
   virtual void beginTransparencyGroup(GfxState *state, double *bbox,
 				      GfxColorSpace *blendingColorSpace,
 				      GBool isolated, GBool knockout,
@@ -361,6 +364,7 @@ private:
   SplashPattern *getColor(GfxRGB *rgb);
 #if SPLASH_CMYK
   SplashPattern *getColor(GfxCMYK *cmyk);
+  SplashPattern *getColor(GfxColor *deviceN);
 #endif
   void setOverprintMask(GfxColorSpace *colorSpace, GBool overprintFlag,
 			int overprintMode, GfxColor *singleColor, GBool grayIndexed = gFalse);

@@ -1,6 +1,6 @@
 /* PackageInstaller.cpp:
 
-   Copyright (C) 2001-2011 Christian Schenk
+   Copyright (C) 2001-2013 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -1844,6 +1844,10 @@ PackageInstallerImpl::ConnectToServer ()
 {
   const char * MSG_CANNOT_START_SERVER =
     T_("Cannot start MiKTeX package manager.");
+  if (! pSession->UnloadFilenameDatabase())
+  {
+    // ignore for now
+  }
   if (localServer.pInstaller == 0)
     {
       if (localServer.pManager == 0)
@@ -1876,7 +1880,7 @@ PackageInstallerImpl::ConnectToServer ()
 			    __uuidof(MiKTeXPackageManagerLib
 				     ::IPackageManager),
 			    reinterpret_cast<void**>(&localServer.pManager));
-	      if (hr == CO_E_NOTINITIALIZED)
+	      if (hr == CO_E_NOTINITIALIZED || hr == MK_E_SYNTAX)
 		{
 		  MyCoInitialize ();
 		  hr =

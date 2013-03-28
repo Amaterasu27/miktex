@@ -188,7 +188,13 @@ const UInt32 byteMark				= 0x00000080UL;
 
 /* if the user specifies a paper size or output driver program */
 const char *papersize;
+#if defined(MIKTEX)
+const char *outputdriver = "xdvipdfmx" MIKTEX_EXE_FILE_SUFFIX;
+const char *outputdriverargs[] = { "-q",  "-E" };
+MiKTeX::Core::Process * outputdriverprocess;
+#else
 const char *outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
+#endif
 
 
 void initversionstring(char **versions)
@@ -3178,21 +3184,28 @@ open_dvi_output(/*out*/ bytefile & dviFile)
       outPath +=
 	MiKTeX::TeXAndFriends::WebAppInputLine::UnmangleNameOfFile(THEAPP.GetNameOfFile().Get());
       MiKTeX::Core::CommandLineBuilder args;
+      for (int i = 0; i < sizeof(outputdriverargs) / sizeof(outputdriverargs[0]); ++ i)
+      {
+	args.AppendOption (outputdriverargs[i]);
+      }
       args.AppendOption	("-o ", outPath);
       if (papersize != 0)
 	{
 	  args.AppendOption ("-p ", papersize);
 	}
-      std::string cmd = outputdriver;
-      cmd += ' ';
-      cmd += args.Get();
-      FILE * pFile = _popen(cmd.c_str(), "wb");
-      if (pFile != 0)
-	{
-	  dviFile.Attach (pFile, true);
-	  THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
-	}
-      return (pFile != 0);
+      MiKTeX::Core::PathName xdvipdfmx;
+      if (! MiKTeX::Core::SessionWrapper(true)->FindFile(outputdriver, MiKTeX::Core::FileType::EXE, xdvipdfmx))
+      {
+	return (0);
+      }
+      MiKTeX::Core::ProcessStartInfo processStartInfo;
+      processStartInfo.FileName = xdvipdfmx.Get();
+      processStartInfo.Arguments = args.Get();
+      processStartInfo.RedirectStandardInput = true;
+      outputdriverprocess = MiKTeX::Core::Process::Start(processStartInfo);
+      dviFile.Attach (processStartInfo.StandardInput, true);
+      THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(outPath.Get()));
+      return (1);
     }
 }
 #else
@@ -3265,8 +3278,13 @@ dviclose(/*[in,out]*/ bytefile & dviFile)
     }
   else
     {
-      int ret = _pclose (dviFile);
+      fclose (dviFile);
       dviFile.Attach (0, true);
+      outputdriverprocess->WaitForExit();
+      int ret = outputdriverprocess->get_ExitCode();
+      outputdriverprocess->Close ();
+      delete outputdriverprocess;
+      outputdriverprocess = 0;
       return (ret);
     }
 }

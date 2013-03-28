@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_glyf.c,v 1.5 2011/03/06 03:14:15 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -215,7 +215,13 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
 
   ASSERT(g);
 
-  if (sfont == NULL || sfont->stream == NULL)
+  if (sfont == NULL ||
+#ifdef XETEX
+      sfont->ft_face == NULL
+#else
+      sfont->stream == NULL
+#endif
+     )
     ERROR("File not opened.");
 
   if (sfont->type != SFNT_TYPE_TRUETYPE &&
@@ -520,7 +526,13 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
 
   ASSERT(g);
 
-  if (sfont == NULL || sfont->stream == NULL)
+  if (sfont == NULL ||
+#ifdef XETEX
+      sfont->ft_face == NULL
+#else
+      sfont->stream == NULL
+#endif
+     )
     ERROR("File not opened.");
 
   if (sfont->type != SFNT_TYPE_TRUETYPE &&
@@ -583,7 +595,6 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
   for (i = 0; i < g->num_glyphs; i++) {
     USHORT gid;     /* old gid */
     ULONG  loc, len;
-    SHORT  number_of_contours;
 
     gid = g->gd[i].ogid;
     if (gid >= maxp->numGlyphs)
@@ -616,7 +627,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
     }
 
     sfnt_seek_set(sfont, offset+loc);
-    number_of_contours = sfnt_get_short(sfont);
+    (void)               sfnt_get_short(sfont);
 
     /* BoundingBox: FWord x 4 */
     g->gd[i].llx = sfnt_get_short(sfont);

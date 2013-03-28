@@ -1,6 +1,6 @@
 
-/* t4ht.c (2010-12-16-08:47), generated from tex4ht-t4ht.tex
-   Copyright (C) 2009-2010 TeX Users Group
+/* t4ht.c (2012-07-25-19:28), generated from tex4ht-t4ht.tex
+   Copyright (C) 2009-2012 TeX Users Group
    Copyright (C) 1998-2009 Eitan M. Gurari
 
 %
@@ -246,7 +246,11 @@
 #define READ_BIN_FLAGS "rb"
 #define READ_TEXT_FLAGS "r"
 #define WRITE_BIN_FLAGS "wb"
+#ifdef WIN32
+#define WRITE_TEXT_FLAGS "wb"
+#else
 #define WRITE_TEXT_FLAGS "w"
+#endif
 #else
 #define READ_BIN_FLAGS "r"
 #define READ_TEXT_FLAGS "r"
@@ -904,7 +908,7 @@ static struct script_struct * add_script
 }
 
 
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
 
 
 static char *get_env_dir
@@ -1427,13 +1431,13 @@ struct empty_pic_struct *empty_pic;
 
 Q_CHAR * tex4ht_env_file = (Q_CHAR *) 0;
 Q_CHAR * dos_env_file =
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
   
 get_env_dir(argv[0])
 
 ;
 #endif
-#if !defined(DOS_WIN32) && !defined(__MSDOS__)
+#if !defined(__MSDOS__)
   (Q_CHAR *) 0;
 #endif
 
@@ -1479,11 +1483,6 @@ get_env_dir(argv[0])
       }
     }
 
-#if ! defined(MIKTEX)
-    for (i=0; i < argc; i++)
-      free (argv[i]);
-    free (argv);
-#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -1513,22 +1512,22 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47)\n");
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28)\n");
 #endif
 #else
 #ifdef PLATFORM
 #  if defined(MIKTEX)
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s MiKTeX)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 %s MiKTeX)\n",PLATFORM);
 #  else
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 %s kpathsea)\n",PLATFORM);
 #  endif
 #else
 #  if defined(MIKTEX)
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 MiKTeX)\n");
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 MiKTeX)\n");
 #  else
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 kpathsea)\n");
 #  endif
 #endif
 #endif
@@ -1601,7 +1600,7 @@ system( yes ) != 0
        Q_CHAR *p, *q;
   
 #ifdef KPATHSEA
-   kpse_set_program_name (argv[0], NULL);
+   kpse_set_program_name (argv[0], "tex4ht");
 #endif
 
 
@@ -2105,7 +2104,7 @@ int i, start_loc, end_loc, addr = 0;
 char rec_op, *ch;
 static struct files_rec *to_rec, *from_rec,
    *opened_files = (struct files_rec *) 0,
-   *p, *p1, *p2, *p3, *p4, *from_op, *to_op;
+   *p, *p1, *p2, *p3, *p4, *from_op;
 FILE *in_file, *out_file;
 BOOL write_on;
 
@@ -2266,7 +2265,7 @@ p->label = addr;
 
             
 if( rec_op == Until_op ){
-  for( to_op = p = to_rec->down;
+  for( p = to_rec->down;
            p != (struct files_rec*) 0;  p = p->down ){
     if( p->op == From_op ){ from_op = p; break; }
   }

@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.43 2011/03/06 03:14:14 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -474,6 +474,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
       } else if (p + 4 <= endptr &&
                  !memcmp(p, "sfd:", strlen("sfd:"))) {
         char  *r;
+        const char  *rr;
         /* SFD mapping: sfd:Big5,00 */
         p += 4; skip_blank(&p, endptr);
         q  = parse_string_value(&p, endptr);
@@ -487,14 +488,14 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
           RELEASE(q);
           return  -1;
         }
-        *r = 0; r++; skip_blank((const char **)&r, r + strlen(r));
-        if (*r == '\0') {
+        *r = 0; rr = ++r; skip_blank(&rr, r + strlen(r));
+        if (*rr == '\0') {
           WARN("Invalid value for option 'm': %s,", q);
           RELEASE(q);
           return  -1;
         }
         mrec->charmap.sfd_name   = mstrdup(q);
-        mrec->charmap.subfont_id = mstrdup(r);
+        mrec->charmap.subfont_id = mstrdup(rr);
         RELEASE(q);
       } else if (p + 4 < endptr &&
                  !memcmp(p, "pad:", strlen("pad:"))) {

@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid_p.h,v 1.9 2008/05/17 04:18:47 chofchof Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -51,6 +51,10 @@ struct CIDFont
   char       *ident;      /* Map record entry */
   char       *name;       /* Fontname or filename */
   char       *fontname;   /* PostScript font name */
+#ifdef XETEX
+  FT_Face     ft_face;
+  unsigned short *ft_to_gid;
+#endif
   /*
    * CIDFont Specific
    */

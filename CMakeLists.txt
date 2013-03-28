@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,7 +20,7 @@
 set(CMAKE_COLOR_MAKEFILE FALSE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 if(WIN32 AND NOT UNIX)
   set(NATIVE_WINDOWS 1)
@@ -660,6 +660,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}
   ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
@@ -918,6 +919,10 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
+  add_subdirectory(${rel_graphite2_dir})
+endif(BUILDING_MIKTEX)
+
+if(BUILDING_MIKTEX)
   add_subdirectory(${rel_graphite_engine_dir}-static)
 endif(BUILDING_MIKTEX)
 
@@ -984,7 +989,7 @@ if(NOT USE_SYSTEM_PNG)
 endif(NOT USE_SYSTEM_PNG)
 
 if(BUILDING_MIKTEX)
-  set(POPPLER_VERSION "0.20.0")
+  set(POPPLER_VERSION "0.22.0")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 

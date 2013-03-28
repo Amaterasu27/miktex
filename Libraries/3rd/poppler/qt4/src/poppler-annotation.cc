@@ -3,6 +3,7 @@
  * Copyright (C) 2006, 2008, 2010 Pino Toscano <pino@kde.org>
  * Copyright (C) 2012, Guillermo A. Amaral B. <gamaral@kde.org>
  * Copyright (C) 2012, Fabio D'Urso <fabiodurso@hotmail.it>
+ * Copyright (C) 2012, Tobias Koenig <tokoe@kdab.com>
  * Adapting code from
  *   Copyright (C) 2004 by Enrico Ros <eros.kde@email.it>
  *
@@ -42,6 +43,7 @@
 #include <Gfx.h>
 #include <Error.h>
 #include <FileSpec.h>
+#include <Link.h>
 
 /* Almost all getters directly query the underlying poppler annotation, with
  * the exceptions of link, file attachment, sound, movie and screen annotations,
@@ -203,10 +205,22 @@ void AnnotationPrivate::fillMTX(double MTX[6]) const
     // build a normalized transform matrix for this page at 100% scale
     GfxState * gfxState = new GfxState( 72.0, 72.0, pdfPage->getCropBox(), pdfPage->getRotate(), gTrue );
     double * gfxCTM = gfxState->getCTM();
+
+    double w = pdfPage->getCropWidth();
+    double h = pdfPage->getCropHeight();
+
+    // Swap width and height if the page is rotated landscape or seascape
+    if ( pdfPage->getRotate() == 90 || pdfPage->getRotate() == 270 )
+    {
+        double t = w;
+        w = h;
+        h = t;
+    }
+
     for ( int i = 0; i < 6; i+=2 )
     {
-        MTX[i] = gfxCTM[i] / pdfPage->getCropWidth();
-        MTX[i+1] = gfxCTM[i+1] / pdfPage->getCropHeight();
+        MTX[i] = gfxCTM[i] / w;
+        MTX[i+1] = gfxCTM[i+1] / h;
     }
     delete gfxState;
 }
@@ -443,7 +457,8 @@ QList<Annotation*> AnnotationPrivate::findAnnotations(::Page *pdfPage, DocumentD
             case Annot::typeUnknown:
                 continue; // special case for ignoring unknown annotations
             case Annot::typeWidget:
-                continue; // handled as forms or some other way
+                annotation = new WidgetAnnotation();
+                break;
             default:
             {
 #define CASE_FOR_TYPE( thetype ) \
@@ -481,6 +496,40 @@ Ref AnnotationPrivate::pdfObjectReference() const
     return pdfAnnot->getRef();
 }
 
+Link* AnnotationPrivate::additionalAction( Annotation::AdditionalActionType type ) const
+{
+    if ( pdfAnnot->getType() != Annot::typeScreen && pdfAnnot->getType() != Annot::typeWidget )
+        return 0;
+
+    Annot::AdditionalActionsType actionType = Annot::actionCursorEntering;
+    switch ( type )
+    {
+        case Annotation::CursorEnteringAction: actionType = Annot::actionCursorEntering; break;
+        case Annotation::CursorLeavingAction: actionType = Annot::actionCursorLeaving; break;
+        case Annotation::MousePressedAction: actionType = Annot::actionMousePressed; break;
+        case Annotation::MouseReleasedAction: actionType = Annot::actionMouseReleased; break;
+        case Annotation::FocusInAction: actionType = Annot::actionFocusIn; break;
+        case Annotation::FocusOutAction: actionType = Annot::actionFocusOut; break;
+        case Annotation::PageOpeningAction: actionType = Annot::actionPageOpening; break;
+        case Annotation::PageClosingAction: actionType = Annot::actionPageClosing; break;
+        case Annotation::PageVisibleAction: actionType = Annot::actionPageVisible; break;
+        case Annotation::PageInvisibleAction: actionType = Annot::actionPageInvisible; break;
+    }
+
+    ::LinkAction *linkAction = 0;
+    if ( pdfAnnot->getType() == Annot::typeScreen )
+        linkAction = static_cast<AnnotScreen*>( pdfAnnot )->getAdditionalAction( actionType );
+    else
+        linkAction = static_cast<AnnotWidget*>( pdfAnnot )->getAdditionalAction( actionType );
+
+    Link *link = 0;
+
+    if ( linkAction )
+        link = PageData::convertLinkActionToLink( linkAction, parentDoc, QRectF() );
+
+    return link;
+}
+
 void AnnotationPrivate::addAnnotationToPage(::Page *pdfPage, DocumentData *doc, const Annotation * ann)
 {
     if (ann->d_ptr->pdfAnnot != 0)
@@ -509,14 +558,6 @@ void AnnotationPrivate::removeAnnotationFromPage(::Page *pdfPage, const Annotati
         error(errIO, -1, "Annotation doesn't belong to the specified page");
         return;
     }
-
-    // Remove popup window
-    AnnotMarkup *markupann = dynamic_cast<AnnotMarkup*>(ann->d_ptr->pdfAnnot);
-    if (markupann && markupann->getPopup())
-        pdfPage->removeAnnot(markupann->getPopup());
-
-    // Remove appearance streams (if any)
-    ann->d_ptr->pdfAnnot->invalidateAppearance();
 
     // Remove annotation
     pdfPage->removeAnnot(ann->d_ptr->pdfAnnot);
@@ -1500,6 +1541,11 @@ QList<Annotation*> Annotation::revisions() const
         return res;
     }
 
+    /* If the annotation doesn't live in a object on its own (eg bug51361), it
+     * has no ref, therefore it can't have revisions */
+    if ( !d->pdfAnnot->getHasRef() )
+        return QList<Annotation*>();
+
     return AnnotationPrivate::findAnnotations( d->pdfPage, d->parentDoc, d->pdfAnnot->getId() );
 }
 
@@ -1662,7 +1708,7 @@ void TextAnnotation::store( QDomNode & node, QDomDocument & document ) const
     // store the optional attributes
     if ( textType() != Linked )
         textElement.setAttribute( "type", (int)textType() );
-    if ( textIcon() != "Comment" )
+    if ( textIcon() != "Note" )
         textElement.setAttribute( "icon", textIcon() );
     if ( inplaceAlign() )
         textElement.setAttribute( "align", inplaceAlign() );
@@ -4250,6 +4296,64 @@ void ScreenAnnotation::setScreenTitle( const QString &title )
 {
     Q_D( ScreenAnnotation );
     d->title = title;
+}
+
+Link* ScreenAnnotation::additionalAction( AdditionalActionType type ) const
+{
+    Q_D( const ScreenAnnotation );
+    return d->additionalAction( type );
+}
+
+/** WidgetAnnotation [Annotation] */
+class WidgetAnnotationPrivate : public AnnotationPrivate
+{
+    public:
+        Annotation * makeAlias();
+        Annot* createNativeAnnot(::Page *destPage, DocumentData *doc);
+};
+
+Annotation * WidgetAnnotationPrivate::makeAlias()
+{
+    return new WidgetAnnotation(*this);
+}
+
+Annot* WidgetAnnotationPrivate::createNativeAnnot(::Page *destPage, DocumentData *doc)
+{
+    return 0; // Not implemented
+}
+
+WidgetAnnotation::WidgetAnnotation(WidgetAnnotationPrivate &dd)
+    : Annotation( dd )
+{}
+
+WidgetAnnotation::WidgetAnnotation()
+    : Annotation( *new WidgetAnnotationPrivate() )
+{
+}
+
+WidgetAnnotation::~WidgetAnnotation()
+{
+}
+
+void WidgetAnnotation::store( QDomNode & node, QDomDocument & document ) const
+{
+    // store base annotation properties
+    storeBaseAnnotationProperties( node, document );
+
+    // create [widget] element
+    QDomElement widgetElement = document.createElement( "widget" );
+    node.appendChild( widgetElement );
+}
+
+Annotation::SubType WidgetAnnotation::subType() const
+{
+    return AWidget;
+}
+
+Link* WidgetAnnotation::additionalAction( AdditionalActionType type ) const
+{
+    Q_D( const WidgetAnnotation );
+    return d->additionalAction( type );
 }
 
 //BEGIN utility annotation functions

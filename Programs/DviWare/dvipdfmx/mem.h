@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.6 2009/11/29 01:18:20 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -30,39 +30,8 @@
 extern void *new (size_t size);
 extern void *renew (void *p, size_t size);
 
-extern void mem_debug_init(void);
-extern void mem_debug_check(void);
-
-#ifdef MEM_DEBUG
-
-extern void *mem_add    (void *ptr,
-			 const char *file, const char *function, int line);
-extern void *mem_remove (void *ptr,
-			 const char *file, const char *function, int line);
-#define MEM_ADD(p)     mem_add(p, __FILE__, __FUNCTION__, __LINE__)
-#define MEM_REMOVE(p)  mem_remove(p, __FILE__, __FUNCTION__, __LINE__)
-
-#else /* ! MEM_DEBUG */
-
-extern void *mem_add    (void *ptr);
-extern void *mem_remove (void *ptr);
-#define MEM_ADD(p)     mem_add(p)
-#define MEM_REMOVE(p)  mem_remove(p)
-
-#endif /* MEM_DEBUG */
-
-
-#define NEW(n,type)     (type *) MEM_ADD(new(((size_t)(n))*sizeof(type)))
-#define RENEW(p,n,type) (type *) MEM_ADD(renew(MEM_REMOVE(p),(n)*sizeof(type)))
-#define RELEASE(p)      free(MEM_REMOVE(p))
-
-/* wrappers for functions from kpathsea */
-#if defined(MIKTEX)
-#define kpse_find_file(x,y,z)     (char *) MEM_ADD(miktex_kpathsea_find_file(kpse_def,x,y,z))
-#else
-#define kpse_path_search(x,y,z)   (char *) MEM_ADD(kpse_path_search(x,y,z))
-#define kpse_find_file(x,y,z)     (char *) MEM_ADD(kpse_find_file(x,y,z))
-#define kpse_find_glyph(x,y,z,w)  (char *) MEM_ADD(kpse_find_glyph(x,y,z,w))
-#endif
+#define NEW(n,type)     (type *) new(((size_t)(n))*sizeof(type))
+#define RENEW(p,n,type) (type *) renew(p,(n)*sizeof(type))
+#define RELEASE(p)      free(p)
 
 #endif /* _MEM_H_ */

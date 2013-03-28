@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.85 2011/03/08 00:20:51 matthias Exp $
+/*  
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2009 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2009-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -104,6 +104,15 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
+#ifdef WIN32
+#if defined(MIKTEX)
+#include <miktex/unxemu.h>
+#endif
+#define STRN_CMP strncasecmp
+#else
+#define STRN_CMP strncmp
+#endif
+
 static void
 set_default_pdf_filename(void)
 {
@@ -112,12 +121,12 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !strncmp(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
-             !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -379,6 +388,7 @@ do_args (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
     char *flag, *nextptr;
+    const char *nnextptr;
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
@@ -418,20 +428,20 @@ do_args (int argc, char *argv[])
         break;
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
-        nextptr = argv[1];
-        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&annot_grow, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
-        nextptr = argv[1];
-        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&x_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
-        nextptr = argv[1];
-        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&y_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':
@@ -596,7 +606,7 @@ do_args (int argc, char *argv[])
      * is do_args was called from config file.  In that case, there is
      * no dvi file name.  Check for that case .
      */
-    if (!mp_mode && strncmp(".dvi", argv[0] + strlen(argv[0]) - 4, 4)) {
+    if (!mp_mode && STRN_CMP(".dvi", argv[0] + strlen(argv[0]) - 4, 4)) {
       dvi_filename = NEW(strlen(argv[0]) + 5, char);
       strcpy(dvi_filename, argv[0]);
       strcat(dvi_filename, ".dvi");
@@ -904,21 +914,15 @@ main (int argc, char *argv[])
   {
     const char *base = xbasename(argv[0]);
 
-#if defined(MIKTEX_WINDOWS)
-#define STRCMP_BASE(s) (_strcmpi(base, s) != 0 && _strcmpi(base, s ".exe") != 0)
-#else
-#define STRCMP_BASE(s) strcmp(base, s) && strcasecmp(base, s ".exe")
-#endif
-
-    if (!(STRCMP_BASE("dvipdfm") && STRCMP_BASE("ebb")))
+    if (STRN_CMP(base, "dvipdfmx", 8) != 0 &&
+        (STRN_CMP(base, "dvipdfm",7) == 0 || STRN_CMP(base, "ebb", 3) == 0))
       compat_mode = 1;
 
-    if (!(STRCMP_BASE("extractbb") && STRCMP_BASE("xbb") &&
-	  STRCMP_BASE("ebb")))
+    if (STRN_CMP(base, "extractbb", 9) == 0 ||
+        STRN_CMP(base, "xbb", 3) == 0 ||
+        STRN_CMP(base, "ebb", 3) == 0)
       return extractbb(argc, argv);
   }
-
-  mem_debug_init();
 
   if (argc < 2) {
     if (!really_quiet)
@@ -1069,8 +1073,6 @@ main (int argc, char *argv[])
 #ifdef MIKTEX_NO_KPATHSEA
   miktex_uninitialize ();
 #endif
-
-  mem_debug_check();
 
   return 0;
 }

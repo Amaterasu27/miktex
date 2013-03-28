@@ -14,9 +14,7 @@
  * the insertion sort threshold, and has been adjusted for records of size 48
  * bytes. The MTHREShold is where we stop finding a better median.
  */
-
-/* #include <stdio.h> -- mkind.h includes this */
-#include    "mkind.h"		       /* only for type declarations */
+#include "qsort.h"			/* qq_compar_fn_t type and qqsort() prototype */
 
 #define THRESH  4		       /* threshold for insertion */
 #define MTHRESH 6		       /* threshold for median */
@@ -25,8 +23,8 @@ static int qsz;			       /* size of each record */
 static int thresh;		       /* THRESHold in chars */
 static int mthresh;		       /* MTHRESHold in chars */
 
-static int	(*qcmp) (char*,char*); /* the comparison routine */
-static void	qst (char *base, char *max);
+static qq_compar_fn_t qcmp;		/* the comparison routine */
+static void qst(char *base, char *max);
 /*
  * qqsort: First, set up some global parameters for qst to share.  Then,
  * quicksort with qst(), and then a cleanup insertion sort ourselves.  Sound
@@ -34,7 +32,7 @@ static void	qst (char *base, char *max);
  */
 
 void
-qqsort(char *base, int n, int size, int (*compar)(char*,char*))
+qqsort(void *base, size_t n, size_t size, qq_compar_fn_t compar)
 {
     register char *i;
     register char *j;
@@ -50,10 +48,14 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
     qcmp = compar;
     thresh = qsz * THRESH;
     mthresh = qsz * MTHRESH;
-    max = base + n * qsz;
+    max = (char *)base + n * qsz;
     if (n >= THRESH) {
+#if defined(MIKTEX)
+	qst((char*)base, max);
+#else
 	qst(base, max);
-	hi = base + thresh;
+#endif
+	hi = (char *)base + thresh;
     } else {
 	hi = max;
     }
@@ -63,12 +65,24 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
      * first THRESH elements (or the first n if n < THRESH), finding the min,
      * and swapping it into the first position.
      */
+#if defined(MIKTEX)
+    for (j = lo = (char*)base; (lo += qsz) < hi;) {
+#else
     for (j = lo = base; (lo += qsz) < hi;) {
+#endif
 	if ((*qcmp) (j, lo) > 0)
 	    j = lo;
     }
+#if defined(MIKTEX)
+    if (j != (char*)base) {
+#else
     if (j != base) {		       /* swap j into place */
-	for (i = base, hi = base + qsz; i < hi;) {
+#endif
+#if defined(MIKTEX)
+	for (i = (char*)base, hi = i + qsz; i < hi;) {
+#else
+	for (i = base, hi = i + qsz; i < hi;) {
+#endif
 	    c = *j;
 	    *j++ = *i;
 	    *i++ = c;
@@ -81,7 +95,11 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
      * the standard insertion sort shift on a character at a time basis for
      * each element in the frob.
      */
+#if defined(MIKTEX)
+    for (min = (char*)base; (hi = min += qsz) < max;) {
+#else
     for (min = base; (hi = min += qsz) < max;) {
+#endif
 	while ((*qcmp) (hi -= qsz, min) > 0);
 	if ((hi += qsz) != min) {
 	    for (lo = min + qsz; --lo >= min;) {
@@ -119,11 +137,11 @@ qst(char *base, char *max)
     register char *mid;
     register int ii;
     register char c;
-    char   *tmp;
+    void *tmp;
     int     lo;
     int     hi;
 
-    lo = (int)(max - base);		/* number of elements as chars */
+    lo = max - base;	/* number of elements as chars */
     do {
 	/*
 	 * At the top here, lo is the number of characters of elements in the
@@ -141,7 +159,11 @@ qst(char *base, char *max)
 		/* switch to first loser */
 		j = (j == jj ? i : jj);
 		if ((*qcmp) (j, tmp) < 0)
+#if defined(MIKTEX)
+		    j = (char*)tmp;
+#else
 		    j = tmp;
+#endif
 	    }
 	    if (j != i) {
 		ii = qsz;
@@ -184,17 +206,21 @@ qst(char *base, char *max)
 		*i++ = *jj;
 		*jj++ = c;
 	    } while (--ii);
+#if defined(MIKTEX)
+	    i = (char*)tmp;
+#else
 	    i = tmp;
+#endif
 	}
 	/*
 	 * Look at sizes of the two partitions, do the smaller one first by
 	 * recursion, then do the larger one by making sure lo is its size,
-	 * base and max are update correctly, and branching back. But only
+	 * base and max are updated correctly, and branching back. But only
 	 * repeat (recursively or by branching) if the partition is of at
 	 * least size THRESH.
 	 */
 	i = (j = mid) + qsz;
-	if ((lo = (int)(j - base)) <= (hi = (int)(max - i))) {
+	if ((lo = j - base) <= (hi = max - i)) {
 	    if (lo >= thresh)
 		qst(base, j);
 	    base = i;

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2012 Christian Schenk
+## Copyright (C) 2009-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,6 +73,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/TiffWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/JpegWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/ImgWriter.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/grandom.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gstrtod.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiBase.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiEncodings.cc
@@ -139,6 +140,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XpdfPluginAPI.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Rendition.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF.cc
 
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
@@ -186,6 +188,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/TiffWriter.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gfile.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmem.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/grandom.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gstrtod.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gtypes.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gtypes_p.h
@@ -260,6 +263,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream-CCITT.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/TextOutputDev.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF8.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeCClassTables.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeCompTables.h
