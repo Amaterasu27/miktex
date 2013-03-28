@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ authorization from the copyright holders.
 /*
 XeTeX_pic.c
    interface between xetex and graphics files
-   (not used on OS X -- we use QuickTime graphics importers instead)
+   (not used on OS X -- we use ImageIO graphics importers instead)
    only needs to get image dimensions, not actually load/process the file
 */
 
@@ -54,9 +54,9 @@ XeTeX_pic.c
 #include <kpathsea/absolute.h>
 
 #include "pdfimage.h"
-#include "pngimage.h"
-#include "jpegimage.h"
-#include "bmpimage.h"
+#include "image/pngimage.h"
+#include "image/jpegimage.h"
+#include "image/bmpimage.h"
 
 
 int

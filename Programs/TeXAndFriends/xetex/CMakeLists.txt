@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2012 Christian Schenk
+## Copyright (C) 2008-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -180,11 +180,11 @@ set_source_files_properties(
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   XeTeX_ext.c
   XeTeX_pic.c
-  bmpimage.c
-  jpegimage.c
-  mfileio.c
-  numbers.c
-  pngimage.c
+  image/bmpimage.c
+  image/jpegimage.c
+  image/mfileio.c
+  image/numbers.c
+  image/pngimage.c
   trans.c
   PROPERTIES LANGUAGE CXX
 )
@@ -192,25 +192,20 @@ set_source_files_properties(
 set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-  FontTableCache.cpp
   XeTeXFontInst.cpp
-  XeTeXFontInst_FT2.cpp
   XeTeXFontMgr.cpp
   XeTeXFontMgr_FC.cpp
-  XeTeXGrLayout.cpp
   XeTeXLayoutInterface.cpp
-  XeTeXOTLayoutEngine.cpp
   XeTeXOTMath.cpp
   XeTeX_ext.c
   XeTeX_pic.c
-  bmpimage.c
-  cmaps.cpp
+  image/bmpimage.c
   hz.cpp
-  jpegimage.c
-  mfileio.c
-  numbers.c
+  image/jpegimage.c
+  image/mfileio.c
+  image/numbers.c
   pdfimage.cpp
-  pngimage.c
+  image/pngimage.c
   trans.c
 )
 
