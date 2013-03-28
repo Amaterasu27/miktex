@@ -32,6 +32,8 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
@@ -48,7 +50,6 @@ add_definitions(
   -DSYNCTEX_ENGINE_H="synctex-xetex.h"
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
-  -DXETEX_GRAPHITE
   -DXETEX_OTHER
   -DXeTeX
   -DPOPPLER_VERSION="${POPPLER_VERSION}"
@@ -87,7 +88,7 @@ set(miktex_tex_change_files
 )
 
 set(pre_xetex_change_files
-  ${etex_ch}
+  #TODO:${etex_ch}
   ${synctex_xetex_ch_srcs_on}
   ${etex_miktex_pre_ch}
   ${etex_miktex_ch}
@@ -130,8 +131,6 @@ add_custom_command(
 
 set(xetex_change_files
   ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-latex3.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-hz.ch
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
