@@ -1275,12 +1275,10 @@ if ext_delimiter<>0 then begin
 @z
 
 @x
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
   end;
 if ext_delimiter=0 then
   begin cur_ext:=""; cur_name:=make_string;
 @y
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
   temp_str:=search_string(cur_area);
   if temp_str>0 then
     begin cur_area:=temp_str;
@@ -1296,12 +1294,8 @@ if ext_delimiter=0 then
 @z
 
 @x
-else  begin cur_name:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
   incr(str_ptr); cur_ext:=make_string;
 @y
-else  begin cur_name:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
   incr(str_ptr); cur_ext:=make_string;
   decr(str_ptr); {undo extension string to look at name part}
   temp_str:=search_string(cur_name);
