@@ -68,6 +68,63 @@ for i:=0 to @'176 do xord[xchr[i]]:=i;
 
 % _____________________________________________________________________________
 %
+% [29.536]
+% _____________________________________________________________________________
+
+@x
+@!TEX_format_default:packed array[1..format_default_length] of char;
+@y
+@!TEX_format_default:packed array[1..format_default_length] of char;
+
+@ @<Set init...@>=
+TEX_format_default:='TeXformats:plain.fmt';
+@z
+
+% _____________________________________________________________________________
+%
+% [29.541]
+% _____________________________________________________________________________
+
+@x
+var k:0..file_name_size; {index into |name_of_file|}
+@y
+var k:1..file_name_size; {index into |name_of_file|}
+@z
+
+@x
+else  begin
+  make_utf16_name;
+  for k:=0 to name_length16-1 do append_char(name_of_file16[k]);
+@y
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+@z
+
+% _____________________________________________________________________________
+%
+% [29.548]
+% _____________________________________________________________________________
+
+@x
+  while not dvi_open_out(dvi_file) do
+@y
+  while not b_open_out(dvi_file) do
+@z
+
+% _____________________________________________________________________________
+%
+% [30.579]
+% _____________________________________________________________________________
+
+@x
+check_for_tfm_font_mapping;
+if b_open_in(tfm_file) then begin
+  file_opened:=true
+@y
+if not b_open_in(tfm_file) then abort;
+@z
+
+% _____________________________________________________________________________
+%
 % [36.773]
 % _____________________________________________________________________________
 
