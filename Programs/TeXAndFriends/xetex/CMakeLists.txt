@@ -96,15 +96,21 @@ add_custom_command(
   OUTPUT
 	${pre_xetex1_web_file}
   COMMAND
-	${tie_exe} -m ${pre_xetex1_web_file}
+	${tie_exe} -m abrakadabra
 		${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
 		${pre_xetex_change_files}
+  COMMAND
+        ${webn_exe} < abrakadabra > ${pre_xetex1_web_file}
+  COMMAND
+        ${CMAKE_COMMAND} -E remove abrakadabra
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     ${tie_exe}
+        ${webn_exe}
 	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
 	${pre_xetex_change_files}
+  VERBATIM
 )
 
 set(pre_xetex2_web_file ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2.web)
