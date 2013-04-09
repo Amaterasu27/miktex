@@ -1,6 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
-
-#pragma once
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
@@ -11,9 +9,6 @@
 #else
 #undef ALIGNOF_DOUBLE
 #endif
-
-/* Font configuration directory */
-#undef CONFDIR
 
 /* Use libxml2 instead of Expat */
 #undef ENABLE_LIBXML2
@@ -26,6 +21,15 @@
 
 /* System font directory */
 #undef FC_DEFAULT_FONTS
+
+/* Define to nothing if C supports flexible array members, and to 1 if it does
+   not. That way, with a declaration like `struct s { int n; double
+   d[FLEXIBLE_ARRAY_MEMBER]; };', the struct hack can be used with pre-C99
+   compilers. When computing the size of such an object, don't use 'sizeof
+   (struct s)' as it overestimates the size. Use 'offsetof (struct s, d)'
+   instead. Don't use 'offsetof (struct s, d[0])', as this doesn't work with
+   MSVC and with C++ compilers. */
+#define FLEXIBLE_ARRAY_MEMBER
 
 /* Define to 1 if you have the `chsize' function. */
 #undef HAVE_CHSIZE
@@ -40,11 +44,14 @@
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 #undef HAVE_DOPRNT
 
-/* Found a useable expat library */
-#define HAVE_EXPAT 1
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
+
+/* Define to 1 if you have the `fstatfs' function. */
+#undef HAVE_FSTATFS
+
+/* Define to 1 if you have the `fstatvfs' function. */
+#undef HAVE_FSTATVFS
 
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE
@@ -112,6 +119,9 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
+/* Define to 1 if you have the `posix_fadvise' function. */
+#undef HAVE_POSIX_FADVISE
+
 /* Define to 1 if you have the `rand' function. */
 #define HAVE_RAND 1
 
@@ -123,6 +133,21 @@
 
 /* Define to 1 if you have the `rand_r' function. */
 #undef HAVE_RAND_R
+
+/* Define to 1 if you have the `regcomp' function. */
+#undef HAVE_REGCOMP
+
+/* Define to 1 if you have the `regerror' function. */
+#undef HAVE_REGERROR
+
+/* Define to 1 if you have the `regexec' function. */
+#undef HAVE_REGEXEC
+
+/* Define to 1 if you have the <regex.h> header file. */
+#undef HAVE_REGEX_H
+
+/* Define to 1 if you have the `regfree' function. */
+#undef HAVE_REGFREE
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -145,12 +170,30 @@
 /* Define to 1 if you have the `strtol' function. */
 #undef HAVE_STRTOL
 
+/* Define to 1 if `d_type' is a member of `struct dirent'. */
+#undef HAVE_STRUCT_DIRENT_D_TYPE
+
+/* Define to 1 if `f_flags' is a member of `struct statfs'. */
+#undef HAVE_STRUCT_STATFS_F_FLAGS
+
+/* Define to 1 if `f_fstypename' is a member of `struct statfs'. */
+#undef HAVE_STRUCT_STATFS_F_FSTYPENAME
+
+/* Define to 1 if `f_basetype' is a member of `struct statvfs'. */
+#undef HAVE_STRUCT_STATVFS_F_BASETYPE
+
+/* Define to 1 if `f_fstypename' is a member of `struct statvfs'. */
+#undef HAVE_STRUCT_STATVFS_F_FSTYPENAME
+
 /* Define to 1 if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
 #undef HAVE_SYS_DIR_H
+
+/* Define to 1 if you have the <sys/mount.h> header file. */
+#undef HAVE_SYS_MOUNT_H
 
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
@@ -159,11 +202,17 @@
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
 
+/* Define to 1 if you have the <sys/statfs.h> header file. */
+#undef HAVE_SYS_STATFS_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/vfs.h> header file. */
+#undef HAVE_SYS_VFS_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
@@ -222,6 +271,9 @@
 /* Use iconv. */
 #undef USE_ICONV
 
+/* Use regex */
+#undef USE_REGEX
+
 /* Version number of package */
 #undef VERSION
 
@@ -249,10 +301,12 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 
+#include "config-fixups.h"
+
 #if defined(MIKTEX) && ! defined(DONT_USE_MIKTEX_EXIT)
 #if defined(MIKTEX_WINDOWS)
 #  define MIKTEX_USE_UTF8_FILE_NAMES 1
 #endif
 #  define USE_MIKTEX_EXIT
-#  undef USE_FCSTAT
+#  undef USE_FCSTAT_WORKAROUND
 #endif

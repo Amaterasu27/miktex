@@ -188,7 +188,7 @@ main (int argc, char **argv)
 	if (s)
 	{
 	    printf ("%s", s);
-	    free (s);
+	    FcStrFree (s);
 	}
     }
     else

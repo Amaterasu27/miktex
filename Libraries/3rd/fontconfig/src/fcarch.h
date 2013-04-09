@@ -46,9 +46,15 @@
  * be64		1234		8		8
  */
 
-#if defined(WORDS_BIGENDIAN) && WORDS_BIGENDIAN
+#if defined(__DARWIN_BYTE_ORDER) && __DARWIN_BYTE_ORDER == __DARWIN_LITTLE_ENDIAN
+# define FC_ARCH_ENDIAN "le"
+#elif defined(__DARWIN_BYTE_ORDER) && __DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN
 # define FC_ARCH_ENDIAN "be"
-#else /* !WORDS_BIGENDIAN */
+#elif defined(__DARWIN_BYTE_ORDER) && __DARWIN_BYTE_ORDER == __DARWIN_PDP_ENDIAN
+# define FC_ARCH_ENDIAN "pe"
+#elif defined(WORDS_BIGENDIAN) && WORDS_BIGENDIAN
+# define FC_ARCH_ENDIAN "be"
+#else
 # define FC_ARCH_ENDIAN "le"
 #endif
 

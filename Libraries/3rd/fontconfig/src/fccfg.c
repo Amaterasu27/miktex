@@ -471,7 +471,7 @@ FcConfigAddCacheDir (FcConfig	    *config,
 }
 
 FcStrList *
-FcConfigGetCacheDirs (FcConfig	*config)
+FcConfigGetCacheDirs (const FcConfig *config)
 {
     if (!config)
     {
@@ -691,12 +691,14 @@ FcConfigPromote (FcValue v, FcValue u)
 
 FcBool
 FcConfigCompareValue (const FcValue	*left_o,
-		      FcOp		op,
+		      FcOp		op_,
 		      const FcValue	*right_o)
 {
     FcValue	left = FcValueCanonicalize(left_o);
     FcValue	right = FcValueCanonicalize(right_o);
     FcBool	ret = FcFalse;
+    FcOp	op = FC_OP_GET_OP (op_);
+    int		flags = FC_OP_GET_FLAGS (op_);
 
     left = FcConfigPromote (left, right);
     right = FcConfigPromote (right, left);
@@ -751,13 +753,19 @@ FcConfigCompareValue (const FcValue	*left_o,
 	    switch (op) {
 	    case FcOpEqual:
 	    case FcOpListing:
-		ret = FcStrCmpIgnoreCase (left.u.s, right.u.s) == 0;
+		if (flags & FcOpFlagIgnoreBlanks)
+		    ret = FcStrCmpIgnoreBlanksAndCase (left.u.s, right.u.s) == 0;
+		else
+		    ret = FcStrCmpIgnoreCase (left.u.s, right.u.s) == 0;
 		break;
 	    case FcOpContains:
 		ret = FcStrStrIgnoreCase (left.u.s, right.u.s) != 0;
 		break;
 	    case FcOpNotEqual:
-		ret = FcStrCmpIgnoreCase (left.u.s, right.u.s) != 0;
+		if (flags & FcOpFlagIgnoreBlanks)
+		    ret = FcStrCmpIgnoreBlanksAndCase (left.u.s, right.u.s) != 0;
+		else
+		    ret = FcStrCmpIgnoreCase (left.u.s, right.u.s) != 0;
 		break;
 	    case FcOpNotContains:
 		ret = FcStrStrIgnoreCase (left.u.s, right.u.s) == 0;
@@ -872,8 +880,9 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
     FcResult	r;
     FcMatrix	*m;
     FcChar8     *str;
+    FcOp	op = FC_OP_GET_OP (e->op);
 
-    switch (e->op) {
+    switch (op) {
     case FcOpInteger:
 	v.type = FcTypeInteger;
 	v.u.i = e->u.ival;
@@ -961,7 +970,7 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 	{
 	    switch (vl.type) {
 	    case FcTypeDouble:
-		switch (e->op) {
+		switch (op) {
 		case FcOpPlus:	
 		    v.type = FcTypeDouble;
 		    v.u.d = vl.u.d + vr.u.d;
@@ -990,7 +999,7 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 		}
 		break;
 	    case FcTypeBool:
-		switch (e->op) {
+		switch (op) {
 		case FcOpOr:
 		    v.type = FcTypeBool;
 		    v.u.b = vl.u.b || vr.u.b;
@@ -1005,11 +1014,11 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 		}
 		break;
 	    case FcTypeString:
-		switch (e->op) {
+		switch (op) {
 		case FcOpPlus:
 		    v.type = FcTypeString;
 		    str = FcStrPlus (vl.u.s, vr.u.s);
-		    v.u.s = FcStrStaticName (str);
+		    v.u.s = FcSharedStr (str);
 		    FcStrFree (str);
 			
 		    if (!v.u.s)
@@ -1021,7 +1030,7 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 		}
 		break;
 	    case FcTypeMatrix:
-		switch (e->op) {
+		switch (op) {
 		case FcOpTimes:
 		    v.type = FcTypeMatrix;
 		    m = malloc (sizeof (FcMatrix));
@@ -1042,7 +1051,7 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 		}
 		break;
 	    case FcTypeCharSet:
-		switch (e->op) {
+		switch (op) {
 		case FcOpPlus:
 		    v.type = FcTypeCharSet;
 		    v.u.c = FcCharSetUnion (vl.u.c, vr.u.c);
@@ -1061,7 +1070,7 @@ FcConfigEvaluate (FcPattern *p, FcExpr *e)
 		}
 		break;
 	    case FcTypeLangSet:
-		switch (e->op) {
+		switch (op) {
 		case FcOpPlus:
 		    v.type = FcTypeLangSet;
 		    v.u.l = FcLangSetUnion (vl.u.l, vr.u.l);
@@ -1186,7 +1195,7 @@ FcConfigMatchValueList (FcPattern	*p,
     while (e)
     {
 	/* Compute the value of the match expression */
-	if (e->op == FcOpComma)
+	if (FC_OP_GET_OP (e->op) == FcOpComma)
 	{
 	    value = FcConfigEvaluate (p, e->u.tree.left);
 	    e = e->u.tree.right;
@@ -1230,7 +1239,7 @@ FcConfigValues (FcPattern *p, FcExpr *e, FcValueBinding binding)
     if (!l)
 	return 0;
     FcMemAlloc (FC_MEM_VALLIST, sizeof (FcValueList));
-    if (e->op == FcOpComma)
+    if (FC_OP_GET_OP (e->op) == FcOpComma)
     {
 	l->value = FcConfigEvaluate (p, e->u.tree.left);
 	l->next = FcConfigValues (p, e->u.tree.right, binding);
@@ -1302,7 +1311,7 @@ FcConfigAdd (FcValueListPtr *head,
     if (FcDebug () & FC_DBG_EDIT)
     {
 	printf ("%s list before ", append ? "Append" : "Prepend");
-	FcValueListPrint (*head);
+	FcValueListPrintWithPosition (*head, *prev);
 	printf ("\n");
     }
 
@@ -1398,6 +1407,7 @@ FcConfigSubstituteWithPat (FcConfig    *config,
     FcEdit	    *e;
     FcValueList	    *l;
     FcPattern	    *m;
+    FcStrSet	    *strs;
 
     if (!config)
     {
@@ -1409,6 +1419,22 @@ FcConfigSubstituteWithPat (FcConfig    *config,
     switch (kind) {
     case FcMatchPattern:
 	s = config->substPattern;
+	strs = FcGetDefaultLangs ();
+	if (strs)
+	{
+	    FcStrList *l = FcStrListCreate (strs);
+	    FcChar8 *lang;
+	    FcValue v;
+
+	    FcStrSetDestroy (strs);
+	    while (l && (lang = FcStrListNext (l)))
+	    {
+		v.type = FcTypeString;
+		v.u.s = lang;
+		FcPatternObjectAddWithBinding (p, FC_LANG_OBJECT, v, FcValueBindingWeak, FcTrue);
+	    }
+	    FcStrListDone (l);
+	}
 	break;
     case FcMatchFont:
 	s = config->substFont;
@@ -1518,7 +1544,7 @@ FcConfigSubstituteWithPat (FcConfig    *config,
 		    break;
 		}
 	    }
-	    switch (e->op) {
+	    switch (FC_OP_GET_OP (e->op)) {
 	    case FcOpAssign:
 		/*
 		 * If there was a test, then replace the matched
@@ -1647,7 +1673,7 @@ DllMain (HINSTANCE hinstDLL,
 
   switch (fdwReason) {
   case DLL_PROCESS_ATTACH:
-      if (!GetModuleFileName ((HMODULE) hinstDLL, fontconfig_path,
+      if (!GetModuleFileName ((HMODULE) hinstDLL, (LPCH) fontconfig_path,
 			      sizeof (fontconfig_path)))
 	  break;
 
@@ -1656,15 +1682,15 @@ DllMain (HINSTANCE hinstDLL,
        * "etc/fonts" in there as FONTCONFIG_PATH. Otherwise use the
        * folder where the DLL is as FONTCONFIG_PATH.
        */
-      p = strrchr (fontconfig_path, '\\');
+      p = (FcChar8 *) strrchr ((const char *) fontconfig_path, '\\');
       if (p)
       {
 	  *p = '\0';
-	  p = strrchr (fontconfig_path, '\\');
-	  if (p && (FcStrCmpIgnoreCase (p + 1, "bin") == 0 ||
-		    FcStrCmpIgnoreCase (p + 1, "lib") == 0))
+	  p = (FcChar8 *) strrchr ((const char *) fontconfig_path, '\\');
+	  if (p && (FcStrCmpIgnoreCase (p + 1, (const FcChar8 *) "bin") == 0 ||
+		    FcStrCmpIgnoreCase (p + 1, (const FcChar8 *) "lib") == 0))
 	      *p = '\0';
-	  strcat (fontconfig_path, "\\etc\\fonts");
+	  strcat ((char *) fontconfig_path, "\\etc\\fonts");
       }
       else
           fontconfig_path[0] = '\0';
@@ -1691,17 +1717,17 @@ static FcChar8 *
 FcConfigFileExists (const FcChar8 *dir, const FcChar8 *file)
 {
     FcChar8    *path;
-    int         size;
+    int         size, osize;
 
     if (!dir)
 	dir = (FcChar8 *) "";
 
-    size = strlen ((char *) dir) + 1 + strlen ((char *) file) + 1;
+    osize = strlen ((char *) dir) + 1 + strlen ((char *) file) + 1;
     /*
      * workaround valgrind warning because glibc takes advantage of how it knows memory is
      * allocated to implement strlen by reading in groups of 4
      */
-    size = (size + 3) & ~3;
+    size = (osize + 3) & ~3;
 
     path = malloc (size);
     if (!path)
@@ -1722,11 +1748,12 @@ FcConfigFileExists (const FcChar8 *dir, const FcChar8 *file)
 #endif
     strcat ((char *) path, (char *) file);
 
-    FcMemAlloc (FC_MEM_STRING, size);
+    FcMemAlloc (FC_MEM_STRING, osize);
     if (access ((char *) path, R_OK) == 0)
 	return path;
 
     FcStrFree (path);
+
     return 0;
 }
 
@@ -1785,11 +1812,11 @@ FcConfigGetPath (void)
 	if (fontconfig_path[0] == '\0')
 	{
 		char *p;
-		if(!GetModuleFileName(NULL, fontconfig_path, sizeof(fontconfig_path)))
+		if(!GetModuleFileName(NULL, (LPCH) fontconfig_path, sizeof(fontconfig_path)))
 			goto bail1;
-		p = strrchr (fontconfig_path, '\\');
+		p = strrchr ((const char *) fontconfig_path, '\\');
 		if (p) *p = '\0';
-		strcat (fontconfig_path, "\\fonts");
+		strcat ((char *) fontconfig_path, "\\fonts");
 	}
 #endif
 #endif    
@@ -1835,6 +1862,84 @@ FcConfigHome (void)
 	return (FcChar8 *) home;
     }
     return 0;
+}
+
+FcChar8 *
+FcConfigXdgCacheHome (void)
+{
+    const char *env = getenv ("XDG_CACHE_HOME");
+    FcChar8 *ret = NULL;
+
+    if (env)
+	ret = FcStrCopy ((const FcChar8 *)env);
+    else
+    {
+	const FcChar8 *home = FcConfigHome ();
+	size_t len = home ? strlen ((const char *)home) : 0;
+
+	ret = malloc (len + 7 + 1);
+	if (ret)
+	{
+	    FcMemAlloc (FC_MEM_STRING, len + 7 + 1);
+	    memcpy (ret, home, len);
+	    memcpy (&ret[len], FC_DIR_SEPARATOR_S ".cache", 7);
+	    ret[len + 7] = 0;
+	}
+    }
+
+    return ret;
+}
+
+FcChar8 *
+FcConfigXdgConfigHome (void)
+{
+    const char *env = getenv ("XDG_CONFIG_HOME");
+    FcChar8 *ret = NULL;
+
+    if (env)
+	ret = FcStrCopy ((const FcChar8 *)env);
+    else
+    {
+	const FcChar8 *home = FcConfigHome ();
+	size_t len = home ? strlen ((const char *)home) : 0;
+
+	ret = malloc (len + 8 + 1);
+	if (ret)
+	{
+	    FcMemAlloc (FC_MEM_STRING, len + 8 + 1);
+	    memcpy (ret, home, len);
+	    memcpy (&ret[len], FC_DIR_SEPARATOR_S ".config", 8);
+	    ret[len + 8] = 0;
+	}
+    }
+
+    return ret;
+}
+
+FcChar8 *
+FcConfigXdgDataHome (void)
+{
+    const char *env = getenv ("XDG_DATA_HOME");
+    FcChar8 *ret = NULL;
+
+    if (env)
+	ret = FcStrCopy ((const FcChar8 *)env);
+    else
+    {
+	const FcChar8 *home = FcConfigHome ();
+	size_t len = home ? strlen ((const char *)home) : 0;
+
+	ret = malloc (len + 13 + 1);
+	if (ret)
+	{
+	    FcMemAlloc (FC_MEM_STRING, len + 13 + 1);
+	    memcpy (ret, home, len);
+	    memcpy (&ret[len], FC_DIR_SEPARATOR_S ".local" FC_DIR_SEPARATOR_S "share", 13);
+	    ret[len + 13] = 0;
+	}
+    }
+
+    return ret;
 }
 
 FcBool
@@ -1883,7 +1988,7 @@ FcConfigFilename (const FcChar8 *url)
     default:
 	path = FcConfigGetPath ();
 	if (!path)
-	    return 0;
+	    return NULL;
 	for (p = path; *p; p++)
 	{
 	    file = FcConfigFileExists (*p, url);
@@ -1893,6 +1998,7 @@ FcConfigFilename (const FcChar8 *url)
 	FcConfigFreePath (path);
 	break;
     }
+
     return file;
 }
 

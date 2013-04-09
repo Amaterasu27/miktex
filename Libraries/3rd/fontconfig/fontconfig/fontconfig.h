@@ -51,8 +51,8 @@ typedef int		FcBool;
  */
 
 #define FC_MAJOR	2
-#define FC_MINOR	9
-#define FC_REVISION	0
+#define FC_MINOR	10
+#define FC_REVISION	2
 
 #define FC_VERSION	((FC_MAJOR * 10000) + (FC_MINOR * 100) + (FC_REVISION))
 
@@ -85,6 +85,7 @@ typedef int		FcBool;
 #define FC_HINT_STYLE	    "hintstyle"		/* Int */
 #define FC_VERTICAL_LAYOUT  "verticallayout"	/* Bool (false) */
 #define FC_AUTOHINT	    "autohint"		/* Bool (false) */
+/* FC_GLOBAL_ADVANCE is deprecated. this is simply ignored on freetype 2.4.5 or later */
 #define FC_GLOBAL_ADVANCE   "globaladvance"	/* Bool (true) */
 #define FC_WIDTH	    "width"		/* Int */
 #define FC_FILE		    "file"		/* String */
@@ -111,10 +112,11 @@ typedef int		FcBool;
 #define FC_EMBEDDED_BITMAP  "embeddedbitmap"	/* Bool - true to enable embedded bitmaps */
 #define FC_DECORATIVE	    "decorative"	/* Bool - true if style is a decorative variant */
 #define FC_LCD_FILTER	    "lcdfilter"		/* Int */
+#define FC_NAMELANG	    "namelang"		/* String RFC 3866 langs */
 
-#define FC_CACHE_SUFFIX		    ".cache-"FC_CACHE_VERSION
-#define FC_DIR_CACHE_FILE	    "fonts.cache-"FC_CACHE_VERSION
-#define FC_USER_CACHE_FILE	    ".fonts.cache-"FC_CACHE_VERSION
+#define FC_CACHE_SUFFIX		    ".cache-" FC_CACHE_VERSION
+#define FC_DIR_CACHE_FILE	    "fonts.cache-" FC_CACHE_VERSION
+#define FC_USER_CACHE_FILE	    ".fonts.cache-" FC_CACHE_VERSION
 
 /* Adjust outline rasterizer */
 #define FC_CHAR_WIDTH	    "charwidth"	/* Int */
@@ -328,6 +330,12 @@ FcDirCacheUnlink (const FcChar8 *dir, FcConfig *config);
 FcPublic FcBool
 FcDirCacheValid (const FcChar8 *cache_file);
 
+FcPublic FcBool
+FcDirCacheClean (const FcChar8 *cache_dir, FcBool verbose);
+
+FcPublic void
+FcCacheCreateTagFile (const FcConfig *config);
+
 /* fccfg.c */
 FcPublic FcChar8 *
 FcConfigHome (void);
@@ -375,7 +383,7 @@ FcPublic FcBlanks *
 FcConfigGetBlanks (FcConfig *config);
 
 FcPublic FcStrList *
-FcConfigGetCacheDirs (FcConfig	*config);
+FcConfigGetCacheDirs (const FcConfig	*config);
 
 FcPublic int
 FcConfigGetRescanInterval (FcConfig *config);
@@ -490,6 +498,9 @@ FcPublic void
 FcFontSetPrint (const FcFontSet *s);
 
 /* fcdefault.c */
+FcPublic FcStrSet *
+FcGetDefaultLangs (void);
+
 FcPublic void
 FcDefaultSubstitute (FcPattern *pattern);
 

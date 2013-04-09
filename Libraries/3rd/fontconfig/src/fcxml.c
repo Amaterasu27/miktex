@@ -53,10 +53,6 @@
 #endif /* ENABLE_LIBXML2 */
 
 #ifdef _WIN32
-#define _WIN32_WINNT 0x0500
-#define STRICT
-#include <windows.h>
-#undef STRICT
 #include <mbstring.h>
 #endif
 
@@ -104,7 +100,7 @@ FcExprCreateString (FcConfig *config, const FcChar8 *s)
     if (e)
     {
 	e->op = FcOpString;
-	e->u.sval = FcStrStaticName (s);
+	e->u.sval = FcSharedStr (s);
     }
     return e;
 }
@@ -176,7 +172,7 @@ FcExprCreateConst (FcConfig *config, const FcChar8 *constant)
     if (e)
     {
 	e->op = FcOpConst;
-	e->u.constant = FcStrStaticName (constant);
+	e->u.constant = FcSharedStr (constant);
     }
     return e;
 }
@@ -199,12 +195,13 @@ FcExprDestroy (FcExpr *e)
 {
     if (!e)
 	return;
-    switch (e->op) {
+    switch (FC_OP_GET_OP (e->op)) {
     case FcOpInteger:
 	break;
     case FcOpDouble:
 	break;
     case FcOpString:
+	FcSharedStrFree (e->u.sval);
 	break;
     case FcOpMatrix:
 	FcMatrixFree (e->u.mval);
@@ -222,6 +219,7 @@ FcExprDestroy (FcExpr *e)
     case FcOpField:
 	break;
     case FcOpConst:
+	FcSharedStrFree (e->u.constant);
 	break;
     case FcOpAssign:
     case FcOpAssignReplace:
@@ -573,7 +571,7 @@ FcTypecheckExpr (FcConfigParse *parse, FcExpr *expr, FcType type)
     if (!expr)
 	return;
 
-    switch (expr->op) {
+    switch (FC_OP_GET_OP (expr->op)) {
     case FcOpInteger:
     case FcOpDouble:
 	FcTypecheckValue (parse, FcTypeDouble, type);
@@ -1361,6 +1359,7 @@ FcParseRange (FcConfigParse *parse)
 	    break;
 	default:
 	    FcConfigMessage (parse, FcSevereError, "invalid element in range");
+	    n = 0;
 	    break;
 	}
 	if (count == 1)
@@ -1581,7 +1580,7 @@ FcParseAlias (FcConfigParse *parse)
     FcExpr	*family = 0, *accept = 0, *prefer = 0, *def = 0, *new = 0;
     FcEdit	*edit = 0, *next;
     FcVStack	*vstack;
-    FcTest	*test;
+    FcTest	*test = NULL;
     FcValueBinding  binding;
 
     if (!FcConfigLexBinding (parse, FcConfigGetAttribute (parse, "binding"), &binding))
@@ -1592,6 +1591,7 @@ FcParseAlias (FcConfigParse *parse)
 	case FcVStackFamily:
 	    if (family)
 	    {
+		FcConfigMessage (parse, FcSevereWarning, "Having multiple <family> in <alias> isn't supported and may not work as expected");
 		new = FcExprCreateOp (parse->config, vstack->u.expr, FcOpComma, family);
 		if (!new)
 		    FcConfigMessage (parse, FcSevereError, "out of memory");
@@ -1622,6 +1622,11 @@ FcParseAlias (FcConfigParse *parse)
 	    if (def)
 		FcExprDestroy (def);
 	    def = vstack->u.expr;
+	    vstack->tag = FcVStackNone;
+	    break;
+	case FcVStackTest:
+	    vstack->u.test->next = test;
+	    test = vstack->u.test;
 	    vstack->tag = FcVStackNone;
 	    break;
 	default:
@@ -1681,11 +1686,21 @@ FcParseAlias (FcConfigParse *parse)
     }
     if (edit)
     {
-	test = FcTestCreate (parse, FcMatchPattern,
-			     FcQualAny,
-			     (FcChar8 *) FC_FAMILY,
-			     FcOpEqual,
-			     family);
+	FcTest *t = FcTestCreate (parse, FcMatchPattern,
+				  FcQualAny,
+				  (FcChar8 *) FC_FAMILY,
+				  FC_OP (FcOpEqual, FcOpFlagIgnoreBlanks),
+				  family);
+	if (test)
+	{
+	    FcTest *p = test;
+
+	    while (p->next)
+		p = p->next;
+	    p->next = t;
+	}
+	else
+	    test = t;
 	if (test)
 	    if (!FcConfigAddEdit (parse->config, test, edit, FcMatchPattern))
 		FcTestDestroy (test);
@@ -1831,24 +1846,257 @@ FcParseUnary (FcConfigParse *parse, FcOp op)
 }
 
 static void
+FcParseDir (FcConfigParse *parse)
+{
+    const FcChar8 *attr, *data;
+    FcChar8 *prefix = NULL;
+#ifdef _WIN32
+    FcChar8         buffer[1000];
+#endif
+
+    attr = FcConfigGetAttribute (parse, "prefix");
+    if (attr && FcStrCmp (attr, (const FcChar8 *)"xdg") == 0)
+	prefix = FcConfigXdgDataHome ();
+    data = FcStrBufDoneStatic (&parse->pstack->str);
+    if (!data)
+    {
+	FcConfigMessage (parse, FcSevereError, "out of memory");
+	goto bail;
+    }
+    if (prefix)
+    {
+	size_t plen = strlen ((const char *)prefix);
+	size_t dlen = strlen ((const char *)data);
+
+	FcMemFree (FC_MEM_STRING, plen + 1);
+	prefix = realloc (prefix, plen + 1 + dlen + 1);
+	if (!prefix)
+	{
+	    FcConfigMessage (parse, FcSevereError, "out of memory");
+	    goto bail;
+	}
+	FcMemAlloc (FC_MEM_STRING, plen + 1 + dlen + 1);
+	prefix[plen] = FC_DIR_SEPARATOR;
+	memcpy (&prefix[plen + 1], data, dlen);
+	prefix[plen + 1 + dlen] = 0;
+	data = prefix;
+    }
+#ifdef _WIN32
+    if (strcmp ((const char *) data, "CUSTOMFONTDIR") == 0)
+    {
+	char *p;
+	data = buffer;
+	if (!GetModuleFileName (NULL, (LPCH) buffer, sizeof (buffer) - 20))
+	{
+	    FcConfigMessage (parse, FcSevereError, "GetModuleFileName failed");
+	    goto bail;
+	}
+	/*
+	 * Must use the multi-byte aware function to search
+	 * for backslash because East Asian double-byte code
+	 * pages have characters with backslash as the second
+	 * byte.
+	 */
+	p = _mbsrchr (data, '\\');
+	if (p) *p = '\0';
+	strcat (data, "\\fonts");
+    }
+    else if (strcmp ((const char *) data, "APPSHAREFONTDIR") == 0)
+    {
+	char *p;
+	data = buffer;
+	if (!GetModuleFileName (NULL, (LPCH) buffer, sizeof (buffer) - 20))
+	{
+	    FcConfigMessage (parse, FcSevereError, "GetModuleFileName failed");
+	    goto bail;
+	}
+	p = _mbsrchr (data, '\\');
+	if (p) *p = '\0';
+	strcat (data, "\\..\\share\\fonts");
+    }
+    else if (strcmp ((const char *) data, "WINDOWSFONTDIR") == 0)
+    {
+	int rc;
+	data = buffer;
+	rc = pGetSystemWindowsDirectory ((LPSTR) buffer, sizeof (buffer) - 20);
+	if (rc == 0 || rc > sizeof (buffer) - 20)
+	{
+	    FcConfigMessage (parse, FcSevereError, "GetSystemWindowsDirectory failed");
+	    goto bail;
+	}
+	if (data [strlen ((const char *) data) - 1] != '\\')
+	    strcat (data, "\\");
+	strcat (data, "fonts");
+    }
+#endif
+    if (strlen ((char *) data) == 0)
+	FcConfigMessage (parse, FcSevereWarning, "empty font directory name ignored");
+    else if (!FcStrUsesHome (data) || FcConfigHome ())
+    {
+	if (!FcConfigAddDir (parse->config, data))
+	    FcConfigMessage (parse, FcSevereError, "out of memory; cannot add directory %s", data);
+    }
+    FcStrBufDestroy (&parse->pstack->str);
+
+  bail:
+    if (prefix)
+	FcStrFree (prefix);
+}
+
+static void
+FcParseCacheDir (FcConfigParse *parse)
+{
+    const FcChar8 *attr;
+    FcChar8 *prefix = NULL, *data;
+
+    attr = FcConfigGetAttribute (parse, "prefix");
+    if (attr && FcStrCmp (attr, (const FcChar8 *)"xdg") == 0)
+	prefix = FcConfigXdgCacheHome ();
+    data = FcStrBufDone (&parse->pstack->str);
+    if (!data)
+    {
+	FcConfigMessage (parse, FcSevereError, "out of memory");
+	goto bail;
+    }
+    if (prefix)
+    {
+	size_t plen = strlen ((const char *)prefix);
+	size_t dlen = strlen ((const char *)data);
+
+	FcMemFree (FC_MEM_STRING, plen + 1);
+	prefix = realloc (prefix, plen + 1 + dlen + 1);
+	if (!prefix)
+	{
+	    FcConfigMessage (parse, FcSevereError, "out of memory");
+	    goto bail;
+	}
+	FcMemAlloc (FC_MEM_STRING, plen + 1 + dlen + 1);
+	prefix[plen] = FC_DIR_SEPARATOR;
+	memcpy (&prefix[plen + 1], data, dlen);
+	prefix[plen + 1 + dlen] = 0;
+	FcStrFree (data);
+	data = prefix;
+    }
+#ifdef _WIN32
+    if (strcmp ((const char *) data, "WINDOWSTEMPDIR_FONTCONFIG_CACHE") == 0)
+    {
+	int rc;
+	FcStrFree (data);
+	data = malloc (1000);
+	if (!data)
+	{
+	    FcConfigMessage (parse, FcSevereError, "out of memory");
+	    goto bail;
+	}
+	FcMemAlloc (FC_MEM_STRING, 1000);
+	rc = GetTempPath (800, (LPSTR) data);
+	if (rc == 0 || rc > 800)
+	{
+	    FcConfigMessage (parse, FcSevereError, "GetTempPath failed");
+	    goto bail;
+	}
+	if (data [strlen ((const char *) data) - 1] != '\\')
+	    strcat (data, "\\");
+	strcat (data, "fontconfig\\cache");
+    }
+    else if (strcmp ((const char *) data, "LOCAL_APPDATA_FONTCONFIG_CACHE") == 0)
+    {
+	char szFPath[MAX_PATH + 1];
+	size_t len;
+
+	if (!(pSHGetFolderPathA && SUCCEEDED(pSHGetFolderPathA(NULL, /* CSIDL_LOCAL_APPDATA */ 28, NULL, 0, szFPath))))
+	{
+	    FcConfigMessage (parse, FcSevereError, "SHGetFolderPathA failed");
+	    goto bail;
+	}
+	strncat(szFPath, "\\fontconfig\\cache", MAX_PATH - 1 - strlen(szFPath));
+	len = strlen(szFPath) + 1;
+	FcStrFree (data);
+	data = malloc(len);
+	if (!data)
+	{
+	    FcConfigMessage (parse, FcSevereError, "out of memory");
+	    goto bail;
+	}
+	FcMemAlloc (FC_MEM_STRING, len);
+	strncpy((char *) data, szFPath, len);
+    }
+#endif
+    if (strlen ((char *) data) == 0)
+	FcConfigMessage (parse, FcSevereWarning, "empty cache directory name ignored");
+    else if (!FcStrUsesHome (data) || FcConfigHome ())
+    {
+	if (!FcConfigAddCacheDir (parse->config, data))
+	    FcConfigMessage (parse, FcSevereError, "out of memory; cannot add cache directory %s", data);
+    }
+    FcStrBufDestroy (&parse->pstack->str);
+
+  bail:
+    if (data)
+	FcStrFree (data);
+}
+
+static void
 FcParseInclude (FcConfigParse *parse)
 {
     FcChar8	    *s;
-    const FcChar8   *i;
+    const FcChar8   *attr;
     FcBool	    ignore_missing = FcFalse;
+    FcBool	    deprecated = FcFalse;
+    FcChar8	    *prefix = NULL;
 
     s = FcStrBufDoneStatic (&parse->pstack->str);
     if (!s)
     {
 	FcConfigMessage (parse, FcSevereError, "out of memory");
-	return;
+	goto bail;
     }
-    i = FcConfigGetAttribute (parse, "ignore_missing");
-    if (i && FcConfigLexBool (parse, (FcChar8 *) i) == FcTrue)
+    attr = FcConfigGetAttribute (parse, "ignore_missing");
+    if (attr && FcConfigLexBool (parse, (FcChar8 *) attr) == FcTrue)
 	ignore_missing = FcTrue;
+    attr = FcConfigGetAttribute (parse, "deprecated");
+    if (attr && FcConfigLexBool (parse, (FcChar8 *) attr) == FcTrue)
+        deprecated = FcTrue;
+    attr = FcConfigGetAttribute (parse, "prefix");
+    if (attr && FcStrCmp (attr, (const FcChar8 *)"xdg") == 0)
+	prefix = FcConfigXdgConfigHome ();
+    if (prefix)
+    {
+	size_t plen = strlen ((const char *)prefix);
+	size_t dlen = strlen ((const char *)s);
+
+	FcMemFree (FC_MEM_STRING, plen + 1);
+	prefix = realloc (prefix, plen + 1 + dlen + 1);
+	if (!prefix)
+	{
+	    FcConfigMessage (parse, FcSevereError, "out of memory");
+	    goto bail;
+	}
+	FcMemAlloc (FC_MEM_STRING, plen + 1 + dlen + 1);
+	prefix[plen] = FC_DIR_SEPARATOR;
+	memcpy (&prefix[plen + 1], s, dlen);
+	prefix[plen + 1 + dlen] = 0;
+	s = prefix;
+    }
     if (!FcConfigParseAndLoad (parse->config, s, !ignore_missing))
 	parse->error = FcTrue;
+    else
+    {
+        FcChar8 *filename;
+
+        filename = FcConfigFilename(s);
+        if ((deprecated == FcTrue) && filename)
+        {
+            FcConfigMessage (parse, FcSevereWarning, "reading configurations from %s is deprecated.", s);
+        }
+        if(filename)
+            FcStrFree(filename);
+    }
     FcStrBufDestroy (&parse->pstack->str);
+
+  bail:
+    if (prefix)
+	FcStrFree (prefix);
 }
 
 typedef struct _FcOpMap {
@@ -1898,6 +2146,8 @@ FcParseTest (FcConfigParse *parse)
     FcOp	    compare;
     FcExpr	    *expr;
     FcTest	    *test;
+    const FcChar8   *iblanks_string;
+    int              flags = 0;
 
     kind_string = FcConfigGetAttribute (parse, "target");
     if (!kind_string)
@@ -1955,13 +2205,31 @@ FcParseTest (FcConfigParse *parse)
 	    return;
 	}
     }
+    iblanks_string = FcConfigGetAttribute (parse, "ignore-blanks");
+    if (iblanks_string)
+    {
+	FcBool f = FcFalse;
+
+	if (!FcNameBool (iblanks_string, &f))
+	{
+	    FcConfigMessage (parse,
+			     FcSevereWarning,
+			     "invalid test ignore-blanks \"%s\"", iblanks_string);
+	}
+	if (f)
+	    flags |= FcOpFlagIgnoreBlanks;
+    }
     expr = FcPopBinary (parse, FcOpComma);
     if (!expr)
     {
 	FcConfigMessage (parse, FcSevereWarning, "missing test expression");
 	return;
     }
-    test = FcTestCreate (parse, kind, qual, name, compare, expr);
+    if (expr->op == FcOpComma)
+    {
+	FcConfigMessage (parse, FcSevereWarning, "Having multiple values in <test> isn't supported and may not work as expected");
+    }
+    test = FcTestCreate (parse, kind, qual, name, FC_OP (compare, flags), expr);
     if (!test)
     {
 	FcConfigMessage (parse, FcSevereError, "out of memory");
@@ -2134,7 +2402,7 @@ FcPopValue (FcConfigParse *parse)
 
     switch (vstack->tag) {
     case FcVStackString:
-	value.u.s = FcStrStaticName (vstack->u.string);
+	value.u.s = FcSharedStr (vstack->u.string);
 	if (value.u.s)
 	    value.type = FcTypeString;
 	break;
@@ -2255,9 +2523,6 @@ FcEndElement(void *userData, const XML_Char *name)
 {
     FcConfigParse   *parse = userData;
     FcChar8	    *data;
-#ifdef _WIN32
-    FcChar8         buffer[1000];
-#endif
 
     if (!parse->pstack)
 	return;
@@ -2267,112 +2532,11 @@ FcEndElement(void *userData, const XML_Char *name)
     case FcElementFontconfig:
 	break;
     case FcElementDir:
-	data = FcStrBufDoneStatic (&parse->pstack->str);
-	if (!data)
-	{
-	    FcConfigMessage (parse, FcSevereError, "out of memory");
-	    break;
-	}
-#ifdef _WIN32
-	if (strcmp (data, "CUSTOMFONTDIR") == 0)
-	{
-		char *p;
-		data = buffer;
-		if (!GetModuleFileName (NULL, buffer, sizeof (buffer) - 20))
-		{
-			FcConfigMessage (parse, FcSevereError, "GetModuleFileName failed");
-			break;
-		}
-		/*
-		 * Must use the multi-byte aware function to search
-		 * for backslash because East Asian double-byte code
-		 * pages have characters with backslash as the second
-		 * byte.
-		 */
-		p = _mbsrchr (data, '\\');
-		if (p) *p = '\0';
-		strcat (data, "\\fonts");
-	}
-	else if (strcmp (data, "APPSHAREFONTDIR") == 0)
-	{
-		char *p;
-		data = buffer;
-		if (!GetModuleFileName (NULL, buffer, sizeof (buffer) - 20))
-		{
-			FcConfigMessage (parse, FcSevereError, "GetModuleFileName failed");
-			break;
-		}
-		p = _mbsrchr (data, '\\');
-		if (p) *p = '\0';
-		strcat (data, "\\..\\share\\fonts");
-	}
-	else if (strcmp (data, "WINDOWSFONTDIR") == 0)
-	{
-	    int rc;
-	    data = buffer;
-#if _WIN32_WINNT >= 0x0500
-	    rc = GetSystemWindowsDirectory (buffer, sizeof (buffer) - 20);
-#else
-	    rc = GetWindowsDirectory (buffer, sizeof (buffer) - 20);
-#endif
-	    if (rc == 0 || rc > sizeof (buffer) - 20)
-	    {
-		FcConfigMessage (parse, FcSevereError, "GetSystemWindowsDirectory failed");
-		break;
-	    }
-	    if (data [strlen (data) - 1] != '\\')
-		strcat (data, "\\");
-	    strcat (data, "fonts");
-	}
-#endif
-	if (strlen ((char *) data) == 0)
-	    FcConfigMessage (parse, FcSevereWarning, "empty font directory name ignored");
-	else if (!FcStrUsesHome (data) || FcConfigHome ())
-	{
-	    if (!FcConfigAddDir (parse->config, data))
-		FcConfigMessage (parse, FcSevereError, "out of memory; cannot add directory %s", data);
-	}
-	FcStrBufDestroy (&parse->pstack->str);
+	FcParseDir (parse);
 	break;
     case FcElementCacheDir:
-	data = FcStrBufDone (&parse->pstack->str);
-	if (!data)
-	{
-	    FcConfigMessage (parse, FcSevereError, "out of memory");
-	    break;
-	}
-#ifdef _WIN32
-	if (strcmp (data, "WINDOWSTEMPDIR_FONTCONFIG_CACHE") == 0)
-	{
-	    int rc;
-	    FcStrFree (data);
-	    data = malloc (1000);
-	    if (!data)
-	    {
-		FcConfigMessage (parse, FcSevereError, "out of memory");
-		break;
-	    }
-	    FcMemAlloc (FC_MEM_STRING, 1000);
-	    rc = GetTempPath (800, data);
-	    if (rc == 0 || rc > 800)
-	    {
-		FcConfigMessage (parse, FcSevereError, "GetTempPath failed");
-		FcStrFree (data);
-		break;
-	    }
-	    if (data [strlen (data) - 1] != '\\')
-		strcat (data, "\\");
-	    strcat (data, "fontconfig\\cache");
-	}
-#endif
-	if (!FcStrUsesHome (data) || FcConfigHome ())
-	{
-	    if (!FcConfigAddCacheDir (parse->config, data))
-		FcConfigMessage (parse, FcSevereError, "out of memory; cannot add cache directory %s", data);
-	}
-	FcStrFree (data);
+	FcParseCacheDir (parse);
 	break;
-	
     case FcElementCache:
 	data = FcStrBufDoneStatic (&parse->pstack->str);
 	if (!data)
@@ -2677,6 +2841,11 @@ bail0:
     return ret || !complain;
 }
 
+#ifdef _WIN32
+pfnGetSystemWindowsDirectory pGetSystemWindowsDirectory = NULL;
+pfnSHGetFolderPathA pSHGetFolderPathA = NULL;
+#endif
+
 FcBool
 FcConfigParseAndLoad (FcConfig	    *config,
 		      const FcChar8 *name,
@@ -2695,6 +2864,22 @@ FcConfigParseAndLoad (FcConfig	    *config,
     char            buf[BUFSIZ];
 #else
     void	    *buf;
+#endif
+
+#ifdef _WIN32
+    if (!pGetSystemWindowsDirectory)
+    {
+        HMODULE hk32 = GetModuleHandleA("kernel32.dll");
+        if (!(pGetSystemWindowsDirectory = (pfnGetSystemWindowsDirectory) GetProcAddress(hk32, "GetSystemWindowsDirectoryA")))
+            pGetSystemWindowsDirectory = (pfnGetSystemWindowsDirectory) GetWindowsDirectory;
+    }
+    if (!pSHGetFolderPathA)
+    {
+        HMODULE hSh = LoadLibraryA("shfolder.dll");
+        /* the check is done later, because there is no provided fallback */
+        if (hSh)
+            pSHGetFolderPathA = (pfnSHGetFolderPathA) GetProcAddress(hSh, "SHGetFolderPathA");
+    }
 #endif
 
     filename = FcConfigFilename (name);
