@@ -1315,6 +1315,33 @@ if ext_delimiter=0 then
 % [29.518]
 % _____________________________________________________________________________
 
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
+some operating systems put the file area last instead of first.)
+@^system dependencies@>
+@y
+some operating systems put the file area last instead of first.)
+@^system dependencies@>
+
+@d check_quoted(#) == {check if string |#| needs quoting}
+if #<>0 then begin
+  j:=str_start[#];
+  while (not must_quote) and (j<str_start[#+1]) do begin
+    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
+  end;
+end
+@#
+@d print_quoted(#) == {print string |#|, omitting quotes}
+if #<>0 then
+  for j:=str_start[#] to str_start[#+1]-1 do
+    if so(str_pool[j])<>"""" then
+      if str_pool[j]="*" then
+        print_char(" ")
+      else if str_pool[j]="?" then
+        print_char("~")
+      else
+        print(so(str_pool[j]))
+@z
+
 @x
 begin slow_print(a); slow_print(n); slow_print(e);
 @y
@@ -1322,24 +1349,7 @@ var must_quote: boolean; {whether to quote the filename}
 @!j:pool_pointer; {index into |str_pool|}
 begin
 must_quote:=false;
-if a<>0 then begin
-  j:=str_start[a];
-  while (not must_quote) and (j<str_start[a+1]) do begin
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start[n];
-  while (not must_quote) and (j<str_start[n+1]) do begin
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start[e];
-  while (not must_quote) and (j<str_start[e+1]) do begin
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-  end;
-end;
+check_quoted(a); check_quoted(n); check_quoted(e);
 {FIXME: Alternative is to assume that any filename that has to be quoted has
  at least one quoted component...if we pick this, a number of insertions
  of |print_file_name| should go away.
@@ -1347,33 +1357,7 @@ end;
               ((|n|<>0)and(|str_pool|[|str_start|[|n|]]=""""))or
               ((|e|<>0)and(|str_pool|[|str_start|[|e|]]=""""));}
 if must_quote then print_char("""");
-if a<>0 then
-  for j:=str_start[a] to str_start[a+1]-1 do
-    if so(str_pool[j])<>"""" then
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]));
-if n<>0 then
-  for j:=str_start[n] to str_start[n+1]-1 do
-    if so(str_pool[j])<>"""" then
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]));
-if e<>0 then
-  for j:=str_start[e] to str_start[e+1]-1 do
-    if so(str_pool[j])<>"""" then
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]));
+print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then print_char("""");
 @z
 
