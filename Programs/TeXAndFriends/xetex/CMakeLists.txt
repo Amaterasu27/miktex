@@ -96,19 +96,14 @@ add_custom_command(
   OUTPUT
 	${pre_xetex1_web_file}
   COMMAND
-	${tie_exe} -m abrakadabra
-		${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+	${tie_exe} -m ${pre_xetex1_web_file}
+		${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
 		${pre_xetex_change_files}
-  COMMAND
-        ${webn_exe} < abrakadabra > ${pre_xetex1_web_file}
-  COMMAND
-        ${CMAKE_COMMAND} -E remove abrakadabra
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${tie_exe}
-	${webn_exe}
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+	${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
 	${pre_xetex_change_files}
   VERBATIM
 )
@@ -119,18 +114,13 @@ add_custom_command(
   OUTPUT
 	${pre_xetex2_web_file}
   COMMAND
-	${tie_exe} -m abrakadabra
+	${tie_exe} -m ${pre_xetex2_web_file}
 		${pre_xetex1_web_file}
 		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
-  COMMAND
-        ${webn_exe} < abrakadabra > ${pre_xetex2_web_file}
-  COMMAND
-        ${CMAKE_COMMAND} -E remove abrakadabra
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${tie_exe}
-	${webn_exe}
 	${pre_xetex1_web_file}
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   VERBATIM
@@ -145,19 +135,14 @@ add_custom_command(
   OUTPUT
 	${xetex_web_file}
   COMMAND
-	${tie_exe} -m abrakadabra
+	${tie_exe} -m ${xetex_web_file}
 		${pre_xetex2_web_file}
 		${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
 		${xetex_post_ch_synctex}
-  COMMAND
-        ${webn_exe} < abrakadabra > ${xetex_web_file}
-  COMMAND
-        ${CMAKE_COMMAND} -E remove abrakadabra
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${tie_exe}
-	${webn_exe}
 	${pre_xetex2_web_file}
 	${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
 	${xetex_post_ch_synctex}
