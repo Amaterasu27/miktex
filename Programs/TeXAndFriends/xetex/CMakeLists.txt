@@ -116,12 +116,14 @@ add_custom_command(
   COMMAND
 	${tie_exe} -m ${pre_xetex2_web_file}
 		${pre_xetex1_web_file}
+  		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
 	${tie_exe}
 	${pre_xetex1_web_file}
+	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   VERBATIM
 )
@@ -266,7 +268,7 @@ delay_load(${xetex_dll_name}
 #  icule
 #  icuuc
   ${jpeg_dll_name}
-  ${kpsemu_dll_name}
+#  ${kpsemu_dll_name}
   ${png_dll_name}
   ${teckit_dll_name}
   ${unxemu_dll_name}

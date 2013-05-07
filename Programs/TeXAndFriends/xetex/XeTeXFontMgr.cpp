@@ -33,7 +33,6 @@ authorization from the copyright holders.
 #if defined(MIKTEX)
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
-const double M_PI = 3.14159265358979323846;
 #endif
 #ifdef XETEX_MAC
 #include "XeTeXFontMgr_Mac.h"
@@ -42,11 +41,14 @@ const double M_PI = 3.14159265358979323846;
 #endif
 #include "XeTeXFontInst.h"
 
+#if ! defined(MIKTEX)
 extern "C" {
 extern Fixed loadedfontdesignsize;
 }
+#endif
 
 // functions from the Pascal/WEB side
+#if ! defined(MIKTEX)
 extern "C" {
 	void zprintnl(int s);
 	void zprintchar(int c);
@@ -54,6 +56,7 @@ extern "C" {
 	void zenddiagnostic(int nl);
 	int gettracingfontsstate();
 };
+#endif
 
 // see cpascal.h
 #define printcstring(STR)        \

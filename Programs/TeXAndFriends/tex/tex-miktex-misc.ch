@@ -1,6 +1,6 @@
 %% tex-miktex-misc.ch:
 %% 
-%% Copyright (C) 1991-2010 Christian Schenk
+%% Copyright (C) 1991-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -114,7 +114,7 @@ versions of the program.
                 modifying the dynamic definition of the font arrays.}
 
 @<Constants...@>=
-{placeholder}
+{marker:constants}
 @z
 
 @x

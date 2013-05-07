@@ -68,8 +68,6 @@ for i:=@'177 to @'377 do xchr[i]:=i;
 @x
 miktex_initialize_char_tables;
 @y
-for i:=first_text_char to last_text_char do xord[chr(i)]:=invalid_code;
-for i:=@'200 to @'377 do xord[xchr[i]]:=i;
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 {Set |xprn| for printable ASCII, unless |eight_bit_p| is set.}
 for i:=0 to 255 do xprn[i]:=(eight_bit_p or ((i>=" ")and(i<="~")));
@@ -157,31 +155,16 @@ end;
 % [5.75]
 % _____________________________________________________________________________
 
-@x
+ @x
 if last<>first then for k:=first to last-1 do print(buffer[k]);
-@y
+ @y
 k:=first; while k < last do begin print_buffer(k) end;
-@z
-
+ @z
 
 % _____________________________________________________________________________
 %
 % [8.114]
 % _____________________________________________________________________________
-
-@x
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword==255 {largest allowable value in a |quarterword|}
-@d min_halfhalfword==-@"8000
-@d max_halfhalfword==@"7FFF
-@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
-@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
-@y
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword=255 {largest allowable value in a |quarterword|}
-@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
-@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
-@z
 
 @x
 @d miktex_int_pars=miktex_int_base+3 {total number of \MiKTeX's integer parameters}

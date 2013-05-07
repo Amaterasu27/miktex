@@ -58,10 +58,6 @@ authorization from the copyright holders.
 #define C4PEXTERN extern
 #include "xetex-miktex.h"
 #include <unistd.h>
-extern "C" {
-  extern void set_cp_code(int fontNum, unsigned int code, int side, int value);
-  extern int get_cp_code(int fontNum, unsigned int code, int side);
-}
 #else
 #define EXTERN extern
 #include "xetexd.h"
@@ -510,7 +506,11 @@ linebreakstart(int f, integer localeStrNum, const uint16_t* text, integer textLe
 			return;
 	}
 
+#if defined(MIKTEX)
+	status = U_ZERO_ERROR;
+#else
 	status = 0;
+#endif
 
 	if ((localeStrNum != brkLocaleStrNum) && (brkIter != NULL)) {
 		ubrk_close(brkIter);
@@ -963,7 +963,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 	char reqEngine = getReqEngine();
 
 	if (reqEngine == 'O' || reqEngine == 'G') {
+#if defined(MIKTEX)
+		shapers = (char**)xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#else
 		shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#endif
 		if (reqEngine == 'O')
 			shapers[nShapers] = strdup("ot");
 		else if (reqEngine == 'G')
@@ -1019,7 +1023,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				if (*cp3 != '=')
 					goto bad_option;
 				++cp3;
+#if defined(MIKTEX)
+				shapers = (char**)xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#else
 				shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#endif
 				/* some dumb systems have no strndup() */
 				shapers[nShapers] = strdup(cp3);
 				shapers[nShapers][cp2 - cp3] = '\0';
@@ -1037,7 +1045,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 				int value = 0;
 				if (readFeatureNumber(cp1, cp2, &tag, &value)
 				 || findGraphiteFeature(engine, cp1, cp2, &tag, &value)) {
+#if defined(MIKTEX)
+					features = (hb_feature_t*)xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#else
 					features = xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#endif
 					features[nFeatures].tag = tag;
 					features[nFeatures].value = value;
 					features[nFeatures].start = 0;
@@ -1050,7 +1062,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			if (*cp1 == '+') {
 				int param = 0;
 				tag = read_tag_with_param(cp1 + 1, &param);
+#if defined(MIKTEX)
+				features = (hb_feature_t*)xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#else
 				features = xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#endif
 				features[nFeatures].tag = tag;
 				features[nFeatures].start = 0;
 				features[nFeatures].end = (unsigned int) -1;
@@ -1065,7 +1081,11 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			if (*cp1 == '-') {
 				++cp1;
 				tag = hb_tag_from_string(cp1, cp2 - cp1);
+#if defined(MIKTEX)
+				features = (hb_feature_t*)xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#else
 				features = xrealloc(features, (nFeatures + 1) * sizeof(hb_feature_t));
+#endif
 				features[nFeatures].tag = tag;
 				features[nFeatures].start = 0;
 				features[nFeatures].end = (unsigned int) -1;
@@ -1089,15 +1109,23 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 			}
 			
 		bad_option:
+#if defined(MIKTEX)
+			fontfeaturewarning((void*)cp1, cp2 - cp1, 0, 0);
+#else
 			fontfeaturewarning(cp1, cp2 - cp1, 0, 0);
-		
+#endif
+
 		next_option:
 			cp1 = cp2;
 		}
 	}
 	
 	if (shapers != NULL) {
+#if defined(MIKTEX)
+		shapers = (char**)xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#else
 		shapers = xrealloc(shapers, (nShapers + 1) * sizeof(char *));
+#endif
 		shapers[nShapers] = NULL;
 	}
 
@@ -2108,7 +2136,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 		UBiDi*	pBiDi = ubidi_open();
 		
 		UErrorCode	errorCode = (UErrorCode)0;
+#if defined(MIKTEX)
+		ubidi_setPara(pBiDi, (const UChar*)txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#else
 		ubidi_setPara(pBiDi, txtPtr, txtLen, getDefaultDirection(engine), NULL, &errorCode);
+#endif
 		
 		dir = ubidi_getDirection(pBiDi);
 		if (dir == UBIDI_MIXED) {
@@ -2130,7 +2162,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 				glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
 				locations = (FixedPoint*)glyph_info;
 				glyphIDs = (uint16_t*)(locations + totalGlyphCount);
+#if defined(MIKTEX)
+				glyphAdvances = (Fixed*)xmalloc(totalGlyphCount * sizeof(Fixed));
+#else
 				glyphAdvances = xmalloc(totalGlyphCount * sizeof(Fixed));
+#endif
 				totalGlyphCount = 0;
 				
 				x = y = 0.0;
@@ -2140,9 +2176,15 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					nGlyphs = layoutChars(engine, txtPtr, logicalStart, length, txtLen,
 											(dir == UBIDI_RTL));
 
+#if defined(MIKTEX)
+					glyphs = (uint32_t*)xmalloc(nGlyphs * sizeof(uint32_t));
+					positions = (float*)xmalloc((nGlyphs * 2 + 2) * sizeof(float));
+					advances = (float*)xmalloc(nGlyphs * sizeof(float));
+#else
 					glyphs = xmalloc(nGlyphs * sizeof(uint32_t));
 					positions = xmalloc((nGlyphs * 2 + 2) * sizeof(float));
 					advances = xmalloc(nGlyphs * sizeof(float));
+#endif
 	
 					getGlyphs(engine, glyphs);
 					getGlyphAdvances(engine, advances);
@@ -2171,9 +2213,15 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 			double width = 0;
 			totalGlyphCount = layoutChars(engine, txtPtr, 0, txtLen, txtLen, (dir == UBIDI_RTL));
 
+#if defined(MIKTEX)
+			glyphs = (uint32_t*)xmalloc(totalGlyphCount * sizeof(uint32_t));
+			positions = (float*)xmalloc((totalGlyphCount * 2 + 2) * sizeof(float));
+			advances = (float*)xmalloc(totalGlyphCount * sizeof(float));
+#else
 			glyphs = xmalloc(totalGlyphCount * sizeof(uint32_t));
 			positions = xmalloc((totalGlyphCount * 2 + 2) * sizeof(float));
 			advances = xmalloc(totalGlyphCount * sizeof(float));
+#endif
 
 			getGlyphs(engine, glyphs);
 			getGlyphAdvances(engine, advances);
@@ -2184,7 +2232,11 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 				glyph_info = xmalloc(totalGlyphCount * native_glyph_info_size);
 				locations = (FixedPoint*)glyph_info;
 				glyphIDs = (uint16_t*)(locations + totalGlyphCount);
+#if defined(MIKTEX)
+				glyphAdvances = (Fixed*)xmalloc(totalGlyphCount * sizeof(Fixed));
+#else
 				glyphAdvances = xmalloc(totalGlyphCount * sizeof(Fixed));
+#endif
 				for (i = 0; i < totalGlyphCount; ++i) {
 					glyphIDs[i] = glyphs[i];
 					glyphAdvances[i] = D2Fix(advances[i]);
@@ -2802,13 +2854,13 @@ Isspace(char c)
 
 #if defined(MIKTEX)
 boolean
-open_dvi_output(/*out*/ bytefile & dviFile)
+open_dvi_output(/*out*/ C4P::FileRoot & dviFile)
 {
   if (nopdfoutput)
     {
       MiKTeX::Core::PathName outPath;
       bool done = THEAPP.OpenOutputFile
-	(*reinterpret_cast<C4P::FileRoot*>(&dviFile),
+	(dviFile,
 	 THEAPP.GetNameOfFile().Get(),
 	 MiKTeX::Core::FileShare::Read,
 	 false,
@@ -3101,16 +3153,6 @@ makeutf16name()
 	namelength16 = t - nameoffile16;
 }
 
-
-int getcpcode(int fontNum, unsigned int code, int side)
-{
-    return get_cp_code(fontNum, code, side);
-}
-
-void setcpcode(int fontNum, unsigned int code, int side, int value)
-{
-    set_cp_code(fontNum, code, side, value);
-}
 
 integer get_native_word_cp(void* pNode, int side)
 {

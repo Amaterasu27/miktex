@@ -71,14 +71,14 @@ for i:=0 to @'176 do xord[xchr[i]]:=i;
 % [29.536]
 % _____________________________________________________________________________
 
-@x
+ @x
 @!TEX_format_default:packed array[1..format_default_length] of char;
-@y
+ @y
 @!TEX_format_default:packed array[1..format_default_length] of char;
 
 @ @<Set init...@>=
 TEX_format_default:='TeXformats:plain.fmt';
-@z
+ @z
 
 % _____________________________________________________________________________
 %

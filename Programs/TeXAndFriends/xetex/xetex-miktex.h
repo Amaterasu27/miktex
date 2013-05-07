@@ -28,7 +28,7 @@
 #include <miktex/TeXAndFriends/config.h>
 
 #include "xetexd.h"
-#include "XeTeXOTMath.h"
+//#include "XeTeXOTMath.h"
 
 #if ! defined(THEDATA)
 #  define THEDATA(x) C4P_VAR(x)
@@ -284,13 +284,13 @@ GetNameOfFileForWeb2C ()
 #define bfield bField
 #define cfield cField
 #define dfield dField
-#define fix2x Fix2X
+#define fix2d Fix2D
 #define htfield htField
 #define setpoint setPoint
 #define txfield txField
 #define tyfield tyField
 #define wdfield wdField
-#define x2fix X2Fix
+#define d2fix D2Fix
 #define xcoord xCoord
 #define xfield xField
 #define ycoord yCoord
@@ -298,6 +298,7 @@ GetNameOfFileForWeb2C ()
 #define zxnoverd xnoverd
 #define zenddiagnostic enddiagnostic
 #define zprintnl printnl
+#define zprintchar printchar
 #define zprintint printint
 #define zprintscaled printscaled
 

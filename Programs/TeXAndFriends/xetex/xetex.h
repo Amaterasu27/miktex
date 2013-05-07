@@ -92,6 +92,8 @@ authorization from the copyright holders.
 #else
 #define xdvbufferbyte(i)			xdvbuffer[i]
 #endif
+#define getcpcode	get_cp_code
+#define setcpcode	set_cp_code
 #define getnativewordcp(p,s)			get_native_word_cp(&(mem[p]), s)
 
 #define pic_node_size				8

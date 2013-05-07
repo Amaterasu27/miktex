@@ -1,6 +1,6 @@
 /* miktex/W2C/Emulation.h: Web2C emulation			-*- C++ -*-
 
-   Copyright (C) 2010-2011 Christian Schenk
+   Copyright (C) 2010-2013 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -146,7 +146,11 @@ MIKTEX_END_EXTERN_C_BLOCK
    cpascal.h
    _________________________________________________________________________ */
 
+#if defined(__cplusplus)
+template<class T> T * addressof(T & x) { return (&x); }
+#else
 #define addressof(x) (&(x))
+#endif
 
 #define decr(x) --(x)
 

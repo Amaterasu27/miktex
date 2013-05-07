@@ -227,6 +227,7 @@ extern const CFStringRef kXeTeXEmboldenAttributeName;
 #ifdef __cplusplus
 extern "C" {
 #endif
+#endif
 	void initversionstring(char **versions);
 
 	void setinputfileencoding(unicodefile f, integer mode, integer encodingData);
@@ -280,8 +281,16 @@ extern "C" {
 
 	int countpdffilepages();
 	int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
+#if defined(MIKTEX)
+	int u_open_in(unicodefile * f, integer mode, integer encodingData);
+#else
 	int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
+#endif
+#if defined(MIKTEX)
+	int open_dvi_output(/*out*/ C4P::FileRoot & dviFile);
+#else
 	int open_dvi_output(FILE** fptr);
+#endif
 	int dviclose(FILE* fptr);
 	int get_uni_c(UFILE* f);
 	int input_line(UFILE* f);
@@ -293,6 +302,11 @@ extern "C" {
 	void checkfortfmfontmapping();
 	void* loadtfmfontmapping();
 	int applytfmfontmapping(void* mapping, int c);
+
+#if defined(MIKTEX)
+	Fixed get_native_glyph_italic_correction(void* pNode);
+	integer get_native_word_cp(void* pNode, int side);
+#endif
 
 #ifndef XETEX_MAC
 typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compile */
@@ -306,6 +320,9 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
 	void aatprintfontname(int what, CFDictionaryRef attrs, int param1, int param2);
 	/* the metrics params here are really TeX 'scaled' (or MacOS 'Fixed') values, but that typedef isn't available every place this is included */
 	void aatgetfontmetrics(CFDictionaryRef attrs, integer* ascent, integer* descent, integer* xheight, integer* capheight, integer* slant);
+
+	void set_cp_code(int fontNum, unsigned int code, int side, int value);
+	int get_cp_code(int fontNum, unsigned int code, int side);
 
 #ifdef XETEX_MAC
 

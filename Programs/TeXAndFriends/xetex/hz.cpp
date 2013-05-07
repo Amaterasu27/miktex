@@ -38,7 +38,9 @@ typedef pair<int, unsigned int> GlyphId;
 typedef map<GlyphId, int>  ProtrusionFactor;
 ProtrusionFactor leftProt, rightProt;
 
+#if ! defined(MIKTEX)
 extern "C" {
+#endif
 
 void set_cp_code(int fontNum, unsigned int code, int side, int value)
 {
@@ -75,6 +77,8 @@ int get_cp_code(int fontNum, unsigned int code, int side)
     return it->second;
 }
 
+#if ! defined(MIKTEX)
 }
+#endif
 
 

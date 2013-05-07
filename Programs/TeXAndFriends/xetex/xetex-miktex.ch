@@ -33,11 +33,11 @@
 % [3.26]
 % _____________________________________________________________________________
 
-@x
+ @x
 @!name_of_file:^UTF8_code; {we build filenames in utf8 to pass to the OS}
-@y
+ @y
 @!name_of_file:packed array[1..file_name_size] of UTF8_code; {we build filenames in utf8 to pass to the OS}
-@z
+ @z
 
 % _____________________________________________________________________________
 %
@@ -62,15 +62,15 @@ term_and_log: begin wterm(chr(s)); wlog(chr(s));
 @z
 
 @x
-log_only: begin wlog(xchr[s]); incr(file_offset);
+log_only: begin wlog(xchr[s]);
 @y
-log_only: begin wlog(chr(s)); incr(file_offset);
+log_only: begin wlog(chr(s));
 @z
 
 @x
-term_only: begin wterm(xchr[s]); incr(term_offset);
+term_only: begin wterm(xchr[s]);
 @y
-term_only: begin wterm(chr(s)); incr(term_offset);
+term_only: begin wterm(chr(s));
 @z
 
 @x
@@ -173,15 +173,11 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 
 @x
 @d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
+@#
+@d etex_int_base=web2c_int_pars {base for \eTeX's integer parameters}
 @y
 @d miktex_int_pars=miktex_int_base+3 {total number of \MiKTeX's integer parameters}
-@z
-
-@x
-@d int_pars=miktex_int_pars {total number of integer parameters}
 @#
-@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
-@y
 @d etex_int_base=miktex_int_pars {base for \eTeX's integer parameters}
 @z
 
@@ -216,40 +212,6 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
     if (str_pool[j]=" ") then must_quote:=true
 @y
     if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
-@z
-
-@x
-    if (str_pool[j]=" ") then must_quote:=true
-@y
-    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
-@z
-
-@x
-    if (str_pool[j]=" ") then must_quote:=true
-@y
-    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
-@z
-
-@x
-    print(str_pool[j]);
-@y
-    if str_pool[j]="*" then
-      print_char(" ")
-    else if str_pool[j]="?" then
-      print_char("~")
-    else
-      print(str_pool[j]);
-@z
-
-@x
-    print(str_pool[j]);
-@y
-    if str_pool[j]="*" then
-      print_char(" ")
-    else if str_pool[j]="?" then
-      print_char("~")
-    else
-      print(str_pool[j]);
 @z
 
 @x
@@ -369,8 +331,9 @@ done: name:=a_make_name_string;
 % _____________________________________________________________________________
 
 @x
-if b_open_in(tfm_file) then begin
+if not b_open_in(tfm_file) then abort;
 @y
+check_for_tfm_font_mapping;
 if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 @z
 
@@ -573,6 +536,17 @@ procedure flush_str(s: str_number); {flush a string if possible}
 		new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(memory_word) - 1) div sizeof(memory_word));
 @y
 		new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(mem[0]) - 1) div sizeof(mem[0]));
+@z
+
+% _____________________________________________________________________________
+%
+% [54.1426]
+% _____________________________________________________________________________
+
+@x
+@!init if (etex_p or(buffer[loc]="*"))and(format_ident=" (INITEX)") then
+@y
+@!Init if (miktex_etex_p or (buffer[loc]="*"))and(format_ident=" (INITEX)") then
 @z
 
 % _____________________________________________________________________________
