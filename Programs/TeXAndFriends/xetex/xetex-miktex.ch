@@ -33,11 +33,11 @@
 % [3.26]
 % _____________________________________________________________________________
 
- @x
+@x
 @!name_of_file:^UTF8_code; {we build filenames in utf8 to pass to the OS}
- @y
+@y
 @!name_of_file:packed array[1..file_name_size] of UTF8_code; {we build filenames in utf8 to pass to the OS}
- @z
+@z
 
 % _____________________________________________________________________________
 %
