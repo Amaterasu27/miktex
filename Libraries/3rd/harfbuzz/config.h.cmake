@@ -33,9 +33,6 @@
 /* Have Graphite library */
 #cmakedefine HAVE_GRAPHITE2 1
 
-/* Have gthread2 library */
-#cmakedefine HAVE_GTHREAD 1
-
 /* Have Old HarfBuzz backend */
 #cmakedefine HAVE_HB_OLD 1
 
