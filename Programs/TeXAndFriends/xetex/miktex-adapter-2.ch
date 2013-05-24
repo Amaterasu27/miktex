@@ -260,7 +260,7 @@ for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @x
   while (not miktex_open_dvi_file (dvi_file)) do
 @y
-  while not b_open_out(dvi_file) do
+  while not dvi_open_out(dvi_file) do
 @z
 
 % _____________________________________________________________________________

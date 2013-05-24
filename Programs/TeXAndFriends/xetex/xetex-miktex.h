@@ -302,11 +302,13 @@ GetNameOfFileForWeb2C ()
 #define zprintint printint
 #define zprintscaled printscaled
 
+#if 0
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
 
 int
 dviclose (/*[in,out]*/ bytefile & dviFile);
+#endif
 
 int miktexloadpoolstrings (int size);
 

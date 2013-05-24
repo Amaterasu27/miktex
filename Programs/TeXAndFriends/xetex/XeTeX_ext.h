@@ -288,10 +288,11 @@ extern "C" {
 #endif
 #if defined(MIKTEX)
 	int open_dvi_output(/*out*/ C4P::FileRoot & dviFile);
+	int dviclose (/*[in,out]*/ C4P::FileRoot & dviFile);
 #else
 	int open_dvi_output(FILE** fptr);
-#endif
 	int dviclose(FILE* fptr);
+#endif
 	int get_uni_c(UFILE* f);
 	int input_line(UFILE* f);
 	void makeutf16name();

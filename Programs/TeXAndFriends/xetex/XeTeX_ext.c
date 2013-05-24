@@ -2986,7 +2986,7 @@ open_dvi_output(FILE** fptr)
 
 #if defined(MIKTEX)
 int
-dviclose(/*[in,out]*/ bytefile & dviFile)
+dviclose(/*[in,out]*/ C4P::FileRoot & dviFile)
 {
   if (nopdfoutput)
     {
