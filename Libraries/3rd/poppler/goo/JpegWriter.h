@@ -37,16 +37,16 @@ public:
 
   JpegWriter(int quality, bool progressive, Format format = RGB);
   JpegWriter(Format format = RGB);
-		~JpegWriter();
-		
-		bool init(FILE *f, int width, int height, int hDPI, int vDPI);
-		
-		bool writePointers(unsigned char **rowPointers, int rowCount);
-		bool writeRow(unsigned char **row);
-		
-		bool close();
+  ~JpegWriter();
+
+  bool init(FILE *f, int width, int height, int hDPI, int vDPI);
+
+  bool writePointers(unsigned char **rowPointers, int rowCount);
+  bool writeRow(unsigned char **row);
+
+  bool close();
   bool supportCMYK();
-	
+
 private:
   JpegWriter(const JpegWriter &other);
   JpegWriter& operator=(const JpegWriter &other);

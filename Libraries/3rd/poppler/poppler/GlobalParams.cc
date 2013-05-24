@@ -1219,26 +1219,26 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 	  }
 	}
 	FcChar8* s2;
-	  res = FcPatternGetString(set->fonts[i], FC_FULLNAME, 0, &s2);
-	  if (res == FcResultMatch && s2) {
+        res = FcPatternGetString(set->fonts[i], FC_FULLNAME, 0, &s2);
+        if (res == FcResultMatch && s2) {
           substituteName.Set((char*)s2);
-	  } else {
-	    // fontconfig does not extract fullname for some fonts
-	    // create the fullname from family and style
-	    res = FcPatternGetString(set->fonts[i], FC_FAMILY, 0, &s2);
-	    if (res == FcResultMatch && s2) {
+        } else {
+          // fontconfig does not extract fullname for some fonts
+          // create the fullname from family and style
+          res = FcPatternGetString(set->fonts[i], FC_FAMILY, 0, &s2);
+          if (res == FcResultMatch && s2) {
             substituteName.Set((char*)s2);
-	      res = FcPatternGetString(set->fonts[i], FC_STYLE, 0, &s2);
-	      if (res == FcResultMatch && s2) {
-		GooString *style = new GooString((char*)s2);
-		if (style->cmp("Regular") != 0) {
+            res = FcPatternGetString(set->fonts[i], FC_STYLE, 0, &s2);
+            if (res == FcResultMatch && s2) {
+              GooString *style = new GooString((char*)s2);
+              if (style->cmp("Regular") != 0) {
                 substituteName.append(" ");
                 substituteName.append(style);
-		}
-		delete style;
-	      }
-	    }
-	  }
+              }
+              delete style;
+            }
+          }
+        }
 	ext = strrchr((char*)s,'.');
 	if (!ext)
 	  continue;

@@ -124,14 +124,14 @@ bool TiffWriter::init(FILE *openedFile, int width, int height, int hDPI, int vDP
   switch (priv->format) {
     case MONOCHROME:
     case GRAY:
-    samplesperpixel = 1;
-    photometric = PHOTOMETRIC_MINISBLACK;
-    break;
+      samplesperpixel = 1;
+      photometric = PHOTOMETRIC_MINISBLACK;
+      break;
 
     case RGB:
-    samplesperpixel = 3;
-    photometric = PHOTOMETRIC_RGB;
-    break;
+      samplesperpixel = 3;
+      photometric = PHOTOMETRIC_RGB;
+      break;
 
     case RGBA_PREMULTIPLIED:
       samplesperpixel = 4;

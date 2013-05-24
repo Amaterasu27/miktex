@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005, 2006, 2008 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2005, 2007-2009, 2011, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2009, 2011-2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008, 2010 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008, 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -798,13 +798,13 @@ int PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
     }
   }
 
-    if (!updated && mode == writeStandard) {
-      // simply copy the original file
-      saveWithoutChangesAs (outStr);
-  } if (mode == writeForceRewrite) {
+  if (!updated && mode == writeStandard) {
+    // simply copy the original file
+    saveWithoutChangesAs (outStr);
+  } else if (mode == writeForceRewrite) {
     saveCompleteRewrite(outStr);
-    } else {
-      saveIncrementalUpdate(outStr); 
+  } else {
+    saveIncrementalUpdate(outStr);
   }
 
   return errNone;
@@ -1211,7 +1211,7 @@ void PDFDoc::writeObject (Object* obj, OutStream* outStr, XRef *xRef, Guint numO
 
 void PDFDoc::writeObjectFooter (OutStream* outStr)
 {
-    outStr->printf("endobj\r\n");
+  outStr->printf("endobj\r\n");
 }
 
 Dict *PDFDoc::createTrailerDict(int uxrefSize, GBool incrUpdate, Guint startxRef,

@@ -1475,7 +1475,7 @@ void PSOutputDev::writeHeader(int firstPage, int lastPage,
     }
     writePSFmt("%%BoundingBox: {0:d} {1:d} {2:d} {3:d}\n",
 	       (int)floor(x1), (int)floor(y1), (int)ceil(x2), (int)ceil(y2));
-      writePSFmt("%%HiResBoundingBox: {0:.6g} {1:.6g} {2:.6g} {3:.6g}\n",
+    writePSFmt("%%HiResBoundingBox: {0:.6g} {1:.6g} {2:.6g} {3:.6g}\n",
 		 x1, y1, x2, y2);
     writePS("%%DocumentSuppliedResources: (atend)\n");
     writePS("%%EndComments\n");
@@ -2155,7 +2155,7 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
 
  err1:
   if (strObj.isStream())
-  strObj.streamClose();
+    strObj.streamClose();
   strObj.free();
 }
 
@@ -7167,8 +7167,8 @@ void PSOutputDev::cvtFunction(Function *func, GBool invertPSFunction) {
       }
       writePS("}\n");
     } else {
-    writePS(func4->getCodeString()->getCString());
-    writePS("\n");
+      writePS(func4->getCodeString()->getCString());
+      writePS("\n");
     }
     break;
   }
