@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.30 2009/08/28 00:26:17 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2008-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -69,7 +69,7 @@
 int
 pdf_font_open_type1c (pdf_font *font)
 {
-  char     *ident, *fontname;
+  char     *fontname;
   FILE     *fp = NULL;
   sfnt     *sfont;
   cff_font *cffont;
@@ -79,7 +79,7 @@ pdf_font_open_type1c (pdf_font *font)
 
   ASSERT(font);
 
-  ident       = pdf_font_get_ident   (font);
+                pdf_font_get_ident   (font);
   encoding_id = pdf_font_get_encoding(font);
 
 #ifdef XETEX

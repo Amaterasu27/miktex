@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvicodes.h,v 1.4 2002/10/30 02:27:08 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -119,7 +119,7 @@
                               Version byte (same as preamble)
                               Padded by four or more 223's to the end of the file. */
 #define PADDING    223
-#define DIR 255 /* Ascii pTeX DIR command */
+#define PTEXDIR 255 /* Ascii pTeX DIR command */
 
 #ifdef XETEX
 #define XDV_PIC_FILE        251 /* include graphic or PDF file */

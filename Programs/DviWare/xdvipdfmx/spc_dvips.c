@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.11 2008/05/29 13:43:51 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -56,7 +56,6 @@
 #include "spc_xtx.h"
 
 #include "epdf.h"
-
 
 static int    block_pending = 0;
 static double pending_x     = 0.0;
@@ -298,7 +297,7 @@ spc_handler_ps_tricks_gdef (struct spc_env *spe, struct spc_arg *args)
 {
   FILE* fp;
 
-  fp = fopen(global_defs, "a");
+  fp = fopen(global_defs, "ab");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\n");
   fclose(fp);
@@ -319,9 +318,15 @@ spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
   T.e = pt.x;
   T.f = pt.y;
   pdf_concatmatrix(&M, &T);
-  if (page_defs == 0)
+
+  if (!page_defs)
     page_defs = dpx_create_temp_file();
-  fp = fopen(page_defs, "a");
+  if (!page_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(page_defs, "ab");
   fprintf(fp, "gsave initmatrix [%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user - pt.x, spe->y_user - pt.y);
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\ngrestore\n");
@@ -336,7 +341,12 @@ spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
   FILE* fp;
   if (!temporary_defs)
     temporary_defs = dpx_create_temp_file();
-  fp = fopen(temporary_defs, "w");
+  if (!temporary_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(temporary_defs, "wb");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\n");
   fclose(fp);
@@ -364,7 +374,7 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
   }
 
   if (pre_def == 0) {
-    dpx_delete_temp_file(temporary_defs);
+    dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
 
@@ -391,7 +401,12 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
     FILE* fp;
     if (!temporary_defs)
       temporary_defs = dpx_create_temp_file();
-    fp  = fopen(temporary_defs, "a");
+    if (!temporary_defs) {
+      WARN("Failed to create temporary input file for PSTricks image conversion.");
+      return  -1;
+    }
+
+    fp  = fopen(temporary_defs, "ab");
     fprintf(fp, "gsave\n");
     if (label == 0)
       fprintf(fp, "[%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -535,7 +550,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
     }
-    fp = fopen(gs_in, "w");
+    fp = fopen(gs_in, "wb");
     for (k = 0; k < num_ps_headers; k++)
       fprintf(fp, "(%s) run\n", ps_headers[k]);
     fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -563,7 +578,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
     }
 #endif
   } else {
-    fp = fopen(gs_in, "a");
+    fp = fopen(gs_in, "ab");
     fprintf(fp, "flattenpath stroke\n");
   }
   fclose(fp);
@@ -595,11 +610,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
     return error;
   }
 
-#if defined(MIKTEX)
   fp = fopen(gs_out, "rb");
-#else
-  fp = fopen(gs_out, "r");
-#endif
    if (pdf_copy_clip(fp, 1, 0, 0) != 0) {
     spc_warn(spe, "Failed to parse the clipping path.");
     RELEASE(gs_in);
@@ -609,8 +620,8 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
   }
   fclose(fp);
 
-  dpx_delete_temp_file(gs_out);
-  dpx_delete_temp_file(gs_in);
+  dpx_delete_temp_file(gs_out, true);
+  dpx_delete_temp_file(gs_in, true);
   gs_in = 0;
 
   return 0;
@@ -633,7 +644,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
     }
-    fp = fopen(gs_in, "w");
+    fp = fopen(gs_in, "wb");
     for (k = 0; k < num_ps_headers; k++)
       fprintf(fp, "(%s) run\n", ps_headers[k]);
     fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -641,7 +652,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
     if (page_defs != 0)
       fprintf(fp, "(%s) run\n", page_defs);
   } else
-    fp = fopen(gs_in, "a");
+    fp = fopen(gs_in, "ab");
 
   fprintf(fp, "\nsave\n");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
@@ -697,8 +708,8 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
     }
     pdf_dev_put_image(form_id, &p, 0, 0);
 
-    dpx_delete_temp_file(gs_out);
-    dpx_delete_temp_file(gs_in);
+    dpx_delete_temp_file(gs_out, true);
+    dpx_delete_temp_file(gs_in, true);
     gs_in = 0;
   }
 
@@ -862,7 +873,7 @@ int
 spc_dvips_at_begin_page (void)
 {
   if (page_defs) {
-    dpx_delete_temp_file(page_defs);
+    dpx_delete_temp_file(page_defs, true);
     page_defs = 0;
   }
 
@@ -876,7 +887,7 @@ spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
   if (!temporary_defs) {
-    dpx_delete_temp_file(temporary_defs);
+    dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
   return  0;
@@ -889,7 +900,12 @@ spc_dvips_at_begin_document (void)
 
   /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
   global_defs = dpx_create_temp_file();
-  fp = fopen(global_defs, "w");
+  if (!global_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(global_defs, "wb");
   fprintf(fp, "tx@Dict begin /STV {} def end\n");
   fclose(fp);
   return  0;
@@ -898,8 +914,14 @@ spc_dvips_at_begin_document (void)
 int
 spc_dvips_at_end_document (void)
 {
-  dpx_delete_temp_file(global_defs);
-  dpx_delete_temp_file(page_defs);
+  if (ps_headers) {
+    while (num_ps_headers > 0)
+      RELEASE(ps_headers[--num_ps_headers]);
+    free(ps_headers);
+    ps_headers = NULL;
+  }
+  dpx_delete_temp_file(global_defs, true);
+  dpx_delete_temp_file(page_defs, true);
   return  0;
 }
 
@@ -984,14 +1006,16 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 }
 
 #if defined(MIKTEX)
-#define GS_CALCULATOR "mgs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#define GS_CALCULATOR "mgs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #define popen _popen
 #define pclose _pclose
 #else
 #ifdef __EMX__
-#define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
+#elif defined(WIN32)
+#define GS_CALCULATOR "gswin32c -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #else
-#define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #endif
 #endif
 
@@ -1004,7 +1028,12 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
   if (res1 == 0 && res2 == 0)
     return -1;
   formula = dpx_create_temp_file();
-  fp = fopen(formula, "w");
+  if (!formula) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(formula, "wb");
   for (k = 0; k < num_ps_headers; k++)
     fprintf(fp, "(%s) run\n", ps_headers[k]);
   fprintf(fp, "0 0 moveto\n");
@@ -1023,10 +1052,9 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
         *p = '/';
   }
 #endif
-  k = strlen(GS_CALCULATOR) + strlen(formula) + 2;
-  cmd = malloc(k);
+  k = strlen(GS_CALCULATOR) + strlen(formula) + 1;
+  cmd = NEW(k, char);
   strcpy(cmd, GS_CALCULATOR);
-  strcat(cmd, " ");
   strcat(cmd, formula);
 
   coord = popen(cmd, "r");
@@ -1043,6 +1071,7 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
     return -1;
 
   pclose(coord);
-  dpx_delete_temp_file(formula);
+  RELEASE(cmd);
+  dpx_delete_temp_file(formula, true);
   return 0;
 }

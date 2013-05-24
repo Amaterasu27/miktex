@@ -1,14 +1,13 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.64 2008/05/22 10:08:02 matthias Exp $
+/*  
     
-	This is xdvipdfmx, an extended version of...
+    This is xdvipdfmx, an extended version of...
 
-    DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
+    DVIPDFMx, an eXtended-2013 version of DVIPDFM by Mark A. Wicks.
 
-	Copyright (c) 2006 SIL International (Jonathan Kew) and Jin-Hwan Cho
-	(xdvipdfmx extensions for XeTeX support)
+    Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2008-2013 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -67,6 +66,10 @@
 
 #include "error.h"
 
+#if defined(MIKTEX)
+#include <miktex/unxemu.h>
+#endif
+
 static int verbose = 0;
 
 static int mp_mode = 0;
@@ -89,6 +92,12 @@ static int    really_quiet  = 0;
  */
 static int pdfdecimaldigits = 2;
 
+/* Image cache life in hours */
+/*  0 means erase all old images and leave new images */
+/* -1 means erase all old images and also erase new images */
+/* -2 means ignore image cache (default) */
+static int image_cache_life = -2;
+
 /* Encryption */
 static int do_encryption    = 0;
 static unsigned key_bits    = 40;
@@ -109,6 +118,12 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
+#ifdef WIN32
+#define STRN_CMP strncasecmp
+#else
+#define STRN_CMP strncmp
+#endif
+
 static void
 set_default_pdf_filename(void)
 {
@@ -117,16 +132,16 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !strncmp(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
 #ifdef XETEX
-             (!strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4) ||
-              !strncmp(".xdv", dvi_base+strlen(dvi_base)-4, 4))) {
+             (!STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4) ||
+              !STRN_CMP(".xdv", dvi_base+strlen(dvi_base)-4, 4))) {
 #else
-             !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
 #endif
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
@@ -145,7 +160,7 @@ usage (int exit_code)
   fprintf (stdout, "\nThis is %s-%s by Jonathan Kew and Jin-Hwan Cho,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of DVIPDFMx, which in turn was\n");
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (c) 2006-2011 SIL International and Jin-Hwan Cho.\n");
+  fprintf (stdout, "\nCopyright (c) 2006-2013 SIL International and Jin-Hwan Cho.\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -180,6 +195,10 @@ usage (int exit_code)
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf (stdout, "-E \t\tAlways try to embed fonts, regardless of licensing flags.\n");
+  fprintf (stdout, "-I number\tImage cache life in hours [-2]\n");
+  fprintf (stdout, "         \t 0: erase all old images and leave new images\n");
+  fprintf (stdout, "         \t-1: erase all old images and also erase new images\n");
+  fprintf (stdout, "         \t-2: ignore image cache\n");
   fprintf (stdout, "-K number\tEncryption key length [40]\n");
   fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
@@ -385,6 +404,7 @@ do_args (int argc, char *argv[])
 {
   while (argc > 0 && *argv[0] == '-') {
     char *flag, *nextptr;
+    const char *nnextptr;
 
     for (flag = argv[0] + 1; *flag != 0; flag++) {
       switch (*flag) {
@@ -409,20 +429,20 @@ do_args (int argc, char *argv[])
         break;
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
-        nextptr = argv[1];
-        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&annot_grow, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
-        nextptr = argv[1];
-        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&x_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
-        nextptr = argv[1];
-        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
+        nnextptr = nextptr = argv[1];
+        read_length(&y_offset, &nnextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':
@@ -517,6 +537,11 @@ do_args (int argc, char *argv[])
           POP_ARG();
         }
         break;
+      case 'I':
+        CHECK_ARG(1, "image cache life in hours");
+        image_cache_life = atoi(argv[1]);
+        POP_ARG();
+        break;
       case 'S':
         do_encryption = 1;
         break;
@@ -579,7 +604,7 @@ do_args (int argc, char *argv[])
   } else if (argc > 0) {
     /*
      * The only legitimate way to have argc == 0 here is
-     * is do_args was called from config file.  In that case, there is
+     * do_args was called from config file.  In that case, there is
      * no dvi file name.  Check for that case .
      */
     dvi_filename = NEW(strlen(argv[0]) + 5, char); /* space to append .dvi */
@@ -821,12 +846,11 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  if (strcmp(argv[0], "ebb") == 0)
+  const char *av0 = xbasename(argv[0]);
+  if (STRN_CMP(av0, "ebb", 3) == 0)
     return extractbb(argc, argv, EBB_OUTPUT);
-  else if (strcmp(argv[0], "xbb") == 0 || strcmp(argv[0], "extractbb") == 0)
+  else if (STRN_CMP(av0, "xbb", 3) == 0 || STRN_CMP(av0, "extractbb", 9) == 0)
     return extractbb(argc, argv, XBB_OUTPUT);
-
-  mem_debug_init();
 
 #ifdef MIKTEX_NO_KPATHSEA
   miktex_initialize();
@@ -835,6 +859,11 @@ main (int argc, char *argv[])
 #  if defined(MIKTEX)
   kpse_set_program_name(argv[0], "dvipdfm");
 #  endif
+#ifdef WIN32
+#if !defined(MIKTEX)
+  texlive_gs_init ();
+#endif
+#endif
 #endif
 
   paperinit();
@@ -859,6 +888,7 @@ main (int argc, char *argv[])
   kpse_set_program_enabled(kpse_pk_format, true, kpse_src_texmf_cnf);
 #endif
   pdf_font_set_dpi(font_dpi);
+  dpx_delete_old_cache(image_cache_life);
 
   if (dvi_filename == NULL) {
     if (verbose)
@@ -966,8 +996,6 @@ main (int argc, char *argv[])
 #ifdef MIKTEX_NO_KPATHSEA
   miktex_uninitialize ();
 #endif
-
-  mem_debug_check();
 
   return 0;
 }

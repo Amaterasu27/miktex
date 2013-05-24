@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_write.c,v 1.7 2011/03/06 03:14:13 chofchof Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -201,13 +201,13 @@ write_map (mapDef *mtab, int count,
       *(wbuf->curptr)++ = '<';
       for (j = 0; j < depth; j++)
 	sputx(codestr[j], &(wbuf->curptr), wbuf->limptr);
-      sputx(c, &(wbuf->curptr), wbuf->limptr);
+      sputx((unsigned char)c, &(wbuf->curptr), wbuf->limptr);
       *(wbuf->curptr)++ = '>';
       *(wbuf->curptr)++ = ' ';
       *(wbuf->curptr)++ = '<';
       for (j = 0; j < depth; j++)
 	sputx(codestr[j], &(wbuf->curptr), wbuf->limptr);
-      sputx(c + blocks[i].count, &(wbuf->curptr), wbuf->limptr);
+      sputx((unsigned char)(c + blocks[i].count), &(wbuf->curptr), wbuf->limptr);
       *(wbuf->curptr)++ = '>';
       *(wbuf->curptr)++ = ' ';
       *(wbuf->curptr)++ = '<';

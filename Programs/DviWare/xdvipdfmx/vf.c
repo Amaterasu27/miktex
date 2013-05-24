@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/vf.c,v 1.19 2007/11/18 08:06:03 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -986,7 +986,7 @@ void vf_set_char(SIGNED_QUAD ch, int vf_font)
 	case XXX4:
 	  vf_xxx4(&start, end);
 	  break;
-	case DIR:
+	case PTEXDIR:
 	  vf_dir(&start, end);
 	  break;
 	default:
