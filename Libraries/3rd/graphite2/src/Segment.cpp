@@ -139,14 +139,7 @@ void Segment::appendSlot(int id, int cid, int gid, int iFeats, size_t coffset)
     m_charinfo[id].feats(iFeats);
     m_charinfo[id].base(coffset);
     const GlyphFace * theGlyph = m_face->glyphs().glyphSafe(gid);
-    if (theGlyph)
-    {
-        m_charinfo[id].breakWeight(theGlyph->attrs()[m_silf->aBreak()]);
-    }
-    else
-    {
-        m_charinfo[id].breakWeight(0);
-    }
+    m_charinfo[id].breakWeight(theGlyph ? theGlyph->attrs()[m_silf->aBreak()] : 0);
     
     aSlot->child(NULL);
     aSlot->setGlyph(this, gid, theGlyph);
@@ -192,6 +185,13 @@ void Segment::freeSlot(Slot *aSlot)
 {
     if (m_last == aSlot) m_last = aSlot->prev();
     if (m_first == aSlot) m_first = aSlot->next();
+    if (aSlot->attachedTo())
+        aSlot->attachedTo()->removeChild(aSlot);
+    while (aSlot->firstChild())
+    {
+        aSlot->firstChild()->attachTo(NULL);
+        aSlot->removeChild(aSlot->firstChild());
+    }
     // reset the slot incase it is reused
     ::new (aSlot) Slot;
     memset(aSlot->userAttrs(), 0, m_silf->numUser() * sizeof(int16));
