@@ -985,6 +985,8 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
+add_subdirectory(${rel_pixman_dir}-static)
+
 if(NOT USE_SYSTEM_PNG)
   add_subdirectory(${rel_png_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
