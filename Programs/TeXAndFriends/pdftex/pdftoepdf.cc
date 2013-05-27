@@ -17,11 +17,18 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* For MINGW32 <rpcndr.h> defines 'boolean' as 'unsigned char',
-   conflicting with the definition for Pascal's boolean as 'int'
-   in <kpathsea/types.h>.
+/* Do this early in order to avoid a conflict between
+   MINGW32 <rpcndr.h> defining 'boolean' as 'unsigned char' and
+   <kpathsea/types.h> defining Pascal's boolean as 'int'.
 */
-#define boolean MINGW32_boolean
+#if ! defined(MIKTEX)
+extern "C" {
+#endif
+#include <w2c/config.h>
+#include <kpathsea/lib.h>
+#if ! defined(MIKTEX)
+}
+#endif
 
 #include <stdlib.h>
 #include <math.h>
@@ -42,11 +49,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
+#endif
 #if defined(MIKTEX)
 #define assert MIKTEX_ASSERT
 #else
 #include <assert.h>
-#endif
 #endif
 #include "Object.h"
 #include "Stream.h"
@@ -61,24 +68,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GlobalParams.h"
 #include "Error.h"
 
-#undef boolean
-
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
 
 #if ! defined(MIKTEX)
 extern "C" {
-#endif
-
-#include <openbsd-compat.h>
-
-#include <kpathsea/c-auto.h>
-#include <kpathsea/c-proto.h>
-#include <kpathsea/lib.h>
-
-#if ! defined(MIKTEX)
-#include <w2c/c-auto.h>         /* define SIZEOF_LONG */
-#include <w2c/config.h>         /* define type integer */
 #endif
 
 #if defined(MIKTEX)
@@ -309,6 +303,11 @@ static int getNewObjectNumber(Ref ref)
         }
         pdftex_fail("Object not yet copied: %i %i", ref.num, ref.gen);
     }
+#ifdef _MSC_VER
+    /* Never reached, but without __attribute__((noreturn)) for pdftex_fail()
+       MSVC 5.0 requires an int return value.  */
+    return -60000;
+#endif
 }
 
 static void copyObject(Object *);
@@ -682,7 +681,7 @@ static void writeEncodings()
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
                 glyphNames[i] = s;
             else
-                glyphNames[i] = (char *) notdef;
+                glyphNames[i] = notdef;
         }
         epdf_write_enc(glyphNames, r->enc_objnum);
     }

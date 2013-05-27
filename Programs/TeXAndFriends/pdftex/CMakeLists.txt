@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -58,19 +58,14 @@ add_definitions(
   -D_UNICODE -DUNICODE
 )
 
-set(synctex_pdftex_ch_srcs_mem_only
+set(pdftex_ch_synctex
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-def.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch1
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
-)
-
-set(synctex_pdftex_ch_srcs_on
-  ${synctex_pdftex_ch_srcs_mem_only}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch1
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch1
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdf-rec.ch2
 )
 
@@ -178,7 +173,7 @@ add_custom_command(
   OUTPUT ${pdftex_change_file}
   COMMAND ${tie_exe} -c ${pdftex_change_file}
 		${pdftex_web_file}
-		${synctex_pdftex_ch_srcs_on}
+		${pdftex_ch_synctex}
 		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
 #		${etex_miktex_post_ch}
@@ -345,7 +340,7 @@ add_custom_command(
 	${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied-n.web
   COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/pdftex-tied.web
 		${pdftex_web_file}
-		${synctex_pdftex_ch_srcs_on}
+		${pdftex_ch_synctex}
 		${etex_miktex_pre_ch}
 		${miktex_tex_change_files}
 #		${etex_miktex_post_ch}
