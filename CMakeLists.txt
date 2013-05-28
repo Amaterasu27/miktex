@@ -986,6 +986,7 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_subdirectory(${rel_pixman_dir}-static)
+add_subdirectory(${rel_cairo_dir})
 
 if(NOT USE_SYSTEM_PNG)
   add_subdirectory(${rel_png_dir}-static)
