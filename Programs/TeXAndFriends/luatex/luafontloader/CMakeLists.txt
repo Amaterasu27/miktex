@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -43,12 +43,15 @@ configure_file(
 set(luafontforge_sources
   fontforge/Unicode/ArabicForms.c
   fontforge/Unicode/alphabet.c
+  fontforge/Unicode/backtrns.c
   fontforge/Unicode/char.c
   fontforge/Unicode/cjk.c
   fontforge/Unicode/combiners.h
   fontforge/Unicode/gwwiconv.c
   fontforge/Unicode/memory.c
   fontforge/Unicode/ucharmap.c
+  fontforge/Unicode/unialt.c
+  fontforge/Unicode/usprintf.c
   fontforge/Unicode/ustring.c
   fontforge/Unicode/utype.c
   fontforge/fontforge/PfEd.h
@@ -67,8 +70,6 @@ set(luafontforge_sources
   fontforge/fontforge/fontviewbase.c
   fontforge/fontforge/fvcomposit.c
   fontforge/fontforge/fvfonts.c
-  fontforge/fontforge/libffstamp.h
-  fontforge/fontforge/libstamp.pre
   fontforge/fontforge/lookups.c
   fontforge/fontforge/lookups.h
   fontforge/fontforge/macbinary.c
@@ -117,7 +118,6 @@ set(luafontforge_sources
   fontforge/fontforge/unicoderange.h
   fontforge/fontforge/views.h
   fontforge/gutils/fsys.c
-  fontforge/gutils/gwwintl.c
   fontforge/inc/basics.h
   fontforge/inc/chardata.h
   fontforge/inc/charset.h
