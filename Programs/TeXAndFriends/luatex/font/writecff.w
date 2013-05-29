@@ -1,26 +1,29 @@
 % writecff.w
-
+%
 % Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
+static const char _svn_version[] =
+    "$Id: writecff.w 4551 2013-01-04 16:08:20Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/font/writecff.w $";
+
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
-
 #include "font/writecff.h"
 
 #if defined(MIKTEX)
@@ -28,10 +31,6 @@
 #endif
 
 extern int cidset;
-
-static const char _svn_version[] =
-    "$Id: writecff.w 3848 2010-09-01 08:34:37Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writecff.w $";
 
 @ @c
 #define get_offset(s,n) get_unsigned(s, (n))
@@ -1771,8 +1770,8 @@ long cff_read_charsets(cff_font * cff)
     }
 
     if (count > 0) {
-        fprintf(stdout, "count=%d\n", count);
-        CFF_ERROR("Charset data possibly broken");
+        /* fprintf(stdout, "count=%d\n", count); */
+        WARN("Charset data possibly broken (num_glyphs too high)");
     }
 
     return length;
@@ -2994,7 +2993,7 @@ static void write_fontfile(PDF pdf, cff_font * cffont, char *fullname)
     cff_release_index(topdict);
 
     for (i = 0; i < offset; i++)
-        fb_putchar(pdf, dest[i]);
+        strbuf_putchar(pdf->fb, dest[i]);
 
     xfree(dest);
     return;
@@ -3033,7 +3032,7 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     long size, offset = 0;
 
     card8 *data;
-    card16 num_glyphs, cs_count, code, gid, last_cid;
+    card16 num_glyphs, cs_count1, code, gid, last_cid;
 
     double nominal_width, default_width;
 
@@ -3145,13 +3144,13 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     cs_idx = cff_get_index_header(cffont);
 
     offset = (long) cffont->offset;
-    cs_count = cs_idx->count;
-    if (cs_count < 2) {
+    cs_count1 = cs_idx->count;
+    if (cs_count1 < 2) {
         CFF_ERROR("No valid charstring data found.");
     }
 
     /* build the new charstrings entry */
-    charstrings = cff_new_index((card16) (cs_count + 1));
+    charstrings = cff_new_index((card16) (cs_count1 + 1));
     max_len = 2 * CS_STR_LEN_MAX;
     charstrings->data = xcalloc((unsigned) max_len, sizeof(card8));
     charstring_len = 0;
@@ -3161,7 +3160,7 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
 
     {
         int i;
-        for (i = 0; i < cs_count; i++) {
+        for (i = 0; i < cs_count1; i++) {
             code = (card16) i;
             glyph->id = code;
             DO_COPY_CHARSTRING();
@@ -3172,7 +3171,7 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
        each (set) bit is a (present) CID. */	
     if (1) {
       int cid;
-      cidset = pdf_new_objnum(pdf);
+      cidset = pdf_create_obj(pdf, obj_type_others, 0);
       if (cidset != 0) {
        size_t l = (last_cid/8)+1;
        char *stream = xmalloc(l);
@@ -3183,10 +3182,14 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
 	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
            }
        }
-       pdf_begin_dict(pdf, cidset, 0);
+       pdf_begin_obj(pdf, cidset, OBJSTM_NEVER);
+       pdf_begin_dict(pdf);
+       pdf_dict_add_streaminfo(pdf);
+       pdf_end_dict(pdf);
        pdf_begin_stream(pdf);
        pdf_out_block(pdf, stream, l);
        pdf_end_stream(pdf);
+       pdf_end_obj(pdf);
       }
     }
 
@@ -3319,7 +3322,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     long size, offset = 0;
 
     card8 *data;
-    card16 num_glyphs, cs_count, gid, last_cid;
+    card16 num_glyphs, cs_count1, gid, last_cid;
 
 
     int fdsel, prev_fd, cid_count, cid;
@@ -3376,23 +3379,25 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     }
 
     /* CIDSet: a table of bits indexed by cid, bytes with high order bit first, 
-       each (set) bit is a (present) CID. */	
+       each (set) bit is a (present) CID. */
     if (1) {
-      cidset = pdf_new_objnum(pdf);
-      if (cidset != 0) {
-       size_t l = (last_cid/8)+1;
-       char *stream = xmalloc(l);
-       memset(stream, 0, l);
-       for (cid = 1; cid <= (long) last_cid; cid++) {
-           if (CIDToGIDMap[2 * cid] || CIDToGIDMap[2 * cid + 1]) {
-	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
-           }
-       }
-       pdf_begin_dict(pdf, cidset, 0);
-       pdf_begin_stream(pdf);
-       pdf_out_block(pdf, stream, l);
-       pdf_end_stream(pdf);
-      }
+        cidset = pdf_create_obj(pdf, obj_type_others, 0);
+        if (cidset != 0) {
+            size_t l = (last_cid / 8) + 1;
+            char *stream = xmalloc(l);
+            memset(stream, 0, l);
+            for (cid = 1; cid <= (long) last_cid; cid++) {
+                if (CIDToGIDMap[2 * cid] || CIDToGIDMap[2 * cid + 1]) {
+                    stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
+                }
+            }
+            pdf_begin_obj(pdf, cidset, OBJSTM_NEVER);
+            pdf_begin_dict(pdf);
+            pdf_begin_stream(pdf);
+            pdf_out_block(pdf, stream, l);
+            pdf_end_stream(pdf);
+            pdf_end_obj(pdf);
+        }
     }
 
 
@@ -3407,8 +3412,8 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     cs_idx = cff_get_index_header(cffont);
 
     offset = (long) cffont->offset;
-    cs_count = cs_idx->count;
-    if (cs_count < 2) {
+    cs_count1 = cs_idx->count;
+    if (cs_count1 < 2) {
         CFF_ERROR("No valid charstring data found.");
     }
 
@@ -3422,7 +3427,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     fdselect->num_entries = 0;
     fdselect->data.ranges = xcalloc(num_glyphs, sizeof(cff_range3));
 
-    charstrings = cff_new_index((card16) (cs_count + 1));
+    charstrings = cff_new_index((card16) (cs_count1 + 1));
     max_len = 2 * CS_STR_LEN_MAX;
     charstrings->data = xcalloc((unsigned) max_len, sizeof(card8));
     charstring_len = 0;
@@ -3555,7 +3560,7 @@ void writetype1w(PDF pdf, fd_entry * fd)
             write_cff(pdf, cff, fd);
         } else {
             for (i = 0; i < tfm_size; i++)
-                fb_putchar(pdf, tfm_buffer[i]);
+                strbuf_putchar(pdf->fb, tfm_buffer[i]);
         }
         fd->ff_found = 1;
     } else {
