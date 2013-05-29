@@ -1,6 +1,6 @@
-/* pdfglyph.h
+/* pdfpagetree.h
 
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009--2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,14 +17,13 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfglyph.h 4575 2013-02-08 20:42:52Z hhenkel $ */
+/* $Id: pdfpagetree.h 4214 2011-04-27 21:53:38Z hhenkel $ */
 
-#ifndef PDFGLYPH_H
-#  define PDFGLYPH_H
+#ifndef PAGETREE_H
+#  define PAGETREE_H
 
-void end_chararray(PDF pdf);
-void end_charmode(PDF pdf);
-void pdf_place_glyph(PDF pdf, internal_font_number f, int c);
-void pdf_print_charwidth(PDF pdf, internal_font_number f, int i);
+int output_pages_tree(PDF);
+int pdf_do_page_divert(PDF, int, int);
+void pdf_do_page_undivert(int, int);
 
-#endif
+#endif                          /* PAGETREE_H */

@@ -1,28 +1,28 @@
-% pagetree.w
-% 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
-
+% pdfpagetree.w
+%
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "ptexlib.h"
-
 static const char _svn_version[] =
-    "$Id: pagetree.w 3887 2010-09-14 21:32:23Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pagetree.w $";
+    "$Id: pdfpagetree.w 4612 2013-03-25 09:15:18Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/pdf/pdfpagetree.w $";
+
+#include "ptexlib.h"
 
 @* Page diversions.
 
@@ -30,7 +30,7 @@ static const char _svn_version[] =
 #ifdef DEBUG
 #  define PAGES_TREE_KIDSMAX 3
 #else
-#  define PAGES_TREE_KIDSMAX 6
+#  define PAGES_TREE_KIDSMAX 10
 #endif
 
 static struct avl_table *divert_list_tree = NULL;
@@ -110,7 +110,7 @@ static divert_list_entry *get_divert_list(int divnum)
     return d;
 }
 
-@ |pdf_do_page_divert()| returns the current /Parent object number 
+@ |pdf_do_page_divert()| returns the current /Parent object number
 @c
 int pdf_do_page_divert(PDF pdf, int objnum, int divnum)
 {
@@ -209,7 +209,7 @@ void pdf_do_page_undivert(int divnum, int curdivnum)
 #endif
 }
 
-@ write a /Pages object 
+@ write a /Pages object
 @c
 #define pdf_pages_attr equiv(pdf_pages_attr_loc)
 
@@ -217,24 +217,29 @@ static void write_pages(PDF pdf, pages_entry * p, int parent)
 {
     int i;
     assert(p != NULL);
-    pdf_begin_dict(pdf, p->objnum, 1);
-    pdf_printf(pdf, "/Type /Pages\n");
+    pdf_begin_obj(pdf, p->objnum, OBJSTM_ALWAYS);
+    pdf_begin_dict(pdf);
+    pdf_dict_add_name(pdf, "Type", "Pages");
     if (parent == 0) {          /* it's root */
-        if (pdf_pages_attr != null)
-            pdf_print_toks_ln(pdf, pdf_pages_attr);
+        if (pdf_pages_attr != null) {
+            pdf_print_toks(pdf, pdf_pages_attr);
+            pdf_out(pdf, ' ');
+        }
         print_pdf_table_string(pdf, "pagesattributes");
     } else
-        pdf_printf(pdf, "/Parent %d 0 R\n", parent);
-    pdf_printf(pdf, "/Count %d\n/Kids [", (int) p->number_of_pages);
+        pdf_dict_add_ref(pdf, "Parent", parent);
+    pdf_dict_add_int(pdf, "Count", (int) p->number_of_pages);
+    pdf_add_name(pdf, "Kids");
+    pdf_begin_array(pdf);
     for (i = 0; i < p->number_of_kids; i++)
-        pdf_printf(pdf, "%d 0 R ", (int) p->kids[i]);
-    pdf_remove_last_space(pdf);
-    pdf_printf(pdf, "]\n");
+        pdf_add_ref(pdf, (int) p->kids[i]);
+    pdf_end_array(pdf);
     pdf_end_dict(pdf);
+    pdf_end_obj(pdf);
 }
 
 @ loop over all /Pages objects, output them, create their parents,
-recursing bottom up, return the /Pages root object number 
+recursing bottom up, return the /Pages root object number
 @c
 static int output_pages_list(PDF pdf, pages_entry * pe)
 {
