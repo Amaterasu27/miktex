@@ -1,8 +1,7 @@
-/* avlstuff.h
+/* luatex-common.h
 
-   Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
-
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
    This file is part of LuaTeX.
 
    LuaTeX is free software; you can redistribute it and/or modify it under
@@ -18,16 +17,18 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: avlstuff.h 4612 2013-03-25 09:15:18Z taco $ */
+/* $Id: luatex-common.h 4054 2011-01-10 19:05:54Z hhenkel $ */
 
-#ifndef AVLSTUFF_H
-#  define AVLSTUFF_H
+/* This file contains declarations used in C code as well as in C++ code.
+*/
 
-#  include "avl.h"
+#ifndef LUATEX_COMMON_H
+#  define LUATEX_COMMON_H
 
-extern struct libavl_allocator avl_xallocator;
+/* utils.c */
+__attribute__ ((format(printf, 1, 2)))
+extern void pdftex_warn(const char *fmt, ...);
+__attribute__ ((noreturn, format(printf, 1, 2)))
+extern void pdftex_fail(const char *fmt, ...);
 
-int comp_int_entry(const void *, const void *, void *);
-int comp_string_entry(const void *, const void *, void *);
-
-#endif                          /* AVLSTUFF_H */
+#endif /* LUATEX_COMMON_H */

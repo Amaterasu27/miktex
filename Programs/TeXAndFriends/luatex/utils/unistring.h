@@ -1,7 +1,6 @@
-/* avlstuff.h
+/* unistring.h
 
-   Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,16 +17,24 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: avlstuff.h 4612 2013-03-25 09:15:18Z taco $ */
+/* $Id: unistring.h 4599 2013-03-19 15:41:07Z taco $ */
 
-#ifndef AVLSTUFF_H
-#  define AVLSTUFF_H
+#ifndef UNISTRING_H
+#  define UNISTRING_H
 
-#  include "avl.h"
+extern unsigned char *uni2str(unsigned);
+extern unsigned str2uni(const unsigned char *);
+extern int buffer_to_unichar(int k);
 
-extern struct libavl_allocator avl_xallocator;
+extern char *uni2string(char *utf8_text, unsigned ch);
+extern unsigned u_length(register unsigned int *str);
+extern void utf2uni_strcpy(unsigned int *ubuf, const char *utf8buf); 
 
-int comp_int_entry(const void *, const void *, void *);
-int comp_string_entry(const void *, const void *, void *);
+#define is_utf8_follow(A) (A >= 0x80 && A < 0xC0)
 
-#endif                          /* AVLSTUFF_H */
+#define utf8_size(a) (a>0xFFFF ? 4 : (a>0x7FF ? 3 : (a>0x7F? 2 : 1)))
+
+extern char *utf16be_str(long code);
+
+#endif
+

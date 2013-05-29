@@ -86,7 +86,7 @@
 #define MAX_DIR_LENGTH 1023
 typedef struct dir_data {
 	int  closed;
-#if defined(_WIN32) && ! defined(MIKTEX)
+#ifdef _WIN32
 	long hFile;
 	char pattern[MAX_DIR_LENGTH+1];
 #else
@@ -851,7 +851,7 @@ static void set_info (lua_State *L) {
 }
 
 
-static const struct luaL_reg fslib[] = {
+static const struct luaL_Reg fslib[] = {
 	{"attributes", file_info},
 	{"chdir", change_dir},
 	{"currentdir", get_dir},

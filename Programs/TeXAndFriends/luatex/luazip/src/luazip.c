@@ -154,7 +154,7 @@ static int zip_openfile (lua_State *L) {
     int i, m, n;
 
     /* how many extension were specified? */
-    n = luaL_getn(L, 2);
+    n = lua_rawlen(L, 2);
 
     if (n > LUAZIP_MAX_EXTENSIONS)
     {
@@ -344,7 +344,7 @@ static int read_line (lua_State *L, ZZIP_FILE *f) {
     char *p = luaL_prepbuffer(&b);
     if (zzip_fgets(p, LUAL_BUFFERSIZE, f) == NULL) {  /* eof? */
       luaL_pushresult(&b);  /* close buffer */
-      return (lua_strlen(L, -1) > 0);  /* check whether read something */
+      return (lua_rawlen(L, -1) > 0);  /* check whether read something */
     }
     l = strlen(p);
     if (p[l-1] != '\n')
@@ -465,7 +465,7 @@ static int ff_seek (lua_State *L) {
   }
 }
 
-static const luaL_reg ziplib[] = {
+static const luaL_Reg ziplib[] = {
   {"open", zip_open},
   {"close", zip_close},
   {"type", zip_type},
@@ -474,7 +474,7 @@ static const luaL_reg ziplib[] = {
   {NULL, NULL}
 };
 
-static const luaL_reg flib[] = {
+static const luaL_Reg flib[] = {
   {"open", f_open},
   {"close", zip_close},
   {"files", f_files},
@@ -483,7 +483,7 @@ static const luaL_reg flib[] = {
   {NULL, NULL}
 };
 
-static const luaL_reg fflib[] = {
+static const luaL_Reg fflib[] = {
   {"read", ff_read},
   {"close", ff_close},
   {"seek", ff_seek},
