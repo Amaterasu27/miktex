@@ -1,6 +1,6 @@
 /* mpost-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 2011 Christian Schenk
+   Copyright (C) 2011-2013 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4201
-#define MIKTEX_COMP_ORIG_VERSION_STR "1.504"
+#define MIKTEX_COMP_J2000_VERSION 4697
+#define MIKTEX_COMP_ORIG_VERSION_STR "1.802"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 2008-2011 Taco Hoekwater"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2008-2011 Taco Hoekwater"

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2011 Christian Schenk
+## Copyright (C) 2010-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,8 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
 )
 
 add_definitions(
@@ -37,6 +39,9 @@ add_definitions(
 set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mp.c
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.c
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.c
+  ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.c
+  ${CMAKE_CURRENT_BINARY_DIR}/pngout.c
   ${CMAKE_CURRENT_BINARY_DIR}/psout.c
   ${CMAKE_CURRENT_BINARY_DIR}/svgout.c
   ${CMAKE_CURRENT_BINARY_DIR}/tfmin.c
@@ -45,10 +50,13 @@ set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
   ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmp.h
   ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpsvgout.h
   ${CMAKE_CURRENT_BINARY_DIR}/mptfmin.h
+  ${CMAKE_CURRENT_BINARY_DIR}/pngout.h
 )
 
 set_source_files_properties(
@@ -86,6 +94,54 @@ add_custom_command(
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpmath.w
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.h
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/mpmathdouble
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}
+  MAIN_DEPENDENCY
+    mpmath.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/mpmathdouble.w
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.h
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/mpstrings
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}
+  MAIN_DEPENDENCY
+    mpmath.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/mpstrings.w
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/pngout.c
+    ${CMAKE_CURRENT_BINARY_DIR}/pngout.h
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/pngout
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}
+  MAIN_DEPENDENCY
+    mpmath.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/pngout.w
   VERBATIM
 )
 
@@ -209,11 +265,13 @@ foreach(x ${executables})
   add_executable(${x} ${mpost_sources})
   target_link_libraries(${x}
     ${app_dll_name}
+    ${cairo_dll_name}
     ${core_dll_name}
     ${getopt_dll_name}
     ${kpsemu_dll_name}
     ${mp_lib_name}
     ${utf8wrap_dll_name}
+    ${w2cemu_dll_name}
   )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION "${bindir}")
