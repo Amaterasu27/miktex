@@ -94,7 +94,9 @@ extern "C" {
 
     /* pdfgen.w */
     extern int ten_pow[10];
+#if ! (defined(MIKTEX) && defined(_MSC_VER))
     __attribute__ ((format(printf, 2, 3)))
+#endif
     extern void pdf_printf(PDF, const char *fmt, ...);
     extern void pdf_begin_obj(PDF, int, int);
     extern void pdf_end_obj(PDF);

@@ -29,6 +29,11 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  define MIKTEX_UTF8_WRAP_ALL 1
+#  include <miktex/utf8wrap.h>
+#endif
+
 static const char _svn_version[] =
     "$Id: liolibext.c 4546 2013-01-02 14:52:28Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/liolibext.c $";
 
@@ -40,7 +45,7 @@ static const char _svn_version[] =
 ** =======================================================
 */
 
-#if defined(_WIN32)
+#if defined(_WIN32) && ! defined(MIKTEX)
 
 #ifdef _MSC_VER
 #define lua_popen(L,c,m)		((void)L, win32_popen(c,m))
@@ -349,6 +354,10 @@ static int test_eof (lua_State *L, FILE *f) {
 
 /* this version does not care wether the file has 
    line endings using an 'alien' convention */
+
+#if defined(MIKTEX) && defined(read_line)
+#  undef read_line
+#endif
 
 static int read_line(lua_State * L, FILE * f, int chop)
 {

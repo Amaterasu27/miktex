@@ -8,7 +8,7 @@
 /*=========================================================================*\
 * WinSock include files
 \*=========================================================================*/
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) || defined(MIKTEX)
 #define _WIN32_WINNT 0x0501
 #endif
 #include <winsock2.h>

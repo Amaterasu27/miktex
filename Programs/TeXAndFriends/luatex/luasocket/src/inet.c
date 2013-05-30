@@ -10,7 +10,7 @@
 
 #include "inet.h"
 
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) || defined(MIKTEX_WINDOWS)
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt)
 {
         if (af == AF_INET)

@@ -8,7 +8,9 @@
 #ifndef lconfig_h
 #define lconfig_h
 
+#if ! defined(MIKTEX)
 #include <c-auto.h>
+#endif
 
 #include <limits.h>
 #include <stddef.h>

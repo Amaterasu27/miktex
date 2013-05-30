@@ -41,7 +41,7 @@
 #    define _INC_CTYPE 1
 #  endif
 #endif
-# include <w2c/config.h>
+//# include <w2c/config.h>
 #endif
 #if defined(MIKTEX)
 #  include <miktex/unxemu.h>

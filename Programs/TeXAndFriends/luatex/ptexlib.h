@@ -51,9 +51,11 @@
 #  include <miktex/utf8wrap.h>
 #endif
 
+#if ! defined(MIKTEX)
 #  ifdef _MSC_VER
 extern double rint(double x);
 #  endif
+#endif
 
 #  if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
 extern char **suffixlist;       /* in luainit.w */

@@ -86,7 +86,7 @@
 #define MAX_DIR_LENGTH 1023
 typedef struct dir_data {
 	int  closed;
-#ifdef _WIN32
+#if defined(_WIN32) && ! defined(MIKTEX)
 	long hFile;
 	char pattern[MAX_DIR_LENGTH+1];
 #else

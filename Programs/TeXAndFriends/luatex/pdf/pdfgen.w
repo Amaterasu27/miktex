@@ -1523,11 +1523,17 @@ static void print_ID(PDF pdf)
 #ifdef WIN32
     {
         char *p;
+#if defined(MIKTEX)
+        for (p = pwd; *p; p++) {
+            if (*p == '\\')
+                *p = '/';
+#else
         for (p = pwd; *p; p++) {
             if (*p == '\\')
                 *p = '/';
             else if (IS_KANJI(p))
                 p++;
+#endif
         }
     }
 #endif

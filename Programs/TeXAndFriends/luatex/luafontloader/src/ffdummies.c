@@ -27,6 +27,10 @@
 #include <basics.h>
 #include <ustring.h>
 
+#if defined(MIKTEX)
+#  include <miktex/KPSE/Emulation.h>
+#endif
+
 static const char _svn_version[] =
     "$Id: ffdummies.c 3738 2010-07-13 10:28:24Z oneiros $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";

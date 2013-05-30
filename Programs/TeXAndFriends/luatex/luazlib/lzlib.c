@@ -34,6 +34,9 @@ Changes:
 
 #include "zlib.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  include <miktex/unxemu.h>
+#endif
 
 /*
 ** =========================================================================

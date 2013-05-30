@@ -48,7 +48,6 @@ set(luatexlib_cwebs
   ../font/writettf.w
   ../font/writetype0.w
   ../font/writetype2.w
-  ../image/pdftoepdf.w
   ../image/writeimg.w
   ../image/writejbig2.w
   ../image/writejp2.w
@@ -125,6 +124,10 @@ set(luatexlib_cwebs
   ../utils/utils.w
 )
 
+set(luatexlib_ccwebs
+  ../image/pdftoepdf.w
+)
+
 foreach(cweb ${luatexlib_cwebs})
   get_filename_component(fn ${cweb} NAME_WE)
   add_custom_command(
@@ -145,6 +148,27 @@ foreach(cweb ${luatexlib_cwebs})
     ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
   )
 endforeach(cweb)
+
+foreach(ccweb ${luatexlib_ccwebs})
+  get_filename_component(fn ${ccweb} NAME_WE)
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+    COMMAND
+      ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${ccweb} - ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+    MAIN_DEPENDENCY
+      ${ccweb}
+    DEPENDS
+      ${ctangle_exe}
+      ${CMAKE_CURRENT_SOURCE_DIR}/${ccweb}
+    VERBATIM
+  )
+  set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+  )
+endforeach(ccweb)
 
 set_source_files_properties(
   ${luatexlib_cweb_sources}

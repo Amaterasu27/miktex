@@ -69,9 +69,6 @@ static lua_Number LoadNumber(LoadState* S)
  return x;
 }
 
-#if defined(MIKTEX_WINDOWS) && defined(LoadString)
-#  undef LoadString
-#endif
 static TString* LoadString(LoadState* S)
 {
  size_t size;
