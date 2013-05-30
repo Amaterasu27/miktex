@@ -229,8 +229,15 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
+set_target_properties(${app_dll_name}
+      PROPERTIES
+      LINK_INTERFACE_LIBRARIES ""
+)
+
 target_link_libraries(${luatex_program_dll_name}
-  ${zlib_dll_name}
+  wsock32.lib
+  ws2_32.lib
+
   ${app_dll_name}
   ${cairo_dll_name}
   ${core_dll_name}
@@ -247,6 +254,7 @@ target_link_libraries(${luatex_program_dll_name}
   ${utf8wrap_dll_name}
   ${getopt_dll_name}
   ${w2cemu_dll_name}
+  ${zlib_dll_name}
   
 
   luatex-lua52-static

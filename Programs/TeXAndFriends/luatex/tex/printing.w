@@ -376,7 +376,11 @@ void tprint(const char *sss)
         break;
     }
     /* what is left is the 3 term/log settings */
+#if defined(MIKTEX)
+    buffer = xmalloc(strlen(sss)*3 + 10);
+#else
     buffer = xmalloc(strlen(sss)*3);
+#endif
     if (dolog) {
         const unsigned char *ss = (const unsigned char *) sss;
         while (*ss) {
