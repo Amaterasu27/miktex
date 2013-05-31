@@ -1052,9 +1052,9 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
   }
 
   pdf_doc_add_names("Dests",
-                            pdf_string_value (name),
-                            pdf_string_length(name),
-                            array);
+                    pdf_string_value (name),
+                    pdf_string_length(name),
+                    array);
   pdf_release_obj(name);
 
   return  0;

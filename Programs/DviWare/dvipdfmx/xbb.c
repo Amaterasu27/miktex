@@ -70,8 +70,8 @@ static void show_usage(void)
     fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
     fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
   } else {
-  fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-  fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
   }
 }
 
