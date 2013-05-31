@@ -3,11 +3,11 @@
 ** read a portable anymap and produce a Portable Network Graphics file
 **
 ** derived from pnmtorast.c (c) 1990,1991 by Jef Poskanzer and some
-** parts derived from ppmtogif.c by Marcel Wijkstra <wijkstra@fwi.uva.nl>
-** thanks to Greg Roelofs <newt@pobox.com> for contributions and bug-fixes
+** parts derived from ppmtogif.c by Marcel Wijkstra <wijkstra|fwi.uva.nl>
 **
-** Copyright (C) 1995-1998 by Alexander Lehmann <alex@hal.rhein-main.de>
-**                        and Willem van Schaik <willem@schaik.com>
+** Copyright (C) 1995-1998 by Alexander Lehmann <alex|hal.rhein-main.de>
+**                         and Willem van Schaik <willem|schaik.com>
+** Copyright (C) 1998-2005 by Greg Roelofs <newt|pobox.com>
 **
 ** Permission to use, copy, modify, and distribute this software and its
 ** documentation for any purpose and without fee is hereby granted, provided
@@ -17,9 +17,75 @@
 ** implied warranty.
 */
 
-#define VERSION "2.37.1 (3 July 1998)"
+/* GRR 20051112:  applied Cosmin Truta's zlib-strategy patch (new -strategy
+ *  option); applied Sascha Demetrio's significant-bits patch (new -sbit
+ *  option); cleaned up read_text() function and fixed a memleak; adapted
+ *  2002 Debian/Alan Cox patch to fix several potential allocation-overflow
+ *  bugs (added new grr_overflow2() function as aid). */
 
-/* GRR 980621:  moved some if-tests out of full-image loops; added fix for
+/* GRR 20051102:  ifdef'd out some impossible code (maxval = unsigned short
+ *  at most, so testing for > 65535 is pointless). */
+
+/* GRR 20051023:  fixed buffer overrun in RGBA-palette calculations. */
+
+/* GRR 20020616:  fixed assumption in read_text() that malloc() always
+ *  returns successfully; applied TenThumbs' enhancement patch of 20010808:
+ *
+ *    The problem is the keyword on a line by itself. The read_text
+ *    function sees the keyword and replaces the first non-text character
+ *    with '\0'. In this case that's a newline. The function then tries
+ *    to copy the rest of the line as text but it only looks for space,
+ *    tab, and newline which don't exist so it keeps looking and copying
+ *    until it finds something. Buffer overrun time!
+ *
+ *    When I fixed that I found that pnmtopng treats blank lines as a
+ *    text chunk and libpng complains about zero length keywords. That
+ *    seems silly.
+ *
+ *    Here's a patch to fix all of this. */
+
+/* GRR 20020408:  plugged some memory leaks; improved documentation of
+ *  palette-remapping code; added support for custom (ordered) palette
+ *  (new -palette option). */
+
+/* GRR 20010816:  fixed bug reported by Eric Fu <ericfu|etrieve.com>:
+ *  stdin/stdout must be set to binary mode for DOS-like environments.  (Bug
+ *  report was specifically about NetPBM 9.x version, not this code, but same
+ *  issue applies here.)  Borrowed tried-and-true funzip.c code for maximal
+ *  portability, but note dependency on macros that may need to be defined
+ *  explicitly in makefiles (e.g., HAVE_SETMODE, FLEXOS and RISCOS). */
+
+/* GRR 20010721:  fixed bug reported by Werner Lemberg <wl|gnu.org>:
+ *  bKGD value not scaled properly in sub-8-bit grayscale images (should
+ *  be scaled identically to tRNS value).  Also renamed version.h to
+ *  less generic pnmtopng_version.h and replaced one last (deprecated)
+ *  png_write_destroy() call. */
+
+/* GRR 20000930:  fixed bug reported by Steven Grady <grady|xcf.berkeley.edu>:
+ *  if -transparent option given but exact color does not exist (e.g., when
+ *  doing batch conversion of a web site), pnmtopng would pick an approximate
+ *  color instead of ignoring the transparency.  Also added optional errorlevel
+ *  and return-code 2 (== warning; see PNMTOPNG_WARNING_LEVEL below) for such
+ *  cases.  (1 already used by pm_error().) */
+
+/* GRR 20000315:  ifdef'd out a never-reached (for non-PGM_BIGGRAYS) case
+ *  that causes a gcc warning. */
+
+/* GRR 19991203:  incorporated fix by Rafal Rzeczkowski <rzeczkrg|mcmaster.ca>:
+ *  gray images with exactly 16 shades were being promoted to 8-bit grayscale
+ *  rather than 4-bit palette due to misuse of the pm_maxvaltobits() function.
+ *  Also moved VERSION to new version.h header file. */
+
+/* GRR 19990713:  fixed redundant freeing of png_ptr and info_ptr in setjmp()
+ *  blocks and added png_destroy_write_struct() and pm_close(ifp) in each
+ *  pm_error() block.  */
+
+/* GRR 19990308:  declared "clobberable" automatic variables in convertpnm()
+ *  static to fix Solaris/gcc stack-corruption bug.  Also installed custom
+ *  error-handler to avoid jmp_buf size-related problems (i.e., jmp_buf
+ *  compiled with one size in libpng and another size here).  */
+
+/* GRR 19980621:  moved some if-tests out of full-image loops; added fix for
  *  following problem discovered by Magnus Holmgren and debugged by Glenn:
  *
  *    The pnm has three colors:  0 0 0, 204 204 204, and 255 255 255.
@@ -30,21 +96,37 @@
  *    than the scaled colors.  What appears in the PLTE chunk is
  *    0 0 0, 12 12 12, and 15 15 15, which of course results in a
  *    very dark image.
- *
- *  (temporarily ifdef'd for easier inspection and before/after testing)
  */
-#define GRR_GRAY_PALETTE_FIX
 
-#include "pnm.h"
-#include "png.h"
-#if defined(MIKTEX)
-#  include <pnginfo.h>
-#  include <pngstruct.h>
-#  define trans trans_alpha
-#  define trans_values trans_color
+#ifndef PNMTOPNG_WARNING_LEVEL
+#  define PNMTOPNG_WARNING_LEVEL 0   /* use 0 for backward compatibility, */
+#endif                               /*  2 for warnings (1 == error) */
+
+#include <string.h>		/* strcat() */
+#include <png.h>		/* includes zlib.h and setjmp.h */
+#include "pnmtopng_version.h"	/* VERSION macro */
+#include <pnm.h>
+#ifndef PPM_STDSORT /* defined in newer ppmcmap.h, which newer pnm.h includes */
+#  include <ppmcmap.h>		/* NOT installed by default with older netpbm */
 #endif
 
-#include "ppmcmap.h"
+#include "pnmtopng_overflow.h"  /* grr_overflow2() function (clone) */
+
+typedef unsigned char   uch;
+typedef unsigned short  ush;
+typedef unsigned long   ulg;
+
+typedef struct _jmpbuf_wrapper {
+  jmp_buf jmpbuf;
+} jmpbuf_wrapper;
+
+/* GRR 19991205:  this is used as a test for pre-1999 versions of netpbm and
+ *   pbmplus vs. 1999 or later (in which pm_close was split into two) 
+ */
+#ifdef PBMPLUS_RAWBITS
+#  define pm_closer pm_close
+#  define pm_closew pm_close
+#endif
 
 #ifndef TRUE
 #  define TRUE 1
@@ -60,9 +142,11 @@
 
 /* function prototypes */
 #ifdef __STDC__
-static int closestcolor (pixel color, colorhist_vector chv, int colors, xelval maxval);
+static int closestcolor (pixel color, colorhist_vector chv, int colors,
+                         xelval maxval);
 static void read_text (png_info *info_ptr, FILE *tfp);
-static void convertpnm (FILE *ifp, FILE *afp, FILE *tfp);
+static void pnmtopng_error_handler (png_structp png_ptr, png_const_charp msg);
+static int convertpnm (FILE *ifp, FILE *afp, FILE *pfp, FILE *tfp, FILE *ofp);
 int main (int argc, char *argv[]);
 #endif
 
@@ -88,6 +172,8 @@ static float chroma_by = -1.0;
 static int phys_x = -1.0;
 static int phys_y = -1.0;
 static int phys_unit = -1.0;
+static int have_ordered_palette = FALSE;
+static char *palette_file;
 static int text = FALSE;
 static int ztxt = FALSE;
 static char *text_file;
@@ -95,18 +181,30 @@ static int mtime = FALSE;
 static char *date_string;
 static char *time_string;
 static struct tm time_struct;
+static int sbit_n = 0;
+static int sbit[4] = { 0, 0, 0, 0 };
 static int filter = -1;
 static int compression = -1;
+static int strategy = -1;
 static int force = FALSE;
+static jmpbuf_wrapper pnmtopng_jmpbuf_struct;
+
+
+
+
+/******************/
+/*  CLOSESTCOLOR  */
+/******************/
 
 #ifdef __STDC__
-static int closestcolor (pixel color, colorhist_vector chv, int colors, xelval maxval)
+static int closestcolor (pixel color, colorhist_vector chv, int colors,
+                         xelval maxval)
 #else
 static int closestcolor (color, chv, colors, maxval)
-pixel color;
-colorhist_vector chv;
-int colors;
-xelval maxval;
+  pixel color;
+  colorhist_vector chv;
+  int colors;
+  xelval maxval;
 #endif
 {
   int i, r, g, b, d;
@@ -130,91 +228,179 @@ xelval maxval;
   return imin;
 }
 
+
+
+
+/***************/
+/*  READ_TEXT  */
+/***************/
+
 #ifdef __STDC__
 static void read_text (png_info *info_ptr, FILE *tfp)
 #else
 static void read_text (info_ptr, tfp)
-png_info *info_ptr;
-FILE *tfp;
+  png_info *info_ptr;
+  FILE *tfp;
 #endif
 {
-  char textline[256];
+# define TEXTLINE_MAX 1024  /* some URLs are > 256 chars long */
+  char textline[TEXTLINE_MAX];
   int textpos;
   int i, j;
-  int c;
-  char *cp;
+  int ch;
+  char *cp, *texterr = "pnmtopng:  unable to allocate memory for text chunks\n";
 
+  grr_overflow2 (MAXCOMMENTS, (int)sizeof(png_text));
   info_ptr->text = (png_text *)malloc (MAXCOMMENTS * sizeof (png_text));
+  if (!info_ptr->text) {
+    fprintf(stderr, texterr);
+    fflush(stderr);
+    return;   /* not much else can do */
+  }
   j = 0;
   textpos = 0;
-  while ((c = getc (tfp)) != EOF) {
-    if (c != '\n' && c != EOF) {
-      textline[textpos++] = c;
+  /* loop over bytes in text file until hit EOF */
+  do {
+    /* any line >= TEXTLINE_MAX bytes long: truncate and treat as EOF */
+    ch = (textpos < TEXTLINE_MAX)? getc(tfp) : EOF;
+    if (ch != '\n' && ch != EOF) {
+      textline[textpos++] = ch;
     } else {
       textline[textpos++] = '\0';
+      if (textline[0] == '\0') {   /* check for keyword-on-own-line case */
+        textpos = 0;
+        continue;
+      }
       if ((textline[0] != ' ') && (textline[0] != '\t')) {
-        /* the following is a not that accurate check on Author or Title */
+        /* the following is an inaccurate check for Author or Title */
         if ((!ztxt) || (textline[0] == 'A') || (textline[0] == 'T'))
           info_ptr->text[j].compression = -1;
         else
           info_ptr->text[j].compression = 0;
-        cp = malloc (textpos);
-        info_ptr->text[j].key = cp;
+        info_ptr->text[j].key = cp = malloc (textpos);
+        if (!cp) {
+          fprintf(stderr, texterr);
+          fflush(stderr);
+          return;   /* not much else can do */
+        }
         i = 0;
         if (textline[0] == '"') {
           i++;
-          while (textline[i] != '"' && textline[i] != '\n')
-            (*(cp++) = textline[i++]);
+          while (textline[i] != '"' && textline[i] != '\n' &&
+                 textline[i] != '\0')
+            *(cp++) = textline[i++];
           i++;
         } else {
-          while (textline[i] != ' ' && textline[i] != '\t' && textline[i] != '\n')
-            (*(cp++) = textline[i++]);
+          while (textline[i] != ' '  && textline[i] != '\t' &&
+                 textline[i] != '\n' && textline[i] != '\0')
+            *(cp++) = textline[i++];
         }
-        *(cp++) = '\0';
-        cp = malloc (textpos);
-        info_ptr->text[j].text = cp;
+        *cp = '\0';  /* end of info_ptr->text[j].key */
+        info_ptr->text[j].text = cp = malloc (textpos);
+        if (!cp) {
+          fprintf(stderr, texterr);
+          fflush(stderr);
+          return;   /* not much else can do */
+        }
         while (textline[i] == ' ' || textline[i] == '\t')
           i++;
         strcpy (cp, &textline[i]);
         info_ptr->text[j].text_length = strlen (cp);
         j++;
-      }        else {
-        j--;
+      } else {
+        --j;
+        if (info_ptr->text[j].text_length + textpos <= 0) {
+          /* malloc() would overflow:  terminate now; lose comment */
+          fprintf(stderr, texterr);
+          fflush(stderr);
+          ch = EOF;
+          break;
+        }
+        /* FIXME: should just use realloc() here */
         cp = malloc (info_ptr->text[j].text_length + textpos);
+        if (!cp) {
+          fprintf(stderr, texterr);
+          fflush(stderr);
+          return;   /* not much else can do */
+        }
         strcpy (cp, info_ptr->text[j].text);
-        strcat (cp, "\n");
-        info_ptr->text[j].text = cp;
+        cp[ info_ptr->text[j].text_length ] = '\n';
         i = 0;
         while (textline[i] == ' ' || textline[i] == '\t')
-        i++;
-        strcat (cp, &textline[i]);
+          ++i;
+        strcpy (cp + info_ptr->text[j].text_length + 1, &textline[i]);
+        free (info_ptr->text[j].text); /* FIXME: see realloc() comment above */
+        info_ptr->text[j].text = cp;
         info_ptr->text[j].text_length = strlen (cp);
-        j++;
+        ++j;
       }
       textpos = 0;
     }
-  } /* end while */
+  } while (ch != EOF);
   info_ptr->num_text = j;
 }
 
+
+
+
+/****************************/
+/*  PNMTOPNG_ERROR_HANDLER  */
+/****************************/
+
 #ifdef __STDC__
-static void convertpnm (FILE *ifp, FILE *afp, FILE *tfp)
+static void pnmtopng_error_handler (png_structp png_ptr, png_const_charp msg)
 #else
-static void convertpnm (ifp, afp, tfp)
-FILE *ifp;
-FILE *afp;
-FILE *tfp;
+static void pnmtopng_error_handler (png_ptr, msg)
+  png_structp png_ptr;
+  png_const_charp msg;
+#endif
+{
+  jmpbuf_wrapper  *jmpbuf_ptr;
+
+  /* this function, aside from the extra step of retrieving the "error
+   * pointer" (below) and the fact that it exists within the application
+   * rather than within libpng, is essentially identical to libpng's
+   * default error handler.  The second point is critical:  since both
+   * setjmp() and longjmp() are called from the same code, they are
+   * guaranteed to have compatible notions of how big a jmp_buf is,
+   * regardless of whether _BSD_SOURCE or anything else has (or has not)
+   * been defined. */
+
+  fprintf(stderr, "pnmtopng:  fatal libpng error: %s\n", msg);
+  fflush(stderr);
+
+  jmpbuf_ptr = png_get_error_ptr(png_ptr);
+  if (jmpbuf_ptr == NULL) {         /* we are completely hosed now */
+    fprintf(stderr,
+      "pnmtopng:  EXTREMELY fatal error: jmpbuf unrecoverable; terminating.\n");
+    fflush(stderr);
+    exit(99);
+  }
+
+  longjmp(jmpbuf_ptr->jmpbuf, 1);
+}
+
+
+
+
+/****************/
+/*  CONVERTPNM  */
+/****************/
+
+#ifdef __STDC__
+  static int convertpnm (FILE *ifp, FILE *afp, FILE *pfp, FILE *tfp, FILE *ofp)
+#else
+  static int convertpnm (ifp, afp, pfp, tfp, ofp)
+    FILE *ifp, *afp, *pfp, *tfp, *ofp;
 #endif
 {
   xel **xels;	/* GRR:  a xel is always a pixel; pixel may be ulg or struct */
   xel p;	/*        (pnm.h)                  (ppm.h)  */
-  int rows, cols, format, pnm_type;
+  int rows, cols, format;
   xelval maxval;
-  xelval maxmaxval = 255;
-  xelval scaleval;
+  xelval scaleval = 255;
   xelval value;
   pixel transcolor;
-  int sbitval;
   int mayscale;
   pixel backcolor;
 
@@ -222,52 +408,116 @@ FILE *tfp;
   png_info *info_ptr;
 
   png_color palette[MAXCOLORS];
+  png_color ordered_palette[MAXCOLORS];
   png_byte trans[MAXCOLORS];
   png_uint_16 histogram[MAXCOLORS];
   png_byte *line;
   png_byte *pp;
   int pass;
   int color;
-  gray **alpha_mask = NULL;	/* initialized to quiet compiler warnings */
   gray alpha_maxval;
   int alpha_rows;
   int alpha_cols;
-  int alpha_sbitval = 0;	/* initialized to quiet compiler warnings */
   int alpha_trans;
-  int num_alphas_of_color = 0;
-  gray *alphas_of_color[MAXCOLORS];
-  int alphas_of_color_cnt[MAXCOLORS];
+  gray *alphas_of_color[MAXCOLORS+1];
+  int alphas_of_color_cnt[MAXCOLORS+1];
   int alphas_first_index[MAXCOLORS+1];
-  int mapping[MAXCOLORS];
-  int palette_size = 0;		/* initialized to quiet compiler warnings */
-  colorhist_vector chv;
-  colorhash_table cht = NULL;	/* initialized to quiet compiler warnings */
-  int depth=0, colors;		/* initialized to quiet compiler warnings */
+  int mapping[MAXCOLORS];	/* mapping[old_index] = new_index */
+  int colors;
   int fulldepth;
   int x, y;
   int i, j;
 
-  png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  /* these variables are declared static because gcc wasn't kidding
+   * about "variable XXX might be clobbered by `longjmp' or `vfork'"
+   * (stack corruption observed on Solaris 2.6 with gcc 2.8.1, even
+   * in the absence of any other error condition) */
+  static int pnm_type;
+  static xelval maxmaxval;
+  static int sbitval;
+  static gray **alpha_mask;
+  static int alpha_sbitval;
+  static int num_alphas_of_color;
+  static int palette_size;
+  static int ordered_palette_size;
+  static colorhist_vector chv;
+  static colorhash_table cht;
+  static int depth;
+  static int errorlevel;
+
+
+  /* these guys are initialized to quiet compiler warnings: */
+  maxmaxval = 255;
+  num_alphas_of_color = 0;
+  alpha_mask = NULL;
+  alpha_sbitval = 0;
+  palette_size = 0;
+  chv = NULL;
+  cht = NULL;
+  depth = 0;
+  errorlevel = 0;
+
+  png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING,
+    &pnmtopng_jmpbuf_struct, pnmtopng_error_handler, NULL);
   if (png_ptr == NULL) {
-    pm_error ("cannot allocate LIBPNG structure");
-  }
-  info_ptr = png_create_info_struct (png_ptr);
-  if (info_ptr == NULL) {
-    fclose(ifp);
-    png_destroy_write_struct (&png_ptr, (png_infopp)NULL);
-    pm_error ("cannot allocate LIBPNG structures");
+    pm_closer (ifp);
+    pm_error ("cannot allocate main libpng structure (png_ptr)");
   }
 
-#if defined(MIKTEX)
-  if (setjmp (png_ptr->longjmp_buffer)) {
-#else
-  if (setjmp (png_ptr->jmpbuf)) {
-#endif
-    fclose(ifp);
+  info_ptr = png_create_info_struct (png_ptr);
+  if (info_ptr == NULL) {
     png_destroy_write_struct (&png_ptr, (png_infopp)NULL);
-    free (png_ptr);
-    free (info_ptr);
-    pm_error ("setjmp returns error condition");
+    pm_closer (ifp);
+    pm_error ("cannot allocate libpng info structure (info_ptr)");
+  }
+
+  if (setjmp (pnmtopng_jmpbuf_struct.jmpbuf)) {
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    pm_closer (ifp);
+    pm_error ("setjmp returns error condition (1)");
+  }
+
+  /* handle ordered palette first so we can reuse common variables: */
+  if (have_ordered_palette) {
+    if (verbose)
+      pm_message ("reading ordered palette (colormap)...");
+    xels = pnm_readpnm (pfp, &cols, &rows, &maxval, &format);
+
+    pnm_type = PNM_FORMAT_TYPE (format);
+    if (pnm_type != PPM_TYPE) {
+      png_destroy_write_struct (&png_ptr, &info_ptr);
+      pm_closer (ifp);
+      pm_closer (pfp);
+      pnm_freearray (xels, rows);
+      xels = NULL;
+      pm_error ("ordered palette must be a PPM file (P3 or P6)");
+    }
+
+    ordered_palette_size = rows * cols;
+    if (ordered_palette_size > MAXCOLORS) {
+      png_destroy_write_struct (&png_ptr, &info_ptr);
+      pm_closer (ifp);
+      pm_closer (pfp);
+      pnm_freearray (xels, rows);
+      xels = NULL;
+      pm_error("ordered-palette image can contain no more than 256 RGB pixels");
+    }
+    if (verbose)
+      pm_message ("%d colors found", ordered_palette_size);
+
+    j = 0;
+    for (y = 0 ; y < rows ; y++) {
+      for (x = 0 ; x < cols ; x++) {
+        p = xels[y][x];
+        ordered_palette[j].red   = PPM_GETR (p);
+        ordered_palette[j].green = PPM_GETG (p);
+        ordered_palette[j].blue  = PPM_GETB (p);
+        ++j;
+      }
+    }
+    pnm_freearray (xels, rows);
+    xels = NULL;
+    /* now ordered_palette[] and ordered_palette_size are valid */
   }
 
   xels = pnm_readpnm (ifp, &cols, &rows, &maxval, &format);
@@ -275,11 +525,11 @@ FILE *tfp;
 
   if (verbose) {
     if (pnm_type == PBM_TYPE)    
-      pm_message ("reading a PBM file (maxval=%d)", maxval);
+      pm_message ("reading a PBM file (maxval=%u)", maxval);
     else if (pnm_type == PGM_TYPE)    
-      pm_message ("reading a PGM file (maxval=%d)", maxval);
+      pm_message ("reading a PGM file (maxval=%u)", maxval);
     else if (pnm_type == PPM_TYPE)    
-      pm_message ("reading a PPM file (maxval=%d)", maxval);
+      pm_message ("reading a PPM file (maxval=%u)", maxval);
   }
 
   if (pnm_type == PGM_TYPE)
@@ -291,10 +541,16 @@ FILE *tfp;
     transcolor = ppm_parsecolor (transstring, maxmaxval);
 
   if (alpha) {
+    if (verbose)
+      pm_message ("reading alpha-channel image...");
     alpha_mask = pgm_readpgm (afp, &alpha_cols, &alpha_rows, &alpha_maxval);
+
     if (alpha_cols != cols || alpha_rows != rows) {
+      png_destroy_write_struct (&png_ptr, &info_ptr);
+      pm_closer (ifp);
       pm_error ("dimensions for image and alpha mask do not agree");
     }
+
     /* check if the alpha mask can be represented by a single transparency
        value (i.e. all colors fully opaque except one fully transparent;
        the transparent color may not also occur as fully opaque.
@@ -367,10 +623,16 @@ FILE *tfp;
 
   sbitval = 0;
   if (pnm_type != PBM_TYPE || alpha) {
-    if (maxval > 65535 && !downscale)
-      pm_error ("can only handle files up to 16-bit (use -downscale to override");
+#if 0   /* GRR 20051102:  pointless since maxval is unsigned char or short */
+    if (maxval > 65535 && !downscale) {
+      png_destroy_write_struct (&png_ptr, &info_ptr);
+      pm_closer (ifp);
+      pm_error ("can handle files only up to 16-bit (use -downscale to override");
+    }
 
-    if (maxval < 65536) {
+    if (maxval < 65536)
+#endif /* 0 */
+    {
       sbitval = pm_maxvaltobits (maxval);
       if (maxval != pm_bitstomaxval (sbitval))
         sbitval = 0;
@@ -395,10 +657,12 @@ FILE *tfp;
           pm_message ("cannot rescale to 16-bit; rescaling to 8-bit instead (maxval = %d)",
             maxval);
           scaleval = 255;
+#ifdef PGM_BIGGRAYS   /* GRR 20000315:  this avoids a gcc warning */
         } else {
           if (verbose)
             pm_message ("rescaling to 16-bit");
           scaleval = 65535;
+#endif
         }
       }
       for (y = 0 ; y < rows ; y++)
@@ -480,12 +744,16 @@ FILE *tfp;
   /* scale alpha mask to match bit depth of image */
 
   if (alpha) {
-    if (alpha_maxval < 65536) {
+#if 0   /* GRR:  pointless since alpha_maxval is unsigned char or short */
+    if (alpha_maxval > 65535)
+      alpha_sbitval = 0;
+    else
+#endif
+    {
       alpha_sbitval = pm_maxvaltobits (alpha_maxval);
       if (alpha_maxval != pm_bitstomaxval (alpha_sbitval))
         alpha_sbitval = 0;
-    } else
-      alpha_sbitval = 0;
+    }
 
     if (alpha_maxval != maxval) {
       if (verbose)
@@ -516,11 +784,10 @@ FILE *tfp;
           for (x = 0 ; x < cols ; x++) {
             PNM_ASSIGN1 (xels[y][x], PNM_GET1 (xels[y][x])&0xf);
           }
-
-        if (transparent > 0) {
-          PNM_ASSIGN1 (transcolor, PNM_GET1 (transcolor)&0xf);
-        }
-
+        if (transparent > 0)
+          PNM_ASSIGN1 (transcolor, PNM_GET1 (transcolor) & 0xf);
+        if (background > 0)
+          PNM_ASSIGN1 (backcolor, PNM_GET1 (backcolor) & 0xf);
         maxval = 15;
         if (verbose)
           pm_message ("scaling to 4-bit (grayscale superfluous data)");
@@ -540,9 +807,10 @@ FILE *tfp;
           for (x = 0 ; x < cols ; x++) {
             PNM_ASSIGN1 (xels[y][x], PNM_GET1 (xels[y][x]) & 3);
           }
-        if (transparent > 0) {
+        if (transparent > 0)
           PNM_ASSIGN1 (transcolor, PNM_GET1 (transcolor) & 3);
-        }
+        if (background > 0)
+          PNM_ASSIGN1 (backcolor, PNM_GET1 (backcolor) & 3);
         maxval = 3;
         if (verbose)
           pm_message ("scaling to 2-bit (grayscale superfluous data)");
@@ -562,9 +830,10 @@ FILE *tfp;
           for (x = 0 ; x < cols ; x++) {
             PNM_ASSIGN1 (xels[y][x], PNM_GET1 (xels[y][x])&1);
           }
-        if (transparent > 0) {
+        if (transparent > 0)
           PNM_ASSIGN1 (transcolor, PNM_GET1 (transcolor) & 1);
-        }
+        if (background > 0)
+          PNM_ASSIGN1 (backcolor, PNM_GET1 (backcolor) & 1);
         maxval = 1;
         if (verbose)
           pm_message ("scaling to 1-bit (grayscale superfluous data)");
@@ -579,7 +848,7 @@ FILE *tfp;
        - for ppm files if we have <= 256 colors
        - for alpha if we have <= 256 color/transparency pairs
        - for pgm files (with or without alpha) if the number of bits needed for
-         the gray-transparency pairs is smaller then the number of bits needed
+         the gray-transparency pairs is smaller than the number of bits needed
          for maxval
      When maxval > 255, we never write a paletted image.
   */
@@ -602,27 +871,37 @@ FILE *tfp;
     if (verbose) {
       pm_message ("%d colors found", colors);
     }
-    if ((chv == (colorhist_vector) NULL) ||    /* GRR:    v--- was `=' here */
-        (pnm_type == PGM_TYPE && pm_maxvaltobits(colors) > 
+    /* GRR:  note that if colors == 16, maxval == 15 (i.e., range == 0-15) */
+    if ((chv == (colorhist_vector) NULL) ||    /* GRR:     v-- was `>=' here */
+        (pnm_type == PGM_TYPE && pm_maxvaltobits(colors-1) > 
                                 (pm_maxvaltobits(maxval) / 2)) ||
         (pnm_type == PPM_TYPE && maxval > 255)) {
-      chv = NULL;
+      if (chv) {
+        ppm_freecolorhist (chv);
+        chv = NULL;
+      }
       if (verbose) {
         pm_message ("too many colors for writing a colormapped image");
       }      
     }
 
-    if (chv != (colorhist_vector) NULL) {
+    if (chv != (colorhist_vector) NULL) {  /* palette image not yet ruled out */
 
       if (alpha) {
         /* now check if there are different alpha values for the same color
            and if all pairs still fit into 256 (MAXCOLORS) entries; malloc
            one extra for possible background color */
+        /* GRR:  BUG? this doesn't check whether cht is NULL before using it: */
         cht = ppm_colorhisttocolorhash (chv, colors);
         for (i = 0 ; i < colors + 1 ; i++) {
+          grr_overflow2 (MAXCOLORS, (int)sizeof(int));
           if ((alphas_of_color[i] = (gray *)malloc (MAXCOLORS * sizeof (int)))
               == NULL)
+          {
+            png_destroy_write_struct (&png_ptr, &info_ptr);
+            pm_closer (ifp);
             pm_error ("out of memory allocating alpha/palette entries");
+          }
           alphas_of_color_cnt[i] = 0;
         }
         num_alphas_of_color = colors + 1;
@@ -639,6 +918,8 @@ FILE *tfp;
             }
           }
         }
+        ppm_freecolorhash (cht);
+        cht = NULL;
         alphas_first_index[0] = 0;
         for (i = 0 ; i < colors ; i++)
           alphas_first_index[i+1] = alphas_first_index[i] +
@@ -648,7 +929,7 @@ FILE *tfp;
             alphas_first_index[colors]);
         if (alphas_first_index[colors] > MAXCOLORS) {
           ppm_freecolorhist (chv);
-          chv = NULL;
+          chv = NULL;   /* NOT a palette image */
           if (verbose)
             pm_message (
               "too many color/transparency pairs, writing a non-mapped file");
@@ -656,6 +937,7 @@ FILE *tfp;
       } /* if alpha */
 
       /* add possible background color to palette */
+      /* GRR:  BUG: this doesn't check whether chv is NULL (previous block): */
       if (background > -1) {
         cht = ppm_colorhisttocolorhash (chv, colors);
         background = ppm_lookupcolor (cht, &backcolor);
@@ -675,16 +957,18 @@ FILE *tfp;
               pm_message ("added background color to palette");
           } else {
             background = closestcolor (backcolor, chv, colors, maxval);
+            errorlevel = PNMTOPNG_WARNING_LEVEL;
             if (verbose)
               pm_message ("no room in palette for background color; using closest match instead");
           }
         }
         ppm_freecolorhash (cht);   /* built again about 110 lines below */
+        cht = NULL;
       }
 
     }
   } else {
-    chv = NULL;
+    chv = NULL;   /* NOT a palette image */
   }
 
   if (chv) {
@@ -693,7 +977,6 @@ FILE *tfp;
     else
       palette_size = colors;
 
-#ifdef GRR_GRAY_PALETTE_FIX
     if (maxval < 255) {
       if (verbose)
         pm_message ("rescaling palette values to 8-bit");
@@ -709,7 +992,6 @@ FILE *tfp;
         }
       maxval = 255;  /* necessary for transparent case, at least */
     }
-#endif
 
     if (palette_size <= 2)
       depth = 1;
@@ -733,8 +1015,11 @@ FILE *tfp;
       depth = 2;
     else if (maxval == 1)
       depth = 1;
-    else
+    else {
+      png_destroy_write_struct (&png_ptr, &info_ptr);
+      pm_closer (ifp);
       pm_error (" (can't happen) undefined maxval");
+    }
 
     if (alpha) {
       if (pnm_type == PPM_TYPE)
@@ -758,24 +1043,14 @@ FILE *tfp;
 
   /* now write the file */
 
-#if defined(MIKTEX)
-  if (setjmp (png_ptr->longjmp_buffer)) {
-#else
-  if (setjmp (png_ptr->jmpbuf)) {
-#endif
-#if ! defined(MIKTEX)
-    png_write_destroy (png_ptr);
-#endif
-    free (png_ptr);
-    free (info_ptr);
-    pm_error ("setjmp returns error condition");
+  if (setjmp (pnmtopng_jmpbuf_struct.jmpbuf)) {
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    pm_closer (ifp);
+    pm_error ("setjmp returns error condition (2)");
   }
 
-#ifdef OLDPNG
-  png_write_init (png_ptr);
-  png_info_init (info_ptr);
-#endif
-  png_init_io (png_ptr, stdout);
+  /* GRR:  all of this needs to be rewritten to avoid direct struct access */
+  png_init_io (png_ptr, ofp);
   info_ptr->width = cols;
   info_ptr->height = rows;
   info_ptr->bit_depth = depth;
@@ -820,31 +1095,39 @@ FILE *tfp;
   }
 
   /* PLTE chunk */
-  if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) {
+  if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) { /* i.e., chv != NULL) */
     cht = ppm_colorhisttocolorhash (chv, colors);
     /* before creating palette figure out the transparent color */
     if (transparent > 0) {
       transparent = ppm_lookupcolor (cht, &transcolor);
       if (transparent == -1) {
+        if (verbose)
+          pm_message ("specified transparent color not present in palette; ignoring -transparent");
+        errorlevel = PNMTOPNG_WARNING_LEVEL;
+        /* BUG:  don't pick an approximate color unless requested to do so
+                 (allow with -force option?  -approx option?)
+                 [reported by Steven Grady, grady|xcf.berkeley.edu, 20000507]
         transparent = closestcolor (transcolor, chv, colors, maxval);
         transcolor = chv[transparent].color;
+         */
+      } else {
+        /* now put transparent color in entry 0 by swapping */
+        chv[transparent].color = chv[0].color;
+        chv[0].color = transcolor;
+        /* check if background color was (by bad luck) part of swap */
+        if (background == transparent)
+          background = 0;
+        else if (background == 0)
+          background = transparent;
+        /* rebuild hashtable */
+        ppm_freecolorhash (cht);
+        cht = ppm_colorhisttocolorhash (chv, colors);
+        transparent = 0;
+        trans[0] = 0; /* fully transparent */
+        info_ptr->valid |= PNG_INFO_tRNS;
+        info_ptr->trans = trans;
+        info_ptr->num_trans = 1;
       }
-      /* now put transparent color in entry 0 by swapping */
-      chv[transparent].color = chv[0].color;
-      chv[0].color = transcolor;
-      /* check if background color was by bad luck part of swap */
-      if (background == transparent)
-        background = 0;
-      else if (background == 0)
-        background = transparent;
-      /* rebuild hashtable */
-      ppm_freecolorhash (cht);
-      cht = ppm_colorhisttocolorhash (chv, colors);
-      transparent = 0;
-      trans[0] = 0; /* fully transparent */
-      info_ptr->valid |= PNG_INFO_tRNS;
-      info_ptr->trans = trans;
-      info_ptr->num_trans = 1;
     }
 
     /* creating PNG palette (tRNS *not* yet valid) */
@@ -852,7 +1135,25 @@ FILE *tfp;
       int bot_idx = 0;
       int top_idx = alphas_first_index[colors] - 1;
 
-      /* remap palette indices so opaque entries are last (omittable) */
+      /*
+       * same color     same color (c2),
+       * (c0), four     five different  +-- single color/alpha entry
+       * alpha vals.    alpha values    |   (c3, alphas_of_color[3][0])
+       * ===========    ==============  |
+       *  0  1  2  3  4  5  6  7  8  9 10 ...
+       * c0 c0 c0 c0 c1 c2 c2 c2 c2 c2 c3 ...
+       *  |           |  |              |
+       *  |           |  |              +-- alphas_first_index[3] = 10
+       *  |           |  +----------------- alphas_first_index[2] =  5
+       *  |           +-------------------- alphas_first_index[1] =  4
+       *  +-------------------------------- alphas_first_index[0] =  0
+       *
+       * remap palette indices so opaque entries are last (omittable):  for
+       * each color (i), loop over all the alpha values for that color (j) and
+       * check for opaque ones, moving them to the end (counting down from
+       * above since we don't yet know the relative numbers of opaque and
+       * partially transparent entries).  mapping[old_index] = new_index.
+       */
       for (i = 0;  i < colors;  ++i) {
         for (j = alphas_first_index[i];  j < alphas_first_index[i+1];  ++j) {
           if (alphas_of_color[i][j-alphas_first_index[i]] == 255)
@@ -862,9 +1163,12 @@ FILE *tfp;
         }
       }
       /* indices should have just crossed paths */
-      if (bot_idx != top_idx + 1)
+      if (bot_idx != top_idx + 1) {
+        png_destroy_write_struct (&png_ptr, &info_ptr);
+        pm_closer (ifp);
         pm_error ("internal inconsistency: remapped bot_idx = %d, top_idx = %d",
           bot_idx, top_idx);
+      }
       for (i = 0 ; i < colors ; i++) {
         for (j = alphas_first_index[i] ; j < alphas_first_index[i+1] ; j++) {
           palette[mapping[j]].red   = PPM_GETR (chv[i].color);
@@ -877,6 +1181,44 @@ FILE *tfp;
       info_ptr->trans = trans;
       info_ptr->num_trans = bot_idx;   /* omit opaque values */
       pm_message ("writing %d non-opaque transparency values", bot_idx);
+
+    } else if (have_ordered_palette) {
+      /* GRR BUG:  this is explicitly NOT compatible with RGBA palettes */
+      if (colors != ordered_palette_size) {
+        png_destroy_write_struct (&png_ptr, &info_ptr);
+        pm_closer (ifp);
+        pm_error (
+          "sizes of ordered palette (%d) and existing palette (%d) differ",
+          ordered_palette_size, colors);
+      }
+      for (i = 0 ; i < colors ; i++) {
+        int red   = PPM_GETR (chv[i].color);
+        int green = PPM_GETG (chv[i].color);
+        int blue  = PPM_GETB (chv[i].color);
+
+        mapping[i] = -1;
+        for (j = 0 ; j < ordered_palette_size ; j++) {
+          if (ordered_palette[j].red   == red   &&
+              ordered_palette[j].green == green &&
+              ordered_palette[j].blue  == blue)
+          {
+            /* mapping[old_index] = new_index */
+            mapping[i] = j;
+            break;
+          }
+        }
+        if (mapping[i] == -1) {
+          png_destroy_write_struct (&png_ptr, &info_ptr);
+          pm_closer (ifp);
+          pm_error ("failed to find ordered-palette match for existing color "
+            "(%d,%d,%d)", red, green, blue);
+        }
+        palette[mapping[i]].red   = red;
+        palette[mapping[i]].green = green;
+        palette[mapping[i]].blue  = blue;
+      }
+      palette_size = ordered_palette_size;
+
     } else {
       for (i = 0 ; i < MAXCOLORS ; i++) {
         palette[i].red = PPM_GETR (chv[i].color);
@@ -899,7 +1241,7 @@ FILE *tfp;
     }
     ppm_freecolorhist (chv);
 
-  } else /* color_type != PNG_COLOR_TYPE_PALETTE */
+  } else /* color_type != PNG_COLOR_TYPE_PALETTE */ {
     if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY) {
       if (transparent > 0) {
         info_ptr->valid |= PNG_INFO_tRNS;
@@ -914,9 +1256,13 @@ FILE *tfp;
         info_ptr->trans_values.blue = PPM_GETB (transcolor);
       }
     } else {
-      if (transparent > 0)
+      if (transparent > 0) {
+        png_destroy_write_struct (&png_ptr, &info_ptr);
+        pm_closer (ifp);
         pm_error (" (can't happen) transparency AND alpha");
+      }
     }
+  }
 
   /* bKGD chunk */
   if (background > -1) {
@@ -924,23 +1270,24 @@ FILE *tfp;
     if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) {
       if (alpha)
         info_ptr->background.index = mapping[alphas_first_index[background]];
+      else if (have_ordered_palette)
+        info_ptr->background.index = mapping[background];
       else
         info_ptr->background.index = background;
-    } else
-    if (info_ptr->color_type == PNG_COLOR_TYPE_RGB ||
-        info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
+    } else if (info_ptr->color_type == PNG_COLOR_TYPE_RGB ||
+               info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+    {
       info_ptr->background.red = PPM_GETR (backcolor);
       info_ptr->background.green = PPM_GETG (backcolor);
       info_ptr->background.blue = PPM_GETB (backcolor);
-    } else
-    if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY ||
-        info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+    } else if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY ||
+               info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
       info_ptr->background.gray = PNM_GET1 (backcolor);
     }
   }
 
   /* sBIT chunk */
-  if ((sbitval != 0) || (alpha && (alpha_sbitval != 0))) {
+  if ((sbitval != 0) || (alpha && (alpha_sbitval != 0)) || sbit_n > 0) {
     info_ptr->valid |= PNG_INFO_sBIT;
 
     if (sbitval == 0)
@@ -949,15 +1296,17 @@ FILE *tfp;
       alpha_sbitval = pm_maxvaltobits (maxval);
 
     if (info_ptr->color_type & PNG_COLOR_MASK_COLOR) {
-      info_ptr->sig_bit.red   = sbitval;
-      info_ptr->sig_bit.green = sbitval;
-      info_ptr->sig_bit.blue  = sbitval;
-    } else {
-      info_ptr->sig_bit.gray = sbitval;
-    }
-
-    if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA) {
-      info_ptr->sig_bit.alpha = alpha_sbitval;
+      info_ptr->sig_bit.red   = (sbit_n > 0)? sbit[0] : sbitval;
+      info_ptr->sig_bit.green = (sbit_n > 1)? sbit[1] : sbitval;
+      info_ptr->sig_bit.blue  = (sbit_n > 2)? sbit[2] : sbitval;
+      if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA) {
+        info_ptr->sig_bit.alpha = (sbit_n > 3)? sbit[3] : alpha_sbitval;
+      }
+    } else /* grayscale */ {
+      info_ptr->sig_bit.gray = (sbit_n > 0)? sbit[0] : sbitval;
+      if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA) {
+        info_ptr->sig_bit.alpha = (sbit_n > 1)? sbit[1] : alpha_sbitval;
+      }
     }
   }
 
@@ -974,23 +1323,29 @@ FILE *tfp;
                                      &time_struct.tm_mday);
     if (time_struct.tm_year > 1900)
       time_struct.tm_year -= 1900;
-    time_struct.tm_mon--; /* tm has monthes 0..11 */
+    time_struct.tm_mon--; /* tm has months 0..11 */
     sscanf (time_string, "%d:%d:%d", &time_struct.tm_hour,
                                      &time_struct.tm_min,
                                      &time_struct.tm_sec);
     png_convert_from_struct_tm (&info_ptr->mod_time, &time_struct);
   }
 
-  /* explicit filter-type (or none) required */
+  /* explicit filter-type (or none) */
   if ((filter >= 0) && (filter <= 4))
   {
     png_set_filter (png_ptr, 0, filter);
   }
 
-  /* zlib compression-level (or none) required */
+  /* zlib compression-level (or none) */
   if ((compression >= 0) && (compression <= 9))
   {
     png_set_compression_level (png_ptr, compression);
+  }
+
+  /* zlib compression-strategy (or none) */
+  if ((strategy >= 0) && (strategy <= 3))
+  {
+    png_set_compression_strategy(png_ptr, strategy);
   }
 
   /* write the png-info struct */
@@ -1007,8 +1362,14 @@ FILE *tfp;
   /* let libpng take care of, e.g., bit-depth conversions */
   png_set_packing (png_ptr);
 
-  /* GRR:  need to check for malloc failure here */
-  line = malloc (cols*8); /* max: 3 color channels, one alpha channel, 16-bit */
+  /* max: 3 color channels, one alpha channel, 16-bit */
+  grr_overflow2 (cols, 8);
+  if ((line = (png_byte *) malloc (cols*8)) == NULL)
+  {
+    png_destroy_write_struct (&png_ptr, &info_ptr);
+    pm_closer (ifp);
+    pm_error ("out of memory allocating PNG row buffer");
+  }
 
   for (pass = 0 ; pass < png_set_interlace_handling (png_ptr) ; pass++) {
     for (y = 0 ; y < rows ; y++) {
@@ -1023,12 +1384,16 @@ FILE *tfp;
         } else if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) {
           color = ppm_lookupcolor (cht, &p);
           if (alpha) {
-            for (i = alphas_first_index[color] ; i < alphas_first_index[color+1] ; i++)
-              if (alpha_mask[y][x] == alphas_of_color[color][i - alphas_first_index[color]]) {
+            for (i = alphas_first_index[color] ;
+                 i < alphas_first_index[color+1] ; i++)
+              if (alpha_mask[y][x] ==
+                  alphas_of_color[color][i - alphas_first_index[color]])
+              {
                 color = mapping[i];
                 break;
               }
-          }
+          } else if (have_ordered_palette)
+            color = mapping[color];
           *pp++ = color;
         } else if (info_ptr->color_type == PNG_COLOR_TYPE_RGB ||
                    info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
@@ -1042,6 +1407,8 @@ FILE *tfp;
             *pp++ = PPM_GETB (p) >> 8;
           *pp++ = PPM_GETB (p)&0xff;
         } else {
+          png_destroy_write_struct (&png_ptr, &info_ptr);
+          pm_closer (ifp);
           pm_error (" (can't happen) undefined color_type");
         }
         if (info_ptr->color_type & PNG_COLOR_MASK_ALPHA) {
@@ -1054,34 +1421,57 @@ FILE *tfp;
     }
   }
   png_write_end (png_ptr, info_ptr);
-#if ! defined(MIKTEX)
-  png_write_destroy (png_ptr);
-#endif
-  /* flush first because free(png_ptr) can segfault due to jmpbuf problems
-     in png_write_destroy */
-  fflush (stdout);
-  free (png_ptr);
-  free (info_ptr);
-  for (i = 0 ; i < num_alphas_of_color ; i++)
+  /* flush first in case freeing png_ptr segfaults due to jmpbuf problems */
+  fflush (ofp);
+  png_destroy_write_struct(&png_ptr, &info_ptr);
+
+  /* num_alphas_of_color is non-zero iff alphas_of_color[] were successfully
+   * allocated, so no need to test for NULL */
+  for (i = 0 ; i < num_alphas_of_color ; i++) {
     free(alphas_of_color[i]);
+    alphas_of_color[i] = NULL;
+  }
+  /* note that chv was already freed at end of PNG_COLOR_TYPE_PALETTE block */
+  if (cht) {
+    ppm_freecolorhash (cht);
+    cht = NULL;
+  }
+  if (alpha_mask) {
+    pgm_freearray (alpha_mask, alpha_rows);
+    alpha_mask = NULL;
+  }
+  if (xels) {
+    pnm_freearray (xels, rows);
+    xels = NULL;
+  }
+
+  return errorlevel;
 }
 
+
+
+
+/**********/
+/*  MAIN  */
+/**********/
+
 #ifdef __STDC__
-int main (int argc, char *argv[])
+  int main (int argc, char *argv[])
 #else
-int main (argc, argv)
-int argc;
-char *argv[];
+  int main (argc, argv)
+    int argc;
+    char *argv[];
 #endif
 {
-  FILE *ifp, *tfp, *afp;
-  int argn;
+  FILE *ifp, *afp, *pfp, *tfp, *ofp;
+  int argn, errorlevel;
 
-  char *usage = "[-verbose] [-downscale] [-interlace] [-alpha file] ...\n\
-             ... [-transparent color] [-background color] [-gamma value] ...\n\
-             ... [-hist] [-chroma wx wy rx ry gx gy bx by] [-phys x y unit] ...\n\
-             ... [-text file] [-ztxt file] [-time [yy]yy-mm-dd hh:mm:ss] ...\n\
-             ... [-filter 0..4] [-compression 0..9] [-force] [pnmfile]";
+  char *usage = "[-verbose] [-downscale] [-interlace] [-force] [-alpha file] ...\n"
+"             ... [-transparent color] [-background color] [-gamma value] ...\n"
+"             ... [-hist] [-chroma wx wy rx ry gx gy bx by] [-phys x y unit] ...\n"
+"             ... [-text file] [-ztxt file] [-time [yy]yy-mm-dd hh:mm:ss] ...\n"
+"             ... [-filter 0..4] [-compression 0..9] [-strategy 0..3] ...\n"
+"             ... [-palette file] [-sbit s1[,s2[,s3[,s4]]]] [pnmfile]";
 
   pnm_init (&argc, argv);
   argn = 1;
@@ -1099,6 +1489,8 @@ char *argv[];
     if (pm_keymatch (argv[argn], "-alpha", 2)) {
       if (transparent > 0)
         pm_error ("-alpha and -transparent are mutually exclusive");
+      if (have_ordered_palette)
+        pm_error ("-alpha and -palette are mutually exclusive");
       alpha = TRUE;
       if (++argn < argc)
         alpha_file = argv[argn];
@@ -1108,6 +1500,8 @@ char *argv[];
     if (pm_keymatch (argv[argn], "-transparent", 3)) {
       if (alpha)
         pm_error ("-alpha and -transparent are mutually exclusive");
+      if (have_ordered_palette)
+        pm_error ("-transparent and -palette are (currently) mutually exclusive");
       transparent = 1;
       if (++argn < argc)
         transstring = argv[argn];
@@ -1204,13 +1598,23 @@ char *argv[];
         pm_usage (usage);
       }
     } else 
-    if (pm_keymatch (argv[argn], "-filter", 3)) {
+    if (pm_keymatch (argv[argn], "-palette", 3)) {
+      if (alpha)
+        pm_error ("-alpha and -palette are mutually exclusive");
+      if (transparent > 0)
+        pm_error ("-transparent and -palette are (currently) mutually exclusive");
+      have_ordered_palette = TRUE;
       if (++argn < argc)
-      {
+        palette_file = argv[argn];
+      else
+        pm_usage (usage);
+    } else
+    if (pm_keymatch (argv[argn], "-filter", 3)) {
+      if (++argn < argc) {
         sscanf (argv[argn], "%d", &filter);
-        if ((filter < 0) || (filter > 4))
-        {
-          pm_message ("filter must be 0 (none), 1 (sub), 2 (up), 3 (avg) or 4 (paeth)");
+        if ((filter < 0) || (filter > 4)) {
+          pm_message
+            ("filter must be 0 (none), 1 (sub), 2 (up), 3 (avg), or 4 (paeth)");
           pm_usage (usage);
         }
       }
@@ -1218,13 +1622,45 @@ char *argv[];
         pm_usage (usage);
     } else
     if (pm_keymatch (argv[argn], "-compression", 3)) {
-      if (++argn < argc)
-      {
+      if (++argn < argc) {
         sscanf (argv[argn], "%d", &compression);
-        if ((compression < 0) || (compression > 9))
-        {
+        if ((compression < 0) || (compression > 9)) {
           pm_message ("zlib compression must be between 0 (none) and 9 (max)");
           pm_usage (usage);
+        }
+      }
+      else
+        pm_usage (usage);
+    } else
+    if (pm_keymatch (argv[argn], "-strategy", 3)) {
+      if (++argn < argc) {
+        sscanf (argv[argn], "%d", &strategy);
+        if ((strategy < 0) || (strategy > 3)) {
+          pm_message ("zlib strategy must be 0 (default), 1 (filtered), "
+            "2 (Huffman), or 3 (RLE)");
+          pm_usage (usage);
+        }
+      }
+      else
+        pm_usage (usage);
+    } else
+    if (pm_keymatch (argv[argn], "-sbit", 2)) {
+      if (++argn < argc)
+      {
+        sbit_n = sscanf (argv[argn], "%i,%i,%i,%i", &sbit[0], &sbit[1],
+          &sbit[2], &sbit[3]);
+        if (sbit_n == 0 || sbit_n == EOF)
+          pm_usage (usage);
+        else {
+          int j; 
+          for (j = 0; j < sbit_n; ++j) {
+            if (sbit[j] < 1 || sbit[j] > 16) {
+              pm_message
+                ("number of significant bits must be between 1 and 16");
+              pm_usage (usage);
+              break;
+            }
+          }
         }
       }
       else
@@ -1234,13 +1670,8 @@ char *argv[];
       force = TRUE;
     } else {
       fprintf(stderr,"pnmtopng version %s.\n", VERSION);
-#if defined(MIKTEX)
-      fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n",
-        PNG_LIBPNG_VER_STRING, "(?)");
-#else
       fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n",
         PNG_LIBPNG_VER_STRING, png_libpng_ver);
-#endif
       fprintf(stderr, "   Compiled with zlib %s; using zlib %s.\n",
         ZLIB_VERSION, zlib_version);
 #ifdef PGM_BIGGRAYS
@@ -1261,8 +1692,27 @@ char *argv[];
     ifp = pm_openr (argv[argn]);
     ++argn;
   } else {
+
+    /* setmode/fdopen code borrowed from Info-ZIP's funzip.c (Mark Adler) */
+    /* [HAVE_SETMODE is same macro used by NetPBM 9.x for Cygwin, etc.] */
+
+#ifdef HAVE_SETMODE   /* DOS, FLEXOS, Human68k, NetWare, OS/2, Win32 */
+# if (defined(__HIGHC__) && !defined(FLEXOS))
+    setmode(stdin, _BINARY);
+# else
+    setmode(0, O_BINARY);   /* some buggy C libraries require BOTH setmode() */
+# endif                     /*  call AND the fdopen() in binary mode :-( */
+#endif
+
+#ifdef RISCOS
     ifp = stdin;
+#else
+    if ((ifp = fdopen(0, "rb")) == (FILE *)NULL)
+      pm_error ("cannot find stdin");
+#endif
+
   }
+
   if (argn != argc)
     pm_usage (usage);
 
@@ -1271,20 +1721,44 @@ char *argv[];
   else
     afp = NULL;
 
+  if (have_ordered_palette)
+    pfp = pm_openr (palette_file);
+  else
+    pfp = NULL;
+
   if ((text) || (ztxt))
     tfp = pm_openr (text_file);
   else
     tfp = NULL;
 
-  convertpnm (ifp, afp, tfp);
+  /* output always goes to stdout */
+
+#ifdef HAVE_SETMODE   /* DOS, FLEXOS, Human68k, NetWare, OS/2, Win32 */
+# if (defined(__HIGHC__) && !defined(FLEXOS))
+  setmode(stdout, _BINARY);
+# else
+  setmode(1, O_BINARY);
+# endif
+#endif
+
+#ifdef RISCOS
+  ofp = stdout;
+#else
+  if ((ofp = fdopen(1, "wb")) == (FILE *)NULL)
+    pm_error ("cannot write to stdout");
+#endif
+
+  errorlevel = convertpnm (ifp, afp, pfp, tfp, ofp);
 
   if (alpha)
-    pm_close (afp);
+    pm_closer (afp);
+  if (have_ordered_palette)
+    pm_closer (pfp);
   if ((text) || (ztxt))
-    pm_close (tfp);
+    pm_closer (tfp);
 
-  pm_close (ifp);
-  pm_close (stdout);
+  pm_closer (ifp);
+  pm_closew (ofp);
 
-  exit (0);
+  return errorlevel;
 }

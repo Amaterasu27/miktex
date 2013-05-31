@@ -2,8 +2,9 @@
 ** pngtopnm.c -
 ** read a Portable Network Graphics file and produce a portable anymap
 **
-** Copyright (C) 1995,1998 by Alexander Lehmann <alex@hal.rhein-main.de>
-**                        and Willem van Schaik <willem@schaik.com>
+** Copyright (C) 1995,1998 by Alexander Lehmann <alex|hal.rhein-main.de>
+**                        and Willem van Schaik <willem|schaik.com>
+** Copyright (C) 1999-2005 by Greg Roelofs <newt|pobox.com>
 **
 ** Permission to use, copy, modify, and distribute this software and its
 ** documentation for any purpose and without fee is hereby granted, provided
@@ -16,16 +17,54 @@
 ** with lots of bits pasted from libpng.txt by Guy Eric Schalnat
 */
 
-#define VERSION "2.37.1 (3 July 1998)"
+/* GRR 20051112:  adapted 2002 Debian/Alan Cox patch to fix several potential
+ *  allocation-overflow bugs (added new grr_overflow2() function as aid). */
+
+/* GRR 20051102:  ifdef'd out some impossible code (maxval = unsigned short
+ *  at most, so testing for > P?M_MAXVAL is pointless). */
+
+/* GRR 20010816:  fixed bug reported by Eric Fu <ericfu|etrieve.com>:
+ *  stdin/stdout must be set to binary mode for DOS-like environments.  (Bug
+ *  report was specifically about NetPBM 9.x version, not this code, but same
+ *  issue applies here.)  Borrowed tried-and-true funzip.c code for maximal
+ *  portability, but note dependency on macros that may need to be defined
+ *  explicitly in makefiles (e.g., HAVE_SETMODE, FLEXOS and RISCOS).  Also
+ *  added optional errorlevel/return-code 2 (see PNMTOPNG_WARNING_LEVEL below)
+ *  for warnings.  (1 already used by pm_error().) */
+
+/* GRR 20010721:  renamed version.h to less generic pnmtopng_version.h */
+
+/* GRR 19991203:  moved VERSION to new version.h header file */
+
+/* GRR 19990713:  fixed redundant freeing of png_ptr and info_ptr in setjmp()
+ *  blocks and added "pm_close(ifp)" in each.  */
+
+/* GRR 19990317:  declared "clobberable" automatic variables in convertpng()
+ *  static to fix Solaris/gcc stack-corruption bug.  Also installed custom
+ *  error-handler to avoid jmp_buf size-related problems (i.e., jmp_buf
+ *  compiled with one size in libpng and another size here).  */
+
+#ifndef PNMTOPNG_WARNING_LEVEL
+#  define PNMTOPNG_WARNING_LEVEL 0   /* use 0 for backward compatibility, */
+#endif                               /*  2 for warnings (1 == error) */
 
 #include <math.h>
-#include "pnm.h"
-#include "png.h"
-#if defined(MIKTEX)
-#  include <pnginfo.h>
-#  include <pngstruct.h>
-#  define trans trans_alpha
-#  define trans_values trans_color
+#include "png.h"		/* includes zlib.h and setjmp.h */
+#include "pnmtopng_version.h"	/* VERSION macro */
+#include <pnm.h>
+
+#include "pnmtopng_overflow.h"  /* grr_overflow2() function (clone) */
+
+typedef struct _jmpbuf_wrapper {
+  jmp_buf jmpbuf;
+} jmpbuf_wrapper;
+
+/* GRR 19991205:  this is used as a test for pre-1999 versions of netpbm and
+ *   pbmplus vs. 1999 or later (in which pm_close was split into two)
+ */
+#ifdef PBMPLUS_RAWBITS
+#  define pm_closer pm_close
+#  define pm_closew pm_close
 #endif
 
 #ifndef TRUE
@@ -41,11 +80,13 @@
 /* function prototypes */
 #ifdef __STDC__
 static png_uint_16 _get_png_val (png_byte **pp, int bit_depth);
-static void store_pixel (xel *pix, png_uint_16 r, png_uint_16 g, png_uint_16 b, png_uint_16 a);
+static void store_pixel (xel *pix, png_uint_16 r, png_uint_16 g, png_uint_16 b,
+                         png_uint_16 a);
 static int iscolor (png_color c);
 static void save_text (png_info *info_ptr, FILE *tfp);
 static void show_time (png_info *info_ptr);
-static void convertpng (FILE *ifp, FILE *tfp);
+static void pngtopnm_error_handler (png_structp png_ptr, png_const_charp msg);
+static int convertpng (FILE *ifp, FILE *tfp, FILE *ofp);
 int main (int argc, char *argv[]);
 #endif
 
@@ -63,15 +104,22 @@ static float totalgamma = -1.0;
 static int text = FALSE;
 static char *text_file;
 static int mtime = FALSE;
+static jmpbuf_wrapper pngtopnm_jmpbuf_struct;
+
+
 
 #define get_png_val(p) _get_png_val (&(p), info_ptr->bit_depth)
+
+/******************/
+/*  _GET_PNG_VAL  */
+/******************/
 
 #ifdef __STDC__
 static png_uint_16 _get_png_val (png_byte **pp, int bit_depth)
 #else
 static png_uint_16 _get_png_val (pp, bit_depth)
-png_byte **pp;
-int bit_depth;
+  png_byte **pp;
+  int bit_depth;
 #endif
 {
   png_uint_16 c = 0;
@@ -87,12 +135,20 @@ int bit_depth;
   return c;
 }
 
+
+
+
+/*****************/
+/*  STORE_PIXEL  */
+/*****************/
+
 #ifdef __STDC__
-static void store_pixel (xel *pix, png_uint_16 r, png_uint_16 g, png_uint_16 b, png_uint_16 a)
+static void store_pixel (xel *pix, png_uint_16 r, png_uint_16 g, png_uint_16 b,
+                         png_uint_16 a)
 #else
 static void store_pixel (pix, r, g, b, a)
-xel *pix;
-png_uint_16 r, g, b, a;
+  xel *pix;
+  png_uint_16 r, g, b, a;
 #endif
 {
   if (alpha == alpha_only) {
@@ -107,12 +163,19 @@ png_uint_16 r, g, b, a;
   }
 }
 
+
+
+
+/*******************/
+/*  GAMMA_CORRECT  */
+/*******************/
+
 #ifdef __STDC__
 static png_uint_16 gamma_correct (png_uint_16 v, float g)
 #else
 static png_uint_16 gamma_correct (v, g)
-png_uint_16 v;
-float g;
+  png_uint_16 v;
+  float g;
 #endif
 {
   if (g != -1.0)
@@ -122,22 +185,36 @@ float g;
     return v;
 }
 
+
+
+
+/*************/
+/*  ISCOLOR  */
+/*************/
+
 #ifdef __STDC__
 static int iscolor (png_color c)
 #else
 static int iscolor (c)
-png_color c;
+  png_color c;
 #endif
 {
   return c.red != c.green || c.green != c.blue;
 }
 
+
+
+
+/***************/
+/*  SAVE_TEXT  */
+/***************/
+
 #ifdef __STDC__
 static void save_text (png_info *info_ptr, FILE *tfp)
 #else
 static void save_text (info_ptr, tfp)
-png_info *info_ptr;
-FILE *tfp;
+  png_info *info_ptr;
+  FILE *tfp;
 #endif
 {
   int i, j, k;
@@ -167,11 +244,18 @@ FILE *tfp;
   }
 }
 
+
+
+
+/***************/
+/*  SHOW_TIME  */
+/***************/
+
 #ifdef __STDC__
 static void show_time (png_info *info_ptr)
 #else
 static void show_time (info_ptr)
-png_info *info_ptr;
+  png_info *info_ptr;
 #endif
 {
   static char *month[] =
@@ -186,17 +270,63 @@ png_info *info_ptr;
   }
 }
 
-#define SIG_CHECK_SIZE 4
+
+
+
+/****************************/
+/*  PNGTOPNM_ERROR_HANDLER  */
+/****************************/
 
 #ifdef __STDC__
-static void convertpng (FILE *ifp, FILE *tfp)
+static void pngtopnm_error_handler (png_structp png_ptr, png_const_charp msg)
 #else
-static void convertpng (ifp, tfp)
-FILE *ifp;
-FILE *tfp;
+static void pngtopnm_error_handler (png_ptr, msg)
+  png_structp png_ptr;
+  png_const_charp msg;
 #endif
 {
-  char sig_buf [SIG_CHECK_SIZE];
+  jmpbuf_wrapper  *jmpbuf_ptr;
+
+  /* this function, aside from the extra step of retrieving the "error
+   * pointer" (below) and the fact that it exists within the application
+   * rather than within libpng, is essentially identical to libpng's
+   * default error handler.  The second point is critical:  since both
+   * setjmp() and longjmp() are called from the same code, they are
+   * guaranteed to have compatible notions of how big a jmp_buf is,
+   * regardless of whether _BSD_SOURCE or anything else has (or has not)
+   * been defined. */
+
+  fprintf(stderr, "pnmtopng:  fatal libpng error: %s\n", msg);
+  fflush(stderr);
+
+  jmpbuf_ptr = png_get_error_ptr(png_ptr);
+  if (jmpbuf_ptr == NULL) {         /* we are completely hosed now */
+    fprintf(stderr,
+      "pnmtopng:  EXTREMELY fatal error: jmpbuf unrecoverable; terminating.\n");
+    fflush(stderr);
+    exit(99);
+  }
+
+  longjmp(jmpbuf_ptr->jmpbuf, 1);
+}
+
+
+
+
+#define SIG_CHECK_SIZE 4
+
+/****************/
+/*  CONVERTPNG  */
+/****************/
+
+#ifdef __STDC__
+static int convertpng (FILE *ifp, FILE *tfp, FILE *ofp)
+#else
+static int convertpng (ifp, tfp, ofp)
+  FILE *ifp, *tfp, *ofp;
+#endif
+{
+  png_byte sig_buf[SIG_CHECK_SIZE];
   png_struct *png_ptr;
   png_info *info_ptr;
   pixel *row;
@@ -208,35 +338,47 @@ FILE *tfp;
   png_uint_16 c, c2, c3, a;
   int pnm_type;
   int i;
-  char *type_string = "";
-  char *alpha_string = "";
   int trans_mix;
   pixel backcolor;
   char gamma_string[80];
 
-  if (fread (sig_buf, 1, SIG_CHECK_SIZE, ifp) != SIG_CHECK_SIZE)
-    pm_error ("input file empty or too short");
-  if (png_sig_cmp (sig_buf, (png_size_t) 0, (png_size_t) SIG_CHECK_SIZE) != 0)
-    pm_error ("input file not a PNG file");
+  /* these variables are declared static because gcc wasn't kidding
+   * about "variable XXX might be clobbered by `longjmp' or `vfork'"
+   * (stack corruption observed on Solaris 2.6 with gcc 2.8.1, even
+   * in the absence of any other error condition) */
+  static char *type_string;
+  static char *alpha_string;
+  static int errorlevel;
 
-  png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (png_ptr == NULL) {
-    pm_error ("cannot allocate LIBPNG structure");
+  errorlevel = 0;
+  type_string = alpha_string = "";
+
+  if (fread (sig_buf, 1, SIG_CHECK_SIZE, ifp) != SIG_CHECK_SIZE) {
+    pm_closer (ifp);
+    pm_error ("input file is empty or truncated");
   }
+  if (png_sig_cmp (sig_buf, (png_size_t) 0, (png_size_t) SIG_CHECK_SIZE) != 0) {
+    pm_closer (ifp);
+    pm_error ("input file is not a PNG file");
+  }
+
+  png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING,
+    &pngtopnm_jmpbuf_struct, pngtopnm_error_handler, NULL);
+  if (png_ptr == NULL) {
+    pm_closer (ifp);
+    pm_error ("cannot allocate main libpng structure (png_ptr)");
+  }
+
   info_ptr = png_create_info_struct (png_ptr);
   if (info_ptr == NULL) {
     png_destroy_read_struct (&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    pm_error ("cannot allocate LIBPNG structures");
+    pm_closer (ifp);
+    pm_error ("cannot allocate libpng info structure (info_ptr)");
   }
 
-#if defined(MIKTEX)
-  if (setjmp (png_ptr->longjmp_buffer)) {
-#else
-  if (setjmp (png_ptr->jmpbuf)) {
-#endif
-    png_destroy_read_struct (&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-    free (png_ptr);
-    free (info_ptr);
+  if (setjmp (pngtopnm_jmpbuf_struct.jmpbuf)) {
+    png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
+    pm_closer (ifp);
     pm_error ("setjmp returns error condition");
   }
 
@@ -289,29 +431,33 @@ FILE *tfp;
 		  info_ptr->interlace_type ? ", Adam7 interlaced" : "");
   }
 
+  grr_overflow2 (info_ptr->height, (int)sizeof(png_byte*));
   png_image = (png_byte **)malloc (info_ptr->height * sizeof (png_byte*));
   if (png_image == NULL) {
-#if ! defined(MIKTEX)
-    png_read_destroy (png_ptr, info_ptr, (png_info *)0);
-#endif
-    free (png_ptr);
-    free (info_ptr);
-    pm_error ("couldn't alloc space for image");
+    png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
+    pm_closer (ifp);
+    pm_error ("couldn't allocate space for image");
   }
 
-  if (info_ptr->bit_depth == 16)
+  if (info_ptr->bit_depth == 16) {
+    grr_overflow2 (2, info_ptr->width);
     linesize = 2 * info_ptr->width;
-  else
+  } else {
     linesize = info_ptr->width;
+  }
 
-  if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  if (info_ptr->color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+    grr_overflow2 (2, linesize);
     linesize *= 2;
-  else
-  if (info_ptr->color_type == PNG_COLOR_TYPE_RGB)
+  } else
+  if (info_ptr->color_type == PNG_COLOR_TYPE_RGB) {
+    grr_overflow2 (3, linesize);
     linesize *= 3;
-  else
-  if (info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+  } else
+  if (info_ptr->color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
+    grr_overflow2 (4, linesize);
     linesize *= 4;
+  }
 
   for (y = 0 ; y < info_ptr->height ; y++) {
     png_image[y] = malloc (linesize);
@@ -319,12 +465,9 @@ FILE *tfp;
       for (x = 0 ; x < y ; x++)
         free (png_image[x]);
       free (png_image);
-#if ! defined(MIKTEX)
-      png_read_destroy (png_ptr, info_ptr, (png_info *)0);
-#endif
-      free (png_ptr);
-      free (info_ptr);
-      pm_error ("couldn't alloc space for image");
+      png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
+      pm_closer (ifp);
+      pm_error ("couldn't allocate space for image");
     }
   }
 
@@ -343,11 +486,13 @@ FILE *tfp;
       if (displaygamma != info_ptr->gamma) {
         png_set_gamma (png_ptr, displaygamma, info_ptr->gamma);
 	totalgamma = (double) info_ptr->gamma * (double) displaygamma;
-	/* in case of gamma-corrections, sBIT's as in the PNG-file are not valid anymore */
+	/* in case of gamma correction, sBITs as in the PNG-file are not valid
+	 * anymore */
 	info_ptr->valid &= ~PNG_INFO_sBIT;
         if (verbose)
-          pm_message ("image gamma is %4.2f, converted for display gamma of %4.2f",
-                    info_ptr->gamma, displaygamma);
+          pm_message (
+            "image gamma is %4.2f, converted for display gamma of %4.2f",
+            info_ptr->gamma, displaygamma);
       }
     } else {
       if (displaygamma != info_ptr->gamma) {
@@ -355,8 +500,9 @@ FILE *tfp;
 	totalgamma = (double) displaygamma;
 	info_ptr->valid &= ~PNG_INFO_sBIT;
 	if (verbose)
-	  pm_message ("image gamma assumed 1.0, converted for display gamma of %4.2f",
-		      displaygamma);
+	  pm_message (
+	    "image gamma assumed 1.0, converted for display gamma of %4.2f",
+	    displaygamma);
       }
     }
   }
@@ -397,7 +543,9 @@ FILE *tfp;
              info_ptr->sig_bit.red != info_ptr->sig_bit.blue) &&
             alpha == none) {
 	  pm_message ("different bit depths for color channels not supported");
-	  pm_message ("writing file with %d bit resolution", info_ptr->bit_depth);
+	  pm_message ("writing file with %d bit resolution",
+	    info_ptr->bit_depth);
+	  errorlevel = PNMTOPNG_WARNING_LEVEL;
         } else {
           if ((info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) &&
 	      (info_ptr->sig_bit.red < 255)) {
@@ -503,9 +651,11 @@ FILE *tfp;
     float r;
     r = (float)info_ptr->x_pixels_per_unit / info_ptr->y_pixels_per_unit;
     if (r != 1.0) {
-      pm_message ("warning - non-square pixels; to fix do a 'pnmscale -%cscale %g'",
-		    r < 1.0 ? 'x' : 'y',
-		    r < 1.0 ? 1.0 / r : r );
+      pm_message (
+	"warning - non-square pixels; to fix do a 'pnmscale -%cscale %g'",
+	r < 1.0 ? 'x' : 'y',
+	r < 1.0 ? 1.0 / r : r );
+      errorlevel = PNMTOPNG_WARNING_LEVEL;
     }
   }
 
@@ -513,12 +663,9 @@ FILE *tfp;
     for (y = 0 ; y < info_ptr->height ; y++)
       free (png_image[y]);
     free (png_image);
-#if ! defined(MIKTEX)
-    png_read_destroy (png_ptr, info_ptr, (png_info *)0);
-#endif
-    free (png_ptr);
-    free (info_ptr);
-    pm_error ("couldn't alloc space for image");
+    png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
+    pm_closer (ifp);
+    pm_error ("couldn't allocate space for image");
   }
 
   if (alpha == alpha_only) {
@@ -564,11 +711,14 @@ FILE *tfp;
     }
   }
 
+#if 0   /* GRR 20051102:  pointless since maxval is <= unsigned short */
   if ((pnm_type == PGM_TYPE) && (maxval > PGM_MAXMAXVAL))
     maxmaxval = PGM_MAXMAXVAL;
   else if ((pnm_type == PPM_TYPE) && (maxval > PPM_MAXMAXVAL))
     maxmaxval = PPM_MAXMAXVAL;
-  else maxmaxval = maxval;
+  else
+#endif
+  maxmaxval = maxval;
 
   if (verbose)
     pm_message ("writing a %s file (maxval=%u)",
@@ -578,7 +728,7 @@ FILE *tfp;
                                        "UNKNOWN!", 
 		maxmaxval);
 
-  pnm_writepnminit (stdout, info_ptr->width, info_ptr->height, maxval,
+  pnm_writepnminit (ofp, info_ptr->width, info_ptr->height, maxval,
                     pnm_type, FALSE);
 
   for (y = 0 ; y < info_ptr->height ; y++) {
@@ -630,41 +780,42 @@ FILE *tfp;
           for (i = 0 ; i < info_ptr->height ; i++)
             free (png_image[i]);
           free (png_image);
-#if ! defined(MIKTEX)
-          png_read_destroy (png_ptr, info_ptr, (png_info *)0);
-#endif
-          free (png_ptr);
-          free (info_ptr);
+          png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
+          pm_closer (ifp);
           pm_error ("unknown PNG color type");
       }
       pnm_pixel++;
     }
-    pnm_writepnmrow (stdout, row, info_ptr->width, maxval, pnm_type, FALSE);
+    pnm_writepnmrow (ofp, row, info_ptr->width, maxval, pnm_type, FALSE);
   }
 
-  fflush(stdout);
+  fflush(ofp);
   pnm_freerow (row);
   for (y = 0 ; y < info_ptr->height ; y++)
     free (png_image[y]);
   free (png_image);
-#if ! defined(MIKTEX)
-  png_read_destroy (png_ptr, info_ptr, (png_info *)0);
-#endif
+  png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
 
-  free (png_ptr);
-  free (info_ptr);
+  return errorlevel;
 }
+
+
+
+
+/**********/
+/*  MAIN  */
+/**********/
 
 #ifdef __STDC__
 int main (int argc, char *argv[])
 #else
 int main (argc, argv)
-int argc;
-char *argv[];
+  int argc;
+  char *argv[];
 #endif
 {
-  FILE *ifp, *tfp;
-  int argn;
+  FILE *ifp, *tfp, *ofp;
+  int argn, errorlevel;
 
   char *usage = "[-verbose] [-alpha | -mix] [-background color] ...\n\
              ... [-gamma value] [-text file] [-time] [pngfile]";
@@ -705,8 +856,12 @@ char *argv[];
     if (pm_keymatch (argv[argn], "-time", 3)) {
       mtime = TRUE;
     } else {
-      fprintf(stderr,"pngtopnm version %s, compiled with libpng version %s\n",
-        VERSION, PNG_LIBPNG_VER_STRING);
+      fprintf(stderr,"pngtopnm version %s.\n", VERSION);
+      fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n",
+        PNG_LIBPNG_VER_STRING, png_libpng_ver);
+      fprintf(stderr, "   Compiled with zlib %s; using zlib %s.\n",
+        ZLIB_VERSION, zlib_version);
+      fprintf(stderr, "\n");
       pm_usage (usage);
     }
     argn++;
@@ -716,8 +871,27 @@ char *argv[];
     ifp = pm_openr (argv[argn]);
     ++argn;
   } else {
+
+    /* setmode/fdopen code borrowed from Info-ZIP's funzip.c (Mark Adler) */
+    /* [HAVE_SETMODE is same macro used by NetPBM 9.x for Cygwin, etc.] */
+
+#ifdef HAVE_SETMODE   /* DOS, FLEXOS, Human68k, NetWare, OS/2, Win32 */
+# if (defined(__HIGHC__) && !defined(FLEXOS))
+    setmode(stdin, _BINARY);
+# else
+    setmode(0, O_BINARY);   /* some buggy C libraries require BOTH setmode() */
+# endif                     /*  call AND the fdopen() in binary mode :-( */
+#endif
+
+#ifdef RISCOS
     ifp = stdin;
+#else
+    if ((ifp = fdopen(0, "rb")) == (FILE *)NULL)
+      pm_error ("cannot find stdin");
+#endif
+
   }
+
   if (argn != argc)
     pm_usage (usage);
 
@@ -726,12 +900,30 @@ char *argv[];
   else
     tfp = NULL;
 
-  convertpng (ifp, tfp);
+  /* output always goes to stdout */
+
+#ifdef HAVE_SETMODE   /* DOS, FLEXOS, Human68k, NetWare, OS/2, Win32 */
+# if (defined(__HIGHC__) && !defined(FLEXOS))
+  setmode(stdout, _BINARY);
+# else
+  setmode(1, O_BINARY);
+# endif
+#endif
+
+#ifdef RISCOS
+  ofp = stdout;
+#else
+  if ((ofp = fdopen(1, "wb")) == (FILE *)NULL)
+    pm_error ("cannot write to stdout");
+#endif
+
+  errorlevel = convertpng (ifp, tfp, ofp);
 
   if (text)
-    pm_close (tfp);
+    pm_closew (tfp);
 
-  pm_close (ifp);
-  pm_close (stdout);
-  exit (0);
+  pm_closer (ifp);
+  pm_closew (ofp);
+
+  return errorlevel;
 }
