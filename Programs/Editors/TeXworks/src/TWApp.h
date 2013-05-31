@@ -272,7 +272,8 @@ private:
 	
 	TWScriptManager *scriptManager;
 
- 	QHash<QString, QVariant> m_globals;
+	QHash<QString, QVariant> m_globals;
+	QList<QTextCodec*> customTextCodecs;
 	
 #ifdef Q_WS_WIN
 	HWND messageTargetWindow;

@@ -683,7 +683,7 @@
     </message>
     <message>
         <source>Toolbar buttons</source>
-        <translation>工具栏按钮</translation>
+        <translation type="obsolete">工具栏按钮</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -719,7 +719,7 @@
     </message>
     <message>
         <source>Interface locale:</source>
-        <translation>程序界面语言：</translation>
+        <translation type="obsolete">程序界面语言：</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -921,6 +921,22 @@
 &lt;p&gt;&lt;strong&gt;自动：&lt;/strong&gt;排版完成后控制台输出面板还原回之前状态&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;排版完成后隐藏：&lt;/strong&gt;排版完成后始终隐藏控制台输出面板。&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locale:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toolbar buttons:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open corresponding PDF preview with TeX files</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -962,11 +978,19 @@
     </message>
     <message>
         <source>Log files (*.log)</source>
-        <translation>日志文件（*.log）</translation>
+        <translation type="obsolete">日志文件（*.log）</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation>辅助文件（*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl）</translation>
+        <translation type="obsolete">辅助文件（*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl）</translation>
+    </message>
+    <message>
+        <source>Log files (*.log *.blg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "TWScript.h"
 #include "TWScriptAPI.h"
 #include "ConfigurableApp.h"
+#include "DefaultPrefs.h"
 
 #include <QTextStream>
 #include <QMetaObject>
@@ -458,7 +459,7 @@ bool TWScript::mayReadFile(const QString& filename, QObject * context) const
 	QVariant targetFile;
 	QDir targetDir;
 	
-	if (settings.value("allowScriptFileReading", false).toBool())
+	if (settings.value("allowScriptFileReading", kDefault_AllowScriptFileReading).toBool())
 		return true;
 	
 	// even if global reading is disallowed, some exceptions may apply

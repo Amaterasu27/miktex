@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -1324,8 +1324,7 @@ void PDFDocument::changeEvent(QEvent *event)
 		if (pdfWidget)
 			pdfWidget->updateStatusBar();
 	}
-	else
-		QMainWindow::changeEvent(event);
+	QMainWindow::changeEvent(event);
 }
 
 void PDFDocument::linkToSource(TeXDocument *texDoc)
@@ -1348,6 +1347,16 @@ void PDFDocument::texClosed(QObject *obj)
 	}
 }
 
+void PDFDocument::texActivated(TeXDocument * texDoc)
+{
+	// A source file was activated. Make sure it is the first in the list of
+	// source docs so that future "Goto Source" actions point there.
+	if (sourceDocList.first() != texDoc) {
+		sourceDocList.removeAll(texDoc);
+		sourceDocList.prepend(texDoc);
+	}
+}
+
 void PDFDocument::updateRecentFileActions()
 {
 	TWUtils::updateRecentFileActions(this, recentFileActions, menuOpen_Recent, actionClear_Recent_Files);
@@ -1361,8 +1370,8 @@ void PDFDocument::updateWindowMenu()
 void PDFDocument::sideBySide()
 {
 	if (sourceDocList.count() > 0) {
-		TWUtils::sideBySide(sourceDocList[0], this);
-		sourceDocList[0]->selectWindow(false);
+		TWUtils::sideBySide(sourceDocList.first(), this);
+		sourceDocList.first()->selectWindow(false);
 		selectWindow();
 	}
 	else
@@ -1591,19 +1600,19 @@ void PDFDocument::showScale(qreal scale)
 void PDFDocument::retypeset()
 {
 	if (sourceDocList.count() > 0)
-		sourceDocList[0]->typeset();
+		sourceDocList.first()->typeset();
 }
 
 void PDFDocument::interrupt()
 {
 	if (sourceDocList.count() > 0)
-		sourceDocList[0]->interrupt();
+		sourceDocList.first()->interrupt();
 }
 
 void PDFDocument::goToSource()
 {
 	if (sourceDocList.count() > 0)
-		sourceDocList[0]->selectWindow();
+		sourceDocList.first()->selectWindow();
 	else
 		// should not occur, the action is supposed to be disabled
 		actionGo_to_Source->setEnabled(false);

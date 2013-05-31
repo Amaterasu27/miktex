@@ -683,7 +683,7 @@
     </message>
     <message>
         <source>Toolbar buttons</source>
-        <translation>툴바 단추</translation>
+        <translation type="obsolete">툴바 단추</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -719,7 +719,7 @@
     </message>
     <message>
         <source>Interface locale:</source>
-        <translation>인터페이스 언어:</translation>
+        <translation type="obsolete">인터페이스 언어:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -940,6 +940,22 @@
 &lt;p&gt;&lt;strong&gt;성공하면:&lt;/strong&gt; 조판이 성공하면 콘솔 출력 패널을 닫습니다. 컴파일 시작시 닫혀 있었는지 불문합니다.&lt;/p&gt;
 </translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locale:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toolbar buttons:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open corresponding PDF preview with TeX files</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -985,11 +1001,19 @@
     </message>
     <message>
         <source>Log files (*.log)</source>
-        <translation>로그 파일 (*.log)</translation>
+        <translation type="obsolete">로그 파일 (*.log)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation>부수 파일 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+        <translation type="obsolete">부수 파일 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+    </message>
+    <message>
+        <source>Log files (*.log *.blg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

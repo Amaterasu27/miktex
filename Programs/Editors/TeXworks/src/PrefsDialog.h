@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -29,19 +29,6 @@
 
 #include "ui_PrefsDialog.h"
 #include "ui_ToolConfig.h"
-
-const int kDefault_LaunchOption = 1;
-const int kDefault_ToolBarIcons = 2;
-const bool kDefault_ToolBarText = false;
-const int kDefault_SyntaxColoring = 0;
-const int kDefault_IndentMode = -1;
-const int kDefault_QuotesMode = -1;
-const bool kDefault_LineNumbers = false;
-const bool kDefault_WrapLines = true;
-const int kDefault_TabWidth = 32;
-const int kDefault_HideConsole = 1;
-const bool kDefault_HighlightCurrentLine = true;
-const bool kDefault_AutocompleteEnabled = true;
 
 class QListWidgetItem;
 

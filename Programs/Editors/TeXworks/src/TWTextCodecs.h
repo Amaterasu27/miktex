@@ -19,5 +19,26 @@
 	see <http://www.tug.org/texworks/>.
 */
 
-// Default paths to TeX binaries on Windows, for TeXworks
-#define DEFAULT_BIN_PATHS "c:/texlive/2013/bin;c:/texlive/2012/bin;c:/texlive/2011/bin;c:/texlive/2010/bin;c:/texlive/2009/bin;c:/texlive/2008/bin;c:/texlive/2007/bin;c:/w32tex/bin;c:/Program Files/MiKTeX 3.0/miktex/bin;c:/Program Files (x86)/MiKTeX 3.0/miktex/bin;c:/Program Files/MiKTeX 2.9/miktex/bin;c:/Program Files (x86)/MiKTeX 2.9/miktex/bin;c:/Program Files/MiKTeX 2.8/miktex/bin;c:/Program Files (x86)/MiKTeX 2.8/miktex/bin;c:/Program Files/MiKTeX 2.7/miktex/bin;c:/Program Files (x86)/MiKTeX 2.7/miktex/bin"
+#ifndef TWTextCodecs_H
+#define TWTextCodecs_H
+
+#include <QTextCodec>
+
+class MacCentralEurRomanCodec : public QTextCodec
+{
+public:
+	MacCentralEurRomanCodec() : QTextCodec() { }
+	virtual ~MacCentralEurRomanCodec() { }
+
+	// NOTE: The mib number is arbitrary since this encoding is not in the IANA
+	// list (http://www.iana.org/assignments/character-sets).
+	int mibEnum() const { return -4000; }
+	QByteArray name() const { return "Mac Central European Roman"; }
+	QList<QByteArray> aliases() const;
+
+protected:
+	QByteArray convertFromUnicode(const QChar * input, int length, ConverterState * state) const;
+	QString convertToUnicode(const char * chars, int len, ConverterState * state) const;
+};
+
+#endif // !defined(TWTextCodecs)

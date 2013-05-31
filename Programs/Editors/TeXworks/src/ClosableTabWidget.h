@@ -19,5 +19,30 @@
 	see <http://www.tug.org/texworks/>.
 */
 
-// Default paths to TeX binaries on Windows, for TeXworks
-#define DEFAULT_BIN_PATHS "c:/texlive/2013/bin;c:/texlive/2012/bin;c:/texlive/2011/bin;c:/texlive/2010/bin;c:/texlive/2009/bin;c:/texlive/2008/bin;c:/texlive/2007/bin;c:/w32tex/bin;c:/Program Files/MiKTeX 3.0/miktex/bin;c:/Program Files (x86)/MiKTeX 3.0/miktex/bin;c:/Program Files/MiKTeX 2.9/miktex/bin;c:/Program Files (x86)/MiKTeX 2.9/miktex/bin;c:/Program Files/MiKTeX 2.8/miktex/bin;c:/Program Files (x86)/MiKTeX 2.8/miktex/bin;c:/Program Files/MiKTeX 2.7/miktex/bin;c:/Program Files (x86)/MiKTeX 2.7/miktex/bin"
+#ifndef __CLOSABLE_TAB_WIDGET_H
+#define __CLOSABLE_TAB_WIDGET_H
+
+#include <QTabWidget>
+#include <QToolButton>
+
+// The ClosableTabWidget class is adapted from code presented by Girish
+// Ramakrishnan in a Qt Labs post:
+//
+//   http://labs.qt.nokia.com/2007/06/06/lineedit-with-a-clear-button
+class ClosableTabWidget : public QTabWidget
+{
+	Q_OBJECT
+public:
+	ClosableTabWidget(QWidget * parent = NULL);
+	virtual ~ClosableTabWidget() { }
+
+signals:
+	void requestClose();
+
+protected:
+	void resizeEvent(QResizeEvent * e);
+
+	QToolButton * _closeButton;
+};
+
+#endif // !defined(__CLOSABLE_TAB_WIDGET_H)
