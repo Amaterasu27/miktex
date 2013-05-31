@@ -2,18 +2,18 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:TPM="http://texlive.dante.de/">
   <rdf:Description about="http://www.miktex.org/packages/miktex/">
-    <TPM:Name>Lua 5.1 bin</TPM:Name>
-    <TPM:Title>Lua 5.1 binaries</TPM:Title>
+    <TPM:Name>Lua 5.2 bin</TPM:Name>
+    <TPM:Title>Lua 5.2 binaries</TPM:Title>
     <TPM:Version>@MIKTEX_VERSION_STR@</TPM:Version>
-    <TPM:TargetSystem>windows-x86</TPM:TargetSystem>
+    <TPM:TargetSystem>windows-x64</TPM:TargetSystem>
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
-      This package includes the Lua 5.1 DLL.
+      This package includes the Lua 5.2 DLL.
     </TPM:Description>
     <TPM:RunFiles>
-texmf/miktex/bin/${lua_dll_name}.dll
-texmf/miktex/bin/miktex-lua.exe
-texmf/miktex/bin/miktex-luac.exe
+texmf/miktex/bin/x64/${lua_dll_name}.dll
+texmf/miktex/bin/x64/miktex-lua.exe
+texmf/miktex/bin/x64/miktex-luac.exe
     </TPM:RunFiles>
   </rdf:Description>
 </rdf:RDF>

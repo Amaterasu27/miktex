@@ -663,7 +663,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
   ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
@@ -922,14 +921,6 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_graphite2_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_graphite_engine_dir}-static)
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_graphite_engine_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
@@ -1212,10 +1203,6 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_epstopdf_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_pnmtopng_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
