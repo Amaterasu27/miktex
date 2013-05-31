@@ -40,7 +40,7 @@ static int compare_one (const char *x, const char *y);
 static int compare_page (const FIELD_PTR *a, const FIELD_PTR *b);
 static int compare_string (const unsigned char *a, const unsigned char *b);
 static int new_strcmp (const unsigned char *a, const unsigned char *b,
-				 int option);
+           int option);
 
 void
 sort_idx(void)
@@ -56,7 +56,7 @@ sort_idx(void)
 #endif
     idx_dc = 0;
     idx_gc = 0L;
-    qqsort(idx_key, idx_gt, sizeof(FIELD_PTR), compare);
+    qqsort(idx_key, (size_t)idx_gt, sizeof(FIELD_PTR), compare);
 #ifdef HAVE_SETLOCALE
     setlocale(LC_COLLATE, prev_locale);
 #endif
