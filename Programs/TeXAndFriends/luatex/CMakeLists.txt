@@ -229,11 +229,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
-set_target_properties(${app_dll_name}
-      PROPERTIES
-      LINK_INTERFACE_LIBRARIES ""
-)
-
 target_link_libraries(${luatex_program_dll_name}
   wsock32.lib
   ws2_32.lib

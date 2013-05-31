@@ -270,6 +270,7 @@ foreach(x ${executables})
     ${getopt_dll_name}
     ${kpsemu_dll_name}
     ${mp_lib_name}
+	${png_dll_name}
     ${utf8wrap_dll_name}
     ${w2cemu_dll_name}
   )

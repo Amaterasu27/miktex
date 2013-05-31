@@ -257,7 +257,9 @@ target_link_libraries(${xetex_dll_name}
   ${poppler_lib_name}
   ${teckit_dll_name}
   ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
   ${w2cemu_dll_name}
+  ${zlib_dll_name}
 )
 
 delay_load(${xetex_dll_name}

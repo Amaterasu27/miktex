@@ -100,6 +100,7 @@ set_target_properties(${fontconfig_dll_name}
 rebase(${fontconfig_dll_name})
 
 target_link_libraries(${fontconfig_dll_name}
+  ${core_dll_name}
   ${expat_dll_name}
   ${freetype2_dll_name}
   ${unxemu_dll_name}

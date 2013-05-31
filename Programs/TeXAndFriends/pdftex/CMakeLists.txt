@@ -295,6 +295,7 @@ if(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${miktex_prefix}pdftex
     ${jpeg_dll_name}
     ${kpsemu_lib_name}
+    ${md5_lib_name}
     ${png_lib_name}
     ${poppler_lib_name}
     ${unxemu_dll_name}
@@ -304,6 +305,7 @@ else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${pdftex_dll_name}
     ${jpeg_dll_name}
     ${kpsemu_dll_name}
+    ${md5_dll_name}
     ${png_dll_name}
     ${poppler_lib_name}
     ${unxemu_dll_name}
