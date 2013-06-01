@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2011 Christian Schenk
+   Copyright (C) 2003-2013 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -29,6 +29,10 @@
 
 #if defined(HAVE_CONFIG_H)
 #  include <config.h>
+#endif
+
+#if defined(_WIN32)
+#  include <Windows.h>
 #endif
 
 #include <algorithm>

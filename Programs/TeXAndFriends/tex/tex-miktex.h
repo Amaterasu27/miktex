@@ -1,6 +1,6 @@
 /* tex-miktex.h:						-*- C++ -*-
 
-   Copyright (C) 1991-2010 Christian Schenk
+   Copyright (C) 1991-2013 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -49,6 +49,8 @@
 #if ! defined(MIKTEXHELP_TEX)
 #  include <MiKTeX/Core/Help>
 #endif
+
+#include <miktex/W2C/Emulation>
 
 using namespace MiKTeX::TeXAndFriends;
 

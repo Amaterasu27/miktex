@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -80,6 +80,16 @@ set(${tex_target_name}_sources
 
 create_web_app(TeX)
 
+if(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(${tex_target_name}
+    ${w2cemu_lib_name}
+  )
+else(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(${tex_target_name}
+    ${w2cemu_dll_name}
+  )
+endif(LINK_EVERYTHING_STATICALLY)
+
 if(NATIVE_WINDOWS)
   create_exe_alias(initex tex --initialize)
   create_exe_alias(virtex tex)
@@ -129,6 +139,16 @@ set(${triptex_target_name}_sources
 )
 
 create_web_app(TripTeX)
+
+if(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(${triptex_target_name}
+    ${w2cemu_lib_name}
+  )
+else(LINK_EVERYTHING_STATICALLY)
+  target_link_libraries(${triptex_target_name}
+    ${w2cemu_dll_name}
+  )
+endif(LINK_EVERYTHING_STATICALLY)
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/triptex_pool.cpp

@@ -12,6 +12,7 @@ EXPORTS
 	FcBlanksDestroy
 	FcBlanksIsMember
 	FcCacheCopySet
+	FcCacheCreateTagFile
 	FcCacheDir
 	FcCacheNumFont
 	FcCacheNumSubdir
@@ -61,6 +62,7 @@ EXPORTS
 	FcConfigSubstituteWithPat
 	FcConfigUptoDate
 	FcDefaultSubstitute
+	FcDirCacheClean
 	FcDirCacheLoad
 	FcDirCacheLoadFile
 	FcDirCacheRead
@@ -89,6 +91,7 @@ EXPORTS
 	FcFreeTypeCharSetAndSpacing
 	FcFreeTypeQuery
 	FcFreeTypeQueryFace
+	FcGetDefaultLangs
 	FcGetLangs
 	FcGetVersion
 	FcInit

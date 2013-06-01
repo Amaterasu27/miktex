@@ -120,6 +120,7 @@ target_link_libraries(xdvipdfmx
   ${freetype2_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
   ${zlib_dll_name}
 )

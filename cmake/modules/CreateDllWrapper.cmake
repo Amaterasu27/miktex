@@ -1,6 +1,6 @@
 ## CreateDllWrapper.cmake
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,7 +37,7 @@ macro(create_dll_wrapper _name _dll)
     ${CMAKE_CURRENT_BINARY_DIR}/${_name}wrapper.cpp
     COMPILE_FLAGS "-DDLLMAIN=${_dllmain} -D_UNICODE"
   )
-  target_link_libraries(${_name} ${_dll})
+  target_link_libraries(${_name} ${core_dll_name} ${_dll})
   merge_trustinfo_manifest(${_name} asInvoker)
   install(TARGETS ${_name} DESTINATION ${bindir})
 endmacro(create_dll_wrapper)

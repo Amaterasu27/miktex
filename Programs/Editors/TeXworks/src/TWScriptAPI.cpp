@@ -360,16 +360,15 @@ QMap<QString, QVariant> TWScriptAPI::getDictionaryList(const bool forceReload /*
 	QMap<QString, QVariant> retVal;
 #if defined(MIKTEX)
 	// not possible (under Windows) to call TWUtils methods
-	const QHash<QString, QString> * h = new QHash<QString, QString>();
 #else
 	const QHash<QString, QString> * h = TWUtils::getDictionaryList(forceReload);
-#endif
 	for (QHash<QString, QString>::const_iterator it = h->begin(); it != h->end(); ++it) {
 		if (!retVal.contains(it.value()))
 			retVal[it.value()] = QVariant::fromValue((QList<QVariant>() << it.key()));
 		else
 			retVal[it.value()] = (retVal[it.value()].toList() << it.key());
 	}
+#endif
 	
 	return retVal;
 }
@@ -381,6 +380,9 @@ Q_INVOKABLE
 QList<QVariant> TWScriptAPI::getEngineList() const
 {
 	QList<QVariant> retVal;
+#if defined(MIKTEX)
+	// not possible (under Windows) to call TWApp methods
+#else
 	const QList<Engine> engines = TWApp::instance()->getEngineList();
 
 	foreach (const Engine& e, engines) {
@@ -388,6 +390,7 @@ QList<QVariant> TWScriptAPI::getEngineList() const
 		s["name"] = e.name();
 		retVal.append(s);
 	}
+#endif
 
 	return retVal;
 }
