@@ -1,7 +1,7 @@
 /* miktex/KPSE/Emulation.h: kpathsea emulation			-*- C++ -*-
 
    Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry
-   Copyright (C) 2000-2012 Christian Schenk
+   Copyright (C) 2000-2013 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -56,6 +56,12 @@
 // API decoration for exported functions and data
 #define MIKTEXKPSCEEAPI(type) MIKTEXKPSEXPORT type MIKTEXCEECALL
 #define MIKTEXKPSDATA(type) MIKTEXKPSEXPORT type
+
+#define MIKTEX_KPATHSEA_LFS 1
+
+#if defined(MIKTEX_KPATHSEA_LFS)
+#  define off_t MIKTEX_INT64
+#endif
 
 /* _________________________________________________________________________
 
@@ -405,14 +411,24 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define xfseek(fp, offset, wherefrom, filename) \
       miktex_xfseek(fp, offset, wherefrom, filename)
 
+#if MIKTEX_KPATHSEA_LFS
+#define xfseeko(fp, offset, wherefrom, filename) \
+      miktex_xfseeko64(fp, offset, wherefrom, filename)
+#else
 #define xfseeko(fp, offset, wherefrom, filename) \
       miktex_xfseeko(fp, offset, wherefrom, filename)
+#endif
 
 #define xftell(fp, filename) \
-      miktex_xftell(fp, filename)
+      miktex_xftello64(fp, filename)
 
+#if MIKTEX_KPATHSEA_LFS
+#define xftello(fp, filename) \
+      miktex_xftello64(fp, filename)
+#else
 #define xftello(fp, filename) \
       miktex_xftello(fp, filename)
+#endif
 
 #define xmalloc(size) miktex_core_malloc(size, __FILE__, __LINE__)
 
