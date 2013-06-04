@@ -1,6 +1,6 @@
 /* w2cemu.cpp: texk compatibility functions
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2013 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -129,6 +129,30 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
     }
   MIKTEX_FREE (lpszPath);
   return (*ppfile == 0 ? 0 : 1);
+}
+
+/* _________________________________________________________________________
+
+   Web2C::RecordFileInfo
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+Web2C::RecordFileInfo (/*[in]*/ const char *	lpszPath,
+		       /*[in]*/ FileAccess	access)
+{
+  // TODO
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_record_file_info
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_record_file_info (/*[in]*/ const char *	lpszPath,
+			       /*[in]*/ int		reading)
+{
+  Web2C::RecordFileInfo(lpszPath, reading ? FileAccess::Read : FileAccess::Write);
 }
 
 /* _________________________________________________________________________
