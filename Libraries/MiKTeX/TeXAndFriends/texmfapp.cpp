@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -190,7 +190,7 @@ TeXMFApp::OnTeXMFFinishJob ()
 {
   if (recordFileNames)
     {
-      StreamWriter writer (PathName(0, jobName.c_str(), "fls"));
+      StreamWriter writer (PathName(outputDirectory.Empty() ? 0 : outputDirectory.Get(), jobName.c_str(), "fls"));
       PathName cwd;
       cwd.SetToCurrentDirectory ();
       writer.WriteFormattedLine ("PWD %s", cwd.ToUnix().Get());
