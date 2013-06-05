@@ -190,22 +190,7 @@ TeXMFApp::OnTeXMFFinishJob ()
 {
   if (recordFileNames)
     {
-      StreamWriter writer (PathName(outputDirectory.Empty() ? 0 : outputDirectory.Get(), jobName.c_str(), "fls"));
-      PathName cwd;
-      cwd.SetToCurrentDirectory ();
-      writer.WriteFormattedLine ("PWD %s", cwd.ToUnix().Get());
-      vector<FileInfoRecord> fileInfoRecords = pSession->GetFileInfoRecords();
-      for (vector<FileInfoRecord>::const_iterator it = fileInfoRecords.begin();
-	   it != fileInfoRecords.end();
-	   ++ it)
-	{
-	  writer.WriteFormattedLine ("%s %s",
-				     (it->access == FileAccess::Read
-				      ? "INPUT"
-				      : "OUTPUT"),
-				     PathName(it->fileName).ToUnix().Get());
-	}
-      writer.Close ();
+      pSession->SetRecorderPath(PathName(outputDirectory.Empty() ? 0 : outputDirectory.Get(), jobName.c_str(), "fls"));
     }
   if (timeStatistics)
     {

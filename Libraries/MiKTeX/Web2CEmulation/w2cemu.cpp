@@ -133,26 +133,53 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
 
 /* _________________________________________________________________________
 
-   Web2C::RecordFileInfo
+   Web2C::RecordFileName
    _________________________________________________________________________ */
 
 MIKTEXW2CCEEAPI(void)
-Web2C::RecordFileInfo (/*[in]*/ const char *	lpszPath,
+Web2C::RecordFileName (/*[in]*/ const char *	lpszPath,
 		       /*[in]*/ FileAccess	access)
 {
-  // TODO
+  if (miktex_web2c_recorder_enabled)
+  {
+    SessionWrapper(true)->StartFileInfoRecorder();
+  }
 }
 
 /* _________________________________________________________________________
 
-   miktex_web2c_record_file_info
+   miktex_web2c_record_file_name
    _________________________________________________________________________ */
 
 MIKTEXW2CCEEAPI(void)
-miktex_web2c_record_file_info (/*[in]*/ const char *	lpszPath,
+miktex_web2c_record_file_name (/*[in]*/ const char *	lpszPath,
 			       /*[in]*/ int		reading)
 {
-  Web2C::RecordFileInfo(lpszPath, reading ? FileAccess::Read : FileAccess::Write);
+  Web2C::RecordFileName(lpszPath, reading ? FileAccess::Read : FileAccess::Write);
+}
+
+/* _________________________________________________________________________
+
+   Web2C::ChangeRecorderFileName
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+Web2C::ChangeRecorderFileName (/*[in]*/ const char *	lpszName)
+{
+  PathName path (miktex_web2c_output_directory, lpszName);
+  path.SetExtension(".fls");
+  SessionWrapper(true)->SetRecorderPath(path);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_change_recorder_file_name
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_change_recorder_file_name (/*[in]*/ const char *	lpszPath)
+{
+  Web2C::ChangeRecorderFileName(lpszPath);
 }
 
 /* _________________________________________________________________________

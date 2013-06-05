@@ -33,31 +33,7 @@
 #include <miktex/Core/Version>
 #include <miktex/KPSE/Emulation>
 
-// DLL import/export switch
-#if ! defined(B96BCD894353492A9CF685C84B9AB5E0)
-#  if defined(_MSC_VER)
-#    define MIKTEXW2CEXPORT __declspec(dllimport)
-#  else
-#    define MIKTEXW2CEXPORT
-#  endif
-#endif
-
-// API decoration for exported functions and data
-#define MIKTEXW2CCEEAPI(type) MIKTEXW2CEXPORT type MIKTEXCEECALL
-#define MIKTEXW2CDATA(type) MIKTEXW2CEXPORT type
-
-#define MIKTEXWEB2C_BEGIN_NAMESPACE		\
-  namespace MiKTeX {				\
-    namespace Web2C {
-
-#define MIKTEXWEB2C_END_NAMESPACE		\
-    }						\
-  }
-
-#if defined(MIKTEX_W2C_EMULATION_LIB_LIB_H)
-#else
-#  define MIKTEX_W2C_EMULATION_ALL_HEADERS 1
-#endif
+#include "pre.h"
 
 /* _________________________________________________________________________
 
@@ -102,52 +78,7 @@ MIKTEX_END_EXTERN_C_BLOCK
    lib/lib.h
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_W2C_EMULATION_LIB_LIB_H) || defined(MIKTEX_W2C_EMULATION_ALL_HEADERS)
-
-#if defined(__cplusplus)
-#define open_input(f_ptr, filefmt, fopen_mode) \
-  MiKTeX::Web2C::OpenInput(nameoffile + 1, f_ptr, filefmt, fopen_mode)
-#else
-#define open_input(f_ptr, filefmt, fopen_mode) \
-  UNIMPLEMENTED_miktex_web2c_open_input(f_ptr, filefmt, fopen_mode)
-#endif
-
-#define close_file(f) ((f) != 0 ? (void)fclose(f) : (void)0)
-
-#define versionstring miktex_web2c_version_string
-
-#define recorder_change_filename(new_name)
-
-#if defined(__cplusplus)
-#define recorder_record_input(fname) \
-  MiKTeX::Web2C::RecordFileInfo(fname, MiKTeX::Core::FileAccess::Read)
-#else
-#define recorder_record_input(fname) \
-  miktex_web2c_record_file_info(fname, 1)
-#endif
-
-#if defined(__cplusplus)
-#define recorder_record_output(fname) \
-  MiKTeX::Web2C::RecordFileInfo(fname, MiKTeX::Core::FileAccess::Write)
-#else
-#define recorder_record_output(fname) \
-  miktex_web2c_record_file_info(fname, 0)
-#endif
-
-#define recorder_enabled miktex_web2c_recorder_enabled
-
-#if defined(THEAPP)
-#  define output_directory (THEAPP.GetOutputDirectory().Empty() ? 0 : THEAPP.GetOutputDirectory().Get())
-#else
-#  define output_directory miktex_web2c_output_directory
-#endif
-
-#define fullnameoffile miktex_web2c_fullnameoffile
-
-#define setupboundvariable(var, var_name, dflt) \
-  miktex_setupboundvariable(var, var_name, dflt)
-
-#endif
+#include "../../lib/lib.h"
 
 /* _________________________________________________________________________
 
@@ -166,8 +97,6 @@ MIKTEX_END_EXTERN_C_BLOCK
 
    cpascal.h
    _________________________________________________________________________ */
-
-#if defined(MIKTEX_W2C_EMULATION_CPASCAL_H) || defined(MIKTEX_W2C_EMULATION_ALL_HEADERS)
 
 #if defined(__cplusplus)
 template<class T> T * addressof(T & x) { return (&x); }
@@ -215,8 +144,6 @@ typedef double real;
 
 #define ucharcast(x) ((unsigned char)(x))
 
-#endif
-
 /* _________________________________________________________________________
 
    Prototypes
@@ -229,16 +156,6 @@ MIKTEXW2CCEEAPI(void)
 GetSecondsAndMicros (/*[out]*/ int * pSeconds,
 		     /*[out]*/ int * pMicros);
 
-MIKTEXW2CCEEAPI(int)
-OpenInput (/*[in,out]*/ char *			lpszFileName,
-	   /*[in]*/ FILE **			ppfile,
-	   /*[in]*/ kpse_file_format_type	format,
-	   /*[in]*/ const char *		lpszMode);
-
-MIKTEXW2CCEEAPI(void)
-RecordFileInfo (/*[in]*/ const char *		      lpszPath,
-		/*[in]*/ MiKTeX::Core::FileAccess     access);
-
 MIKTEXWEB2C_END_NAMESPACE;
 #endif
 
@@ -246,50 +163,13 @@ MIKTEXWEB2C_END_NAMESPACE;
 MIKTEX_BEGIN_EXTERN_C_BLOCK
 #endif
 
-MIKTEXW2CCEEAPI(void)
-miktex_web2c_record_file_info (/*[in]*/ const char *	lpszPath,
-			       /*[in]*/ int		reading);
-
 MIKTEXW2CCEEAPI(integer)
 miktex_zround (/*[in]*/ double r);
 
-MIKTEXW2CCEEAPI(void)
-miktex_setupboundvariable (/*[in]*/ integer *      pVar,
-			   /*[in]*/ const char *   lpszVarName,
-			   /*[in]*/ integer	      dflt);
-
 #if defined(__cplusplus)
 MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
-/* _________________________________________________________________________
-
-   Variables
-   _________________________________________________________________________ */
-
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
-#endif
-
-extern
-MIKTEXW2CDATA(string)
-miktex_web2c_fullnameoffile;
-
-extern
-MIKTEXW2CDATA(const_string)
-miktex_web2c_output_directory;
-
-extern
-MIKTEXW2CDATA(boolean)
-miktex_web2c_recorder_enabled;
-
-extern
-MIKTEXW2CDATA(const_string)
-miktex_web2c_version_string;
-
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
 
 /* _________________________________________________________________________ */
 

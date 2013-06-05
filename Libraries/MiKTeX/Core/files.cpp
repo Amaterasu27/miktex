@@ -233,6 +233,15 @@ SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
 	}
     }
   fileInfoRecords.push_back (fir);
+  if (fileNameRecorderStream.IsOpen())
+  {
+    fileNameRecorderStream.WriteFormattedLine ("%s %s",
+      (fir.access == FileAccess::Read
+      ? "INPUT"
+      : "OUTPUT"),
+      PathName(fir.fileName).ToUnix().Get());
+    fileNameRecorderStream.Flush ();
+  }
 }
 
 /* _________________________________________________________________________
@@ -766,11 +775,58 @@ File::Copy (/*[in]*/ const PathName &	source,
    _________________________________________________________________________ */
 
 bool
+SessionImpl::StartFileInfoRecorder ()
+{
+  recordingFileNames = true;
+  return (true);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::StartFileInfoRecorder
+   _________________________________________________________________________ */
+
+bool
 SessionImpl::StartFileInfoRecorder (/*[in]*/ bool recordPackageNames)
 {
   recordingFileNames = true;
   recordingPackageNames = recordPackageNames;
   return (true);
+}
+
+/* _________________________________________________________________________
+
+   SessionImpl::SetRecorderPath
+   _________________________________________________________________________ */
+
+void
+SessionImpl::SetRecorderPath (/*[in]*/ const PathName & path)
+{
+  if (! (recordingFileNames || recordingPackageNames))
+  {
+    return;
+  }
+  if (fileNameRecorderStream.IsOpen())
+  {
+    return;
+  }
+  fileNameRecorderStream.Attach(File::Open(path, FileMode::Create, FileAccess::Write));
+  PathName cwd;
+  cwd.SetToCurrentDirectory ();
+  fileNameRecorderStream.WriteFormattedLine ("PWD %s", cwd.ToUnix().Get());
+  vector<FileInfoRecord> fileInfoRecords = GetFileInfoRecords();
+  for (vector<FileInfoRecord>::const_iterator it = fileInfoRecords.begin();
+    it != fileInfoRecords.end();
+    ++ it)
+  {
+    fileNameRecorderStream.WriteFormattedLine ("%s %s",
+      (it->access == FileAccess::Read
+      ? "INPUT"
+      : "OUTPUT"),
+      PathName(it->fileName).ToUnix().Get());
+  }
+  fileNameRecorderStream.Flush();
+
 }
 
 /* _________________________________________________________________________

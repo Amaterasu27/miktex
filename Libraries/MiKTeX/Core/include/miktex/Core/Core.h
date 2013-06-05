@@ -1,6 +1,6 @@
 /* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -4728,6 +4728,13 @@ public:
   }
 
 public:
+  void
+  Flush ()
+  {
+    fflush(stream.Get());
+  }
+
+public:
   MIKTEXCOREEXPORT
   MIKTEXTHISCALL
   ~StreamWriter ();
@@ -6374,7 +6381,29 @@ public:
   virtual
   bool
   MIKTEXTHISCALL
-  StartFileInfoRecorder (/*[in]*/ bool bRecordPackageNames)
+  StartFileInfoRecorder ()
+    = 0;
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  StartFileInfoRecorder (/*[in]*/ bool recordPackageNames)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetRecorderPath (/*[in]*/ const PathName & path)
+    = 0;
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  RecordFileInfo (/*[in]*/ const char *	lpszPath,
+		  /*[in]*/ FileAccess	access)
     = 0;
 
 public:
