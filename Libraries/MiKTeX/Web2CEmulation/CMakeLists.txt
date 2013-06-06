@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,7 +24,13 @@ include_directories(BEFORE
 set(${w2cemu_dll_name}_sources
   StdAfx.cpp
   StdAfx.h
+  include/c-auto.h
+  include/cpascal.h
+  include/lib/lib.h
   include/miktex/W2C/Emulation.h
+  include/miktex/W2C/pre.h
+  include/w2c/c-auto.h
+  include/w2c/config.h
   internal.h
   w2cemu-version.h
   w2cemu.cpp

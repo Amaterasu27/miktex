@@ -27,6 +27,10 @@ using namespace std;
 using namespace MiKTeX;
 using namespace MiKTeX::Core;
 
+namespace {
+  PathName outputDirectory;
+}
+
 /* _________________________________________________________________________
 
    TranslateModeString
@@ -166,7 +170,7 @@ miktex_web2c_record_file_name (/*[in]*/ const char *	lpszPath,
 MIKTEXW2CCEEAPI(void)
 Web2C::ChangeRecorderFileName (/*[in]*/ const char *	lpszName)
 {
-  PathName path (miktex_web2c_output_directory, lpszName);
+  PathName path (GetOutputDirectory(), lpszName);
   path.SetExtension(".fls");
   SessionWrapper(true)->SetRecorderPath(path);
 }
@@ -200,11 +204,61 @@ miktex_web2c_recorder_enabled = 0;
 
 /* _________________________________________________________________________
 
-   miktex_web2c_output_directory
+   Web2C::SetOutputDirectory
    _________________________________________________________________________ */
 
-MIKTEXW2CDATA(const_string)
-miktex_web2c_output_directory = 0;
+MIKTEXW2CCEEAPI(void)
+Web2C::SetOutputDirectory (const PathName & path)
+{
+  PathName outputDirectory = path;
+  outputDirectory.MakeAbsolute ();
+  if (! Directory::Exists(outputDirectory))
+  {
+    FATAL_MIKTEX_ERROR ("Web2C::SetOutputDirectory",
+      T_("The specified directory does not exist."),
+      outputDirectory.Get());
+  }
+#if 0 // TODO
+  if (auxDirectory[0] == 0)
+  {
+    auxDirectory = outputDirectory;
+  }
+#endif
+  SessionWrapper(true)->AddInputDirectory (outputDirectory.Get(), true);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_set_output_directory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_set_output_directory (/*[in]*/ const char * lpszPath)
+{
+  Web2C::SetOutputDirectory (lpszPath);
+}
+
+/* _________________________________________________________________________
+
+   Web2C::GetOutputDirectory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(PathName)
+Web2C::GetOutputDirectory ()
+{
+  return (outputDirectory);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_get_output_directory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(const char *)
+miktex_web2c_get_output_directory ()
+{
+  return (Web2C::GetOutputDirectory().Get());
+}
 
 /* _________________________________________________________________________
 

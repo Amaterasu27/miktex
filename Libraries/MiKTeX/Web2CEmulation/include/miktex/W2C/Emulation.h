@@ -47,31 +47,7 @@
    w2c/config.h
    _________________________________________________________________________ */
 
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
-#endif
-
-typedef int integer;
-
-typedef MIKTEX_INT64 longinteger;
-
-#define LONGINTEGER_TYPE long long
-#define LONGINTEGER_PRI "ll"
-
-MIKTEXW2CEXPORT MIKTEXNORETURN void MIKTEXCEECALL
-miktex_uexit (int status);
-
-#define uexit miktex_uexit
-
-MIKTEXW2CEXPORT MIKTEXNORETURN void MIKTEXCEECALL
-miktex_usagehelp (/*[in]*/ const char **	lpszLines,
-		  /*[in]*/ const char *		lpszBugEmail);
-
-#define usagehelp miktex_usagehelp
-
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
+#include "../../w2c/config.h"
 
 /* _________________________________________________________________________
 
@@ -141,6 +117,8 @@ template<class T> T * addressof(T & x) { return (&x); }
 typedef double real;
 
 #define intcast(x) ((integer)(x))
+
+#define stringcast(x) ((char *) (x))
 
 #define ucharcast(x) ((unsigned char)(x))
 

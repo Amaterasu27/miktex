@@ -218,6 +218,7 @@ extern XETEXCLASS XETEXAPP;
 #include <miktex/TeXAndFriends/ETeXApp.inl>
 
 #include <miktex/KPSE/Emulation>
+#include <miktex/W2C/Emulation>
 
 #include "xetex.h"
 #include "synctex.h"
@@ -274,11 +275,9 @@ GetNameOfFileForWeb2C ()
 #define ruledp THEDATA(ruledp)
 
 #define c4p_sizeof(x) sizeof(x)
-#define addressof(x) &(x)
 #undef nullptr
 #define nullptr() 0
 #define isnullptr(p) ((p) == 0)
-#define stringcast(x) ((char*)(x))
 
 #define afield aField
 #define bfield bField

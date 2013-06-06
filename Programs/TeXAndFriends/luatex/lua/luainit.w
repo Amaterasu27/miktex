@@ -313,7 +313,11 @@ static void parse_options(int ac, char **av)
             dump_name = optarg;
 
         } else if (ARGUMENT_IS("output-directory")) {
+#if defined(MIKTEX)
+			miktex_web2c_set_output_directory (optarg);
+#else
             output_directory = optarg;
+#endif
 
         } else if (ARGUMENT_IS("output-comment")) {
             size_t len = strlen(optarg);

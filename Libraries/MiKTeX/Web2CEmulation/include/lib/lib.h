@@ -68,14 +68,21 @@
 
 #if defined(THEAPP)
 #  define output_directory (THEAPP.GetOutputDirectory().Empty() ? 0 : THEAPP.GetOutputDirectory().Get())
+#elif defined(__cplusplus)
+#  define output_directory MiKTeX::Web2C::GetOutputDirectory().Get()
 #else
-#  define output_directory miktex_web2c_output_directory
+#  define output_directory miktex_web2c_get_output_directory()
 #endif
 
 #define fullnameoffile miktex_web2c_fullnameoffile
 
 #define setupboundvariable(var, var_name, dflt) \
   miktex_setupboundvariable(var, var_name, dflt)
+
+/* _________________________________________________________________________
+
+   C++ API
+   _________________________________________________________________________ */
 
 #if defined(__cplusplus)
 MIKTEXWEB2C_BEGIN_NAMESPACE;
@@ -93,8 +100,19 @@ MIKTEXW2CCEEAPI(void)
 RecordFileName (/*[in]*/ const char *		      lpszPath,
 		/*[in]*/ MiKTeX::Core::FileAccess     access);
 
+MIKTEXW2CCEEAPI(MiKTeX::Core::PathName)
+GetOutputDirectory ();
+
+MIKTEXW2CCEEAPI(void)
+SetOutputDirectory (const MiKTeX::Core::PathName & path);
+
 MIKTEXWEB2C_END_NAMESPACE;
 #endif
+
+/* _________________________________________________________________________
+
+   C API
+   _________________________________________________________________________ */
 
 #if defined(__cplusplus)
 MIKTEX_BEGIN_EXTERN_C_BLOCK
@@ -115,21 +133,15 @@ miktex_setupboundvariable (/*[in]*/ integer *      pVar,
 			   /*[in]*/ const char *   lpszVarName,
 			   /*[in]*/ integer	      dflt);
 
-#if defined(__cplusplus)
-MIKTEX_END_EXTERN_C_BLOCK
-#endif
-
-#if defined(__cplusplus)
-MIKTEX_BEGIN_EXTERN_C_BLOCK
-#endif
-
 extern
 MIKTEXW2CDATA(string)
 miktex_web2c_fullnameoffile;
 
-extern
-MIKTEXW2CDATA(const_string)
-miktex_web2c_output_directory;
+MIKTEXW2CCEEAPI(const char *)
+miktex_web2c_get_output_directory ();
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_set_output_directory (/*[in]*/ const char * lpszPath);
 
 extern
 MIKTEXW2CDATA(boolean)
