@@ -19,7 +19,7 @@
 
 #include "xetex_version.h"
 
-#define MIKTEX_COMP_J2000_VERSION 4892
+#define MIKTEX_COMP_J2000_VERSION 4917
 #define MIKTEX_COMP_ORIG_VERSION_STR XETEX_VERSION
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 1994-2008 by SIL International, (C) 2009-2012 by Jonathan Kew, (C) 2010-2012 by Han Han The Thanh, (C) 2012-2013 by Khaled Hosny"
