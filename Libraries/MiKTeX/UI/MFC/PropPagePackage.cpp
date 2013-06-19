@@ -1,6 +1,6 @@
 /* PropPagePackage.cpp:
 
-   Copyright (C) 2000-2011 Christian Schenk
+   Copyright (C) 2000-2013 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -65,6 +65,8 @@ PropPagePackage::PropPagePackage (/*[in]*/ const PackageInfo & packageInfo)
   name = Utils::UTF8ToWideChar(packageInfo.displayName).c_str();
   MakeOneLine (title, Utils::UTF8ToWideChar(packageInfo.title));
   size.Format (T_(_T("%u Bytes")), static_cast<unsigned>(packageInfo.GetSize()));
+  maintainer = Utils::UTF8ToWideChar(packageInfo.copyrightOwner).c_str();
+  version = Utils::UTF8ToWideChar(packageInfo.version).c_str();
 }
 
 /* _________________________________________________________________________
@@ -78,9 +80,11 @@ PropPagePackage::DoDataExchange (/*[in]*/ CDataExchange * pDX)
   CPropertyPage::DoDataExchange (pDX);
   DDX_Text(pDX, IDC_DATE, date);
   DDX_Text(pDX, IDC_DESCRIPTION, description);
+  DDX_Text(pDX, IDC_MAINTAINER, maintainer);
   DDX_Text(pDX, IDC_NAME, name);
   DDX_Text(pDX, IDC_PACKAGE_SIZE, size);
   DDX_Text(pDX, IDC_TITLE, title);
+  DDX_Text(pDX, IDC_VERSION, version);
 }
 
 /* _________________________________________________________________________
