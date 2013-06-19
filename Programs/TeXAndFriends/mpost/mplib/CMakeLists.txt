@@ -106,7 +106,7 @@ add_custom_command(
   WORKING_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}
   MAIN_DEPENDENCY
-    mpmath.w
+    mpmathdouble.w
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpmathdouble.w
@@ -122,7 +122,7 @@ add_custom_command(
   WORKING_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}
   MAIN_DEPENDENCY
-    mpmath.w
+    mpstrings.w
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpstrings.w
@@ -138,7 +138,7 @@ add_custom_command(
   WORKING_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}
   MAIN_DEPENDENCY
-    mpmath.w
+    pngout.w
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/pngout.w

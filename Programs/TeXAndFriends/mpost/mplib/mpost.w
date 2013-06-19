@@ -1,4 +1,4 @@
-% $Id: mpost.w 1895 2013-03-27 11:17:17Z taco $
+% $Id: mpost.w 1916 2013-06-13 10:19:49Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -456,7 +456,7 @@ static int mpost_run_make_mpx (MP mp, char *mpname, char *mpxname) {
       mpost_xfree(mpversion);
     }
   }
-
+  
   mpost_xfree (cnf_cmd);
   return (int)(ret == 0);
 }
@@ -1335,6 +1335,17 @@ extern __declspec(dllexport) int DLLPROC (int argc, char **argv);
 @ Now this is really it: \MP\ starts and ends here.
 
 @c 
+static char *cleaned_invocation_name(char *arg)
+{
+    char *ret, *dot;
+    const char *start = xbasename(arg);
+    ret = xstrdup(start);
+    dot = strrchr(ret, '.');
+    if (dot != NULL) {
+        *dot = 0;               /* chop */
+    }
+    return ret;
+}
 int
 #if defined(MIKTEX)
 MIKTEXCEECALL Main (int argc, char **argv)
@@ -1355,8 +1366,8 @@ main (int argc, char **argv)
   options->ini_version       = (int)false;
   options->print_found_names = (int)true;
   {
-    const char *base = xbasename(argv[0]);
-    if (!strcmp(base, "dvitomp") || !strcasecmp(base, "dvitomp.exe"))
+    const char *base = cleaned_invocation_name(argv[0]);
+    if (FILESTRCASEEQ(base, "dvitomp"))
       dvitomp_only=1;
   }
   if (dvitomp_only) {
