@@ -30,6 +30,9 @@
 
 #include "pfaedit.h"
 #include "ustring.h"
+#if defined(MIKTEX)
+#  include "w2c/config.h"
+#endif
 #include "lib/lib.h"            /* web2c's lib, for recorder_record_input */
 
 static const char _svn_version[] =

@@ -1,6 +1,6 @@
 /* PackageManager.cpp: MiKTeX Package Manager
 
-   Copyright (C) 2001-2012 Christian Schenk
+   Copyright (C) 2001-2013 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -2197,7 +2197,6 @@ PackageManager::StripTeXMFPrefix (/*[in]*/ const string &	str,
 void
 PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
 {
-#if defined(MIKTEX_WINDOWS)
   SessionWrapper(true)
     ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 		      MIKTEX_REGVAL_USE_PROXY,
@@ -2214,7 +2213,6 @@ PackageManager::SetProxy (/*[in]*/ const ProxySettings & proxySettings)
     ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 		      MIKTEX_REGVAL_PROXY_AUTH_REQ,
 		      proxySettings.authenticationRequired);
-#endif
   PackageManagerImpl::proxyUser = proxySettings.user;
   PackageManagerImpl::proxyPassword = proxySettings.password;
 }
@@ -2228,88 +2226,84 @@ bool
 PackageManager::TryGetProxy (/*[in]*/ const char *	lpszDestUrl,
 			     /*[out]*/ ProxySettings &	proxySettings)
 {
+  SessionWrapper pSession (true);
+  string useProxy;
+  if (pSession->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER, MIKTEX_REGVAL_USE_PROXY, useProxy))
+  {
+    proxySettings.useProxy = (useProxy == "t");
+    if (! pSession->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER, MIKTEX_REGVAL_PROXY_HOST, proxySettings.proxy))
+    {
+      return (false);
+    }
+    string port;
+    if (! pSession->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER, MIKTEX_REGVAL_PROXY_PORT, port))
+    {
+      return (false);
+    }
+    proxySettings.port = atoi(port.c_str());
+    string authenticationRequired;
+    if (! pSession->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER, MIKTEX_REGVAL_PROXY_AUTH_REQ, authenticationRequired))
+    {
+      return (false);
+    }
+    proxySettings.authenticationRequired = (authenticationRequired == "t");
+    proxySettings.user = PackageManagerImpl::proxyUser;
+    proxySettings.password = PackageManagerImpl::proxyPassword;
+    return (true);
+  }
   string proxyEnv;
   if (lpszDestUrl != 0)
+  {
+    Uri uri (lpszDestUrl);
+    string scheme = uri.GetScheme();
+    string envName;
+    if (scheme == "http")
     {
-      Uri uri (lpszDestUrl);
-      string scheme = uri.GetScheme();
-      string envName;
-      if (scheme == "http")
-	{
-	  envName = "http_proxy";
-	}
-      else if (scheme == "ftp")
-	{
-	  envName = "FTP_PROXY";
-	}
-      else
-	{
-	  UNEXPECTED_CONDITION ("PackageManager::TryGetProxy");
-	}
-      Utils::GetEnvironmentString (envName.c_str(), proxyEnv);
+      envName = "http_proxy";
     }
+    else if (scheme == "ftp")
+    {
+      envName = "FTP_PROXY";
+    }
+    else
+    {
+      UNEXPECTED_CONDITION ("PackageManager::TryGetProxy");
+    }
+    Utils::GetEnvironmentString (envName.c_str(), proxyEnv);
+  }
   if (proxyEnv.empty())
+  {
+    Utils::GetEnvironmentString("ALL_PROXY", proxyEnv);
+  }
+  if (proxyEnv.empty())
+  {
+    return (false);
+  }
+  Uri uri (proxyEnv.c_str());
+  proxySettings.useProxy = true;
+  proxySettings.proxy = uri.GetHost();
+  proxySettings.port = uri.GetPort();
+  string userInfo = uri.GetUserInfo();
+  proxySettings.authenticationRequired = ! userInfo.empty();
+  if (proxySettings.authenticationRequired)
+  {
+    string::size_type idx = userInfo.find_first_of(":");
+    if (idx == string::npos)
     {
-      Utils::GetEnvironmentString("ALL_PROXY", proxyEnv);
+      proxySettings.user = userInfo;
+      proxySettings.password = "";
     }
-  if (! proxyEnv.empty())
+    else
     {
-      Uri uri (proxyEnv.c_str());
-      proxySettings.useProxy = true;
-      proxySettings.proxy = uri.GetHost();
-      proxySettings.port = uri.GetPort();
-      string userInfo = uri.GetUserInfo();
-      if (! userInfo.empty())
-	{
-	  proxySettings.authenticationRequired = true;
-	  string::size_type idx = userInfo.find_first_of(":");
-	  if (idx == string::npos)
-	    {
-	      proxySettings.user = userInfo;
-	      proxySettings.password = "";
-	    }
-	  else
-	    {
-	      proxySettings.user = userInfo.substr(0, idx);
-	      proxySettings.password = userInfo.substr(idx + 1);
-	    }
-	}
-      return (true);
+      proxySettings.user = userInfo.substr(0, idx);
+      proxySettings.password = userInfo.substr(idx + 1);
     }
-  string str;
-  if (! (SessionWrapper(true)
-	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			     MIKTEX_REGVAL_USE_PROXY,
-			     str)))
-    {
-      return (false);
-    }
-  proxySettings.useProxy = (str == "t");
-  if (! (SessionWrapper(true)
-	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			     MIKTEX_REGVAL_PROXY_HOST,
-			     proxySettings.proxy)))
-    {
-      return (false);
-    }
-  if (! (SessionWrapper(true)
-	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			     MIKTEX_REGVAL_PROXY_PORT,
-			     str)))
-    {
-      return (false);
-    }
-  proxySettings.port = atoi(str.c_str());
-  if (! (SessionWrapper(true)
-	 ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			     MIKTEX_REGVAL_PROXY_AUTH_REQ,
-			     str)))
-    {
-      return (false);
-    }
-  proxySettings.authenticationRequired = (str == "t");
-  proxySettings.user = PackageManagerImpl::proxyUser;
-  proxySettings.password = PackageManagerImpl::proxyPassword;
+  }
+  else
+  {
+    proxySettings.user = "";
+    proxySettings.password = "";
+  }
   return (true);
 }
 

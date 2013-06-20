@@ -701,6 +701,7 @@ PackageInstallerImpl::FindUpdates ()
       UpdateInfo updateInfo;
       updateInfo.deploymentName = lpszPackage;
       updateInfo.timePackaged = dbLight.GetTimePackaged(lpszPackage);
+      updateInfo.version = dbLight.GetPackageVersion(lpszPackage);
 
       // get local package definition
       const PackageInfo * pPackageInfo
