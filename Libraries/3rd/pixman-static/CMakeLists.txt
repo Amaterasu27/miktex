@@ -20,7 +20,11 @@
 ##use_static_crt()
 ##use_static_libraries()
 
-add_definitions(-DUSE_X86_MMX -DUSE_SSE2 -DPACKAGE=pixman-1 -DPACKAGE_VERSION="" -DPACKAGE_BUGREPORT="")
+add_definitions(-DUSE_SSE2 -DPACKAGE=pixman-1 -DPACKAGE_VERSION="" -DPACKAGE_BUGREPORT="")
+
+if(NOT CMAKE_CL_64)
+  add_definitions(-DUSE_X86_MMX)
+endif(NOT CMAKE_CL_64)
 
 include_directories(BEFORE
   ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
