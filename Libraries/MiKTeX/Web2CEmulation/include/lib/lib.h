@@ -69,7 +69,7 @@
 #if defined(THEAPP)
 #  define output_directory (THEAPP.GetOutputDirectory().Empty() ? 0 : THEAPP.GetOutputDirectory().Get())
 #elif defined(__cplusplus)
-#  define output_directory MiKTeX::Web2C::GetOutputDirectory().Get()
+#  define output_directory (MiKTeX::Web2C::GetOutputDirectory().Empty() ? 0 : MiKTeX::Web2C::GetOutputDirectory().Get())
 #else
 #  define output_directory miktex_web2c_get_output_directory()
 #endif

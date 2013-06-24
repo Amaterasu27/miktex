@@ -257,7 +257,7 @@ Web2C::GetOutputDirectory ()
 MIKTEXW2CCEEAPI(const char *)
 miktex_web2c_get_output_directory ()
 {
-  return (Web2C::GetOutputDirectory().Get());
+  return (Web2C::GetOutputDirectory().Empty() ? 0 : Web2C::GetOutputDirectory().Get());
 }
 
 /* _________________________________________________________________________
