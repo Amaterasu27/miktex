@@ -101,6 +101,10 @@ static char *mpost_itoa (int i) {
 
 
 @ @c
+#if defined(MIKTEX_WINDOWS)
+/* the following WIN32 code is a mess. it does not work. disable it. */
+#undef WIN32
+#endif
 #ifdef WIN32
 static int
 Isspace (char c)
@@ -232,6 +236,9 @@ static void mpost_run_editor (MP mp, char *fname, int fline) {
     fprintf (stderr, "! Trouble executing `%s'.\n", command);
   exit(EXIT_FAILURE);
 }
+#if defined(MIKTEX_WINDOWS)
+#define WIN32
+#endif
 
 @ 
 @<Register the callback routines@>=
