@@ -133,21 +133,12 @@ miktex_ansi_to_utf8 (/*[in]*/ const char *	lpszAnsi,
 MIKTEXCEEAPI(void)
 miktex_create_temp_file_name (/*[out]*/ char *	lpszFileName);
 
-MIKTEXCEEAPI(int)
-miktex_determine_metafont_mode (/*[in]*/ unsigned	dpi,
-				/*[out]*/ char *	lpszMnemonic,
-				/*[in]*/ size_t		bufSize);
-
 MIKTEXCOREEXPORT MIKTEXNORETURN void MIKTEXCEECALL
 miktex_exit (/*[in]*/ int status);
 
 #if defined(USE_MIKTEX_EXIT)
 #  define exit(status) miktex_exit(status)
 #endif
-
-MIKTEXCEEAPI(int)
-miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
-		      /*[out]*/ char *		lpszPath);
 
 MIKTEXCEEAPI(int)
 miktex_find_input_file (/*[in]*/ const char *	lpszApplicationNames,
@@ -183,18 +174,8 @@ MIKTEXCEEAPI(int)
 miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
 		      /*[out]*/ char *		lpszPath);
 
-MIKTEXCEEAPI(char *)
-miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
-			 /*[in]*/ const char *	lpszValueName,
-			 /*[out]*/ char *	lpszBuf,
-			 /*[in]*/ size_t	bufSize,
-			 /*[in]*/ const char *	lpszDefaultValue);
-
 MIKTEXCEEAPI(unsigned)
 miktex_get_number_of_texmf_roots ();
-
-MIKTEXCEEAPI(void)
-miktex_get_gs_exe (/*[out]*/ char * lpszPath);
 
 MIKTEXCEEAPI(int)
 miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
@@ -207,9 +188,6 @@ miktex_get_root_directory (/*[in]*/  unsigned	r,
 MIKTEXCEEAPI(int)
 miktex_pathcmp (/*[in]*/ const char *	lpszPath1,
 		/*[in]*/ const char *	lpszPath2);
-
-MIKTEXCEEAPI(void)
-miktex_remember_temp_file (/*[in]*/ const char *	lpszFileName);
 
 MIKTEXCEEAPI(void)
 miktex_replace_string (/*[out]*/ char *		lpszBuf,
@@ -226,7 +204,6 @@ miktex_start_process (/*[in]*/ const char *	lpszFileName,
 		      /*[out]*/ FILE **		ppFileStandardOutput,
 		      /*[out]*/ FILE **		ppFileStandardError,
 		      /*[in]*/ const char *	lpszWorkingDirectory);
-
 MIKTEXCEEAPI(void)
 miktex_uncompress_file (/*[in]*/ const char *	lpszPathIn,
 			/*[out]*/ char *	lpszPathOut);

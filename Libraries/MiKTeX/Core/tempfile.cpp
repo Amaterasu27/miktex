@@ -1,6 +1,6 @@
 /* tempfile.cpp: managing temporary files
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -22,21 +22,6 @@
 #include "StdAfx.h"
 
 #include "internal.h"
-
-/* _________________________________________________________________________
-
-   miktex_remember_temp_file
-   _________________________________________________________________________ */
-
-MIKTEXCEEAPI(void)
-miktex_remember_temp_file (/*[in]*/ const char * lpszFileName)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFileName);
-  UNUSED (lpszFileName);
-  UNIMPLEMENTED ("miktex_remember_temp_file");
-  C_FUNC_END ();
-}
 
 /* _________________________________________________________________________
 

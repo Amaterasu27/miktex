@@ -770,30 +770,6 @@ miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
 
 /* _________________________________________________________________________
 
-   miktex_find_afm_file
-   _________________________________________________________________________ */
-
-MIKTEXCEEAPI(int)
-miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
-		      /*[out]*/ char *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
-					    FileType::AFM,
-					    temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
    miktex_find_enc_file
    _________________________________________________________________________ */
 

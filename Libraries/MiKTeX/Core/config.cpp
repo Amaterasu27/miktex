@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1696,35 +1696,4 @@ SessionImpl::ExpandValues (/*[in]*/ const char *	lpszToBeExpanded,
 	}
     }
   return (expansion);
-}
-
-/* _________________________________________________________________________
-
-   miktex_get_config_value
-
-   Get a configuration parameter.
-   _________________________________________________________________________ */
-
-MIKTEXCEEAPI(char *)
-miktex_get_config_value (/*[in]*/ const char *	lpszSectionName,
-			 /*[in]*/ const char *	lpszValueName,
-			 /*[out]*/ char *	lpszBuf,
-			 /*[in]*/ size_t	bufSize,
-			 /*[in]*/ const char *	lpszDefaultValue)
-{
-  C_FUNC_BEGIN ();
-  string value;
-  if (! SessionImpl::GetSession()->TryGetConfigValue(lpszSectionName,
-						     lpszValueName,
-						     value))
-    {
-      if (lpszDefaultValue == 0)
-	{
-	  return (0);
-	}
-      value = lpszDefaultValue;
-    }
-  Utils::CopyString (lpszBuf, bufSize, value.c_str());
-  return (lpszBuf);
-  C_FUNC_END ();
 }
