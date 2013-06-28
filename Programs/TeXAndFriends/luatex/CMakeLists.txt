@@ -116,6 +116,17 @@ set(lua52_sources
 add_library(luatex-lua52-static STATIC ${lua52_sources})
 
 ###############################################################################
+## luatex-miktex-static
+###############################################################################
+
+set(miktex_sources
+  miktex/miktex.cpp
+  miktex/luatex.h
+)
+
+add_library(luatex-miktex-static STATIC ${miktex_sources})
+
+###############################################################################
 ## luatex-luasocket-static
 ###############################################################################
 
@@ -251,12 +262,13 @@ target_link_libraries(${luatex_program_dll_name}
   ${w2cemu_dll_name}
   ${zlib_dll_name}
   
-
   luatex-lua52-static
   luatex-luafontforge-static
   luatex-luamisc-static
   luatex-luasocket-static
   luatex-static
+
+  luatex-miktex-static
 )
 
 rebase(${luatex_program_dll_name})

@@ -351,7 +351,11 @@ read an integer value |x| that is supposed to be in the range |a<=x<=b|.
 
 
 @ @c
+#if defined(MIKTEX)
+boolean load_fmt_file(const char *fmtname, boolean silent)
+#else
 boolean load_fmt_file(const char *fmtname)
+#endif
 {
     int j, k;                   /* all-purpose indices */
     halfword p;                 /* all-purpose pointer */
@@ -515,6 +519,12 @@ boolean load_fmt_file(const char *fmtname)
     prev_depth = dimen_par(pdf_ignored_dimen_code);
     return true;                /* it worked! */
   BAD_FMT:
+#if defined(MIKTEX)
+    if (silent)
+	{
+		return (false);
+	}
+#endif
     wake_up_terminal();
     wterm_cr();
     fprintf(term_out, "(Fatal format file error; I'm stymied)");

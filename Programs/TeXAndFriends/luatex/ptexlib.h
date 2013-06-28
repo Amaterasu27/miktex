@@ -42,6 +42,7 @@
 
 #if defined(MIKTEX)
 #  include <assert.h>
+#  include <miktex/luatex.h>
 #else
 #  include "lib/lib.h"
 #endif

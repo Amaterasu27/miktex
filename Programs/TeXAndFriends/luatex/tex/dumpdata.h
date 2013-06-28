@@ -27,7 +27,11 @@ extern str_number format_name;  /* principal file name */
 extern FILE *fmt_file;          /* for input or output of format information */
 
 extern void store_fmt_file(void);
+#if defined(MIKTEX)
+extern boolean load_fmt_file(const char *, boolean);
+#else
 extern boolean load_fmt_file(const char *);
+#endif
 
 /* (Un)dumping.  These are called from the change file.  */
 #  define        dump_things(base, len) \

@@ -430,10 +430,27 @@ void main_body(void)
             initialize();       /* erase preloaded format */
         if ((fname = open_fmt_file()) == NULL)
             goto FINAL_END;
+#if defined(MIKTEX)
+        if (! load_fmt_file(fname, true))
+		{
+            zwclose (fmt_file);
+			miktex_luatex_renew_format_file (fname);
+			if ((fname = open_fmt_file()) == 0)
+			{
+				goto FINAL_END;
+			}
+			if (! load_fmt_file(fname, false))
+			{
+				zwclose (fmt_file);
+				goto FINAL_END;
+			}
+        }
+#else
         if (!load_fmt_file(fname)) {
             zwclose(fmt_file);
             goto FINAL_END;
         }
+#endif
         zwclose(fmt_file);
         while ((iloc < ilimit) && (buffer[iloc] == ' '))
             incr(iloc);
