@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -47,6 +47,7 @@ set(kpathsea_includes
   concatn.h
   config.h
   debug.h
+  dirent.h
   expand.h
   getopt.h
   kpathsea.h

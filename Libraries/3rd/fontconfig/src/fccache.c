@@ -36,9 +36,6 @@
 #if defined(HAVE_MMAP) || defined(__CYGWIN__)
 #  include <unistd.h>
 #  include <sys/mman.h>
-#elif defined(_WIN32)
-#  define _WIN32_WINNT 0x0500
-#  include <windows.h>
 #endif
 
 #ifndef O_BINARY
@@ -59,93 +56,30 @@ static void MD5Transform(FcChar32 buf[4], FcChar32 in[16]);
 
 #define CACHEBASE_LEN (1 + 32 + 1 + sizeof (FC_ARCHITECTURE) + sizeof (FC_CACHE_SUFFIX))
 
-#if defined(_WIN32) && ! defined(MIKTEX)
-
-#include <windows.h>
-
-#ifdef __GNUC__
-typedef long long INT64;
-#define EPOCH_OFFSET 11644473600ll
-#else
-#define EPOCH_OFFSET 11644473600i64
-typedef __int64 INT64;
-#endif
-
-/* Workaround for problems in the stat() in the Microsoft C library:
- *
- * 1) stat() uses FindFirstFile() to get the file
- * attributes. Unfortunately this API doesn't return correct values
- * for modification time of a directory until some time after a file
- * or subdirectory has been added to the directory. (This causes
- * run-test.sh to fail, for instance.) GetFileAttributesEx() is
- * better, it returns the updated timestamp right away.
- *
- * 2) stat() does some strange things related to backward
- * compatibility with the local time timestamps on FAT volumes and
- * daylight saving time. This causes problems after the switches
- * to/from daylight saving time. See
- * http://bugzilla.gnome.org/show_bug.cgi?id=154968 , especially
- * comment #30, and http://www.codeproject.com/datetime/dstbugs.asp .
- * We don't need any of that, FAT and Win9x are as good as dead. So
- * just use the UTC timestamps from NTFS, converted to the Unix epoch.
- */
-
-int
-FcStat (const FcChar8 *file, struct stat *statb)
+static FcBool
+FcCacheIsMmapSafe (int fd)
 {
-    WIN32_FILE_ATTRIBUTE_DATA wfad;
-    char full_path_name[MAX_PATH];
-    char *basename;
-    DWORD rc;
+    static FcBool is_initialized = FcFalse;
+    static FcBool is_env_available = FcFalse;
+    static FcBool use_mmap = FcFalse;
 
-    if (!GetFileAttributesEx (file, GetFileExInfoStandard, &wfad))
-	return -1;
+    if (!is_initialized)
+    {
+	const char *env;
 
-    statb->st_dev = 0;
+	env = getenv ("FONTCONFIG_USE_MMAP");
+	if (env)
+	{
+	    if (FcNameBool ((const FcChar8 *)env, &use_mmap))
+		is_env_available = FcTrue;
+	}
+	is_initialized = FcTrue;
+    }
+    if (is_env_available)
+	return use_mmap;
 
-    /* Calculate a pseudo inode number as a hash of the full path name.
-     * Call GetLongPathName() to get the spelling of the path name as it
-     * is on disk.
-     */
-    rc = GetFullPathName (file, sizeof (full_path_name), full_path_name, &basename);
-    if (rc == 0 || rc > sizeof (full_path_name))
-	return -1;
-
-    rc = GetLongPathName (full_path_name, full_path_name, sizeof (full_path_name));
-    statb->st_ino = FcStringHash (full_path_name);
-
-    statb->st_mode = _S_IREAD | _S_IWRITE;
-    statb->st_mode |= (statb->st_mode >> 3) | (statb->st_mode >> 6);
-
-    if (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-	statb->st_mode |= _S_IFDIR;
-    else
-	statb->st_mode |= _S_IFREG;
-
-    statb->st_nlink = 1;
-    statb->st_uid = statb->st_gid = 0;
-    statb->st_rdev = 0;
-
-    if (wfad.nFileSizeHigh > 0)
-	return -1;
-    statb->st_size = wfad.nFileSizeLow;
-
-    statb->st_atime = (*(INT64 *)&wfad.ftLastAccessTime)/10000000 - EPOCH_OFFSET;
-    statb->st_mtime = (*(INT64 *)&wfad.ftLastWriteTime)/10000000 - EPOCH_OFFSET;
-    statb->st_ctime = statb->st_mtime;
-
-    return 0;
+    return FcIsFsMmapSafe (fd);
 }
-
-#else
-
-int
-FcStat (const FcChar8 *file, struct stat *statb)
-{
-  return stat ((char *) file, statb);
-}
-
-#endif
 
 static const char bin2hex[] = { '0', '1', '2', '3',
 				'4', '5', '6', '7',
@@ -247,7 +181,7 @@ FcDirCacheProcess (FcConfig *config, const FcChar8 *dir,
     struct stat file_stat, dir_stat;
     FcBool	ret = FcFalse;
 
-    if (FcStat (dir, &dir_stat) < 0)
+    if (FcStatChecksum (dir, &dir_stat) < 0)
         return FcFalse;
 
     FcDirCacheBasename (dir, cache_base);
@@ -594,14 +528,14 @@ FcCacheTimeValid (FcCache *cache, struct stat *dir_stat)
 
     if (!dir_stat)
     {
-	if (FcStat (FcCacheDir (cache), &dir_static) < 0)
+	if (FcStatChecksum (FcCacheDir (cache), &dir_static) < 0)
 	    return FcFalse;
 	dir_stat = &dir_static;
     }
     if (FcDebug () & FC_DBG_CACHE)
-	printf ("FcCacheTimeValid dir \"%s\" cache time %d dir time %d\n",
-		FcCacheDir (cache), cache->mtime, (int) dir_stat->st_mtime);
-    return cache->mtime == (int) dir_stat->st_mtime;
+	printf ("FcCacheTimeValid dir \"%s\" cache checksum %d dir checksum %d\n",
+		FcCacheDir (cache), cache->checksum, (int) dir_stat->st_mtime);
+    return cache->checksum == (int) dir_stat->st_mtime;
 }
 
 /*
@@ -625,13 +559,16 @@ FcDirCacheMapFd (int fd, struct stat *fd_stat, struct stat *dir_stat)
     }
 
     /*
-     * Lage cache files are mmap'ed, smaller cache files are read. This
+     * Large cache files are mmap'ed, smaller cache files are read. This
      * balances the system cost of mmap against per-process memory usage.
      */
-    if (fd_stat->st_size >= FC_CACHE_MIN_MMAP)
+    if (FcCacheIsMmapSafe (fd) && fd_stat->st_size >= FC_CACHE_MIN_MMAP)
     {
 #if defined(HAVE_MMAP) || defined(__CYGWIN__)
 	cache = mmap (0, fd_stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
+#ifdef HAVE_POSIX_FADVISE
+	posix_fadvise (fd, 0, fd_stat->st_size, POSIX_FADV_WILLNEED);
+#endif
 	if (cache == MAP_FAILED)
 	    cache = NULL;
 #elif defined(_WIN32)
@@ -762,7 +699,7 @@ FcDirCacheValidateHelper (int fd, struct stat *fd_stat, struct stat *dir_stat, v
 	ret = FcFalse;
     else if (fd_stat->st_size != c.size)
 	ret = FcFalse;
-    else if (c.mtime != (int) dir_stat->st_mtime)
+    else if (c.checksum != (int) dir_stat->st_mtime)
 	ret = FcFalse;
     return ret;
 }
@@ -837,7 +774,7 @@ FcDirCacheBuild (FcFontSet *set, const FcChar8 *dir, struct stat *dir_stat, FcSt
     cache->magic = FC_CACHE_MAGIC_ALLOC;
     cache->version = FC_CACHE_CONTENT_VERSION;
     cache->size = serialize->size;
-    cache->mtime = (int) dir_stat->st_mtime;
+    cache->checksum = (int) dir_stat->st_mtime;
 
     /*
      * Serialize directory name
@@ -936,7 +873,7 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
     if (!list)
 	return FcFalse;
     while ((test_dir = FcStrListNext (list))) {
-	if (access ((char *) test_dir, W_OK|X_OK) == 0)
+	if (access ((char *) test_dir, W_OK) == 0)
 	{
 	    cache_dir = test_dir;
 	    break;
@@ -950,6 +887,8 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
 		if (FcMakeDirectory (test_dir))
 		{
 		    cache_dir = test_dir;
+		    /* Create CACHEDIR.TAG */
+		    FcDirCacheCreateTagFile (cache_dir);
 		    break;
 		}
 	    }
@@ -959,6 +898,8 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
 	    else if (chmod ((char *) test_dir, 0755) == 0)
 	    {
 		cache_dir = test_dir;
+		/* Try to create CACHEDIR.TAG too */
+		FcDirCacheCreateTagFile (cache_dir);
 		break;
 	    }
 	}
@@ -1042,6 +983,97 @@ FcDirCacheWrite (FcCache *cache, FcConfig *config)
  bail1:
     FcStrFree (cache_hashed);
     return FcFalse;
+}
+
+FcBool
+FcDirCacheClean (const FcChar8 *cache_dir, FcBool verbose)
+{
+    DIR		*d;
+    struct dirent *ent;
+    FcChar8	*dir_base;
+    FcBool	ret = FcTrue;
+    FcBool	remove;
+    FcCache	*cache;
+    struct stat	target_stat;
+
+    dir_base = FcStrPlus (cache_dir, (FcChar8 *) FC_DIR_SEPARATOR_S);
+    if (!dir_base)
+    {
+	fprintf (stderr, "Fontconfig error: %s: out of memory\n", cache_dir);
+	return FcFalse;
+    }
+    if (access ((char *) cache_dir, W_OK) != 0)
+    {
+	if (verbose || FcDebug () & FC_DBG_CACHE)
+	    printf ("%s: not cleaning %s cache directory\n", cache_dir,
+		    access ((char *) cache_dir, F_OK) == 0 ? "unwritable" : "non-existent");
+	goto bail0;
+    }
+    if (verbose || FcDebug () & FC_DBG_CACHE)
+	printf ("%s: cleaning cache directory\n", cache_dir);
+    d = opendir ((char *) cache_dir);
+    if (!d)
+    {
+	perror ((char *) cache_dir);
+	ret = FcFalse;
+	goto bail0;
+    }
+    while ((ent = readdir (d)))
+    {
+	FcChar8	*file_name;
+	const FcChar8	*target_dir;
+
+	if (ent->d_name[0] == '.')
+	    continue;
+	/* skip cache files for different architectures and */
+	/* files which are not cache files at all */
+	if (strlen(ent->d_name) != 32 + strlen ("-" FC_ARCHITECTURE FC_CACHE_SUFFIX) ||
+	    strcmp(ent->d_name + 32, "-" FC_ARCHITECTURE FC_CACHE_SUFFIX))
+	    continue;
+
+	file_name = FcStrPlus (dir_base, (FcChar8 *) ent->d_name);
+	if (!file_name)
+	{
+	    fprintf (stderr, "Fontconfig error: %s: allocation failure\n", cache_dir);
+	    ret = FcFalse;
+	    break;
+	}
+	remove = FcFalse;
+	cache = FcDirCacheLoadFile (file_name, NULL);
+	if (!cache)
+	{
+	    if (verbose || FcDebug () & FC_DBG_CACHE)
+		printf ("%s: invalid cache file: %s\n", cache_dir, ent->d_name);
+	    remove = FcTrue;
+	}
+	else
+	{
+	    target_dir = FcCacheDir (cache);
+	    if (stat ((char *) target_dir, &target_stat) < 0)
+	    {
+		if (verbose || FcDebug () & FC_DBG_CACHE)
+		    printf ("%s: %s: missing directory: %s \n",
+			    cache_dir, ent->d_name, target_dir);
+		remove = FcTrue;
+	    }
+	}
+	if (remove)
+	{
+	    if (unlink ((char *) file_name) < 0)
+	    {
+		perror ((char *) file_name);
+		ret = FcFalse;
+	    }
+	}
+	FcDirCacheUnload (cache);
+        FcStrFree (file_name);
+    }
+
+    closedir (d);
+  bail0:
+    FcStrFree (dir_base);
+
+    return ret;
 }
 
 /*
@@ -1341,6 +1373,87 @@ static void MD5Transform(FcChar32 buf[4], FcChar32 in[16])
     buf[2] += c;
     buf[3] += d;
 }
+
+FcBool
+FcDirCacheCreateTagFile (const FcChar8 *cache_dir)
+{
+    FcChar8		*cache_tag;
+    int 		 fd;
+    FILE		*fp;
+    FcAtomic		*atomic;
+    static const FcChar8 cache_tag_contents[] =
+	"Signature: 8a477f597d28d172789f06886806bc55\n"
+	"# This file is a cache directory tag created by fontconfig.\n"
+	"# For information about cache directory tags, see:\n"
+	"#       http://www.brynosaurus.com/cachedir/\n";
+    static size_t	 cache_tag_contents_size = sizeof (cache_tag_contents) - 1;
+    FcBool		 ret = FcFalse;
+
+    if (!cache_dir)
+	return FcFalse;
+
+    if (access ((char *) cache_dir, W_OK) == 0)
+    {
+	/* Create CACHEDIR.TAG */
+	cache_tag = FcStrPlus (cache_dir, (const FcChar8 *) FC_DIR_SEPARATOR_S "CACHEDIR.TAG");
+	if (!cache_tag)
+	    return FcFalse;
+	atomic = FcAtomicCreate ((FcChar8 *)cache_tag);
+	if (!atomic)
+	    goto bail1;
+	if (!FcAtomicLock (atomic))
+	    goto bail2;
+	fd = open((char *)FcAtomicNewFile (atomic), O_RDWR | O_CREAT, 0644);
+	if (fd == -1)
+	    goto bail3;
+	fp = fdopen(fd, "wb");
+	if (fp == NULL)
+	    goto bail3;
+
+	fwrite(cache_tag_contents, cache_tag_contents_size, sizeof (FcChar8), fp);
+	fclose(fp);
+
+	if (!FcAtomicReplaceOrig(atomic))
+	    goto bail3;
+
+	ret = FcTrue;
+      bail3:
+	FcAtomicUnlock (atomic);
+      bail2:
+	FcAtomicDestroy (atomic);
+      bail1:
+	FcStrFree (cache_tag);
+    }
+
+    if (FcDebug () & FC_DBG_CACHE)
+    {
+	if (ret)
+	    printf ("Created CACHEDIR.TAG at %s\n", cache_dir);
+	else
+	    printf ("Unable to create CACHEDIR.TAG at %s\n", cache_dir);
+    }
+
+    return ret;
+}
+
+void
+FcCacheCreateTagFile (const FcConfig *config)
+{
+    FcChar8   *cache_dir = NULL;
+    FcStrList *list;
+
+    list = FcConfigGetCacheDirs (config);
+    if (!list)
+	return;
+
+    while ((cache_dir = FcStrListNext (list)))
+    {
+	if (FcDirCacheCreateTagFile (cache_dir))
+	    break;
+    }
+    FcStrListDone (list);
+}
+
 #define __fccache__
 #include "fcaliastail.h"
 #undef __fccache__

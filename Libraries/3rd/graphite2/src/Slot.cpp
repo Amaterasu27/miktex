@@ -144,7 +144,7 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
     return res;
 }
 
-uint32 Slot::clusterMetric(const Segment *seg, uint8 metric, uint8 attrLevel)
+int32 Slot::clusterMetric(const Segment *seg, uint8 metric, uint8 attrLevel)
 {
     Position base;
     Rect bbox = seg->theGlyphBBoxTemporary(gid());
@@ -247,7 +247,9 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
         if (idx < map.size() && map[idx])
         {
             Slot *other = map[idx];
-            if (other != this && other->child(this))
+            if (other == this) break;
+            if (m_parent) m_parent->removeChild(this);
+            if (other->child(this))
             {
                 attachTo(other);
                 if (((seg->dir() & 1) != 0) ^ (idx > subindex))
@@ -342,6 +344,34 @@ bool Slot::sibling(Slot *ap)
         m_sibling = ap;
     else
         return m_sibling->sibling(ap);
+    return true;
+}
+
+bool Slot::removeChild(Slot *ap)
+{
+    if (this == ap || !m_child) return false;
+    else if (ap == m_child)
+    {
+        Slot *nSibling = m_child->nextSibling();
+        m_child->sibling(NULL);
+        m_child = nSibling;
+        return true;
+    }
+    else
+        return m_child->removeSibling(ap);
+    return true;
+}
+
+bool Slot::removeSibling(Slot *ap)
+{
+    if (this == ap || !m_sibling) return false;
+    else if (ap == m_sibling)
+    {
+        m_sibling = m_sibling->nextSibling();
+        return true;
+    }
+    else
+        return m_sibling->removeSibling(ap);
     return true;
 }
 

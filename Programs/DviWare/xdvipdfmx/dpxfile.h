@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.h,v 1.9 2009/03/12 19:29:48 matthias Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -51,6 +51,7 @@ extern FILE *dpx_open_file (const char *filename, int type);
 extern char * dpx_find_type1_file (const char *filename);
 extern char * dpx_find_truetype_file (const char *filename);
 extern char * dpx_find_opentype_file (const char *filename);
+extern char * dpx_find_dfont_file (const char *filename);
 
 #define DPXFOPEN(n,t)  dpx_open_file((const char *)(n),(t))
 #define DPXFCLOSE(f)   MFCLOSE((f))
@@ -61,6 +62,9 @@ extern int   dpx_file_apply_filter (const char *cmdtmpl,
                                    const char *input, const char *output,
                                    unsigned char version);
 extern char *dpx_create_temp_file  (void);
-extern void  dpx_delete_temp_file  (char *tmp); /* tmp freed here */
+extern char *dpx_create_fix_temp_file (const char *filename);
+extern void  dpx_delete_old_cache  (int life);
+extern void  dpx_delete_temp_file  (char *tmp, int force); /* tmp freed here */
 
+extern int   keep_cache;
 #endif /* _DPXFILE_H_ */

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -106,6 +106,14 @@ foreach(e ${exes})
     ${pnm_dll_name}
   )
 endforeach(e ${exes})
+
+target_link_libraries(pnmtotiff
+  ${tiff_dll_name}
+)
+
+target_link_libraries(tifftopnm
+  ${tiff_dll_name}
+)
 
 install(TARGETS ${exes} ${pnm_dll_name}
   RUNTIME DESTINATION "${bindir}"

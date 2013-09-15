@@ -17,11 +17,13 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4787
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.9998"
+#include "xetex_version.h"
 
-#define MIKTEX_COMP_COPYRIGHT_STR "(C) 1994-2008 by SIL International, (C) 2009-2011 by Jonathan Kew"
-#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1994-2008 by SIL International, © 2009-2011 by Jonathan Kew"
+#define MIKTEX_COMP_J2000_VERSION 4987
+#define MIKTEX_COMP_ORIG_VERSION_STR XETEX_VERSION
+
+#define MIKTEX_COMP_COPYRIGHT_STR "(C) 1994-2008 by SIL International, (C) 2009-2012 by Jonathan Kew, (C) 2010-2012 by Han Han The Thanh, (C) 2012-2013 by Khaled Hosny"
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 1994-2008 by SIL International, © 2009-2012 by Jonathan Kew, © 2010-2012 by Han Han The Thanh, © 2012-2013 by Khaled Hosny"
 #define MIKTEX_COMP_TM_STR "TeX is a trademark of the American Mathematical Society."
 
 #include <miktex/Core/Version>

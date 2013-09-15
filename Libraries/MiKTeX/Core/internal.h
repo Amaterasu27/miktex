@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1143,7 +1143,26 @@ public:
   virtual
   bool
   MIKTEXTHISCALL
-  StartFileInfoRecorder (/*[in]*/ bool bRecordPackageNames);
+  StartFileInfoRecorder ();
+
+public:
+  virtual
+  bool
+  MIKTEXTHISCALL
+  StartFileInfoRecorder (/*[in]*/ bool RecordPackageNames);
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  SetRecorderPath (/*[in]*/ const PathName & path);
+
+public:
+  virtual
+  void
+  MIKTEXTHISCALL
+  RecordFileInfo (/*[in]*/ const char *	lpszPath,
+		  /*[in]*/ FileAccess	access);
 
 public:
   virtual
@@ -1580,11 +1599,6 @@ public:
   IsTEXMFFile (/*[in]*/ const char *	lpszPath,
 	       /*[out]*/ char *		lpszRelPath,
 	       /*[out]*/ unsigned *		pRootIndex);
-
-public:
-  void
-  RecordFileInfo (/*[in]*/ const char *	lpszPath,
-		  /*[in]*/ FileAccess		access);
 
 public:
   bool
@@ -2309,6 +2323,9 @@ private:
   // true, if we record a package history
 private:
   bool recordingPackageNames;
+
+private:
+  StreamWriter fileNameRecorderStream;
 
   // package history file
 private:

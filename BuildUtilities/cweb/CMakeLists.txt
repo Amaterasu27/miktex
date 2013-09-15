@@ -49,9 +49,10 @@ endif(NATIVE_WINDOWS)
 add_executable(initctangle ${initctangle_sources})
 
 target_link_libraries(initctangle
+  ${app_dll_name}
+  ${core_dll_name}
   ${kpsemu_dll_name}
   ${w2cemu_dll_name}
-  ${core_dll_name}
 )
 
 merge_trustinfo_manifest(initctangle asInvoker)
@@ -128,9 +129,10 @@ add_executable(ctangle ${ctangle_sources})
 merge_trustinfo_manifest(ctangle asInvoker)
 
 target_link_libraries(ctangle
+  ${app_dll_name}
+  ${core_dll_name}
   ${kpsemu_dll_name}
   ${w2cemu_dll_name}
-  ${core_dll_name}
 )
 
 set(cweave_sources
@@ -175,9 +177,10 @@ add_executable(cweave ${cweave_sources})
 merge_trustinfo_manifest(cweave asInvoker)
 
 target_link_libraries(cweave
+  ${app_dll_name}
+  ${core_dll_name}
   ${kpsemu_dll_name}
   ${w2cemu_dll_name}
-  ${core_dll_name}
 )
 
 if(BUILDING_MIKTEX)

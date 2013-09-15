@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,7 +32,6 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 set(xdvipdfmx_sources
   ${wrapper_cpp}
   agl.c
-  agl_standard.c
   bmpimage.c
   cff.c
   cff_dict.c
@@ -121,6 +120,7 @@ target_link_libraries(xdvipdfmx
   ${freetype2_dll_name}
   ${kpsemu_dll_name}
   ${png_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
   ${zlib_dll_name}
 )

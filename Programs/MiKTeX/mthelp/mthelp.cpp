@@ -1,6 +1,6 @@
 /* mthelp.cpp:
 
-   Copyright (C) 2004-2008 Christian Schenk
+   Copyright (C) 2004-2013 Christian Schenk
 
    This file is a part of MTHelp.
 
@@ -20,6 +20,10 @@
 
 #if defined(HAVE_CONFIG_H)
 #  include <config.h>
+#endif
+
+#if defined(MIKTEX_WINDOWS)
+#  include <Windows.h>
 #endif
 
 #include "mthelp-version.h"

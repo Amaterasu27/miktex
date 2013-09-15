@@ -301,7 +301,7 @@ static void read_encoding(char *encname)
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == 0)
         ttf_fail("invalid encoding vector: name or `[' missing:\n%s", enc_line);
     for (i = 0; i < 256; i++)
-        enc_names[i] = (char *) notdef;
+        enc_names[i] = notdef;
     if (r[1] == 32)
         r += 2;
     else
@@ -1041,7 +1041,7 @@ int main(int argc, char **argv)
     char date[128], *s;
     time_t t = time(&t);
     int c;
-    kpse_set_program_name(argv[0], NULL);
+    kpse_set_program_name(argv[0], "ttf2afm");
     kpse_init_prog("ttf2afm", 0, 0, 0);
     while ((c = getopt(argc, argv, "iucve:o:m:")) != -1)
         switch (c) {

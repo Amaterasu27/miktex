@@ -29,6 +29,7 @@
 #define IDD_GIVE_BACK                   130
 #define IDC_DATE                        1001
 #define IDC_USE_PROXY                   1002
+#define IDC_MAINTAINER                  1002
 #define IDC_LIST_PACKAGES               1003
 #define IDC_CONNECTION_SETTINGS         1004
 #define IDC_FIND_NOW                    1005
@@ -71,6 +72,7 @@
 #define IDC_FILENAME                    1042
 #define IDC_NAME                        1043
 #define IDC_COMBO_DRIVE                 1044
+#define IDC_VERSION                     1044
 #define IDC_FILE                        1045
 #define IDC_LINE1                       1046
 #define IDC_PACKAGE_SIZE                1047

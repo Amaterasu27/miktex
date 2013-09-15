@@ -695,7 +695,7 @@
     </message>
     <message>
         <source>Toolbar buttons</source>
-        <translation>Araç çubuğu düğmeleri</translation>
+        <translation type="obsolete">Araç çubuğu düğmeleri</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -731,7 +731,7 @@
     </message>
     <message>
         <source>Interface locale:</source>
-        <translation>Arayüz dili:</translation>
+        <translation type="obsolete">Arayüz dili:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -952,6 +952,22 @@
 &lt;p&gt;&lt;strong&gt;Hata yoksa:&lt;/strong&gt; Hatasız dizgi sonrası konsol çıktısını önceki durumunu dikkate almadan gizle.&lt;/p&gt;
 </translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation>Arayüz</translation>
+    </message>
+    <message>
+        <source>Locale:</source>
+        <translation>Yerellik:</translation>
+    </message>
+    <message>
+        <source>Toolbar buttons:</source>
+        <translation>Araç çubuğu düğmeleri</translation>
+    </message>
+    <message>
+        <source>Open corresponding PDF preview with TeX files</source>
+        <translation>TeX dosyaları ile ilgili PDF önizlemesini aç</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1003,11 +1019,19 @@
     </message>
     <message>
         <source>Log files (*.log)</source>
-        <translation>Kayıt dosyaları (*.log)</translation>
+        <translation type="obsolete">Kayıt dosyaları (*.log)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation>Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+        <translation type="obsolete">Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+    </message>
+    <message>
+        <source>Log files (*.log *.blg)</source>
+        <translation>Kayıt dosyaları (*.log *.blg)</translation>
+    </message>
+    <message>
+        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
+        <translation>Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</translation>
     </message>
 </context>
 <context>
@@ -2194,7 +2218,7 @@ Mevcut değişikliklerinizi gözardı etmek, ve dosyayı diskten %1 kodlaması i
     <message>
         <source>A typesetting process is still running and must be stopped before closing this window.
 Do you want to stop it now?</source>
-	<translation>Bir dizgi işlemi halen devam ediyor ve bu pencereyi kapatmadan önce durdurulması gerekli.
+        <translation>Bir dizgi işlemi halen devam ediyor ve bu pencereyi kapatmadan önce durdurulması gerekli.
 Şimdi durdurmak istiyor musunuz?</translation>
     </message>
     <message>
@@ -2211,7 +2235,7 @@ Do you want to stop it now?</source>
     </message>
     <message>
         <source>When a TeX distribution is installed you may need to tell TeXworks where to find it in Edit -&gt; Preferences -&gt; Typesetting.</source>
-        <translation>Bir TeX dağıtımı kurulduğunda TeXworks'e onu nerede bulabileceğini Düzenle -&gt; Tercihler -&gt; Dizgi ile anlatmanız gerekebilir.</translation>
+        <translation>Bir TeX dağıtımı kurulduğunda TeXworks&apos;e onu nerede bulabileceğini Düzenle -&gt; Tercihler -&gt; Dizgi ile anlatmanız gerekebilir.</translation>
     </message>
     <message>
         <source>Check the configuration of the %1 tool and the path settings in the Preferences dialog.</source>
@@ -2232,7 +2256,7 @@ Do you want to stop it now?</source>
  -) Resize the window
 
 We are sorry for the inconvenience.</source>
-	<translation>Yüklenen belgeyi düzenleyiciye yerleştirirken bir sorun ortaya çıktı. Bu Qt çatısından kaynaklanıyor ve bazı durumlarda TeXworks'ün çökmesine neden olabilir. Bu sorun gizli veya üst üste binen satırlar olarak gözlenebilir. Aşağıdakilerden birini deneyerek bunun üstesinden gelebilirsiniz:
+        <translation>Yüklenen belgeyi düzenleyiciye yerleştirirken bir sorun ortaya çıktı. Bu Qt çatısından kaynaklanıyor ve bazı durumlarda TeXworks&apos;ün çökmesine neden olabilir. Bu sorun gizli veya üst üste binen satırlar olarak gözlenebilir. Aşağıdakilerden birini deneyerek bunun üstesinden gelebilirsiniz:
  -) Sentaks renklendirmeyi kapatıp açın
  -) Satır numaralarını kapatıp açın
  -) Pencereyi boyutunu değiştirin
@@ -2241,7 +2265,7 @@ Rahatsızlık için üzgünüz.</translation>
     </message>
     <message>
         <source>Show Console Output</source>
-	<translation>Konsol Çıktısını Göster</translation>
+        <translation>Konsol Çıktısını Göster</translation>
     </message>
 </context>
 <context>

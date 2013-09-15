@@ -35,19 +35,19 @@ public:
   enum Format { RGB, RGBA_PREMULTIPLIED, GRAY, MONOCHROME, CMYK };
 
   TiffWriter(Format format = RGB);
-		~TiffWriter();
-		
-		void setCompressionString(const char *compressionStringArg);
+  ~TiffWriter();
 
-		bool init(FILE *openedFile, int width, int height, int hDPI, int vDPI);
-		
-		bool writePointers(unsigned char **rowPointers, int rowCount);
-		bool writeRow(unsigned char **rowData);
-		
+  void setCompressionString(const char *compressionStringArg);
+
+  bool init(FILE *openedFile, int width, int height, int hDPI, int vDPI);
+
+  bool writePointers(unsigned char **rowPointers, int rowCount);
+  bool writeRow(unsigned char **rowData);
+
   bool supportCMYK() { return true; }
 
-		bool close();
-	
+  bool close();
+
 private:
   TiffWriter(const TiffWriter &other);
   TiffWriter& operator=(const TiffWriter &other);

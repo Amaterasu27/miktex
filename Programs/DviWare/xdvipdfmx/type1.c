@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.46 2009/08/28 00:26:17 matthias Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2008-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -478,7 +478,7 @@ write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
 int
 pdf_font_load_type1 (pdf_font *font)
 {
-  pdf_obj      *fontdict, *descriptor;
+  pdf_obj      *fontdict;
   int           encoding_id;
   char         *usedchars, *ident;
   char         *fontname, *uniqueTag;
@@ -504,7 +504,7 @@ pdf_font_load_type1 (pdf_font *font)
   encoding_id = pdf_font_get_encoding  (font);
   fontdict    = pdf_font_get_resource  (font);
 
-  descriptor  = pdf_font_get_descriptor(font);
+                pdf_font_get_descriptor(font);
   usedchars   = pdf_font_get_usedchars (font);
   ident       = pdf_font_get_ident     (font);
   fontname    = pdf_font_get_fontname  (font);
@@ -680,7 +680,6 @@ pdf_font_load_type1 (pdf_font *font)
     t1_ginfo   gm;
     card16     gid, gid_orig;
     long       dstlen_max, srclen;
-    int        have_seac = 0;
     card8     *srcptr, *dstptr;
 
     offset  = dstlen_max = 0L;
@@ -737,7 +736,7 @@ pdf_font_load_type1 (pdf_font *font)
 	  if (verbose > 2)
 	    MESG("/%s", achar_name);
 	  GIDMap[num_glyphs++] = achar_gid;
-	  charset->data.glyphs[charset->num_entries] = cff_get_sid(cffont, achar_name);
+	  charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, achar_name);
 	  charset->num_entries += 1;
 	}
 
@@ -749,10 +748,9 @@ pdf_font_load_type1 (pdf_font *font)
 	  if (verbose > 2)
 	    MESG("/%s", bchar_name);
 	  GIDMap[num_glyphs++] = bchar_gid;
-	  charset->data.glyphs[charset->num_entries] = cff_get_sid(cffont, bchar_name);
+	  charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, bchar_name);
 	  charset->num_entries += 1;
 	}
-	have_seac = 1;
       }
       widths[gid] = gm.wx;
     }

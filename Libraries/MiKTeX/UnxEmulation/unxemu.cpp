@@ -1,6 +1,6 @@
 /* unxemu.cpp:
 
-   Copyright (C) 2007-2011 Christian Schenk
+   Copyright (C) 2007-2013 Christian Schenk
 
    This file is part of the MiKTeX UNXEMU Library.
 
@@ -24,6 +24,8 @@
 #include <errno.h>
 
 #include <miktex/Core/Core>
+
+#include <WinSock2.h>
 
 using namespace MiKTeX::Core;
 using namespace std;

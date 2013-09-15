@@ -1,6 +1,6 @@
 /* xdvipdfmx-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4535
-#define MIKTEX_COMP_ORIG_VERSION_STR "0.7.8"
+#define MIKTEX_COMP_J2000_VERSION 4892
+#define MIKTEX_COMP_ORIG_VERSION_STR "0.7.9"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 2006-2001 SIL International and Jin-Hwan Cho"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "© 2006-2011 SIL International and Jin-Hwan Cho"

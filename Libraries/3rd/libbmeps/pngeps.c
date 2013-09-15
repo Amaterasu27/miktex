@@ -48,10 +48,6 @@ DAMAGE.
 #if HAVE_LIBPNG
 
 #include <png.h>
-#if defined(MIKTEX)
-#  include <pnginfo.h>
-#  include <pngstruct.h>
-#endif
 #include <math.h>
 
 #if HAVE_SETJMP_H
@@ -303,11 +299,7 @@ png_run(FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int
       pi = png_create_info_struct(pp);
       if(pi) { 
 #if HAVE_SETJMP_H
-#  if defined(MIKTEX)
-	if(setjmp(pp->longjmp_buffer) == 0) {
-#  else
         if(setjmp(pp->jmpbuf) == 0) {
-#  endif
 #endif
 	  png_init_io(pp, in); 
 	  png_read_info(pp, pi); 

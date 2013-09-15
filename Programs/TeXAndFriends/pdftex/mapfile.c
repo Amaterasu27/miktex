@@ -110,11 +110,11 @@ static void delete_ff_entry(ff_entry * ff)
 static fm_entry *dummy_fm_entry(void)
 {
 #if defined(MIKTEX)
-  static const fm_entry const_fm_entry = { 0 };
+    static fm_entry const_fm_entry = { 0 };
 #else
-    static const fm_entry const_fm_entry;
+    static fm_entry const_fm_entry;
 #endif
-    return (fm_entry *) & const_fm_entry;
+    return & const_fm_entry;
 }
 
 /**********************************************************************/

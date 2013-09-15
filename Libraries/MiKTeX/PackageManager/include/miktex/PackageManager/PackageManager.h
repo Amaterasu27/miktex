@@ -1,6 +1,6 @@
 /* miktex/PackageManager/PackageManager.h: package manager API	-*- C++ -*-
 
-   Copyright (C) 2001-2011 Christian Schenk
+   Copyright (C) 2001-2013 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -939,6 +939,8 @@ public:
 
     /// Date/Time the package was created.
     time_t timePackaged;
+
+    std::string version;
 
     enum Action {
       None,

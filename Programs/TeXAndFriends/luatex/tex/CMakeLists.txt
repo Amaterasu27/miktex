@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2011 Christian Schenk
+## Copyright (C) 2010-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -63,7 +63,6 @@ set(luatexlib_cwebs
   ../lua/luatoken.w
   ../lua/texluac.w
   ../luascripts/txt2zlib.w
-  ../pdf/pagetree.w
   ../pdf/pdfaction.w
   ../pdf/pdfannot.w
   ../pdf/pdfcolorstack.w
@@ -79,6 +78,7 @@ set(luatexlib_cwebs
   ../pdf/pdfobj.w
   ../pdf/pdfoutline.w
   ../pdf/pdfpage.w
+  ../pdf/pdfpagetree.w
   ../pdf/pdfrule.w
   ../pdf/pdfsaverestore.w
   ../pdf/pdfsetmatrix.w
@@ -120,7 +120,12 @@ set(luatexlib_cwebs
   ../tex/textoken.w
   ../utils/avlstuff.w
   ../utils/managed-sa.w
+  ../utils/unistring.w
   ../utils/utils.w
+)
+
+set(luatexlib_ccwebs
+  ../image/pdftoepdf.w
 )
 
 foreach(cweb ${luatexlib_cwebs})
@@ -143,6 +148,27 @@ foreach(cweb ${luatexlib_cwebs})
     ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
   )
 endforeach(cweb)
+
+foreach(ccweb ${luatexlib_ccwebs})
+  get_filename_component(fn ${ccweb} NAME_WE)
+  add_custom_command(
+    OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+    COMMAND
+      ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/${ccweb} - ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+    WORKING_DIRECTORY
+      ${CMAKE_CURRENT_BINARY_DIR}
+    MAIN_DEPENDENCY
+      ${ccweb}
+    DEPENDS
+      ${ctangle_exe}
+      ${CMAKE_CURRENT_SOURCE_DIR}/${ccweb}
+    VERBATIM
+  )
+  set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
+    ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
+  )
+endforeach(ccweb)
 
 set_source_files_properties(
   ${luatexlib_cweb_sources}
@@ -203,7 +229,6 @@ set(luatexlib_sources
   ../font/writettf.h
   ../image/epdf.h
   ../image/image.h
-  ../image/pdftoepdf.cc
   ../image/pdftoepdf.h
   ../image/writeimg.h
   ../image/writejbig2.h
@@ -217,7 +242,7 @@ set(luatexlib_sources
   ../lua/lepdflib.cc
   ../lua/lfontlib.c
   ../lua/limglib.c
-  ../lua/liolib.c
+  ../lua/liolibext.c
   ../lua/lkpselib.c
   ../lua/llanglib.c
   ../lua/llfslibext.c
@@ -225,15 +250,17 @@ set(luatexlib_sources
   ../lua/lnodelib.c
   ../lua/loslibext.c
   ../lua/lpdflib.c
+  ../lua/lpdfscannerlib.cc
   ../lua/lstatslib.c
+  ../lua/lstrlibext.c
   ../lua/ltexiolib.c
   ../lua/ltexlib.c
   ../lua/ltokenlib.c
   ../lua/luagen.h
   ../lua/luatex-api.h
+#  ../luascripts/pdflua.c
   ../luascripts/pdflua.h
   ../luatex.h
-  ../pdf/pagetree.h
   ../pdf/pdfaction.h
   ../pdf/pdfannot.h
   ../pdf/pdfcolorstack.h
@@ -249,6 +276,7 @@ set(luatexlib_sources
   ../pdf/pdfobj.h
   ../pdf/pdfoutline.h
   ../pdf/pdfpage.h
+  ../pdf/pdfpagetree.h
   ../pdf/pdfrule.h
   ../pdf/pdfsaverestore.h
   ../pdf/pdfsetmatrix.h
@@ -293,6 +321,7 @@ set(luatexlib_sources
   ../utils/avl.h
   ../utils/avlstuff.h
   ../utils/managed-sa.h
+  ../utils/unistring.h
   ../utils/utils.h
 )
 

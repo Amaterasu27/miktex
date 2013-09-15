@@ -1,6 +1,6 @@
 %% tie-miktex.ch: WEB change file for Tie
 %% 
-%% Copyright (C) 2000-2008 Christian Schenk
+%% Copyright (C) 2000-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -60,4 +60,17 @@ xchr[nl_mark]='\n';
    if (c!=@' ' && c!=tab_mark)
 @y
    if (c!=@' ' && c!=tab_mark && c!=cr_mark)
+@z
+
+% _____________________________________________________________________________
+%
+% [7.34]
+% _____________________________________________________________________________
+
+@x
+    out_file=fopen(out_name,"w");
+@y
+    if(strcmp(out_name, "-") == 0) out_file=stdout;
+    else
+    out_file=fopen(out_name,"w");
 @z

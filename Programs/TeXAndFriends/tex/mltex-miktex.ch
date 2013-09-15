@@ -630,10 +630,8 @@ if (qo(y)>=font_bc[g])and(qo(y)<=font_ec[g]) then
 @z
 
 @x [36] m.722 l.14172 -- MLTeX: avoid substitution in |fetch|
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
     cur_i:=char_info(cur_f)(cur_c)
 @y
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
     cur_i:=orig_char_info(cur_f)(cur_c)
 @z
 

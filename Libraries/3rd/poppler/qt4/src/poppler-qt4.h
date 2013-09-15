@@ -604,7 +604,7 @@ delete it;
 	   \since 0.14
 	**/
 	bool search(const QString &text, double &rectLeft, double &rectTop, double &rectRight, double &rectBottom, SearchDirection direction, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
-
+	
 	/**
 	   Returns a list of all occurrences of the specified text on the page.
 	   
@@ -1644,7 +1644,7 @@ height = dummy.height();
        \since 0.12
     */
     POPPLER_QT4_EXPORT bool isCmsAvailable();
-
+    
     /**
        Whether the overprint preview functionality is available.
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2011 Christian Schenk
+## Copyright (C) 2010-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,12 +20,16 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/lua51
+  ${CMAKE_CURRENT_SOURCE_DIR}/lua52
+  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
 )
 
 add_definitions(
   -DAPPTAG=luatex
+  -DLUA_COMPAT_ALL
+  -DLUA_COMPAT_MODULE
   -DMIKTEX_LUATEX
   -DNO_DUMP_SHARE
   -DPDF_PARSER_ONLY
@@ -48,66 +52,79 @@ endif(WITH_CONTEXT_SUPPORT)
 
 
 ###############################################################################
-## luatex-lua51-static
+## luatex-lua52-static
 ###############################################################################
 
-set(lua51_sources
-  lua51/lapi.c
-  lua51/lapi.h
-  lua51/lauxlib.c
-  lua51/lauxlib.h
-  lua51/lbaselib.c
-  lua51/lcoco.c
-  lua51/lcoco.h
-  lua51/lcode.c
-  lua51/lcode.h
-  lua51/ldblib.c
-  lua51/ldebug.c
-  lua51/ldebug.h
-  lua51/ldo.c
-  lua51/ldo.h
-  lua51/ldump.c
-  lua51/lfunc.c
-  lua51/lfunc.h
-  lua51/lgc.c
-  lua51/lgc.h
-  lua51/linit.c
-  lua51/llex.c
-  lua51/llex.h
-  lua51/llimits.h
-  lua51/lmathlib.c
-  lua51/lmem.c
-  lua51/lmem.h
-  lua51/loadlib.c
-  lua51/lobject.c
-  lua51/lobject.h
-  lua51/lopcodes.c
-  lua51/lopcodes.h
-  lua51/loslib.c
-  lua51/lparser.c
-  lua51/lparser.h
-  lua51/lstate.c
-  lua51/lstate.h
-  lua51/lstring.c
-  lua51/lstring.h
-  lua51/lstrlib.c
-  lua51/ltable.c
-  lua51/ltable.h
-  lua51/ltablib.c
-  lua51/ltm.c
-  lua51/ltm.h
-  lua51/lua.h
-  lua51/luaconf.h
-  lua51/lualib.h
-  lua51/lundump.c
-  lua51/lundump.h
-  lua51/lvm.c
-  lua51/lvm.h
-  lua51/lzio.c
-  lua51/lzio.h
+set(lua52_sources
+  lua52/lapi.c
+  lua52/lapi.h
+  lua52/lauxlib.c
+  lua52/lauxlib.h
+  lua52/lbaselib.c
+  lua52/lbitlib.c
+  lua52/lcode.c
+  lua52/lcode.h
+  lua52/lcorolib.c
+  lua52/lctype.c
+  lua52/lctype.h
+  lua52/ldblib.c
+  lua52/ldebug.c
+  lua52/ldebug.h
+  lua52/ldo.c
+  lua52/ldo.h
+  lua52/ldump.c
+  lua52/lfunc.c
+  lua52/lfunc.h
+  lua52/lgc.c
+  lua52/lgc.h
+  lua52/linit.c
+  lua52/llex.c
+  lua52/llex.h
+  lua52/llimits.h
+  lua52/lmathlib.c
+  lua52/lmem.c
+  lua52/lmem.h
+  lua52/loadlib.c
+  lua52/lobject.c
+  lua52/lobject.h
+  lua52/lopcodes.c
+  lua52/lopcodes.h
+  lua52/loslib.c
+  lua52/lparser.c
+  lua52/lparser.h
+  lua52/lstate.c
+  lua52/lstate.h
+  lua52/lstring.c
+  lua52/lstring.h
+  lua52/lstrlib.c
+  lua52/ltable.c
+  lua52/ltable.h
+  lua52/ltablib.c
+  lua52/ltm.c
+  lua52/ltm.h
+  lua52/lua.h
+  lua52/luaconf.h
+  lua52/lualib.h
+  lua52/lundump.c
+  lua52/lundump.h
+  lua52/lvm.c
+  lua52/lvm.h
+  lua52/lzio.c
+  lua52/lzio.h
 )
 
-add_library(luatex-lua51-static STATIC ${lua51_sources})
+add_library(luatex-lua52-static STATIC ${lua52_sources})
+
+###############################################################################
+## luatex-miktex-static
+###############################################################################
+
+set(miktex_sources
+  miktex/miktex.cpp
+  miktex/luatex.h
+)
+
+add_library(luatex-miktex-static STATIC ${miktex_sources})
 
 ###############################################################################
 ## luatex-luasocket-static
@@ -158,6 +175,7 @@ set(luamisc_sources
   luamd5/md5_lua.c
   luamd5/md5lib.c
   luapeg/lpeg.c
+  luapeg/lpeg.h
   luaprofiler/clocks.c
   luaprofiler/clocks.h
   luaprofiler/core_profiler.c
@@ -223,8 +241,11 @@ endif(NATIVE_WINDOWS)
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
 target_link_libraries(${luatex_program_dll_name}
-  ${zlib_dll_name}
+  wsock32.lib
+  ws2_32.lib
+
   ${app_dll_name}
+  ${cairo_dll_name}
   ${core_dll_name}
   ${jpeg_dll_name}
   ${kpsemu_dll_name}
@@ -239,13 +260,15 @@ target_link_libraries(${luatex_program_dll_name}
   ${utf8wrap_dll_name}
   ${getopt_dll_name}
   ${w2cemu_dll_name}
+  ${zlib_dll_name}
   
-
-  luatex-lua51-static
+  luatex-lua52-static
   luatex-luafontforge-static
   luatex-luamisc-static
   luatex-luasocket-static
   luatex-static
+
+  luatex-miktex-static
 )
 
 rebase(${luatex_program_dll_name})

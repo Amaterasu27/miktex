@@ -162,11 +162,11 @@ usage (char *program, int error)
 {
     FILE *file = error ? stderr : stdout;
 #if HAVE_GETOPT_LONG
-    fprintf (file, "usage: %s [-rv] [--recurse] [--verbose] [*-%s.cache-2|directory]...\n",
+    fprintf (file, "usage: %s [-rv] [--recurse] [--verbose] [*-%s" FC_CACHE_SUFFIX "|directory]...\n",
 	     program, FC_ARCHITECTURE);
     fprintf (file, "       %s [-Vh] [--version] [--help]\n", program);
 #else
-    fprintf (file, "usage: %s [-rvVh] [*-%s.cache-2|directory]...\n",
+    fprintf (file, "usage: %s [-rvVh] [*-%s" FC_CACHE_SUFFIX "|directory]...\n",
 	     program, FC_ARCHITECTURE);
 #endif
     fprintf (file, "Reads font information cache from:\n");
@@ -243,7 +243,7 @@ cache_print_set (FcFontSet *set, FcStrSet *dirs, const FcChar8 *base_name, FcBoo
 	if (s)
 	{
 	    printf ("%s", s);
-	    free (s);
+	    FcStrFree (s);
 	}
     }
     if (verbose && !set->nfont && !ndir)

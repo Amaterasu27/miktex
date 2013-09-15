@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.38 2011/03/06 03:14:13 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -301,7 +301,10 @@ add_TTCIDVMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
 		   char *used_chars, unsigned char *cidtogidmap, unsigned short last_cid)
 {
   pdf_obj *w2_array, *an_array = NULL;
-  long cid, prev, start;
+  long cid;
+#if 0
+  long prev = 0, start = 0;
+#endif
   double defaultVertOriginY, defaultAdvanceHeight;
   int    empty = 1;
 
@@ -309,15 +312,19 @@ add_TTCIDVMetrics (pdf_obj *fontdict, struct tt_glyphs *g,
   defaultAdvanceHeight = PDFUNIT(g->default_advh);
 
   w2_array = pdf_new_array();
-  start = prev = 0;
   for (cid = 0; cid <= last_cid; cid++) {
-    USHORT idx, gid;
+    USHORT idx;
+#if 0
+    USHORT gid;
+#endif
     double vertOriginX, vertOriginY, advanceHeight;
 
     if (!is_used_char2(used_chars, cid))
       continue;
+#if 0
     gid = (cidtogidmap) ? ((cidtogidmap[2*cid] << 8)|cidtogidmap[2*cid+1]) : cid;
-    idx = tt_get_index(g, cid);
+#endif
+    idx = tt_get_index(g, (USHORT)cid);
     if (cid != 0 && idx == 0)
       continue;
     advanceHeight = PDFUNIT(g->gd[idx].advh);
@@ -452,7 +459,8 @@ cid_to_code (CMap *cmap, CID cid)
 {
   unsigned char  inbuf[2], outbuf[32];
   long           inbytesleft = 2, outbytesleft = 32;
-  unsigned char *p, *q;
+  const unsigned char *p;
+  unsigned char *q;
 
   if (!cmap)
     return cid;
@@ -461,7 +469,7 @@ cid_to_code (CMap *cmap, CID cid)
   inbuf[1] = cid & 0xff;
   p = inbuf; q = outbuf;
 
-  CMap_decode_char(cmap, (const unsigned char **) &p, &inbytesleft, &q, &outbytesleft);
+  CMap_decode_char(cmap, &p, &inbytesleft, &q, &outbytesleft);
 
   if (inbytesleft != 0)
     return 0;
@@ -560,7 +568,9 @@ CIDFont_type2_dofont (CIDFont *font)
       ERROR("Invalid TTC index in %s.", font->ident);
     break;
   case SFNT_TYPE_TRUETYPE:
-#ifndef XETEX_MAC
+#ifndef XETEX
+	/* disable the check here becuase sfnt_open() does not distinguish dfont
+	 * from regular trutype */
     if (font->options->index > 0)
       ERROR("Found TrueType font file while expecting TTC file (%s).", font->ident);
 #endif
@@ -705,7 +715,7 @@ CIDFont_type2_dofont (CIDFont *font)
 	if (gid == 0 && unicode_cmap) {
 	  long alt_code;
 
-	  alt_code = fix_CJK_symbols(code);
+	  alt_code = fix_CJK_symbols((unsigned short)code);
 	  if (alt_code != code) {
 	    gid = tt_cmap_lookup(ttcmap, alt_code);
 	    if (gid != 0) {
@@ -787,7 +797,7 @@ CIDFont_type2_dofont (CIDFont *font)
 	if (gid == 0 && unicode_cmap) {
 	  long alt_code;
 
-	  alt_code = fix_CJK_symbols(code);
+	  alt_code = fix_CJK_symbols((unsigned short)code);
 	  if (alt_code != code) {
 	    gid = tt_cmap_lookup(ttcmap, alt_code);
 	    if (gid != 0) {
@@ -963,9 +973,12 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     offset = ttc_read_offset(sfont, opt->index);
     break;
   case SFNT_TYPE_TRUETYPE:
-#ifdef XETEX_MAC /* disable the index check here because of how .dfonts are handled */
+#ifdef XETEX
+	/* disable the check here becuase sfnt_open() does not distinguish dfont
+	 * from regular trutype */
     offset = 0;
 #else
+	assert (opt->index == 0);
     if (opt->index > 0) {
       ERROR("Invalid TTC index (not TTC font): %s", name);
     } else {

@@ -20,6 +20,8 @@
 set(CMAKE_COLOR_MAKEFILE FALSE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
+set(CMAKE_LINK_INTERFACE_LIBRARIES "")
+
 cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 if(WIN32 AND NOT UNIX)
@@ -661,7 +663,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
   ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_graphite_engine_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
   ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
@@ -923,11 +924,7 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_graphite_engine_dir}-static)
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_graphite_engine_dir})
+  add_subdirectory(${rel_harfbuzz_dir}-static)
 endif(BUILDING_MIKTEX)
 
 if(NOT HAVE_GETOPT_H)
@@ -981,6 +978,9 @@ if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
 endif(NATIVE_WINDOWS)
 
+add_subdirectory(${rel_pixman_dir}-static)
+add_subdirectory(${rel_cairo_dir})
+
 if(NOT USE_SYSTEM_PNG)
   add_subdirectory(${rel_png_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
@@ -989,7 +989,7 @@ if(NOT USE_SYSTEM_PNG)
 endif(NOT USE_SYSTEM_PNG)
 
 if(BUILDING_MIKTEX)
-  set(POPPLER_VERSION "0.22.0")
+  set(POPPLER_VERSION "0.22.2")
   add_subdirectory(${rel_poppler_dir}-static)
 endif(BUILDING_MIKTEX)
 
@@ -1203,10 +1203,6 @@ endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_epstopdf_dir})
-endif(BUILDING_MIKTEX)
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_pnmtopng_dir})
 endif(BUILDING_MIKTEX)
 
 if(BUILDING_MIKTEX)

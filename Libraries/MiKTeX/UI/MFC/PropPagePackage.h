@@ -1,6 +1,6 @@
 /* PropPagePackage.h:						-*- C++ -*-
 
-   Copyright (C) 2000-2006 Christian Schenk
+   Copyright (C) 2000-2013 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -58,4 +58,10 @@ private:
 
 private:
   CString title;
+
+private:
+  CString version;
+
+private:
+  CString maintainer;
 };

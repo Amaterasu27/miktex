@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1124,8 +1124,14 @@ SessionImpl::TryCreateFile (/*[in]*/ const char * lpszFileName,
   default:
     return (false);
   }
-  char szBuf[4096];
-  size_t size = 4096;
+  const size_t BUF_SIZE = 50000;
+  char * szBuf = reinterpret_cast<char*>(malloc(BUF_SIZE));
+  if (szBuf == 0)
+  {
+    OUT_OF_MEMORY ("malloc");
+  }
+  AutoMemoryPointer xxx (szBuf);
+  size_t size = BUF_SIZE;
   int exitCode;
   if (! Process::Run(makeUtility,
 		     commandLine.Get(),

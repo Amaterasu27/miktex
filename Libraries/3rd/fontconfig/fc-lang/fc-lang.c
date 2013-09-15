@@ -62,6 +62,12 @@ FcCacheObjectDereference (void *object)
 {
 }
 
+FcPrivate FcChar8 *
+FcLangNormalize (const FcChar8 *lang)
+{
+    return NULL;
+}
+
 int FcDebugVal;
 
 FcChar8 *

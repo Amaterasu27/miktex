@@ -1,6 +1,6 @@
 %% tex-miktex-hash.ch:
 %% 
-%% Copyright (C) 1991-2009 Christian Schenk
+%% Copyright (C) 1991-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -22,10 +22,9 @@
 % _____________________________________________________________________________
 
 @x
-@<Constants...@>=
-{placeholder}
+{marker:constants}
 @y
-@<Constants...@>=
+{marker:constants}
 @!hash_offset=514; {smallest index in hash array, i.e., |hash_base| }
   {Use |hash_offset=0| for compilers which cannot decrement pointers.}
 @z

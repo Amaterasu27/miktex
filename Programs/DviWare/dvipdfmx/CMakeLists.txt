@@ -142,7 +142,12 @@ set(exes
 
 foreach(x ${exes})
   add_executable (${x} ${wrapper_cpp})
-  target_link_libraries(${x} ${dvipdfmx_dll_name})
+  target_link_libraries(${x}
+    ${app_dll_name}
+    ${core_dll_name}
+    ${dvipdfmx_dll_name}
+    ${utf8wrap_dll_name}
+  )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION ${bindir})
 endforeach(x)

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009-2011 Christian Schenk
+## Copyright (C) 2009-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -38,6 +38,8 @@ add_definitions(
 
 set(texworks_sources
   src/ClickableLabel.h
+  src/ClosableTabWidget.cpp
+  src/ClosableTabWidget.h
   src/CommandlineParser.cpp
   src/CommandlineParser.h
   src/CompletingEdit.cpp
@@ -46,6 +48,7 @@ set(texworks_sources
   src/ConfirmDelete.cpp
   src/ConfirmDelete.h
   src/DefaultBinaryPathsWin.h
+  src/DefaultPrefs.h
   src/FindDialog.cpp
   src/FindDialog.h
   src/HardWrapDialog.cpp
@@ -70,6 +73,8 @@ set(texworks_sources
   src/TWScriptable.cpp
   src/TWScriptable.h
   src/TWSystemCmd.h
+  src/TWTextCodecs.cpp
+  src/TWTextCodecs.h
   src/TWUtils.cpp
   src/TWUtils.h
   src/TWVersion.h
@@ -127,6 +132,7 @@ endif(NATIVE_WINDOWS)
 
 set(texworks_moc_sources
   src/ClickableLabel.h
+  src/ClosableTabWidget.h
   src/CompletingEdit.h
   src/ConfigurableApp.h
   src/ConfirmDelete.h
@@ -184,9 +190,10 @@ if(LINK_EVERYTHING_STATICALLY)
 else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${core_dll_name}
-    ${zlib_dll_name}
     ${hunspell_dll_name}
     ${poppler_qt4_dll_name}
+    ${utf8wrap_dll_name}
+    ${zlib_dll_name}
     ${QT_QTMAIN_LIBRARY}
     ${QT_LIBRARIES}
   )

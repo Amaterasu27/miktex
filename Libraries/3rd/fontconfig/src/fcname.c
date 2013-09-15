@@ -54,7 +54,7 @@ static const FcObjectType _FcBaseObjectTypes[] = {
     { FC_HINTING,	FcTypeBool, },
     { FC_VERTICAL_LAYOUT,   FcTypeBool, },
     { FC_AUTOHINT,	FcTypeBool, },
-    { FC_GLOBAL_ADVANCE,    FcTypeBool, },
+    { FC_GLOBAL_ADVANCE,    FcTypeBool, },	/* deprecated */
     { FC_FILE,		FcTypeString, },
     { FC_INDEX,		FcTypeInteger, },
     { FC_RASTERIZER,	FcTypeString, },
@@ -76,6 +76,7 @@ static const FcObjectType _FcBaseObjectTypes[] = {
     { FC_EMBEDDED_BITMAP,   FcTypeBool },
     { FC_DECORATIVE,	FcTypeBool },
     { FC_LCD_FILTER,	FcTypeInteger }, /* 41 */
+    { FC_NAMELANG,	FcTypeString }, /* 42 */
 };
 
 #define NUM_OBJECT_TYPES    (sizeof _FcBaseObjectTypes / sizeof _FcBaseObjectTypes[0])
@@ -441,7 +442,7 @@ static const FcConstant _FcBaseConstants[] = {
     { (FcChar8 *) "hinting",	    "hinting",	    FcTrue },
     { (FcChar8 *) "verticallayout", "verticallayout",	FcTrue },
     { (FcChar8 *) "autohint",	    "autohint",	    FcTrue },
-    { (FcChar8 *) "globaladvance",  "globaladvance",	FcTrue },
+    { (FcChar8 *) "globaladvance",  "globaladvance",	FcTrue }, /* deprecated */
     { (FcChar8 *) "outline",	    "outline",	    FcTrue },
     { (FcChar8 *) "scalable",	    "scalable",	    FcTrue },
     { (FcChar8 *) "minspace",	    "minspace",	    FcTrue },
@@ -572,9 +573,10 @@ FcNameBool (const FcChar8 *v, FcBool *result)
 }
 
 static FcValue
-FcNameConvert (FcType type, FcChar8 *string, FcMatrix *m)
+FcNameConvert (FcType type, FcChar8 *string)
 {
     FcValue	v;
+    FcMatrix	m;
 
     v.type = type;
     switch (v.type) {
@@ -583,7 +585,7 @@ FcNameConvert (FcType type, FcChar8 *string, FcMatrix *m)
 	    v.u.i = atoi ((char *) string);
 	break;
     case FcTypeString:
-	v.u.s = FcStrStaticName(string);
+	v.u.s = FcSharedStr (string);
 	if (!v.u.s)
 	    v.type = FcTypeVoid;
 	break;
@@ -595,8 +597,8 @@ FcNameConvert (FcType type, FcChar8 *string, FcMatrix *m)
 	v.u.d = strtod ((char *) string, 0);
 	break;
     case FcTypeMatrix:
-	v.u.m = m;
-	sscanf ((char *) string, "%lg %lg %lg %lg", &m->xx, &m->xy, &m->yx, &m->yy);
+	sscanf ((char *) string, "%lg %lg %lg %lg", &m.xx, &m.xy, &m.yx, &m.yy);
+	v.u.m = FcMatrixCopy (&m);
 	break;
     case FcTypeCharSet:
 	v.u.c = FcNameParseCharSet (string);
@@ -648,7 +650,6 @@ FcNameParse (const FcChar8 *name)
     FcChar8		*e;
     FcChar8		delim;
     FcValue		v;
-    FcMatrix		m;
     const FcObjectType	*t;
     const FcConstant	*c;
 
@@ -699,31 +700,13 @@ FcNameParse (const FcChar8 *name)
 		    name = FcNameFindNext (name, ":,", save, &delim);
 		    if (t)
 		    {
-			v = FcNameConvert (t->type, save, &m);
+			v = FcNameConvert (t->type, save);
 			if (!FcPatternAdd (pat, t->object, v, FcTrue))
 			{
-			    switch (v.type) {
-			    case FcTypeCharSet:
-				FcCharSetDestroy ((FcCharSet *) v.u.c);
-				break;
-			    case FcTypeLangSet:
-				FcLangSetDestroy ((FcLangSet *) v.u.l);
-				break;
-			    default:
-				break;
-			    }
+			    FcValueDestroy (v);
 			    goto bail2;
 			}
-			switch (v.type) {
-			case FcTypeCharSet:
-			    FcCharSetDestroy ((FcCharSet *) v.u.c);
-			    break;
-			case FcTypeLangSet:
-			    FcLangSetDestroy ((FcLangSet *) v.u.l);
-			    break;
-			default:
-			    break;
-			}
+			FcValueDestroy (v);
 		    }
 		    if (delim != ',')
 			break;

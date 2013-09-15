@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.34 2011/03/06 03:14:13 chofchof Exp $
+/*  
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -76,15 +76,19 @@ static struct {
 #define ACC_START 1
 #define ACC_END   4
 
+static char registry_Adobe[] = "Adobe";
+static char ordering_Identity[] = "Identity";
+static char ordering_UCS[] = "UCS";
+
 CIDSysInfo CSI_IDENTITY = {
-  (char *) "Adobe",
-  (char *) "Identity",
+  registry_Adobe,
+  ordering_Identity,
   0
 };
 
 CIDSysInfo CSI_UNICODE = {
-  (char *) "Adobe",
-  (char *) "UCS",
+  registry_Adobe,
+  ordering_UCS,
   0
 };
 

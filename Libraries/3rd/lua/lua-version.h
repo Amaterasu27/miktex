@@ -1,6 +1,6 @@
 /* lua-version.h: version number				-*- C++ -*-
 
-   Copyright (C) 2010-2011 Christian Schenk
+   Copyright (C) 2010-2013 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4203
-#define MIKTEX_COMP_ORIG_VERSION_STR "5.1.4-2"
+#define MIKTEX_COMP_J2000_VERSION 4897
+#define MIKTEX_COMP_ORIG_VERSION_STR "5.2.2"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1994-2008 Lua.org, PUC-Rio.  All rights reserved."
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "Copyright © 1994-2008 Lua.org, PUC-Rio.  All rights reserved."

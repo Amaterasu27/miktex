@@ -16,12 +16,12 @@
  */
 #include "qsort.h"			/* qq_compar_fn_t type and qqsort() prototype */
 
-#define THRESH  4		       /* threshold for insertion */
-#define MTHRESH 6		       /* threshold for median */
+#define THRESH  4			/* threshold for insertion */
+#define MTHRESH 6			/* threshold for median */
 
-static int qsz;			       /* size of each record */
-static int thresh;		       /* THRESHold in chars */
-static int mthresh;		       /* MTHRESHold in chars */
+static int qsz;				/* size of each record */
+static int thresh;			/* THRESHold in chars */
+static int mthresh;			/* MTHRESHold in chars */
 
 static qq_compar_fn_t qcmp;		/* the comparison routine */
 static void qst(char *base, char *max);
@@ -40,7 +40,7 @@ qqsort(void *base, size_t n, size_t size, qq_compar_fn_t compar)
     register char *hi;
     register char *min;
     register char c;
-    char   *max;
+    char *max;
 
     if (n <= 1)
 	return;
@@ -76,7 +76,7 @@ qqsort(void *base, size_t n, size_t size, qq_compar_fn_t compar)
 #if defined(MIKTEX)
     if (j != (char*)base) {
 #else
-    if (j != base) {		       /* swap j into place */
+    if (j != base) {			/* swap j into place */
 #endif
 #if defined(MIKTEX)
 	for (i = (char*)base, hi = i + qsz; i < hi;) {
@@ -138,8 +138,8 @@ qst(char *base, char *max)
     register int ii;
     register char c;
     void *tmp;
-    int     lo;
-    int     hi;
+    int lo;
+    int hi;
 
     lo = max - base;	/* number of elements as chars */
     do {
@@ -183,10 +183,10 @@ qst(char *base, char *max)
 		    j -= qsz;
 		    continue;
 		}
-		tmp = i + qsz;	       /* value of i after swap */
-		if (i == mid) {	       /* j <-> mid, new mid is j */
+		tmp = i + qsz;		/* value of i after swap */
+		if (i == mid) {		/* j <-> mid, new mid is j */
 		    mid = jj = j;
-		} else {	       /* i <-> j */
+		} else {		/* i <-> j */
 		    jj = j;
 		    j -= qsz;
 		}
@@ -194,9 +194,9 @@ qst(char *base, char *max)
 	    }
 	    if (i == mid) {
 		break;
-	    } else {		       /* i <-> mid, new mid is i */
+	    } else {			/* i <-> mid, new mid is i */
 		jj = mid;
-		tmp = mid = i;	       /* value of i after swap */
+		tmp = mid = i;		/* value of i after swap */
 		j -= qsz;
 	    }
     swap:

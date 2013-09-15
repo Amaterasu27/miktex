@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.23 2008/05/18 14:49:20 chofchof Exp $
+/*  
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2008-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -374,6 +374,7 @@ pdf_get_font_subtype (int font_id)
   return font->subtype;
 }
 
+#if 0
 char *
 pdf_get_font_fontname (int font_id)
 {
@@ -385,6 +386,7 @@ pdf_get_font_fontname (int font_id)
 
   return font->fontname;
 }
+#endif /* 0 */
 
 int
 pdf_get_font_encoding (int font_id)
@@ -455,7 +457,7 @@ try_load_ToUnicode_CMap (pdf_font *font)
 void
 pdf_close_fonts (void)
 {
-  int  font_id, retval;
+  int  font_id;
 
   for (font_id = 0;
        font_id < font_cache.count; font_id++) {
@@ -496,24 +498,22 @@ pdf_close_fonts (void)
       if (__verbose)
 	MESG("[Type1]");
       if (!pdf_font_get_flag(font, PDF_FONT_FLAG_BASEFONT))
-	retval = pdf_font_load_type1(font);
-      else
-	retval = 0;
+	pdf_font_load_type1(font);
       break;
     case PDF_FONT_FONTTYPE_TYPE1C:
       if (__verbose)
 	MESG("[Type1C]");
-      retval = pdf_font_load_type1c(font);
+      pdf_font_load_type1c(font);
       break;
     case PDF_FONT_FONTTYPE_TRUETYPE:
       if (__verbose)
 	MESG("[TrueType]");
-      retval = pdf_font_load_truetype(font);
+      pdf_font_load_truetype(font);
       break;
     case PDF_FONT_FONTTYPE_TYPE3:
       if (__verbose)
 	MESG("[Type3/PK]");
-      retval = pdf_font_load_pkfont (font);
+      pdf_font_load_pkfont (font);
       break;
     case PDF_FONT_FONTTYPE_TYPE0:
       break;
@@ -929,6 +929,7 @@ pdf_font_get_flag (pdf_font *font, int mask)
   return ((font->flags & mask) ? 1 : 0);
 }
 
+#if 0
 int
 pdf_font_get_flags (pdf_font *font)
 {
@@ -936,6 +937,7 @@ pdf_font_get_flags (pdf_font *font)
 
   return font->flags;
 }
+#endif /* 0 */
 
 double
 pdf_font_get_param (pdf_font *font, int param_type)

@@ -9,7 +9,7 @@
     <TPM:Date>@MIKTEX_DATETIME_STR@</TPM:Date>
     <TPM:Description>
       This package includes graphics conversion utilities: bmeps,
-      epstopdf, pcxtoppm, pngtopnm, ppmtobmp, tgatoppm, tifftopnm.
+      epstopdf, pcxtoppm, ppmtobmp, tgatoppm, tifftopnm.
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/${bmeps_dll_name}.dll
@@ -24,7 +24,6 @@ texmf/miktex/bin/${tiff_dll_name}.dll
 texmf/miktex/bin/bmeps.exe
 texmf/miktex/bin/epstopdf.exe
 texmf/miktex/bin/pcxtoppm.exe
-texmf/miktex/bin/pngtopnm.exe
 texmf/miktex/bin/ppmtobmp.exe
 texmf/miktex/bin/tgatoppm.exe
 texmf/miktex/bin/tifftopnm.exe

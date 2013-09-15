@@ -95,8 +95,13 @@ DAMAGE.
 #ifndef HAVE_MALLOC_H
 #define HAVE_MALLOC_H		1
 #endif
+#if defined(MIKTEX)
+#undef HAVE_SETJMP_H
+#define HAVE_SETJMP_H 0
+#else
 #ifndef HAVE_SETJMP_H
 #define HAVE_SETJMP_H		1
+#endif
 #endif
 #ifndef HAVE__SETMODE
 #define HAVE__SETMODE		1

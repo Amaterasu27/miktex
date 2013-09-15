@@ -1,24 +1,27 @@
 % luainit.w
-% 
-% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
-
+%
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
+%
 % This file is part of LuaTeX.
-
+%
 % LuaTeX is free software; you can redistribute it and/or modify it under
 % the terms of the GNU General Public License as published by the Free
 % Software Foundation; either version 2 of the License, or (at your
 % option) any later version.
-
+%
 % LuaTeX is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 % FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 % License for more details.
-
+%
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-#include "openbsd-compat.h"
+static const char _svn_version[] =
+    "$Id: luainit.w 4524 2012-12-20 15:38:02Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/lua/luainit.w $";
+
 #include <kpathsea/c-stat.h>
 
 #include "ptexlib.h"
@@ -28,10 +31,7 @@
 #  include <miktex/Core/Paths.h> // MIKTEX_PREFIX
 #endif
 
-static const char _svn_version[] =
-    "$Id: luainit.w 4260 2011-05-13 07:03:44Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/luainit.w $";
-
-@ 
+@
 TH: TODO
 
 This file is getting a bit messy, but it is not simple to fix unilaterally.
@@ -94,7 +94,7 @@ const_string LUATEX_IHELP[] = {
     "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
     "   --nosocket                    disable the lua socket library",
     "   --output-comment=STRING       use STRING for DVI file comment instead of date (no effect for PDF)",
-    "   --output-directory=DIR        use DIR as the directory to write files to",
+    "   --output-directory=DIR        use existing DIR as the directory to write files in",
     "   --output-format=FORMAT        use FORMAT for job output; FORMAT is 'dvi' or 'pdf'",
     "   --[no-]parse-first-line       disable/enable parsing of the first line of the input file",
     "   --progname=STRING             set the program name to STRING",
@@ -120,6 +120,7 @@ const_string LUATEX_IHELP[] = {
 static char *ex_selfdir(char *argv0)
 {
 #if defined(WIN32) && ! defined(MIKTEX)
+#if defined(__MINGW32__)
     char path[PATH_MAX], *fp;
 
     /* SearchPath() always gives back an absolute directory */
@@ -129,22 +130,33 @@ static char *ex_selfdir(char *argv0)
     for (fp = path; fp && *fp; fp++)
         if (IS_DIR_SEP(*fp))
             *fp = DIR_SEP;
-    return xdirname(path);
-#else
+#else /* __MINGW32__ */
+#define PATH_MAX 512
+    char short_path[PATH_MAX], path[PATH_MAX], *fp;
+
+    /* SearchPath() always gives back an absolute directory */
+    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
+        FATAL1("Can't determine where the executable %s is.\n", argv0);
+    if (getlongpath(path, short_path, sizeof(path)) == 0) {
+        FATAL1("This path points to an invalid file : %s\n", short_path);
+    }
+#endif /* __MINGW32__ */
+   return xdirname(path);
+#else /* WIN32 */
     return kpse_selfdir(argv0);
 #endif
 }
 
 @ @c
 static void
-prepare_cmdline(lua_State * L, char **argv, int argc, int zero_offset)
+prepare_cmdline(lua_State * L, char **av, int ac, int zero_offset)
 {
     int i;
     char *s;
-    luaL_checkstack(L, argc + 3, "too many arguments to script");
+    luaL_checkstack(L, ac + 3, "too many arguments to script");
     lua_createtable(L, 0, 0);
-    for (i = 0; i < argc; i++) {
-        lua_pushstring(L, argv[i]);
+    for (i = 0; i < ac; i++) {
+        lua_pushstring(L, av[i]);
         lua_rawseti(L, -2, (i - zero_offset));
     }
     lua_setglobal(L, "arg");
@@ -241,8 +253,13 @@ static struct option long_options[]
 };
 
 @ @c
-static void parse_options(int argc, char **argv)
+static void parse_options(int ac, char **av)
 {
+#ifdef WIN32
+/* save argc and argv */
+    int sargc = argc;
+    char **sargv = argv;
+#endif
     int g;                      /* `getopt' return code.  */
     int option_index;
     char *firstfile = NULL;
@@ -253,7 +270,7 @@ static void parse_options(int argc, char **argv)
         luainit = 1;
     }
     for (;;) {
-        g = getopt_long_only(argc, argv, "+", long_options, &option_index);
+        g = getopt_long_only(ac, av, "+", long_options, &option_index);
 
         if (g == -1)            /* End of arguments, exit the loop.  */
             break;
@@ -296,7 +313,11 @@ static void parse_options(int argc, char **argv)
             dump_name = optarg;
 
         } else if (ARGUMENT_IS("output-directory")) {
+#if defined(MIKTEX)
+			miktex_web2c_set_output_directory (optarg);
+#else
             output_directory = optarg;
+#endif
 
         } else if (ARGUMENT_IS("output-comment")) {
             size_t len = strlen(optarg);
@@ -363,10 +384,10 @@ static void parse_options(int argc, char **argv)
             /* *INDENT-OFF* */
             puts("\n\nExecute  'luatex --credits'  for credits and version details.\n\n"
                  "There is NO warranty. Redistribution of this software is covered by\n"
-                 "the terms of the GNU General Public License, version 2. For more\n"
-                 "information about these matters, see the file named COPYING and\n"
-                 "the LuaTeX source.\n\n" 
-                 "Copyright 2012 Taco Hoekwater, the LuaTeX Team.\n");
+                 "the terms of the GNU General Public License, version 2 or (at your option)\n"
+                 "any later version. For more information about these matters, see the file\n"
+                 "named COPYING and the LuaTeX source.\n\n" 
+                 "Copyright 2013 Taco Hoekwater, the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
@@ -385,7 +406,7 @@ static void parse_options(int argc, char **argv)
                  "lua       by Roberto Ierusalimschy, Waldemar Celes,\n" 
                  "             Luiz Henrique de Figueiredo\n" 
                  "metapost  by John Hobby, Taco Hoekwater and friends.\n" 
-                 "poppler   by Derek Noonburg, Kristian Høgsberg (partial)\n" 
+                 "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n" 
                  "fontforge by George Williams (partial)\n\n" 
                  "Some extensions to lua and additional lua libraries are used, as well as\n" 
                  "libraries for graphic inclusion. More details can be found in the source.\n" 
@@ -399,11 +420,11 @@ static void parse_options(int argc, char **argv)
     /* attempt to find |input_name| / |dump_name| */
     if (lua_only) {
 	if (argv[optind]) {
- 	   startup_filename = strdup(argv[optind]);
+ 	   startup_filename = xstrdup(argv[optind]);
            lua_offset = optind;
         }
     } else if (argv[optind] && argv[optind][0] == '&') {
-        dump_name = strdup(argv[optind] + 1);
+        dump_name = xstrdup(argv[optind] + 1);
     } else if (argv[optind] && argv[optind][0] != '\\') {
 #if defined(MIKTEX_WINDOWS)
 	{
@@ -418,9 +439,9 @@ static void parse_options(int argc, char **argv)
 	}
 #endif
         if (argv[optind][0] == '*') {
-            input_name = strdup(argv[optind] + 1);
+            input_name = xstrdup(argv[optind] + 1);
         } else {
-            firstfile = strdup(argv[optind]);
+            firstfile = xstrdup(argv[optind]);
             if ((strstr(firstfile, ".lua") ==
                  firstfile + strlen(firstfile) - 4)
                 || (strstr(firstfile, ".luc") ==
@@ -439,6 +460,32 @@ static void parse_options(int argc, char **argv)
                 input_name = firstfile;
             }
         }
+#ifdef WIN32
+    } else if (sargv[sargc-1] && sargv[sargc-1][0] != '-' &&
+               sargv[sargc-1][0] != '\\') {
+        if (sargv[sargc-1][0] == '&')
+            dump_name = xstrdup(sargv[sargc-1] + 1);
+        else  {
+            char *p;
+            if (sargv[sargc-1][0] == '*')
+                input_name = xstrdup(sargv[sargc-1] + 1);
+            else
+                input_name = xstrdup(sargv[sargc-1]);
+            sargv[sargc-1] = normalize_quotes(input_name, "argument");
+            /* Same as
+                  input_name = (char *)xbasename(input_name);
+               but without cast const => non-const.  */
+            input_name += xbasename(input_name) - input_name;
+            p = strrchr(input_name, '.');
+            if (p != NULL && strcasecmp(p, ".tex") == 0)
+                *p = '\0';
+            if (!c_job_name)
+                c_job_name = normalize_quotes(input_name, "jobname");
+        }
+        if (safer_option)      /* --safer implies --nosocket */
+            nosocket_option = 1;
+        return;
+#endif
     }
     if (safer_option)           /* --safer implies --nosocket */
         nosocket_option = 1;
@@ -466,7 +513,7 @@ static char *find_filename(char *name, const char *envkey)
     } else {
         dirname = getenv(envkey);
         if ((dirname != NULL) && strlen(dirname)) {
-            dirname = strdup(getenv(envkey));
+            dirname = xstrdup(getenv(envkey));
             if (*(dirname + strlen(dirname) - 1) == '/') {
                 *(dirname + strlen(dirname) - 1) = 0;
             }
@@ -588,7 +635,6 @@ function, the other for its environment .
 
 @c
 static int lua_loader_function = 0;
-static int lua_loader_env = 0;
 
 static int luatex_kpse_lua_find(lua_State * L)
 {
@@ -596,13 +642,10 @@ static int luatex_kpse_lua_find(lua_State * L)
     const char *name;
     name = luaL_checkstring(L, 1);
     if (program_name_set == 0) {
-        lua_CFunction orig_func;
         lua_rawgeti(L, LUA_REGISTRYINDEX, lua_loader_function);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, lua_loader_env);
-        lua_replace(L, LUA_ENVIRONINDEX);
-        orig_func = lua_tocfunction(L, -1);
-        lua_pop(L, 1);
-        return (orig_func) (L);
+	lua_pushvalue(L, -2);
+	lua_call(L, 1, 1);
+	return 1;
     }
     filename = luatex_kpse_find_aux(L, name, kpse_lua_format, "lua");
     if (filename == NULL)
@@ -616,7 +659,7 @@ static int luatex_kpse_lua_find(lua_State * L)
 
 @ @c
 static int clua_loader_function = 0;
-static int clua_loader_env = 0;
+extern int searcher_C_luatex (lua_State *L, const char *name, const char *filename);
 
 static int luatex_kpse_clua_find(lua_State * L)
 {
@@ -628,85 +671,72 @@ static int luatex_kpse_clua_find(lua_State * L)
     }
     name = luaL_checkstring(L, 1);
     if (program_name_set == 0) {
-        lua_CFunction orig_func;
         lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_env);
-        lua_replace(L, LUA_ENVIRONINDEX);
-        orig_func = lua_tocfunction(L, -1);
-        lua_pop(L, 1);
-        return (orig_func) (L);
+	lua_pushvalue(L, -2);
+	lua_call(L, 1, 1);
+	return 1;
+    } else {
+        const char *path_saved;
+        char *prefix, *postfix, *p, *total;
+        char *extensionless;
+        filename = luatex_kpse_find_aux(L, name, kpse_clua_format, "C");
+    	if (filename == NULL)
+           return 1;               /* library not found in this path */
+	extensionless = strdup(filename);
+	if (!extensionless) return 1;  /* allocation failure */
+	p = strstr(extensionless, name);
+	if (!p) return 1;  /* this would be exceedingly weird */
+	*p = '\0';
+	prefix = strdup(extensionless);
+	if (!prefix) return 1;  /* allocation failure */
+	postfix = strdup(p+strlen(name));
+	if (!postfix) return 1;  /* allocation failure */
+	total = malloc(strlen(prefix)+strlen(postfix)+2);
+	if (!total) return 1;  /* allocation failure */
+	snprintf(total,strlen(prefix)+strlen(postfix)+2, "%s?%s", prefix, postfix);
+	/* save package.path */
+	lua_getglobal(L,"package");
+        lua_getfield(L,-1,"cpath");
+	path_saved = lua_tostring(L,-1);
+	lua_pop(L,1);
+        /* set package.path = "?" */
+	lua_pushstring(L,total);
+	lua_setfield(L,-2,"cpath");
+	lua_pop(L,1); /* pop "package" */
+        /* run function */
+        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loader_function);
+  	lua_pushstring(L, name);
+	lua_call(L, 1, 1);
+        /* restore package.path */
+	lua_getglobal(L,"package");
+	lua_pushstring(L,path_saved);
+	lua_setfield(L,-2,"cpath");
+	lua_pop(L,1); /* pop "package" */
+	free(extensionless);
+	free(total);
+        return 1;
     }
-    filename = luatex_kpse_find_aux(L, name, kpse_clua_format, "C");
-    if (filename == NULL)
-        return 1;               /* library not found in this path */
-    return loader_C_luatex(L, name, filename);
-}
-
-@ @c
-static int clua_loadall_function = 0;
-static int clua_loadall_env = 0;
-
-static int luatex_kpse_cluaall_find(lua_State * L)
-{
-    const char *filename;
-    const char *name;
-    char *fixedname;
-    const char *p = NULL;
-    if (safer_option) {
-        lua_pushliteral(L, "\n\t[All-in-one searcher disabled in safer mode]");
-        return 1;               /* library not found in this path */
-    }
-    name = luaL_checkstring(L, 1);
-    p = strchr(name, '.');
-    if (program_name_set == 0) {
-        lua_CFunction orig_func;
-        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loadall_function);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, clua_loadall_env);
-        lua_replace(L, LUA_ENVIRONINDEX);
-        orig_func = lua_tocfunction(L, -1);
-        lua_pop(L, 1);
-        return (orig_func) (L);
-    }
-    if (p == NULL) return 0;  /* is root */
-    fixedname = xmalloc((size_t)(p - name)+1);
-    memcpy(fixedname,name,(size_t)(p - name));
-    fixedname[(p - name)] = '\0';
-    filename = luatex_kpse_find_aux(L, fixedname, kpse_clua_format, "All-in-one");
-    free(fixedname);
-    if (filename == NULL)
-	return 1;               /* library not found in this path */
-    return loader_Call_luatex(L, name, filename);
 }
 
 @ Setting up the new search functions. 
 
- This replaces package.loaders[2] with the function defined above.
+This replaces package.searchers[2] and package.searchers[3] with the 
+functions defined above.
 
 @c
 static void setup_lua_path(lua_State * L)
 {
     lua_getglobal(L, "package");
-    lua_getfield(L, -1, "loaders");
-    lua_rawgeti(L, -1, 2);      /* package.loaders[2] */
-    lua_getfenv(L, -1);
-    lua_loader_env = luaL_ref(L, LUA_REGISTRYINDEX);
+    lua_getfield(L, -1, "searchers");
+    lua_rawgeti(L, -1, 2);      /* package.searchers[2] */
     lua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pushcfunction(L, luatex_kpse_lua_find);
     lua_rawseti(L, -2, 2);      /* replace the normal lua loader */
 
-    lua_rawgeti(L, -1, 3);      /* package.loaders[3] */
-    lua_getfenv(L, -1);
-    clua_loader_env = luaL_ref(L, LUA_REGISTRYINDEX);
+    lua_rawgeti(L, -1, 3);      /* package.searchers[3] */
     clua_loader_function = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pushcfunction(L, luatex_kpse_clua_find);
     lua_rawseti(L, -2, 3);      /* replace the normal lua lib loader */
-
-    lua_rawgeti(L, -1, 4);      /* package.loaders[4] */
-    lua_getfenv(L, -1);
-    clua_loadall_env = luaL_ref(L, LUA_REGISTRYINDEX);
-    clua_loadall_function = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pushcfunction(L, luatex_kpse_cluaall_find);
-    lua_rawseti(L, -2, 4);      /* replace the normal lua lib loader */
 
     lua_pop(L, 2);              /* pop the array and table */
 }
@@ -788,29 +818,42 @@ void lua_initialize(int ac, char **av)
     argc = ac;
     argv = av;
 
-#if defined(MIKTEX)
-    if (asprintf(&banner, "This is LuaTeX, Version %s (%s)",
-                 luatex_version_string, MIKTEX_BANNER_STR) < 0) {
-        exit(EXIT_FAILURE);
+    if (luatex_svn < 0) {
+        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION;
+        size_t len;
+        char buf[16];
+        sprintf(buf, "%d", luatex_date_info);
+        len = strlen(fmt) + strlen(luatex_version_string) + strlen(buf) - 3;
+
+        /* len is just enough, because of the placeholder chars in fmt
+           that get replaced by the arguments.  */
+        banner = xmalloc(len);
+        sprintf(banner, fmt, luatex_version_string, buf);
+    } else {
+        const char *fmt = "This is LuaTeX, Version %s-%s " WEB2CVERSION " (rev %d)";
+        size_t len;
+        char buf[16];
+        sprintf(buf, "%d", luatex_date_info);
+        len = strlen(fmt) + strlen(luatex_version_string) + strlen(buf) + 6;
+        banner = xmalloc(len);
+        sprintf(banner, fmt, luatex_version_string, buf, luatex_svn);
     }
-#else
-    if (asprintf(&banner, "This is LuaTeX, Version %s-%d" WEB2CVERSION,
-                 luatex_version_string, luatex_date_info) < 0) {
-        exit(EXIT_FAILURE);
-    }
-#endif
     ptexbanner = banner;
 
     kpse_invocation_name = cleaned_invocation_name(argv[0]);
 
     /* be 'luac' */
-    if (argc > 1 &&
-        (STREQ(kpse_invocation_name, "texluac") ||
+    if (argc >1) {
+        if (STREQ(kpse_invocation_name, "texluac"))
+            exit(luac_main(ac, av));
 #if defined(MIKTEX)
-		 STREQ(kpse_invocation_name, MIKTEX_PREFIX "texluac") ||
+	if (STREQ(kpse_invocation_name, MIKTEX_PREFIX "texluac"))
+            exit(luac_main(ac, av));
 #endif
-         STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac"))) {
-        exit(luac_main(ac, av));
+        if (STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac")) {
+            strcpy(av[1], "luatex");
+            exit(luac_main(--ac, ++av));
+        }
     }
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
     mk_suffixlist();
@@ -868,6 +911,7 @@ void lua_initialize(int ac, char **av)
         init_tex_table(Luas);
         if (lua_pcall(Luas, 0, 0, 0)) {
             fprintf(stdout, "%s\n", lua_tostring(Luas, -1));
+	    lua_traceback(Luas);
             exit(1);
         }
         /* no filename? quit now! */
@@ -920,6 +964,7 @@ void lua_initialize(int ac, char **av)
                 shellenabledp = 1;
                 restrictedshell = 1;
             }
+	    free(v1);
         }
         /* If shell escapes are restricted, get allowed cmds from cnf.  */
         if (shellenabledp && restrictedshell == 1) {
@@ -927,6 +972,7 @@ void lua_initialize(int ac, char **av)
             get_lua_string("texconfig", "shell_escape_commands", &v1);
             if (v1) {
                 mk_shellcmdlist(v1);
+		free(v1);
             }
         }
 
@@ -975,7 +1021,7 @@ void check_texconfig_init(void)
 void write_svnversion(char *v)
 {
     char *a_head, *n;
-    char *a = strdup(v);
+    char *a = xstrdup(v);
     size_t l = strlen("$Id: luatex.web ");
     if (a != NULL) {
         a_head = a;

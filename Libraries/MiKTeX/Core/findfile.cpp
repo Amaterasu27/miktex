@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -199,11 +199,14 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
 	AutoFndbRelease autoRelease (pFndb);
 	vector<PathName> paths;
 	vector<string> fileNameInfo;
-	if (pFndb->Search(lpszFileName,
+	bool foundInFndb = pFndb->Search(lpszFileName,
 	  it->Get(),
 	  firstMatchOnly,
 	  paths,
-	  fileNameInfo))
+	  fileNameInfo);
+	// we must release the FNDB handle since CheckCandidate() might request an unload of the FNDB
+	autoRelease.Reset ();
+	if (foundInFndb)
 	{
 	  for (int idx = 0; idx < paths.size(); ++ idx)
 	  {
@@ -267,7 +270,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
    _________________________________________________________________________ */
 
 inline
- bool
+bool
 IsNewer (/*[in]*/ const PathName & path1,
 	 /*[in]*/ const PathName & path2)
 {
@@ -756,30 +759,6 @@ miktex_find_ttf_file (/*[in]*/ const char *	lpszFontName,
   PathName temp;
   if (! SessionImpl::GetSession()->FindFile(lpszFontName,
 					    FileType::TTF,
-					    temp))
-    {
-      return (0);
-    }
-  Utils::CopyString (lpszPath, BufferSizes::MaxPath, temp.Get());
-  return (1);
-  C_FUNC_END ();
-}
-
-/* _________________________________________________________________________
-
-   miktex_find_afm_file
-   _________________________________________________________________________ */
-
-MIKTEXCEEAPI(int)
-miktex_find_afm_file (/*[in]*/ const char *	lpszFontName,
-		      /*[out]*/ char *		lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_STRING (lpszFontName);
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  PathName temp;
-  if (! SessionImpl::GetSession()->FindFile(lpszFontName,
-					    FileType::AFM,
 					    temp))
     {
       return (0);

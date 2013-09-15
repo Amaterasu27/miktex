@@ -27,7 +27,9 @@
 #include "fontforgevw.h"
 #include <gfile.h>
 #include <time.h>
-#if ! defined(MIKTEX)
+#if defined(MIKTEX)
+#include <WinSock2.h>
+#else
 #include <sys/time.h>
 #endif
 #include <locale.h>

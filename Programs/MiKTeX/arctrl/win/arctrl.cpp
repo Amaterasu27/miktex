@@ -1,10 +1,14 @@
 /* arctrl.cpp: control Acrobat Reader
 
-   Copyright (C) 2006-2012 Christian Schenk
+   Copyright (C) 2006-2013 Christian Schenk
 */
 
 /* This program (arctrl) is based on public domain work by Fabrice
    Popineau. Based on Adobe documentation. */
+
+#if defined(MIKTEX_WINDOWS)
+#  include <Windows.h>
+#endif
    
 #include <map>
 #include <memory>

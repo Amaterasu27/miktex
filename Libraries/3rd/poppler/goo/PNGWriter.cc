@@ -49,12 +49,12 @@ PNGWriter::PNGWriter(Format formatA)
 
 PNGWriter::~PNGWriter()
 {
-	/* cleanup heap allocation */
+  /* cleanup heap allocation */
   png_destroy_write_struct(&priv->png_ptr, &priv->info_ptr);
   if (priv->icc_data) {
     gfree(priv->icc_data);
     free(priv->icc_name);
-	}
+  }
 
   delete priv;
 }
@@ -81,56 +81,56 @@ bool PNGWriter::init(FILE *f, int width, int height, int hDPI, int vDPI)
   png_const_bytep icc_data_ptr = (png_const_bytep)priv->icc_data;
 #endif
 
-	/* initialize stuff */
+  /* initialize stuff */
   priv->png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!priv->png_ptr) {
-		error(errInternal, -1, "png_create_write_struct failed");
-		return false;
-	}
+    error(errInternal, -1, "png_create_write_struct failed");
+    return false;
+  }
 
   priv->info_ptr = png_create_info_struct(priv->png_ptr);
   if (!priv->info_ptr) {
-		error(errInternal, -1, "png_create_info_struct failed");
-		return false;
-	}
+    error(errInternal, -1, "png_create_info_struct failed");
+    return false;
+  }
 
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "png_jmpbuf failed");
-		return false;
-	}
+    error(errInternal, -1, "png_jmpbuf failed");
+    return false;
+  }
 
-	/* write header */
+  /* write header */
   png_init_io(priv->png_ptr, f);
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "Error during writing header");
-		return false;
-	}
-	
-	// Set up the type of PNG image and the compression level
+    error(errInternal, -1, "Error during writing header");
+    return false;
+  }
+
+  // Set up the type of PNG image and the compression level
   png_set_compression_level(priv->png_ptr, Z_BEST_COMPRESSION);
 
-	// Silence silly gcc
-	png_byte bit_depth = -1;
-	png_byte color_type = -1;
+  // Silence silly gcc
+  png_byte bit_depth = -1;
+  png_byte color_type = -1;
   switch (priv->format) {
-		case RGB:
-			bit_depth = 8;
-			color_type = PNG_COLOR_TYPE_RGB;
-			break;
-		case RGBA:
-			bit_depth = 8;
-			color_type = PNG_COLOR_TYPE_RGB_ALPHA;
-			break;
-		case GRAY:
-			bit_depth = 8;
-			color_type = PNG_COLOR_TYPE_GRAY;
-			break;
-		case MONOCHROME:
-			bit_depth = 1;
-			color_type = PNG_COLOR_TYPE_GRAY;
-			break;
-	}
-	png_byte interlace_type = PNG_INTERLACE_NONE;
+    case RGB:
+      bit_depth = 8;
+      color_type = PNG_COLOR_TYPE_RGB;
+      break;
+    case RGBA:
+      bit_depth = 8;
+      color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+      break;
+    case GRAY:
+      bit_depth = 8;
+      color_type = PNG_COLOR_TYPE_GRAY;
+      break;
+    case MONOCHROME:
+      bit_depth = 1;
+      color_type = PNG_COLOR_TYPE_GRAY;
+      break;
+  }
+  png_byte interlace_type = PNG_INTERLACE_NONE;
 
   png_set_IHDR(priv->png_ptr, priv->info_ptr, width, height, bit_depth, color_type, interlace_type, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
@@ -143,51 +143,51 @@ bool PNGWriter::init(FILE *f, int width, int height, int hDPI, int vDPI)
 
   png_write_info(priv->png_ptr, priv->info_ptr);
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "error during writing png info bytes");
-		return false;
-	}
+    error(errInternal, -1, "error during writing png info bytes");
+    return false;
+  }
 
-	// pack 1 pixel/byte rows into 8 pixels/byte
+  // pack 1 pixel/byte rows into 8 pixels/byte
   if (priv->format == MONOCHROME)
     png_set_packing(priv->png_ptr);
 
-	return true;
+  return true;
 }
 
 bool PNGWriter::writePointers(unsigned char **rowPointers, int rowCount)
 {
   png_write_image(priv->png_ptr, rowPointers);
-	/* write bytes */
+  /* write bytes */
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "Error during writing bytes");
-		return false;
-	}
-	
-	return true;
+    error(errInternal, -1, "Error during writing bytes");
+    return false;
+  }
+
+  return true;
 }
 
 bool PNGWriter::writeRow(unsigned char **row)
 {
-	// Write the row to the file
+  // Write the row to the file
   png_write_rows(priv->png_ptr, row, 1);
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "error during png row write");
-		return false;
-	}
-	
-	return true;
+    error(errInternal, -1, "error during png row write");
+    return false;
+  }
+
+  return true;
 }
 
 bool PNGWriter::close()
 {
-	/* end write */
+  /* end write */
   png_write_end(priv->png_ptr, priv->info_ptr);
   if (setjmp(png_jmpbuf(priv->png_ptr))) {
-		error(errInternal, -1, "Error during end of write");
-		return false;
-	}
-	
-	return true;
+    error(errInternal, -1, "Error during end of write");
+    return false;
+  }
+
+  return true;
 }
 
 #endif

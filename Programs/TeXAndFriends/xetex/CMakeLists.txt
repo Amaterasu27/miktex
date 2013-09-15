@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2012 Christian Schenk
+## Copyright (C) 2008-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,6 +32,8 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
@@ -48,27 +50,21 @@ add_definitions(
   -DSYNCTEX_ENGINE_H="synctex-xetex.h"
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
-  -DXETEX_GRAPHITE
   -DXETEX_OTHER
   -DXeTeX
   -DPOPPLER_VERSION="${POPPLER_VERSION}"
 )
 
-set(synctex_xetex_ch_srcs_mem_only
+set(xetex_ch_synctex
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-def.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-mem.ch2
-)
-
-set(synctex_xetex_ch_srcs_on
-  ${synctex_xetex_ch_srcs_mem_only}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch2
 )
 
-set(xetex_post_ch_srcs_with_synctex
+set(xetex_post_ch_synctex
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch3
 )
 
@@ -87,10 +83,10 @@ set(miktex_tex_change_files
 )
 
 set(pre_xetex_change_files
-  ${etex_ch}
-  ${synctex_xetex_ch_srcs_on}
+  ${xetex_ch_synctex}
   ${etex_miktex_pre_ch}
   ${etex_miktex_ch}
+  ${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-0.ch
   ${miktex_tex_change_files}
 )
 
@@ -101,14 +97,15 @@ add_custom_command(
 	${pre_xetex1_web_file}
   COMMAND
 	${tie_exe} -m ${pre_xetex1_web_file}
-		${tex_web}
+		${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
 		${pre_xetex_change_files}
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-    ${tie_exe}
-	${tex_web}
+	${tie_exe}
+	${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
 	${pre_xetex_change_files}
+  VERBATIM
 )
 
 set(pre_xetex2_web_file ${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2.web)
@@ -119,19 +116,16 @@ add_custom_command(
   COMMAND
 	${tie_exe} -m ${pre_xetex2_web_file}
 		${pre_xetex1_web_file}
+  		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 		${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-    ${tie_exe}
+	${tie_exe}
 	${pre_xetex1_web_file}
+	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-1.ch
 	${CMAKE_CURRENT_SOURCE_DIR}/miktex-adapter-2.ch
-)
-
-set(xetex_change_files
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-latex3.ch
-  ${CMAKE_CURRENT_SOURCE_DIR}/xetex-hz.ch
+  VERBATIM
 )
 
 set(xetex_web_file ${CMAKE_CURRENT_BINARY_DIR}/xetex.web)
@@ -145,14 +139,16 @@ add_custom_command(
   COMMAND
 	${tie_exe} -m ${xetex_web_file}
 		${pre_xetex2_web_file}
-		${xetex_change_files}
-		${xetex_post_ch_srcs_with_synctex}
+		${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
+		${xetex_post_ch_synctex}
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-    ${tie_exe}
+	${tie_exe}
 	${pre_xetex2_web_file}
-	${xetex_change_files}
+	${CMAKE_CURRENT_SOURCE_DIR}/xetex.ch
+	${xetex_post_ch_synctex}
+  VERBATIM
 )
 
 add_custom_command(
@@ -180,38 +176,52 @@ set_source_files_properties(
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   XeTeX_ext.c
   XeTeX_pic.c
-  bmpimage.c
-  jpegimage.c
-  mfileio.c
-  numbers.c
-  pngimage.c
+  image/bmpimage.c
+  image/jpegimage.c
+  image/mfileio.c
+  image/numbers.c
+  image/pngimage.c
   trans.c
   PROPERTIES LANGUAGE CXX
 )
 
 set(${xetex_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/xetex_pool.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-common.h
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xetex.h
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
-  FontTableCache.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
+  MathTable.h
   XeTeXFontInst.cpp
-  XeTeXFontInst_FT2.cpp
+  XeTeXFontInst.h
   XeTeXFontMgr.cpp
+  XeTeXFontMgr.h
   XeTeXFontMgr_FC.cpp
-  XeTeXGrLayout.cpp
+  XeTeXFontMgr_FC.h
   XeTeXLayoutInterface.cpp
-  XeTeXOTLayoutEngine.cpp
+  XeTeXLayoutInterface.h
   XeTeXOTMath.cpp
+  XeTeXOTMath.h
   XeTeX_ext.c
+  XeTeX_ext.h
   XeTeX_pic.c
-  bmpimage.c
-  cmaps.cpp
+  XeTeXswap.h
+  c4p_pre.h
+  etex_version.h
   hz.cpp
-  jpegimage.c
-  mfileio.c
-  numbers.c
+  image/bmpimage.c
+  image/jpegimage.c
+  image/mfileio.c
+  image/numbers.c
+  image/pngimage.c
   pdfimage.cpp
-  pngimage.c
+  pdfimage.h
   trans.c
+  trans.h
+  xetex-miktex.h
+  xetex-version.h
+  xetex.h
+  xetex_version.h
 )
 
 set_source_files_properties(
@@ -236,7 +246,8 @@ set_source_files_properties(
 target_link_libraries(${xetex_dll_name}
   ${fontconfig_dll_name}
   ${freetype2_dll_name}
-  ${graphite_engine_lib_name}
+  ${graphite2_dll_name}
+  ${harfbuzz_lib_name}
   ${icudt_dll_name}
   ${icule_dll_name}
   ${icuuc_dll_name}
@@ -246,44 +257,39 @@ target_link_libraries(${xetex_dll_name}
   ${poppler_lib_name}
   ${teckit_dll_name}
   ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
   ${w2cemu_dll_name}
+  ${zlib_dll_name}
 )
 
 delay_load(${xetex_dll_name}
   ${fontconfig_dll_name}
   ${freetype2_dll_name}
-#  icudt36
-#  icule36
-#  icuuc36
+  ${graphite2_dll_name}
+#  icudt
+#  icule
+#  icuuc
+  ${jpeg_dll_name}
+#  ${kpsemu_dll_name}
   ${png_dll_name}
   ${teckit_dll_name}
+  ${unxemu_dll_name}
+  ${w2cemu_dll_name}
 )
 
 ## dev targets
 
 add_custom_command(
   OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
-  COMMAND ${tie_exe} -m ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
-		${tex_web}
-		${etex_ch}
-		${etex_miktex_pre_ch}
-		${etex_miktex_ch}
-		${miktex_tex_change_files}
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
   COMMAND ${webn_exe}
-	< ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex.web
-	> ${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
+	< ${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
-    ${tie_exe}
     ${webn_exe}
-	${tex_web}
-	${etex_ch}
-	${etex_miktex_pre_ch}
-	${etex_miktex_ch}
-	${miktex_tex_change_files}
+        ${CMAKE_CURRENT_SOURCE_DIR}/xetex.web
   VERBATIM
 )
 
@@ -317,10 +323,10 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-final-n.web
   COMMAND ${webn_exe}
 	< ${xetex_web_file}
-	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+	> ${CMAKE_CURRENT_BINARY_DIR}/xetex-final-n.web
   WORKING_DIRECTORY
 	${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
@@ -331,8 +337,8 @@ add_custom_command(
 
 add_custom_target(xetex-dev ALL
     DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/etex-miktex-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
 	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex1-n.web
 	${CMAKE_CURRENT_BINARY_DIR}/pre-xetex2-n.web
-	${CMAKE_CURRENT_BINARY_DIR}/xetex-n.web
+	${CMAKE_CURRENT_BINARY_DIR}/xetex-final-n.web
 )

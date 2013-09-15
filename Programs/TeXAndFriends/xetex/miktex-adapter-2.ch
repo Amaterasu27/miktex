@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2012 Christian Schenk
+%% Copyright (C) 2007-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -22,26 +22,13 @@
 % _____________________________________________________________________________
 
 @x
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
-  {printed when \eTeX\ starts}
-@y
-@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
-  {printed when \eTeX\ starts}
-@z
-
-@x
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
 @d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
-@z
-
-@x
-@d banner==eTeX_banner
-@y
-@d banner==eTeX_banner
-@d banner_k==eTeX_banner_k
+@#
+@d banner==TeX_banner
+@d banner_k==TeX_banner_k
 @z
 
 % _____________________________________________________________________________
@@ -50,13 +37,9 @@
 % _____________________________________________________________________________
 
 @x
-@!xord: array [text_char] of ASCII_code;
-  {specifies conversion of input characters}
 @!xchr: array [ASCII_code] of text_char;
   {specifies conversion of output characters}
 @y
-@!xord: array [text_char] of ASCII_code;
-  {specifies conversion of input characters}
 xchr: array [ASCII_code] of text_char;
    { specifies conversion of output characters }
 xprn: array [ASCII_code] of ASCII_code;
@@ -85,8 +68,6 @@ for i:=@'177 to @'377 do xchr[i]:=i;
 @x
 miktex_initialize_char_tables;
 @y
-for i:=first_text_char to last_text_char do xord[chr(i)]:=invalid_code;
-for i:=@'200 to @'377 do xord[xchr[i]]:=i;
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 {Set |xprn| for printable ASCII, unless |eight_bit_p| is set.}
 for i:=0 to 255 do xprn[i]:=(eight_bit_p or ((i>=" ")and(i<="~")));
@@ -150,7 +131,7 @@ is considered an output file the file variable is |term_out|.
 
 % _____________________________________________________________________________
 %
-% [5.61]
+% [5.65]
 % _____________________________________________________________________________
 
 @x
@@ -171,34 +152,19 @@ end;
 
 % _____________________________________________________________________________
 %
-% [5.71]
+% [5.75]
 % _____________________________________________________________________________
 
-@x
+ @x
 if last<>first then for k:=first to last-1 do print(buffer[k]);
-@y
+ @y
 k:=first; while k < last do begin print_buffer(k) end;
-@z
-
+ @z
 
 % _____________________________________________________________________________
 %
-% [8.110]
+% [8.114]
 % _____________________________________________________________________________
-
-@x
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword==255 {largest allowable value in a |quarterword|}
-@d min_halfhalfword==-@"8000
-@d max_halfhalfword==@"7FFF
-@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
-@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
-@y
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword=255 {largest allowable value in a |quarterword|}
-@d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
-@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
-@z
 
 @x
 @d miktex_int_pars=miktex_int_base+3 {total number of \MiKTeX's integer parameters}
@@ -206,9 +172,15 @@ k:=first; while k < last do begin print_buffer(k) end;
 @d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
 @z
 
+@x
+@d int_pars=miktex_int_pars {total number of integer parameters}
+@y
+@d int_pars=web2c_int_pars {total number of integer parameters}
+@z
+
 % _____________________________________________________________________________
 %
-% [18.264]
+% [18.276]
 % _____________________________________________________________________________
 
 @x
@@ -219,7 +191,7 @@ k:=first; while k < last do begin print_buffer(k) end;
 
 % _____________________________________________________________________________
 %
-% [22.304]
+% [22.316]
 % _____________________________________________________________________________
 
 @x
@@ -230,7 +202,7 @@ k:=first; while k < last do begin print_buffer(k) end;
 
 % _____________________________________________________________________________
 %
-% [29.518]
+% [29.533]
 % _____________________________________________________________________________
 
 @x
@@ -240,65 +212,31 @@ k:=first; while k < last do begin print_buffer(k) end;
 @z
 
 @x
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-@y
-    must_quote:=str_pool[j]=" "; incr(j);
-@z
-
-@x
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-@y
-    must_quote:=str_pool[j]=" "; incr(j);
-@z
-
-@x
       if str_pool[j]="*" then
         print_char(" ")
       else if str_pool[j]="?" then
         print_char("~")
       else
-        print(so(str_pool[j]));
+        print(so(str_pool[j]))
 @y
-      print(so(str_pool[j]));
-@z
-
-@x
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]));
-@y
-      print(so(str_pool[j]));
-@z
-
-@x
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]));
-@y
-      print(so(str_pool[j]));
+      print(so(str_pool[j]))
 @z
 
 % _____________________________________________________________________________
 %
-% [29.519]
+% [29.535]
 % _____________________________________________________________________________
 
 @x
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
+begin k:=0;
 @y
+begin k:=0;
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @z
 
 % _____________________________________________________________________________
 %
-% [29.523]
+% [29.540]
 % _____________________________________________________________________________
 
 @x
@@ -316,18 +254,18 @@ for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
 
 % _____________________________________________________________________________
 %
-% [29.532]
+% [29.549]
 % _____________________________________________________________________________
 
 @x
   while (not miktex_open_dvi_file (dvi_file)) do
 @y
-  while not b_open_out(dvi_file) do
+  while not dvi_open_out(dvi_file) do
 @z
 
 % _____________________________________________________________________________
 %
-% [29.536]
+% [29.553]
 % _____________________________________________________________________________
 
 @x
@@ -351,7 +289,7 @@ end
 
 % _____________________________________________________________________________
 %
-% [29.537]
+% [29.554]
 % _____________________________________________________________________________
 
 @x
@@ -364,7 +302,7 @@ end
 
 % _____________________________________________________________________________
 %
-% [30.563]
+% [30.580]
 % _____________________________________________________________________________
 
 @x
@@ -375,7 +313,7 @@ if not b_open_in(tfm_file) then abort;
 
 % _____________________________________________________________________________
 %
-% [32.642]
+% [32.662]
 % _____________________________________________________________________________
 
 @x
@@ -386,7 +324,7 @@ if not b_open_in(tfm_file) then abort;
 
 % _____________________________________________________________________________
 %
-% [46.1034]
+% [46.1067]
 % _____________________________________________________________________________
 
 @x
@@ -397,7 +335,7 @@ if not b_open_in(tfm_file) then abort;
 
 % _____________________________________________________________________________
 %
-% [47.1135]
+% [47.1168]
 % _____________________________________________________________________________
 
 @x
@@ -420,7 +358,7 @@ end;
 
 % _____________________________________________________________________________
 %
-% [49.1275]
+% [49.1308]
 % _____________________________________________________________________________
 
 @x
@@ -433,7 +371,7 @@ end;
 
 % _____________________________________________________________________________
 %
-% [49.1302]
+% [49.1335]
 % _____________________________________________________________________________
 
 @x
@@ -444,11 +382,10 @@ end;
 
 % _____________________________________________________________________________
 %
-% [50.1303]
+% [50.1336]
 % _____________________________________________________________________________
 
-%
-@x [50.1303] l.23722
+@x
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;
@@ -459,7 +396,7 @@ end;
 
 % _____________________________________________________________________________
 %
-% [50.1307]
+% [50.1340]
 % _____________________________________________________________________________
 
 @x
@@ -471,7 +408,7 @@ dump_int(@$);@/
 
 % _____________________________________________________________________________
 %
-% [50.1308]
+% [50.1341]
 % _____________________________________________________________________________
 
 @x
@@ -489,7 +426,7 @@ if x<>@$ then goto bad_fmt; {check that strings are the same}
 
 % _____________________________________________________________________________
 %
-% [50.1323]
+% [50.1356]
 % _____________________________________________________________________________
 
 @x
@@ -502,7 +439,7 @@ font_ec:=xmalloc_array(eight_bits, font_max);
 
 % _____________________________________________________________________________
 %
-% [50.1327]
+% [50.1360]
 % _____________________________________________________________________________
 
 @x
@@ -515,7 +452,7 @@ if (x<>69069)or feof(fmt_file) then goto bad_fmt
 
 % _____________________________________________________________________________
 %
-% [51.1332]
+% [51.1365]
 % _____________________________________________________________________________
 
 @x
@@ -531,11 +468,12 @@ miktex_allocate_memory;
 miktex_allocate_memory;
   buffer:=xmalloc_array (ASCII_code, buf_size);
   input_file:=xmalloc_array (alpha_file, max_in_open);
+  line_stack:=xmalloc_array (integer, max_in_open);
 @z
 
 % _____________________________________________________________________________
 %
-% [51.1337]
+% [51.1370]
 % _____________________________________________________________________________
 
 @x
@@ -558,7 +496,49 @@ tini@/
 
 % _____________________________________________________________________________
 %
-% [58.1618]
+% [54.1426]
+% _____________________________________________________________________________
+
+@x
+@!Init if (miktex_etex_p or (buffer[loc]="*"))and(format_ident=" (INITEX)") then
+@y
+@!init if (buffer[loc]="*")and(format_ident=" (INITEX)") then
+@z
+
+@x
+  if (buffer[loc]="*") then incr(loc);
+  eTeX_mode:=1; {enter extended mode}
+@y
+  incr(loc); eTeX_mode:=1; {enter extended mode}
+@z
+
+% _____________________________________________________________________________
+%
+% [54.1445]
+% _____________________________________________________________________________
+
+@x
+@!eof_seen : array[1..sup_max_in_open] of boolean; {has eof been seen?}
+@y
+@!eof_seen : array[1..max_in_open] of boolean; {has eof been seen?}
+@z
+
+% _____________________________________________________________________________
+%
+% [54.1559]
+% _____________________________________________________________________________
+
+@x
+@!grp_stack : array[0..sup_max_in_open] of save_pointer; {initial |cur_boundary|}
+@!if_stack : array[0..sup_max_in_open] of pointer; {initial |cond_ptr|}
+@y
+@!grp_stack : array[0..max_in_open] of save_pointer; {initial |cur_boundary|}
+@!if_stack : array[0..max_in_open] of pointer; {initial |cond_ptr|}
+@z
+
+% _____________________________________________________________________________
+%
+% [58.1707]
 % _____________________________________________________________________________
 
 @x

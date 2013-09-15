@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 2003-2008 Christian Schenk
+   Copyright (C) 2003-2013 Christian Schenk
 
    This file is part of MTPrint.
 
@@ -17,6 +17,10 @@
    You should have received a copy of the GNU General Public License
    along with MTPrint; if not, write to the Free Software Foundation,
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. */
+
+#if defined(MIKTEX_WINDOWS)
+#  include <Windows.h>
+#endif
 
 #include <malloc.h>
 

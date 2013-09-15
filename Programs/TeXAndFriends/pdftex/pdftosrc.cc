@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     if (extract_xref_table) {
-#if defined(MIKTEX)
-      int size = xref->getNumObjects();
+#ifdef POPPLER_VERSION
+        int size = xref->getNumObjects();
 #else
         int size = xref->getSize();
 #endif

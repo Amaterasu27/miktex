@@ -26,6 +26,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#ifdef HAVE_REGEX_H
+#include <regex.h>
+#endif
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -267,6 +270,55 @@ FcStrCmp (const FcChar8 *s1, const FcChar8 *s2)
 	    break;
     }
     return (int) c1 - (int) c2;
+}
+
+#ifdef USE_REGEX
+static FcBool
+_FcStrRegexCmp (const FcChar8 *s, const FcChar8 *regex, int cflags, int eflags)
+{
+    int ret = -1;
+    regex_t reg;
+
+    if ((ret = regcomp (&reg, (const char *)regex, cflags)) != 0)
+    {
+	if (FcDebug () & FC_DBG_MATCHV)
+	{
+	    char buf[512];
+
+	    regerror (ret, &reg, buf, 512);
+	    printf("Regexp compile error: %s\n", buf);
+	}
+	return FcFalse;
+    }
+    ret = regexec (&reg, (const char *)s, 0, NULL, eflags);
+    if (ret != 0)
+    {
+	if (FcDebug () & FC_DBG_MATCHV)
+	{
+	    char buf[512];
+
+	    regerror (ret, &reg, buf, 512);
+	    printf("Regexp exec error: %s\n", buf);
+	}
+    }
+    regfree (&reg);
+
+    return ret == 0 ? FcTrue : FcFalse;
+}
+#else
+#  define _FcStrRegexCmp(_s_, _regex_, _cflags_, _eflags_)	(FcFalse)
+#endif
+
+FcBool
+FcStrRegexCmp (const FcChar8 *s, const FcChar8 *regex)
+{
+	return _FcStrRegexCmp (s, regex, REG_EXTENDED | REG_NOSUB, 0);
+}
+
+FcBool
+FcStrRegexCmpIgnoreCase (const FcChar8 *s, const FcChar8 *regex)
+{
+	return _FcStrRegexCmp (s, regex, REG_EXTENDED | REG_NOSUB | REG_ICASE, 0);
 }
 
 /*
@@ -781,6 +833,7 @@ FcStrBufChar (FcStrBuf *buf, FcChar8 c)
 	if (buf->allocated)
 	{
 	    size = buf->size * 2;
+	    FcMemFree (FC_MEM_STRBUF, buf->size);
 	    new = realloc (buf->buf, size);
 	}
 	else
@@ -798,8 +851,6 @@ FcStrBufChar (FcStrBuf *buf, FcChar8 c)
 	    buf->failed = FcTrue;
 	    return FcFalse;
 	}
-	if (buf->size)
-	    FcMemFree (FC_MEM_STRBUF, buf->size);
 	FcMemAlloc (FC_MEM_STRBUF, size);
 	buf->size = size;
 	buf->buf = new;
@@ -844,11 +895,11 @@ FcStrCopyFilename (const FcChar8 *s)
 	FcChar8	*full;
 	int	size;
 	if (!home)
-	    return 0;
+	    return NULL;
 	size = strlen ((char *) home) + strlen ((char *) s);
 	full = (FcChar8 *) malloc (size);
 	if (!full)
-	    return 0;
+	    return NULL;
 	strcpy ((char *) full, (char *) home);
 	strcat ((char *) full, (char *) s + 1);
 	new = FcStrCanonFilename (full);
@@ -856,6 +907,7 @@ FcStrCopyFilename (const FcChar8 *s)
     }
     else
 	new = FcStrCanonFilename (s);
+
     return new;
 }
 
@@ -922,6 +974,10 @@ FcStrCanonAbsoluteFilename (const FcChar8 *s)
     FcMemAlloc (FC_MEM_STRING, size);
     slash = NULL;
     f = file;
+#ifdef _WIN32
+    if (*s == '/' && *(s+1) == '/') /* Network path, do not squash // */
+	*f++ = *s++;
+#endif
     for (;;) {
 	if (*s == '/' || *s == '\0')
 	{
@@ -1000,13 +1056,13 @@ FcStrCanonFilename (const FcChar8 *s)
 {
 #ifdef _WIN32
     FcChar8 full[FC_MAX_FILE_LEN + 2];
-    int size = GetFullPathName (s, sizeof (full) -1,
-				full, NULL);
+    int size = GetFullPathName ((LPCSTR) s, sizeof (full) -1,
+				(LPSTR) full, NULL);
 
     if (size == 0)
 	perror ("GetFullPathName");
 
-    FcConvertDosPath (full);
+    FcConvertDosPath ((char *) full);
     return FcStrCanonAbsoluteFilename (full);
 #else
     if (s[0] == '/')
@@ -1122,6 +1178,50 @@ FcStrSetAddFilename (FcStrSet *set, const FcChar8 *s)
 	return FcFalse;
     }
     return FcTrue;
+}
+
+FcBool
+FcStrSetAddLangs (FcStrSet *strs, const char *languages)
+{
+    const char *p = languages, *next;
+    FcChar8 lang[128] = {0}, *normalized_lang;
+    size_t len;
+    FcBool ret = FcFalse;
+
+    if (!languages)
+	return FcFalse;
+
+    while ((next = strchr (p, ':')))
+    {
+	len = next - p;
+	len = FC_MIN (len, 128);
+	strncpy ((char *) lang, p, len);
+	lang[len] = 0;
+	/* ignore an empty item */
+	if (*lang)
+	{
+	    normalized_lang = FcLangNormalize ((const FcChar8 *) lang);
+	    if (normalized_lang)
+	    {
+		FcStrSetAdd (strs, normalized_lang);
+		free (normalized_lang);
+		ret = FcTrue;
+	    }
+	}
+	p = next + 1;
+    }
+    if (*p)
+    {
+	normalized_lang = FcLangNormalize ((const FcChar8 *) p);
+	if (normalized_lang)
+	{
+	    FcStrSetAdd (strs, normalized_lang);
+	    free (normalized_lang);
+	    ret = FcTrue;
+	}
+    }
+
+    return ret;
 }
 
 FcBool

@@ -1,9 +1,9 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ Copyright (c) 1994-2008 by SIL International
+ Copyright (c) 2009 by Jonathan Kew
 
- Written by Jonathan Kew
+ SIL Author(s): Jonathan Kew
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -34,40 +34,31 @@ authorization from the copyright holders.
 #define __XETEX_OT_MATH__
 
 #include "XeTeX_ext.h"
-
-#ifdef XETEX_OT_MATH_IMPLEMENTATION
 #include "MathTable.h"
-#include "layout/LEFontInstance.h"
-#else
-#if defined(MIKTEX)		/* "C" linkage not required */
-#include "MathTable.h"
-#else
-#define GlyphAssembly void /* used when we're just declaring the functions for xetex.ch */
-#endif
-#endif
 
-#if ! defined(MIKTEX)		/* "C" linkage not required */
+#if ! defined(MIKTEX)
 /* public "C" APIs for calling from Web(-to-C) code */
 #ifdef __cplusplus
 extern "C" {
 #endif
 #endif
-	int getnativemathsyparam(int f, int n);
-	int getnativemathexparam(int f, int n);
-	int getotmathconstant(int f, int n);
-	int getotmathvariant(int f, int g, int v, integer* adv, int horiz);
-	void* getotassemblyptr(int f, int g, int horiz);
-	int getotmathitalcorr(int f, int g);
-	int getotmathaccentpos(int f, int g);
-	int otpartcount(const GlyphAssembly* a);
-	int otpartglyph(const GlyphAssembly* a, int i);
-	int otpartisextender(const GlyphAssembly* a, int i);
-	int otpartstartconnector(int f, const GlyphAssembly* a, int i);
-	int otpartendconnector(int f, const GlyphAssembly* a, int i);
-	int otpartfulladvance(int f, const GlyphAssembly* a, int i);
-	int otminconnectoroverlap(int f);
+	int get_native_mathsy_param(int f, int n);
+	int get_native_mathex_param(int f, int n);
+	int get_ot_math_constant(int f, int n);
+	int get_ot_math_variant(int f, int g, int v, integer* adv, int horiz);
+	void* get_ot_assembly_ptr(int f, int g, int horiz);
+	int get_ot_math_ital_corr(int f, int g);
+	int get_ot_math_accent_pos(int f, int g);
+	int get_ot_math_kern(int f, int g, int sf, int sg, int cmd, int shift);
+	int ot_part_count(const GlyphAssembly* a);
+	int ot_part_glyph(const GlyphAssembly* a, int i);
+	int ot_part_is_extender(const GlyphAssembly* a, int i);
+	int ot_part_start_connector(int f, const GlyphAssembly* a, int i);
+	int ot_part_end_connector(int f, const GlyphAssembly* a, int i);
+	int ot_part_full_advance(int f, const GlyphAssembly* a, int i);
+	int ot_min_connector_overlap(int f);
 #ifdef __cplusplus
-#if ! defined(MIKTEX)		/* "C" linkage not required */
+#if ! defined(MIKTEX)
 };
 #endif
 #endif

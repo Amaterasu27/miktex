@@ -30,8 +30,9 @@
 // Copyright (C) 2010 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2011 Sam Liao <phyomh@gmail.com>
 // Copyright (C) 2012 Horst Prote <prote@fmi.uni-stuttgart.de>
-// Copyright (C) 2012 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2012, 2013 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2012 Peter Breitenlohner <peb@mppmu.mpg.de>
+// Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -250,6 +251,7 @@ TextWord::TextWord(GfxState *state, int rotA, double fontSizeA) {
   edge = NULL;
   charPos = NULL;
   font = NULL;
+  textMat = NULL;
   len = size = 0;
   spaceAfter = gFalse;
   next = NULL;
@@ -277,11 +279,12 @@ TextWord::~TextWord() {
   gfree(edge);
   gfree(charPos);
   gfree(font);
+  gfree(textMat);
 }
 
 void TextWord::addChar(GfxState *state, TextFontInfo *fontA, double x, double y,
 		       double dx, double dy, int charPosA, int charLen,
-		       CharCode c, Unicode u) {
+		       CharCode c, Unicode u, Matrix textMatA) {
   GfxFont *gfxFont;
   double ascent, descent;
   ascent = descent = 0; // make gcc happy
@@ -293,12 +296,14 @@ void TextWord::addChar(GfxState *state, TextFontInfo *fontA, double x, double y,
     edge = (double *)greallocn(edge, (size + 1), sizeof(double));
     charPos = (int *)greallocn(charPos, size + 1, sizeof(int));
     font = (TextFontInfo **)greallocn(font, size, sizeof(TextFontInfo *));
+    textMat = (Matrix *)greallocn(textMat, size, sizeof(Matrix));
   }
   text[len] = u;
   charcode[len] = c;
   charPos[len] = charPosA;
   charPos[len + 1] = charPosA + charLen;
   font[len] = fontA;
+  textMat[len] = textMatA;
 
   if (len == 0) {
     if ((gfxFont = fontA->gfxFont)) {
@@ -452,6 +457,7 @@ void TextWord::merge(TextWord *word) {
     edge = (double *)greallocn(edge, (size + 1), sizeof(double));
     charPos = (int *)greallocn(charPos, size + 1, sizeof(int));
     font = (TextFontInfo **)greallocn(font, size, sizeof(TextFontInfo *));
+    textMat = (Matrix *)greallocn(textMat, size, sizeof(Matrix));
   }
   for (i = 0; i < word->len; ++i) {
     text[len + i] = word->text[i];
@@ -459,6 +465,7 @@ void TextWord::merge(TextWord *word) {
     edge[len + i] = word->edge[i];
     charPos[len + i] = word->charPos[i];
     font[len + i] = word->font[i];
+    textMat[len + i] = word->textMat[i];
   }
   edge[len + word->len] = word->edge[word->len];
   charPos[len + word->len] = word->charPos[word->len];
@@ -2257,7 +2264,7 @@ void TextPage::beginWord(GfxState *state) {
 
   // for vertical writing mode, the lines are effectively rotated 90
   // degrees
-  if (state->getFont()->getWMode()) {
+  if (gfxFont && gfxFont->getWMode()) {
     rot = (rot + 1) & 3;
   }
 
@@ -2271,6 +2278,7 @@ void TextPage::addChar(GfxState *state, double x, double y,
   GBool overlap;
   int i;
   int wMode;
+  Matrix mat;
 
   // subtract char and word spacing from the dx,dy values
   sp = state->getCharSpace();
@@ -2365,6 +2373,10 @@ void TextPage::addChar(GfxState *state, double x, double y,
       beginWord(state);
     }
 
+    state->getFontTransMat(&mat.m[0], &mat.m[1], &mat.m[2], &mat.m[3]);
+    mat.m[4] = x1;
+    mat.m[5] = y1;
+
     // page rotation and/or transform matrices can cause text to be
     // drawn in reverse order -- in this case, swap the begin/end
     // coordinates and break text into individual chars
@@ -2384,7 +2396,7 @@ void TextPage::addChar(GfxState *state, double x, double y,
     w1 /= uLen;
     h1 /= uLen;
     for (i = 0; i < uLen; ++i) {
-      curWord->addChar(state, curFont, x1 + i*w1, y1 + i*h1, w1, h1, charPos, nBytes, c, u[i]);
+      curWord->addChar(state, curFont, x1 + i*w1, y1 + i*h1, w1, h1, charPos, nBytes, c, u[i], mat);
     }
   }
   charPos += nBytes;
@@ -3632,76 +3644,76 @@ GBool TextPage::findText(Unicode *s, int len,
             ((j == 0 || !unicodeTypeAlphaNum(txt[j - 1])) &&
              (j + len == m || !unicodeTypeAlphaNum(txt[j + len])))) {
 
-	// compare the strings
-	for (k = 0; k < len; ++k) {
-	  if (p[k] != s2[k]) {
-	    break;
-	  }
-	}
+          // compare the strings
+          for (k = 0; k < len; ++k) {
+            if (p[k] != s2[k]) {
+              break;
+            }
+          }
 
-	// found it
-	if (k == len) {
-	  // where s2 matches a subsequence of a compatibility equivalence
-	  // decomposition, highlight the entire glyph, since we don't know
-	  // the internal layout of subglyph components
-	  int normStart = line->normalized_idx[j];
-	  int normAfterEnd = line->normalized_idx[j + len - 1] + 1;
-	  switch (line->rot) {
-	  case 0:
-	    xMin1 = line->edge[normStart];
-	    xMax1 = line->edge[normAfterEnd];
-	    yMin1 = line->yMin;
-	    yMax1 = line->yMax;
-	    break;
-	  case 1:
-	    xMin1 = line->xMin;
-	    xMax1 = line->xMax;
-	    yMin1 = line->edge[normStart];
-	    yMax1 = line->edge[normAfterEnd];
-	    break;
-	  case 2:
-	    xMin1 = line->edge[normAfterEnd];
-	    xMax1 = line->edge[normStart];
-	    yMin1 = line->yMin;
-	    yMax1 = line->yMax;
-	    break;
-	  case 3:
-	    xMin1 = line->xMin;
-	    xMax1 = line->xMax;
-	    yMin1 = line->edge[normAfterEnd];
-	    yMax1 = line->edge[normStart];
-	    break;
-	  }
-	  if (backward) {
-	    if ((startAtTop ||
-		 yMin1 < yStart || (yMin1 == yStart && xMin1 < xStart)) &&
-		(stopAtBottom ||
-		 yMin1 > yStop || (yMin1 == yStop && xMin1 > xStop))) {
-	      if (!found ||
-		  yMin1 > yMin0 || (yMin1 == yMin0 && xMin1 > xMin0)) {
-		xMin0 = xMin1;
-		xMax0 = xMax1;
-		yMin0 = yMin1;
-		yMax0 = yMax1;
-		found = gTrue;
-	      }
-	    }
-	  } else {
-	    if ((startAtTop ||
-		 yMin1 > yStart || (yMin1 == yStart && xMin1 > xStart)) &&
-		(stopAtBottom ||
-		 yMin1 < yStop || (yMin1 == yStop && xMin1 < xStop))) {
-	      if (!found ||
-		  yMin1 < yMin0 || (yMin1 == yMin0 && xMin1 < xMin0)) {
-		xMin0 = xMin1;
-		xMax0 = xMax1;
-		yMin0 = yMin1;
-		yMax0 = yMax1;
-		found = gTrue;
-	      }
-	    }
-	  }
-	}
+          // found it
+          if (k == len) {
+            // where s2 matches a subsequence of a compatibility equivalence
+            // decomposition, highlight the entire glyph, since we don't know
+            // the internal layout of subglyph components
+            int normStart = line->normalized_idx[j];
+            int normAfterEnd = line->normalized_idx[j + len - 1] + 1;
+            switch (line->rot) {
+            case 0:
+              xMin1 = line->edge[normStart];
+              xMax1 = line->edge[normAfterEnd];
+              yMin1 = line->yMin;
+              yMax1 = line->yMax;
+              break;
+            case 1:
+              xMin1 = line->xMin;
+              xMax1 = line->xMax;
+              yMin1 = line->edge[normStart];
+              yMax1 = line->edge[normAfterEnd];
+              break;
+            case 2:
+              xMin1 = line->edge[normAfterEnd];
+              xMax1 = line->edge[normStart];
+              yMin1 = line->yMin;
+              yMax1 = line->yMax;
+              break;
+            case 3:
+              xMin1 = line->xMin;
+              xMax1 = line->xMax;
+              yMin1 = line->edge[normAfterEnd];
+              yMax1 = line->edge[normStart];
+              break;
+            }
+            if (backward) {
+              if ((startAtTop ||
+                   yMin1 < yStart || (yMin1 == yStart && xMin1 < xStart)) &&
+                  (stopAtBottom ||
+                   yMin1 > yStop || (yMin1 == yStop && xMin1 > xStop))) {
+                if (!found ||
+                    yMin1 > yMin0 || (yMin1 == yMin0 && xMin1 > xMin0)) {
+                  xMin0 = xMin1;
+                  xMax0 = xMax1;
+                  yMin0 = yMin1;
+                  yMax0 = yMax1;
+                  found = gTrue;
+                }
+              }
+            } else {
+              if ((startAtTop ||
+                   yMin1 > yStart || (yMin1 == yStart && xMin1 > xStart)) &&
+                  (stopAtBottom ||
+                   yMin1 < yStop || (yMin1 == yStop && xMin1 < xStop))) {
+                if (!found ||
+                    yMin1 < yMin0 || (yMin1 == yMin0 && xMin1 < xMin0)) {
+                  xMin0 = xMin1;
+                  xMax0 = xMax1;
+                  yMin0 = yMin1;
+                  yMax0 = yMax1;
+                  found = gTrue;
+                }
+              }
+            }
+          }
 	}
 	if (backward) {
 	  --j;
@@ -3712,7 +3724,7 @@ GBool TextPage::findText(Unicode *s, int len,
 	}
       }
     }
-    }
+  }
 
   gfree(s2);
   if (!caseSensitive) {
@@ -4274,9 +4286,7 @@ TextSelectionPainter::TextSelectionPainter(TextPage *page,
   out->startPage (0, state);
   out->setDefaultCTM (state->getCTM());
 
-  state->setTextMat(1, 0, 0, -1, 0, 0);
   state->setFillColorSpace(new GfxDeviceRGBColorSpace());
-
 }
 
 TextSelectionPainter::~TextSelectionPainter()
@@ -4337,24 +4347,31 @@ void TextSelectionPainter::visitWord (TextWord *word, int begin, int end,
   while (begin < end) {
     TextFontInfo *font = word->font[begin];
     font->gfxFont->incRefCnt();
-    state->setFont(font->gfxFont, word->fontSize);
-  out->updateFont(state);
+    Matrix *mat = &word->textMat[begin];
+
+    state->setTextMat(mat->m[0], mat->m[1], mat->m[2], mat->m[3], 0, 0);
+    state->setFont(font->gfxFont, 1);
+    out->updateFont(state);
 
     int fEnd = begin + 1;
-    while (fEnd < end && font->matches(word->font[fEnd]))
+    while (fEnd < end && font->matches(word->font[fEnd]) &&
+	   mat->m[0] == word->textMat[fEnd].m[0] &&
+	   mat->m[1] == word->textMat[fEnd].m[1] &&
+	   mat->m[2] == word->textMat[fEnd].m[2] &&
+	   mat->m[3] == word->textMat[fEnd].m[3])
       fEnd++;
 
-  /* The only purpose of this string is to let the output device query
-   * it's length.  Might want to change this interface later. */
+    /* The only purpose of this string is to let the output device query
+     * it's length.  Might want to change this interface later. */
     GooString *string = new GooString ((char *) word->charcode, fEnd - begin);
-  out->beginString(state, string);
+    out->beginString(state, string);
 
     for (int i = begin; i < fEnd; i++) {
-    out->drawChar(state, word->edge[i], word->base, 0, 0, 0, 0,
-		  word->charcode[i], 1, NULL, 0);
+      out->drawChar(state, word->textMat[i].m[4], word->textMat[i].m[5], 0, 0, 0, 0,
+		    word->charcode[i], 1, NULL, 0);
     }
-  out->endString(state);
-  delete string;
+    out->endString(state);
+    delete string;
     begin = fEnd;
   }
 }

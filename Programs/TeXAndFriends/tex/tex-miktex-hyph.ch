@@ -1,6 +1,6 @@
 %% tex-miktex-hyph.ch:
 %% 
-%% Copyright (C) 1991-2008 Christian Schenk
+%% Copyright (C) 1991-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -28,6 +28,14 @@
 % _____________________________________________________________________________
 
 @x
+{marker:constants}
+@y
+{marker:constants}
+@!inf_hyph_size=610; {Must be not less than |hyph_prime|!}
+@!sup_hyph_size=65535;
+@z
+
+@x
 @!trie_size=8000; {space for hyphenation patterns; should be larger for
   \.{INITEX} than it is in production versions of \TeX}
 @y
@@ -43,14 +51,16 @@
 @!max_trie_op=65535; {largest possible trie opcode for any language}
 @z
 
+% _____________________________________________________________________________
+%
+% [1.12]
+% _____________________________________________________________________________
+
 @x
 @d hyph_size=307 {another prime; the number of \.{\\hyphenation} exceptions}
 @y
 @d hyph_prime=607 {another prime for hashing \.{\\hyphenation} exceptions;
                 if you change this, you should also change |iinf_hyphen_size|.}
-@<Constants...@>=
-@!inf_hyph_size=610; {Must be not less than |hyph_prime|!}
-@!sup_hyph_size=65535;
 @z
 
 % _____________________________________________________________________________
@@ -250,31 +260,19 @@ not_found: decr(hn)
 @ @<If the string |hyph_word[h]| is less than \(hc)...@>=
 k:=hyph_word[h]; if k=0 then goto not_found;
 if length(k)<hn then goto not_found;
-if length(k)=hn then
-  begin j:=1; u:=str_start[k];
-  repeat if so(str_pool[u])<hc[j] then goto not_found;
-  if so(str_pool[u])>hc[j] then goto done;
-  incr(j); incr(u);
-  until j>hn;
-  @<Insert hyphens as specified in |hyph_list[h]|@>;
-  decr(hn); goto found;
-  end;
-done:
 @y
 @ @<If the string |hyph_word[h]| is less than \(hc)...@>=
 {This is now a simple hash list, not an ordered one, so
 the module title is no longer descriptive.}
 k:=hyph_word[h]; if k=0 then goto not_found;
-if length(k)=hn then
-  begin j:=1; u:=str_start[k];
+@z
+
+@x
+  repeat if so(str_pool[u])<hc[j] then goto not_found;
+  if so(str_pool[u])>hc[j] then goto done;
+@y
   repeat
   if so(str_pool[u])<>hc[j] then goto done;
-  incr(j); incr(u);
-  until j>hn;
-  @<Insert hyphens as specified in |hyph_list[h]|@>;
-  decr(hn); goto found;
-  end;
-done:
 @z
 
 % _____________________________________________________________________________
@@ -348,24 +346,26 @@ found: hyph_word[h]:=s; hyph_list[h]:=p
 k:=hyph_word[h];
 if length(k)<length(s) then goto found;
 if length(k)>length(s) then goto not_found;
-u:=str_start[k]; v:=str_start[s];
-repeat if str_pool[u]<str_pool[v] then goto found;
-if str_pool[u]>str_pool[v] then goto not_found;
-incr(u); incr(v);
-until u=str_start[k+1];
-found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
-t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
-not_found:
 @y
 @ @<If the string |hyph_word[h]| is less than \(or)...@>=
 {This is now a simple hash list, not an ordered one, so
 the module title is no longer descriptive.}
 k:=hyph_word[h];
 if length(k)<>length(s) then goto not_found;
-u:=str_start[k]; v:=str_start[s];
+@z
+
+@x
+repeat if str_pool[u]<str_pool[v] then goto found;
+if str_pool[u]>str_pool[v] then goto not_found;
+@y
 repeat if str_pool[u]<>str_pool[v] then goto not_found;
-incr(u); incr(v);
-until u=str_start[k+1];
+@z
+
+@x
+found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
+t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
+not_found:
+@y
 {repeat hyphenation exception; flushing old data}
 flush_string; s:=hyph_word[h]; {avoid |slow_make_string|!}
 decr(hyph_count);
@@ -664,17 +664,19 @@ for k:=0 to hyph_size do if hyph_word[k]<>0 then
 
 @x
 for k:=0 to trie_max do dump_hh(trie[k]);
-dump_int(trie_op_ptr);
+@y
+dump_things(trie_trl[0], trie_max+1);
+dump_things(trie_tro[0], trie_max+1);
+dump_things(trie_trc[0], trie_max+1);
+@z
+
+@x
 for k:=1 to trie_op_ptr do
   begin dump_int(hyf_distance[k]);
   dump_int(hyf_num[k]);
   dump_int(hyf_next[k]);
   end;
 @y
-dump_things(trie_trl[0], trie_max+1);
-dump_things(trie_tro[0], trie_max+1);
-dump_things(trie_trc[0], trie_max+1);
-dump_int(trie_op_ptr);
 dump_things(hyf_distance[1], trie_op_ptr);
 dump_things(hyf_num[1], trie_op_ptr);
 dump_things(hyf_next[1], trie_op_ptr);
@@ -716,24 +718,26 @@ for k:=1 to hyph_count do
 
 @x
 for k:=0 to j do undump_hh(trie[k]);
-undump_size(0)(trie_op_size)('trie op size')(j); @+init trie_op_ptr:=j;@+tini
-for k:=1 to j do
-  begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
-  undump(0)(63)(hyf_num[k]);
-  undump(min_quarterword)(max_quarterword)(hyf_next[k]);
-  end;
 @y
 {These first three haven't been allocated yet unless we're \.{INITEX};
  we do that precisely so we don't allocate more space than necessary.}
 undump_things(trie_trl[0], j+1);
 undump_things(trie_tro[0], j+1);
 undump_things(trie_trc[0], j+1);
-undump_size(0)(trie_op_size)('trie op size')(j); @+init trie_op_ptr:=j;@+tini
+@z
+
+@x
+for k:=1 to j do
+  begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
+  undump(0)(63)(hyf_num[k]);
+  undump(min_quarterword)(max_quarterword)(hyf_next[k]);
+  end;
+@y
 {I'm not sure we have such a strict limitation (64) on these values, so
  let's leave them unchecked.}
 undump_things(hyf_distance[1], j);
 undump_things(hyf_num[1], j);
-undump_things(hyf_next[1], j);
+undump_upper_check_things(max_trie_op, hyf_next[1], j);
 @z
 
 % _____________________________________________________________________________

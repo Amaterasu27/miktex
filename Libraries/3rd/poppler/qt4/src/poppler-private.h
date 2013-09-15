@@ -157,9 +157,9 @@ namespace Poppler {
 			else
 #endif
 			{
-			bgColor[0] = paperColor.blue();
-			bgColor[1] = paperColor.green();
-			bgColor[2] = paperColor.red();
+				bgColor[0] = paperColor.blue();
+				bgColor[1] = paperColor.green();
+				bgColor[2] = paperColor.red();
 			}
 			GBool AA = m_hints & Document::TextAntialiasing ? gTrue : gFalse;
 			SplashOutputDev * splashOutputDev = new SplashOutputDev(
@@ -189,7 +189,7 @@ namespace Poppler {
 			return;
 
 		paperColor = color;
-
+		
 		// Make sure the new paper color will be picked up for the next rendering
 		delete m_outputDev;
 		m_outputDev = NULL;

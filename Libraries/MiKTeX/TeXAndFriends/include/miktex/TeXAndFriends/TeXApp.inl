@@ -374,17 +374,6 @@ runsystem (/*[in]*/ const CharType * lpszCommand)
   return (miktexwrite18(reinterpret_cast<const TEXMFCHAR *>(lpszCommand)));
 }
 
-#if defined(addressof)
-#  undef addressof
-#endif
-
-template<class T>
-T *
-addressof (/*[in]*/ T & x)
-{
-  return (&x);
-}
-
 template<class CharType>
 const CharType *
 conststringcast (/*[in]*/ CharType * lpsz)

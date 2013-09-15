@@ -1,6 +1,6 @@
 /* w2cemu.cpp: texk compatibility functions
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2013 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -26,6 +26,10 @@
 using namespace std;
 using namespace MiKTeX;
 using namespace MiKTeX::Core;
+
+namespace {
+  PathName outputDirectory;
+}
 
 /* _________________________________________________________________________
 
@@ -133,6 +137,57 @@ Web2C::OpenInput (/*[in,out]*/ char *			lpszFileName,
 
 /* _________________________________________________________________________
 
+   Web2C::RecordFileName
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+Web2C::RecordFileName (/*[in]*/ const char *	lpszPath,
+		       /*[in]*/ FileAccess	access)
+{
+  if (miktex_web2c_recorder_enabled)
+  {
+    SessionWrapper(true)->StartFileInfoRecorder();
+  }
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_record_file_name
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_record_file_name (/*[in]*/ const char *	lpszPath,
+			       /*[in]*/ int		reading)
+{
+  Web2C::RecordFileName(lpszPath, reading ? FileAccess::Read : FileAccess::Write);
+}
+
+/* _________________________________________________________________________
+
+   Web2C::ChangeRecorderFileName
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+Web2C::ChangeRecorderFileName (/*[in]*/ const char *	lpszName)
+{
+  PathName path (GetOutputDirectory(), lpszName);
+  path.SetExtension(".fls");
+  SessionWrapper(true)->SetRecorderPath(path);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_change_recorder_file_name
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_change_recorder_file_name (/*[in]*/ const char *	lpszPath)
+{
+  Web2C::ChangeRecorderFileName(lpszPath);
+}
+
+/* _________________________________________________________________________
+
    miktex_web2c_version_string
    _________________________________________________________________________ */
 
@@ -149,11 +204,61 @@ miktex_web2c_recorder_enabled = 0;
 
 /* _________________________________________________________________________
 
-   miktex_web2c_output_directory
+   Web2C::SetOutputDirectory
    _________________________________________________________________________ */
 
-MIKTEXW2CDATA(const_string)
-miktex_web2c_output_directory = 0;
+MIKTEXW2CCEEAPI(void)
+Web2C::SetOutputDirectory (const PathName & path)
+{
+  PathName outputDirectory = path;
+  outputDirectory.MakeAbsolute ();
+  if (! Directory::Exists(outputDirectory))
+  {
+    FATAL_MIKTEX_ERROR ("Web2C::SetOutputDirectory",
+      T_("The specified directory does not exist."),
+      outputDirectory.Get());
+  }
+#if 0 // TODO
+  if (auxDirectory[0] == 0)
+  {
+    auxDirectory = outputDirectory;
+  }
+#endif
+  SessionWrapper(true)->AddInputDirectory (outputDirectory.Get(), true);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_set_output_directory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(void)
+miktex_web2c_set_output_directory (/*[in]*/ const char * lpszPath)
+{
+  Web2C::SetOutputDirectory (lpszPath);
+}
+
+/* _________________________________________________________________________
+
+   Web2C::GetOutputDirectory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(PathName)
+Web2C::GetOutputDirectory ()
+{
+  return (outputDirectory);
+}
+
+/* _________________________________________________________________________
+
+   miktex_web2c_get_output_directory
+   _________________________________________________________________________ */
+
+MIKTEXW2CCEEAPI(const char *)
+miktex_web2c_get_output_directory ()
+{
+  return (Web2C::GetOutputDirectory().Empty() ? 0 : Web2C::GetOutputDirectory().Get());
+}
 
 /* _________________________________________________________________________
 

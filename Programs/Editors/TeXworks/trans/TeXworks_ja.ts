@@ -686,7 +686,7 @@
     </message>
     <message>
         <source>Toolbar buttons</source>
-        <translation>ツールバーボタン</translation>
+        <translation type="obsolete">ツールバーボタン</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -722,7 +722,7 @@
     </message>
     <message>
         <source>Interface locale:</source>
-        <translation>次回起動時の言語:</translation>
+        <translation type="obsolete">次回起動時の言語:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -928,6 +928,22 @@
 &lt;p&gt;&lt;strong&gt;自動で隠す:&lt;/strong&gt; 事前にコンソールが表示していなければ、タイプセット完了時にコンソールを閉じます&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;成功時に隠す:&lt;/strong&gt; 事前の状態を問わず、タイプセット完了時にコンソールを閉じます&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locale:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toolbar buttons:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open corresponding PDF preview with TeX files</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -973,11 +989,19 @@
     </message>
     <message>
         <source>Log files (*.log)</source>
-        <translation>ログファイル (*.log)</translation>
+        <translation type="obsolete">ログファイル (*.log)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation>補助ファイル (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+        <translation type="obsolete">補助ファイル (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
+    </message>
+    <message>
+        <source>Log files (*.log *.blg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

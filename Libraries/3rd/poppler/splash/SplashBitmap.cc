@@ -116,15 +116,15 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPadA,
   }
   data = (SplashColorPtr)gmallocn_checkoverflow(rowSize, height);
   if (data != NULL) {
-  if (!topDown) {
-    data += (height - 1) * rowSize;
-    rowSize = -rowSize;
-  }
-  if (alphaA) {
-    alpha = (Guchar *)gmallocn(width, height);
-  } else {
-    alpha = NULL;
-  }
+    if (!topDown) {
+      data += (height - 1) * rowSize;
+      rowSize = -rowSize;
+    }
+    if (alphaA) {
+      alpha = (Guchar *)gmallocn(width, height);
+    } else {
+      alpha = NULL;
+    }
   } else {
     alpha = NULL;
   }
@@ -397,7 +397,7 @@ SplashError SplashBitmap::writeImgFile(SplashImageFileFormat format, FILE *f, in
 #endif
       default:
         fprintf(stderr, "TiffWriter: Mode %d not supported\n", mode);
-      writer = new TiffWriter();
+        writer = new TiffWriter();
       }
       if (writer) {
         ((TiffWriter *)writer)->setCompressionString(compressionString);

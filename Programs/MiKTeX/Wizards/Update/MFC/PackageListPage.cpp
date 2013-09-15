@@ -1,6 +1,6 @@
 /* PackageListPag.cpp:
 
-   Copyright (C) 2002-2011 Christian Schenk
+   Copyright (C) 2002-2013 Christian Schenk
 
    This file is part of the MiKTeX Update Wizard.
 
@@ -112,8 +112,8 @@ PackageListPage::OnInitDialog ()
     pInstaller = auto_ptr<PackageInstaller>(g_pManager->CreateInstaller());
     listControl.SetExtendedStyle (listControl.GetExtendedStyle() | ExtendedStyles);
     InsertColumn (0, T_("Name"), T_("xxxx yet another package"));
-    InsertColumn (1, T_("Old"), T_("xxxx 19-December-2000"));
-    InsertColumn (2, T_("New"), T_("xxxx 19-December-2000"));
+    InsertColumn (1, T_("Old"), T_("xxxx v1.1234 19-December-2000"));
+    InsertColumn (2, T_("New"), T_("xxxx v1.1234 19-December-2000"));
   }
   catch (const MiKTeXException & e)
   {
@@ -386,8 +386,13 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       // display the 'old' package time-stamp, if the package is known
       if (locallyKnown && oldPackageInfo.timeInstalled > 0)
       {
+	CString strOld = UT_(oldPackageInfo.version.c_str());
+	if (! strOld.IsEmpty())
+	{
+	  strOld += " / ";
+	}
 	CTime timeOld (oldPackageInfo.timePackaged);
-	CString strOld = timeOld.Format("%d-%b-%y");
+	strOld += timeOld.Format("%d-%b-%y");
 	listControl.SetItemText (idx, 1, strOld);
       }
 
@@ -404,8 +409,13 @@ PackageListPage::OnFillList (/*[in]*/ WPARAM		wParam,
       }
       else
       {
+	CString strNew = UT_(it->version.c_str());
+	if (! strNew.IsEmpty())
+	{
+	  strNew += " / ";
+	}
 	CTime timeNew (it->timePackaged);
-	CString strNew = timeNew.Format ("%d-%b-%y");
+	strNew += timeNew.Format ("%d-%b-%y");
 	listControl.SetItemText (idx, 2, strNew);
       }
 

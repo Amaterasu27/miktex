@@ -1,6 +1,6 @@
 %% miktex-adapter-1.ch:
 %% 
-%% Copyright (C) 2003-2007 Christian Schenk
+%% Copyright (C) 2003-2013 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -18,11 +18,30 @@
 
 % _____________________________________________________________________________
 %
-% [18.254]
+% [8.114]
 % _____________________________________________________________________________
 
 @x
-@d tex_int_pars=55 {total number of \TeX's integer parameters}
+@d max_quarterword==255 {largest allowable value in a |quarterword|}
 @y
-@d int_pars=55 {total number of integer parameters}
+@d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
+@z
+
+% _____________________________________________________________________________
+%
+% [29.542]
+% _____________________________________________________________________________
+
+@x
+var k:1..file_name_size; {index into |name_of_file|}
+@y
+var k:0..file_name_size; {index into |name_of_file|}
+@z
+
+@x
+else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+@y
+else  begin
+  make_utf16_name;
+  for k:=0 to name_length16-1 do append_char(name_of_file16[k]);
 @z

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011 Christian Schenk
+## Copyright (C) 2011-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -70,8 +70,15 @@ endif(NATIVE_WINDOWS)
 
 set(libs
   ${core_dll_name}
+  ${mpm_dll_name}
   ${ui_mfc_dll_name}
 )
+
+if(NATIVE_WINDOWS)
+  set(libs ${libs}
+    htmlhelp.lib
+  )
+endif(NATIVE_WINDOWS)
 
 add_executable(mo WIN32 ${mo_mfc_sources})
 

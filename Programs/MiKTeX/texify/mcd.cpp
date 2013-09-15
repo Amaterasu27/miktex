@@ -1,6 +1,6 @@
 /* mcd.cpp: MiKTeX compiler driver
 
-   Copyright (C) 1998-2010 Christian Schenk
+   Copyright (C) 1998-2013 Christian Schenk
 
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,
    2002, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -27,6 +27,10 @@
    Friedman.
 
    Most of the source comments are stolen from the texi2dvi script. */
+
+#if defined(MIKTEX_WINDOWS)
+#  include <windows.h>
+#endif
 
 #include <cctype>
 #include <cstdarg>

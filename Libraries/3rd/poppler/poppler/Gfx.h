@@ -17,7 +17,7 @@
 // Copyright (C) 2007 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright (C) 2008 Brad Hards <bradh@kde.org>
 // Copyright (C) 2008, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2009-2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009-2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009, 2010, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
@@ -225,6 +225,8 @@ private:
   MarkedContentStack *mcStack;	// current BMC/EMC stack
 
   Parser *parser;		// parser for page content stream(s)
+  
+  std::set<int> formsDrawing;	// the forms that are being drawn
 
 #ifdef USE_CMS
   PopplerCache iccColorSpaceCache;

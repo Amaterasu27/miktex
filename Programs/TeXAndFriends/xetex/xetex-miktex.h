@@ -1,6 +1,6 @@
 /* xetex-miktex.h:						-*- C++ -*-
    
-   Copyright (C) 2007-2012 Christian Schenk
+   Copyright (C) 2007-2013 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -28,7 +28,7 @@
 #include <miktex/TeXAndFriends/config.h>
 
 #include "xetexd.h"
-#include "XeTeXOTMath.h"
+//#include "XeTeXOTMath.h"
 
 #if ! defined(THEDATA)
 #  define THEDATA(x) C4P_VAR(x)
@@ -218,6 +218,7 @@ extern XETEXCLASS XETEXAPP;
 #include <miktex/TeXAndFriends/ETeXApp.inl>
 
 #include <miktex/KPSE/Emulation>
+#include <miktex/W2C/Emulation>
 
 #include "xetex.h"
 #include "synctex.h"
@@ -274,23 +275,21 @@ GetNameOfFileForWeb2C ()
 #define ruledp THEDATA(ruledp)
 
 #define c4p_sizeof(x) sizeof(x)
-#define addressof(x) &(x)
 #undef nullptr
 #define nullptr() 0
 #define isnullptr(p) ((p) == 0)
-#define stringcast(x) ((char*)(x))
 
 #define afield aField
 #define bfield bField
 #define cfield cField
 #define dfield dField
-#define fix2x Fix2X
+#define fix2d Fix2D
 #define htfield htField
 #define setpoint setPoint
 #define txfield txField
 #define tyfield tyField
 #define wdfield wdField
-#define x2fix X2Fix
+#define d2fix D2Fix
 #define xcoord xCoord
 #define xfield xField
 #define ycoord yCoord
@@ -298,14 +297,17 @@ GetNameOfFileForWeb2C ()
 #define zxnoverd xnoverd
 #define zenddiagnostic enddiagnostic
 #define zprintnl printnl
+#define zprintchar printchar
 #define zprintint printint
 #define zprintscaled printscaled
 
+#if 0
 boolean
 open_dvi_output(/*out*/ bytefile & dviFile);
 
 int
 dviclose (/*[in,out]*/ bytefile & dviFile);
+#endif
 
 int miktexloadpoolstrings (int size);
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -63,7 +63,7 @@ add_executable(outocp ${outocp_sources})
 merge_trustinfo_manifest(outocp asInvoker)
 
 target_link_libraries(outocp
-  ${app_dll_namen}
+  ${app_dll_name}
   ${core_dll_name}
   ${getopt_dll_name}
   ${kpsemu_dll_name}
@@ -124,7 +124,7 @@ add_executable(otp2ocp ${otp2ocp_sources})
 merge_trustinfo_manifest(otp2ocp asInvoker)
 
 target_link_libraries(otp2ocp
-  ${app_dll_namen}
+  ${app_dll_name}
   ${core_dll_name}
   ${getopt_dll_name}
   ${kpsemu_dll_name}

@@ -1,6 +1,6 @@
 /* gsinfo.cpp: getting Ghostscript information
 
-   Copyright (C) 1996-2007 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -103,18 +103,4 @@ SessionImpl::GetGhostscript (/*[out]*/ char *	lpszPath,
     {
       *pVersionNumber = static_cast<unsigned long>(gsVersion.GetHighWord());
     }
-}
-
-/* _________________________________________________________________________
-
-   miktex_get_gs_exe
-   _________________________________________________________________________ */
-
-MIKTEXCEEAPI(void)
-miktex_get_gs_exe (/*[out]*/ char *	lpszPath)
-{
-  C_FUNC_BEGIN ();
-  MIKTEX_ASSERT_PATH_BUFFER (lpszPath);
-  SessionImpl::GetSession()->GetGhostscript (lpszPath, 0);
-  C_FUNC_END ();
 }

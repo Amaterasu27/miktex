@@ -65,7 +65,7 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
            If we set idx = 0, (x)dvipdfmx works fine for the font and
            created pdf seems fine. The post table may not be important
            in such a case */
-	idx = 0;
+        idx = 0;
       }
     }
     indices[i] = idx;
