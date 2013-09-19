@@ -43,7 +43,7 @@ input=csplain-utf8.ini
 arguments=-enable-enctex
 attributes=exclude
 compiler=pdftex
-description=CSPlain
+description=PDF CSPlain
 input=csplain-utf8.ini
 
 [dvilualatex]
