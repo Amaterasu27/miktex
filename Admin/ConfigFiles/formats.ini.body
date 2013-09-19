@@ -18,19 +18,33 @@ input=bplain.ini
 
 [cslatex]
 
-arguments=-tcx=cp227.tcx
 attributes=exclude
 compiler=pdftex
 description=CSLaTeX
 input=cslatex.ini
 
+[pdfcslatex]
+
+attributes=exclude
+compiler=pdftex
+description=PDF CSLaTeX
+input=cslatex.ini
+
 [csplain]
 
-arguments=-tcx=cp227.tcx
+arguments=-enable-enctex
 attributes=exclude
 compiler=pdftex
 description=CSPlain
-input=csplain.ini
+input=csplain-utf8.ini
+
+[pdfcsplain]
+
+arguments=-enable-enctex
+attributes=exclude
+compiler=pdftex
+description=CSPlain
+input=csplain-utf8.ini
 
 [dvilualatex]
 
