@@ -1,6 +1,6 @@
 /* DviPage.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -1188,6 +1188,7 @@ DviPageImpl::StartDvips ()
       arguments.AppendOption ("-MiKTeX:pedantic");
     }
   arguments.AppendOption ("-MiKTeX:allowallpaths");
+  arguments.AppendOption ("-h", "gs_permitfilereading.pro");
   arguments.AppendArgument (pDviImpl->GetDviFileName());
 
   PathName dir (pDviImpl->GetDviFileName());
@@ -1248,7 +1249,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   arguments.AppendOption ("-q");
   arguments.AppendOption ("-dBATCH");
   arguments.AppendOption ("-dNOPAUSE");
-  arguments.AppendOption ("-dSAFER");
+  arguments.AppendOption ("-dDELAYSAFER");
   arguments.AppendOption ("-sstdout=", "%stderr");
   arguments.AppendOption ("-dTextAlphaBits=", "4");
   arguments.AppendOption ("-dGraphicsAlphaBits=", "4");
@@ -1263,6 +1264,7 @@ DviPageImpl::StartGhostscript (/*[in]*/ int shrinkFactor)
   processStartInfo.StandardInput = dvipsOut.Get();
   processStartInfo.RedirectStandardError = true;
   processStartInfo.RedirectStandardOutput = true;
+  processStartInfo.WorkingDirectory = pDviImpl->GetDviFileName().MakeAbsolute().RemoveFileSpec().Get();
 
   auto_ptr<Process> pGhostscript (Process::Start(processStartInfo));
 

@@ -1,6 +1,6 @@
 /* Ghostscript.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -24,14 +24,6 @@
 #include "internal.h"
 
 #include "Ghostscript.h"
-
-namespace {
-  // make file reading 'wide-open'
-  const char * const l_szPermitFileReading = "\
-{ << /PermitFileReading [ (*) ] /PermitFileWriting [ ] PermitFileControl [ ]\
- >> setuserparams .locksafe } stopped pop\
-";
-}
 
 /* _________________________________________________________________________
 
@@ -122,6 +114,7 @@ Ghostscript::Start ()
   startinfo.RedirectStandardInput = true;
   startinfo.RedirectStandardOutput = true;
   startinfo.RedirectStandardError = true;
+  startinfo.WorkingDirectory = pDviImpl->GetDviFileName().MakeAbsolute().RemoveFileSpec().Get();
 
   pProcess.reset (Process::Start(startinfo));
 
@@ -134,9 +127,6 @@ Ghostscript::Start ()
 
   // start stderr reader
   pStderrReaderThread.reset (Thread::Start(StderrReader, this));
-
-  // enable file reading
-  Execute ("%s", l_szPermitFileReading);
 }
 
 /* _________________________________________________________________________

@@ -1,6 +1,6 @@
 /* PostScript.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of the MiKTeX DVI Library.
 
@@ -63,6 +63,7 @@ PostScript::Initialize ()
   AddHeader ("finclude.pro");
 #endif
   AddHeader ("special.pro");
+  AddHeader ("gs_permitfilereading.pro");
 }
 
 /* _________________________________________________________________________
