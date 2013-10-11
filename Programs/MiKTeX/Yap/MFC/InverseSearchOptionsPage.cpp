@@ -1,6 +1,6 @@
 /* InverseSearchOptionsPage.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of Yap.
 
@@ -192,12 +192,23 @@ bool
 LocateTeXnicCenter (/*[out]*/ PathName & tc)
 {
   PathName path;
-  if (! ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenter", L"AppPath", path))
+  if (ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenter", L"AppPath", path))
   {
-    return (false);
+    path += "TEXCNTR.EXE";;
+    if (! File::Exists(path))
+    {
+      return (false);
+    }
   }
-  path += "TEXCNTR.EXE";;
-  if (! File::Exists(path))
+  else if (ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenterNT", L"AppPath", path))
+  {
+    path += "TeXnicCenter.exe";;
+    if (! File::Exists(path))
+    {
+      return (false);
+    }
+  }
+  else
   {
     return (false);
   }
