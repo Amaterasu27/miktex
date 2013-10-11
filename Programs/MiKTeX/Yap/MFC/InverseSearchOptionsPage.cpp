@@ -53,12 +53,17 @@ ReadPath (/*[in]*/ HKEY		    hkeyRoot,
 {
   HKEY hkey;
   REGSAM samDesired = KEY_READ;
-#if defined(MIKTEX_WINDOWS_64)
-  samDesired |= KEY_WOW64_32KEY;
-#endif
   if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, samDesired, &hkey) != ERROR_SUCCESS)
   {
-    return (false);
+#if defined(MIKTEX_WINDOWS_64)
+    samDesired |= KEY_WOW64_32KEY;
+#else
+    samDesired |= KEY_WOW64_64KEY;
+#endif
+    if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, samDesired, &hkey) != ERROR_SUCCESS)
+    {
+      return (false);
+    }
   }
   AutoHKEY autoHKEY (hkey);
   wchar_t szPath[_MAX_PATH];
