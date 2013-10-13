@@ -112,7 +112,7 @@ FatalSoapError (/*[in]*/ soap *		pSoap,
       }
       const char ** ppDetail = soap_faultdetail(pSoap);
       string detail;
-      if (ppDetail)
+      if (ppDetail && *ppDetail)
       {
 #if defined(MIKTEX_WINDOWS)
 	// FIXME: gSoap returns Ansi text
