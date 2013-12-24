@@ -1,6 +1,6 @@
 /* InverseSearchOptionsPage.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2013 Christian Schenk
 
    This file is part of Yap.
 
@@ -53,12 +53,17 @@ ReadPath (/*[in]*/ HKEY		    hkeyRoot,
 {
   HKEY hkey;
   REGSAM samDesired = KEY_READ;
-#if defined(MIKTEX_WINDOWS_64)
-  samDesired |= KEY_WOW64_32KEY;
-#endif
   if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, samDesired, &hkey) != ERROR_SUCCESS)
   {
-    return (false);
+#if defined(MIKTEX_WINDOWS_64)
+    samDesired |= KEY_WOW64_32KEY;
+#else
+    samDesired |= KEY_WOW64_64KEY;
+#endif
+    if (RegOpenKeyExW(hkeyRoot, lpszSubKey, 0, samDesired, &hkey) != ERROR_SUCCESS)
+    {
+      return (false);
+    }
   }
   AutoHKEY autoHKEY (hkey);
   wchar_t szPath[_MAX_PATH];
@@ -192,12 +197,23 @@ bool
 LocateTeXnicCenter (/*[out]*/ PathName & tc)
 {
   PathName path;
-  if (! ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenter", L"AppPath", path))
+  if (ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenter", L"AppPath", path))
   {
-    return (false);
+    path += "TEXCNTR.EXE";;
+    if (! File::Exists(path))
+    {
+      return (false);
+    }
   }
-  path += "TEXCNTR.EXE";;
-  if (! File::Exists(path))
+  else if (ReadPath(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ToolsCenter\\TeXnicCenterNT", L"AppPath", path))
+  {
+    path += "TeXnicCenter.exe";;
+    if (! File::Exists(path))
+    {
+      return (false);
+    }
+  }
+  else
   {
     return (false);
   }
