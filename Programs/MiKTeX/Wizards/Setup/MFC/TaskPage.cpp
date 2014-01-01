@@ -69,7 +69,7 @@ TaskPage::OnInitDialog ()
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
   try
     {
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::Download:
 	  task = 0;
@@ -199,14 +199,11 @@ TaskPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
-    {
-      theApp.setupTask =
-	(task == 0
-	 ? SetupTask::Download
-	 : (task == 1
-	    ? SetupTask::InstallFromLocalRepository
-	    : SetupTask::InstallFromRemoteRepository));
-    }
+  {
+    SetupOptions options = theApp.pSetupService->GetOptions();
+    options.Task = (task == 0 ? SetupTask::Download : (task == 1 ? SetupTask::InstallFromLocalRepository : SetupTask::InstallFromRemoteRepository));
+    theApp.pSetupService->SetOptions(options);
+  }
   return (ret);
 }
 

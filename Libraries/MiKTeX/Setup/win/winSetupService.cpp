@@ -1,6 +1,6 @@
 /* winSetupService.cpp:
 
-   Copyright (C) 2013 Christian Schenk
+   Copyright (C) 2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -41,7 +41,7 @@ using namespace std;
    SetupServiceImpl::ULogAddRegValue
    _________________________________________________________________________ */
 
-void SetupServiceImpl::ULogAddRegValue (HKEY hkey, const char * lpszSubKey, const char * lpszValueName)
+void SetupServiceImpl::ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName)
 {
   if (! uninstStream.IsOpen())
   {
@@ -65,17 +65,13 @@ void SetupServiceImpl::ULogAddRegValue (HKEY hkey, const char * lpszSubKey, cons
    SetupServiceImpl::CreateProgramFolder
    _________________________________________________________________________ */
 
-PathName
-SetupServiceImpl::CreateProgramFolder ()
+PathName SetupServiceImpl::CreateProgramFolder()
 {
-  int cidl =
-    (options.IsCommonSetup && IsWindowsNT()
-     ? CSIDL_COMMON_PROGRAMS
-     : CSIDL_PROGRAMS);
+  int cidl = (options.IsCommonSetup && IsWindowsNT() ? CSIDL_COMMON_PROGRAMS : CSIDL_PROGRAMS);
   PathName path = Utils::GetFolderPath(cidl, cidl, true);
   path += options.FolderName;
   Directory::Create(path);
-  return (path);
+  return path;
 }
 
 /* _________________________________________________________________________
@@ -336,11 +332,11 @@ void SetupServiceImpl::CreateProgramIcons()
   PathName path = CreateProgramFolder();
   for (size_t i = 0; i < nShellLinks; ++ i)
     {
-      CreateShellLink (path, shellLinks[i]);
+      CreateShellLink(path, shellLinks[i]);
     }
 }
 
-void SetupServiceImpl::CreateShellLink (const PathName & pathFolder, const ShellLinkData & ld)
+void SetupServiceImpl::CreateShellLink(const PathName & pathFolder, const ShellLinkData & ld)
 {
   if ((ld.flags & LD_IFCOMMON) != 0 && ! options.IsCommonSetup)
   {
@@ -350,9 +346,9 @@ void SetupServiceImpl::CreateShellLink (const PathName & pathFolder, const Shell
 
   PathName pathLink;
 
-  if (ld.subFolderID != 0)
+  if (ld.lpszFolder != 0)
   {
-    PathName pathSubFolder(pathFolder, ld.subFolderID);
+    PathName pathSubFolder(pathFolder, ld.lpszFolder);
     Directory::Create(pathSubFolder);
     pathLink = pathSubFolder;
   }
@@ -361,7 +357,7 @@ void SetupServiceImpl::CreateShellLink (const PathName & pathFolder, const Shell
     pathLink = pathFolder;
   }
   
-  pathLink += ld.nameID;
+  pathLink += ld.lpszName;
   pathLink.SetExtension(ld.isUrl ? ".url" : ".lnk");
 
   if (File::Exists(pathLink))
@@ -507,7 +503,7 @@ void SetupServiceImpl::CreateShellLink (const PathName & pathFolder, const Shell
    SetupServiceImpl::CreateInternetShortcut
    _________________________________________________________________________ */
 
-void SetupServiceImpl::CreateInternetShortcut (const PathName & path, const char * lpszUrl)
+void SetupServiceImpl::CreateInternetShortcut(const PathName & path, const char * lpszUrl)
 {
   _COM_SMARTPTR_TYPEDEF(IUniformResourceLocatorW, IID_IUniformResourceLocatorW);
 
@@ -584,7 +580,6 @@ void SetupServiceImpl::CreateInternetShortcut (const PathName & path, const char
    ? HKEY_LOCAL_MACHINE				\
    : HKEY_CURRENT_USER)
 
-
 void SetupServiceImpl::RegisterUninstaller()
 {
   // make uninstall command line
@@ -658,8 +653,7 @@ void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueN
   ULogAddRegValue(UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
 }
 
-void
-SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, DWORD value)
+void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, DWORD value)
 {
   LONG result = RegSetValueExW(hkey, UW_(lpszValueName), 0, REG_DWORD, reinterpret_cast<const BYTE *>(&value), static_cast<DWORD>(sizeof(value)));  
   if (result != ERROR_SUCCESS)

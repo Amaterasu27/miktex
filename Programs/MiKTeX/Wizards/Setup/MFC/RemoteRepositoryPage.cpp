@@ -173,7 +173,7 @@ LRESULT
 RemoteRepositoryPage::OnWizardNext ()
 {
   UINT next;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
     case SetupTask::InstallFromRemoteRepository:
@@ -196,7 +196,7 @@ LRESULT
 RemoteRepositoryPage::OnWizardBack ()
 {
   UINT prev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       prev = IDD_PACKAGE_SET_DOWNLOAD;

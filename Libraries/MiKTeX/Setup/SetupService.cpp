@@ -1,6 +1,6 @@
 /* SetupService.cpp:
 
-   Copyright (C) 2013 Christian Schenk
+   Copyright (C) 2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -45,12 +45,8 @@ SetupService::~SetupService()
    _________________________________________________________________________ */
 
 SetupServiceImpl::SetupServiceImpl()
-  : refCount (0)
+  : refCount (0), logging(false)
 {
-  options.Task = SetupTask::None;
-  options.IsDryRun = false;
-  options.IsCommonSetup = false;
-  options.IsPortable = false;
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
 }
@@ -77,8 +73,7 @@ SetupServiceImpl::~SetupServiceImpl()
 
 SetupService * SetupService::Create()
 {
-  SetupService * pService = new SetupServiceImpl();
-  return (pService);
+  return new SetupServiceImpl();
 }
 
 /* _________________________________________________________________________
@@ -110,9 +105,10 @@ void SetupServiceImpl::Release()
    SetupServiceImpl::SetOptions
    _________________________________________________________________________ */
 
-void SetupServiceImpl::SetOptions(const SetupOptions & options)
+SetupOptions SetupServiceImpl::SetOptions(const SetupOptions & options)
 {
   this->options = options;
+  return this->options;
 }
 
 /* _________________________________________________________________________
@@ -234,6 +230,52 @@ PathName SetupServiceImpl::CloseLog(bool cancel)
 
 /* _________________________________________________________________________
 
+   SetupServiceImpl::LogHeader
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::LogHeader()
+{
+  Log(T_("%s %s Report\n\n"), static_cast<const char *>(TU_(options.Banner)), options.Version);
+  time_t t = time(0);
+  struct tm * pTm = localtime(&t);
+  char dateString[128];
+  strftime(dateString, 128, "%A, %B %d, %Y", pTm);
+  char timeString[128];
+  strftime(timeString, 128, "%H:%M:%S", pTm);
+  Log(T_("Date: %s\n"), dateString);
+  Log(T_("Time: %s\n"), timeString);
+  Log(T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
+#if defined(MIKTEX_WINDOWS)
+  if (IsWindowsNT())
+  {
+    Log("SystemAdmin: %s\n", (SessionWrapper(true)->RunningAsAdministrator() ? "yes" : "false"));
+    Log("PowerUser: %s\n", (SessionWrapper(true)->RunningAsPowerUser() ? "yes" : "false"));
+  }
+#endif
+  if (options.Task != SetupTask::Download)
+  {
+    Log("SharedSetup: %s\n", (options.IsCommonSetup ? "yes" : "false"));
+  }
+  wchar_t szSetupPath[BufferSizes::MaxPath];
+  if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath) == 0)
+  {
+    FATAL_WINDOWS_ERROR("GetModuleFileNameW", 0);
+  }
+  Log(T_("Setup path: %s\n"), WU_(szSetupPath));
+  if (options.Task != SetupTask::Download)
+  {
+    Log("UserRoots: %s\n", (options.Config.userRoots.empty() ? T_("<none specified>") : options.Config.userRoots.c_str()));
+    Log("UserData: %s\n", (options.Config.userDataRoot.Empty() ? T_("<none specified>") : options.Config.userDataRoot.Get()));
+    Log("UserConfig: %s\n", (options.Config.userConfigRoot.Empty() ? T_("<none specified>") : options.Config.userConfigRoot.Get()));
+    Log("CommonRoots: %s\n", (options.Config.commonRoots.empty() ? T_("<none specified>") : options.Config.commonRoots.c_str()));
+    Log("CommonData: %s\n", (options.Config.commonDataRoot.Empty() ? T_("<none specified>") : options.Config.commonDataRoot.Get()));
+    Log("CommonConfig: %s\n", (options.Config.commonConfigRoot.Empty() ? T_("<none specified>") : options.Config.commonConfigRoot.Get()));
+    Log("\nInstallation: %s\n", GetInstallRoot().Get());
+  }
+}
+
+/* _________________________________________________________________________
+
    SetupServiceImpl::Log
    _________________________________________________________________________ */
 
@@ -253,6 +295,11 @@ void SetupServiceImpl::Log(const char * lpszFormat, ...)
 void SetupServiceImpl::LogV(const char * lpszFormat, va_list argList)
 {
   MIKTEX_LOCK(logStream);
+  if (! logging)
+  {
+    logging = true;
+    LogHeader();
+  }
   string formatted = Utils::FormatString(lpszFormat, argList);
   static string currentLine;
   for (const char * lpsz = formatted.c_str(); *lpsz != 0; ++ lpsz)

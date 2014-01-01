@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2013 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -85,7 +85,10 @@
 #include <miktex/Core/Registry>
 #include <miktex/Core/win/DllProc>
 
+#include <miktex/Setup/SetupService.h>
+
 using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
+using namespace MiKTeX::Setup;
 using namespace MiKTeX;
 using namespace std;

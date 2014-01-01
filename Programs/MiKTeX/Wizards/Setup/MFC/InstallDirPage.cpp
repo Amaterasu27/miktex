@@ -145,7 +145,7 @@ LRESULT
 InstallDirPage::OnWizardBack ()
 {
   noDdv = true;
-  if (theApp.portable)
+  if (theApp.IsPortable())
   {
     return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(IDD_PACKAGE_SET_INSTALL)));
   }

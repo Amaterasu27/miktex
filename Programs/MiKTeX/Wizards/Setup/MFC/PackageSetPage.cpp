@@ -109,13 +109,13 @@ LRESULT
 PackageSetPage::OnWizardNext ()
 {
   UINT next;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       next = IDD_REMOTE_REPOSITORY;
       break;
     case SetupTask::InstallFromCD:
-      if (theApp.portable)
+      if (theApp.IsPortable())
       {
 	next = IDD_INSTALLDIR;
       }
@@ -125,7 +125,7 @@ PackageSetPage::OnWizardNext ()
       }
       break;
     case SetupTask::InstallFromLocalRepository:
-      if (theApp.portable)
+      if (theApp.IsPortable())
       {
 	next = IDD_LOCAL_REPOSITORY;
       }
@@ -135,7 +135,7 @@ PackageSetPage::OnWizardNext ()
       }
       break;
     case SetupTask::InstallFromRemoteRepository:
-      if (theApp.portable)
+      if (theApp.IsPortable())
       {
 	next = IDD_REMOTE_REPOSITORY;
       }

@@ -207,107 +207,6 @@ AssertValidString (/*[in]*/ const char *	lp,
 
 /* _________________________________________________________________________
 
-   GetErrnoMessage
-   _________________________________________________________________________ */
-
-static
-inline
-std::string &
-GetErrnoMessage (/*[in]*/ int			err,
-		 /*[out]*/ std::string &	message)
-{
-#if _MSC_VER >= 1400
-  char szBuf[256];
-  if (strerror_s(szBuf, 256, err) != 0)
-    {
-      message = "";
-    }
-  else
-    {
-      message = szBuf;
-    }
-#else
-  message = strerror(err);
-#endif
-  return (message);
-}
-
-/* _________________________________________________________________________
-
-   ClearString
-   _________________________________________________________________________ */
-
-inline
-bool
-ClearString (/*[in,out]*/ char *	lpsz)
-{
-  lpsz[0] = 0;
-  return (true);
-}
-
-/* _________________________________________________________________________
-
-   StrCmp
-   _________________________________________________________________________ */
-
-#if defined(StrCmp)
-#  undef StrCmp
-#endif
-
-inline
-int
-StrCmp (/*[in]*/ const char *	lpsz1,
-	/*[in]*/ const char *	lpsz2)
-{
-  return (strcmp(lpsz1, lpsz2));
-}
-
-inline
-int
-StrCmp (/*[in]*/ const wchar_t *	lpsz1,
-	/*[in]*/ const wchar_t *	lpsz2)
-{
-  return (wcscmp(lpsz1, lpsz2));
-}
-
-/* _________________________________________________________________________
-
-   FPutS
-   _________________________________________________________________________ */
-
-inline
-int
-FPutS (/*[in]*/ const char *	lpsz,
-       /*[in]*/ FILE *		stream)
-{
-  int n = fputs(lpsz, stream);
-  if (n < 0)
-    {
-      FATAL_CRT_ERROR ("fputs", 0);
-    }
-  return (n);
-}
-
-/* _________________________________________________________________________
-
-   FPutC
-   _________________________________________________________________________ */
-
-inline
-int
-FPutC (/*[in]*/ int	ch,
-       /*[in]*/ FILE *	stream)
-{
-  int chWritten = fputc(ch, stream);
-  if (chWritten == EOF)
-    {
-      FATAL_CRT_ERROR ("fputc", 0);
-    }
-  return (chWritten);
-}
-
-/* _________________________________________________________________________
-
    ShellLinkData
    _________________________________________________________________________ */
 
@@ -315,8 +214,8 @@ FPutC (/*[in]*/ int	ch,
 struct ShellLinkData  
 {
   bool isUrl;
-  const char * subFolderID;
-  const char * nameID;
+  const char * lpszFolder;
+  const char * lpszName;
   const char * lpszPathName;
   unsigned long flags;
   const char * lpszDescription;
@@ -348,7 +247,13 @@ public:
   virtual void MIKTEXTHISCALL Release();
 
 public:
-  virtual void MIKTEXTHISCALL SetOptions(const SetupOptions & options);
+  virtual SetupOptions MIKTEXTHISCALL GetOptions()
+  {
+    return this->options;
+  }
+
+public:
+  virtual SetupOptions MIKTEXTHISCALL SetOptions(const SetupOptions & options);
 
 public:
   virtual void MIKTEXTHISCALL OpenLog();
@@ -360,7 +265,7 @@ public:
   virtual void MIKTEXCEECALL Log(const char * lpszFormat, ...);
 
 public:
-  virtual void MIKTEXTHISCALL LogV (const char * lpszFormat, va_list argList);
+  virtual void MIKTEXTHISCALL LogV(const char * lpszFormat, va_list argList);
 
 public:
   virtual void ULogOpen();
@@ -369,11 +274,14 @@ public:
   virtual void ULogClose(bool finalize);
 
 public:
+  virtual MiKTeX::Core::PathName GetULogFileName();
+
+public:
   virtual void ULogAddFile(const MiKTeX::Core::PathName & path);
 
 #if defined(MIKTEX_WINDOWS)
 public:
-  virtual void ULogAddRegValue (HKEY hkey, const char * lpszSubKey, const char * lpszValueName);
+  virtual void ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -382,7 +290,7 @@ public:
 #endif
 
 public:
-  SetupServiceImpl ();
+  SetupServiceImpl();
 
 private:
   int refCount;
@@ -410,9 +318,6 @@ private:
 
 private:
   std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
-
-private:
-  MiKTeX::Core::PathName GetULogFileName ();
 
 private:
   MiKTeX::Core::PathName GetInstallRoot() const
@@ -444,7 +349,7 @@ private:
 
 #if defined(MIKTEX_WINDOWS)
 private:
-  void CreateShellLink (const MiKTeX::Core::PathName & pathFolder, const ShellLinkData & ld);
+  void CreateShellLink(const MiKTeX::Core::PathName & pathFolder, const ShellLinkData & ld);
 #endif
 
 #if defined(MIKTEX_WINDOWS)
@@ -455,7 +360,11 @@ private:
 private:
   std::wstring & Expand(const char * lpszSource, std::wstring & dest);
 
+private:
+  void SetupServiceImpl::LogHeader();
 
+private:
+  bool logging;
 };
 
 /* _________________________________________________________________________ */

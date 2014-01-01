@@ -23,9 +23,6 @@
 #include "Setup.h"
 
 #include "SetupWizard.h"
-#include "ShellLinkData.h"
-
-#define REGSTR_PATH_CURRENTCONTROLSET_A "System\\CurrentControlSet"
 
 // this runs the wizard
 SetupWizardApplication theApp;
@@ -806,8 +803,7 @@ SetupWizardApplication::SetupWizardApplication ()
   : packageLevel (PackageLevel::None),
     prefabricatedPackageLevel (PackageLevel::None),
     installOnTheFly (TriState::Undetermined),
-    paperSize ("A4"),
-    setupTask (SetupTask::None)
+    paperSize ("A4")
 {
   SetAppID (UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
 }
@@ -859,12 +855,12 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 
   for (; path.GetCurrent() != 0; ++ path)
     {
-      if (! (theApp.startupConfig.userDataRoot == path.GetCurrent()
-	     || theApp.startupConfig.userConfigRoot == path.GetCurrent()
-	     || theApp.startupConfig.userInstallRoot == path.GetCurrent()
-	     || theApp.startupConfig.commonDataRoot == path.GetCurrent()
-	     || theApp.startupConfig.commonConfigRoot == path.GetCurrent()
-	     || theApp.startupConfig.commonInstallRoot == path.GetCurrent()))
+      if (! (theApp.GetStartupConfig().userDataRoot == path.GetCurrent()
+	     || theApp.GetStartupConfig().userConfigRoot == path.GetCurrent()
+	     || theApp.GetStartupConfig().userInstallRoot == path.GetCurrent()
+	     || theApp.GetStartupConfig().commonDataRoot == path.GetCurrent()
+	     || theApp.GetStartupConfig().commonConfigRoot == path.GetCurrent()
+	     || theApp.GetStartupConfig().commonInstallRoot == path.GetCurrent()))
 	{
 	  if (vec.size() > 0)
 	    {
@@ -1014,7 +1010,7 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
   {
     return (false);
   }
-  Log (T_("started from MiKTeXDirect location\n"));
+  theApp.pSetupService->Log(T_("started from MiKTeXDirect location\n"));
   return (true);
 }
 
@@ -1077,15 +1073,16 @@ GetDefaultLocalRepository ()
 void
 SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 {
+  SetupOptions options = theApp.pSetupService->GetOptions();
   theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
-  theApp.dryRun = cmdinfo.optDryRun;
+  options.IsDryRun = cmdinfo.optDryRun;
   theApp.mustReboot = false;
   theApp.prefabricated = false;
   theApp.registerPath = true;
   theApp.showLogFileOnExit = false;
   theApp.unattended = cmdinfo.optUnattended;
   theApp.packageLevel = cmdinfo.packageLevel;
-  theApp.portable = cmdinfo.optPortable;
+  options.IsPortable = cmdinfo.optPortable;
 
   // check to see whether setup is started from a MiKTeXDirect location
   theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(theApp.MiKTeXDirectRoot);
@@ -1096,16 +1093,16 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     }
 
   // startup configuration
-  theApp.startupConfig = cmdinfo.startupConfig;
-  if (theApp.startupConfig.commonInstallRoot.Empty())
-    {
-      theApp.startupConfig.commonInstallRoot = FindCommonInstallDir();
-    }
+  options.Config = cmdinfo.startupConfig;
+  if (options.Config.commonInstallRoot.Empty())
+  {
+    options.Config.commonInstallRoot = FindCommonInstallDir();
+  }
 
   theApp.noRegistry = cmdinfo.optNoRegistry;
 
   // shared setup
-  theApp.commonUserSetup =
+  options.IsCommonSetup =
     ((IsWindowsNT() && SessionWrapper(true)->RunningAsAdministrator())
      || cmdinfo.optShared
      || ! cmdinfo.startupConfig.commonRoots.empty()
@@ -1130,40 +1127,36 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 #endif
 
   // startup menu item (default: "MiKTeX X.Y")
-  theApp.folderName = cmdinfo.folderName;
-  if (theApp.folderName.Empty())
-    {
-      theApp.folderName =
-	MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
-    }
+  options.FolderName = cmdinfo.folderName;
+  if (options.FolderName.Empty())
+  {
+    options.FolderName = MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
+  }
 
   // local package repository
   if (! cmdinfo.localPackageRepository.Empty())
+  {
+    options.LocalPackageRepository = cmdinfo.localPackageRepository;
+    if (cmdinfo.task != SetupTask::Download)
     {
-      theApp.localPackageRepository = cmdinfo.localPackageRepository;
-      if (cmdinfo.task != SetupTask::Download)
-	{
-	  PackageLevel foundPackageLevel =
-	    TestLocalRepository(theApp.localPackageRepository,
-				theApp.packageLevel);
-	  if (foundPackageLevel == PackageLevel::None)
-	  {
-	    FATAL_MIKTEX_ERROR ("SetupGlobalVars",
-	      T_("The specified local repository does not exist."),
-	      0);
-	  }
-	  if (theApp.packageLevel == PackageLevel::None)
-	  {
-	    theApp.packageLevel = foundPackageLevel;
-	  }
-	}
+      PackageLevel foundPackageLevel =
+	TestLocalRepository(options.LocalPackageRepository, theApp.packageLevel);
+      if (foundPackageLevel == PackageLevel::None)
+      {
+	FATAL_MIKTEX_ERROR ("SetupGlobalVars",
+	  T_("The specified local repository does not exist."),
+	  0);
+      }
+      if (theApp.packageLevel == PackageLevel::None)
+      {
+	theApp.packageLevel = foundPackageLevel;
+      }
     }
+  }
   else
   {
     PackageLevel foundPackageLevel =
-      SearchLocalRepository(theApp.localPackageRepository,
-			    theApp.packageLevel,
-			    theApp.prefabricated);
+      SearchLocalRepository(options.LocalPackageRepository, theApp.packageLevel, theApp.prefabricated);
     if (foundPackageLevel != PackageLevel::None)
     {
       if (theApp.packageLevel == PackageLevel::None)
@@ -1178,10 +1171,9 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     else
     {
       // check the default location
-      theApp.localPackageRepository = GetDefaultLocalRepository();
+      options.LocalPackageRepository = GetDefaultLocalRepository();
       PackageLevel foundPackageLevel =
-	TestLocalRepository(theApp.localPackageRepository,
-			    theApp.packageLevel);
+	TestLocalRepository(options.LocalPackageRepository, theApp.packageLevel);
       if (theApp.packageLevel == PackageLevel::None)
       {
 	theApp.packageLevel = foundPackageLevel;
@@ -1190,19 +1182,18 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   }
 
   // setup task
-  theApp.setupTask = cmdinfo.task;
-  if (theApp.setupTask == SetupTask::None)
+  options.Task = cmdinfo.task;
+  if (options.Task == SetupTask::None)
+  {
+    if (theApp.isMiKTeXDirect)
     {
-      if (theApp.isMiKTeXDirect)
-	{
-	  theApp.setupTask = SetupTask::InstallFromCD;
-	}
-      else if (! theApp.localPackageRepository.Empty()
-	       && theApp.packageLevel != PackageLevel::None)
-	{
-	  theApp.setupTask = SetupTask::InstallFromLocalRepository;
-	}
+      options.Task = SetupTask::InstallFromCD;
     }
+    else if (! options.LocalPackageRepository.Empty() && theApp.packageLevel != PackageLevel::None)
+    {
+      options.Task = SetupTask::InstallFromLocalRepository;
+    }
+  }
 
   // remote package repository
   theApp.remotePackageRepository = cmdinfo.remotePackageRepository;
@@ -1218,7 +1209,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   // check variables, if started in unattended mode
   if (theApp.unattended)
     {
-      if (theApp.setupTask == SetupTask::None)
+      if (options.Task == SetupTask::None)
 	{
 	  FATAL_MIKTEX_ERROR
 	    ("SetupGlobalVars",
@@ -1232,10 +1223,10 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	     T_("No package set has been specified."),
 	     0);
 	}
-      if (theApp.setupTask == SetupTask::InstallFromLocalRepository
-	  || theApp.setupTask == SetupTask::Download)
+      if (options.Task == SetupTask::InstallFromLocalRepository
+	  || options.Task == SetupTask::Download)
 	{
-	  if (theApp.localPackageRepository.Empty())
+	  if (options.LocalPackageRepository.Empty())
 	    {
 	      FATAL_MIKTEX_ERROR
 		("SetupGlobalVars",
@@ -1243,8 +1234,8 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 		 0);
 	    }
 	}
-      if (theApp.setupTask == SetupTask::InstallFromRemoteRepository
-	  || theApp.setupTask == SetupTask::Download)
+      if (options.Task == SetupTask::InstallFromRemoteRepository
+	  || options.Task == SetupTask::Download)
 	{
 	  if (theApp.remotePackageRepository.empty())
 	    {
@@ -1255,136 +1246,8 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	    }
 	}
     }
-}
 
-/* _________________________________________________________________________
-
-   OpenLog
-   _________________________________________________________________________ */
-
-void
-OpenLog ()
-{
-  if (theApp.logStream.IsOpen())
-    {
-      return ;
-    }
-
-  // make the intermediate log file name
-  theApp.intermediateLogFile.SetToTempFile ();
-  
-  // open the intermediate log file
-  {
-    CSingleLock singleLock (&theApp.criticalSectionMonitorLogStream, TRUE);
-    theApp.logStream.Attach (File::Open(theApp.intermediateLogFile,
-					FileMode::Create,
-					FileAccess::Write));
-    theApp.logStream.WriteLine ();
-    theApp.logStream.WriteLine ();
-  }
-}
-
-/* _________________________________________________________________________
-
-   CloseLog
-   _________________________________________________________________________ */
-
-void
-CloseLog (/*[in]*/ bool cancel)
-{
-  // we must have an intermediate log file
-  if (! theApp.logStream.IsOpen())
-    {
-      return;
-    }
-
-  // close the intermediate log file
-  theApp.logStream.Close ();
-
-  if (cancel)
-    {
-      File::Delete (theApp.intermediateLogFile);
-      return;
-    }
-
-  // determine the final log directory
-  PathName pathLogDir;
-  if (theApp.dryRun || theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
-    {
-      pathLogDir.SetToTempDirectory ();
-    }
-  else
-    {
-      if (theApp.setupTask == SetupTask::InstallFromCD
-	  || theApp.setupTask == SetupTask::InstallFromLocalRepository
-	  || theApp.setupTask == SetupTask::InstallFromRemoteRepository)
-	{
-	  if (Directory::Exists(theApp.GetInstallRoot()))
-	    {
-	      pathLogDir.Set (theApp.GetInstallRoot(),
-			      MIKTEX_PATH_MIKTEX_CONFIG_DIR);
-	    }
-	  else
-	    {
-	      pathLogDir.SetToTempDirectory ();
-	    }
-	}
-      else if (theApp.setupTask == SetupTask::Download)
-	{
-	  if (Directory::Exists(theApp.localPackageRepository))
-	    {
-	      pathLogDir = theApp.localPackageRepository;
-	    }
-	  else
-	    {
-	      pathLogDir.SetToTempDirectory ();
-	    }
-	}
-      else
-	{
-	  // remove the intermediate log file
-	  File::Delete (theApp.intermediateLogFile);
-	  return;
-	}
-    }
-
-  // create the log directory
-  Directory::Create (pathLogDir);
-
-  // make the final log path name
-  PathName pathLogFile (pathLogDir);
-  CTime t = CTime::GetCurrentTime();
-  if (theApp.setupTask == SetupTask::Download)
-    {
-      pathLogFile += TU_(t.Format(_T("download-%Y-%m-%d-%H-%M")));
-    }
-  else
-    {
-      pathLogFile += TU_(t.Format(_T("setup-%Y-%m-%d-%H-%M")));
-    }
-  pathLogFile.SetExtension (".log");
-
-  // install the log file
-  // <todo>add the log file to the uninstall script</todo>
-  File::Copy (theApp.intermediateLogFile, pathLogFile);
-
-  // remove the intermediate log file
-  File::Delete (theApp.intermediateLogFile);
-
-  if (theApp.showLogFileOnExit)
-    {
-      INT_PTR r =
-	reinterpret_cast<INT_PTR>(ShellExecuteW(0,
-					        L"open",
-						pathLogFile.ToWideCharString().c_str(),
-					        0,
-					        0,
-					        SW_SHOWNORMAL));
-      if (r <= 32)
-	{
-	  Process::Start ("notepad.exe", pathLogFile.Get());
-	}
-    }
+  options = theApp.pSetupService->SetOptions(options);
 }
 
 /* _________________________________________________________________________
@@ -1490,6 +1353,18 @@ SetupWizardApplication::InitInstance ()
       // create package manager
       pManager = PackageManager::Create();
 
+      // create setup service
+      pSetupService = SetupService::Create();
+      SetupOptions options = pSetupService->GetOptions();
+      CString banner;
+      if (! banner.LoadString(IDS_SETUPWIZ))
+      {
+	UNEXPECTED_CONDITION ("InitInstance");
+      }
+      options.Banner = TU_(banner);
+      options.Version = MIKTEX_COMPONENT_VERSION_STR;
+      options = pSetupService->SetOptions(options);
+
       // set trace options
       traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
       TraceStream::SetTraceFlags
@@ -1533,7 +1408,7 @@ SetupWizardApplication::InitInstance ()
       SetupGlobalVars (cmdinfo);
 
       // open the log file
-      OpenLog ();
+      pSetupService->OpenLog();
 
       INT_PTR dlgRet;
       
@@ -1545,7 +1420,16 @@ SetupWizardApplication::InitInstance ()
       }
       
       // clean up
-      CloseLog (dlgRet == IDCANCEL);
+      PathName pathLogFile = pSetupService->CloseLog(dlgRet == IDCANCEL);
+      if (theApp.showLogFileOnExit && ! pathLogFile.Empty())
+      {
+	INT_PTR r = reinterpret_cast<INT_PTR>(
+	  ShellExecuteW(0, L"open", pathLogFile.ToWideCharString().c_str(), 0, 0, SW_SHOWNORMAL));
+	if (r <= 32)
+	{
+	  Process::Start("notepad.exe", pathLogFile.Get());
+	}
+      }
       traceStream.reset ();
       pManager->UnloadDatabase ();
       pManager.Release ();
@@ -1648,7 +1532,7 @@ bool
 ContainsBinDir (/*[in]*/ const char *	lpszPath)
 {
   PathName pathBinDir;
-  if (theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
+  if (theApp.pSetupService->GetOptions().Task == SetupTask::PrepareMiKTeXDirect)
     {
       pathBinDir.Set (theApp.MiKTeXDirectTeXMFRoot, MIKTEX_PATH_BIN_DIR);
     }
@@ -1682,696 +1566,6 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
 	}
     }
   return (false);
-}
-
-/* _________________________________________________________________________
-
-   GetLogFileName
-   _________________________________________________________________________ */
-
-PathName
-GetLogFileName ()
-{
-  PathName ret;
-  if (theApp.dryRun || theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
-    {
-      ret.SetToTempDirectory ();
-    }
-  else
-    {
-      ret = theApp.GetInstallRoot();
-      ret += MIKTEX_PATH_MIKTEX_CONFIG_DIR;
-    }
-  Directory::Create (ret);
-  ret += MIKTEX_UNINSTALL_LOG;
-  return (ret);
-}
-
-/* _________________________________________________________________________
-
-   ULogOpen
-   _________________________________________________________________________ */
-
-enum Section { None, Files, HKLM, HKCU };
-
-namespace {
-  Section section = None;
-}
-
-void
-ULogOpen ()
-{
-  PathName uninstLog (GetLogFileName());
-  FileMode mode =
-    (File::Exists(uninstLog) ? FileMode::Append : FileMode::Create);
-  theApp.uninstStream.Attach (File::Open(uninstLog, mode, FileAccess::Write));;
-  section = None;
-}
-
-/* _________________________________________________________________________
-
-   AddUninstallerRegValue
-   _________________________________________________________________________ */
-
-#define UNINST_DISPLAY_NAME \
-  MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
-
-#define UNINST_DISPLAY_NAME_MIKTEXDIRECT \
-  "MiKTeXDirect" " " MIKTEX_VERSION_STR
-
-#define REGSTR_PATH_UNINSTALL_A "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
-
-#define UNINST_REG_PATH							\
-    (theApp.setupTask == SetupTask::PrepareMiKTeXDirect			\
-     ? REGSTR_PATH_UNINSTALL_A "\\" UNINST_DISPLAY_NAME_MIKTEXDIRECT	\
-     : REGSTR_PATH_UNINSTALL_A "\\" UNINST_DISPLAY_NAME)
-
-#define UNINST_HKEY_ROOT			\
-  (theApp.commonUserSetup			\
-   ? HKEY_LOCAL_MACHINE				\
-   : HKEY_CURRENT_USER)
-
-void
-AddUninstallerRegValue (/*[in]*/ HKEY		hkey,
-			/*[in]*/ const char *	lpszValueName,
-			/*[in]*/ const char *	lpszValue)
-{
-  CStringW value (UW_(lpszValue));
-  LONG result =
-    RegSetValueExW
-    (hkey,
-    UW_(lpszValueName),
-    0,
-    REG_SZ,
-    reinterpret_cast<const BYTE *>(static_cast<const wchar_t *>(value)),
-    static_cast<DWORD>((wcslen(value) + 1) * sizeof(wchar_t)));
-  if (result != ERROR_SUCCESS)
-  {
-    FATAL_WINDOWS_ERROR_2 ("RegSetValueExW", result, 0);
-  }
-  ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
-}
-
-void
-AddUninstallerRegValue (/*[in]*/ HKEY		hkey,
-			/*[in]*/ const char *	lpszValueName,
-			/*[in]*/ DWORD		value)
-{
-  LONG result =
-    RegSetValueExW
-    (hkey,
-     UW_(lpszValueName),
-     0,
-     REG_DWORD,
-     reinterpret_cast<const BYTE *>(&value),
-     static_cast<DWORD>(sizeof(value)));
-  
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 ("RegSetValueEx", result, 0);
-    }
-  
-  ULogAddRegValue (UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
-}
-
-/* _________________________________________________________________________
-
-   RegisterUninstaller
-   _________________________________________________________________________ */
-
-#define UNINST_HELP_LINK "http://miktex.org/support"
-#define UNINST_PUBLISHER MIKTEX_COMP_COMPANY_STR
-#define UNINST_DISPLAY_VERSION MIKTEX_VERSION_STR
-#define UNINST_DISPLAY_STRING				\
-  (theApp.setupTask == SetupTask::PrepareMiKTeXDirect	\
-   ? UNINST_DISPLAY_NAME_MIKTEXDIRECT			\
-   : UNINST_DISPLAY_NAME)
-#define UNINST_ABOUT_URL "http://miktex.org/about"
-#define UNINST_UPDATE_URL "http://miktex.org"
-#define UNINST_COMMENT T_("Uninstall MiKTeX")
-#define UNINST_README MIKTEX_URL_WWW_KNOWN_ISSUES
-
-void
-RegisterUninstaller ()
-{
-  // make uninstall command line
-  string commandLine;
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
-    {
-      PathName pathCopyStart (theApp.GetInstallRoot(),
-			      (theApp.commonUserSetup
-			       ? MIKTEX_PATH_INTERNAL_COPYSTART_ADMIN_EXE
-			       : MIKTEX_PATH_INTERNAL_COPYSTART_EXE));
-      commandLine += Q_(pathCopyStart.Get());
-      commandLine += " ";
-    }
-  PathName pathUninstallDat (theApp.GetInstallRoot(),
-			     (theApp.commonUserSetup
-			      ? MIKTEX_PATH_INTERNAL_UNINSTALL_ADMIN_EXE
-			      : MIKTEX_PATH_INTERNAL_UNINSTALL_EXE));
-  commandLine += Q_(pathUninstallDat.Get());
-
-  // make icon path
-  PathName iconPath (theApp.GetInstallRoot());
-  iconPath += MIKTEX_PATH_BIN_DIR;
-  iconPath += MIKTEX_MO_EXE;
-  iconPath.Append (",0", false);
-
-  // create registry key
-  HKEY hkey;
-  DWORD disp;
-  LONG result =
-    RegCreateKeyExW(UNINST_HKEY_ROOT,
-		    UW_(UNINST_REG_PATH),
-		    0,
-		    0,
-		    REG_OPTION_NON_VOLATILE,
-		    KEY_ALL_ACCESS,
-		    0,
-		    &hkey,
-		    &disp);
-  if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyEx", result, 0);
-    }
-  AutoHKEY autoHKEY (hkey);
-  
-  // set values
-  PathName installRoot (theApp.GetInstallRoot());
-  AddUninstallerRegValue (hkey, "Comment", UNINST_COMMENT);
-  AddUninstallerRegValue (hkey, "DisplayIcon", iconPath.Get());
-  AddUninstallerRegValue (hkey, "DisplayName", UNINST_DISPLAY_STRING); 
-  AddUninstallerRegValue (hkey, "DisplayVersion", UNINST_DISPLAY_VERSION);
-  AddUninstallerRegValue (hkey, "HelpLink", UNINST_HELP_LINK);
-  AddUninstallerRegValue (hkey, "InstallLocation", installRoot.Get());
-  AddUninstallerRegValue (hkey, "NoModify", 1);
-  AddUninstallerRegValue (hkey, "NoRepair", 1);
-  AddUninstallerRegValue (hkey, "Publisher", UNINST_PUBLISHER);
-  AddUninstallerRegValue (hkey, "Readme", UNINST_README);
-  AddUninstallerRegValue (hkey, "UninstallString", commandLine.c_str());
-  AddUninstallerRegValue (hkey, "UrlInfoAbout", UNINST_ABOUT_URL);
-  AddUninstallerRegValue (hkey, "UrlUpdateInfo", UNINST_UPDATE_URL);
-}
-
-/* _________________________________________________________________________
-
-   ULogClose
-   _________________________________________________________________________ */
-
-void
-ULogClose (/*[in]*/ bool finalize)
-{
-  if (! theApp.uninstStream.IsOpen())
-    {
-      return;
-    }
-  
-  try
-    {
-      if (finalize)
-	{
-	  ULogAddFile (GetLogFileName());
-	  if (! theApp.portable)
-	  {
-	    RegisterUninstaller ();
-	  }
-	}
-    }
-  catch (const exception &)
-    {
-      theApp.uninstStream.Close ();
-      throw;
-    }
-
-  theApp.uninstStream.Close ();
-}
-
-/* _________________________________________________________________________
-
-   ULogAddFile
-   _________________________________________________________________________ */
-
-void
-ULogAddFile (/*[in]*/ const PathName & path)
-{
-  if (! theApp.uninstStream.IsOpen())
-    {
-      return;
-    }
-  if (section != Files)
-    {
-      theApp.uninstStream.WriteLine ("[files]");
-      section = Files;
-    }
-  PathName absolutePath (path);
-  absolutePath.MakeAbsolute ();
-  absolutePath.ToDos ();
-  theApp.uninstStream.WriteLine (absolutePath.Get());
-}
-
-/* _________________________________________________________________________
-
-   ULogAddRegValue
-   _________________________________________________________________________ */
-
-void
-ULogAddRegValue (/*[in]*/ HKEY		hkey,
-		 /*[in]*/ const char *	lpszSubKey,
-		 /*[in]*/ const char *	lpszValueName)
-{
-  if (! theApp.uninstStream.IsOpen())
-    {
-      return;
-    }
-  if (hkey == HKEY_LOCAL_MACHINE && section != HKLM)
-    {
-      theApp.uninstStream.WriteLine ("[hklm]");
-      section = HKLM;
-    }
-  else if (hkey == HKEY_CURRENT_USER && section != HKCU)
-    {
-      theApp.uninstStream.WriteLine ("[hkcu]");
-      section = HKCU;
-    }
-  theApp.uninstStream.WriteFormattedLine
-    ("%s;%s", lpszSubKey, lpszValueName);
-}
-
-/* _________________________________________________________________________
-
-   CreateProgramFolder
-   _________________________________________________________________________ */
-
-PathName
-CreateProgramFolder ()
-{
-  int cidl =
-    (theApp.commonUserSetup && IsWindowsNT()
-     ? CSIDL_COMMON_PROGRAMS
-     : CSIDL_PROGRAMS);
-  PathName path = Utils::GetFolderPath(cidl, cidl, true);
-  path += theApp.folderName;
-  Directory::Create (path);
-  return (path);
-}
-
-/* _________________________________________________________________________
-
-   Expand
-   _________________________________________________________________________ */
-
-CStringW &
-Expand (/*[in]*/ const char *	lpszSource,
-	/*[out]*/ CStringW &	dest)
-{
-  dest = lpszSource;
-  int pos;
-  while ((pos = dest.Find(L"%MIKTEX_INSTALL%")) >= 0)
-    {
-      dest.Delete (pos, 16);
-      dest.Insert (pos, UW_(theApp.GetInstallRoot().Get()));
-    }
-  return (dest);
-}
-
-/* _________________________________________________________________________
-
-   CreateInternetShortcut
-   _________________________________________________________________________ */
-
-void
-CreateInternetShortcut (/*[in]*/ const PathName &	path,
-			/*[in]*/ const char *		lpszUrl)
-{
-  _COM_SMARTPTR_TYPEDEF (IUniformResourceLocatorW,
-			 IID_IUniformResourceLocatorW);
-
-  IUniformResourceLocatorWPtr pURL;
-
-  HRESULT hr =
-    CoCreateInstance(CLSID_InternetShortcut,
-		     0, 
-		     CLSCTX_INPROC_SERVER,
-		     IID_IUniformResourceLocatorW,
-		     reinterpret_cast<void **>(&pURL));
-
-  if (FAILED(hr))
-    {
-      Log (T_("IUniformResourceLocator could not be created (%08x)\n"), hr);
-      UNEXPECTED_CONDITION ("CreateInternetShortcut");
-    }
-
-  hr = pURL->SetURL(UW_(lpszUrl), 0);
-
-  if (FAILED(hr))
-    {
-      Log (T_("IUniformResourceLocatorW::SetURL() failed (%08x)\n"), hr);
-      UNEXPECTED_CONDITION ("CreateInternetShortcut");
-    }
-
-  IPersistFilePtr pPF;
-
-  hr = pURL->QueryInterface(IID_IPersistFile, reinterpret_cast<void **>(&pPF));
-
-  if (FAILED(hr))
-    {
-      Log (T_("IPersistFile could not be created (%08x)\n"), hr);
-      UNEXPECTED_CONDITION ("CreateInternetShortcut");
-    }
-
-  hr = pPF->Save(path.ToWideCharString().c_str(), TRUE);
-
-  if (FAILED(hr))
-    {
-      Log (T_("IPersistFile::Save() failed (%08x)\n"), hr);
-      UNEXPECTED_CONDITION ("CreateInternetShortcut");
-    }
-}
-
-/* _________________________________________________________________________
-
-   CreateShellLink
-   _________________________________________________________________________ */
-
-void
-CreateShellLink (/*[in]*/ const PathName &		pathFolder,
-		 /*[in]*/ const ShellLinkData &		ld)
-{
-  if ((ld.flags & LD_IFCOMMON) != 0 && ! theApp.commonUserSetup)
-  {
-    // ignore system-wide command if this is a per-user setup
-    return;
-  }
-
-  PathName pathLink;
-
-  if (ld.subFolderID > 0)
-    {
-      CString subFolder;
-      if (! subFolder.LoadString(ld.subFolderID))
-	{
-	  UNEXPECTED_CONDITION ("CreateShellLink");
-	}
-      PathName pathSubFolder (pathFolder,
-			      static_cast<LPCTSTR>(subFolder));
-      Directory::Create (pathSubFolder);
-      pathLink = pathSubFolder;
-    }
-  else
-    {
-      pathLink = pathFolder;
-    }
-  
-  CString strItemName;
-
-  if (! strItemName.LoadString(ld.nameID))
-    {
-      UNEXPECTED_CONDITION ("CreateShellLink");
-    }
-
-  pathLink += static_cast<LPCTSTR>(strItemName);
-  pathLink.SetExtension (ld.isUrl ? ".url" : ".lnk");
-
-  if (File::Exists(pathLink))
-    {
-      Log (T_("removing %s...\n"), Q_(pathLink));
-      if (! theApp.dryRun)
-	{
-	  File::Delete (pathLink);
-	}
-    }
-  
-  if (ld.lpszPathName == 0)
-    {
-      return;
-    }
-  
-  if (ld.isUrl)
-    {
-      Log (T_("creating internet shortcut %s...\n"), Q_(pathLink));
-    }
-  else
-    {
-      Log (T_("creating shell link %s...\n"), Q_(pathLink));
-    }
-
-  if (theApp.dryRun)
-    {
-      return;
-    }
-
-  if (ld.isUrl)
-    {
-      CreateInternetShortcut (pathLink, ld.lpszPathName);
-    }
-  else
-    {
-      _COM_SMARTPTR_TYPEDEF (IShellLink, IID_IShellLink);
-
-      IShellLinkWPtr psl;
-
-      HRESULT hr =
-	CoCreateInstance(CLSID_ShellLink,
-			 0,
-			 CLSCTX_INPROC_SERVER,
-			 IID_IShellLinkW,
-			 reinterpret_cast<void **>(&psl));
-
-      if (FAILED(hr))
-	{
-	  Log (T_("IShellLinkW could not be created (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION ("CreateShellLink");
-	}
-      
-      CString str;
-      
-      hr = psl->SetPath(Expand(ld.lpszPathName, str));
-
-      if (FAILED(hr))
-	{
-	  Log (T_("IShellLinkW::SetPath() failed (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION ("CreateShellLink");
-	}
-      
-      if ((ld.flags & LD_USEARGS) != 0)
-	{
-	  hr = psl->SetArguments(Expand(ld.lpszArgs, str));
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetArguments() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-      
-      if ((ld.flags & LD_USEDESC) != 0)
-	{
-	  hr = psl->SetDescription(UW_(ld.lpszDescription));
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetDescription() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-      
-      if ((ld.flags & LD_USEICON) != 0)
-	{
-	  hr =
-	    psl->SetIconLocation(Expand(ld.lpszIconPath, str), ld.iconIndex);
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetIconLocation() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-      
-      if ((ld.flags & LD_USEWORKDIR) != 0)
-	{
-	  hr = psl->SetWorkingDirectory(Expand(ld.lpszWorkingDir, str));
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetWorkingDirectory() failed (%08x)\n"),
-		   hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-
-      if ((ld.flags & LD_USESHOWCMD) != 0)
-	{
-	  hr = psl->SetShowCmd(ld.showCmd);
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetShowCmd() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-      
-      if ((ld.flags & LD_USEHOTKEY) != 0)
-	{
-	  hr = psl->SetHotkey(ld.hotKey);
-	  if (FAILED(hr))
-	    {
-	      Log (T_("IShellLinkW::SetHotkey() failed (%08x)\n"), hr);
-	      UNEXPECTED_CONDITION ("CreateShellLink");
-	    }
-	}
-      
-      IPersistFilePtr ppf;
-
-      hr =
-	psl->QueryInterface(IID_IPersistFile, reinterpret_cast<void **>(&ppf));
-
-      if (FAILED(hr))
-	{
-	  Log (T_("IPersistFile could not be created (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION ("CreateShellLink");
-	}
-
-      hr = ppf->Save(pathLink.ToWideCharString().c_str(), TRUE);
-
-      if (FAILED(hr))
-	{
-	  Log (T_("IPersistFile::Save() failed (%08x)\n"), hr);
-	  UNEXPECTED_CONDITION ("CreateShellLink");
-	}
-    }
-
-  ULogAddFile (pathLink.Get());
-}
-
-/* _________________________________________________________________________
-
-   CreateProgramIcons
-   _________________________________________________________________________ */
-
-void
-CreateProgramIcons ()
-{
-  PathName path = CreateProgramFolder();
-  for (size_t i = 0; i < nShellLinks; ++ i)
-    {
-      CreateShellLink (path, shellLinks[i]);
-    }
-}
-
-/* _________________________________________________________________________
-
-   LogV
-   _________________________________________________________________________ */
-
-void
-LogV (/*[in]*/ const char *	lpszFormat,
-      /*[in]*/ va_list		argList)
-{
-  CSingleLock singleLock (&theApp.criticalSectionMonitorLogStream, TRUE);
-  string formatted = Utils::FormatString(lpszFormat, argList);
-  static string currentLine;
-  for (const char * lpsz = formatted.c_str();
-       *lpsz != 0;
-       ++ lpsz)
-    {
-      if (lpsz[0] == '\n'
-	  || (lpsz[0] == '\r' && lpsz[1] == '\n'))
-	{
-	  theApp.traceStream->WriteFormattedLine ("setup",
-						  "%s",
-						  currentLine.c_str());
-	  if (theApp.logStream.IsOpen())
-	    {
-	      theApp.logStream.WriteLine (currentLine);
-	    }
-	  currentLine = "";
-	  if (lpsz[0] == '\r')
-	    {
-	      ++ lpsz;
-	    }
-	}
-      else
-	{
-	  currentLine += *lpsz;
-	}
-    }
-}
-
-/* _________________________________________________________________________
-
-   Log
-   _________________________________________________________________________ */
-
-void
-Log (/*[in]*/ const char *	lpszFormat,
-     /*[in]*/			...)
-{
-  va_list argList;
-  va_start (argList, lpszFormat);
-  LogV (lpszFormat, argList);
-  va_end (argList);
-}
-
-/* _________________________________________________________________________
-
-   LogHeader
-   _________________________________________________________________________ */
-
-void
-LogHeader ()
-{
-  CString banner;
-  if (! banner.LoadString(IDS_SETUPWIZ))
-    {
-      UNEXPECTED_CONDITION ("LogHeader");
-    }
-  Log (T_("%s %s Report\n\n"),
-       static_cast<const char *>(TU_(banner)),
-       MIKTEX_COMPONENT_VERSION_STR);
-  CTime t = CTime::GetCurrentTime();
-  Log (T_("Date: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%A, %B %d, %Y")))));
-  Log (T_("Time: %s\n"), static_cast<const char *>(TU_(t.Format(_T("%H:%M:%S")))));
-  Log (T_("OS version: %s\n"), Utils::GetOSVersionString().c_str());
-  if (IsWindowsNT())
-    {
-      Log ("SystemAdmin: %s\n",
-	   (SessionWrapper(true)->RunningAsAdministrator()
-	    ? "yes"
-	    : "false"));
-      Log ("PowerUser: %s\n",
-	   (SessionWrapper(true)->RunningAsPowerUser()
-	    ? "yes"
-	    : "false"));
-    }
-  if (theApp.setupTask != SetupTask::Download)
-    {
-      Log ("SharedSetup: %s\n",
-	   (theApp.commonUserSetup ? "yes" : "false"));
-    }
-  Log (T_("Setup path: %s\n"), theApp.setupPath.Get());
-  if (theApp.setupTask != SetupTask::Download)
-    {
-      Log ("UserRoots: %s\n",
-	  (theApp.startupConfig.userRoots.empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.userRoots.c_str()));
-      Log ("UserData: %s\n",
-	   (theApp.startupConfig.userDataRoot.Empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.userDataRoot.Get()));
-      Log ("UserConfig: %s\n",
-	   (theApp.startupConfig.userConfigRoot.Empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.userConfigRoot.Get()));
-      Log ("CommonRoots: %s\n",
-	  (theApp.startupConfig.commonRoots.empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.commonRoots.c_str()));
-      Log ("CommonData: %s\n",
-	   (theApp.startupConfig.commonDataRoot.Empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.commonDataRoot.Get()));
-      Log ("CommonConfig: %s\n",
-	   (theApp.startupConfig.commonConfigRoot.Empty()
-	    ? T_("<none specified>")
-	    : theApp.startupConfig.commonConfigRoot.Get()));
-      Log ("\nInstallation: %s\n", theApp.GetInstallRoot().Get());
-    }
 }
 
 /* _________________________________________________________________________
@@ -2496,11 +1690,11 @@ ReportError (/*[in]*/ const MiKTeXException & e)
 	  str += e.GetInfo();
 	}
       AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
-      Log (T_("\nAn error occurred:\n"));
-      Log (T_("  source file: %s\n"), e.GetSourceFile().c_str());
-      Log (T_("  source line: %d\n"), e.GetSourceLine());
-      Log (T_("  message: %s\n"), e.what());
-      Log (T_("  info: %s\n"), e.GetInfo().c_str());
+      theApp.pSetupService->Log(T_("\nAn error occurred:\n"));
+      theApp.pSetupService->Log(T_("  source file: %s\n"), e.GetSourceFile().c_str());
+      theApp.pSetupService->Log(T_("  source line: %d\n"), e.GetSourceLine());
+      theApp.pSetupService->Log(T_("  message: %s\n"), e.what());
+      theApp.pSetupService->Log(T_("  info: %s\n"), e.GetInfo().c_str());
     }
   catch (const exception &)
     {
@@ -2522,7 +1716,7 @@ ReportError (/*[in]*/ const exception & e)
 	T_("The operation could not be completed for the following reason: ");
       str += "\n\n";
       str += e.what();
-      Log ("\n%s\n", str.c_str());
+      theApp.pSetupService->Log("\n%s\n", str.c_str());
       AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
     }
   catch (const exception &)

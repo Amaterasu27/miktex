@@ -60,7 +60,7 @@ SharedInstallationPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
 
-  commonUserSetup = (theApp.commonUserSetup ? 0 : 1);
+  commonUserSetup = (theApp.IsCommonSetup() ? 0 : 1);
 
   BOOL ret = CPropertyPage::OnInitDialog();
 
@@ -167,7 +167,7 @@ SharedInstallationPage::OnWizardNext ()
     }
   else
     {
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::InstallFromCD:
 	  next = IDD_INSTALLDIR;
@@ -212,7 +212,7 @@ SharedInstallationPage::OnWizardBack ()
     }
   else
     {
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::InstallFromCD:
 	case SetupTask::InstallFromLocalRepository:
@@ -242,7 +242,9 @@ SharedInstallationPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.commonUserSetup = (commonUserSetup == 0);
+      SetupOptions options = theApp.pSetupService->GetOptions();
+      options.IsCommonSetup = (commonUserSetup == 0);
+      theApp.pSetupService->SetOptions(options);
     }
   return (ret);
 }

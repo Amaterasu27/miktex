@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2012 Christian Schenk
+   Copyright (C) 1999-2013 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -158,26 +158,6 @@ private:
 
 /* _________________________________________________________________________
 
-   SetupTask
-   _________________________________________________________________________ */
-
-class SetupTaskEnum
-{
-public:
-  enum EnumType {
-    None,
-    Download,
-    InstallFromCD,
-    InstallFromLocalRepository,
-    InstallFromRemoteRepository, // <todo/>
-    PrepareMiKTeXDirect,
-  };
-};
-
-typedef EnumWrapper<SetupTaskEnum> SetupTask;
-
-/* _________________________________________________________________________
-
    SetupWizardApplication
    _________________________________________________________________________ */
 
@@ -195,16 +175,7 @@ public:
   DECLARE_MESSAGE_MAP();
 
 public:
-  CCriticalSection criticalSectionMonitorLogStream;
-
-public:
-  StreamWriter logStream;
-
-public:
   auto_ptr<TraceStream> traceStream;
-
-public:
-  PathName intermediateLogFile;
 
 #if ENABLE_ADDTEXMF
 public:
@@ -218,7 +189,7 @@ public:
   PackageManagerPtr pManager;
 
 public:
-  PathName folderName;
+  SetupServicePtr pSetupService;
 
 public:
   string paperSize;
@@ -227,31 +198,68 @@ public:
   TriState installOnTheFly;
 
 public:
-  StartupConfig startupConfig;
-
-public:
   PathName GetInstallRoot () const
   {
-    return (commonUserSetup
-      ? startupConfig.commonInstallRoot
-      : startupConfig.userInstallRoot);
+    SetupOptions options = pSetupService->GetOptions();
+    return (options.IsCommonSetup ? options.Config.commonInstallRoot : options.Config.userInstallRoot);
   }
 
 public:
   void SetInstallRoot (/*[in]*/ const PathName & path)
   {
-    if (commonUserSetup)
+    SetupOptions options = pSetupService->GetOptions();
+    if (options.IsCommonSetup)
     {
-      startupConfig.commonInstallRoot = path;
+      options.Config.commonInstallRoot = path;
     }
     else
     {
-      startupConfig.userInstallRoot = path;
+      options.Config.userInstallRoot = path;
     }
+    pSetupService->SetOptions(options);
   }
 
 public:
-  PathName localPackageRepository;
+  SetupTask GetSetupTask()
+  {
+    return pSetupService->GetOptions().Task;
+  }
+
+public:
+  bool IsCommonSetup()
+  {
+    return pSetupService->GetOptions().IsCommonSetup;
+  }
+
+public:
+  bool IsPortable()
+  {
+    return pSetupService->GetOptions().IsPortable;
+  }
+
+public:
+  bool IsDryRun()
+  {
+    return pSetupService->GetOptions().IsDryRun;
+  }
+
+public:
+  PathName GetLocalPackageRepository()
+  {
+    return pSetupService->GetOptions().LocalPackageRepository;
+  }
+
+public:
+  PathName GetFolderName()
+  {
+    return pSetupService->GetOptions().FolderName;
+  }
+
+public:
+  StartupConfig GetStartupConfig()
+  {
+    return pSetupService->GetOptions().Config;
+  }
 
 public:
   PathName MiKTeXDirectTeXMFRoot;
@@ -265,9 +273,6 @@ public:
 public:
   PathName setupPath;
 
-public:
-  SetupTask setupTask;
-
 #if ENABLE_ADDTEXMF
 public:
   bool noAddTEXMFDirs;
@@ -278,12 +283,6 @@ public:
 
 public:
   bool allowUnattendedReboot;
-
-public:
-  bool commonUserSetup;
-
-public:
-  bool dryRun;
 
 public:
   bool isMiKTeXDirect;
@@ -305,12 +304,6 @@ public:
 
 public:
   bool unattended;
-
-public:
-  bool portable;
-
-public:
-  StreamWriter uninstStream;
 };
 
 extern SetupWizardApplication theApp;
@@ -332,17 +325,11 @@ ComparePaths (/*[in]*/ const PathName & path1,
 	      /*[in]*/ bool shortify = false);
 
 void
-CreateProgramIcons ();
-
-void
 DDV_Path (/*[in]*/ CDataExchange *	pDX,
 	  /*[in]*/ const CString &	str);
 
 VersionNumber
 GetFileVersion (/*[in]*/ const PathName &	path);
-
-PathName
-GetLogFileName ();
 
 bool
 FindFile (/*[in]*/ const PathName &	fileName,
@@ -352,40 +339,15 @@ bool
 FindDataDir (/*[out]*/ CString & strDir);
 
 void
-Log (/*[in]*/ const char *	lpsz,
-     /*[in]*/				...);
-
-void
 TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ unsigned long	functionResult,
 		   /*[in]*/ const char *	lpszInfo,
 		   /*[in]*/ const char *	lpszSourceFile,
 		   /*[in]*/ int			lpszSourceLine);
 
-void
-LogHeader ();
-
-void LogV
-(/*[in]*/ const char *	lpsz,
- /*[in]*/ va_list		args);
-
 PackageLevel
 TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
 		     /*[in]*/ PackageLevel		requestedPackageLevel);
-
-void
-ULogAddFile (/*[in]*/ const PathName & path);
-
-void
-ULogAddRegValue (/*[in]*/ HKEY hkey,
-		 /*[in]*/ LPCSTR pszSubKey,
-		 /*[in]*/ LPCSTR pszValueName);
-
-void
-ULogClose (/*[in]*/ bool bRegister = false);
-
-void
-ULogOpen ();
 
 void
 ReportError (/*[in]*/ const MiKTeXException & e);

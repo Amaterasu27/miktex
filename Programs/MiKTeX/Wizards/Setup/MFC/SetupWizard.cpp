@@ -136,7 +136,7 @@ SetupWizard::OnInitDialog ()
 	}
       else if (theApp.prefabricated)
 	{
-	  PathName configFile (theApp.localPackageRepository);
+	  PathName configFile (theApp.GetLocalPackageRepository());
 	  configFile += "pr.ini";
 	  SmartPointer<Cfg> pConfig (Cfg::Create());
 	  pConfig->Read (configFile);

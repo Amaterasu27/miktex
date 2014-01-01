@@ -156,7 +156,7 @@ LRESULT
 InfoListPage::OnWizardBack ()
 {
   UINT prev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       prev = IDD_LOCAL_REPOSITORY;
@@ -214,13 +214,13 @@ InfoListPage::CreateReport ()
 
   info = "";
 
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       info += (T_(_T("Download ")) + packageSet + T_(_T(" from ")) + CRLF
 	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
-	       + TAB + UT_(theApp.localPackageRepository.Get()));
+	       + TAB + UT_(theApp.GetLocalPackageRepository().Get()));
       break;
     case SetupTask::InstallFromCD:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from CD/DVD")));
@@ -234,7 +234,7 @@ InfoListPage::CreateReport ()
       else
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-		   + TAB + UT_(theApp.localPackageRepository.Get()) + CRLF
+		   + TAB + UT_(theApp.GetLocalPackageRepository().Get()) + CRLF
 		   + T_(_T(" to ")) + CRLF
 		   + TAB + UT_(theApp.GetInstallRoot().Get()));
 	}
@@ -257,15 +257,15 @@ InfoListPage::CreateReport ()
 
   info += CRLF + CRLF;
   
-  if (theApp.setupTask != SetupTask::Download)
+  if (theApp.GetSetupTask() != SetupTask::Download)
     {
-      if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+      if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect)
 	{
-	  if (theApp.portable)
+	  if (theApp.IsPortable())
 	  {
 	    info += T_("Install MiKTeX Portable");
 	  }
-	  else if (theApp.commonUserSetup)
+	  else if (theApp.IsCommonSetup())
 	  {
 	    info += T_("Install MiKTeX for all users");
 	  }
@@ -286,8 +286,8 @@ InfoListPage::CreateReport ()
       info += theApp.paperSize.c_str();
       info += CRLF;
       info += CRLF;
-      if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect
-	  && theApp.setupTask != SetupTask::Download)
+      if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect
+	  && theApp.GetSetupTask() != SetupTask::Download)
 	{
 	  switch (theApp.installOnTheFly.Get())
 	    {

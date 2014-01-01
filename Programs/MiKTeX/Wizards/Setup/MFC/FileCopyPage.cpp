@@ -1,6 +1,6 @@
 /* FileCopyPage.cpp: the actual setup process
 
-   Copyright (C) 1999-2012 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -95,7 +95,7 @@ FileCopyPage::OnInitDialog ()
   reportControl.LimitText (100000);
   try
     {
-      SessionWrapper(true)->SetAdminMode (theApp.commonUserSetup);
+      SessionWrapper(true)->SetAdminMode (theApp.IsCommonSetup());
       pInstaller =
 	auto_ptr<PackageInstaller>(theApp.pManager->CreateInstaller());
       pInstaller->SetNoPostProcessing (true);
@@ -130,7 +130,7 @@ FileCopyPage::OnSetActive ()
 	  pSheet->SetWizardButtons (0);
 
 #if 0
-	  if (theApp.setupTask != SetupTask::Download)
+	  if (theApp.GetSetupTask() != SetupTask::Download)
 	    {
 	      GetControl(IDC_ETA_TITLE)->ShowWindow (SW_HIDE);
 	      GetControl(IDC_ETA)->ShowWindow (SW_HIDE);
@@ -196,9 +196,9 @@ FileCopyPage::OnKillActive ()
   if (ret)
     {
       try
-	{
-	  ULogClose (! pSheet->GetErrorFlag());
-	}
+      {
+	theApp.pSetupService->ULogClose(! pSheet->GetErrorFlag());
+      }
       catch (const MiKTeXException & e)
 	{
 	  ReportError (e);
@@ -227,14 +227,14 @@ FileCopyPage::OnQueryCancel ()
     }
   try
     {
-      Log (T_("\n<<<Cancel? "));
-      if (AfxMessageBox((theApp.setupTask == SetupTask::Download
+      theApp.pSetupService->Log(T_("\n<<<Cancel? "));
+      if (AfxMessageBox((theApp.GetSetupTask() == SetupTask::Download
 			 ? IDS_CANCEL_DOWNLOAD
 			 : IDS_CANCEL_SETUP),
 			MB_OKCANCEL | MB_ICONEXCLAMATION)
 	  == IDOK)
 	{
-	  Log (T_("Yes!>>>\n"));
+	  theApp.pSetupService->Log(T_("Yes!>>>\n"));
 	  pSheet->SetCancelFlag ();
 	  if (! PostMessage(WM_PROGRESS))
 	    {
@@ -243,7 +243,7 @@ FileCopyPage::OnQueryCancel ()
 	}
       else
 	{
-	  Log (T_("No!>>>\n"));
+	  theApp.pSetupService->Log(T_("No!>>>\n"));
 	}
     }
   catch (const MiKTeXException & e)
@@ -271,7 +271,7 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
 
   try
     {
-      if (! animationControl.Open(theApp.setupTask == SetupTask::Download
+      if (! animationControl.Open(theApp.GetSetupTask() == SetupTask::Download
 				  ? IDA_DOWNLOAD
 				  : IDA_FILECOPY))
 	{
@@ -291,7 +291,7 @@ FileCopyPage::OnStartFileCopy (/*[in]*/ WPARAM	wParam,
       progressControl2.SetRange (0, PROGRESS_MAX);
       progressControl2.SetPos (0);
 
-      if (theApp.setupTask == SetupTask::Download)
+      if (theApp.GetSetupTask() == SetupTask::Download)
 	{
 	  GetControl(IDC_PROGRESS1_TITLE)->SetWindowText (T_(_T("Downloading:")));
 	}
@@ -361,7 +361,7 @@ FileCopyPage::OnProgress (/*[in]*/ WPARAM	wParam,
 	  // close the wizard, if it is running unattended
 	  if (theApp.unattended)
 	    {
-	      ULogClose (! pSheet->GetErrorFlag());
+	      theApp.pSetupService->ULogClose(! pSheet->GetErrorFlag());
 	      EndDialog (IDOK);
 	    }
 
@@ -526,7 +526,7 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
       sharedData.packageName = progressInfo.displayName;
     }
 
-  if (theApp.setupTask == SetupTask::Download)
+  if (theApp.GetSetupTask() == SetupTask::Download)
     {
       if (progressInfo.cbPackageDownloadTotal > 0)
 	{
@@ -556,8 +556,8 @@ FileCopyPage::OnProgress (/*[in]*/ Notification		nf)
       visibleProgress =
 	(visibleProgress || (sharedData.secondsRemaining != oldValue));
     }
-  else if ((theApp.setupTask == SetupTask::InstallFromLocalRepository
-	    || theApp.setupTask == SetupTask::InstallFromCD)
+  else if ((theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository
+	    || theApp.GetSetupTask() == SetupTask::InstallFromCD)
 	   && progressInfo.cbInstallTotal > 0)
     {
       totalSize = static_cast<DWORD>(progressInfo.cbInstallTotal);
@@ -611,7 +611,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 
   This->timeOfLastProgressRefresh = 0;
 
-  if (theApp.setupTask == SetupTask::PrepareMiKTeXDirect)
+  if (theApp.GetSetupTask() == SetupTask::PrepareMiKTeXDirect)
     {
       theApp.SetInstallRoot (theApp.MiKTeXDirectTeXMFRoot);
     }
@@ -627,10 +627,7 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
 	}
       comInit = true;
 
-      // write the log header
-      LogHeader ();
-      
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::Download:
 	  This->DoTheDownload ();
@@ -696,18 +693,18 @@ FileCopyPage::DoTheDownload ()
 
   // initialize installer
   pInstaller->SetRepository (theApp.remotePackageRepository.c_str());
-  pInstaller->SetDownloadDirectory (theApp.localPackageRepository);
+  pInstaller->SetDownloadDirectory (theApp.GetLocalPackageRepository());
   pInstaller->SetPackageLevel (theApp.packageLevel);
   pInstaller->SetCallback (this);
 
   // create the local repository directory
-  Directory::Create (theApp.localPackageRepository);
+  Directory::Create (theApp.GetLocalPackageRepository());
 
   // remember local repository folder
   SessionWrapper(true)
     ->SetConfigValue (MIKTEX_REGKEY_PACKAGE_MANAGER,
 		      MIKTEX_REGVAL_LOCAL_REPOSITORY,
-		      theApp.localPackageRepository.Get());
+		      theApp.GetLocalPackageRepository().Get());
 
   // start downloader in the background
   pInstaller->DownloadAsync();
@@ -724,7 +721,7 @@ FileCopyPage::DoTheDownload ()
   PathName licenseFile;
   if (FindFile(LICENSE_FILE, licenseFile))
     {
-      PathName licenseFileDest (theApp.localPackageRepository, LICENSE_FILE);
+      PathName licenseFileDest (theApp.GetLocalPackageRepository(), LICENSE_FILE);
       if (ComparePaths(licenseFile.Get(), licenseFileDest.Get(), true) != 0)
 	{
 	  File::Copy (licenseFile, licenseFileDest);
@@ -741,7 +738,7 @@ FileCopyPage::DoTheDownload ()
 		       0, 0,
 		       szFileName, BufferSizes::MaxPath,
 		       szExt, BufferSizes::MaxPath);
-      PathName pathDest (theApp.localPackageRepository, szFileName, szExt);
+      PathName pathDest (theApp.GetLocalPackageRepository(), szFileName, szExt);
       if (ComparePaths(theApp.setupPath.Get(), pathDest.Get(), true) != 0)
 	{
 	  File::Copy (theApp.setupPath, pathDest);
@@ -761,22 +758,22 @@ void
 FileCopyPage::DoPrepareMiKTeXDirect ()
 {
   // open the uninstall script
-  ULogOpen ();
+  theApp.pSetupService->ULogOpen ();
 #if 0				// <fixme/>
-  ULogAddFile (g_strLogFile);
+  theApp.pSetupService->ULogAddFile (g_strLogFile);
 #endif
 
   // run IniTeXMF
   ConfigureMiKTeX ();
 
   // create shell links
-  if (! theApp.portable)
+  if (! theApp.IsPortable())
   {
-    CreateProgramIcons ();
+    theApp.pSetupService->CreateProgramIcons();
   }
 
   // register path
-  if (! theApp.portable && theApp.registerPath)
+  if (! theApp.IsPortable() && theApp.registerPath)
     {
       Utils::CheckPath (true);
     }
@@ -792,11 +789,11 @@ FileCopyPage::DoTheInstallation ()
 {
   // register installation directory
   StartupConfig startupConfig;
-  if (theApp.commonUserSetup)
+  if (theApp.IsCommonSetup())
   {
-    startupConfig.commonInstallRoot = theApp.startupConfig.commonInstallRoot;
+    startupConfig.commonInstallRoot = theApp.GetStartupConfig().commonInstallRoot;
   }
-  startupConfig.userInstallRoot = theApp.startupConfig.userInstallRoot;
+  startupConfig.userInstallRoot = theApp.GetStartupConfig().userInstallRoot;
   SessionWrapper(true)->RegisterRootDirectories (
     startupConfig,
     RegisterRootDirectoriesFlags::Temporary | RegisterRootDirectoriesFlags::NoRegistry);
@@ -810,7 +807,7 @@ FileCopyPage::DoTheInstallation ()
     }
   else
     {
-      pathDB.Set (theApp.localPackageRepository, MIKTEX_MPM_DB_FULL_FILE_NAME);
+      pathDB.Set (theApp.GetLocalPackageRepository(), MIKTEX_MPM_DB_FULL_FILE_NAME);
     }
   Report (true, T_("Loading package database...\n"));
   theApp.pManager->LoadDatabase (pathDB);
@@ -824,12 +821,12 @@ FileCopyPage::DoTheInstallation ()
     }
   else
     {
-      pInstaller->SetRepository  (theApp.localPackageRepository.Get());
+      pInstaller->SetRepository  (theApp.GetLocalPackageRepository().Get());
       // remember local repository folder
       if (! theApp.prefabricated)
 	{
 	  theApp.pManager->SetLocalPackageRepository
-	    (theApp.localPackageRepository);
+	    (theApp.GetLocalPackageRepository());
 	}
     }
   pInstaller->SetPackageLevel (theApp.packageLevel);
@@ -839,9 +836,9 @@ FileCopyPage::DoTheInstallation ()
   Directory::Create (theApp.GetInstallRoot());
 
   // open the uninstall script
-  ULogOpen ();
+  theApp.pSetupService->ULogOpen ();
 #if 0				// <fixme/>
-  ULogAddFile (g_strLogFile);
+  theApp.pSetupService->ULogAddFile (g_strLogFile);
 #endif
 
   // run installer
@@ -878,9 +875,9 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // create shell links
-  if (! theApp.portable)
+  if (! theApp.IsPortable())
   {
-    CreateProgramIcons ();
+    theApp.pSetupService->CreateProgramIcons();
   }
 
   if (pSheet->GetCancelFlag())
@@ -889,14 +886,14 @@ FileCopyPage::DoTheInstallation ()
     }
 
   // register path
-  if (! theApp.portable && theApp.registerPath)
+  if (! theApp.IsPortable() && theApp.registerPath)
     {
       Utils::CheckPath (true);
     }
 
-  if (theApp.portable)
+  if (theApp.IsPortable())
   {
-    PathName fileName (theApp.startupConfig.commonInstallRoot);
+    PathName fileName (theApp.GetStartupConfig().commonInstallRoot);
     fileName += "miktex-portable.cmd";
     StreamWriter starter (fileName);
     starter.WriteLine ("@echo off");
@@ -953,46 +950,46 @@ FileCopyPage::ConfigureMiKTeX ()
   
   CommandLineBuilder cmdLine;
 
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+  if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect)
     {
       // [1] define roots & remove old fndbs
       cmdLine.Clear ();
-      if (theApp.portable)
+      if (theApp.IsPortable())
       {
 	cmdLine.AppendOption ("--portable=",
-	  theApp.startupConfig.commonInstallRoot);
+	  theApp.GetStartupConfig().commonInstallRoot);
       }
       else
       {
-	if (! theApp.startupConfig.userInstallRoot.Empty())
+	if (! theApp.GetStartupConfig().userInstallRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-install=",
-	    theApp.startupConfig.userInstallRoot);
+	    theApp.GetStartupConfig().userInstallRoot);
 	}
-	if (! theApp.startupConfig.userDataRoot.Empty())
+	if (! theApp.GetStartupConfig().userDataRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-data=",
-	    theApp.startupConfig.userDataRoot);
+	    theApp.GetStartupConfig().userDataRoot);
 	}
-	if (! theApp.startupConfig.userConfigRoot.Empty())
+	if (! theApp.GetStartupConfig().userConfigRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--user-config=",
-	    theApp.startupConfig.userConfigRoot);
+	    theApp.GetStartupConfig().userConfigRoot);
 	}
-	if (! theApp.startupConfig.commonDataRoot.Empty())
+	if (! theApp.GetStartupConfig().commonDataRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-data=",
-	    theApp.startupConfig.commonDataRoot);
+	    theApp.GetStartupConfig().commonDataRoot);
 	}
-	if (! theApp.startupConfig.commonConfigRoot.Empty())
+	if (! theApp.GetStartupConfig().commonConfigRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-config=",
-	    theApp.startupConfig.commonConfigRoot);
+	    theApp.GetStartupConfig().commonConfigRoot);
 	}
-	if (! theApp.startupConfig.commonInstallRoot.Empty())
+	if (! theApp.GetStartupConfig().commonInstallRoot.Empty())
 	{
 	  cmdLine.AppendOption ("--common-install=",
-	    theApp.startupConfig.commonInstallRoot);
+	    theApp.GetStartupConfig().commonInstallRoot);
 	}
 	if (theApp.noRegistry)
 	{
@@ -1003,13 +1000,13 @@ FileCopyPage::ConfigureMiKTeX ()
 	    "[" MIKTEX_REGKEY_CORE "]" MIKTEX_REGVAL_NO_REGISTRY "=1");
 	}
       }
-      if (! theApp.startupConfig.commonRoots.empty())
+      if (! theApp.GetStartupConfig().commonRoots.empty())
       {
-	cmdLine.AppendOption ("--common-roots=", theApp.startupConfig.commonRoots);
+	cmdLine.AppendOption ("--common-roots=", theApp.GetStartupConfig().commonRoots);
       }
-      if (! theApp.startupConfig.userRoots.empty())
+      if (! theApp.GetStartupConfig().userRoots.empty())
       {
-	cmdLine.AppendOption ("--user-roots=", theApp.startupConfig.userRoots);
+	cmdLine.AppendOption ("--user-roots=", theApp.GetStartupConfig().userRoots);
       }
       cmdLine.AppendOption ("--rmfndb");
       RunIniTeXMF (cmdLine);
@@ -1071,7 +1068,7 @@ FileCopyPage::ConfigureMiKTeX ()
   cmdLine.AppendOption ("--set-config-value=", valueSpec.c_str());
   RunIniTeXMF (cmdLine);
 
-  if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+  if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect)
     {
       // [7] refresh file name database again
       RunIniTeXMF ("--update-fndb");
@@ -1081,12 +1078,12 @@ FileCopyPage::ConfigureMiKTeX ()
 	}
     }
 
-  if (! theApp.portable)
+  if (! theApp.IsPortable())
   {
     RunIniTeXMF ("--register-shell-file-types");
   }
       
-  if (! theApp.portable && theApp.registerPath)
+  if (! theApp.IsPortable() && theApp.registerPath)
   {
     RunIniTeXMF ("--modify-path");
   }
@@ -1115,22 +1112,22 @@ FileCopyPage::RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
-  if (theApp.commonUserSetup)
+  if (theApp.IsCommonSetup())
   {
     cmdLine.AppendOption ("--admin");
   }
-  cmdLine.AppendOption ("--log-file=", GetLogFileName());
+  cmdLine.AppendOption("--log-file=", theApp.pSetupService->GetULogFileName());
   cmdLine.AppendOption ("--verbose");
 
   // run initexmf.exe
-  if (! theApp.dryRun)
-    {
-      Log ("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
-      ULogClose ();
-      SessionWrapper(true)->UnloadFilenameDatabase ();
-      Process::Run (exePath.Get(), cmdLine.Get(), this);
-      ULogOpen ();
-    }
+  if (! theApp.IsDryRun())
+  {
+    theApp.pSetupService->Log("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
+    theApp.pSetupService->ULogClose(false);
+    SessionWrapper(true)->UnloadFilenameDatabase();
+    Process::Run(exePath.Get(), cmdLine.Get(), this);
+    theApp.pSetupService->ULogOpen();
+  }
 
   // refresh progress bars
   if (! pSheet->GetCancelFlag())
@@ -1169,21 +1166,21 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 
   // make command line
   CommandLineBuilder cmdLine (cmdLine1);
-  if (theApp.commonUserSetup)
+  if (theApp.IsCommonSetup())
   {
     cmdLine.AppendOption ("--admin");
   }
   cmdLine.AppendOption ("--verbose");
 
   // run mpm.exe
-  if (! theApp.dryRun)
-    {
-      Log ("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
-      ULogClose ();
-      SessionWrapper(true)->UnloadFilenameDatabase ();
-      Process::Run (exePath.Get(), cmdLine.Get(), this);
-      ULogOpen ();
-    }
+  if (! theApp.IsDryRun())
+  {
+    theApp.pSetupService->Log("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
+    theApp.pSetupService->ULogClose(false);
+    SessionWrapper(true)->UnloadFilenameDatabase();
+    Process::Run(exePath.Get(), cmdLine.Get(), this);
+    theApp.pSetupService->ULogOpen();
+  }
 
   // refresh progress bars
   if (! pSheet->GetCancelFlag())
@@ -1214,8 +1211,8 @@ FileCopyPage::RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1)
 void
 FileCopyPage::CalculateExpenditure ()
 {
-  if (theApp.setupTask == SetupTask::InstallFromLocalRepository
-      || theApp.setupTask == SetupTask::InstallFromCD)
+  if (theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository
+      || theApp.GetSetupTask() == SetupTask::InstallFromCD)
     {
       totalIniTeXMFRuns = 8;
     }
@@ -1258,7 +1255,7 @@ FileCopyPage::Report (/*[in]*/ bool		writeLog,
   }
   if (writeLog)
   {
-    Log ("%s", str.c_str());
+    theApp.pSetupService->Log("%s", str.c_str());
   }
   if (! lines.empty())
   {
@@ -1321,7 +1318,7 @@ void
 FileCopyPage::CreateInfoFile ()
 {
   StreamWriter
-    stream (PathName(theApp.localPackageRepository, DOWNLOAD_INFO_FILE));
+    stream (PathName(theApp.GetLocalPackageRepository(), DOWNLOAD_INFO_FILE));
   const char * lpszPackageSet;
   switch (theApp.packageLevel.Get())
     {
@@ -1353,7 +1350,7 @@ http://miktex.org.\n"),
   RepositoryInfo repositoryInfo;
   if (theApp.pManager->TryGetRepositoryInfo(theApp.remotePackageRepository, repositoryInfo))
   {
-    StreamWriter stream (PathName(theApp.localPackageRepository, "pr.ini"));
+    StreamWriter stream (PathName(theApp.GetLocalPackageRepository(), "pr.ini"));
     stream.WriteFormattedLine ("[repository]");
     stream.WriteFormattedLine ("date=%d", static_cast<int>(repositoryInfo.timeDate));
     stream.WriteFormattedLine ("version=%u", static_cast<unsigned>(repositoryInfo.version));

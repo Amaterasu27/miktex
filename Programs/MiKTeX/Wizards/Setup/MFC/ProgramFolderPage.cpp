@@ -57,7 +57,7 @@ BOOL
 ProgramFolderPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  folderName = theApp.folderName.ToWideCharString().c_str();
+  folderName = theApp.GetFolderName().ToWideCharString().c_str();
   BOOL ret = CPropertyPage::OnInitDialog();
   return (ret);
 }
@@ -106,7 +106,7 @@ LRESULT
 ProgramFolderPage::OnWizardBack ()
 {
   UINT uPrev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::InstallFromCD:
     case SetupTask::InstallFromLocalRepository:
@@ -133,9 +133,11 @@ ProgramFolderPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
-    {
-      theApp.folderName = static_cast<LPCTSTR>(folderName);
-    }
+  {
+    SetupOptions options = theApp.pSetupService->GetOptions();
+    options.FolderName = static_cast<LPCTSTR>(folderName);
+    theApp.pSetupService->SetOptions(options);
+  }
   return (ret);
 }
 

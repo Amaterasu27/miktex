@@ -70,21 +70,29 @@ public:
 };
 
 typedef MiKTeX::Core::EnumWrapper<SetupTaskEnum> SetupTask;
+
 /* _________________________________________________________________________
 
-   SetupService
+   SetupOptions
    _________________________________________________________________________ */
 
 struct SetupOptions
 {
 public:
-  SetupOptions()
-    : Task(SetupTask::None)
+  SetupOptions() :
+    Task(SetupTask::None), IsDryRun(false), IsCommonSetup(false),
+    IsPortable(false)
   {
   }
 
 public:
   SetupTask Task;
+
+public:
+  std::string Banner;
+
+public:
+  std::string Version;
 
 public:
   bool IsDryRun;
@@ -107,6 +115,11 @@ public:
 #endif
 };
 
+/* _________________________________________________________________________
+
+   SetupService
+   _________________________________________________________________________ */
+
 class
 MIKTEXNOVTABLE
 SetupService
@@ -121,7 +134,10 @@ public:
   virtual void MIKTEXTHISCALL Release() = 0;
 
 public:
-  virtual void MIKTEXTHISCALL SetOptions(const SetupOptions & options) = 0;
+  virtual SetupOptions MIKTEXTHISCALL GetOptions() = 0;
+
+public:
+  virtual SetupOptions MIKTEXTHISCALL SetOptions(const SetupOptions & options) = 0;
 
 public:
   virtual void MIKTEXTHISCALL OpenLog() = 0;
@@ -133,13 +149,16 @@ public:
   virtual void MIKTEXCEECALL Log(const char * lpszFormat, ...) = 0;
 
 public:
-  virtual void MIKTEXTHISCALL LogV (const char * lpszFormat, va_list argList) = 0;
+  virtual void MIKTEXTHISCALL LogV(const char * lpszFormat, va_list argList) = 0;
 
 public:
-  virtual void ULogOpen() = 0;
+  virtual void MIKTEXTHISCALL ULogOpen() = 0;
 
 public:
-  virtual void ULogClose(bool finalize) = 0;
+  virtual void MIKTEXTHISCALL ULogClose(bool finalize) = 0;
+
+public:
+  virtual MiKTeX::Core::PathName MIKTEXTHISCALL GetULogFileName() = 0;
 
 public:
   virtual void ULogAddFile(const MiKTeX::Core::PathName & path) = 0;

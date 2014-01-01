@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2013 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,6 +36,11 @@ configure_file(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
+)
+
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 include_directories(BEFORE
@@ -125,6 +130,7 @@ target_link_libraries(setup
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
+  ${setup_lib_name}
   ${uriparser_lib_name}
   ${utf8wrap_lib_name}
   ${zlib_lib_name}

@@ -100,7 +100,7 @@ LRESULT
 SettingsPage::OnWizardNext ()
 {
   UINT next;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::InstallFromCD:
     case SetupTask::InstallFromLocalRepository:
@@ -134,7 +134,7 @@ SettingsPage::OnWizardBack ()
   return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(IDD_FOLDER)));
 #else
   UINT uPrev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::InstallFromCD:
     case SetupTask::InstallFromLocalRepository:
