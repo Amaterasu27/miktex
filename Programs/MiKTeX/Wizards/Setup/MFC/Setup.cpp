@@ -1,6 +1,6 @@
 /* Setup.cpp:
 
-   Copyright (C) 1999-2012 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of MiKTeX Setup Wizard.
 
@@ -800,10 +800,7 @@ END_MESSAGE_MAP();
    _________________________________________________________________________ */
 
 SetupWizardApplication::SetupWizardApplication ()
-  : packageLevel (PackageLevel::None),
-    prefabricatedPackageLevel (PackageLevel::None),
-    installOnTheFly (TriState::Undetermined),
-    paperSize ("A4")
+  : prefabricatedPackageLevel (PackageLevel::None)
 {
   SetAppID (UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
 }
@@ -877,6 +874,15 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 
    TestLocalRepository
    _________________________________________________________________________ */
+
+#define LICENSE_FILE "LICENSE.TXT"
+#define DOWNLOAD_INFO_FILE "README.TXT"
+
+#define BASIC_MIKTEX "\"Basic MiKTeX\""
+#define BASIC_MIKTEX_LEGACY "\"Small MiKTeX\""
+#define COMPLETE_MIKTEX "\"Complete MiKTeX\""
+#define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
+#define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
 
 PackageLevel
 TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
@@ -1077,20 +1083,15 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
   options.IsDryRun = cmdinfo.optDryRun;
   theApp.mustReboot = false;
-  theApp.prefabricated = false;
-  theApp.registerPath = true;
+  options.IsPrefabricated = false;
+  options.IsRegisterPathEnabled = true;
   theApp.showLogFileOnExit = false;
   theApp.unattended = cmdinfo.optUnattended;
-  theApp.packageLevel = cmdinfo.packageLevel;
+  options.PackageLevel = cmdinfo.packageLevel;
   options.IsPortable = cmdinfo.optPortable;
 
   // check to see whether setup is started from a MiKTeXDirect location
-  theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(theApp.MiKTeXDirectRoot);
-  if (theApp.isMiKTeXDirect)
-    {
-      theApp.MiKTeXDirectTeXMFRoot = theApp.MiKTeXDirectRoot;
-      theApp.MiKTeXDirectTeXMFRoot += "texmf";
-    }
+  theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(options.MiKTeXDirectRoot);
 
   // startup configuration
   options.Config = cmdinfo.startupConfig;
@@ -1099,7 +1100,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     options.Config.commonInstallRoot = FindCommonInstallDir();
   }
 
-  theApp.noRegistry = cmdinfo.optNoRegistry;
+  options.IsRegistryEnabled = ! cmdinfo.optNoRegistry;
 
   // shared setup
   options.IsCommonSetup =
@@ -1114,7 +1115,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 #if FEATURE_1874934
   if (cmdinfo.installOnTheFly != TriState::Undetermined)
     {
-      theApp.installOnTheFly = cmdinfo.installOnTheFly;
+      options.IsInstallOnTheFlyEnabled = cmdinfo.installOnTheFly;
     }
 #endif
 
@@ -1122,7 +1123,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 #if FEATURE_1874934
   if (! cmdinfo.paperSize.empty())
     {
-      theApp.paperSize = cmdinfo.paperSize;
+      options.PaperSize = cmdinfo.paperSize;
     }
 #endif
 
@@ -1140,30 +1141,30 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     if (cmdinfo.task != SetupTask::Download)
     {
       PackageLevel foundPackageLevel =
-	TestLocalRepository(options.LocalPackageRepository, theApp.packageLevel);
+	TestLocalRepository(options.LocalPackageRepository, theApp.GetPackageLevel());
       if (foundPackageLevel == PackageLevel::None)
       {
 	FATAL_MIKTEX_ERROR ("SetupGlobalVars",
 	  T_("The specified local repository does not exist."),
 	  0);
       }
-      if (theApp.packageLevel == PackageLevel::None)
+      if (theApp.GetPackageLevel() == PackageLevel::None)
       {
-	theApp.packageLevel = foundPackageLevel;
+	options.PackageLevel = foundPackageLevel;
       }
     }
   }
   else
   {
     PackageLevel foundPackageLevel =
-      SearchLocalRepository(options.LocalPackageRepository, theApp.packageLevel, theApp.prefabricated);
+      SearchLocalRepository(options.LocalPackageRepository, theApp.GetPackageLevel(), options.IsPrefabricated);
     if (foundPackageLevel != PackageLevel::None)
     {
-      if (theApp.packageLevel == PackageLevel::None)
+      if (options.PackageLevel == PackageLevel::None)
       {
-	theApp.packageLevel = foundPackageLevel;
+	options.PackageLevel = foundPackageLevel;
       }
-      if (theApp.prefabricated)
+      if (options.IsPrefabricated)
       {
 	theApp.prefabricatedPackageLevel = foundPackageLevel;
       }
@@ -1172,11 +1173,10 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       // check the default location
       options.LocalPackageRepository = GetDefaultLocalRepository();
-      PackageLevel foundPackageLevel =
-	TestLocalRepository(options.LocalPackageRepository, theApp.packageLevel);
-      if (theApp.packageLevel == PackageLevel::None)
+      PackageLevel foundPackageLevel = TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
+      if (options.PackageLevel == PackageLevel::None)
       {
-	theApp.packageLevel = foundPackageLevel;
+	options.PackageLevel = foundPackageLevel;
       }
     }
   }
@@ -1189,20 +1189,20 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       options.Task = SetupTask::InstallFromCD;
     }
-    else if (! options.LocalPackageRepository.Empty() && theApp.packageLevel != PackageLevel::None)
+    else if (! options.LocalPackageRepository.Empty() && theApp.GetPackageLevel() != PackageLevel::None)
     {
       options.Task = SetupTask::InstallFromLocalRepository;
     }
   }
 
   // remote package repository
-  theApp.remotePackageRepository = cmdinfo.remotePackageRepository;
-  if (theApp.remotePackageRepository.empty())
+  options.RemotePackageRepository = cmdinfo.remotePackageRepository;
+  if (options.RemotePackageRepository.empty())
     {
       string str;
       if (theApp.pManager->TryGetRemotePackageRepository(str))
 	{
-	  theApp.remotePackageRepository = str.c_str();
+	  options.RemotePackageRepository = str.c_str();
 	}
     }
 
@@ -1216,7 +1216,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	     T_("No setup task has been specified."),
 	     0);
 	}
-      if (theApp.packageLevel == PackageLevel::None)
+      if (theApp.GetPackageLevel() == PackageLevel::None)
 	{
 	  FATAL_MIKTEX_ERROR
 	    ("SetupGlobalVars",
@@ -1237,7 +1237,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
       if (options.Task == SetupTask::InstallFromRemoteRepository
 	  || options.Task == SetupTask::Download)
 	{
-	  if (theApp.remotePackageRepository.empty())
+	  if (options.RemotePackageRepository.empty())
 	    {
 	      FATAL_MIKTEX_ERROR
 		("SetupGlobalVars",
@@ -1534,7 +1534,9 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
   PathName pathBinDir;
   if (theApp.pSetupService->GetOptions().Task == SetupTask::PrepareMiKTeXDirect)
     {
-      pathBinDir.Set (theApp.MiKTeXDirectTeXMFRoot, MIKTEX_PATH_BIN_DIR);
+      pathBinDir = theApp.pSetupService->GetOptions().MiKTeXDirectRoot;
+      pathBinDir += "texmf";
+      pathBinDir += MIKTEX_PATH_BIN_DIR;
     }
   else
     {
@@ -1566,40 +1568,6 @@ ContainsBinDir (/*[in]*/ const char *	lpszPath)
 	}
     }
   return (false);
-}
-
-/* _________________________________________________________________________
-
-   GetFileVersion
-   _________________________________________________________________________ */
-
-VersionNumber
-GetFileVersion (/*[in]*/ const PathName &	path)
-{
-  DWORD dwHandle;
-  DWORD size = GetFileVersionInfoSizeW(path.ToWideCharString().c_str(), &dwHandle);
-  if (size == 0)
-    {
-      FATAL_WINDOWS_ERROR ("GetFileVersionInfoSizeW", path.Get());
-    }
-  CharBuffer<wchar_t> buf (size);
-  if (! GetFileVersionInfoW(path.ToWideCharString().c_str(), dwHandle, size, buf.GetBuffer()))
-    {
-      FATAL_WINDOWS_ERROR ("GetFileVersionInfoW", path.Get());
-    }
-  UINT len;
-  void * pVer;
-  if (! VerQueryValueW(buf.GetBuffer(),
-		       L"\\",
-		       &pVer,
-		       &len))
-    {
-      FATAL_WINDOWS_ERROR ("VerQueryValueW", path.Get());
-    }
-  return
-    (VersionNumber
-     (reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionMS,
-      reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionLS));
 }
 
 /* _________________________________________________________________________

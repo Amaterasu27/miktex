@@ -1,6 +1,6 @@
 /* SetupService.cpp:
 
-   Copyright (C) 2014 Christian Schenk
+   Copyright (C) 2013-2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,6 +19,7 @@
 
 #include <miktex/Core/Core>
 #include <miktex/Core/Paths>
+#include <miktex/Core/Registry>
 #include <miktex/PackageManager/PackageManager>
 
 #include "internal.h"
@@ -29,6 +30,72 @@ using namespace MiKTeX::Core;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX::Setup;
 using namespace std;
+
+#define LICENSE_FILE "LICENSE.TXT"
+#define DOWNLOAD_INFO_FILE "README.TXT"
+
+#define BASIC_MIKTEX "\"Basic MiKTeX\""
+#define BASIC_MIKTEX_LEGACY "\"Small MiKTeX\""
+#define COMPLETE_MIKTEX "\"Complete MiKTeX\""
+#define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
+#define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
+
+/* _________________________________________________________________________
+
+   ComparePaths
+   _________________________________________________________________________ */
+
+SETUPSTATICFUNC(int) ComparePaths(const PathName & path1, const PathName & path2, bool shortify)
+{
+  wchar_t szShortPath1[BufferSizes::MaxPath];
+  wchar_t szShortPath2[BufferSizes::MaxPath];
+
+  if (shortify
+      && (GetShortPathNameW(path1.ToWideCharString().c_str(),
+			    szShortPath1,
+			    BufferSizes::MaxPath)
+	  > 0)
+      && (GetShortPathNameW(path2.ToWideCharString().c_str(),
+			    szShortPath2,
+			    BufferSizes::MaxPath)
+	  > 0))
+    {
+      return (PathName::Compare(szShortPath1, szShortPath2));
+    }
+  else
+    {
+      return (PathName::Compare(path1, path2));
+    }
+}
+
+/* _________________________________________________________________________
+
+   GetFileVersion
+   _________________________________________________________________________ */
+
+SETUPSTATICFUNC(VersionNumber) GetFileVersion(const PathName &	path)
+{
+  DWORD dwHandle;
+  DWORD size = GetFileVersionInfoSizeW(path.ToWideCharString().c_str(), &dwHandle);
+  if (size == 0)
+  {
+    FATAL_WINDOWS_ERROR("GetFileVersionInfoSizeW", path.Get());
+  }
+  CharBuffer<wchar_t> buf (size);
+  if (! GetFileVersionInfoW(path.ToWideCharString().c_str(), dwHandle, size, buf.GetBuffer()))
+  {
+    FATAL_WINDOWS_ERROR("GetFileVersionInfoW", path.Get());
+  }
+  UINT len;
+  void * pVer;
+  if (! VerQueryValueW(buf.GetBuffer(), L"\\", &pVer, &len))
+  {
+    FATAL_WINDOWS_ERROR("VerQueryValueW", path.Get());
+  }
+  return VersionNumber(
+    reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionMS,
+    reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionLS);
+}
 
 /* _________________________________________________________________________
 
@@ -49,6 +116,7 @@ SetupServiceImpl::SetupServiceImpl()
 {
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
+  pManager = PackageManager::Create();
 }
 
 /* _________________________________________________________________________
@@ -423,7 +491,675 @@ void SetupServiceImpl::ULogAddFile (const PathName & path)
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::CreateShellLink
+   SetupServiceImpl::SetCallback
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::SetCallback(SetupServiceCallback * pCallback)
+{
+  this->pCallback = pCallback;
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::Run
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::Run()
+{
+  pInstaller = auto_ptr<PackageInstaller>(pManager->CreateInstaller());
+  pInstaller->SetNoPostProcessing(true);
+  pInstaller->SetNoLocalServer(true);
+  cancelled = false;
+  switch (options.Task.Get())
+  {
+  case SetupTask::Download:
+    DoTheDownload();
+    break;
+  case SetupTask::PrepareMiKTeXDirect:
+    DoPrepareMiKTeXDirect();
+    break;
+  case SetupTask::InstallFromCD:
+  case SetupTask::InstallFromLocalRepository:
+    DoTheInstallation();
+    break;
+  default:
+    UNEXPECTED_CONDITION("SetupServiceImpl::Run");
+  }
+}
+  
+/* _________________________________________________________________________
+
+   SetupServiceImpl::DoTheDownload
+   _________________________________________________________________________ */
+
+void
+SetupServiceImpl::DoTheDownload()
+{
+  // initialize installer
+  pInstaller->SetRepository(options.RemotePackageRepository);
+  pInstaller->SetDownloadDirectory(options.LocalPackageRepository);
+  pInstaller->SetPackageLevel(options.PackageLevel);
+  pInstaller->SetCallback(this);
+
+  // create the local repository directory
+  Directory::Create(options.LocalPackageRepository);
+
+  // remember local repository folder
+  SessionWrapper(true) ->SetConfigValue(
+    MIKTEX_REGKEY_PACKAGE_MANAGER,
+    MIKTEX_REGVAL_LOCAL_REPOSITORY,
+    options.LocalPackageRepository.Get());
+
+  // start downloader in the background
+  pInstaller->DownloadAsync();
+
+  // wait for downloader thread
+  pInstaller->WaitForCompletion ();
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // copy the license file
+  PathName licenseFile;
+  if (FindFile(LICENSE_FILE, licenseFile))
+  {
+    PathName licenseFileDest (options.LocalPackageRepository, LICENSE_FILE);
+    if (ComparePaths(licenseFile.Get(), licenseFileDest.Get(), true) != 0)
+    {
+      File::Copy (licenseFile, licenseFileDest);
+    }
+  }
+
+  // now copy the setup program
+  wchar_t szSetupPath[BufferSizes::MaxPath];
+  if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath) == 0)
+  {
+    FATAL_WINDOWS_ERROR("GetModuleFileNameW", 0);
+  }
+  char szFileName[BufferSizes::MaxPath];
+  char szExt[BufferSizes::MaxPath];
+  PathName::Split(
+    WU_(szSetupPath),
+    0, 0,
+    0, 0,
+    szFileName, BufferSizes::MaxPath,
+    szExt, BufferSizes::MaxPath);
+  PathName pathDest(options.LocalPackageRepository, szFileName, szExt);
+  if (ComparePaths(WU_(szSetupPath), pathDest.Get(), true) != 0)
+  {
+    File::Copy(WU_(szSetupPath), pathDest);
+  }
+
+  // create info file
+  CreateInfoFile ();
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::DoPrepareMiKTeXDirect
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::DoPrepareMiKTeXDirect()
+{
+  PathName installRoot(options.MiKTeXDirectRoot);
+  installRoot += "texmf";
+  if (options.IsCommonSetup)
+  {
+    options.Config.commonInstallRoot = installRoot;
+  }
+  else
+  {
+    options.Config.userInstallRoot = installRoot;
+  }
+
+  // open the uninstall script
+  ULogOpen();
+#if 0				// <fixme/>
+  ULogAddFile(g_strLogFile);
+#endif
+
+  // run IniTeXMF
+  ConfigureMiKTeX();
+
+  // create shell links
+  if (! options.IsPortable)
+  {
+    CreateProgramIcons();
+  }
+
+  // register path
+  if (! options.IsPortable && options.IsRegisterPathEnabled)
+  {
+    Utils::CheckPath(true);
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::DoTheInstallation
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::DoTheInstallation()
+{
+  // register installation directory
+  StartupConfig startupConfig;
+  if (options.IsCommonSetup)
+  {
+    startupConfig.commonInstallRoot = options.Config.commonInstallRoot;
+  }
+  startupConfig.userInstallRoot = options.Config.userInstallRoot;
+  SessionWrapper(true)->RegisterRootDirectories(
+    startupConfig,
+    RegisterRootDirectoriesFlags::Temporary | RegisterRootDirectoriesFlags::NoRegistry);
+
+  // parse package definition files
+  PathName pathDB;
+  if (options.Task == SetupTask::InstallFromCD)
+  {
+    pathDB = options.MiKTeXDirectRoot;
+    pathDB += "texmf";
+    pathDB += MIKTEX_PATH_PACKAGE_DEFINITION_DIR;
+  }
+  else
+  {
+    pathDB = options.LocalPackageRepository;
+    pathDB += MIKTEX_MPM_DB_FULL_FILE_NAME;
+  }
+  if (pCallback != 0)
+  {
+    pCallback->ReportLine(T_("Loading package database..."));
+  }
+  pManager->LoadDatabase(pathDB);
+
+  if (options.Task == SetupTask::InstallFromCD)
+  {
+    pInstaller->SetRepository(options.MiKTeXDirectRoot.Get());
+  }
+  else
+  {
+    pInstaller->SetRepository(options.LocalPackageRepository.Get());
+    // remember local repository folder
+    if (! options.IsPrefabricated)
+    {
+      pManager->SetLocalPackageRepository(options.LocalPackageRepository);
+    }
+  }
+  pInstaller->SetPackageLevel(options.PackageLevel);
+  pInstaller->SetCallback(this);
+
+  // create the destination directory
+  Directory::Create(GetInstallRoot());
+
+  // open the uninstall script
+  ULogOpen();
+#if 0				// <fixme/>
+  ULogAddFile(g_strLogFile);
+#endif
+
+  // run installer
+  pInstaller->InstallRemove();
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // install package definition files
+  pManager->UnloadDatabase();
+  pInstaller->UpdateDb();
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // run IniTeXMF
+  ConfigureMiKTeX();
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // remove obsolete files
+#if 0
+  RemoveObsoleteFiles();
+#endif
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // create shell links
+  if (! options.IsPortable)
+  {
+    CreateProgramIcons();
+  }
+
+  if (cancelled)
+  {
+    return;
+  }
+
+  // register path
+  if (! options.IsPortable && options.IsRegisterPathEnabled)
+  {
+    Utils::CheckPath(true);
+  }
+
+  if (options.IsPortable)
+  {
+    PathName fileName(options.Config.commonInstallRoot);
+    fileName += "miktex-portable.cmd";
+    StreamWriter starter(fileName);
+    starter.WriteLine("@echo off");
+    starter.WriteLine("cd /d %~dp0");
+    starter.WriteLine("miktex\\bin\\miktex-taskbar-icon.exe");
+    starter.Close();
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::ConfigureMiKTeX
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::ConfigureMiKTeX()
+{
+  PathName initexmf(GetInstallRoot());
+  initexmf += MIKTEX_PATH_BIN_DIR;
+  initexmf += MIKTEX_INITEXMF_EXE;
+
+  VersionNumber initexmfVer = GetFileVersion(initexmf);
+
+  if (pCallback != 0 && ! pCallback->OnProgress(MiKTeX::Setup::Notification::ConfigureBegin))
+  {
+    cancelled = true;
+    return;
+  }
+  
+  CommandLineBuilder cmdLine;
+
+  if (options.Task != SetupTask::PrepareMiKTeXDirect)
+  {
+    // define roots & remove old fndbs
+    cmdLine.Clear ();
+    if (options.IsPortable)
+    {
+      cmdLine.AppendOption("--portable=", options.Config.commonInstallRoot);
+    }
+    else
+    {
+      if (! options.Config.userInstallRoot.Empty())
+      {
+	cmdLine.AppendOption("--user-install=", options.Config.userInstallRoot);
+      }
+      if (! options.Config.userDataRoot.Empty())
+      {
+	cmdLine.AppendOption("--user-data=", options.Config.userDataRoot);
+      }
+      if (! options.Config.userConfigRoot.Empty())
+      {
+	cmdLine.AppendOption("--user-config=", options.Config.userConfigRoot);
+      }
+      if (! options.Config.commonDataRoot.Empty())
+      {
+	cmdLine.AppendOption("--common-data=", options.Config.commonDataRoot);
+      }
+      if (! options.Config.commonConfigRoot.Empty())
+      {
+	cmdLine.AppendOption("--common-config=", options.Config.commonConfigRoot);
+      }
+      if (! options.Config.commonInstallRoot.Empty())
+      {
+	cmdLine.AppendOption("--common-install=", options.Config.commonInstallRoot);
+      }
+      if (! options.IsRegistryEnabled)
+      {
+	cmdLine.AppendOption("--no-registry");
+	cmdLine.AppendOption("--create-config-file=", MIKTEX_PATH_MIKTEX_INI);
+	cmdLine.AppendOption("--set-config-value=", "[" MIKTEX_REGKEY_CORE "]" MIKTEX_REGVAL_NO_REGISTRY "=1");
+      }
+    }
+    if (! options.Config.commonRoots.empty())
+    {
+      cmdLine.AppendOption("--common-roots=", options.Config.commonRoots);
+    }
+    if (! options.Config.userRoots.empty())
+    {
+      cmdLine.AppendOption("--user-roots=", options.Config.userRoots);
+    }
+    cmdLine.AppendOption("--rmfndb");
+    RunIniTeXMF(cmdLine);
+    if (cancelled)
+    {
+      return;
+    }
+
+    // register components, configure files
+    RunMpm("--register-components");
+
+    // create filename database files
+    cmdLine.Clear();
+    cmdLine.AppendOption("--update-fndb");
+    RunIniTeXMF(cmdLine);
+    if (cancelled)
+    {
+      return;
+    }
+
+    // create latex.exe, ...
+    RunIniTeXMF(CommandLineBuilder("--force", "--mklinks"));
+    if (cancelled)
+    {
+      return;
+    }
+
+    // create font map files and language.dat
+    RunIniTeXMF(CommandLineBuilder("--mkmaps", "--mklangs"));
+    if (cancelled)
+    {
+      return;
+    }
+  }
+
+  // set paper size
+  if (! options.PaperSize.empty())
+  {
+    cmdLine.Clear();
+    if (StringCompare(options.PaperSize.c_str(), "a4", true) == 0)
+    {
+      cmdLine.AppendOption("--default-paper-size=", "A4size");
+    }
+    else
+    {
+    }
+  }
+
+  // set auto-install
+  string valueSpec = "[" MIKTEX_REGKEY_PACKAGE_MANAGER "]";
+  valueSpec += MIKTEX_REGVAL_AUTO_INSTALL;
+  valueSpec += "=";
+  valueSpec += NUMTOSTR(options.IsInstallOnTheFlyEnabled.Get());
+  cmdLine.Clear();
+  cmdLine.AppendOption("--set-config-value=", valueSpec.c_str());
+  RunIniTeXMF(cmdLine);
+
+  if (options.Task != SetupTask::PrepareMiKTeXDirect)
+  {
+    // refresh file name database again
+    RunIniTeXMF("--update-fndb");
+    if (cancelled)
+    {
+      return;
+    }
+  }
+
+  if (! options.IsPortable)
+  {
+    RunIniTeXMF("--register-shell-file-types");
+  }
+      
+  if (! options.IsPortable && options.IsRegisterPathEnabled)
+  {
+    RunIniTeXMF("--modify-path");
+  }
+
+  // create report
+  RunIniTeXMF("--report");
+  if (cancelled)
+  {
+    return;
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::RunIniTeXMF
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::RunIniTeXMF(const CommandLineBuilder & cmdLine1)
+{
+  // make absolute exe path name
+  PathName exePath;
+  exePath = GetInstallRoot();
+  exePath += MIKTEX_PATH_BIN_DIR;
+  exePath += MIKTEX_INITEXMF_EXE;
+
+  // make command line
+  CommandLineBuilder cmdLine (cmdLine1);
+  if (options.IsCommonSetup)
+  {
+    cmdLine.AppendOption("--admin");
+  }
+  cmdLine.AppendOption("--log-file=", GetULogFileName());
+  cmdLine.AppendOption("--verbose");
+
+  // run initexmf.exe
+  if (! options.IsDryRun)
+  {
+    Log("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
+    ULogClose(false);
+    SessionWrapper(true)->UnloadFilenameDatabase();
+    Process::Run(exePath.Get(), cmdLine.Get(), this);
+    ULogOpen();
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::RunMpm
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::RunMpm(const CommandLineBuilder & cmdLine1)
+{
+  // make absolute exe path name
+  PathName exePath;
+  exePath = GetInstallRoot();
+  exePath += MIKTEX_PATH_BIN_DIR;
+  exePath += MIKTEX_MPM_EXE;
+
+  // make command line
+  CommandLineBuilder cmdLine (cmdLine1);
+  if (options.IsCommonSetup)
+  {
+    cmdLine.AppendOption("--admin");
+  }
+  cmdLine.AppendOption("--verbose");
+
+  // run mpm.exe
+  if (! options.IsDryRun)
+  {
+    Log("%s %s:\n", Q_(exePath.Get()), cmdLine.Get());
+    ULogClose(false);
+    SessionWrapper(true)->UnloadFilenameDatabase();
+    Process::Run(exePath.Get(), cmdLine.Get(), this);
+    ULogOpen();
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::CreateInfoFile
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::CreateInfoFile()
+{
+  StreamWriter stream(PathName(options.LocalPackageRepository, DOWNLOAD_INFO_FILE));
+  const char * lpszPackageSet;
+  switch (options.PackageLevel.Get())
+  {
+  case PackageLevel::Essential:
+    lpszPackageSet = ESSENTIAL_MIKTEX;
+    break;
+  case PackageLevel::Basic:
+    lpszPackageSet = BASIC_MIKTEX;
+    break;
+  case PackageLevel::Complete:
+    lpszPackageSet = COMPLETE_MIKTEX;
+    break;
+  default:
+    MIKTEX_ASSERT(false);
+    __assume(false);
+  }
+  wchar_t szSetupPath[BufferSizes::MaxPath];
+  if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath) == 0)
+  {
+    FATAL_WINDOWS_ERROR("GetModuleFileNameW", 0);
+  }
+  PathName setupExe(szSetupPath);
+  setupExe.RemoveDirectorySpec();
+  stream.WriteFormattedLine (
+    T_("\
+This folder contains the %s package set.\n\
+\n\
+To install MiKTeX, run %s.\n\
+\n\
+For more information, visit the MiKTeX project page at\n\
+http://miktex.org.\n"),
+    lpszPackageSet,
+    setupExe.Get());
+  stream.Close();
+  RepositoryInfo repositoryInfo;
+  if (pManager->TryGetRepositoryInfo(options.RemotePackageRepository, repositoryInfo))
+  {
+    StreamWriter stream(PathName(options.LocalPackageRepository, "pr.ini"));
+    stream.WriteFormattedLine("[repository]");
+    stream.WriteFormattedLine("date=%d", static_cast<int>(repositoryInfo.timeDate));
+    stream.WriteFormattedLine("version=%u", static_cast<unsigned>(repositoryInfo.version));
+    stream.Close();
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::GetProgressInfo
+   _________________________________________________________________________ */
+
+SetupService::ProgressInfo SetupServiceImpl::GetProgressInfo()
+{
+  PackageInstaller::ProgressInfo pi =  pInstaller->GetProgressInfo();
+  ProgressInfo progressInfo;
+  progressInfo.deploymentName = pi.deploymentName;
+  progressInfo.displayName = pi.displayName;
+  progressInfo.fileName = pi.fileName;
+  progressInfo.cFilesRemoveCompleted = pi.cFilesRemoveCompleted;
+  progressInfo.cFilesRemoveTotal = pi.cFilesRemoveTotal;
+  progressInfo.cPackagesRemoveCompleted = pi.cPackagesRemoveCompleted;
+  progressInfo.cPackagesRemoveTotal = pi.cPackagesRemoveTotal;
+  progressInfo.cbPackageDownloadCompleted = pi.cbPackageDownloadCompleted;
+  progressInfo.cbPackageDownloadTotal = pi.cbPackageDownloadTotal;
+  progressInfo.cbDownloadCompleted = pi.cbDownloadCompleted;
+  progressInfo.cbDownloadTotal = pi.cbDownloadTotal;
+  progressInfo.cFilesPackageInstallCompleted = pi.cFilesPackageInstallCompleted;
+  progressInfo.cFilesPackageInstallTotal = pi.cFilesPackageInstallTotal;
+  progressInfo.cFilesInstallCompleted = pi.cFilesInstallCompleted;
+  progressInfo.cFilesInstallTotal = pi.cFilesInstallTotal;
+  progressInfo.cPackagesInstallCompleted = pi.cPackagesInstallCompleted;
+  progressInfo.cPackagesInstallTotal = pi.cPackagesInstallTotal;
+  progressInfo.cbPackageInstallCompleted = pi.cbPackageInstallCompleted;
+  progressInfo.cbPackageInstallTotal = pi.cbPackageInstallTotal;
+  progressInfo.cbInstallCompleted = pi.cbInstallCompleted;
+  progressInfo.cbInstallTotal = pi.cbInstallTotal;
+  progressInfo.bytesPerSecond = pi.bytesPerSecond;
+  progressInfo.timeRemaining = pi.timeRemaining;
+  progressInfo.ready = pi.ready;
+  progressInfo.numErrors = pi.numErrors;
+  progressInfo.cancelled = pi.cancelled;
+  return progressInfo;
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::OnProcessOutput
+   _________________________________________________________________________ */
+
+bool SetupServiceImpl::OnProcessOutput(const void * pOutput, size_t n)
+{
+  if (pCallback != 0 && ! pCallback->OnProcessOutput(pOutput, n))
+  {
+    cancelled = true;
+    return false;
+  }
+  return true;
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::ReportLine
+   _________________________________________________________________________ */
+
+void SetupServiceImpl::ReportLine(const char * lpszLine)
+{
+  if (pCallback != 0)
+  {
+    pCallback->ReportLine(lpszLine);
+  }
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::OnRetryableError
+   _________________________________________________________________________ */
+
+bool SetupServiceImpl::OnRetryableError(const char * lpszMessage)
+{
+  if (pCallback != 0 && ! pCallback->OnRetryableError(lpszMessage))
+  {
+    cancelled = true;
+    return false;
+  }
+  return true;
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::OnProgress
+   _________________________________________________________________________ */
+
+bool SetupServiceImpl::OnProgress(MiKTeX::Packages::Notification nf)
+{
+  if (pCallback != 0)
+  {
+    MiKTeX::Setup::Notification setupNotification(Setup::Notification::None);
+    switch (nf.Get())
+    {
+    case MiKTeX::Packages::Notification::DownloadPackageStart:
+      setupNotification = MiKTeX::Setup::Notification::DownloadPackageStart; break;
+    case MiKTeX::Packages::Notification::DownloadPackageEnd:
+      setupNotification = MiKTeX::Setup::Notification::DownloadPackageEnd; break;
+    case MiKTeX::Packages::Notification::InstallFileStart:
+      setupNotification = MiKTeX::Setup::Notification::InstallFileStart; break;
+    case MiKTeX::Packages::Notification::InstallFileEnd:
+      setupNotification = MiKTeX::Setup::Notification::InstallFileEnd; break;
+    case MiKTeX::Packages::Notification::InstallPackageStart:
+      setupNotification = MiKTeX::Setup::Notification::InstallPackageStart; break;
+    case MiKTeX::Packages::Notification::InstallPackageEnd:
+      setupNotification = MiKTeX::Setup::Notification::InstallPackageEnd; break;
+    case MiKTeX::Packages::Notification::RemoveFileStart:
+      setupNotification = MiKTeX::Setup::Notification::RemoveFileStart; break;
+    case MiKTeX::Packages::Notification::RemoveFileEnd:
+      setupNotification = MiKTeX::Setup::Notification::RemoveFileEnd; break;
+    case MiKTeX::Packages::Notification::RemovePackageStart:
+      setupNotification = MiKTeX::Setup::Notification::RemovePackageStart; break;
+    case MiKTeX::Packages::Notification::RemovePackageEnd:
+      setupNotification = MiKTeX::Setup::Notification::RemovePackageEnd; break;
+    }
+    if (! pCallback->OnProgress(setupNotification))
+    {
+      cancelled = true;
+      return false;
+    }
+  }
+  return true;
+}
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::Expand
    _________________________________________________________________________ */
 
 wstring & SetupServiceImpl::Expand(const char * lpszSource, wstring & dest)
@@ -436,3 +1172,30 @@ wstring & SetupServiceImpl::Expand(const char * lpszSource, wstring & dest)
   }
   return dest;
 }
+
+/* _________________________________________________________________________
+
+   SetupServiceImpl::FindFile
+   _________________________________________________________________________ */
+
+bool SetupServiceImpl::FindFile(const PathName & fileName, PathName & result)
+{
+  // try my directory
+  result = SessionWrapper(true)->GetMyLocation();
+  result += fileName;
+  if (File::Exists(result))
+  {
+    return true;
+  }
+  
+  // try the current directory
+  result.SetToCurrentDirectory ();
+  result += fileName;
+  if (File::Exists(result))
+  {
+    return true;
+  }
+
+  return false;
+}
+

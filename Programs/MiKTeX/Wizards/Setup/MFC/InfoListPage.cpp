@@ -195,7 +195,7 @@ InfoListPage::CreateReport ()
 
   CString packageSet;
 
-  switch (theApp.packageLevel.Get())
+  switch (theApp.GetPackageLevel().Get())
     {
     case PackageLevel::Essential:
       packageSet = T_("essential packages");
@@ -218,7 +218,7 @@ InfoListPage::CreateReport ()
     {
     case SetupTask::Download:
       info += (T_(_T("Download ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.GetRemotePackageRepository().c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
 	       + TAB + UT_(theApp.GetLocalPackageRepository().Get()));
       break;
@@ -226,7 +226,7 @@ InfoListPage::CreateReport ()
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from CD/DVD")));
       break;
     case SetupTask::InstallFromLocalRepository:
-      if (theApp.prefabricated)
+      if (theApp.pSetupService->GetOptions().IsPrefabricated)
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" to ")) + CRLF
 		   + TAB + UT_(theApp.GetInstallRoot().Get()));
@@ -241,13 +241,13 @@ InfoListPage::CreateReport ()
       break;
     case SetupTask::InstallFromRemoteRepository:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.GetRemotePackageRepository().c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
 	       + TAB + UT_(theApp.GetInstallRoot().Get()));
       break;
     case SetupTask::PrepareMiKTeXDirect:
       info += T_("Prepare to run MiKTeX from ");
-      info += theApp.MiKTeXDirectTeXMFRoot.Get();
+      info += PathName(theApp.pSetupService->GetOptions().MiKTeXDirectRoot, "texmf").Get();
       break;
     default:
       MIKTEX_ASSERT (false);
@@ -283,13 +283,13 @@ InfoListPage::CreateReport ()
       info += CRLF;
 #endif
       info += T_("Preferred paper size is ");
-      info += theApp.paperSize.c_str();
+      info += theApp.pSetupService->GetOptions().PaperSize.c_str();
       info += CRLF;
       info += CRLF;
       if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect
 	  && theApp.GetSetupTask() != SetupTask::Download)
 	{
-	  switch (theApp.installOnTheFly.Get())
+	  switch (theApp.pSetupService->GetOptions().IsInstallOnTheFlyEnabled.Get())
 	    {
 	    case TriState::True:
 	      info += T_("Packages will be installed on-the-fly");

@@ -161,7 +161,7 @@ LRESULT
 SharedInstallationPage::OnWizardNext ()
 {
   UINT next;
-  if (theApp.prefabricated)
+  if (theApp.pSetupService->GetOptions().IsPrefabricated)
     {
       next = IDD_INSTALLDIR;
     }
@@ -203,7 +203,7 @@ LRESULT
 SharedInstallationPage::OnWizardBack ()
 {
   UINT prev;
-  if (theApp.prefabricated)
+  if (theApp.pSetupService->GetOptions().IsPrefabricated)
     {
       prev = 
 	(theApp.prefabricatedPackageLevel == PackageLevel::Complete

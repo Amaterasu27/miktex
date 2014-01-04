@@ -1,6 +1,6 @@
 /* PackageSet.cpp:
 
-   Copyright (C) 1999-2006 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -59,7 +59,7 @@ BOOL
 PackageSetPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  switch (theApp.packageLevel.Get())
+  switch (theApp.GetPackageLevel().Get())
     {
     case PackageLevel::Basic:
       packageSet = 0;
@@ -162,7 +162,7 @@ PackageSetPage::OnWizardBack ()
   UINT prev =
     (theApp.isMiKTeXDirect
      ? IDD_MD_TASK
-     : (theApp.prefabricated
+     : (theApp.pSetupService->GetOptions().IsPrefabricated
 	? IDD_LICENSE
 	: IDD_TASK));
   return (reinterpret_cast<LRESULT>(MAKEINTRESOURCE(prev)));
@@ -178,11 +178,11 @@ PackageSetPage::OnKillActive ()
 {
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
-    {
-      theApp.packageLevel = (packageSet == 0
-			? PackageLevel::Basic
-			: PackageLevel::Complete);
-    }
+  {
+    SetupOptions options = theApp.pSetupService->GetOptions();
+    options.PackageLevel = (packageSet == 0 ? PackageLevel::Basic : PackageLevel::Complete);
+    theApp.pSetupService->SetOptions(options);
+  }
   return (ret);
 }
 

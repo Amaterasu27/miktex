@@ -1,6 +1,6 @@
 /* Setup.h:							-*- C++ -*-
 
-   Copyright (C) 1999-2013 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -23,14 +23,6 @@
 
 #include "resource.h"
 
-#define LICENSE_FILE "LICENSE.TXT"
-#define DOWNLOAD_INFO_FILE "README.TXT"
-
-#define BASIC_MIKTEX "\"Basic MiKTeX\""
-#define BASIC_MIKTEX_LEGACY "\"Small MiKTeX\""
-#define COMPLETE_MIKTEX "\"Complete MiKTeX\""
-#define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
-#define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
 
 #include "config.h"
 
@@ -183,19 +175,10 @@ public:
 #endif
 
 public:
-  PackageLevel packageLevel;
-
-public:
   PackageManagerPtr pManager;
 
 public:
   SetupServicePtr pSetupService;
-
-public:
-  string paperSize;
-
-public:
-  TriState installOnTheFly;
 
 public:
   PathName GetInstallRoot () const
@@ -244,9 +227,33 @@ public:
   }
 
 public:
+  bool IsRegistryEnabled()
+  {
+    return pSetupService->GetOptions().IsRegistryEnabled;
+  }
+
+public:
+  bool IsRegisterPathEnabled()
+  {
+    return pSetupService->GetOptions().IsRegisterPathEnabled;
+  }
+
+public:
   PathName GetLocalPackageRepository()
   {
     return pSetupService->GetOptions().LocalPackageRepository;
+  }
+
+public:
+  string GetRemotePackageRepository()
+  {
+    return pSetupService->GetOptions().RemotePackageRepository;
+  }
+
+public:
+  PackageLevel GetPackageLevel()
+  {
+     return pSetupService->GetOptions().PackageLevel;
   }
 
 public:
@@ -262,15 +269,6 @@ public:
   }
 
 public:
-  PathName MiKTeXDirectTeXMFRoot;
-
-public:
-  PathName MiKTeXDirectRoot;
-
-public:
-  string remotePackageRepository;
-
-public:
   PathName setupPath;
 
 #if ENABLE_ADDTEXMF
@@ -279,25 +277,16 @@ public:
 #endif
 
 public:
-  bool noRegistry;
-
-public:
   bool allowUnattendedReboot;
 
 public:
   bool isMiKTeXDirect;
 
 public:
-  bool prefabricated;
-
-public:
   PackageLevel prefabricatedPackageLevel;
 
 public:
   bool mustReboot;
-
-public:
-  bool registerPath;
 
 public:
   bool showLogFileOnExit;
@@ -327,9 +316,6 @@ ComparePaths (/*[in]*/ const PathName & path1,
 void
 DDV_Path (/*[in]*/ CDataExchange *	pDX,
 	  /*[in]*/ const CString &	str);
-
-VersionNumber
-GetFileVersion (/*[in]*/ const PathName &	path);
 
 bool
 FindFile (/*[in]*/ const PathName &	fileName,

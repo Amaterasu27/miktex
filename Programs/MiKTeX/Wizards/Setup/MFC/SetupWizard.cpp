@@ -134,7 +134,7 @@ SetupWizard::OnInitDialog ()
 			static_cast<LPCTSTR>(UW_(MIKTEX_FULL_VERSION_STR)),
 			static_cast<int>(sizeof(void*)) * 8);
 	}
-      else if (theApp.prefabricated)
+      else if (theApp.pSetupService->GetOptions().IsPrefabricated)
 	{
 	  PathName configFile (theApp.GetLocalPackageRepository());
 	  configFile += "pr.ini";
@@ -144,7 +144,7 @@ SetupWizard::OnInitDialog ()
 	  CString version (MIKTEXTEXT(MIKTEX_SERIES_STR));
 	  version += MIKTEXTEXT('.');
 	  version += UT_(pConfig->GetValue("repository", "version").c_str());
-	  switch (theApp.packageLevel.Get())
+	  switch (theApp.GetPackageLevel().Get())
 	    {
 	    case PackageLevel::Essential:
 	      prefix = T_("Essential ");

@@ -209,7 +209,7 @@ LocalRepositoryPage::OnKillActive ()
 	    {
 	      PackageLevel foundPackageLevel =
 		TestLocalRepository(PathName(fileName),
-				    theApp.packageLevel);
+				    theApp.GetPackageLevel());
 	      if (foundPackageLevel == PackageLevel::None)
 		{
 		  CString message;

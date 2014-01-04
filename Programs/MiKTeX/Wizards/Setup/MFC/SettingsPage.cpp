@@ -57,8 +57,8 @@ BOOL
 SettingsPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  paperSize = theApp.paperSize.c_str();
-  switch (theApp.installOnTheFly.Get())
+  paperSize = theApp.pSetupService->GetOptions().PaperSize.c_str();
+  switch (theApp.pSetupService->GetOptions().IsInstallOnTheFlyEnabled.Get())
     {
     case TriState::True:
       installOnTheFly = 0;
@@ -161,18 +161,19 @@ SettingsPage::OnWizardBack ()
 BOOL
 SettingsPage::OnKillActive ()
 {
+  SetupOptions options = theApp.pSetupService->GetOptions();
   BOOL ret = CPropertyPage::OnKillActive();
-  theApp.paperSize = TU_(paperSize);
+  options.PaperSize = TU_(paperSize);
   switch (installOnTheFly)
     {
     case 0:
-      theApp.installOnTheFly = TriState::True;
+      options.IsInstallOnTheFlyEnabled = TriState::True;
       break;
     case 1:
-      theApp.installOnTheFly = TriState::False;
+      options.IsInstallOnTheFlyEnabled = TriState::False;
       break;
     case 2:
-      theApp.installOnTheFly = TriState::Undetermined;
+      options.IsInstallOnTheFlyEnabled = TriState::Undetermined;
       break;
     default:
       ASSERT (false);

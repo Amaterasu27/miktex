@@ -28,7 +28,6 @@
 
 #include "internal.h"
 
-
 #include "setup-version.h"
 
 using namespace MiKTeX::Core;
@@ -79,7 +78,6 @@ PathName SetupServiceImpl::CreateProgramFolder()
    SetupServiceImpl::CreateProgramIcons
    _________________________________________________________________________ */
 
-
 #define LD_USEDESC     0x00000001
 #define LD_USEARGS     0x00000002
 #define LD_USEICON     0x00000004
@@ -96,6 +94,8 @@ PathName SetupServiceImpl::CreateProgramFolder()
 
 #define DOCPATH(name) \
  "%MIKTEX_INSTALL%\\" MIKTEX_PATH_MIKTEX_DOC_DIR "\\" name
+
+BEGIN_ANONYMOUS_NAMESPACE;
 
 const ShellLinkData shellLinks[] = {
 
@@ -327,13 +327,15 @@ const ShellLinkData shellLinks[] = {
 
 size_t nShellLinks = sizeof(shellLinks) / sizeof(shellLinks[0]);
 
+END_ANONYMOUS_NAMESPACE;
+
 void SetupServiceImpl::CreateProgramIcons()
 {
   PathName path = CreateProgramFolder();
   for (size_t i = 0; i < nShellLinks; ++ i)
-    {
-      CreateShellLink(path, shellLinks[i]);
-    }
+  {
+    CreateShellLink(path, shellLinks[i]);
+  }
 }
 
 void SetupServiceImpl::CreateShellLink(const PathName & pathFolder, const ShellLinkData & ld)
@@ -569,7 +571,6 @@ void SetupServiceImpl::CreateInternetShortcut(const PathName & path, const char 
 
 #define REGSTR_PATH_UNINSTALL_A "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 
-
 #define UNINST_REG_PATH							\
     (options.Task == SetupTask::PrepareMiKTeXDirect			\
      ? REGSTR_PATH_UNINSTALL_A "\\" UNINST_DISPLAY_NAME_MIKTEXDIRECT	\
@@ -585,11 +586,11 @@ void SetupServiceImpl::RegisterUninstaller()
   // make uninstall command line
   string commandLine;
   if (options.Task != SetupTask::PrepareMiKTeXDirect)
-    {
-      PathName pathCopyStart(GetInstallRoot(), (options.IsCommonSetup ? MIKTEX_PATH_INTERNAL_COPYSTART_ADMIN_EXE : MIKTEX_PATH_INTERNAL_COPYSTART_EXE));
-      commandLine += Q_(pathCopyStart.Get());
-      commandLine += " ";
-    }
+  {
+    PathName pathCopyStart(GetInstallRoot(), (options.IsCommonSetup ? MIKTEX_PATH_INTERNAL_COPYSTART_ADMIN_EXE : MIKTEX_PATH_INTERNAL_COPYSTART_EXE));
+    commandLine += Q_(pathCopyStart.Get());
+    commandLine += " ";
+  }
   PathName pathUninstallDat(GetInstallRoot(), (options.IsCommonSetup ? MIKTEX_PATH_INTERNAL_UNINSTALL_ADMIN_EXE : MIKTEX_PATH_INTERNAL_UNINSTALL_EXE));
   commandLine += Q_(pathUninstallDat.Get());
 
@@ -602,37 +603,37 @@ void SetupServiceImpl::RegisterUninstaller()
   // create registry key
   HKEY hkey;
   DWORD disp;
-  LONG result =
-    RegCreateKeyExW(UNINST_HKEY_ROOT,
-		    UW_(UNINST_REG_PATH),
-		    0,
-		    0,
-		    REG_OPTION_NON_VOLATILE,
-		    KEY_ALL_ACCESS,
-		    0,
-		    &hkey,
-		    &disp);
+  LONG result = RegCreateKeyExW(
+    UNINST_HKEY_ROOT,
+    UW_(UNINST_REG_PATH),
+    0,
+    0,
+    REG_OPTION_NON_VOLATILE,
+    KEY_ALL_ACCESS,
+    0,
+    &hkey,
+    &disp);
   if (result != ERROR_SUCCESS)
-    {
-      FATAL_WINDOWS_ERROR_2 ("RegCreateKeyEx", result, 0);
-    }
-  AutoHKEY autoHKEY (hkey);
+  {
+    FATAL_WINDOWS_ERROR_2("RegCreateKeyExW", result, 0);
+  }
+  AutoHKEY autoHKEY(hkey);
   
   // set values
-  PathName installRoot (GetInstallRoot());
-  AddUninstallerRegValue (hkey, "Comment", UNINST_COMMENT);
-  AddUninstallerRegValue (hkey, "DisplayIcon", iconPath.Get());
-  AddUninstallerRegValue (hkey, "DisplayName", UNINST_DISPLAY_STRING); 
-  AddUninstallerRegValue (hkey, "DisplayVersion", UNINST_DISPLAY_VERSION);
-  AddUninstallerRegValue (hkey, "HelpLink", UNINST_HELP_LINK);
-  AddUninstallerRegValue (hkey, "InstallLocation", installRoot.Get());
-  AddUninstallerRegValue (hkey, "NoModify", 1);
-  AddUninstallerRegValue (hkey, "NoRepair", 1);
-  AddUninstallerRegValue (hkey, "Publisher", UNINST_PUBLISHER);
-  AddUninstallerRegValue (hkey, "Readme", UNINST_README);
-  AddUninstallerRegValue (hkey, "UninstallString", commandLine.c_str());
-  AddUninstallerRegValue (hkey, "UrlInfoAbout", UNINST_ABOUT_URL);
-  AddUninstallerRegValue (hkey, "UrlUpdateInfo", UNINST_UPDATE_URL);
+  PathName installRoot(GetInstallRoot());
+  AddUninstallerRegValue(hkey, "Comment", UNINST_COMMENT);
+  AddUninstallerRegValue(hkey, "DisplayIcon", iconPath.Get());
+  AddUninstallerRegValue(hkey, "DisplayName", UNINST_DISPLAY_STRING); 
+  AddUninstallerRegValue(hkey, "DisplayVersion", UNINST_DISPLAY_VERSION);
+  AddUninstallerRegValue(hkey, "HelpLink", UNINST_HELP_LINK);
+  AddUninstallerRegValue(hkey, "InstallLocation", installRoot.Get());
+  AddUninstallerRegValue(hkey, "NoModify", 1);
+  AddUninstallerRegValue(hkey, "NoRepair", 1);
+  AddUninstallerRegValue(hkey, "Publisher", UNINST_PUBLISHER);
+  AddUninstallerRegValue(hkey, "Readme", UNINST_README);
+  AddUninstallerRegValue(hkey, "UninstallString", commandLine.c_str());
+  AddUninstallerRegValue(hkey, "UrlInfoAbout", UNINST_ABOUT_URL);
+  AddUninstallerRegValue(hkey, "UrlUpdateInfo", UNINST_UPDATE_URL);
 }
 
 /* _________________________________________________________________________
@@ -643,7 +644,11 @@ void SetupServiceImpl::RegisterUninstaller()
 void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, const char * lpszValue)
 {
   wstring value(UW_(lpszValue));
-  LONG result = RegSetValueExW (hkey, UW_(lpszValueName), 0, REG_SZ,
+  LONG result = RegSetValueExW(
+    hkey,
+    UW_(lpszValueName),
+    0,
+    REG_SZ,
     reinterpret_cast<const BYTE *>(value.c_str()),
     static_cast<DWORD>((value.length() + 1) * sizeof(wchar_t)));
   if (result != ERROR_SUCCESS)

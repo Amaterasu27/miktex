@@ -24,7 +24,7 @@
 class FileCopyPage
   : public CPropertyPage,
     public IRunProcessCallback,
-    public PackageInstallerCallback
+    public SetupServiceCallback
 {
 private:
   enum { IDD = IDD_FILECOPY };
@@ -110,36 +110,12 @@ public:
   virtual
   bool
   MIKTEXTHISCALL
-  OnProgress (/*[in]*/ Notification		nf);
+  OnProgress (/*[in]*/ MiKTeX::Setup::Notification		nf);
 
 private:
   static
   UINT
   WorkerThread (/*[in]*/ void * pParam);
-
-private:
-  void
-  DoTheDownload ();
-
-private:
-  void
-  DoPrepareMiKTeXDirect ();
-
-private:
-  void
-  DoTheInstallation ();
-
-private:
-  void
-  ConfigureMiKTeX ();
-
-private:
-  void
-  RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1);
-
-private:
-  void
-  RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1);
 
 private:
   void
@@ -158,20 +134,12 @@ private:
 
 private:
   void
-  RemoveObsoleteFiles ();
-
-private:
-  void
   CalculateExpenditure ();
   
 private:
   size_t
   GetIniTeXMFRunSize ()
     const;
-
-private:
-  void
-  CreateInfoFile ();
 
 private:
   void
@@ -233,9 +201,6 @@ private:
 private:
   SharedData sharedData;
 
-private:
-  auto_ptr<PackageInstaller> pInstaller;
-  
 private:
   HANDLE hWorkerThread;
 

@@ -58,7 +58,7 @@ MDTaskPage::MDTaskPage ()
 BOOL
 MDTaskPage::OnInitDialog ()
 {
-  root = theApp.MiKTeXDirectRoot.Get();
+  root = theApp.pSetupService->GetOptions().MiKTeXDirectRoot.Get();
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
   switch (theApp.GetSetupTask().Get())
     {

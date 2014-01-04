@@ -60,29 +60,50 @@ set(setup_mfc_sources
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.h
   FileCopyPage.cpp
+  FileCopyPage.h
   FinishPage.cpp
+  FinishPage.h
   InfoListPage.cpp
+  InfoListPage.h
   InstallDirPage.cpp
+  InstallDirPage.h
   LicensePage.cpp
+  LicensePage.h
   LocalRepositoryPage.cpp
+  LocalRepositoryPage.h
   MDTaskPage.cpp
-  ObsoleteFiles.cpp
+  MDTaskPage.h
   PackageSetPage.cpp
+  PackageSetPage.h
   ProgramFolderPage.cpp
+  ProgramFolderPage.h
   RemoteRepositoryPage.cpp
+  RemoteRepositoryPage.h
   SettingsPage.cpp
+  SettingsPage.h
+  Setup-version.h
   Setup.cpp
+  Setup.h
   SetupWizard.cpp
+  SetupWizard.h
   SharedInstallationPage.cpp
+  SharedInstallationPage.h
   StdAfx.cpp
+  StdAfx.h
   TaskPage.cpp
+  TaskPage.h
   WelcomePage.cpp
+  WelcomePage.h
+  resource.h
+  targetver.h
 )
 
 if(ENABLE_ADDTEXMF)
   set(setup_mfc_sources ${setup_mfc_sources}
     AddTEXMFPage.cpp
+    AddTEXMFPage.h
     EditTEXMFPage.cpp
+    EditTEXMFPage.h
   )
 endif(ENABLE_ADDTEXMF)
 
@@ -137,8 +158,8 @@ target_link_libraries(setup
 
 if(NATIVE_WINDOWS)
   target_link_libraries(setup
-    Wldap32
     version
+    Wldap32
     wininet
     winmm
     ws2_32

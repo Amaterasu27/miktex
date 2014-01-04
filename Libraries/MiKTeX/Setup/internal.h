@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2013 Christian Schenk
+   Copyright (C) 2013-2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -234,8 +234,7 @@ struct ShellLinkData
    _________________________________________________________________________ */
 
 class
-SetupServiceImpl
-  : public SetupService
+SetupServiceImpl : public SetupService, public MiKTeX::Core::IRunProcessCallback, public MiKTeX::Packages::PackageInstallerCallback
 {
 public:
   virtual MIKTEXTHISCALL ~SetupServiceImpl();
@@ -284,13 +283,43 @@ public:
   virtual void ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName);
 #endif
 
+public:
+  virtual ProgressInfo GetProgressInfo();
+
+public:
+  virtual void SetCallback(/*[in]*/ SetupServiceCallback * pCallback);
+
+public:
+  virtual void Run();
+
 #if defined(MIKTEX_WINDOWS)
 public:
-  virtual void MIKTEXTHISCALL CreateProgramIcons();
+  virtual void CreateProgramIcons();
 #endif
 
 public:
   SetupServiceImpl();
+
+private:
+  void DoTheDownload();
+
+private:
+  void DoPrepareMiKTeXDirect();
+
+private:
+  void DoTheInstallation();
+
+private:
+  virtual bool OnProcessOutput(const void * pOutput, size_t n);
+
+private:
+  virtual void ReportLine(const char * lpszLine);
+
+private:
+  virtual bool OnRetryableError(const char * lpszMessage);
+
+private:
+  virtual bool OnProgress(MiKTeX::Packages::Notification nf);
 
 private:
   int refCount;
@@ -358,13 +387,40 @@ private:
 #endif
 
 private:
+  void ConfigureMiKTeX();
+
+private:
+  void RunIniTeXMF(const MiKTeX::Core::CommandLineBuilder & cmdLine1);
+
+private:
+  void RunMpm(const MiKTeX::Core::CommandLineBuilder & cmdLine1);
+
+private:
   std::wstring & Expand(const char * lpszSource, std::wstring & dest);
+
+private:
+  bool FindFile(const MiKTeX::Core::PathName & fileName, MiKTeX::Core::PathName & result);
+
+private:
+  void CreateInfoFile();
 
 private:
   void SetupServiceImpl::LogHeader();
 
 private:
   bool logging;
+
+private:
+  bool cancelled;
+
+private:
+  MiKTeX::Packages::PackageManagerPtr pManager;
+
+private:
+  std::auto_ptr<MiKTeX::Packages::PackageInstaller> pInstaller;
+
+private:
+  SetupServiceCallback * pCallback;
 };
 
 /* _________________________________________________________________________ */
