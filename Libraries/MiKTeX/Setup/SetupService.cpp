@@ -536,7 +536,10 @@ void
 SetupServiceImpl::DoTheDownload()
 {
   // initialize installer
-  pInstaller->SetRepository(options.RemotePackageRepository);
+  if (! options.RemotePackageRepository.empty())
+  {
+    pInstaller->SetRepository(options.RemotePackageRepository);
+  }
   pInstaller->SetDownloadDirectory(options.LocalPackageRepository);
   pInstaller->SetPackageLevel(options.PackageLevel);
   pInstaller->SetCallback(this);

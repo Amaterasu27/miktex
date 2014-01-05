@@ -1094,6 +1094,8 @@ endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
 
+add_subdirectory(${rel_miktexsetup_dir})
+
 add_subdirectory(${rel_makex_dir})
 
 add_subdirectory(${rel_initexmf_dir})
