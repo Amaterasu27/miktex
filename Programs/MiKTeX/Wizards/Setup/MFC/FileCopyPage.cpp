@@ -554,8 +554,7 @@ FileCopyPage::OnProgress (/*[in]*/ MiKTeX::Setup::Notification		nf)
       totalSize = static_cast<DWORD>(progressInfo.cbInstallTotal);
 
       // calculate initexmf contribution
-      size_t uSizeExtra =
-	totalIniTeXMFRuns * GetIniTeXMFRunSize();
+      size_t uSizeExtra = 0;
 
       overallExpenditure = totalSize + uSizeExtra;
       if (progressInfo.cbPackageInstallTotal)
@@ -649,40 +648,6 @@ FileCopyPage::WorkerThread (/*[in]*/ void * pParam)
     }
 
   return (0);
-}
-
-/* _________________________________________________________________________
-
-   FileCopyPage::GetIniTeXMFRunSize
-
-   Calculate the contribution of one initexmf run to the total size.
-   _________________________________________________________________________ */
-
-size_t
-FileCopyPage::GetIniTeXMFRunSize ()
-  const
-{
-  MIKTEX_ASSERT (totalSize > 0);
-  return (totalSize / 200 + 1);
-}
-
-/* _________________________________________________________________________
-
-   FileCopyPage::CalcutaleExpenditure
-   _________________________________________________________________________ */
-
-void
-FileCopyPage::CalculateExpenditure ()
-{
-  if (theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository
-      || theApp.GetSetupTask() == SetupTask::InstallFromCD)
-    {
-      totalIniTeXMFRuns = 8;
-    }
-  else
-    {
-      totalIniTeXMFRuns = 2;
-    }
 }
 
 /* _________________________________________________________________________

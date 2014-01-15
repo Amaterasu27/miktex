@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,13 +29,6 @@ endif(BUILDING_MIKTEX)
 
 set(screenshots_png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/autoinstall.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-license.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-shared.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-installdir.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-settings.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-info.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-progress.png
-  ${CMAKE_CURRENT_SOURCE_DIR}/Images/basic-finish.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/browselocaltexmf.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/localtexmf.png
   ${CMAKE_CURRENT_SOURCE_DIR}/Images/mo-general.png
@@ -72,7 +65,6 @@ if(BUILDING_MIKTEX)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/manual")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/packaging")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/relnotes")
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html/roadmap")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/png75")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/faq")
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/www/manual")
@@ -432,134 +424,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
-## installation instructions
-
-if(BUILDING_MIKTEX)
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/install.html
-    COMMAND
-	${PERL_EXE} ${runxsltproc_perl}
-		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/install.html
-		html.xsl
-		install.xml
-    DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
-	${entities_ent}
-	${html_xsl}
-    VERBATIM
-  )
-
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/install.tex
-    COMMAND
-	${PERL_EXE} ${runxsltproc_perl}
-		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/install.tex
-		db2latex-install.xsl
-		install.xml
-    DEPENDS
-	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/install.xml
-	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-install.xsl
-	${entities_ent}
-    VERBATIM
-  )
-
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-    COMMAND
-	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-    COMMAND
-	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_BINARY_DIR}/png75
-		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-    COMMAND
-  	${CMAKE_COMMAND} -E
-		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
-		${TEXIFY_EXE} --pdf ${CMAKE_CURRENT_BINARY_DIR}/install.tex
-    COMMAND
-  	${CMAKE_COMMAND} -E copy
-		${CMAKE_CURRENT_BINARY_DIR}/scratch/install.pdf
-		${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-    DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/install.tex
-	${screenshots75_png}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    VERBATIM
-  )
-
-  install(
-    FILES
-	${CMAKE_CURRENT_BINARY_DIR}/install.html
-	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
-    DESTINATION
-	${docdir}
-  )
-endif(BUILDING_MIKTEX)
-
-###############################################################################
-## preview
-
-if(BUILDING_MIKTEX)
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/preview.tex
-    COMMAND
-	${PERL_EXE} ${runxsltproc_perl}
-		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/preview.tex
-		db2latex-preview.xsl
-		preview.xml
-    DEPENDS
-        ${CMAKE_CURRENT_SOURCE_DIR}/preview.xml
-        ${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
-	${entities_ent}
-	${CMAKE_SOURCE_DIR}/${rel_xsl_dir}/db2latex-preview.xsl
-	${CMAKE_BINARY_DIR}/${rel_xsl_dir}/db2latex-common.xsl
-    VERBATIM
-  )
-
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
-    COMMAND
-	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/scratch
-    COMMAND
-	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_BINARY_DIR}/png75
-		${CMAKE_CURRENT_BINARY_DIR}/scratch/images
-    COMMAND
-  	${CMAKE_COMMAND} -E
-		chdir ${CMAKE_CURRENT_BINARY_DIR}/scratch
-		${TEXIFY_EXE} --pdf ${CMAKE_CURRENT_BINARY_DIR}/preview.tex
-    COMMAND
-  	${CMAKE_COMMAND} -E copy
-		${CMAKE_CURRENT_BINARY_DIR}/scratch/preview.pdf
-		${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
-    DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/preview.tex
-	${screenshots75_png}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    VERBATIM
-  )
-
-  install(
-    FILES
-	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
-    DESTINATION
-	${docdir}
-  )
-endif(BUILDING_MIKTEX)
-
-###############################################################################
 ## packaging guide
 
 if(BUILDING_MIKTEX)
@@ -589,7 +453,6 @@ if(BUILDING_MIKTEX)
 		packaging.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
-	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/packaging.xml
 	${entities_ent}
 	${html_xsl}
@@ -637,7 +500,6 @@ if(BUILDING_MIKTEX)
 		relnotes.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
-	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
 	${html_xsl}
@@ -674,7 +536,6 @@ if(BUILDING_MIKTEX)
 		relnotes.xml
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/version.ent
-	${CMAKE_CURRENT_SOURCE_DIR}/changes.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/relnotes.xml
 	${entities_ent}
 	${www_xsl}
@@ -914,49 +775,6 @@ if(BUILDING_MIKTEX)
 endif(BUILDING_MIKTEX)
 
 ###############################################################################
-## roadmap
-
-if(BUILDING_MIKTEX)
-  add_custom_command(
-    OUTPUT
-	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
-    COMMAND
-  	${PERL_EXE} ${rmtree_perl} ${CMAKE_CURRENT_BINARY_DIR}/html/roadmap
-    COMMAND
-	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_SOURCE_DIR}/${rel_docbook_xsl_dir}/images
-		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/images
-    COMMAND
-	${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_CURRENT_SOURCE_DIR}/Images
-		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/images
-    COMMAND
-	${CMAKE_COMMAND} -E copy
-		${miktexman_css}
-		${CMAKE_CURRENT_BINARY_DIR}/html/roadmap
-    COMMAND
-	${PERL_EXE} ${runxsltproc_perl}
-		--path \"${xslt_path}\"
-		--output ${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
-		html.xsl
-		roadmap.xml
-    DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/version.ent
-	${CMAKE_CURRENT_SOURCE_DIR}/roadmap.xml
-	${entities_ent}
-	${html_xsl}
-	${miktexman_css}
-    VERBATIM
-  ) 
-
-  install(
-    DIRECTORY	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/
-    DESTINATION	${docdir}/roadmap
-    PATTERN	".svn" EXCLUDE
-  )
-endif(BUILDING_MIKTEX)
-
-###############################################################################
 ## man pages
 
 if(NOT NATIVE_WINDOWS)
@@ -1010,18 +828,14 @@ if(BUILDING_MIKTEX)
   add_custom_target(all-doc ALL
     DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/faq.chm
-	${CMAKE_CURRENT_BINARY_DIR}/install.html
-	${CMAKE_CURRENT_BINARY_DIR}/install.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/license.html
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.chm
 	${CMAKE_CURRENT_BINARY_DIR}/miktex.pdf
-	${CMAKE_CURRENT_BINARY_DIR}/preview.pdf
 	${CMAKE_CURRENT_BINARY_DIR}/html/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/html/faq/faq.html
 	${CMAKE_CURRENT_BINARY_DIR}/html/manual/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/html/packaging/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/html/relnotes/index.html
-	${CMAKE_CURRENT_BINARY_DIR}/html/roadmap/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/faq.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/faq/index.html
 	${CMAKE_CURRENT_BINARY_DIR}/www/manual/index.html

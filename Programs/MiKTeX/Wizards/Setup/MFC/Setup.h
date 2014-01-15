@@ -227,18 +227,6 @@ public:
   }
 
 public:
-  bool IsRegistryEnabled()
-  {
-    return pSetupService->GetOptions().IsRegistryEnabled;
-  }
-
-public:
-  bool IsRegisterPathEnabled()
-  {
-    return pSetupService->GetOptions().IsRegisterPathEnabled;
-  }
-
-public:
   PathName GetLocalPackageRepository()
   {
     return pSetupService->GetOptions().LocalPackageRepository;
@@ -267,9 +255,6 @@ public:
   {
     return pSetupService->GetOptions().Config;
   }
-
-public:
-  PathName setupPath;
 
 #if ENABLE_ADDTEXMF
 public:
