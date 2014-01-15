@@ -112,7 +112,7 @@ SetupService::~SetupService()
    _________________________________________________________________________ */
 
 SetupServiceImpl::SetupServiceImpl()
-  : refCount (0), logging(false)
+  : refCount (0), logging(false), pCallback(0)
 {
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
@@ -166,6 +166,148 @@ void SetupServiceImpl::Release()
   {
     delete this;
   }
+}
+
+/* _________________________________________________________________________
+
+   SetupService::GetDefaultLocalRepository
+   _________________________________________________________________________ */
+
+PathName SetupService::GetDefaultLocalRepository()
+{
+  PathName ret;
+  string val;
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER, MIKTEX_REGVAL_LOCAL_REPOSITORY, val))
+  {
+    ret = val;
+  }
+  else
+    {
+#if defined(MIKTEX_WINDOWS)
+      // try Internet Explorer download directory
+      AutoHKEY hkey;
+      LONG res = RegOpenKeyExW(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Internet Explorer", 0, KEY_READ, &hkey);
+      if (res == ERROR_SUCCESS)
+      {
+	DWORD type;
+	DWORD len = static_cast<DWORD>(ret.GetCapacity() * sizeof(ret[0]));
+	res = RegQueryValueExA(hkey.Get(), "Download Directory", 0, &type, reinterpret_cast<unsigned char *>(ret.GetBuffer()), &len);
+      }
+      if (res != ERROR_SUCCESS || ! Directory::Exists(ret))
+      {
+	ret = "";
+      }
+#endif
+      if (ret.Empty())
+      {
+	// default is "%TEMP%\MiKTeX X.Y Packages"
+	ret.SetToTempDirectory();
+      }
+      ret += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR " ";
+      ret.Append (T_("Setup"), false);
+  }
+  return ret;
+}
+
+/* _________________________________________________________________________
+
+   SetupService::SearchLocalRepository
+   _________________________________________________________________________ */
+
+PackageLevel SetupService::SearchLocalRepository(/*[out]*/ PathName & localRepository, PackageLevel requestedPackageLevel, /*[out]*/ bool & prefabricated)
+{
+  PackageLevel packageLevel_ = PackageLevel::None;
+
+  // try current directory
+  localRepository.SetToCurrentDirectory();
+  packageLevel_ = SetupService::TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
+  {
+    prefabricated = true;
+    return packageLevel_;
+  }
+
+  // try my directory
+  localRepository = SessionWrapper(true)->GetMyLocation();
+  packageLevel_ = SetupService::TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
+  {
+    prefabricated = true;
+    return packageLevel_;
+  }
+
+  // try ..\tm\packages
+  localRepository = SessionWrapper(true)->GetMyLocation();
+  localRepository += "..";
+  localRepository += "tm";
+  localRepository += "packages";
+  localRepository.MakeAbsolute ();
+  packageLevel_ = SetupService::TestLocalRepository(localRepository, requestedPackageLevel);
+  if (packageLevel_ != PackageLevel::None)
+  {
+    prefabricated = true;
+    return packageLevel_;
+  }
+
+  // try last directory
+  if (PackageManager::TryGetLocalPackageRepository(localRepository))
+  {
+    packageLevel_ = SetupService::TestLocalRepository(localRepository, requestedPackageLevel);
+    if (packageLevel_ != PackageLevel::None)
+    {
+      prefabricated = false;
+      return packageLevel_;
+    }
+  }
+
+  return PackageLevel::None;
+}
+
+/* _________________________________________________________________________
+
+   SetupService::TestLocalRepository
+   _________________________________________________________________________ */
+
+PackageLevel SetupService::TestLocalRepository(const PathName & pathRepository, PackageLevel requestedPackageLevel)
+{
+  PathName pathInfoFile (pathRepository, DOWNLOAD_INFO_FILE);
+  if (! File::Exists(pathInfoFile))
+  {
+    return PackageLevel::None;
+  }
+  StreamReader stream(pathInfoFile);
+  string firstLine;
+  bool haveFirstLine = stream.ReadLine(firstLine);
+  stream.Close();
+  if (! haveFirstLine)
+  {
+    return PackageLevel::None;
+  }
+  PackageLevel packageLevel_ = PackageLevel::None;
+  if (firstLine.find(ESSENTIAL_MIKTEX) != string::npos)
+  {
+    packageLevel_ = PackageLevel::Essential;
+  }
+  else if (firstLine.find(BASIC_MIKTEX) != string::npos)
+  {
+    packageLevel_ = PackageLevel::Basic;
+  }
+  else if (firstLine.find(COMPLETE_MIKTEX) != string::npos
+    || firstLine.find(COMPLETE_MIKTEX_LEGACY) != string::npos)
+  {
+    packageLevel_ = PackageLevel::Complete;
+  }
+  else
+  {
+    // README.TXT doesn't look right
+    return PackageLevel::None;
+  }
+  if (requestedPackageLevel > packageLevel_)
+  {
+    // doesn't have the requested package set
+    return PackageLevel::None;
+  }
+  return packageLevel_;
 }
 
 /* _________________________________________________________________________
@@ -535,11 +677,35 @@ void SetupServiceImpl::Run()
 void
 SetupServiceImpl::DoTheDownload()
 {
-  // initialize installer
-  if (! options.RemotePackageRepository.empty())
+  // complete options
+  if (options.LocalPackageRepository.Empty())
   {
-    pInstaller->SetRepository(options.RemotePackageRepository);
+    PackageLevel foundPackageLevel = SearchLocalRepository(options.LocalPackageRepository, options.PackageLevel, options.IsPrefabricated);
+    if (foundPackageLevel == PackageLevel::None)
+    {
+      // check the default location
+      options.LocalPackageRepository = SetupService::GetDefaultLocalRepository();
+      foundPackageLevel = SetupService::TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
+      if (options.PackageLevel == PackageLevel::None)
+      {
+	options.PackageLevel = foundPackageLevel;
+      }
+    }
   }
+  if (options.PackageLevel == PackageLevel::None)
+  {
+    options.PackageLevel = PackageLevel::Complete;
+  }
+  if (options.RemotePackageRepository.empty())
+  {
+    if (! pManager->TryGetRemotePackageRepository(options.RemotePackageRepository))
+    {
+      options.RemotePackageRepository = pManager->PickRepositoryUrl();
+    }
+  }
+
+  // initialize installer
+  pInstaller->SetRepository(options.RemotePackageRepository);
   pInstaller->SetDownloadDirectory(options.LocalPackageRepository);
   pInstaller->SetPackageLevel(options.PackageLevel);
   pInstaller->SetCallback(this);
@@ -571,7 +737,7 @@ SetupServiceImpl::DoTheDownload()
     PathName licenseFileDest (options.LocalPackageRepository, LICENSE_FILE);
     if (ComparePaths(licenseFile.Get(), licenseFileDest.Get(), true) != 0)
     {
-      File::Copy (licenseFile, licenseFileDest);
+      File::Copy(licenseFile, licenseFileDest);
     }
   }
 

@@ -872,121 +872,6 @@ CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
 
 /* _________________________________________________________________________
 
-   TestLocalRepository
-   _________________________________________________________________________ */
-
-#define LICENSE_FILE "LICENSE.TXT"
-#define DOWNLOAD_INFO_FILE "README.TXT"
-
-#define BASIC_MIKTEX "\"Basic MiKTeX\""
-#define BASIC_MIKTEX_LEGACY "\"Small MiKTeX\""
-#define COMPLETE_MIKTEX "\"Complete MiKTeX\""
-#define COMPLETE_MIKTEX_LEGACY "\"Total MiKTeX\""
-#define ESSENTIAL_MIKTEX "\"Essential MiKTeX\""
-
-PackageLevel
-TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
-		     /*[in]*/ PackageLevel		requestedPackageLevel)
-{
-  PathName pathInfoFile (pathRepository, DOWNLOAD_INFO_FILE);
-  if (! File::Exists(pathInfoFile))
-    {
-      return (PackageLevel::None);
-    }
-  StreamReader stream (pathInfoFile);
-  string firstLine;
-  bool haveFirstLine = stream.ReadLine(firstLine);
-  stream.Close ();
-  if (! haveFirstLine)
-    {
-      return (PackageLevel::None);
-    }
-  PackageLevel packageLevel_ = PackageLevel::None;
-  if (firstLine.find(ESSENTIAL_MIKTEX) != string::npos)
-    {
-      packageLevel_ = PackageLevel::Essential;
-    }
-  else if (firstLine.find(BASIC_MIKTEX) != string::npos)
-    {
-      packageLevel_ = PackageLevel::Basic;
-    }
-  else if (firstLine.find(COMPLETE_MIKTEX) != string::npos
-	   || firstLine.find(COMPLETE_MIKTEX_LEGACY) != string::npos)
-    {
-      packageLevel_ = PackageLevel::Complete;
-    }
-  else
-    {
-      // README.TXT doesn't look right
-      return (PackageLevel::None);
-    }
-  if (requestedPackageLevel > packageLevel_)
-    {
-      // doesn't have the requested package set
-      return (PackageLevel::None);
-    }
-  return (packageLevel_);
-}
-
-/* _________________________________________________________________________
-
-   SearchLocalRepository
-   _________________________________________________________________________ */
-
-PackageLevel
-SearchLocalRepository (/*[out]*/ PathName &	localRepository,
-		       /*[in]*/ PackageLevel	requestedPackageLevel,
-		       /*[out]*/ bool &		prefabricated)
-{
-  PackageLevel packageLevel_ = PackageLevel::None;
-
-  // try current directory
-  localRepository.SetToCurrentDirectory ();
-  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
-  if (packageLevel_ != PackageLevel::None)
-    {
-      prefabricated = true;
-      return (packageLevel_);
-    }
-
-  // try my directory
-  localRepository = SessionWrapper(true)->GetMyLocation();
-  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
-  if (packageLevel_ != PackageLevel::None)
-    {
-      prefabricated = true;
-      return (packageLevel_);
-    }
-
-  // try ..\tm\packages
-  localRepository = SessionWrapper(true)->GetMyLocation();
-  localRepository += "..";
-  localRepository += "tm";
-  localRepository += "packages";
-  localRepository.MakeAbsolute ();
-  packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
-  if (packageLevel_ != PackageLevel::None)
-    {
-      prefabricated = true;
-      return (packageLevel_);
-    }
-
-  // try last directory
-  if (PackageManager::TryGetLocalPackageRepository(localRepository))
-    {
-      packageLevel_ = TestLocalRepository(localRepository, requestedPackageLevel);
-      if (packageLevel_ != PackageLevel::None)
-      {
-	prefabricated = false;
-	return (packageLevel_);
-      }
-    }
-
-  return (PackageLevel::None);
-}
-
-/* _________________________________________________________________________
-
    IsMiKTeXDirect
    _________________________________________________________________________ */
 
@@ -1022,63 +907,13 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 
 /* _________________________________________________________________________
 
-   GetDefaultLocalRepository
-   _________________________________________________________________________ */
-
-PathName
-GetDefaultLocalRepository ()
-{
-  PathName ret;
-  string val;
-  if (SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_PACKAGE_MANAGER,
-			  MIKTEX_REGVAL_LOCAL_REPOSITORY,
-			  val))
-    {
-      ret = val;
-    }
-  else
-    {
-      // try Internet Explorer download directory
-      AutoHKEY hkey;
-      LONG res =
-	RegOpenKeyExW(HKEY_CURRENT_USER,
-		      L"SOFTWARE\\Microsoft\\Internet Explorer",
-		      0,
-		      KEY_READ,
-		      &hkey);
-      if (res == ERROR_SUCCESS)
-	{
-	  DWORD type;
-	  DWORD len = static_cast<DWORD>(ret.GetCapacity() * sizeof(ret[0]));
-	  res =
-	    RegQueryValueExA
-	    (hkey.Get(),
-	     "Download Directory",
-	     0,
-	     &type,
-	     reinterpret_cast<unsigned char *>(ret.GetBuffer()),
-	     &len);
-	}
-      if (res != ERROR_SUCCESS || ! Directory::Exists(ret))
-	{
-	  // default is "%TEMP%\MiKTeX X.Y Packages"
-	  ret.SetToTempDirectory ();
-	}
-      ret += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR " ";
-      ret.Append (T_("Setup"), false);
-    }
-  return (ret);
-}
-
-/* _________________________________________________________________________
-
    SetupGlobalVars
    _________________________________________________________________________ */
 
 void
 SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 {
+  theApp.pSetupService->Initialize();
   SetupOptions options = theApp.pSetupService->GetOptions();
   theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
   options.IsDryRun = cmdinfo.optDryRun;
@@ -1140,15 +975,14 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     options.LocalPackageRepository = cmdinfo.localPackageRepository;
     if (cmdinfo.task != SetupTask::Download)
     {
-      PackageLevel foundPackageLevel =
-	TestLocalRepository(options.LocalPackageRepository, theApp.GetPackageLevel());
+      PackageLevel foundPackageLevel = SetupService::TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
       if (foundPackageLevel == PackageLevel::None)
       {
 	FATAL_MIKTEX_ERROR ("SetupGlobalVars",
 	  T_("The specified local repository does not exist."),
 	  0);
       }
-      if (theApp.GetPackageLevel() == PackageLevel::None)
+      if (options.PackageLevel == PackageLevel::None)
       {
 	options.PackageLevel = foundPackageLevel;
       }
@@ -1156,8 +990,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   }
   else
   {
-    PackageLevel foundPackageLevel =
-      SearchLocalRepository(options.LocalPackageRepository, theApp.GetPackageLevel(), options.IsPrefabricated);
+    PackageLevel foundPackageLevel = SetupService::SearchLocalRepository(options.LocalPackageRepository, options.PackageLevel, options.IsPrefabricated);
     if (foundPackageLevel != PackageLevel::None)
     {
       if (options.PackageLevel == PackageLevel::None)
@@ -1172,8 +1005,8 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     else
     {
       // check the default location
-      options.LocalPackageRepository = GetDefaultLocalRepository();
-      PackageLevel foundPackageLevel = TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
+      options.LocalPackageRepository = SetupService::GetDefaultLocalRepository();
+      PackageLevel foundPackageLevel = SetupService::TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
       if (options.PackageLevel == PackageLevel::None)
       {
 	options.PackageLevel = foundPackageLevel;
@@ -1189,7 +1022,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
     {
       options.Task = SetupTask::InstallFromCD;
     }
-    else if (! options.LocalPackageRepository.Empty() && theApp.GetPackageLevel() != PackageLevel::None)
+    else if (! options.LocalPackageRepository.Empty() && options.PackageLevel != PackageLevel::None)
     {
       options.Task = SetupTask::InstallFromLocalRepository;
     }
@@ -1216,7 +1049,7 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 	     T_("No setup task has been specified."),
 	     0);
 	}
-      if (theApp.GetPackageLevel() == PackageLevel::None)
+      if (options.PackageLevel == PackageLevel::None)
 	{
 	  FATAL_MIKTEX_ERROR
 	    ("SetupGlobalVars",
@@ -1375,13 +1208,6 @@ SetupWizardApplication::InitInstance ()
       char ** argv;
       GetArguments (TU_(m_lpCmdLine), TU_(AfxGetAppName()), argc, argv);
       SetupCommandLineInfo cmdinfo;
-      wchar_t szSetupPath[BufferSizes::MaxPath];
-      if (GetModuleFileNameW(0, szSetupPath, BufferSizes::MaxPath)
-	  == 0)
-	{
-	  FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
-	}
-      setupPath = szSetupPath;
       ReadSetupWizIni (cmdinfo);
       ParseSetupCommandLine (argc, argv, cmdinfo);
       FreeArguments (argc, argv);
@@ -1521,53 +1347,6 @@ ComparePaths (/*[in]*/ const PathName &	path1,
     {
       return (PathName::Compare(path1, path2));
     }
-}
-
-/* _________________________________________________________________________
-
-   ContainsBinDir
-   _________________________________________________________________________ */
-
-bool
-ContainsBinDir (/*[in]*/ const char *	lpszPath)
-{
-  PathName pathBinDir;
-  if (theApp.pSetupService->GetOptions().Task == SetupTask::PrepareMiKTeXDirect)
-    {
-      pathBinDir = theApp.pSetupService->GetOptions().MiKTeXDirectRoot;
-      pathBinDir += "texmf";
-      pathBinDir += MIKTEX_PATH_BIN_DIR;
-    }
-  else
-    {
-      pathBinDir.Set (theApp.GetInstallRoot(), MIKTEX_PATH_BIN_DIR);
-    }
-  CSVList bindir (lpszPath, ';');
-  for (; bindir.GetCurrent() != 0; ++ bindir)
-    {
-      size_t l = StrLen(bindir.GetCurrent());
-      if (l == 0)
-	{
-	  continue;
-	}
-      PathName pathBinDir2;
-      if (bindir.GetCurrent()[0] == '"'
-	  && l > 2
-	  && bindir.GetCurrent()[l - 1] == '"')
-	{
-	  pathBinDir2 = bindir.GetCurrent() + 1;
-	  pathBinDir2[l - 2] = 0;
-	}
-      else
-	{
-	  pathBinDir2 = bindir.GetCurrent();
-	}
-      if (ComparePaths(pathBinDir, pathBinDir2, true) == 0)
-	{
-	  return (true);
-	}
-    }
-  return (false);
 }
 
 /* _________________________________________________________________________

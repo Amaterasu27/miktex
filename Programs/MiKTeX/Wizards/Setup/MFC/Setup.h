@@ -331,10 +331,6 @@ TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
 		   /*[in]*/ const char *	lpszSourceFile,
 		   /*[in]*/ int			lpszSourceLine);
 
-PackageLevel
-TestLocalRepository (/*[in]*/ const PathName &		pathRepository,
-		     /*[in]*/ PackageLevel		requestedPackageLevel);
-
 void
 ReportError (/*[in]*/ const MiKTeXException & e);
 

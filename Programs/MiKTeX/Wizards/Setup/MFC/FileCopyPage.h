@@ -1,6 +1,6 @@
 /* FileCopyPage.h:						-*- C++ -*-
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -23,7 +23,6 @@
 
 class FileCopyPage
   : public CPropertyPage,
-    public IRunProcessCallback,
     public SetupServiceCallback
 {
 private:
@@ -134,15 +133,6 @@ private:
 
 private:
   void
-  CalculateExpenditure ();
-  
-private:
-  size_t
-  GetIniTeXMFRunSize ()
-    const;
-
-private:
-  void
   ReportError (/*[in]*/ const exception & e);
 
 private:
@@ -165,16 +155,10 @@ private:
   CCriticalSection criticalSectionMonitor;
   
 private:
-  int totalIniTeXMFRuns;
-
-private:
   DWORD overallExpenditure;
 
 private:
   DWORD totalSize;
-
-private:
-  size_t completedIniTeXMFRuns;
 
 private:
   struct SharedData

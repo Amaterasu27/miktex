@@ -39,6 +39,7 @@ const char * DEFAULT_TRACE_STREAMS =
    _________________________________________________________________________ */
 
 class Application
+  : SetupServiceCallback
 {
 private:
   void InstallSignalHandler(int sig)
@@ -66,6 +67,18 @@ public:
     InstallSignalHandler(SIGINT);
     InstallSignalHandler(SIGTERM);
   }
+
+public:
+  virtual void ReportLine(/*[in]*/ const char * lpszLine);
+
+public:
+  virtual bool MIKTEXTHISCALL OnRetryableError(const char * lpszMessage);
+
+public:
+  virtual bool MIKTEXTHISCALL OnProgress(MiKTeX::Setup::Notification nf);
+
+public:
+  virtual bool MIKTEXTHISCALL OnProcessOutput(const void * pOutput, size_t n);
 
 public:
   void Main(int argc, const char ** argv);
@@ -186,8 +199,7 @@ void Application::Message(const char *	lpszFormat, ...)
    Application::Verbose
    _________________________________________________________________________ */
 
-void
-Application::Verbose(const char * lpszFormat, ...)
+void Application::Verbose(const char * lpszFormat, ...)
 {
   if (! verbose)
   {
@@ -215,14 +227,52 @@ MIKTEXNORETURN void Application::Error(const char * lpszFormat, ...)
 
 /* _________________________________________________________________________
 
+   Application::ReportLine
+   _________________________________________________________________________ */
+
+void Application::ReportLine(const char * lpszLine)
+{
+  Verbose("%s\n", lpszLine);
+}
+
+/* _________________________________________________________________________
+
+   Application::OnRetryableError
+   _________________________________________________________________________ */
+
+bool Application::OnRetryableError (const char * lpszMessage)
+{
+  return false;
+}
+
+/* _________________________________________________________________________
+
+   Application::OnProgress
+   _________________________________________________________________________ */
+
+bool Application::OnProgress(MiKTeX::Setup::Notification nf)
+{
+  return ! interrupted;
+}
+
+/* _________________________________________________________________________
+
+   Application::OnProcessOutput
+   _________________________________________________________________________ */
+
+bool Application::OnProcessOutput(const void * pOutput, size_t n)
+{
+  Verbose ("%.*s", n, reinterpret_cast<const char *>(pOutput));
+  return ! interrupted;
+}
+
+/* _________________________________________________________________________
+
    Application::Main
    _________________________________________________________________________ */
 
 void Application::Main(int argc, const char ** argv)
 {
-  pSetupService.Create ();
-  SetupOptions setupOptions = pSetupService->GetOptions();
-
   Session::InitInfo initInfo;
   initInfo.SetProgramInvocationName(argv[0]);
 
@@ -277,11 +327,6 @@ void Application::Main(int argc, const char ** argv)
     Error("%s", msg.c_str());
   }
       
-  if (popt.GetArgs() != 0)
-  {
-    Error(T_("This utility does not accept non-option arguments."));
-  }
-
   if (optVersion)
   {
     printf ("%s\n", Utils::MakeProgramVersionString
@@ -297,11 +342,37 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     return;
   }
 
-  setupOptions.Task = SetupTask::Download;
+  const char ** leftovers = popt.GetArgs();
+
+  int argCount = popt.GetArgCount();
+
+  if (argCount == 0)
+  {
+    Error(T_("Missing arguments."));
+  }
+
+  if (argCount > 1)
+  {
+    Error(T_("Too many arguments."));
+  }
+
+  pSession.CreateSession(initInfo);
+
+  pSetupService.Create ();
+  SetupOptions setupOptions = pSetupService->GetOptions();
+
+  if (strcmp("download", leftovers[0]) == 0)
+  {
+    setupOptions.Task = SetupTask::Download;
+  }
+  else
+  {
+    Error(T_("Unknown/unsupported setup task: %s"), leftovers[0]);
+  }
 
   pSetupService->SetOptions(setupOptions);
 
-  pSession.CreateSession(initInfo);
+  pSetupService->SetCallback(this);
 
   if (optAdmin)
   {

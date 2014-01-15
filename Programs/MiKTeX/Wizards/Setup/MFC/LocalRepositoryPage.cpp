@@ -208,7 +208,7 @@ LocalRepositoryPage::OnKillActive ()
 	  if (theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository)
 	    {
 	      PackageLevel foundPackageLevel =
-		TestLocalRepository(PathName(fileName),
+		SetupService::TestLocalRepository(PathName(fileName),
 				    theApp.GetPackageLevel());
 	      if (foundPackageLevel == PackageLevel::None)
 		{
