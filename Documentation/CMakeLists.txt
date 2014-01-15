@@ -98,15 +98,12 @@ set(manual_xml_files
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/MPINPUTS.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/TEXINPUTS.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/EnvVars/TFMFONTS.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/basicsetup.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/netsetup.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/configuring.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/envvars.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/features.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/installing.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/intro.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/localguide.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/Manual/prerequisites.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/printing.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/tcxtables.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/Manual/texfeatures.xml
