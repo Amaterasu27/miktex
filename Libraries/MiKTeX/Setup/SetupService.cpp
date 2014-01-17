@@ -22,6 +22,10 @@
 #include <miktex/Core/Registry>
 #include <miktex/PackageManager/PackageManager>
 
+#if defined(MIKTEX_WINDOWS)
+#  include <ShlObj.h>
+#endif
+
 #include "internal.h"
 
 #include "setup-version.h"
@@ -117,6 +121,24 @@ SetupServiceImpl::SetupServiceImpl()
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
   pManager = PackageManager::Create();
+
+  string path;
+  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_COMMON_INSTALL, path))
+  {
+    options.Config.commonInstallRoot = path;
+  }
+  else
+  {
+#if defined(MIKTEX_WINDOWS)
+    // default location: "C:\Program Files\MiKTeX X.Y"
+    options.Config.commonInstallRoot = Utils::GetFolderPath(
+      CSIDL_PROGRAM_FILES,
+      CSIDL_PROGRAM_FILES,
+      true);
+    options.Config.commonInstallRoot += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
+#endif
+  }
+
 }
 
 /* _________________________________________________________________________
@@ -648,10 +670,7 @@ void SetupServiceImpl::SetCallback(SetupServiceCallback * pCallback)
 
 void SetupServiceImpl::Run()
 {
-  pInstaller = auto_ptr<PackageInstaller>(pManager->CreateInstaller());
-  pInstaller->SetNoPostProcessing(true);
-  pInstaller->SetNoLocalServer(true);
-  cancelled = false;
+  Initialize();
   switch (options.Task.Get())
   {
   case SetupTask::Download:
@@ -671,21 +690,35 @@ void SetupServiceImpl::Run()
   
 /* _________________________________________________________________________
 
-   SetupServiceImpl::DoTheDownload
+   SetupServiceImpl::Initialize
    _________________________________________________________________________ */
 
-void
-SetupServiceImpl::DoTheDownload()
+void SetupServiceImpl::Initialize()
 {
+  pInstaller = auto_ptr<PackageInstaller>(pManager->CreateInstaller());
+  pInstaller->SetNoPostProcessing(true);
+  pInstaller->SetNoLocalServer(true);
+  cancelled = false;
+
   // complete options
-  if (options.LocalPackageRepository.Empty())
+  if (options.Task == SetupTask::Download || options.Task == SetupTask::InstallFromLocalRepository)
   {
-    PackageLevel foundPackageLevel = SearchLocalRepository(options.LocalPackageRepository, options.PackageLevel, options.IsPrefabricated);
-    if (foundPackageLevel == PackageLevel::None)
+    if (options.LocalPackageRepository.Empty())
     {
-      // check the default location
-      options.LocalPackageRepository = SetupService::GetDefaultLocalRepository();
-      foundPackageLevel = SetupService::TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
+      PackageLevel foundPackageLevel = SearchLocalRepository(options.LocalPackageRepository, options.PackageLevel, options.IsPrefabricated);
+      if (foundPackageLevel == PackageLevel::None)
+      {
+	// check the default location
+	options.LocalPackageRepository = SetupService::GetDefaultLocalRepository();
+	foundPackageLevel = SetupService::TestLocalRepository(options.LocalPackageRepository, options.PackageLevel);
+      }
+      if (options.Task == SetupTask::InstallFromLocalRepository)
+      {
+	if (foundPackageLevel < options.PackageLevel)
+	{
+	  FATAL_MIKTEX_ERROR("SetupServiceImp::Initialize", "no local package directory found", 0);
+	}
+      }
       if (options.PackageLevel == PackageLevel::None)
       {
 	options.PackageLevel = foundPackageLevel;
@@ -696,7 +729,20 @@ SetupServiceImpl::DoTheDownload()
   {
     options.PackageLevel = PackageLevel::Complete;
   }
-  if (options.RemotePackageRepository.empty())
+  if (options.Config.userInstallRoot.Empty())
+  {
+    if (options.Task == SetupTask::InstallFromCD ||
+      options.Task == SetupTask::InstallFromLocalRepository ||
+      options.Task == SetupTask::InstallFromRemoteRepository)
+    {
+#if defined(MIKTEX_WINDOWS)
+      // FIXME
+      options.Config.userInstallRoot = "C:\\MiKTeX";
+#endif
+    }
+  }
+  if (options.RemotePackageRepository.empty() &&
+    (options.Task == SetupTask::Download || options.Task == SetupTask::InstallFromRemoteRepository))
   {
     if (! pManager->TryGetRemotePackageRepository(options.RemotePackageRepository))
     {
@@ -705,20 +751,43 @@ SetupServiceImpl::DoTheDownload()
   }
 
   // initialize installer
-  pInstaller->SetRepository(options.RemotePackageRepository);
-  pInstaller->SetDownloadDirectory(options.LocalPackageRepository);
+  if (options.Task == SetupTask::InstallFromCD)
+  {
+    pInstaller->SetRepository(options.MiKTeXDirectRoot.Get());
+  }
+  else if (options.Task == SetupTask::Download)
+  {
+    pInstaller->SetRepository(options.RemotePackageRepository);
+    pInstaller->SetDownloadDirectory(options.LocalPackageRepository);
+    // remember local repository folder
+    SessionWrapper(true)->SetConfigValue(
+      MIKTEX_REGKEY_PACKAGE_MANAGER,
+      MIKTEX_REGVAL_LOCAL_REPOSITORY,
+      options.LocalPackageRepository.Get());
+    // create the local repository directory
+    Directory::Create(options.LocalPackageRepository);
+  }
+  else if (options.Task == SetupTask::InstallFromLocalRepository)
+  {
+    pInstaller->SetRepository(options.LocalPackageRepository.Get());
+    // remember local repository folder
+    if (! options.IsPrefabricated)
+    {
+      pManager->SetLocalPackageRepository(options.LocalPackageRepository);
+    }
+  }
   pInstaller->SetPackageLevel(options.PackageLevel);
   pInstaller->SetCallback(this);
+}
 
-  // create the local repository directory
-  Directory::Create(options.LocalPackageRepository);
+/* _________________________________________________________________________
 
-  // remember local repository folder
-  SessionWrapper(true) ->SetConfigValue(
-    MIKTEX_REGKEY_PACKAGE_MANAGER,
-    MIKTEX_REGVAL_LOCAL_REPOSITORY,
-    options.LocalPackageRepository.Get());
+   SetupServiceImpl::DoTheDownload
+   _________________________________________________________________________ */
 
+void
+SetupServiceImpl::DoTheDownload()
+{
   // start downloader in the background
   pInstaller->DownloadAsync();
 
@@ -841,22 +910,6 @@ void SetupServiceImpl::DoTheInstallation()
     pCallback->ReportLine(T_("Loading package database..."));
   }
   pManager->LoadDatabase(pathDB);
-
-  if (options.Task == SetupTask::InstallFromCD)
-  {
-    pInstaller->SetRepository(options.MiKTeXDirectRoot.Get());
-  }
-  else
-  {
-    pInstaller->SetRepository(options.LocalPackageRepository.Get());
-    // remember local repository folder
-    if (! options.IsPrefabricated)
-    {
-      pManager->SetLocalPackageRepository(options.LocalPackageRepository);
-    }
-  }
-  pInstaller->SetPackageLevel(options.PackageLevel);
-  pInstaller->SetCallback(this);
 
   // create the destination directory
   Directory::Create(GetInstallRoot());

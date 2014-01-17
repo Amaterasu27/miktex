@@ -301,6 +301,9 @@ public:
   SetupServiceImpl();
 
 private:
+  void Initialize();
+
+private:
   void DoTheDownload();
 
 private:

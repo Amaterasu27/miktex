@@ -123,6 +123,7 @@ enum Option
 {
   OPT_AAA = 1,
   OPT_ADMIN,
+  OPT_PACKAGE_LEVEL,
   OPT_QUIET,
   OPT_TRACE,
   OPT_VERBOSE,
@@ -144,6 +145,11 @@ const struct poptOption Application::aoption[] = {
   {
     "quiet", 0, POPT_ARG_NONE, 0, OPT_QUIET,
     T_("Suppress all output (except errors)."), 0
+  },
+
+  {
+    "package-level", 0, POPT_ARG_STRING, 0, OPT_PACKAGE_LEVEL,
+    T_("Set the package level (essential, basic, ...)."), 0
   },
 
   {
@@ -278,6 +284,7 @@ void Application::Main(int argc, const char ** argv)
 
   bool optAdmin = false;
   bool optVersion = false;
+  PackageLevel optPackageLevel = PackageLevel::None;
   Cpopt popt(argc, argv, aoption);
   int option;
 
@@ -288,6 +295,28 @@ void Application::Main(int argc, const char ** argv)
     {
     case OPT_ADMIN:
       optAdmin = true;
+      break;
+    case OPT_PACKAGE_LEVEL:
+      if (StringCompare(lpszOptArg, "essential") == 0)
+      {
+	optPackageLevel = PackageLevel::Essential;
+      }
+      else if (StringCompare(lpszOptArg, "basic") == 0)
+      {
+	optPackageLevel = PackageLevel::Basic;
+      }
+      else if (StringCompare(lpszOptArg, "advanced") == 0)
+      {
+	optPackageLevel = PackageLevel::Advanced;
+      }
+      else if (StringCompare(lpszOptArg, "complete") == 0)
+      {
+	optPackageLevel = PackageLevel::Complete;
+      }
+      else
+      {
+	Error("Application::Main", T_("Invalid package level."), 0);
+      }
       break;
     case OPT_QUIET:
       if (verbose)
@@ -365,9 +394,18 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
   {
     setupOptions.Task = SetupTask::Download;
   }
+  else if (strcmp("install", leftovers[0]) == 0)
+  {
+    setupOptions.Task = SetupTask::InstallFromLocalRepository;
+  }
   else
   {
     Error(T_("Unknown/unsupported setup task: %s"), leftovers[0]);
+  }
+
+  if (optPackageLevel != PackageLevel::None)
+  {
+    setupOptions.PackageLevel = optPackageLevel;
   }
 
   pSetupService->SetOptions(setupOptions);
