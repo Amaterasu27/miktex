@@ -551,13 +551,7 @@ FileCopyPage::OnProgress (/*[in]*/ MiKTeX::Setup::Notification		nf)
 	    || theApp.GetSetupTask() == SetupTask::InstallFromCD)
 	   && progressInfo.cbInstallTotal > 0)
     {
-      totalSize = static_cast<DWORD>(progressInfo.cbInstallTotal);
-
-      // calculate initexmf contribution
-      size_t uSizeExtra = 0;
-
-      overallExpenditure = totalSize + uSizeExtra;
-      if (progressInfo.cbPackageInstallTotal)
+      if (progressInfo.cbPackageInstallTotal > 0)
 	{
 	  int oldValue = sharedData.progress1Pos;
 	  sharedData.progress1Pos
@@ -572,7 +566,7 @@ FileCopyPage::OnProgress (/*[in]*/ MiKTeX::Setup::Notification		nf)
       sharedData.progress2Pos
 	= static_cast<int>(
 	  ((static_cast<double>(progressInfo.cbInstallCompleted)
-	    / overallExpenditure)
+	    / progressInfo.cbInstallTotal)
 	   * PROGRESS_MAX));
       visibleProgress =
 	(visibleProgress || (sharedData.progress2Pos != oldValue));

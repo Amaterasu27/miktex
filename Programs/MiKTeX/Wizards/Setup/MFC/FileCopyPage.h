@@ -155,12 +155,6 @@ private:
   CCriticalSection criticalSectionMonitor;
   
 private:
-  DWORD overallExpenditure;
-
-private:
-  DWORD totalSize;
-
-private:
   struct SharedData
   {
     SharedData ()

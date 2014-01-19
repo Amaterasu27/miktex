@@ -3779,7 +3779,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
       printf ("%s\n", Utils::MakeProgramVersionString(TheNameOfTheGame,
 	MIKTEX_COMPONENT_VERSION_STR).c_str());
       printf (T_("\n\
-Copyright (C) 1996-2012 Christian Schenk\n\
+Copyright (C) 1996-2014 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       return;

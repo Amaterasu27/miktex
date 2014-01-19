@@ -913,7 +913,6 @@ IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
 void
 SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 {
-  theApp.pSetupService->Initialize();
   SetupOptions options = theApp.pSetupService->GetOptions();
   theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
   options.IsDryRun = cmdinfo.optDryRun;

@@ -28,6 +28,10 @@
 
 #include "internal.h"
 
+#if defined(MIKTEX_WINDOWS)
+#  include "win/winSetupService.h"
+#endif
+
 #include "setup-version.h"
 
 using namespace MiKTeX::Core;
@@ -70,35 +74,6 @@ SETUPSTATICFUNC(int) ComparePaths(const PathName & path1, const PathName & path2
     {
       return (PathName::Compare(path1, path2));
     }
-}
-
-/* _________________________________________________________________________
-
-   GetFileVersion
-   _________________________________________________________________________ */
-
-SETUPSTATICFUNC(VersionNumber) GetFileVersion(const PathName &	path)
-{
-  DWORD dwHandle;
-  DWORD size = GetFileVersionInfoSizeW(path.ToWideCharString().c_str(), &dwHandle);
-  if (size == 0)
-  {
-    FATAL_WINDOWS_ERROR("GetFileVersionInfoSizeW", path.Get());
-  }
-  CharBuffer<wchar_t> buf (size);
-  if (! GetFileVersionInfoW(path.ToWideCharString().c_str(), dwHandle, size, buf.GetBuffer()))
-  {
-    FATAL_WINDOWS_ERROR("GetFileVersionInfoW", path.Get());
-  }
-  UINT len;
-  void * pVer;
-  if (! VerQueryValueW(buf.GetBuffer(), L"\\", &pVer, &len))
-  {
-    FATAL_WINDOWS_ERROR("VerQueryValueW", path.Get());
-  }
-  return VersionNumber(
-    reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionMS,
-    reinterpret_cast<VS_FIXEDFILEINFO*>(pVer)->dwFileVersionLS);
 }
 
 /* _________________________________________________________________________
@@ -163,7 +138,9 @@ SetupServiceImpl::~SetupServiceImpl()
 
 SetupService * SetupService::Create()
 {
-  return new SetupServiceImpl();
+#if defined(MIKTEX_WINDOWS)
+  return new winSetupServiceImpl();
+#endif
 }
 
 /* _________________________________________________________________________
@@ -612,12 +589,10 @@ SetupServiceImpl::ULogClose(bool finalize)
     if (finalize)
     {
       ULogAddFile(GetULogFileName());
-#if defined(MIKTEX_WINDOWS)
       if (! options.IsPortable)
       {
 	RegisterUninstaller();
       }
-#endif
     }
   }
   catch (const exception &)
@@ -994,8 +969,6 @@ void SetupServiceImpl::ConfigureMiKTeX()
   PathName initexmf(GetInstallRoot());
   initexmf += MIKTEX_PATH_BIN_DIR;
   initexmf += MIKTEX_INITEXMF_EXE;
-
-  VersionNumber initexmfVer = GetFileVersion(initexmf);
 
   if (pCallback != 0 && ! pCallback->OnProgress(MiKTeX::Setup::Notification::ConfigureBegin))
   {

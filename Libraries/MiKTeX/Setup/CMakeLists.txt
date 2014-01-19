@@ -29,6 +29,7 @@ set(${setup_dll_name}_sources
   internal.h
   setup-version.h
   win/winSetupService.cpp
+  win/winSetupService.h
 )
 
 if(NATIVE_WINDOWS)

@@ -207,29 +207,6 @@ AssertValidString (/*[in]*/ const char *	lp,
 
 /* _________________________________________________________________________
 
-   ShellLinkData
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-struct ShellLinkData  
-{
-  bool isUrl;
-  const char * lpszFolder;
-  const char * lpszName;
-  const char * lpszPathName;
-  unsigned long flags;
-  const char * lpszDescription;
-  const char * lpszArgs;
-  const char * lpszIconPath;
-  int iconIndex;
-  const char * lpszWorkingDir;
-  int showCmd;
-  WORD hotKey;
-};
-#endif
-
-/* _________________________________________________________________________
-
    SetupServiceImpl
    _________________________________________________________________________ */
 
@@ -278,11 +255,6 @@ public:
 public:
   virtual void ULogAddFile(const MiKTeX::Core::PathName & path);
 
-#if defined(MIKTEX_WINDOWS)
-public:
-  virtual void ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName);
-#endif
-
 public:
   virtual ProgressInfo GetProgressInfo();
 
@@ -292,66 +264,64 @@ public:
 public:
   virtual void Run();
 
-#if defined(MIKTEX_WINDOWS)
-public:
-  virtual void CreateProgramIcons();
-#endif
+protected:
+    virtual void RegisterUninstaller() = 0;
 
-public:
+protected:
   SetupServiceImpl();
 
-private:
+protected:
   void Initialize();
 
-private:
+protected:
   void DoTheDownload();
 
-private:
+protected:
   void DoPrepareMiKTeXDirect();
 
-private:
+protected:
   void DoTheInstallation();
 
-private:
+protected:
   virtual bool OnProcessOutput(const void * pOutput, size_t n);
 
-private:
+protected:
   virtual void ReportLine(const char * lpszLine);
 
-private:
+protected:
   virtual bool OnRetryableError(const char * lpszMessage);
 
-private:
+protected:
   virtual bool OnProgress(MiKTeX::Packages::Notification nf);
 
-private:
+protected:
   int refCount;
 
-private:
+protected:
   SetupOptions options;
 
-private:
+protected:
   enum Section { None, Files, HKLM, HKCU };
 
-private:
+protected:
   Section section;
 
-private:
+protected:
   MiKTeX::Core::StreamWriter logStream;
 
-private:
+protected:
   MIKTEX_DEFINE_LOCK(logStream);
 
-private:
+protected:
   MiKTeX::Core::PathName intermediateLogFile;
 
-private:
+protected:
   MiKTeX::Core::StreamWriter uninstStream;
 
-private:
+protected:
   std::auto_ptr<MiKTeX::Core::TraceStream> traceStream;
 
-private:
+protected:
   MiKTeX::Core::PathName GetInstallRoot() const
   {
     return (options.IsCommonSetup
@@ -359,70 +329,40 @@ private:
       : options.Config.userInstallRoot);
   }
 
-#if defined(MIKTEX_WINDOWS)
-private:
-  void RegisterUninstaller();
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  void AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, const char * lpszValue);
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  void AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, DWORD value);
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  MiKTeX::Core::PathName SetupServiceImpl::CreateProgramFolder ();
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  void CreateShellLink(const MiKTeX::Core::PathName & pathFolder, const ShellLinkData & ld);
-#endif
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  void CreateInternetShortcut(const MiKTeX::Core::PathName & path, const char * lpszUrl);
-#endif
-
-private:
+protected:
   void ConfigureMiKTeX();
 
-private:
+protected:
   void RunIniTeXMF(const MiKTeX::Core::CommandLineBuilder & cmdLine1);
 
-private:
+protected:
   void RunMpm(const MiKTeX::Core::CommandLineBuilder & cmdLine1);
 
-private:
+protected:
   std::wstring & Expand(const char * lpszSource, std::wstring & dest);
 
-private:
+protected:
   bool FindFile(const MiKTeX::Core::PathName & fileName, MiKTeX::Core::PathName & result);
 
-private:
+protected:
   void CreateInfoFile();
 
-private:
+protected:
   void SetupServiceImpl::LogHeader();
 
-private:
+protected:
   bool logging;
 
-private:
+protected:
   bool cancelled;
 
-private:
+protected:
   MiKTeX::Packages::PackageManagerPtr pManager;
 
-private:
+protected:
   std::auto_ptr<MiKTeX::Packages::PackageInstaller> pInstaller;
 
-private:
+protected:
   SetupServiceCallback * pCallback;
 };
 

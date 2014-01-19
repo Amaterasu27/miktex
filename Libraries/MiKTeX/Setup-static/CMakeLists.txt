@@ -32,6 +32,7 @@ set(${setup_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/internal.h
   ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/setup-version.h
   ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/win/winSetupService.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/win/winSetupService.h
 )
 
 if(NATIVE_WINDOWS)

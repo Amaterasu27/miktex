@@ -28,6 +28,8 @@
 
 #include "internal.h"
 
+#include "winSetupService.h"
+
 #include "setup-version.h"
 
 using namespace MiKTeX::Core;
@@ -37,10 +39,10 @@ using namespace std;
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::ULogAddRegValue
+   winSetupServiceImpl::ULogAddRegValue
    _________________________________________________________________________ */
 
-void SetupServiceImpl::ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName)
+void winSetupServiceImpl::ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName)
 {
   if (! uninstStream.IsOpen())
   {
@@ -61,10 +63,10 @@ void SetupServiceImpl::ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::CreateProgramFolder
+   winSetupServiceImpl::CreateProgramFolder
    _________________________________________________________________________ */
 
-PathName SetupServiceImpl::CreateProgramFolder()
+PathName winSetupServiceImpl::CreateProgramFolder()
 {
   int cidl = (options.IsCommonSetup && IsWindowsNT() ? CSIDL_COMMON_PROGRAMS : CSIDL_PROGRAMS);
   PathName path = Utils::GetFolderPath(cidl, cidl, true);
@@ -75,7 +77,7 @@ PathName SetupServiceImpl::CreateProgramFolder()
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::CreateProgramIcons
+   winSetupServiceImpl::CreateProgramIcons
    _________________________________________________________________________ */
 
 #define LD_USEDESC     0x00000001
@@ -329,7 +331,7 @@ size_t nShellLinks = sizeof(shellLinks) / sizeof(shellLinks[0]);
 
 END_ANONYMOUS_NAMESPACE;
 
-void SetupServiceImpl::CreateProgramIcons()
+void winSetupServiceImpl::CreateProgramIcons()
 {
   PathName path = CreateProgramFolder();
   for (size_t i = 0; i < nShellLinks; ++ i)
@@ -338,7 +340,7 @@ void SetupServiceImpl::CreateProgramIcons()
   }
 }
 
-void SetupServiceImpl::CreateShellLink(const PathName & pathFolder, const ShellLinkData & ld)
+void winSetupServiceImpl::CreateShellLink(const PathName & pathFolder, const ShellLinkData & ld)
 {
   if ((ld.flags & LD_IFCOMMON) != 0 && ! options.IsCommonSetup)
   {
@@ -502,10 +504,10 @@ void SetupServiceImpl::CreateShellLink(const PathName & pathFolder, const ShellL
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::CreateInternetShortcut
+   winSetupServiceImpl::CreateInternetShortcut
    _________________________________________________________________________ */
 
-void SetupServiceImpl::CreateInternetShortcut(const PathName & path, const char * lpszUrl)
+void winSetupServiceImpl::CreateInternetShortcut(const PathName & path, const char * lpszUrl)
 {
   _COM_SMARTPTR_TYPEDEF(IUniformResourceLocatorW, IID_IUniformResourceLocatorW);
 
@@ -548,7 +550,7 @@ void SetupServiceImpl::CreateInternetShortcut(const PathName & path, const char 
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::RegisterUninstaller
+   winSetupServiceImpl::RegisterUninstaller
    _________________________________________________________________________ */
 
 #define UNINST_HELP_LINK "http://miktex.org/support"
@@ -581,7 +583,7 @@ void SetupServiceImpl::CreateInternetShortcut(const PathName & path, const char 
    ? HKEY_LOCAL_MACHINE				\
    : HKEY_CURRENT_USER)
 
-void SetupServiceImpl::RegisterUninstaller()
+void winSetupServiceImpl::RegisterUninstaller()
 {
   // make uninstall command line
   string commandLine;
@@ -638,10 +640,10 @@ void SetupServiceImpl::RegisterUninstaller()
 
 /* _________________________________________________________________________
 
-   SetupServiceImpl::AddUninstallerRegValue
+   winSetupServiceImpl::AddUninstallerRegValue
    _________________________________________________________________________ */
 
-void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, const char * lpszValue)
+void winSetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, const char * lpszValue)
 {
   wstring value(UW_(lpszValue));
   LONG result = RegSetValueExW(
@@ -658,7 +660,7 @@ void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueN
   ULogAddRegValue(UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
 }
 
-void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, DWORD value)
+void winSetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueName, DWORD value)
 {
   LONG result = RegSetValueExW(hkey, UW_(lpszValueName), 0, REG_DWORD, reinterpret_cast<const BYTE *>(&value), static_cast<DWORD>(sizeof(value)));  
   if (result != ERROR_SUCCESS)
@@ -667,3 +669,4 @@ void SetupServiceImpl::AddUninstallerRegValue(HKEY hkey, const char * lpszValueN
   }
   ULogAddRegValue(UNINST_HKEY_ROOT, UNINST_REG_PATH, lpszValueName);
 }
+
