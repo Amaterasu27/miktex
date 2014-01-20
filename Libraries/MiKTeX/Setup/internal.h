@@ -223,6 +223,9 @@ public:
   virtual void MIKTEXTHISCALL Release();
 
 public:
+  virtual void MIKTEXTHISCALL Initialize() = 0;
+
+public:
   virtual SetupOptions MIKTEXTHISCALL GetOptions()
   {
     return this->options;
@@ -269,9 +272,6 @@ protected:
 
 protected:
   SetupServiceImpl();
-
-protected:
-  void Initialize();
 
 protected:
   void DoTheDownload();

@@ -22,10 +22,6 @@
 #include <miktex/Core/Registry>
 #include <miktex/PackageManager/PackageManager>
 
-#if defined(MIKTEX_WINDOWS)
-#  include <ShlObj.h>
-#endif
-
 #include "internal.h"
 
 #if defined(MIKTEX_WINDOWS)
@@ -96,22 +92,10 @@ SetupServiceImpl::SetupServiceImpl()
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
   pManager = PackageManager::Create();
-
   string path;
   if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_COMMON_INSTALL, path))
   {
     options.Config.commonInstallRoot = path;
-  }
-  else
-  {
-#if defined(MIKTEX_WINDOWS)
-    // default location: "C:\Program Files\MiKTeX X.Y"
-    options.Config.commonInstallRoot = Utils::GetFolderPath(
-      CSIDL_PROGRAM_FILES,
-      CSIDL_PROGRAM_FILES,
-      true);
-    options.Config.commonInstallRoot += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
-#endif
   }
 
 }

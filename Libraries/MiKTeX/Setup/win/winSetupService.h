@@ -47,6 +47,12 @@ struct ShellLinkData
 
 class winSetupServiceImpl : public SetupServiceImpl
 {
+public:
+  winSetupServiceImpl();
+
+public:
+  virtual void Initialize();
+
 private:
   virtual void ULogAddRegValue(HKEY hkey, const char * lpszSubKey, const char * lpszValueName);
 
@@ -70,9 +76,6 @@ private:
 
 private:
   void CreateInternetShortcut(const MiKTeX::Core::PathName & path, const char * lpszUrl);
-
-
-
 };
 
 /* _________________________________________________________________________ */
