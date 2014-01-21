@@ -35,22 +35,22 @@ SetupWizardApplication theApp;
 class SetupCommandLineInfo : public CCommandLineInfo
 {
 public:
-  SetupCommandLineInfo ()
-    : optAllowUnattendedReboot (false),
-      optDryRun (false),
+  SetupCommandLineInfo() :
+    optAllowUnattendedReboot(false),
+    optDryRun(false),
 #if ENABLE_ADDTEXMF
-      optNoAddTEXMFDirs (false),
+    optNoAddTEXMFDirs(false),
 #endif
-      optNoRegistry (false),
-      optPrivate (false),
-      optPortable (false),
-      optShared (false),
-      optUnattended (false),
-      packageLevel (PackageLevel::None),
+    optNoRegistry(false),
+    optPrivate(false),
+    optPortable(false),
+    optShared(false),
+    optUnattended(false),
+    packageLevel(PackageLevel::None),
 #if FEATURE_1874934
-      installOnTheFly (TriState::Undetermined),
+    installOnTheFly(TriState::Undetermined),
 #endif
-      task (SetupTask::None)
+    task(SetupTask::None)
   {
   }
 
@@ -114,19 +114,13 @@ public:
    AddArgument
    _________________________________________________________________________ */
 
-void
-AddArgument (/*[in]*/ const string &	argument,
-	     /*[in,out]*/ int &		argc,
-	     /*[in,out]*/ char ** &	argv,
-	     /*[in,out]*/ int &		argMax)
+void AddArgument (const string & argument, /*[out]*/ int & argc, /*[out]*/ char ** & argv, /*[out]*/ int & argMax)
 {
   if (argc == argMax)
-    {
-      argMax += 10;
-      argv =
-	reinterpret_cast<char**>(realloc(argv,
-					 argMax * sizeof(argv[0])));
-    }
+  {
+    argMax += 10;
+    argv = reinterpret_cast<char**>(realloc(argv, argMax * sizeof(argv[0])));
+  }
   argv[ argc++ ] = strdup(argument.c_str());
 }
 
@@ -135,18 +129,14 @@ AddArgument (/*[in]*/ const string &	argument,
    GetArguments
    _________________________________________________________________________ */
 
-void
-GetArguments (/*[in]*/ const char *		lpszCommandLine,
-	      /*[in]*/ const char *		lpszExeName,
-	      /*[in,out]*/ int &		argc,
-	      /*[in,out]*/ char ** &		argv)
+void GetArguments (const char * lpszCommandLine, const char * lpszExeName, /*[out]*/ int & argc, /*[out]*/ char ** & argv)
 {
   argc = 0;
   argv = 0;
 
   int argMax = 0;
 
-  AddArgument (string(lpszExeName), argc, argv, argMax);
+  AddArgument(string(lpszExeName), argc, argv, argMax);
 
   string arg;
 
@@ -156,33 +146,33 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
   const char * lpsz = lpszCommandLine;
 
   while (*lpsz != 0)
+  {
+    if (*lpsz == ' ' && ! inQuotedArg)
     {
-      if (*lpsz == ' ' && ! inQuotedArg)
-	{
-	  if (copying)
-	    {
-	      AddArgument (arg, argc, argv, argMax);
-	      arg = "";
-	      copying = false;
-	    }
-	}
-      else if (*lpsz == '"')
-	{
-	  inQuotedArg = ! inQuotedArg;
-	  copying = true;
-	}
-      else
-	{
-	  arg += *lpsz;
-	  copying = true;
-	}
-      ++ lpsz;
+      if (copying)
+      {
+	AddArgument(arg, argc, argv, argMax);
+	arg = "";
+	copying = false;
+      }
     }
+    else if (*lpsz == '"')
+    {
+      inQuotedArg = ! inQuotedArg;
+      copying = true;
+    }
+    else
+    {
+      arg += *lpsz;
+      copying = true;
+    }
+    ++ lpsz;
+  }
 
   if (copying)
-    {
-      AddArgument (arg, argc, argv, argMax);
-    }
+  {
+    AddArgument(arg, argc, argv, argMax);
+  }
 }
 
 /* _________________________________________________________________________
@@ -190,16 +180,14 @@ GetArguments (/*[in]*/ const char *		lpszCommandLine,
    FreeArguments
    _________________________________________________________________________ */
 
-void
-FreeArguments (/*[in]*/ int		argc,
-	       /*[in,out]*/ char ** & 	argv)
+void FreeArguments (int argc, /*[out]*/ char ** & argv)
 {
   for (int i = 0; i < argc; ++ i)
-    {
-      free (argv[i]);
-      argv[i] = 0;
-    }
-  free (argv);
+  {
+    free(argv[i]);
+    argv[i] = 0;
+  }
+  free(argv);
   argv = 0;
 }
 
@@ -243,8 +231,7 @@ enum {
 
 const struct option long_options[] =
 {
-  { "allow-unattended-reboot", no_argument, 0,
-    OPT_ALLOW_UNATTENDED_REBOOT },
+  { "allow-unattended-reboot", no_argument, 0, OPT_ALLOW_UNATTENDED_REBOOT },
 #if FEATURE_1874934
   { "auto-install", required_argument, 0, OPT_AUTO_INSTALL },
 #endif
@@ -255,10 +242,8 @@ const struct option long_options[] =
   { "download-only", no_argument, 0, OPT_DOWNLOAD_ONLY },
   { "dry-run", no_argument, 0, OPT_DRY_RUN },
   { "help", no_argument, 0, OPT_HELP },
-  { "install-from-local-repository", no_argument, 0,
-    OPT_INSTALL_FROM_LOCAL_REPOSITORY },
-  { "local-package-repository", required_argument, 0,
-    OPT_LOCAL_PACKAGE_REPOSITORY },
+  { "install-from-local-repository", no_argument, 0, OPT_INSTALL_FROM_LOCAL_REPOSITORY },
+  { "local-package-repository", required_argument, 0, OPT_LOCAL_PACKAGE_REPOSITORY },
   { "no-additional-roots", no_argument, 0, OPT_NO_ADDITIONAL_ROOTS },
   { "no-registry", no_argument, 0, OPT_NO_REGISTRY },
   { "package-set", required_argument, 0, OPT_PACKAGE_SET },
@@ -268,8 +253,7 @@ const struct option long_options[] =
   { "portable", no_argument, 0, OPT_PORTABLE },
   { "private", no_argument, 0, OPT_PRIVATE },
   { "program-folder", required_argument, 0, OPT_PROGRAM_FOLDER },
-  { "remote-package-repository", required_argument, 0,
-    OPT_REMOTE_PACKAGE_REPOSITORY },
+  { "remote-package-repository", required_argument, 0, OPT_REMOTE_PACKAGE_REPOSITORY },
   { "shared", no_argument, 0, OPT_SHARED },
   { "unattended", no_argument, 0, OPT_UNATTENDED },
   { "user-config", required_argument, 0, OPT_USER_CONFIG },
@@ -284,20 +268,19 @@ const struct option long_options[] =
    ShowHelpAndExit
    _________________________________________________________________________ */
 
-void
-ShowHelpAndExit (/*[in]*/ int retCode = 0)
+void ShowHelpAndExit(int retCode = 0)
 {
-  AfxMessageBox (T_(_T("Usage: setupwiz [OPTIONS]\r\n\
+  AfxMessageBox(T_(_T("Usage: setupwiz [OPTIONS]\r\n\
 \r\n\
 Options:\r\n\r\n\
   --allow-unattended-reboot\r\n"))
 #if FEATURE_1874934
-		 T_(_T("\
+		T_(_T("\
   --auto-install=yes\r\n\
   --auto-install=no\r\n\
   --auto-install=ask\r\n"))
 #endif
-		 T_(_T("\
+		T_(_T("\
   --common-config=DIR\r\n\
   --common-data=DIR\r\n\
   --common-install=DIR\r\n\
@@ -311,11 +294,11 @@ Options:\r\n\r\n\
   --no-registry\r\n\
   --package-set=SET\r\n"))
 #if FEATURE_1874934
-		 T_(_T("\
+		T_(_T("\
   --paper-size=A4\r\n\
   --paper-size=Letter\r\n"))
 #endif
-		 T_(_T("\
+		T_(_T("\
   --portable\r\n\
   --private\r\n\
   --program-folder=NAME\r\n\
@@ -329,7 +312,7 @@ Options:\r\n\r\n\
 \r\n\
 setupwiz reads its arguments from setupwiz.opt, if such a file exists.\r\n\
 See the MiKTeX Manual for more information.")));
-  exit (retCode);
+  exit(retCode);
 }
 
 /* _________________________________________________________________________
@@ -337,14 +320,11 @@ See the MiKTeX Manual for more information.")));
    CheckStartupConfig
    _________________________________________________________________________ */
 
-void
-CheckStartupConfig (/*[in,out]*/ StartupConfig & startupConfig)
+void CheckStartupConfig(/*[out]*/ StartupConfig & startupConfig)
 {
 #if 1
   string commonRoots;
-  for (CSVList tok (startupConfig.commonRoots.c_str(), ';');
-    tok.GetCurrent() != 0;
-    ++ tok)
+  for (CSVList tok (startupConfig.commonRoots.c_str(), ';'); tok.GetCurrent() != 0; ++ tok)
   {
     PathName path (tok.GetCurrent());
     if (path.Empty())
@@ -353,50 +333,38 @@ CheckStartupConfig (/*[in,out]*/ StartupConfig & startupConfig)
     }
     if (startupConfig.commonConfigRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --common-config value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --common-config value."),
 	path.Get());
     }
     if (startupConfig.commonDataRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --common-data value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --common-data value."),
 	path.Get());
     }
     if (startupConfig.commonInstallRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --common-install value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --common-install value."),
 	path.Get());
     }
     if (startupConfig.userConfigRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --user-config value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --user-config value."),
 	path.Get());
     }
     if (startupConfig.userDataRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --user-data value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --user-data value."),
 	path.Get());
     }
     if (startupConfig.userInstallRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---common-roots value collides with --user-install value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --common-roots value collides with --user-install value."),
 	path.Get());
     }
     if (! commonRoots.empty())
@@ -408,9 +376,7 @@ Improper options: \
   startupConfig.commonRoots = commonRoots;
 
   string userRoots;
-  for (CSVList tok (startupConfig.userRoots.c_str(), ';');
-    tok.GetCurrent() != 0;
-    ++ tok)
+  for (CSVList tok (startupConfig.userRoots.c_str(), ';'); tok.GetCurrent() != 0; ++ tok)
   {
     PathName path (tok.GetCurrent());
     if (path.Empty())
@@ -419,58 +385,44 @@ Improper options: \
     }
     if (Utils::Contains(startupConfig.commonRoots.c_str(), path.Get(), ";", true))
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --common-roots value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --common-roots value."),
 	path.Get());
     }
     if (startupConfig.commonConfigRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --common-config value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --common-config value."),
 	path.Get());
     }
     if (startupConfig.commonDataRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --common-data value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --common-data value."),
 	path.Get());
     }
     if (startupConfig.commonInstallRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --common-install value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --common-install value."),
 	path.Get());
     }
     if (startupConfig.userConfigRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --user-config value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --user-config value."),
 	path.Get());
     }
     if (startupConfig.userDataRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --user-data value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --user-data value."),
 	path.Get());
     }
     if (startupConfig.userInstallRoot == path)
     {
-      FATAL_MIKTEX_ERROR ("CheckStartupConfig",
-	T_("\
-Improper options: \
---user-roots value collides with --user-install value."),
+      FATAL_MIKTEX_ERROR("CheckStartupConfig",
+	T_("Improper options: --user-roots value collides with --user-install value."),
 	path.Get());
     }
     if (! userRoots.empty())
@@ -488,10 +440,7 @@ Improper options: \
    ParseSetupCommandLine
    _________________________________________________________________________ */
 
-void
-ParseSetupCommandLine (/*[in]*/ int				argc,
-		       /*[in]*/ char **				argv,
-		       /*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
+void ParseSetupCommandLine(int argc, char ** argv, /*[out]*/ SetupCommandLineInfo & cmdinfo)
 {
   int iOptIdx = 0;
   int c;
@@ -500,229 +449,189 @@ ParseSetupCommandLine (/*[in]*/ int				argc,
 
   optind = 0;
 
-  while ((c = getopt_long_only(argc, argv, "", long_options, &iOptIdx))
-	 != EOF)
+  while ((c = getopt_long_only(argc, argv, "", long_options, &iOptIdx)) != EOF)
+  {
+    switch (c)
     {
-      switch (c)
-	{
 
-	case OPT_ALLOW_UNATTENDED_REBOOT:
-	  cmdinfo.optAllowUnattendedReboot = true;
-	  break;
+    case OPT_ALLOW_UNATTENDED_REBOOT:
+      cmdinfo.optAllowUnattendedReboot = true;
+      break;
 
 #if FEATURE_1874934
-	case OPT_AUTO_INSTALL:
-	  if (StringCompare(optarg, "yes", true) == 0)
-	    {
-	      cmdinfo.installOnTheFly = TriState::True;
-	    }
-	  else if (StringCompare(optarg, "no", true) == 0)
-	    {
-	      cmdinfo.installOnTheFly = TriState::False;
-	    }
-	  else if (StringCompare(optarg, "ask", true) == 0)
-	    {
-	      cmdinfo.installOnTheFly = TriState::Undetermined;
-	    }
-	  else
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("Value must be one of: yes, no, ask."),
-		 0);
-	    }
-	  break;
+    case OPT_AUTO_INSTALL:
+      if (StringCompare(optarg, "yes", true) == 0)
+      {
+	cmdinfo.installOnTheFly = TriState::True;
+      }
+      else if (StringCompare(optarg, "no", true) == 0)
+      {
+	cmdinfo.installOnTheFly = TriState::False;
+      }
+      else if (StringCompare(optarg, "ask", true) == 0)
+      {
+	cmdinfo.installOnTheFly = TriState::Undetermined;
+      }
+      else
+      {
+	FATAL_MIKTEX_ERROR ("ParseSetupCommandLine", T_("Value must be one of: yes, no, ask."), 0);
+      }
+      break;
 #endif
 
-	case OPT_COMMON_CONFIG:
-	  if (IsWindowsNT()
-	      && ! (SessionWrapper(true)->RunningAsAdministrator()
-		    || SessionWrapper(true)->RunningAsPowerUser()))
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("You must have administrator privileges to set up \
-a common configuration directory."),
-		 0);
-	    }
-	  cmdinfo.startupConfig.commonConfigRoot = optarg;
-	  break;
+    case OPT_COMMON_CONFIG:
+      if (! (SessionWrapper(true)->RunningAsAdministrator() || SessionWrapper(true)->RunningAsPowerUser()))
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("You must have administrator privileges to set up a common configuration directory."), 0);
+      }
+      cmdinfo.startupConfig.commonConfigRoot = optarg;
+      break;
 
-	case OPT_COMMON_DATA:
-	  if (IsWindowsNT()
-	      && ! (SessionWrapper(true)->RunningAsAdministrator()
-		    || SessionWrapper(true)->RunningAsPowerUser()))
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("You must have administrator privileges to set up \
-a common data directory."),
-		 0);
-	    }
-	  cmdinfo.startupConfig.commonDataRoot = optarg;
-	  break;
+    case OPT_COMMON_DATA:
+      if (! (SessionWrapper(true)->RunningAsAdministrator() || SessionWrapper(true)->RunningAsPowerUser()))
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("You must have administrator privileges to set up a common data directory."), 0);
+      }
+      cmdinfo.startupConfig.commonDataRoot = optarg;
+      break;
 
-	case OPT_COMMON_INSTALL:
-	  if (IsWindowsNT()
-	      && ! (SessionWrapper(true)->RunningAsAdministrator()
-		    || SessionWrapper(true)->RunningAsPowerUser()))
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("You must have administrator privileges to set up \
-a common installation directory."),
-		 0);
-	    }
-	  cmdinfo.startupConfig.commonInstallRoot = optarg;
-	  break;
+    case OPT_COMMON_INSTALL:
+      if (! (SessionWrapper(true)->RunningAsAdministrator() || SessionWrapper(true)->RunningAsPowerUser()))
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("You must have administrator privileges to set up a common installation directory."), 0);
+      }
+      cmdinfo.startupConfig.commonInstallRoot = optarg;
+      break;
 
-	case OPT_COMMON_ROOTS:
-	  if (IsWindowsNT()
-	      && ! (SessionWrapper(true)->RunningAsAdministrator()
-		    || SessionWrapper(true)->RunningAsPowerUser()))
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("You must have administrator privileges to set up \
-common root directories."),
-		 0);
-	    }
-	  cmdinfo.startupConfig.commonRoots = optarg;
-	  break;
+    case OPT_COMMON_ROOTS:
+      if (! (SessionWrapper(true)->RunningAsAdministrator() || SessionWrapper(true)->RunningAsPowerUser()))
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("You must have administrator privileges to set up common root directories."), 0);
+      }
+      cmdinfo.startupConfig.commonRoots = optarg;
+      break;
 
-	case OPT_DOWNLOAD_ONLY:
-	  cmdinfo.task = SetupTask::Download;
-	  break;
+    case OPT_DOWNLOAD_ONLY:
+      cmdinfo.task = SetupTask::Download;
+      break;
 
-	case OPT_DRY_RUN:
-	  cmdinfo.optDryRun = true;
-	  break;
+    case OPT_DRY_RUN:
+      cmdinfo.optDryRun = true;
+      break;
 
-	case OPT_HELP:
-	  FreeArguments (argc, argv);
-	  ShowHelpAndExit ();
-	  break;
+    case OPT_HELP:
+      FreeArguments(argc, argv);
+      ShowHelpAndExit();
+      break;
 
-	case OPT_INSTALL_FROM_LOCAL_REPOSITORY:
-	  cmdinfo.task = SetupTask::InstallFromLocalRepository;
-	  break;
+    case OPT_INSTALL_FROM_LOCAL_REPOSITORY:
+      cmdinfo.task = SetupTask::InstallFromLocalRepository;
+      break;
 
-	case OPT_LOCAL_PACKAGE_REPOSITORY:
-	  cmdinfo.localPackageRepository = optarg;
-	  break;
+    case OPT_LOCAL_PACKAGE_REPOSITORY:
+      cmdinfo.localPackageRepository = optarg;
+      break;
 
-	case OPT_NO_ADDITIONAL_ROOTS:
+    case OPT_NO_ADDITIONAL_ROOTS:
 #if ENABLE_ADDTEXMF
-	  cmdinfo.optNoAddTEXMFDirs = true;
+      cmdinfo.optNoAddTEXMFDirs = true;
 #endif
-	  break;
+      break;
 
-	case OPT_NO_REGISTRY:
-	  cmdinfo.optNoRegistry = true;
-	  break;
+    case OPT_NO_REGISTRY:
+      cmdinfo.optNoRegistry = true;
+      break;
 
 #if FEATURE_1874934
-	case OPT_PAPER_SIZE:
-	  if (StringCompare(optarg, "A4", true) == 0)
-	    {
-	      cmdinfo.paperSize = "A4";
-	    }
-	  else if (StringCompare(optarg, "Letter", true) == 0)
-	    {
-	      cmdinfo.paperSize = "Letter";
-	    }
-	  else
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("Value must be one of: A4, Letter."),
-		 0);
-	    }
-	  break;
+    case OPT_PAPER_SIZE:
+      if (StringCompare(optarg, "A4", true) == 0)
+      {
+	cmdinfo.paperSize = "A4";
+      }
+      else if (StringCompare(optarg, "Letter", true) == 0)
+      {
+	cmdinfo.paperSize = "Letter";
+      }
+      else
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("Value must be one of: A4, Letter."), 0);
+      }
+      break;
 #endif
 
-	case OPT_PACKAGE_SET:
-	  if (StringCompare(optarg, "essential") == 0)
-	    {
-	      cmdinfo.packageLevel = PackageLevel::Essential;
-	    }
-	  else if (StringCompare(optarg, "basic") == 0)
-	    {
-	      cmdinfo.packageLevel = PackageLevel::Basic;
-	    }
-	  else if (StringCompare(optarg, "advanced") == 0)
-	    {
-	      cmdinfo.packageLevel = PackageLevel::Advanced;
-	    }
-	  else if (StringCompare(optarg, "complete") == 0)
-	    {
-	      cmdinfo.packageLevel = PackageLevel::Complete;
-	    }
-	  else
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("Invalid package set."),
-		 0);
-	    }
-	  break;
+    case OPT_PACKAGE_SET:
+      if (StringCompare(optarg, "essential") == 0)
+      {
+	cmdinfo.packageLevel = PackageLevel::Essential;
+      }
+      else if (StringCompare(optarg, "basic") == 0)
+      {
+	cmdinfo.packageLevel = PackageLevel::Basic;
+      }
+      else if (StringCompare(optarg, "advanced") == 0)
+      {
+	cmdinfo.packageLevel = PackageLevel::Advanced;
+      }
+      else if (StringCompare(optarg, "complete") == 0)
+      {
+	cmdinfo.packageLevel = PackageLevel::Complete;
+      }
+      else
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("Invalid package set."), 0);
+      }
+      break;
 
-	case OPT_PORTABLE:
-	  cmdinfo.optPortable = true;
-	  break;
+    case OPT_PORTABLE:
+      cmdinfo.optPortable = true;
+      break;
 
-	case OPT_PRIVATE:
-	  cmdinfo.optPrivate = true;
-	  break;
+    case OPT_PRIVATE:
+      cmdinfo.optPrivate = true;
+      break;
 
-	case OPT_PROGRAM_FOLDER:
-	  cmdinfo.folderName = optarg;
-	  break;
-	  
-	case OPT_REMOTE_PACKAGE_REPOSITORY:
-	  cmdinfo.remotePackageRepository = optarg;
-	  break;
+    case OPT_PROGRAM_FOLDER:
+      cmdinfo.folderName = optarg;
+      break;
 
-	case OPT_SHARED:
-	  if (IsWindowsNT()
-	      && ! (SessionWrapper(true)->RunningAsAdministrator()
-		    || SessionWrapper(true)->RunningAsPowerUser()))
-	    {
-	      FATAL_MIKTEX_ERROR
-		("ParseSetupCommandLine",
-		 T_("You must have administrator privileges to set up \
-a shared MiKTeX system."),
-		 0);
-	    }
-	  cmdinfo.optShared = true;
-	  break;
+    case OPT_REMOTE_PACKAGE_REPOSITORY:
+      cmdinfo.remotePackageRepository = optarg;
+      break;
 
-	case OPT_UNATTENDED:
-	  cmdinfo.optUnattended = true;
-	  break;
+    case OPT_SHARED:
+      if (! (SessionWrapper(true)->RunningAsAdministrator() || SessionWrapper(true)->RunningAsPowerUser()))
+      {
+	FATAL_MIKTEX_ERROR("ParseSetupCommandLine", T_("You must have administrator privileges to set up a shared MiKTeX system."), 0);
+      }
+      cmdinfo.optShared = true;
+      break;
 
-	case OPT_USER_CONFIG:
-	  cmdinfo.startupConfig.userConfigRoot = optarg;
-	  break;
+    case OPT_UNATTENDED:
+      cmdinfo.optUnattended = true;
+      break;
 
-	case OPT_USER_DATA:
-	  cmdinfo.startupConfig.userDataRoot = optarg;
-	  break;
+    case OPT_USER_CONFIG:
+      cmdinfo.startupConfig.userConfigRoot = optarg;
+      break;
 
-	case OPT_USER_INSTALL:
-	  cmdinfo.startupConfig.userInstallRoot = optarg;
-	  break;
+    case OPT_USER_DATA:
+      cmdinfo.startupConfig.userDataRoot = optarg;
+      break;
 
-	case OPT_USER_ROOTS:
-	  cmdinfo.startupConfig.userRoots = optarg;
-	  break;
+    case OPT_USER_INSTALL:
+      cmdinfo.startupConfig.userInstallRoot = optarg;
+      break;
 
-	default:
-	  FreeArguments (argc, argv);
-	  ShowHelpAndExit (1);
-	  break;
-	}
+    case OPT_USER_ROOTS:
+      cmdinfo.startupConfig.userRoots = optarg;
+      break;
+
+    default:
+      FreeArguments(argc, argv);
+      ShowHelpAndExit(1);
+      break;
     }
+  }
 }
 
 /* _________________________________________________________________________
@@ -730,27 +639,25 @@ a shared MiKTeX system."),
    FindFile
    _________________________________________________________________________ */
 
-bool
-FindFile (/*[in]*/ const PathName &	fileName,
-	  /*[out]*/ PathName &		result)
+bool FindFile(const PathName &	fileName, /*[out]*/ PathName & result)
 {
   // try my directory
   result = SessionWrapper(true)->GetMyLocation();
   result += fileName;
   if (File::Exists(result))
-    {
-      return (true);
-    }
-  
+  {
+    return true;
+  }
+
   // try the current directory
-  result.SetToCurrentDirectory ();
+  result.SetToCurrentDirectory();
   result += fileName;
   if (File::Exists(result))
-    {
-      return (true);
-    }
+  {
+    return true;
+  }
 
-  return (false);
+  return false;
 }
 
 /* _________________________________________________________________________
@@ -758,29 +665,28 @@ FindFile (/*[in]*/ const PathName &	fileName,
    ReadSetupWizIni
    _________________________________________________________________________ */
 
-bool
-ReadSetupWizIni (/*[in,out]*/ SetupCommandLineInfo &	cmdinfo)
+bool ReadSetupWizIni(/*[out]*/ SetupCommandLineInfo & cmdinfo)
 {
   PathName fileName;
   if (! FindFile("setupwiz.opt", fileName))
-    {
-      return (false);
-    }
-  StreamReader reader (fileName);
+  {
+    return false;
+  }
+  StreamReader reader(fileName);
   string commandLine;
   string line;
   while (reader.ReadLine(line))
-    {
-      commandLine += ' ';
-      commandLine += line;
-    }
-  reader.Close ();
+  {
+    commandLine += ' ';
+    commandLine += line;
+  }
+  reader.Close();
   int argc;
   char ** argv;
-  GetArguments (commandLine.c_str(), TU_(AfxGetAppName()), argc, argv);
-  ParseSetupCommandLine (argc, argv, cmdinfo);
-  FreeArguments (argc, argv);
-  return (true);
+  GetArguments(commandLine.c_str(), TU_(AfxGetAppName()), argc, argv);
+  ParseSetupCommandLine(argc, argv, cmdinfo);
+  FreeArguments(argc, argv);
+  return true;
 }
 
 /* _________________________________________________________________________
@@ -799,39 +705,12 @@ END_MESSAGE_MAP();
    SetupWizardApplication::SetupWizardApplication
    _________________________________________________________________________ */
 
-SetupWizardApplication::SetupWizardApplication ()
-  : prefabricatedPackageLevel (PackageLevel::None)
+SetupWizardApplication::SetupWizardApplication() :
+  prefabricatedPackageLevel(PackageLevel::None),
+  mustReboot(false),
+  showLogFileOnExit(false)
 {
-  SetAppID (UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
-}
-
-/* _________________________________________________________________________
-
-   FindCommonInstallDir
-   _________________________________________________________________________ */
-
-PathName
-FindCommonInstallDir ()
-{
-  // probe the registry
-  string path;
-  if (SessionWrapper(true)
-      ->TryGetConfigValue(MIKTEX_REGKEY_CORE,
-			  MIKTEX_REGVAL_COMMON_INSTALL,
-			  path))
-    {
-      return (path);
-    }
-  else
-    {
-      // return the default location: "C:\Program Files\MiKTeX X.Y"
-      PathName path =
-	    Utils::GetFolderPath(CSIDL_PROGRAM_FILES,
-				 CSIDL_PROGRAM_FILES,
-				 true);
-      path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
-      return (path);
-    }
+  SetAppID(UT_("MiKTeXorg.MiKTeX.Setup." MIKTEX_COMPONENT_VERSION_STR));
 }
 
 /* _________________________________________________________________________
@@ -914,15 +793,16 @@ void
 SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 {
   SetupOptions options = theApp.pSetupService->GetOptions();
-  theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
-  options.IsDryRun = cmdinfo.optDryRun;
-  theApp.mustReboot = false;
+
   options.IsPrefabricated = false;
   options.IsRegisterPathEnabled = true;
-  theApp.showLogFileOnExit = false;
-  theApp.unattended = cmdinfo.optUnattended;
+
+  options.IsDryRun = cmdinfo.optDryRun;
   options.PackageLevel = cmdinfo.packageLevel;
   options.IsPortable = cmdinfo.optPortable;
+
+  theApp.allowUnattendedReboot = cmdinfo.optAllowUnattendedReboot;
+  theApp.unattended = cmdinfo.optUnattended;
 
   // check to see whether setup is started from a MiKTeXDirect location
   theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(options.MiKTeXDirectRoot);
@@ -931,41 +811,38 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   options.Config = cmdinfo.startupConfig;
   if (options.Config.commonInstallRoot.Empty())
   {
-    options.Config.commonInstallRoot = FindCommonInstallDir();
+    options.Config.commonInstallRoot = SetupService::GetDefaultCommonInstallDir();
   }
 
   options.IsRegistryEnabled = ! cmdinfo.optNoRegistry;
 
   // shared setup
-  options.IsCommonSetup =
-    ((IsWindowsNT() && SessionWrapper(true)->RunningAsAdministrator())
-     || cmdinfo.optShared
-     || ! cmdinfo.startupConfig.commonRoots.empty()
-     || ! cmdinfo.startupConfig.commonInstallRoot.Empty()
-     || ! cmdinfo.startupConfig.commonDataRoot.Empty()
-     || ! cmdinfo.startupConfig.commonConfigRoot.Empty());
+  options.IsCommonSetup = SessionWrapper(true)->RunningAsAdministrator() ||
+     cmdinfo.optShared ||
+     ! cmdinfo.startupConfig.commonRoots.empty() ||
+     ! cmdinfo.startupConfig.commonInstallRoot.Empty() ||
+     ! cmdinfo.startupConfig.commonDataRoot.Empty() ||
+     ! cmdinfo.startupConfig.commonConfigRoot.Empty();
 
   // auto install
 #if FEATURE_1874934
   if (cmdinfo.installOnTheFly != TriState::Undetermined)
-    {
-      options.IsInstallOnTheFlyEnabled = cmdinfo.installOnTheFly;
-    }
+  {
+    options.IsInstallOnTheFlyEnabled = cmdinfo.installOnTheFly;
+  }
 #endif
 
   // paper size
 #if FEATURE_1874934
   if (! cmdinfo.paperSize.empty())
-    {
-      options.PaperSize = cmdinfo.paperSize;
-    }
+  {
+    options.PaperSize = cmdinfo.paperSize;
+  }
 #endif
 
-  // startup menu item (default: "MiKTeX X.Y")
-  options.FolderName = cmdinfo.folderName;
-  if (options.FolderName.Empty())
+  if (! cmdinfo.folderName.empty())
   {
-    options.FolderName = MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
+    options.FolderName = cmdinfo.folderName;
   }
 
   // local package repository
@@ -1030,54 +907,40 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   // remote package repository
   options.RemotePackageRepository = cmdinfo.remotePackageRepository;
   if (options.RemotePackageRepository.empty())
+  {
+    string str;
+    if (theApp.pManager->TryGetRemotePackageRepository(str))
     {
-      string str;
-      if (theApp.pManager->TryGetRemotePackageRepository(str))
-	{
-	  options.RemotePackageRepository = str.c_str();
-	}
+      options.RemotePackageRepository = str.c_str();
     }
+  }
 
   // check variables, if started in unattended mode
   if (theApp.unattended)
+  {
+    if (options.Task == SetupTask::None)
     {
-      if (options.Task == SetupTask::None)
-	{
-	  FATAL_MIKTEX_ERROR
-	    ("SetupGlobalVars",
-	     T_("No setup task has been specified."),
-	     0);
-	}
-      if (options.PackageLevel == PackageLevel::None)
-	{
-	  FATAL_MIKTEX_ERROR
-	    ("SetupGlobalVars",
-	     T_("No package set has been specified."),
-	     0);
-	}
-      if (options.Task == SetupTask::InstallFromLocalRepository
-	  || options.Task == SetupTask::Download)
-	{
-	  if (options.LocalPackageRepository.Empty())
-	    {
-	      FATAL_MIKTEX_ERROR
-		("SetupGlobalVars",
-		 T_("No local package repository has been specified."),
-		 0);
-	    }
-	}
-      if (options.Task == SetupTask::InstallFromRemoteRepository
-	  || options.Task == SetupTask::Download)
-	{
-	  if (options.RemotePackageRepository.empty())
-	    {
-	      FATAL_MIKTEX_ERROR
-		("SetupGlobalVars",
-		 T_("No remote package repository has been specified."),
-		 0);
-	    }
-	}
+      FATAL_MIKTEX_ERROR("SetupGlobalVars", T_("No setup task has been specified."), 0);
     }
+    if (options.PackageLevel == PackageLevel::None)
+    {
+      FATAL_MIKTEX_ERROR("SetupGlobalVars", T_("No package set has been specified."), 0);
+    }
+    if (options.Task == SetupTask::InstallFromLocalRepository || options.Task == SetupTask::Download)
+    {
+      if (options.LocalPackageRepository.Empty())
+      {
+	FATAL_MIKTEX_ERROR("SetupGlobalVars", T_("No local package repository has been specified."), 0);
+      }
+    }
+    if (options.Task == SetupTask::InstallFromRemoteRepository || options.Task == SetupTask::Download)
+    {
+      if (options.RemotePackageRepository.empty())
+      {
+	FATAL_MIKTEX_ERROR("SetupGlobalVars", T_("No remote package repository has been specified."), 0);
+      }
+    }
+  }
 
   options = theApp.pSetupService->SetOptions(options);
 }

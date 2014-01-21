@@ -92,12 +92,6 @@ SetupServiceImpl::SetupServiceImpl()
   traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
   TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
   pManager = PackageManager::Create();
-  string path;
-  if (SessionWrapper(true)->TryGetConfigValue(MIKTEX_REGKEY_CORE, MIKTEX_REGVAL_COMMON_INSTALL, path))
-  {
-    options.Config.commonInstallRoot = path;
-  }
-
 }
 
 /* _________________________________________________________________________
@@ -660,6 +654,10 @@ void SetupServiceImpl::Initialize()
   cancelled = false;
 
   // complete options
+  if (options.Config.commonInstallRoot.Empty())
+  {
+    options.Config.commonInstallRoot = GetDefaultCommonInstallDir();
+  }
   if (options.Task == SetupTask::Download || options.Task == SetupTask::InstallFromLocalRepository)
   {
     if (options.LocalPackageRepository.Empty())

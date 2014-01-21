@@ -39,6 +39,18 @@ using namespace std;
 
 /* _________________________________________________________________________
 
+   SetupService::GetDefaultCommonInstallDir
+   _________________________________________________________________________ */
+
+PathName SetupService::GetDefaultCommonInstallDir()
+{
+  PathName path = Utils::GetFolderPath(CSIDL_PROGRAM_FILES, CSIDL_PROGRAM_FILES, true);
+  path += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
+  return path;
+}
+
+/* _________________________________________________________________________
+
    winSetupServiceImpl::winSetupServiceImpl
    _________________________________________________________________________ */
 
@@ -47,15 +59,6 @@ winSetupServiceImpl::winSetupServiceImpl()
   if (FAILED(CoInitialize(0)))
   {
     FATAL_SETUP_ERROR("winSetupServiceImpl::winSetupServiceImpl", T_("COM could not be initialized"), 0);
-  }
-  if (options.Config.commonInstallRoot.Empty())
-  {
-    // default location: "C:\Program Files\MiKTeX X.Y"
-    options.Config.commonInstallRoot = Utils::GetFolderPath(
-      CSIDL_PROGRAM_FILES,
-      CSIDL_PROGRAM_FILES,
-      true);
-    options.Config.commonInstallRoot += MIKTEX_PRODUCTNAME_STR " " MIKTEX_SERIES_STR;
   }
   if (options.FolderName.Empty())
   {

@@ -418,6 +418,7 @@ public:
   static MIKTEXSETUPCEEAPI(MiKTeX::Packages::PackageLevel) SearchLocalRepository(/*[out]*/ MiKTeX::Core::PathName & localRepository, MiKTeX::Packages::PackageLevel requestedPackageLevel, /*[out]*/ bool & prefabricated);
 
 public:
+  static MIKTEXSETUPCEEAPI(MiKTeX::Core::PathName) GetDefaultCommonInstallDir();
 
 };
 

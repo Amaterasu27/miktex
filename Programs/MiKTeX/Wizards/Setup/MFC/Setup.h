@@ -23,7 +23,6 @@
 
 #include "resource.h"
 
-
 #include "config.h"
 
 /* _________________________________________________________________________
@@ -45,53 +44,26 @@
 #define UW_(x) MiKTeX::Core::Utils::UTF8ToWideChar(x).c_str()
 #define WU_(x) MiKTeX::Core::Utils::WideCharToUTF8(x).c_str()
 
-#if defined(MIKTEX_UNICODE)
-#  define tcout wcout
-#  define tcerr wcerr
-#else
-#  define tcout cout
-#  define tcerr cerr
-#endif
-
 /* _________________________________________________________________________
 
    Error Macros
    _________________________________________________________________________ */
 
-#define INVALID_ARGUMENT(function, param)				\
-  FATAL_MIKTEX_ERROR (function, T_("Invalid argument."), param)
-
 #define UNEXPECTED_CONDITION(function)				\
-  FATAL_MIKTEX_ERROR (function, T_("Unexpected condition."), 0)
+  FATAL_MIKTEX_ERROR(function, T_("Unexpected condition."), 0)
 
 #define FATAL_MIKTEX_ERROR(miktexFunction, traceMessage, lpszInfo)	\
-  Session::FatalMiKTeXError (miktexFunction,				\
-			     traceMessage,				\
-			     lpszInfo,					\
-			     __FILE__,				\
-			     __LINE__)
+  Session::FatalMiKTeXError(miktexFunction,				\
+			    traceMessage,				\
+			    lpszInfo,					\
+			    __FILE__,					\
+			    __LINE__)
 
 #define FATAL_WINDOWS_ERROR(windowsfunction, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,		\
-			      lpszInfo,			\
-			      __FILE__,		\
-			      __LINE__)
-
-#define FATAL_WINDOWS_ERROR_2(windowsfunction, errorCode, lpszInfo)	\
-  Session::FatalWindowsError (windowsfunction,				\
-			      errorCode,				\
-			      lpszInfo,					\
-			      __FILE__,				\
-			      __LINE__)
-
-#define CHECK_WINDOWS_ERROR(windowsFunction, lpszInfo)	\
-  if (::GetLastError() != ERROR_SUCCESS)		\
-    {							\
-      FATAL_WINDOWS_ERROR (windowsFunction, lpszInfo);	\
-    }
-
-#define UNSUPPORTED_PLATFORM()						\
-  __assume(false)
+  Session::FatalWindowsError(windowsfunction,		\
+			     lpszInfo,			\
+			     __FILE__,			\
+			     __LINE__)
 
 /* _________________________________________________________________________
 
@@ -101,47 +73,44 @@
 class TempDirectory
 {
 public:
-  TempDirectory ()
+  TempDirectory()
   {
-    path.SetToTempDirectory ();
+    path.SetToTempDirectory();
     path += T_("MiKTeX Setup");
     if (! Directory::Exists(path))
+    {
+      if (! CreateDirectory(UT_(path.Get()), 0))
       {
-	if (! CreateDirectory(UT_(path.Get()), 0))
-	  {
-	    FATAL_WINDOWS_ERROR ("CreateDirectory", path.Get());
-	  }
+	FATAL_WINDOWS_ERROR("CreateDirectory", path.Get());
       }
+    }
   }
 
 public:
-  ~TempDirectory ()
+  ~TempDirectory()
   {
     try
+    {
+      if (Directory::Exists(path))
       {
-	if (Directory::Exists(path))
-	  {
-	    Delete ();
-	  }
+	Delete();
       }
+    }
     catch (const exception &)
-      {
-      }
+    {
+    }
   }
 
 public:
-  const PathName &
-  Get ()
-    const
+  const PathName & Get() const
   {
-    return (path);
+    return path;
   }
 
 public:
-  void
-  Delete ()
+  void Delete()
   {
-    Directory::Delete (path, true);
+    Directory::Delete(path, true);
   }
 
 private:
@@ -156,12 +125,10 @@ private:
 class SetupWizardApplication : public CWinApp
 {
 public:
-  SetupWizardApplication ();
+  SetupWizardApplication();
   
 public:
-  virtual
-  BOOL
-  InitInstance ();
+  virtual BOOL InitInstance();
   
 public:
   DECLARE_MESSAGE_MAP();
@@ -181,14 +148,14 @@ public:
   SetupServicePtr pSetupService;
 
 public:
-  PathName GetInstallRoot () const
+  PathName GetInstallRoot() const
   {
     SetupOptions options = pSetupService->GetOptions();
-    return (options.IsCommonSetup ? options.Config.commonInstallRoot : options.Config.userInstallRoot);
+    return options.IsCommonSetup ? options.Config.commonInstallRoot : options.Config.userInstallRoot;
   }
 
 public:
-  void SetInstallRoot (/*[in]*/ const PathName & path)
+  void SetInstallRoot(const PathName & path)
   {
     SetupOptions options = pSetupService->GetOptions();
     if (options.IsCommonSetup)
@@ -284,52 +251,21 @@ extern SetupWizardApplication theApp;
 
 /* _________________________________________________________________________
 
-   Protos
+   Prototypes
    _________________________________________________________________________ */
 
 #if ENABLE_ADDTEXMF
-void
-CheckAddTEXMFDirs (/*[out,out]*/ string &	directories,
-		   /*[out]*/ vector<PathName> &	vec);
+void CheckAddTEXMFDirs(/*[out]*/ string & directories, /*[out]*/ vector<PathName> & vec);
 #endif
 
-int
-ComparePaths (/*[in]*/ const PathName & path1,
-	      /*[in]*/ const PathName & path2,
-	      /*[in]*/ bool shortify = false);
+int ComparePaths(const PathName & path1, const PathName & path2, bool shortify = false);
 
-void
-DDV_Path (/*[in]*/ CDataExchange *	pDX,
-	  /*[in]*/ const CString &	str);
+void DDV_Path(CDataExchange *	 DX, const CString & str);
 
-bool
-FindFile (/*[in]*/ const PathName &	fileName,
-	  /*[out]*/ PathName &		result);
+bool FindFile(const PathName & fileName, /*[out]*/ PathName & result);
 
-bool
-FindDataDir (/*[out]*/ CString & strDir);
+void ReportError(const MiKTeXException & e);
 
-void
-TraceWindowsError (/*[in]*/ const char *	lpszWindowsFunction,
-		   /*[in]*/ unsigned long	functionResult,
-		   /*[in]*/ const char *	lpszInfo,
-		   /*[in]*/ const char *	lpszSourceFile,
-		   /*[in]*/ int			lpszSourceLine);
+void ReportError(const exception & e);
 
-void
-ReportError (/*[in]*/ const MiKTeXException & e);
-
-void
-ReportError (/*[in]*/ const exception & e);
-
-void
-SplitUrl (/*[in]*/ const string &	url,
-	  /*[out]*/ string &		protocol,
-	  /*[out]*/ string &		host);
-
-/* _________________________________________________________________________
-
-   STR_BYT_SIZ
-   _________________________________________________________________________ */
-
-#define STR_BYT_SIZ(lpsz) ((StrLen(lpsz) + 1) * sizeof(*lpsz))
+void SplitUrl(const string & url, /*[out]*/ string & protocol, /*[out]*/ string & host);
