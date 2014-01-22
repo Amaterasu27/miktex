@@ -721,68 +721,31 @@ SetupWizardApplication::SetupWizardApplication() :
 
 #if ENABLE_ADDTEXMF
 void
-CheckAddTEXMFDirs (/*[in,out]*/ string &	directories,
-		   /*[out]*/ vector<PathName> &	vec)
+CheckAddTEXMFDirs(/*[out]*/ string & directories, /*[out]*/ vector<PathName> & vec)
 {
-  CSVList path (directories.c_str(), ';');
-
-  vec.clear ();
+  CSVList path(directories.c_str(), ';');
+  vec.clear();
   directories = "";
-
   for (; path.GetCurrent() != 0; ++ path)
+  {
+    if (! (
+      theApp.GetStartupConfig().userDataRoot == path.GetCurrent() ||
+      theApp.GetStartupConfig().userConfigRoot == path.GetCurrent() ||
+      theApp.GetStartupConfig().userInstallRoot == path.GetCurrent() ||
+      theApp.GetStartupConfig().commonDataRoot == path.GetCurrent() ||
+      theApp.GetStartupConfig().commonConfigRoot == path.GetCurrent() ||
+      theApp.GetStartupConfig().commonInstallRoot == path.GetCurrent()))
     {
-      if (! (theApp.GetStartupConfig().userDataRoot == path.GetCurrent()
-	     || theApp.GetStartupConfig().userConfigRoot == path.GetCurrent()
-	     || theApp.GetStartupConfig().userInstallRoot == path.GetCurrent()
-	     || theApp.GetStartupConfig().commonDataRoot == path.GetCurrent()
-	     || theApp.GetStartupConfig().commonConfigRoot == path.GetCurrent()
-	     || theApp.GetStartupConfig().commonInstallRoot == path.GetCurrent()))
-	{
-	  if (vec.size() > 0)
-	    {
-	      directories += ';';
-	    }
-	  vec.push_back (path.GetCurrent());
-	  directories += path.GetCurrent();
-	}
+      if (vec.size() > 0)
+      {
+	directories += ';';
+      }
+      vec.push_back(path.GetCurrent());
+      directories += path.GetCurrent();
     }
+  }
 }
 #endif
-
-/* _________________________________________________________________________
-
-   IsMiKTeXDirect
-   _________________________________________________________________________ */
-
-bool
-IsMiKTeXDirectRoot (/*[out]*/ PathName & MiKTeXDirectRoot)
-{
-  // check ..\texmf\miktex\config\miktexstartup.ini
-  MiKTeXDirectRoot = SessionWrapper(true)->GetMyLocation();
-  MiKTeXDirectRoot += "..";
-  MiKTeXDirectRoot.MakeAbsolute ();
-  PathName pathStartupConfig = MiKTeXDirectRoot;
-  pathStartupConfig += "texmf";
-  pathStartupConfig += MIKTEX_PATH_STARTUP_CONFIG_FILE;
-  if (! File::Exists(pathStartupConfig))
-  {
-    return (false);
-  }
-  FileAttributes attributes = File::GetAttributes(pathStartupConfig);
-  if (((attributes & FileAttributes::ReadOnly) != 0) == 0)
-  {
-    return (false);
-  }
-  SmartPointer<Cfg> pcfg (Cfg::Create());      
-  pcfg->Read (pathStartupConfig);
-  string str;
-  if (! pcfg->TryGetValue("Auto", "Config", str) || str != "Direct")
-  {
-    return (false);
-  }
-  theApp.pSetupService->Log(T_("started from MiKTeXDirect location\n"));
-  return (true);
-}
 
 /* _________________________________________________________________________
 
@@ -805,7 +768,11 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
   theApp.unattended = cmdinfo.optUnattended;
 
   // check to see whether setup is started from a MiKTeXDirect location
-  theApp.isMiKTeXDirect = IsMiKTeXDirectRoot(options.MiKTeXDirectRoot);
+  theApp.isMiKTeXDirect = SetupService::IsMiKTeXDirect(options.MiKTeXDirectRoot);
+  if (theApp.isMiKTeXDirect)
+  {
+    theApp.pSetupService->Log(T_("started from MiKTeXDirect location\n"));
+  }
 
   // startup configuration
   options.Config = cmdinfo.startupConfig;
@@ -947,60 +914,10 @@ SetupGlobalVars (/*[in]*/ const SetupCommandLineInfo &	cmdinfo)
 
 /* _________________________________________________________________________
 
-   ExtractFiles
-   _________________________________________________________________________ */
-
-bool
-ExtractFiles (/*[in,out]*/ ScratchDirectory &	sfxDir)
-{
-  _TCHAR szPath[BufferSizes::MaxPath];
-  if (GetModuleFileNameW(0, szPath, BufferSizes::MaxPath) == 0)
-    {
-      FATAL_WINDOWS_ERROR ("GetModuleFileName", 0);
-    }
-  FileStream myImage (File::Open(szPath,
-				 FileMode::Open,
-				 FileAccess::Read,
-				 false));
-  char magic[16];
-  while (myImage.Read(magic, 16) == 16)
-  {
-    static char const MAGIC3[3] = { 'T', 'A', 'R' };
-    if (memcmp(magic, MAGIC3, 3) == 0
-      && memcmp(magic + 3, MAGIC3, 3) == 0
-      && memcmp(magic + 6, MAGIC3, 3) == 0
-      && memcmp(magic + 9, MAGIC3, 3) == 0
-      && memcmp(magic + 12, MAGIC3, 3) == 0
-      && memcmp(magic + 15, MAGIC3, 1) == 0)
-    {
-      sfxDir.Enter ();
-      auto_ptr<MiKTeX::Extractor::Extractor>
-	pExtractor
-	(MiKTeX::Extractor::Extractor::CreateExtractor
-	(MiKTeX::Extractor::ArchiveFileType::Tar));
-      pExtractor->Extract (&myImage,
-	Directory::GetCurrentDirectoryA(),
-	true,
-	0,
-	0);
-      pExtractor->Dispose ();
-      return (true);
-    }
-    else
-    {
-      myImage.Seek (512 - 16, SeekOrigin::Current);
-    }
-  }
-  return (false);
-}
-
-/* _________________________________________________________________________
-
    SetupWizardApplication::InitInstance
    _________________________________________________________________________ */
 
-BOOL
-SetupWizardApplication::InitInstance ()
+BOOL SetupWizardApplication::InitInstance()
 {
   INITCOMMONCONTROLSEX initCtrls;
 
@@ -1008,140 +925,131 @@ SetupWizardApplication::InitInstance ()
   initCtrls.dwICC = ICC_WIN95_CLASSES;
 
   if (! InitCommonControlsEx(&initCtrls))
-    {
-      AfxMessageBox (T_(_T("The application could not be initialized (1).")),
-		     MB_ICONSTOP | MB_OK);
-      return (FALSE);
-    }
+  {
+    AfxMessageBox(T_(_T("The application could not be initialized (1).")), MB_ICONSTOP | MB_OK);
+    return FALSE;
+  }
 
   if (FAILED(CoInitialize(0)))
-    {
-      AfxMessageBox (T_(_T("The application could not be initialized (2).")),
-		     MB_ICONSTOP | MB_OK);
-      return (FALSE);
-    }
+  {
+    AfxMessageBox(T_(_T("The application could not be initialized (2).")), MB_ICONSTOP | MB_OK);
+    return FALSE;
+  }
 
-  AfxInitRichEdit2 ();
+  AfxInitRichEdit2();
 
   try
+  {
+    // create a scratch root directory
+    TempDirectory scratchRoot;
+
+    // create a MiKTeX session
+    StartupConfig startupConfig;
+    startupConfig.userInstallRoot = scratchRoot.Get();
+    startupConfig.userDataRoot = scratchRoot.Get();
+    startupConfig.userConfigRoot = scratchRoot.Get();
+    startupConfig.commonDataRoot = scratchRoot.Get();
+    startupConfig.commonConfigRoot = scratchRoot.Get();
+    startupConfig.commonInstallRoot = scratchRoot.Get();
+    Session::InitInfo initInfo("setup", Session::InitFlags::NoConfigFiles);
+    initInfo.SetStartupConfig(startupConfig);
+    SessionWrapper pSession(initInfo);
+
+    // extract package archive files
+    ScratchDirectory sfxDir;
+    bool selfExtractor = SetupService::ExtractFiles(sfxDir);
+
+    // create package manager
+    pManager = PackageManager::Create();
+
+    // create setup service
+    pSetupService = SetupService::Create();
+    SetupOptions options = pSetupService->GetOptions();
+    CString banner;
+    if (! banner.LoadString(IDS_SETUPWIZ))
     {
-      // create a scratch root directory
-      TempDirectory scratchRoot;
+      UNEXPECTED_CONDITION("SetupWizardApplication::InitInstance");
+    }
+    options.Banner = TU_(banner);
+    options.Version = MIKTEX_COMPONENT_VERSION_STR;
+    options = pSetupService->SetOptions(options);
 
-      // create a MiKTeX session
-      StartupConfig startupConfig;
-      startupConfig.userInstallRoot = scratchRoot.Get();
-      startupConfig.userDataRoot = scratchRoot.Get();
-      startupConfig.userConfigRoot = scratchRoot.Get();
-      startupConfig.commonDataRoot = scratchRoot.Get();
-      startupConfig.commonConfigRoot = scratchRoot.Get();
-      startupConfig.commonInstallRoot = scratchRoot.Get();
-      Session::InitInfo initInfo ("setup",
-				  Session::InitFlags::NoConfigFiles);
-      initInfo.SetStartupConfig (startupConfig);
-      SessionWrapper pSession (initInfo);
+    // set trace options
+    traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
+    TraceStream::SetTraceFlags("error,extractor,mpm,process,config,setup");
 
-      // extract package archive files
-      ScratchDirectory sfxDir;
-      bool selfExtractor = ExtractFiles(sfxDir);
+    // get command-line arguments
+    int argc;
+    char ** argv;
+    GetArguments(TU_(m_lpCmdLine), TU_(AfxGetAppName()), argc, argv);
+    SetupCommandLineInfo cmdinfo;
+    ReadSetupWizIni(cmdinfo);
+    ParseSetupCommandLine(argc, argv, cmdinfo);
+    FreeArguments(argc, argv);
+    CheckStartupConfig(cmdinfo.startupConfig);
+    if (cmdinfo.optPrivate && cmdinfo.optShared)
+    {
+      FATAL_MIKTEX_ERROR("SetupWizardApplication::InitInstance", T_("You cannot specify --private along with --shared."), 0);
+    }
+    if (cmdinfo.optPrivate && ! (
+      cmdinfo.startupConfig.commonDataRoot.Empty() &&
+      cmdinfo.startupConfig.commonRoots.empty() &&
+      cmdinfo.startupConfig.commonInstallRoot.Empty() &&
+      cmdinfo.startupConfig.commonConfigRoot.Empty()))
+    {
+      FATAL_MIKTEX_ERROR("SetupWizardApplication::InitInstance",
+	T_("You cannot specify --private along with --common-config, common-data, --common-install or --common-roots."),
+	0);
+    }
+    SetupGlobalVars(cmdinfo);
 
-      // create package manager
-      pManager = PackageManager::Create();
+    // open the log file
+    pSetupService->OpenLog();
 
-      // create setup service
-      pSetupService = SetupService::Create();
-      SetupOptions options = pSetupService->GetOptions();
-      CString banner;
-      if (! banner.LoadString(IDS_SETUPWIZ))
-      {
-	UNEXPECTED_CONDITION ("InitInstance");
-      }
-      options.Banner = TU_(banner);
-      options.Version = MIKTEX_COMPONENT_VERSION_STR;
-      options = pSetupService->SetOptions(options);
+    INT_PTR dlgRet;
 
-      // set trace options
-      traceStream = auto_ptr<TraceStream>(TraceStream::Open("setup"));
-      TraceStream::SetTraceFlags
-	("error,extractor,mpm,process,config,setup");
-      
-      // get command-line arguments
-      int argc;
-      char ** argv;
-      GetArguments (TU_(m_lpCmdLine), TU_(AfxGetAppName()), argc, argv);
-      SetupCommandLineInfo cmdinfo;
-      ReadSetupWizIni (cmdinfo);
-      ParseSetupCommandLine (argc, argv, cmdinfo);
-      FreeArguments (argc, argv);
-      CheckStartupConfig (cmdinfo.startupConfig);
-      if (cmdinfo.optPrivate && cmdinfo.optShared)
-	{
-	  FATAL_MIKTEX_ERROR
-	    ("SetupWizardApplication::InitInstance",
-	     T_("You cannot specify --private along with --shared."),
-	     0);
-	}
-      if (cmdinfo.optPrivate
-	  && ! (cmdinfo.startupConfig.commonDataRoot.Empty()
-		&& cmdinfo.startupConfig.commonRoots.empty()
-		&& cmdinfo.startupConfig.commonInstallRoot.Empty()
-		&& cmdinfo.startupConfig.commonConfigRoot.Empty()))
-	{
-	  FATAL_MIKTEX_ERROR
-	    ("SetupWizardApplication::InitInstance",
-	     T_("You cannot specify --private along with \
---common-config, common-data, --common-install or --common-roots."),
-	     0);
-	}
-      SetupGlobalVars (cmdinfo);
-
-      // open the log file
-      pSetupService->OpenLog();
-
-      INT_PTR dlgRet;
-      
-      // run the wizard
-      {
-	SetupWizard dlg (pManager.Get());
-	m_pMainWnd = &dlg;
-	dlgRet = dlg.DoModal ();
-      }
-      
-      // clean up
-      PathName pathLogFile = pSetupService->CloseLog(dlgRet == IDCANCEL);
-      if (theApp.showLogFileOnExit && ! pathLogFile.Empty())
-      {
-	INT_PTR r = reinterpret_cast<INT_PTR>(
-	  ShellExecuteW(0, L"open", pathLogFile.ToWideCharString().c_str(), 0, 0, SW_SHOWNORMAL));
-	if (r <= 32)
-	{
-	  Process::Start("notepad.exe", pathLogFile.Get());
-	}
-      }
-      traceStream.reset ();
-      pManager->UnloadDatabase ();
-      pManager.Release ();
-      pSession->UnloadFilenameDatabase ();
-      if (selfExtractor)
-	{
-	  sfxDir.Leave ();
-	}
-      scratchRoot.Delete ();
-      pSession.Reset ();
+    // run the wizard
+    {
+      SetupWizard dlg (pManager.Get());
+      m_pMainWnd = &dlg;
+      dlgRet = dlg.DoModal();
     }
 
-  catch (const MiKTeXException & e)
+    // clean up
+    PathName pathLogFile = pSetupService->CloseLog(dlgRet == IDCANCEL);
+    if (theApp.showLogFileOnExit && ! pathLogFile.Empty())
     {
-      ReportError (e);
+      INT_PTR r = reinterpret_cast<INT_PTR>(
+	ShellExecuteW(0, L"open", pathLogFile.ToWideCharString().c_str(), 0, 0, SW_SHOWNORMAL));
+      if (r <= 32)
+      {
+	Process::Start("notepad.exe", pathLogFile.Get());
+      }
     }
-  catch (const exception & e)
+    traceStream.reset();
+    pManager->UnloadDatabase();
+    pManager.Release();
+    pSession->UnloadFilenameDatabase();
+    if (selfExtractor)
     {
-      ReportError (e);
+      sfxDir.Leave();
     }
+    scratchRoot.Delete();
+    pSession.Reset();
+  }
 
-  CoUninitialize ();
+  catch(const MiKTeXException & e)
+  {
+    ReportError (e);
+  }
+  catch(const exception & e)
+  {
+    ReportError (e);
+  }
 
-  return (FALSE);
+  CoUninitialize();
+
+  return FALSE;
 }
 
 /* _________________________________________________________________________
@@ -1150,33 +1058,30 @@ SetupWizardApplication::InitInstance ()
    _________________________________________________________________________ */
 
 #if 0
-bool
-Reboot ()
+bool Reboot()
 {
   if (IsWindowsNT())
+  {
+    HANDLE hToken;
+    if (! OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
     {
-      HANDLE hToken;
-      if (! OpenProcessToken(GetCurrentProcess(),
-			     TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
-			     &hToken))
-	{
-	  return (false);
-	}
-      TOKEN_PRIVILEGES tkp;
-      LookupPrivilegeValue (0, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
-      tkp.PrivilegeCount = 1;
-      tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-      AdjustTokenPrivileges (hToken, FALSE, &tkp, 0, 0, 0);
-      if (GetLastError() != ERROR_SUCCESS)
-	{
-	  return (false);
-	}
+      return false;
     }
+    TOKEN_PRIVILEGES tkp;
+    LookupPrivilegeValue(0, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
+    tkp.PrivilegeCount = 1;
+    tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+    AdjustTokenPrivileges(hToken, FALSE, &tkp, 0, 0, 0);
+    if (GetLastError() != ERROR_SUCCESS)
+    {
+      return false;
+    }
+  }
   if (! ExitWindowsEx(EWX_REBOOT, 0))
-    {
-      return (false);
-    }
-  return (true);
+  {
+    return false;
+  }
+  return true;
 }
 #endif
 
@@ -1185,30 +1090,20 @@ Reboot ()
    ComparePaths
    _________________________________________________________________________ */
 
-int
-ComparePaths (/*[in]*/ const PathName &	path1,
-	      /*[in]*/ const PathName &	path2,
-	      /*[in]*/ bool		shortify)
+int ComparePaths(const PathName & path1, const PathName & path2, bool shortify)
 {
-  _TCHAR szShortPath1[BufferSizes::MaxPath];
-  _TCHAR szShortPath2[BufferSizes::MaxPath];
-
-  if (shortify
-      && (GetShortPathNameW(path1.ToWideCharString().c_str(),
-			    szShortPath1,
-			    BufferSizes::MaxPath)
-	  > 0)
-      && (GetShortPathNameW(path2.ToWideCharString().c_str(),
-			    szShortPath2,
-			    BufferSizes::MaxPath)
-	  > 0))
-    {
-      return (PathName::Compare(szShortPath1, szShortPath2));
-    }
+  wchar_t szShortPath1[BufferSizes::MaxPath];
+  wchar_t szShortPath2[BufferSizes::MaxPath];
+  if (shortify &&
+    (GetShortPathNameW(path1.ToWideCharString().c_str(), szShortPath1, BufferSizes::MaxPath) > 0) &&
+    (GetShortPathNameW(path2.ToWideCharString().c_str(), szShortPath2, BufferSizes::MaxPath) > 0))
+  {
+    return PathName::Compare(szShortPath1, szShortPath2);
+  }
   else
-    {
-      return (PathName::Compare(path1, path2));
-    }
+  {
+    return PathName::Compare(path1, path2);
+  }
 }
 
 /* _________________________________________________________________________
@@ -1216,65 +1111,62 @@ ComparePaths (/*[in]*/ const PathName &	path1,
    DDV_Path
    _________________________________________________________________________ */
 
-void
-DDV_Path (/*[in]*/ CDataExchange *	pDX,
-	  /*[in]*/ const CString &	str)
+void DDV_Path(CDataExchange * pDX, const CString & str)
 {
   if (! pDX->m_bSaveAndValidate)
-    {
-      return;
-    }
+  {
+    return;
+  }
   CString str2;
   if (isalpha(str[0]) && str[1] == ':' && IsDirectoryDelimiter(str[2]))
-    {
-      CString driveRoot = str.Left(3);
-      if (! Directory::Exists(PathName(driveRoot)))
-	{
-	  CString message;
-	  message.Format (T_(_T("The specified path is invalid because the \
-root directory %s does not exist.")),
-			  static_cast<LPCTSTR>(driveRoot));
-	  AfxMessageBox (message, MB_ICONEXCLAMATION);
-	  message.Empty ();
-	  pDX->Fail ();
-	}
-      str2 = str.GetString() + 3;
-    }
-  else
-    {
-      PathName uncRoot;
-      if (! Utils::GetUncRootFromPath(TU_(str), uncRoot))
-	{
-	  CString message;
-	  message.Format (T_(_T("The specified path is invalid because it is not \
-fully qualified.")));
-	  AfxMessageBox (message, MB_ICONEXCLAMATION);
-	  message.Empty ();
-	  pDX->Fail ();
-	}
-      if (! Directory::Exists(uncRoot))
-	{
-	  CString message;
-	  message.Format (T_(_T("The specified path is invalid because the UNC \
-root directory %s does not exist.")),
-			  uncRoot.Get());
-	  AfxMessageBox (message, MB_ICONEXCLAMATION);
-	  message.Empty ();
-	  pDX->Fail ();
-	}
-      str2 = str;
-    }
-  int i = str2.FindOneOf(_T(":*?\"<>|;="));
-  if (i >= 0)
+  {
+    CString driveRoot = str.Left(3);
+    if (! Directory::Exists(PathName(driveRoot)))
     {
       CString message;
-      message.Format (T_(_T("The specified path is invalid because it contains \
-an invalid character (%c).")),
-		      str2[i]);
-      AfxMessageBox (message, MB_ICONEXCLAMATION);
-      message.Empty ();
-      pDX->Fail ();
+      message.Format(
+	T_(_T("The specified path is invalid because the root directory %s does not exist.")),
+	static_cast<LPCTSTR>(driveRoot));
+      AfxMessageBox(message, MB_ICONEXCLAMATION);
+      message.Empty();
+      pDX->Fail();
     }
+    str2 = str.GetString() + 3;
+  }
+  else
+  {
+    PathName uncRoot;
+    if (! Utils::GetUncRootFromPath(TU_(str), uncRoot))
+    {
+      CString message;
+      message.Format(T_(_T("The specified path is invalid because it is not fully qualified.")));
+      AfxMessageBox(message, MB_ICONEXCLAMATION);
+      message.Empty();
+      pDX->Fail();
+    }
+    if (! Directory::Exists(uncRoot))
+    {
+      CString message;
+      message.Format(
+	T_(_T("The specified path is invalid because the UNC root directory %s does not exist.")),
+	uncRoot.Get());
+      AfxMessageBox(message, MB_ICONEXCLAMATION);
+      message.Empty();
+      pDX->Fail();
+    }
+    str2 = str;
+  }
+  int i = str2.FindOneOf(_T(":*?\"<>|;="));
+  if (i >= 0)
+  {
+    CString message;
+    message.Format(
+      T_(_T("The specified path is invalid because it contains an invalid character (%c).")),
+      str2[i]);
+    AfxMessageBox(message, MB_ICONEXCLAMATION);
+    message.Empty();
+    pDX->Fail();
+  }
 }
 
 /* _________________________________________________________________________
@@ -1282,32 +1174,29 @@ an invalid character (%c).")),
    ReportError
    _________________________________________________________________________ */
 
-void
-ReportError (/*[in]*/ const MiKTeXException & e)
+void ReportError(const MiKTeXException & e)
 {
   try
+  {
+    string str = T_("The operation could not be completed for the following reason: ");
+    str += "\n\n";
+    str += e.what();
+    if (! e.GetInfo().empty())
     {
-      string str;
-      str =
-	T_("The operation could not be completed for the following reason: ");
       str += "\n\n";
-      str += e.what();
-      if (! e.GetInfo().empty())
-	{
-	  str += "\n\n";
-	  str += T_("Details: ");
-	  str += e.GetInfo();
-	}
-      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
-      theApp.pSetupService->Log(T_("\nAn error occurred:\n"));
-      theApp.pSetupService->Log(T_("  source file: %s\n"), e.GetSourceFile().c_str());
-      theApp.pSetupService->Log(T_("  source line: %d\n"), e.GetSourceLine());
-      theApp.pSetupService->Log(T_("  message: %s\n"), e.what());
-      theApp.pSetupService->Log(T_("  info: %s\n"), e.GetInfo().c_str());
+      str += T_("Details: ");
+      str += e.GetInfo();
     }
-  catch (const exception &)
-    {
-    }
+    AfxMessageBox(UT_(str.c_str()), MB_OK | MB_ICONSTOP);
+    theApp.pSetupService->Log(T_("\nAn error occurred:\n"));
+    theApp.pSetupService->Log(T_("  source file: %s\n"), e.GetSourceFile().c_str());
+    theApp.pSetupService->Log(T_("  source line: %d\n"), e.GetSourceLine());
+    theApp.pSetupService->Log(T_("  message: %s\n"), e.what());
+    theApp.pSetupService->Log(T_("  info: %s\n"), e.GetInfo().c_str());
+  }
+  catch(const exception &)
+  {
+  }
 }
 
 /* _________________________________________________________________________
@@ -1315,22 +1204,19 @@ ReportError (/*[in]*/ const MiKTeXException & e)
    ReportError
    _________________________________________________________________________ */
 
-void
-ReportError (/*[in]*/ const exception & e)
+void ReportError(const exception & e)
 {
   try
-    {
-      string str;
-      str =
-	T_("The operation could not be completed for the following reason: ");
-      str += "\n\n";
-      str += e.what();
-      theApp.pSetupService->Log("\n%s\n", str.c_str());
-      AfxMessageBox (UT_(str.c_str()), MB_OK | MB_ICONSTOP);
-    }
-  catch (const exception &)
-    {
-    }
+  {
+    string str = T_("The operation could not be completed for the following reason: ");
+    str += "\n\n";
+    str += e.what();
+    theApp.pSetupService->Log("\n%s\n", str.c_str());
+    AfxMessageBox(UT_(str.c_str()), MB_OK | MB_ICONSTOP);
+  }
+  catch(const exception &)
+  {
+  }
 }
 
 /* _________________________________________________________________________
@@ -1338,10 +1224,7 @@ ReportError (/*[in]*/ const exception & e)
    SplitUrl
    _________________________________________________________________________ */
 
-void
-SplitUrl (/*[in]*/ const string &	url,
-	  /*[out]*/ string &		protocol,
-	  /*[out]*/ string &		host)
+void SplitUrl(/*[in]*/ const string & url, /*[out]*/ string & protocol, /*[out]*/ string & host)
 {
   wchar_t szProtocol[200];
   wchar_t szHost[200];
@@ -1352,9 +1235,9 @@ SplitUrl (/*[in]*/ const string &	url,
   url_comp.lpszHostName = szHost;
   url_comp.dwHostNameLength = 200;
   if (! InternetCrackUrlW(UW_(url.c_str()), 0, 0, &url_comp))
-    {
-      FATAL_WINDOWS_ERROR ("InternetCrackUrlW", 0);
-    }
+  {
+    FATAL_WINDOWS_ERROR("InternetCrackUrlW", 0);
+  }
   protocol = WU_(szProtocol);
   host = WU_(szHost);
 }

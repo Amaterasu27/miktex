@@ -20,6 +20,7 @@
 #include <miktex/Core/Core>
 #include <miktex/Core/Paths>
 #include <miktex/Core/Registry>
+#include <miktex/Extractor/Extractor>
 #include <miktex/PackageManager/PackageManager>
 
 #include "internal.h"
@@ -31,6 +32,7 @@
 #include "setup-version.h"
 
 using namespace MiKTeX::Core;
+using namespace MiKTeX::Extractor;
 using namespace MiKTeX::Packages;
 using namespace MiKTeX::Setup;
 using namespace std;
@@ -285,6 +287,79 @@ PackageLevel SetupService::TestLocalRepository(const PathName & pathRepository, 
     return PackageLevel::None;
   }
   return packageLevel_;
+}
+
+/* _________________________________________________________________________
+
+   SetupService::IsMiKTeXDirect
+   _________________________________________________________________________ */
+
+bool SetupService::IsMiKTeXDirect(/*[out]*/ PathName & MiKTeXDirectRoot)
+{
+  // check ..\texmf\miktex\config\miktexstartup.ini
+  MiKTeXDirectRoot = SessionWrapper(true)->GetMyLocation();
+  MiKTeXDirectRoot += "..";
+  MiKTeXDirectRoot.MakeAbsolute ();
+  PathName pathStartupConfig = MiKTeXDirectRoot;
+  pathStartupConfig += "texmf";
+  pathStartupConfig += MIKTEX_PATH_STARTUP_CONFIG_FILE;
+  if (! File::Exists(pathStartupConfig))
+  {
+    return false;
+  }
+  FileAttributes attributes = File::GetAttributes(pathStartupConfig);
+  if (((attributes & FileAttributes::ReadOnly) != 0) == 0)
+  {
+    return false;
+  }
+  SmartPointer<Cfg> pcfg (Cfg::Create());      
+  pcfg->Read (pathStartupConfig);
+  string str;
+  if (! pcfg->TryGetValue("Auto", "Config", str) || str != "Direct")
+  {
+    return false;
+  }
+  return true;
+}
+
+/* _________________________________________________________________________
+
+   SetupService::ExtractFiles
+   _________________________________________________________________________ */
+
+bool SetupService::ExtractFiles(/*[out]*/ ScratchDirectory & sfxDir)
+{
+  wchar_t szPath[BufferSizes::MaxPath];
+  if (GetModuleFileNameW(0, szPath, BufferSizes::MaxPath) == 0)
+  {
+    FATAL_WINDOWS_ERROR ("GetModuleFileNameW", 0);
+  }
+  FileStream myImage(File::Open(szPath, FileMode::Open, FileAccess::Read, false));
+  char magic[16];
+  while (myImage.Read(magic, 16) == 16)
+  {
+    static char const MAGIC3[3] = { 'T', 'A', 'R' };
+    if 
+      (memcmp(magic, MAGIC3, 3) == 0 &&
+      memcmp(magic + 3, MAGIC3, 3) == 0 &&
+      memcmp(magic + 6, MAGIC3, 3) == 0 &&
+      memcmp(magic + 9, MAGIC3, 3) == 0 &&
+      memcmp(magic + 12, MAGIC3, 3) == 0 &&
+      memcmp(magic + 15, MAGIC3, 1) == 0)
+    {
+      sfxDir.Enter();
+      auto_ptr<MiKTeX::Extractor::Extractor> pExtractor(
+	MiKTeX::Extractor::Extractor::CreateExtractor(MiKTeX::Extractor::ArchiveFileType::Tar));
+      pExtractor->Extract(&myImage, Directory::GetCurrentDirectoryA(), true, 0, 0);
+      pExtractor->Dispose();
+      return true;
+    }
+    else
+    {
+      myImage.Seek(512 - 16, SeekOrigin::Current);
+    }
+  }
+  return false;
 }
 
 /* _________________________________________________________________________

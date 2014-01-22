@@ -420,6 +420,11 @@ public:
 public:
   static MIKTEXSETUPCEEAPI(MiKTeX::Core::PathName) GetDefaultCommonInstallDir();
 
+public:
+  static MIKTEXSETUPCEEAPI(bool) IsMiKTeXDirect(/*[out]*/ MiKTeX::Core::PathName & MiKTeXDirectRoot);
+
+public:
+  static MIKTEXSETUPCEEAPI(bool) ExtractFiles(/*[out]*/ MiKTeX::Core::ScratchDirectory & sfxDir);
 };
 
 typedef MiKTeX::Core::SmartPointer<SetupService> SetupServicePtr;

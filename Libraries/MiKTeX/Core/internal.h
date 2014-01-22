@@ -1618,6 +1618,7 @@ public:
   PathName
   GetTempDirectory ();
 
+  // FIXME: make this an API
 public:
   PathName
   GetMyProgramFile (/*[in]*/ bool canonicalized);
