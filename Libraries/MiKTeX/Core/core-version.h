@@ -1,6 +1,6 @@
 /* core-version.h: MiKTeX DLL version number			-*- C++ -*-
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2014 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -19,6 +19,6 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#define MIKTEX_COMP_J2000_VERSION 4927
+#define MIKTEX_COMP_J2000_VERSION 5205
 
 #include <miktex/Core/Version>
