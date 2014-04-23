@@ -238,3 +238,10 @@ compiler=xetex
 description=xelatex
 input=xelatex.ini
 
+[utf8mex]
+
+arguments=-enable-enctex
+attributes=exclude
+compiler=pdftex
+description=UTF8MeX
+input=utf8mex.ini
