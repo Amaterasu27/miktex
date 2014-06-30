@@ -6,6 +6,18 @@ compiler=pdftex
 description=AMS-TeX
 input=amstex.ini
 
+[bagpipe]
+
+compiler=pdftex
+description=Typesetting bagpipe music
+input=bagpipe.ini
+
+[bagpipex]
+
+compiler=pdftex
+description=Typesetting bagpipe music
+input=bagpipex.ini
+
 [bplain]
 
 arguments=-tcx=cp227.tcx
