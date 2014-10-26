@@ -1,6 +1,6 @@
  /* gram.y: C4P parser specification			-*- C++ -*-
 
-    Copyright (C) 1991-2009 Christian Schenk
+    Copyright (C) 1991-2014 Christian Schenk
 
     This file is part of C4P.
 
@@ -82,13 +82,13 @@ namespace {
 
 %token AND ARRAY BEGIn CASE CONST DIV DO DOWNTO ELSE END FILe FOR FORWARD
 	FUNCTION GOTO IF IN LABEL MOD NIL NOT OF OR PACKED PROCEDURE PROGRAM
-	RECORD REPEAT SET THEN TO TYPE UNTIL VAR WHILE WITH READ READLN
+	RECORD REPEAT SET THEN TO TYPE UNTIL VAR WHILE WITH
 	OTHERS
 
 %token DOTDOT NEQ GEQ LEQ ASSIGN
 
 /* pseudo tokens */
-%token PASCAL_KEYWORD TYPE_IDENTIFIER FIELD_IDENTIFIER PASCAL_KEYWORD
+%token PASCAL_KEYWORD TYPE_IDENTIFIER FIELD_IDENTIFIER
 	C_RESERVED CONSTANT_IDENTIFIER FUNCTION_IDENTIFIER
 	PROCEDURE_IDENTIFIER
 	UNDEFINED_IDENTIFIER VARIABLE_IDENTIFIER PARAMETER_IDENTIFIER
@@ -114,6 +114,8 @@ namespace {
 	formal_parameter_section_list function_head procedure_head
         optional_formal_parameter_section_list file_type
 	program_parameter_list program_parameter
+
+%expect 1
 
 %start program
 
@@ -211,17 +213,6 @@ void C4PCEECALL int main (int argc, const char * * argv)\n\n");
 		    close_def_file ();
 		  close_name_file ();
 		}
-	;
-
-block:
-	  label_declaration_part
-	  constant_definition_part
-	  type_definition_part
-	  variable_declaration_part
-/* fixme: nested procedures/functions not yet implemented
-	  procedure_and_function_declaration_part
-*/
-	  statement_part
 	;
 
 program_parameter_list:
@@ -491,12 +482,6 @@ constant_definition:
 		}
 	;
 
-optional_sign:
-	  /* empty */
-	| '+'
-	| '-'
-	;
-
 constant:
 	  REAL_CONSTANT
 		{
@@ -528,7 +513,7 @@ constant:
 		  last_type = LONG_REAL_TYPE;
 		  out_form ("%lf", static_cast<double>(last_value.fvalue));
 		}
-	| '-' REAL_CONSTANT
+	| '-' LONG_REAL_CONSTANT
 		{
 		  last_value.fvalue = - $2;
 		  last_type = LONG_REAL_TYPE;

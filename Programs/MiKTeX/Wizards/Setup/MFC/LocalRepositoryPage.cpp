@@ -58,7 +58,7 @@ BOOL
 LocalRepositoryPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  fileName = theApp.localPackageRepository.Get();
+  fileName = theApp.GetLocalPackageRepository().Get();
   return (CPropertyPage::OnInitDialog());
 }
 
@@ -95,7 +95,7 @@ LocalRepositoryPage::OnSetActive ()
 	    {
 	      UNEXPECTED_CONDITION ("LocalRepositoryPage::OnSetActive");
 	    }
-	  if (theApp.setupTask == SetupTask::Download)
+	  if (theApp.GetSetupTask() == SetupTask::Download)
 	    {
 	      pWnd->SetWindowText
 		(T_(_T("Download the MiKTeX distribution to:")));
@@ -141,7 +141,7 @@ LRESULT
 LocalRepositoryPage::OnWizardNext ()
 {
   UINT next;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       next = IDD_INFOLIST;
@@ -167,14 +167,14 @@ LRESULT
 LocalRepositoryPage::OnWizardBack ()
 {
   UINT prev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
     case SetupTask::InstallFromRemoteRepository:
       prev = IDD_REMOTE_REPOSITORY;
       break;
     case SetupTask::InstallFromLocalRepository:
-      if (theApp.portable)
+      if (theApp.IsPortable())
       {
 	prev = IDD_PACKAGE_SET_INSTALL;
       }
@@ -205,11 +205,11 @@ LocalRepositoryPage::OnKillActive ()
     {
       try
 	{
-	  if (theApp.setupTask == SetupTask::InstallFromLocalRepository)
+	  if (theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository)
 	    {
 	      PackageLevel foundPackageLevel =
-		TestLocalRepository(PathName(fileName),
-				    theApp.packageLevel);
+		SetupService::TestLocalRepository(PathName(fileName),
+				    theApp.GetPackageLevel());
 	      if (foundPackageLevel == PackageLevel::None)
 		{
 		  CString message;
@@ -222,7 +222,9 @@ LocalRepositoryPage::OnKillActive ()
 	    }
 	  if (ret)
 	    {
-	      theApp.localPackageRepository = static_cast<LPCTSTR>(fileName);
+	      SetupOptions options = theApp.pSetupService->GetOptions();
+	      options.LocalPackageRepository = static_cast<LPCTSTR>(fileName);
+	      theApp.pSetupService->SetOptions(options);
 	    }
 	}
       catch (const MiKTeXException & e)
@@ -260,7 +262,7 @@ LocalRepositoryPage::OnBrowse ()
 	}
       bi.lpszTitle = title;
       bi.ulFlags = (BIF_NEWDIALOGSTYLE | BIF_RETURNONLYFSDIRS);
-      if (theApp.setupTask == SetupTask::InstallFromLocalRepository)
+      if (theApp.GetSetupTask() == SetupTask::InstallFromLocalRepository)
 	{
 	  bi.ulFlags |= BIF_NONEWFOLDERBUTTON;
 	}

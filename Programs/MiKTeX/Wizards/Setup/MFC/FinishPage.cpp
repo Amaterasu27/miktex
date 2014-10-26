@@ -118,7 +118,7 @@ FinishPage::OnSetActive ()
 
 	  checkBox.SetWindowText (str);
 	}
-      else if (theApp.setupTask == SetupTask::Download)
+      else if (theApp.GetSetupTask() == SetupTask::Download)
 	{
 	  CString str;
 

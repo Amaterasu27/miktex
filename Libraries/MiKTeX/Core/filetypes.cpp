@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2014 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -517,7 +517,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 	FileType::LUA,
 	"lua",
 	0,
-	P6_(".luc", ".luctex", ".texluc", ".lua", ".luatex", ".texlua"),
+	P7_(".lua", ".luatex", ".luc", ".luctex", ".texlua", ".texluc", ".tlu"),
 	P_(CURRENT_DIRECTORY,
 	   R_(MIKTEX_PATH_SCRIPT_DIR "/{$progname,$engine,}/{lua,}"),
 	   GetFileTypeInfo(FileType::TEX).searchPath.c_str()),

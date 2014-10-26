@@ -6,6 +6,18 @@ compiler=pdftex
 description=AMS-TeX
 input=amstex.ini
 
+[bagpipe]
+
+compiler=pdftex
+description=Typesetting bagpipe music
+input=bagpipe.ini
+
+[bagpipex]
+
+compiler=pdftex
+description=Typesetting bagpipe music
+input=bagpipex.ini
+
 [bplain]
 
 arguments=-tcx=cp227.tcx
@@ -238,3 +250,40 @@ compiler=xetex
 description=xelatex
 input=xelatex.ini
 
+[dvilollipop]
+
+arguments=-tcx=cp227.tcx
+attributes=exclude
+compiler=pdftex
+description=dvilollipop
+input=dvilollipop.ini
+
+[dvilualollipop]
+
+attributes=exclude
+compiler=luatex
+description=dvilualollipop
+input=dvilualollipop.ini
+
+[lollipop]
+
+arguments=-tcx=cp227.tcx
+attributes=exclude
+compiler=pdftex
+description=lollipop
+input=lollipop.ini
+
+[lualollipop]
+
+attributes=exclude
+compiler=luatex
+description=lualollipop
+input=lualollipop.ini
+
+[utf8mex]
+
+arguments=-enable-enctex
+attributes=exclude
+compiler=pdftex
+description=UTF8MeX
+input=utf8mex.ini

@@ -1,6 +1,6 @@
 /* FileCopyPage.h:						-*- C++ -*-
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -23,8 +23,7 @@
 
 class FileCopyPage
   : public CPropertyPage,
-    public IRunProcessCallback,
-    public PackageInstallerCallback
+    public SetupServiceCallback
 {
 private:
   enum { IDD = IDD_FILECOPY };
@@ -110,36 +109,12 @@ public:
   virtual
   bool
   MIKTEXTHISCALL
-  OnProgress (/*[in]*/ Notification		nf);
+  OnProgress (/*[in]*/ MiKTeX::Setup::Notification		nf);
 
 private:
   static
   UINT
   WorkerThread (/*[in]*/ void * pParam);
-
-private:
-  void
-  DoTheDownload ();
-
-private:
-  void
-  DoPrepareMiKTeXDirect ();
-
-private:
-  void
-  DoTheInstallation ();
-
-private:
-  void
-  ConfigureMiKTeX ();
-
-private:
-  void
-  RunIniTeXMF (/*[in]*/ const CommandLineBuilder & cmdLine1);
-
-private:
-  void
-  RunMpm (/*[in]*/ const CommandLineBuilder & cmdLine1);
 
 private:
   void
@@ -155,23 +130,6 @@ private:
   void
   EnableControl (/*[in]*/ UINT	controlId,
 		 /*[in]*/ bool	enable);
-
-private:
-  void
-  RemoveObsoleteFiles ();
-
-private:
-  void
-  CalculateExpenditure ();
-  
-private:
-  size_t
-  GetIniTeXMFRunSize ()
-    const;
-
-private:
-  void
-  CreateInfoFile ();
 
 private:
   void
@@ -197,18 +155,6 @@ private:
   CCriticalSection criticalSectionMonitor;
   
 private:
-  int totalIniTeXMFRuns;
-
-private:
-  DWORD overallExpenditure;
-
-private:
-  DWORD totalSize;
-
-private:
-  size_t completedIniTeXMFRuns;
-
-private:
   struct SharedData
   {
     SharedData ()
@@ -233,9 +179,6 @@ private:
 private:
   SharedData sharedData;
 
-private:
-  auto_ptr<PackageInstaller> pInstaller;
-  
 private:
   HANDLE hWorkerThread;
 

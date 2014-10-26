@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2014 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -508,15 +508,6 @@ public:
   void
   Run (/*[in]*/ int		argc,
        /*[in]*/ const char **	argv);
-
-#if defined(MIKTEX_WINDOWS)
-private:
-  static
-  BOOL
-  CALLBACK
-  EnumWindowsProc (/*[in]*/ HWND	hwnd,
-		   /*[in]*/ LPARAM	lparam);
-#endif
 
 private:
   void
@@ -1807,53 +1798,32 @@ IniTeXMFApp::Finalize ()
 
 /* _________________________________________________________________________
 
-   IniTeXMFApp::EnumWindowsProc
-   _________________________________________________________________________ */
-
-#if defined(MIKTEX_WINDOWS)
-
-BOOL
-CALLBACK
-IniTeXMFApp::EnumWindowsProc (/*[in]*/ HWND	hwnd,
-			      /*[in]*/ LPARAM	lparam)
-{
-  IniTeXMFApp * This = reinterpret_cast<IniTeXMFApp*>(lparam);
-  wchar_t szText[200];
-  if (GetWindowTextW(hwnd, szText, 200) == 0)
-    {
-      return (TRUE);
-    }
-  if (wcsstr(szText, L"MiKTeX") != 0)
-    {
-      if (wcsstr(szText, L"Update") != 0)
-	{
-	  This->updateWizardRunning = true;
-	}
-      else if (wcsstr(szText, L"Setup") != 0
-	       || wcsstr(szText, L"Installer") != 0)
-	{
-	  This->setupWizardRunning = true;
-	}
-    }
-  return (TRUE);
-}
-#endif
-
-/* _________________________________________________________________________
-
    IniTeXMFApp::FindWizards
    _________________________________________________________________________ */
 
-void
-IniTeXMFApp::FindWizards ()
+void IniTeXMFApp::FindWizards()
 {
   setupWizardRunning = false;
   updateWizardRunning = false;
-#if defined(MIKTEX_WINDOWS)
-  EnumWindows (EnumWindowsProc, reinterpret_cast<LPARAM>(this));
-#else
-#  warning Unimplemented: IniTeXMFApp::FindWizards
-#endif
+  vector<string> invokerNames = Process2::GetInvokerNames();
+  for (vector<string>::const_iterator it = invokerNames.begin(); it != invokerNames.end(); ++ it)
+  {
+    if (PathName::Compare(it->c_str(), MIKTEX_PREFIX "update") == 0
+      || PathName::Compare(it->c_str(), MIKTEX_PREFIX "update" MIKTEX_ADMIN_SUFFIX) == 0)
+    {
+      updateWizardRunning = true;
+    }
+    else if (
+      it->find("basic-miktex") != string::npos ||
+      it->find("BASIC-MIKTEX") != string::npos ||
+      it->find("setup") != string::npos ||
+      it->find("SETUP") != string::npos ||
+      it->find("install") != string::npos ||
+      it->find("INSTALL") != string::npos)
+    {
+      setupWizardRunning = true;
+    }
+  }
 }
 
 /* _________________________________________________________________________
@@ -3809,7 +3779,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
       printf ("%s\n", Utils::MakeProgramVersionString(TheNameOfTheGame,
 	MIKTEX_COMPONENT_VERSION_STR).c_str());
       printf (T_("\n\
-Copyright (C) 1996-2012 Christian Schenk\n\
+Copyright (C) 1996-2014 Christian Schenk\n\
 This is free software; see the source for copying conditions.  There is NO\n\
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"));
       return;

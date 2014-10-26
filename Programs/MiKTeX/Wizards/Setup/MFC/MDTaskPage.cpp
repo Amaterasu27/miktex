@@ -58,9 +58,9 @@ MDTaskPage::MDTaskPage ()
 BOOL
 MDTaskPage::OnInitDialog ()
 {
-  root = theApp.MiKTeXDirectRoot.Get();
+  root = theApp.pSetupService->GetOptions().MiKTeXDirectRoot.Get();
   pSheet = reinterpret_cast<SetupWizard *>(GetParent());
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::PrepareMiKTeXDirect:
       task = 0;
@@ -152,7 +152,7 @@ MDTaskPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.setupTask = (task == 0
+      theApp.GetSetupTask() = (task == 0
 		? SetupTask::PrepareMiKTeXDirect
 		: SetupTask::InstallFromCD);
     }

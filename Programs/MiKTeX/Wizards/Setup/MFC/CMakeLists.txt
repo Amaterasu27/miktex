@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -38,6 +38,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -55,30 +60,50 @@ set(setup_mfc_sources
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/ProxyAuthenticationDialog.h
   FileCopyPage.cpp
+  FileCopyPage.h
   FinishPage.cpp
+  FinishPage.h
   InfoListPage.cpp
+  InfoListPage.h
   InstallDirPage.cpp
+  InstallDirPage.h
   LicensePage.cpp
+  LicensePage.h
   LocalRepositoryPage.cpp
+  LocalRepositoryPage.h
   MDTaskPage.cpp
-  ObsoleteFiles.cpp
+  MDTaskPage.h
   PackageSetPage.cpp
+  PackageSetPage.h
   ProgramFolderPage.cpp
+  ProgramFolderPage.h
   RemoteRepositoryPage.cpp
+  RemoteRepositoryPage.h
   SettingsPage.cpp
+  SettingsPage.h
+  Setup-version.h
   Setup.cpp
+  Setup.h
   SetupWizard.cpp
+  SetupWizard.h
   SharedInstallationPage.cpp
-  ShellLinkData.cpp
+  SharedInstallationPage.h
   StdAfx.cpp
+  StdAfx.h
   TaskPage.cpp
+  TaskPage.h
   WelcomePage.cpp
+  WelcomePage.h
+  resource.h
+  targetver.h
 )
 
 if(ENABLE_ADDTEXMF)
   set(setup_mfc_sources ${setup_mfc_sources}
     AddTEXMFPage.cpp
+    AddTEXMFPage.h
     EditTEXMFPage.cpp
+    EditTEXMFPage.h
   )
 endif(ENABLE_ADDTEXMF)
 
@@ -125,6 +150,7 @@ target_link_libraries(setup
   ${md5_lib_name}
   ${mpm_lib_name}
   ${mspack_lib_name}
+  ${setup_lib_name}
   ${uriparser_lib_name}
   ${utf8wrap_lib_name}
   ${zlib_lib_name}
@@ -132,8 +158,8 @@ target_link_libraries(setup
 
 if(NATIVE_WINDOWS)
   target_link_libraries(setup
-    Wldap32
     version
+    Wldap32
     wininet
     winmm
     ws2_32

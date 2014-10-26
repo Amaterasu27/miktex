@@ -156,7 +156,7 @@ LRESULT
 InfoListPage::OnWizardBack ()
 {
   UINT prev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       prev = IDD_LOCAL_REPOSITORY;
@@ -195,7 +195,7 @@ InfoListPage::CreateReport ()
 
   CString packageSet;
 
-  switch (theApp.packageLevel.Get())
+  switch (theApp.GetPackageLevel().Get())
     {
     case PackageLevel::Essential:
       packageSet = T_("essential packages");
@@ -214,19 +214,19 @@ InfoListPage::CreateReport ()
 
   info = "";
 
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       info += (T_(_T("Download ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.GetRemotePackageRepository().c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
-	       + TAB + UT_(theApp.localPackageRepository.Get()));
+	       + TAB + UT_(theApp.GetLocalPackageRepository().Get()));
       break;
     case SetupTask::InstallFromCD:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from CD/DVD")));
       break;
     case SetupTask::InstallFromLocalRepository:
-      if (theApp.prefabricated)
+      if (theApp.pSetupService->GetOptions().IsPrefabricated)
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" to ")) + CRLF
 		   + TAB + UT_(theApp.GetInstallRoot().Get()));
@@ -234,20 +234,20 @@ InfoListPage::CreateReport ()
       else
 	{
 	  info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-		   + TAB + UT_(theApp.localPackageRepository.Get()) + CRLF
+		   + TAB + UT_(theApp.GetLocalPackageRepository().Get()) + CRLF
 		   + T_(_T(" to ")) + CRLF
 		   + TAB + UT_(theApp.GetInstallRoot().Get()));
 	}
       break;
     case SetupTask::InstallFromRemoteRepository:
       info += (T_(_T("Install ")) + packageSet + T_(_T(" from ")) + CRLF
-	       + TAB + UT_(theApp.remotePackageRepository.c_str()) + CRLF
+	       + TAB + UT_(theApp.GetRemotePackageRepository().c_str()) + CRLF
 	       + T_(_T(" to ")) + CRLF
 	       + TAB + UT_(theApp.GetInstallRoot().Get()));
       break;
     case SetupTask::PrepareMiKTeXDirect:
       info += T_("Prepare to run MiKTeX from ");
-      info += theApp.MiKTeXDirectTeXMFRoot.Get();
+      info += PathName(theApp.pSetupService->GetOptions().MiKTeXDirectRoot, "texmf").Get();
       break;
     default:
       MIKTEX_ASSERT (false);
@@ -257,15 +257,15 @@ InfoListPage::CreateReport ()
 
   info += CRLF + CRLF;
   
-  if (theApp.setupTask != SetupTask::Download)
+  if (theApp.GetSetupTask() != SetupTask::Download)
     {
-      if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect)
+      if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect)
 	{
-	  if (theApp.portable)
+	  if (theApp.IsPortable())
 	  {
 	    info += T_("Install MiKTeX Portable");
 	  }
-	  else if (theApp.commonUserSetup)
+	  else if (theApp.IsCommonSetup())
 	  {
 	    info += T_("Install MiKTeX for all users");
 	  }
@@ -283,13 +283,13 @@ InfoListPage::CreateReport ()
       info += CRLF;
 #endif
       info += T_("Preferred paper size is ");
-      info += theApp.paperSize.c_str();
+      info += theApp.pSetupService->GetOptions().PaperSize.c_str();
       info += CRLF;
       info += CRLF;
-      if (theApp.setupTask != SetupTask::PrepareMiKTeXDirect
-	  && theApp.setupTask != SetupTask::Download)
+      if (theApp.GetSetupTask() != SetupTask::PrepareMiKTeXDirect
+	  && theApp.GetSetupTask() != SetupTask::Download)
 	{
-	  switch (theApp.installOnTheFly.Get())
+	  switch (theApp.pSetupService->GetOptions().IsInstallOnTheFlyEnabled.Get())
 	    {
 	    case TriState::True:
 	      info += T_("Packages will be installed on-the-fly");

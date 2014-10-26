@@ -60,7 +60,7 @@ SharedInstallationPage::OnInitDialog ()
 {
   pSheet = reinterpret_cast<SetupWizard*>(GetParent());
 
-  commonUserSetup = (theApp.commonUserSetup ? 0 : 1);
+  commonUserSetup = (theApp.IsCommonSetup() ? 0 : 1);
 
   BOOL ret = CPropertyPage::OnInitDialog();
 
@@ -161,13 +161,13 @@ LRESULT
 SharedInstallationPage::OnWizardNext ()
 {
   UINT next;
-  if (theApp.prefabricated)
+  if (theApp.pSetupService->GetOptions().IsPrefabricated)
     {
       next = IDD_INSTALLDIR;
     }
   else
     {
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::InstallFromCD:
 	  next = IDD_INSTALLDIR;
@@ -203,7 +203,7 @@ LRESULT
 SharedInstallationPage::OnWizardBack ()
 {
   UINT prev;
-  if (theApp.prefabricated)
+  if (theApp.pSetupService->GetOptions().IsPrefabricated)
     {
       prev = 
 	(theApp.prefabricatedPackageLevel == PackageLevel::Complete
@@ -212,7 +212,7 @@ SharedInstallationPage::OnWizardBack ()
     }
   else
     {
-      switch (theApp.setupTask.Get())
+      switch (theApp.GetSetupTask().Get())
 	{
 	case SetupTask::InstallFromCD:
 	case SetupTask::InstallFromLocalRepository:
@@ -242,7 +242,9 @@ SharedInstallationPage::OnKillActive ()
   BOOL ret = CPropertyPage::OnKillActive();
   if (ret)
     {
-      theApp.commonUserSetup = (commonUserSetup == 0);
+      SetupOptions options = theApp.pSetupService->GetOptions();
+      options.IsCommonSetup = (commonUserSetup == 0);
+      theApp.pSetupService->SetOptions(options);
     }
   return (ret);
 }

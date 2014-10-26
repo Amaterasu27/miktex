@@ -184,7 +184,7 @@ LicensePage::OnWizardNext ()
   UINT next =
     (theApp.isMiKTeXDirect
      ? IDD_MD_TASK
-     : (theApp.prefabricated
+     : (theApp.pSetupService->GetOptions().IsPrefabricated
 	? (theApp.prefabricatedPackageLevel == PackageLevel::Complete
 	   ? IDD_PACKAGE_SET_INSTALL
 	   : IDD_SHARED)

@@ -1,6 +1,6 @@
 /* RemoteRepositoryPag.cpp:
 
-   Copyright (C) 1999-2011 Christian Schenk
+   Copyright (C) 1999-2014 Christian Schenk
 
    This file is part of the MiKTeX Setup Wizard.
 
@@ -173,7 +173,7 @@ LRESULT
 RemoteRepositoryPage::OnWizardNext ()
 {
   UINT next;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
     case SetupTask::InstallFromRemoteRepository:
@@ -196,7 +196,7 @@ LRESULT
 RemoteRepositoryPage::OnWizardBack ()
 {
   UINT prev;
-  switch (theApp.setupTask.Get())
+  switch (theApp.GetSetupTask().Get())
     {
     case SetupTask::Download:
       prev = IDD_PACKAGE_SET_DOWNLOAD;
@@ -227,10 +227,12 @@ RemoteRepositoryPage::OnKillActive ()
 	{
 	  POSITION pos = listControl.GetFirstSelectedItemPosition();
 	  if (pos != 0)
-	    {
-	      int i = listControl.GetNextSelectedItem(pos);
-	      theApp.remotePackageRepository = repositories[i].url.c_str();
-	    }
+	  {
+	    SetupOptions options = theApp.pSetupService->GetOptions();
+	    int i = listControl.GetNextSelectedItem(pos);
+	    options.RemotePackageRepository = repositories[i].url.c_str();
+	    theApp.pSetupService->SetOptions(options);
+	  }
 	}
       catch (const MiKTeXException & e)
 	{
@@ -311,7 +313,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	   ++ it, ++ idx)
 	{
 #if MIKTEX_RELEASE_STATE < 4
-	  if (it->packageLevel < theApp.packageLevel)
+	  if (it->packageLevel < theApp.GetPackageLevel())
 	    {
 	      continue;
 	    }
@@ -344,7 +346,7 @@ RemoteRepositoryPage::OnFillList (/*[in]*/ WPARAM		wParam,
 	  SetItemText (idx, 4, it->description.c_str());
 #endif
 
-	  if (it->url == theApp.remotePackageRepository)
+	  if (it->url == theApp.GetRemotePackageRepository())
 	    {
 	      if (! listControl.SetItemState(idx,
 					     LVIS_SELECTED,

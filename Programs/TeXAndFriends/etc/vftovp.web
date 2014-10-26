@@ -3,6 +3,8 @@
 % Version 1.1 fixed problems of strict Pascal (April 1990).
 % Version 1.2 fixed various bugs found by Peter Breitenlohner (September 1990).
 % Version 1.3 made out_as_fix tell the truth in overflow cases (Dec 2002).
+% Version 1.4 reports out-of-range characters (Breitenlohner, Jan 2014),
+%  and tests nl>lig_size not 4*lig_size (C. M. Connelly, Melissa O'Neill).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -21,7 +23,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont VFtoVP} processor}
   \vskip 15pt
-  \centerline{(Version 1.3, December 2002)}
+  \centerline{(Version 1.4, January 2014)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -56,7 +58,7 @@ called \.{AMFtoXPL}.
 The |banner| string defined here should be changed whenever \.{VFtoVP}
 gets modified.
 
-@d banner=='This is VFtoVP, Version 1.3' {printed when the program starts}
+@d banner=='This is VFtoVP, Version 1.4' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it occasionally has lower case letters in strings that are output.
@@ -642,12 +644,12 @@ eval_two_bytes(ne);
 eval_two_bytes(np);
 if lh<2 then abort('The header length is only ',lh:1,'!');
 @.The header length...@>
-if nl>4*lig_size then
+if nl>lig_size then
   abort('The lig/kern program is longer than I can handle!');
 @.The lig/kern program...@>
 if (bc>ec+1)or(ec>255) then abort('The character code range ',
 @.The character code range...@>
-  bc:1,'..',ec:1,'is illegal!');
+  bc:1,'..',ec:1,' is illegal!');
 if (nw=0)or(nh=0)or(nd=0)or(ni=0) then
   abort('Incomplete subfiles for character dimensions!');
 @.Incomplete subfiles...@>
@@ -2218,10 +2220,13 @@ sixty_four_cases(fnt_num_0),four_cases(fnt1):begin f:=0;
 @<Cases...@>=
 sixty_four_cases(set_char_0),sixty_four_cases(set_char_0+64),
  four_cases(set1),four_cases(put1):begin if o>=set1 then
-    if o>=put1 then c:=get_bytes(o-put1+1,false)
-    else c:=get_bytes(o-set1+1,false)
-  else c:=o;
-  if f=font_ptr then
+    if o>=put1 then k:=get_bytes(o-put1+1,false)
+    else k:=get_bytes(o-set1+1,false)
+  else k:=o;
+  c:=k;
+  if (k<0)or(k>255) then
+    bad_vf('Character ',k:1,' is out of range and will be ignored')
+  else if f=font_ptr then
     bad_vf('Character ',c:1,' in undeclared font will be ignored')
 @.Character...will be ignored@>
   else begin vf[font_start[f+1]-1]:=c; {store |c| in the ``hole'' we left}

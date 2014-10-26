@@ -1027,6 +1027,9 @@ add_subdirectory(${rel_extractor_dir}-static)
 add_subdirectory(${rel_mpmlib_dir})
 add_subdirectory(${rel_mpmlib_dir}-static)
 
+add_subdirectory(${rel_setuplib_dir})
+add_subdirectory(${rel_setuplib_dir}-static)
+
 if(QT4_FOUND)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_ui_qt_dir})
@@ -1090,6 +1093,8 @@ if(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
 
 add_subdirectory(${rel_mpm_dir})
+
+add_subdirectory(${rel_miktexsetup_dir})
 
 add_subdirectory(${rel_makex_dir})
 
