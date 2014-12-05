@@ -52,13 +52,15 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${setup_dll_name}
-    ${core_dll_name}
-    ${mpm_dll_name}
+    PRIVATE 
+      ${core_dll_name}
+      ${mpm_dll_name}
   )
 
   if(NATIVE_WINDOWS)
     target_link_libraries(${setup_dll_name}
-      version
+      PRIVATE
+        version
     )
   endif(NATIVE_WINDOWS)
 

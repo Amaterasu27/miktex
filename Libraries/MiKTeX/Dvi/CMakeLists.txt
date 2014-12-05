@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -33,8 +33,6 @@ include_directories(BEFORE
 add_executable(makebitcounts EXCLUDE_FROM_ALL makebitcounts.cpp)
 
 merge_trustinfo_manifest(makebitcounts asInvoker)
-
-get_target_property(makebitcounts_exe makebitcounts LOCATION)
 
 set(${dvi_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/bitcounts.h
@@ -93,7 +91,7 @@ set_source_files_properties(
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bitcounts.h
-  COMMAND ${makebitcounts_exe} > bitcounts.h
+  COMMAND $<TARGET_FILE:makebitcounts> > bitcounts.h
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS makebitcounts
   VERBATIM
@@ -108,9 +106,10 @@ set_target_properties(${dvi_dll_name}
 )
 
 target_link_libraries(${dvi_dll_name}
-  ${bmeps_dll_name}
-  ${core_dll_name}
-  ${dib_dll_name}
+  PRIVATE
+    ${bmeps_dll_name}
+    ${core_dll_name}
+    ${dib_dll_name}
 )
 
 delay_load(${dvi_dll_name} ${bmeps_dll_name})

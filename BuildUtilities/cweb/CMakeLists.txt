@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -57,8 +57,6 @@ target_link_libraries(initctangle
 
 merge_trustinfo_manifest(initctangle asInvoker)
 
-get_target_property(initctangle_exe initctangle LOCATION)
-
 set(ctangle_sources
   ${wrapper_cpp}
   ${CMAKE_CURRENT_BINARY_DIR}/common.c
@@ -94,7 +92,7 @@ endif(NATIVE_WINDOWS)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
-  COMMAND ${initctangle_exe}
+  COMMAND $<TARGET_FILE:initctangle>
 	${CMAKE_CURRENT_SOURCE_DIR}/ctangle.w
 	${CMAKE_CURRENT_SOURCE_DIR}/ctang-w2c.ch
 	${CMAKE_CURRENT_BINARY_DIR}/ctangle.c
@@ -110,7 +108,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/common.c
-  COMMAND ${initctangle_exe}
+  COMMAND $<TARGET_FILE:initctangle>
 	${CMAKE_CURRENT_SOURCE_DIR}/common.w
 	${CMAKE_CURRENT_SOURCE_DIR}/comm-w2c.ch
 	${CMAKE_CURRENT_BINARY_DIR}/common.c

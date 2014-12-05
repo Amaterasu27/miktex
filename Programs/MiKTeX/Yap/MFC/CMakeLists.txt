@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -155,15 +155,13 @@ target_link_libraries(yap
   ${ui_mfc_dll_name}
 )
 
-get_target_property(yap_mfc_exe yap LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET yap
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/yap.manifest
-	-updateresource:${yap_mfc_exe}\;1
+	-updateresource:$<TARGET_FILE:yap>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)

@@ -1,6 +1,6 @@
 ## DelayLoad.cmake
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,6 +22,6 @@ macro(delay_load _target)
     foreach(_dll_name ${ARGN})
       add_link_flags (${_target} "/DELAYLOAD:${_dll_name}.dll")
     endforeach(_dll_name ${ARGN})
-    target_link_libraries(${_target} delayimp)
+    target_link_libraries(${_target} PRIVATE delayimp)
   endif(NATIVE_WINDOWS)
 endmacro(delay_load)

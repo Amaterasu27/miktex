@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -92,12 +92,13 @@ set_target_properties(${gd_dll_name}
 )
 
 target_link_libraries(${gd_dll_name}
-  ${fontconfig_dll_name}
-  ${freetype2_dll_name}
-  ${jpeg_dll_name}
-  ${png_dll_name}
-  ${utf8wrap_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    ${fontconfig_dll_name}
+    ${freetype2_dll_name}
+    ${jpeg_dll_name}
+    ${png_dll_name}
+    ${utf8wrap_dll_name}
+    ${zlib_dll_name}
 )
 
 delay_load(${gd_dll_name}

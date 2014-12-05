@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -96,8 +96,9 @@ set_target_properties(${ui_mfc_dll_name}
 )
 
 target_link_libraries(${ui_mfc_dll_name}
-  ${core_dll_name}
-  ${mpm_dll_name}
+  PRIVATE
+    ${core_dll_name}
+    ${mpm_dll_name}
 )
 
 rebase(${ui_mfc_dll_name})

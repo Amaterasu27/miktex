@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2013 Christian Schenk
+## Copyright (C) 2007-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -100,11 +100,12 @@ set_target_properties(${fontconfig_dll_name}
 rebase(${fontconfig_dll_name})
 
 target_link_libraries(${fontconfig_dll_name}
-  ${core_dll_name}
-  ${expat_dll_name}
-  ${freetype2_dll_name}
-  ${unxemu_dll_name}
-  ${utf8wrap_dll_name}
+  PRIVATE
+    ${core_dll_name}
+    ${expat_dll_name}
+    ${freetype2_dll_name}
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
 )
 
 add_dependencies(${fontconfig_dll_name}

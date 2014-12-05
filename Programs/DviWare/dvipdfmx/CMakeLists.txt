@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -121,15 +121,16 @@ install(TARGETS ${dvipdfmx_dll_name}
   ARCHIVE DESTINATION "${libdir}")
 
 target_link_libraries(${dvipdfmx_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${getopt_dll_name}
-  ${kpsemu_dll_name}
-  ${png_dll_name}
-  ${texmf_dll_name}
-  ${unxemu_dll_name}
-  ${utf8wrap_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${core_dll_name}
+    ${getopt_dll_name}
+    ${kpsemu_dll_name}
+    ${png_dll_name}
+    ${texmf_dll_name}
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
+    ${zlib_dll_name}
 )
 
 set(exes

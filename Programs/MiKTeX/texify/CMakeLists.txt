@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -49,11 +49,12 @@ set_target_properties(${mcd_dll_name}
 )
 
 target_link_libraries(${mcd_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${popt_dll_name}
-  ${regex_dll_name}
-  ${texmf_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${core_dll_name}
+    ${popt_dll_name}
+    ${regex_dll_name}
+    ${texmf_dll_name}
 )
 
 rebase(${mcd_dll_name})

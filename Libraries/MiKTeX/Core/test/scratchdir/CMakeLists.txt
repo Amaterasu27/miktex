@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,10 +37,4 @@ target_link_libraries(core_scratchdir_test1_1
   ${popt_dll_name}
 )
 
-get_target_property(
-  core_scratchdir_test1_exe
-  core_scratchdir_test1
-  LOCATION
-)
-
-add_test(core_scratchdir_test1 ${core_scratchdir_test1_exe})
+add_test(NAME core_scratchdir_test1 COMMAND $<TARGET_FILE:core_scratchdir_test1>)

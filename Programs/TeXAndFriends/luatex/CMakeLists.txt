@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -241,34 +241,35 @@ endif(NATIVE_WINDOWS)
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
 target_link_libraries(${luatex_program_dll_name}
-  wsock32.lib
-  ws2_32.lib
+  PRIVATE
+    wsock32.lib
+    ws2_32.lib
 
-  ${app_dll_name}
-  ${cairo_dll_name}
-  ${core_dll_name}
-  ${jpeg_dll_name}
-  ${kpsemu_dll_name}
-  ${md5_dll_name}
-  ${mp_lib_name}
-  ${obsdcompat_dll_name}
-  ${png_dll_name}
-  ${poppler_lib_name}
-  ${zzip_dll_name}
-
-  ${unxemu_dll_name}
-  ${utf8wrap_dll_name}
-  ${getopt_dll_name}
-  ${w2cemu_dll_name}
-  ${zlib_dll_name}
-  
-  luatex-lua52-static
-  luatex-luafontforge-static
-  luatex-luamisc-static
-  luatex-luasocket-static
-  luatex-static
-
-  luatex-miktex-static
+    ${app_dll_name}
+    ${cairo_dll_name}
+    ${core_dll_name}
+    ${jpeg_dll_name}
+    ${kpsemu_dll_name}
+    ${md5_dll_name}
+    ${mp_lib_name}
+    ${obsdcompat_dll_name}
+    ${png_dll_name}
+    ${poppler_lib_name}
+    ${zzip_dll_name}
+    
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
+    ${getopt_dll_name}
+    ${w2cemu_dll_name}
+    ${zlib_dll_name}
+    
+    luatex-lua52-static
+    luatex-luafontforge-static
+    luatex-luamisc-static
+    luatex-luasocket-static
+    luatex-static
+    
+    luatex-miktex-static
 )
 
 rebase(${luatex_program_dll_name})

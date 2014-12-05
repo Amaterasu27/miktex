@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2013 Christian Schenk
+## Copyright (C) 2013-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -100,12 +100,13 @@ set_target_properties(${cairo_dll_name}
 )
 
 target_link_libraries(${cairo_dll_name}
-  gdi32.lib
-  msimg32.lib
-  user32.lib
-  ${pixman_lib_name}
-  ${png_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    gdi32.lib
+    msimg32.lib
+    user32.lib
+    ${pixman_lib_name}
+    ${png_dll_name}
+    ${zlib_dll_name}
 )
 
 #delay_load(${cairo_dll_name}

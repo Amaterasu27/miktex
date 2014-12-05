@@ -23,7 +23,7 @@ set(MIKTEX_MAJOR_VERSION	3)
 set(MIKTEX_MINOR_VERSION	0)
 
 ## days since January 1, 2000
-set(MIKTEX_J2000_VERSION	5115)
+set(MIKTEX_J2000_VERSION	5451)
 
 ## the version of the binary package
 set(MIKTEX_PACKAGE_REVISION	1)
@@ -40,7 +40,7 @@ set(MIKTEX_RELEASE_NUM		1)
 ##   3 (snapshot release)
 ##   4 (debug)
 set(MIKTEX_RELEASE_STATE
-  0
+  4
   CACHE STRING
   "The MiKTeX release state."
 )

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -95,11 +95,9 @@ add_executable(mkversion EXCLUDE_FROM_ALL
 
 merge_trustinfo_manifest(mkversion asInvoker)
 
-get_target_property(mkversion_exe mkversion LOCATION)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
-  COMMAND ${mkversion_exe}
+  COMMAND $<TARGET_FILE:mkversion>
 	-r ${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
 	-v ${CMAKE_CURRENT_SOURCE_DIR}/version
 	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
@@ -117,13 +115,14 @@ add_executable(mkg3states EXCLUDE_FROM_ALL
 
 merge_trustinfo_manifest(mkg3states asInvoker)
 
-target_link_libraries(mkg3states ${getopt_dll_name})
-
-get_target_property(mkg3states_exe mkg3states LOCATION)
+target_link_libraries(mkg3states
+  PRIVATE
+    ${getopt_dll_name}
+)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
-  COMMAND ${mkg3states_exe} -c const ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
+  COMMAND $<TARGET_FILE:mkg3states> -c const ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
   DEPENDS mkg3states
   VERBATIM
 )

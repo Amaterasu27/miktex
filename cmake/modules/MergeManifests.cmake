@@ -1,6 +1,6 @@
 ## MergeManifests.cmake
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,16 +20,15 @@
 macro(merge_manifests _target _level)
   if(NATIVE_WINDOWS)
     add_link_flags(${_target} "/MANIFESTUAC:NO")
-    get_target_property(_target_exe ${_target} LOCATION)
     add_custom_command(
       TARGET ${_target}
       POST_BUILD
         COMMAND ${MT_EXE} -nologo
 	  -manifest ${CMAKE_SOURCE_DIR}/Resources/Manifests/${_level}.manifest
-	  -updateresource:${_target_exe}\;1
+	  -updateresource:$<TARGET_FILE:${_target}>\;1
         COMMAND ${MT_EXE} -nologo
 	  -manifest ${CMAKE_BINARY_DIR}/Resources/Manifests/Common-Controls.manifest
-	  -updateresource:${_target_exe}\;1
+	  -updateresource:$<TARGET_FILE:${_target}>\;1
 #      VERBATIM
     )
   endif(NATIVE_WINDOWS)

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -153,9 +153,10 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${texmf_dll_name}
-    ${app_dll_name}
-    ${core_dll_name}
-    ${popt_dll_name}
+    PRIVATE
+      ${app_dll_name}
+      ${core_dll_name}
+      ${popt_dll_name}
   )
 
   rebase(${texmf_dll_name})

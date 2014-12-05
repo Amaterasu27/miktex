@@ -1,6 +1,6 @@
 ## CreateWebApp.cmake
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -236,11 +236,12 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
       SOVERSION "1"
       )
     target_link_libraries(${_target_name}
-      ${app_dll_name}
-      ${core_dll_name}
-      ${popt_dll_name}
-      ${texmf_dll_name}
-      )
+      PRIVATE
+        ${app_dll_name}
+        ${core_dll_name}
+        ${popt_dll_name}
+        ${texmf_dll_name}
+    )
     rebase(${_target_name})
   endif(LINK_EVERYTHING_STATICALLY)
 

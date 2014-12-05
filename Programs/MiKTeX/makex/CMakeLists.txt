@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -61,14 +61,16 @@ if(LINK_EVERYTHING_STATICALLY)
 else(LINK_EVERYTHING_STATICALLY)
   add_library(${makex_target_name} SHARED ${${makex_target_name}_sources})
   target_link_libraries(${makex_target_name}
-    ${app_dll_name}
-    ${core_dll_name}
-    ${texmf_dll_name}
+    PRIVATE
+      ${app_dll_name}
+      ${core_dll_name}
+      ${texmf_dll_name}
   )
   if(NATIVE_WINDOWS)
     target_link_libraries(${makex_target_name}
-      ${getopt_dll_name}
-  )
+      PRIVATE
+        ${getopt_dll_name}
+    )
   endif(NATIVE_WINDOWS)
   rebase(${makex_target_name})
 endif(LINK_EVERYTHING_STATICALLY)

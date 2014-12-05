@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -129,9 +129,10 @@ set(TANGLE_FLAGS -omega)
 create_web_app(Omega)
 
 target_link_libraries(${omega_dll_name}
-  ${kpsemu_dll_name}
-  ${w2cemu_dll_name}
-  ${getopt_dll_name}
+  PRIVATE
+    ${kpsemu_dll_name}
+    ${w2cemu_dll_name}
+    ${getopt_dll_name}
 )
 
 ## dev targets

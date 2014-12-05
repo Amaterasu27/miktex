@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2012 Christian Schenk
+## Copyright (C) 2008-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -303,11 +303,9 @@ add_custom_command(
   VERBATIM
 )
 
-get_target_property(fc-lang_exe fc-lang LOCATION)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fclang.h
-  COMMAND ${fc-lang_exe} -d ${CMAKE_CURRENT_SOURCE_DIR} ${orth_files}
+  COMMAND $<TARGET_FILE:fc-lang> -d ${CMAKE_CURRENT_SOURCE_DIR} ${orth_files}
 	< ${CMAKE_CURRENT_SOURCE_DIR}/fclang.tmpl.h
 	> ${CMAKE_CURRENT_BINARY_DIR}/fclang.h
   MAIN_DEPENDENCY fclang.tmpl.h

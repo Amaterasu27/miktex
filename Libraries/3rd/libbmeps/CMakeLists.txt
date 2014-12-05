@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -65,11 +65,12 @@ set_target_properties(${bmeps_dll_name}
 rebase(${bmeps_dll_name})
 
 target_link_libraries(${bmeps_dll_name}
-  ${jpeg_dll_name}
-  ${pbm_dll_name}
-  ${png_dll_name}
-  ${pnm_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    ${jpeg_dll_name}
+    ${pbm_dll_name}
+    ${png_dll_name}
+    ${pnm_dll_name}
+    ${zlib_dll_name}
 )
 
 delay_load(${bmeps_dll_name}

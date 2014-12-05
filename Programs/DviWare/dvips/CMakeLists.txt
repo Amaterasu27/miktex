@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -91,11 +91,12 @@ add_executable(dvips ${dvips_sources})
 merge_trustinfo_manifest(dvips asInvoker)
 
 target_link_libraries(dvips
-  ${app_dll_name}
-  ${bmeps_dll_name}
-  ${core_dll_name}
-  ${kpsemu_dll_name}
-  ${utf8wrap_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${bmeps_dll_name}
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${utf8wrap_dll_name}
 )
 
 delay_load(dvips ${bmeps_dll_name})

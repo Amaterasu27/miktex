@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -87,10 +87,11 @@ set_target_properties(${pnm_dll_name}
 )
 
 target_link_libraries(${pnm_dll_name}
-  ${pbm_dll_name}
-  ${pgm_dll_name}
-  ${ppm_dll_name}
-  ${tiff_dll_name}
+  PRIVATE
+    ${pbm_dll_name}
+    ${pgm_dll_name}
+    ${ppm_dll_name}
+    ${tiff_dll_name}
 )
 
 rebase(${pnm_dll_name})

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2011 Christian Schenk
+## Copyright (C) 2008-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,11 +42,9 @@ target_link_libraries(fc-case
   ${utf8wrap_dll_name}
 )
 
-get_target_property(fc-case_exe fc-case LOCATION)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fccase.h
-  COMMAND ${fc-case_exe} ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt
+  COMMAND $<TARGET_FILE:fc-case> ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt
 	< ${CMAKE_CURRENT_SOURCE_DIR}/fccase.tmpl.h
 	> ${CMAKE_CURRENT_BINARY_DIR}/fccase.h
   MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/CaseFolding.txt

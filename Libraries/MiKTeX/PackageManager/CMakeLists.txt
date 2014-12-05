@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2009 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -150,11 +150,11 @@ if(NATIVE_WINDOWS)
       "-DREGISTER_PROXY_DLL"
     )
     target_link_libraries(${mpm_ps_dll_name}
-      oleaut32
-#      rpcndr
-      rpcns4
-      rpcrt4
-      uuid
+      PRIVATE
+        oleaut32
+        rpcns4
+	rpcrt4
+	uuid
     )
     install(TARGETS ${mpm_ps_dll_name} DESTINATION "${bindir}")
   endif(HAVE_ATLBASE_H)
@@ -170,21 +170,24 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${mpm_dll_name}
-    ${core_dll_name}
-    ${expat_dll_name}
-    ${extractor_dll_name}
-    ${md5_dll_name}
+    PRIVATE  
+      ${core_dll_name}
+      ${expat_dll_name}
+      ${extractor_dll_name}
+      ${md5_dll_name}
   )
 
   if(NATIVE_WINDOWS)
     target_link_libraries(${mpm_dll_name}
-      ${curl_dll_name}
-      Ws2_32
-      wininet
+      PRIVATE
+        ${curl_dll_name}
+	Ws2_32
+	wininet
     )
   else(NATIVE_WINDOWS)
     target_link_libraries(${mpm_dll_name}
-      ${CURL_LIBRARIES}
+      PRIVATE
+        ${CURL_LIBRARIES}
     )
   endif(NATIVE_WINDOWS)
 

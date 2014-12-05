@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -39,11 +39,12 @@ endif(NATIVE_WINDOWS)
 add_library(${cjklatex_dll_name} SHARED ${${cjklatex_dll_name}_sources})
 
 target_link_libraries(${cjklatex_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${getopt_dll_name}
-  ${mpm_dll_name}
-  ${texmf_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${core_dll_name}
+    ${getopt_dll_name}
+    ${mpm_dll_name}
+    ${texmf_dll_name}
 )
 
 set(exes

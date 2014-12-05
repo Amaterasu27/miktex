@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -107,8 +107,9 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${kpsemu_dll_name}
-    ${core_dll_name}
-    ${texmf_dll_name}
+    PRIVATE 
+      ${core_dll_name}
+      ${texmf_dll_name}
   )
 
   rebase(${kpsemu_dll_name})

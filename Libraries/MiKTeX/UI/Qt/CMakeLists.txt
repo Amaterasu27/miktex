@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -118,15 +118,17 @@ set_target_properties(${ui_qt_dll_name}
 )
 
 target_link_libraries(${ui_qt_dll_name}
-  ${core_dll_name}
-  ${mpm_dll_name}
-  ${QT_LIBRARIES}
+  PRIVATE
+    ${core_dll_name}
+    ${mpm_dll_name}
+    ${QT_LIBRARIES}
 )
 
 if(NATIVE_WINDOWS)
   target_link_libraries(${ui_qt_dll_name}
-	comctl32
-    Secur32
+    PRIVATE
+      comctl32
+      Secur32
   )
 endif(NATIVE_WINDOWS)
 

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -43,8 +43,9 @@ endif(NATIVE_WINDOWS)
 add_library(${psres_dll_name} SHARED ${${psres_dll_name}_sources})
 
 target_link_libraries(${psres_dll_name}
-  ${core_dll_name}
-  ps2pkcommon
+  PRIVATE
+    ${core_dll_name}
+    ps2pkcommon
 )
 
 install(TARGETS ${psres_dll_name} DESTINATION ${bindir})

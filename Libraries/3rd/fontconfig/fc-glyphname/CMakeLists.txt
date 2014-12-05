@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2011 Christian Schenk
+## Copyright (C) 2008-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,11 +42,9 @@ target_link_libraries(fc-glyphname
   ${utf8wrap_dll_name}
 )
 
-get_target_property(fc-glyphname_exe fc-glyphname LOCATION)
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/fcglyphname.h
-  COMMAND ${fc-glyphname_exe} ${CMAKE_CURRENT_SOURCE_DIR}/zapfdingbats.txt
+  COMMAND $<TARGET_FILE:fc-glyphname> ${CMAKE_CURRENT_SOURCE_DIR}/zapfdingbats.txt
 	< ${CMAKE_CURRENT_SOURCE_DIR}/fcglyphname.tmpl.h
 	> ${CMAKE_CURRENT_BINARY_DIR}/fcglyphname.h
   MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/zapfdingbats.txt

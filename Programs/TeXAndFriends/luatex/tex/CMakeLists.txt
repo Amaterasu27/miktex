@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -184,15 +184,13 @@ target_link_libraries(txt2zlib
 
 merge_trustinfo_manifest(txt2zlib asInvoker)
 
-get_target_property(txt2zlib_exe txt2zlib LOCATION)
-
 make_directory(${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts)
 
 add_custom_command(
   OUTPUT
     ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
   COMMAND
-    ${txt2zlib_exe}
+    $<TARGET_FILE:txt2zlib>
       ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
       pdflua.c
   WORKING_DIRECTORY

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -32,9 +32,10 @@ endif(NATIVE_WINDOWS)
 add_library(${arctrl_dll_name} SHARED ${${arctrl_dll_name}_sources})
 
 target_link_libraries(${arctrl_dll_name}
-  ${app_dll_name}
-  ${core_dll_name}
-  ${popt_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${core_dll_name}
+    ${popt_dll_name}
 )
 
 rebase(${arctrl_dll_name})

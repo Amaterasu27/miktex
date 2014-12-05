@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -96,7 +96,8 @@ endif(NATIVE_WINDOWS)
 add_library(${lua_dll_name} SHARED ${${lua_dll_name}_sources})
 
 target_link_libraries(${lua_dll_name}
-  ${utf8wrap_dll_name}
+  PRIVATE
+    ${utf8wrap_dll_name}
 )
 
 set_target_properties(${lua_dll_name}

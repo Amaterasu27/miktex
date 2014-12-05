@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -86,7 +86,8 @@ if(LINK_EVERYTHING_STATICALLY)
   )
 else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${tex_target_name}
-    ${w2cemu_dll_name}
+    PRIVATE
+      ${w2cemu_dll_name}
   )
 endif(LINK_EVERYTHING_STATICALLY)
 
@@ -146,7 +147,8 @@ if(LINK_EVERYTHING_STATICALLY)
   )
 else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${triptex_target_name}
-    ${w2cemu_dll_name}
+    PRIVATE
+      ${w2cemu_dll_name}
   )
 endif(LINK_EVERYTHING_STATICALLY)
 

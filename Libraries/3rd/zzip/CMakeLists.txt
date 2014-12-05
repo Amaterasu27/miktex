@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2012 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -80,7 +80,10 @@ set_target_properties(${zzip_dll_name}
     SOVERSION "1"
 )
 
-target_link_libraries(${zzip_dll_name} ${zlib_dll_name})
+target_link_libraries(${zzip_dll_name}
+  PRIVATE
+    ${zlib_dll_name}
+)
 
 rebase(${zzip_dll_name})
 

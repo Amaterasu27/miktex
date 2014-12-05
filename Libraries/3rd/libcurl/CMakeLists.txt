@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -234,7 +234,13 @@ set_target_properties(${curl_dll_name}
 )
 
 if(NATIVE_WINDOWS)
-  target_link_libraries(${curl_dll_name} winmm wsock32 ws2_32 Wldap32)
+  target_link_libraries(${curl_dll_name}
+    PRIVATE
+      winmm
+      wsock32
+      ws2_32
+      Wldap32
+  )
 endif(NATIVE_WINDOWS)
 
 rebase(${curl_dll_name})

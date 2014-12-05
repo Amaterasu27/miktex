@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -48,19 +48,22 @@ set_target_properties(${app_dll_name}
 )
 
 target_link_libraries(${app_dll_name}
-  ${core_dll_name}
-  ${mpm_dll_name}
+  PRIVATE
+    ${core_dll_name}
+    ${mpm_dll_name}
 )
 
 if(QT4_FOUND)
   target_link_libraries(${app_dll_name}
-    ${ui_qt_dll_name}
+    PRIVATE
+      ${ui_qt_dll_name}
   )
 endif(QT4_FOUND)
 
 if(MFC_FOUND)
   target_link_libraries(${app_dll_name}
-    ${ui_mfc_dll_name}
+    PRIVATE
+      ${ui_mfc_dll_name}
   )
 endif(MFC_FOUND)
 

@@ -45,7 +45,8 @@ set_target_properties(${teckit_dll_name}
 )
 
 target_link_libraries(${teckit_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    ${zlib_dll_name}
 )
 
 delay_load(${teckit_dll_name}

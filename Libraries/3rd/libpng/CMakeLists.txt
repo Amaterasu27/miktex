@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -71,7 +71,10 @@ if(WIN32)
     DEFINE_SYMBOL PNG_BUILD_DLL)
 endif()
 
-target_link_libraries(${png_dll_name} ${zlib_dll_name})
+target_link_libraries(${png_dll_name}
+  PRIVATE
+    ${zlib_dll_name}
+)
 
 rebase(${png_dll_name})
 

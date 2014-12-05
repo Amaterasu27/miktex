@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,6 +30,4 @@ target_link_libraries(core_compression_test1
   ${popt_dll_name}
 )
 
-get_target_property(core_compression_test1_exe core_compression_test1 LOCATION)
-
-add_test(core_compression_test1 ${core_compression_test1_exe})
+add_test(NAME core_compression_test1 COMMAND $<TARGET_FILE:core_compression_test1>)

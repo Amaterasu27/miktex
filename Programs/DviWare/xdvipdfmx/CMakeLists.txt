@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -114,15 +114,16 @@ add_executable(xdvipdfmx ${xdvipdfmx_sources})
 merge_trustinfo_manifest(xdvipdfmx asInvoker)
 
 target_link_libraries(xdvipdfmx
-  ${app_dll_name}
-  ${core_dll_name}
-  ${fontconfig_dll_name}
-  ${freetype2_dll_name}
-  ${kpsemu_dll_name}
-  ${png_dll_name}
-  ${unxemu_dll_name}
-  ${utf8wrap_dll_name}
-  ${zlib_dll_name}
+  PRIVATE
+    ${app_dll_name}
+    ${core_dll_name}
+    ${fontconfig_dll_name}
+    ${freetype2_dll_name}
+    ${kpsemu_dll_name}
+    ${png_dll_name}
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
+    ${zlib_dll_name}
 )
 
 delay_load(xdvipdfmx

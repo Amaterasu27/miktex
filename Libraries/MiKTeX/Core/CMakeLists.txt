@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -240,11 +240,11 @@ if(NATIVE_WINDOWS)
       "-DREGISTER_PROXY_DLL"
     )
     target_link_libraries(${core_ps_dll_name}
-      oleaut32
-#      rpcndr
-      rpcns4
-      rpcrt4
-      uuid
+      PRIVATE
+        oleaut32
+        rpcns4
+        rpcrt4
+        uuid
     )
     install(TARGETS ${core_ps_dll_name}
       RUNTIME DESTINATION "${bindir}"
@@ -260,7 +260,7 @@ if(NATIVE_WINDOWS)
 		${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
 		${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.rc
 		${CMAKE_CURRENT_BINARY_DIR}/MSG00001.bin
-#    COMMAND ${MC_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/MiKTeXEvents.mc
+    # COMMAND ${MC_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/MiKTeXEvents.mc
     COMMAND mc ${CMAKE_CURRENT_SOURCE_DIR}/MiKTeXEvents.mc
     MAIN_DEPENDENCY MiKTeXEvents.mc
     DEPENDS MiKTeXEvents.mc
@@ -291,21 +291,23 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     )
   
   target_link_libraries(${core_dll_name}
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${botan_dll_name}
-    ${bzip2_dll_name}
-    ${lzma_dll_name}
-    ${md5_dll_name}
-    ${uriparser_dll_name}
-    ${zlib_dll_name}
-    )
+    PRIVATE
+      ${CMAKE_THREAD_LIBS_INIT}
+      ${botan_dll_name}
+      ${bzip2_dll_name}
+      ${lzma_dll_name}
+      ${md5_dll_name}
+      ${uriparser_dll_name}
+      ${zlib_dll_name}
+  )
   
   if(NATIVE_WINDOWS)
     target_link_libraries(${core_dll_name}
-      SHFolder.lib
-      shlwapi.lib
-      htmlhelp.lib
-      )
+      PRIVATE
+        SHFolder.lib
+	shlwapi.lib
+	htmlhelp.lib
+    )
   endif(NATIVE_WINDOWS)
   
   delay_load(${core_dll_name}
@@ -313,7 +315,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     ${lzma_dll_name}
     ${uriparser_dll_name}
     ${zlib_dll_name}
-    )
+  )
   
   rebase(${core_dll_name})
   

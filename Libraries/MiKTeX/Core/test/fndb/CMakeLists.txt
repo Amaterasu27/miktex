@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -25,9 +25,9 @@ foreach(t 1 2)
     ${core_dll_name}
     ${popt_dll_name}
   )
-  get_target_property(core_fndb_test${t}_exe test${t} LOCATION)
-  add_test(core_fndb_test${t}
-    ${core_fndb_test${t}_exe}
-    --data-root=${dataroot}
-    --install-root=${installroot})
+  add_test(
+    NAME core_fndb_test${t}
+    COMMAND $<TARGET_FILE:core_fndb_test${t}>
+    	--data-root=${dataroot}
+	--install-root=${installroot})
 endforeach(t)
