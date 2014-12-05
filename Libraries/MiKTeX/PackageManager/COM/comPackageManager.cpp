@@ -1,6 +1,6 @@
 /* comPackageManager.cpp:
 
-   Copyright (C) 2001-2011 Christian Schenk
+   Copyright (C) 2001-2014 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -348,7 +348,7 @@ comPackageManager::UpdateRegistry (/*[in]*/ BOOL doRegister)
 					       &regMapEntries[0]);
 #else
       hr =
-	_AtlModule.UpdateRegistryFromResourceS(IDR_PACKAGEMANAGER,
+	_AtlModule.UpdateRegistryFromResource(IDR_PACKAGEMANAGER,
 					       doRegister,
 					       &regMapEntries[0]);
 #endif

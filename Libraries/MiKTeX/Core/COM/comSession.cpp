@@ -1,6 +1,6 @@
 /* comSession.cpp: MiKTeX session
 
-   Copyright (C) 2006-2009 Christian Schenk
+   Copyright (C) 2006-2014 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -480,7 +480,7 @@ comSession::UpdateRegistry (/*[in]*/ BOOL doRegister)
 					       &regMapEntries[0]);
 #else
       hr =
-	_AtlModule.UpdateRegistryFromResourceS(IDR_MIKTEXSESSIONOBJECT,
+	_AtlModule.UpdateRegistryFromResource(IDR_MIKTEXSESSIONOBJECT,
 					       doRegister,
 					       &regMapEntries[0]);
 #endif

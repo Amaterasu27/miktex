@@ -53,8 +53,6 @@ hide_symbols()
 
 add_definitions(-DHAVE_CONFIG_H)
 
-add_definitions(-D_ATL_DLL)
-
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
