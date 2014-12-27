@@ -63,12 +63,12 @@ private:
     float     *fPositions;
 
     /**
-     * The auxiliary data arrays.
+     * The auxillary data array.
      *
      * @internal
      */
     le_uint32 *fAuxData;
-    void     **fAuxParam;
+
 
     /**
      * The insertion list, used to grow the above arrays.
@@ -299,7 +299,6 @@ public:
      * @stable ICU 3.6
      */
     le_uint32 getAuxData(le_int32 glyphIndex, LEErrorCode &success) const;
-    void *getAuxParam(le_int32 glyphIndex, LEErrorCode &success) const;
 
     /**
      * This operator allows direct access to the glyph array
@@ -428,20 +427,15 @@ public:
     void adjustPosition(le_int32 glyphIndex, float xAdjust, float yAdjust, LEErrorCode &success);
 
     /**
-     * Set the auxiliary data for a particular glyph.
+     * Set the auxillary data for a particular glyph.
      *
      * @param glyphIndex the index of the glyph
-     * @param auxData the new auxiliary data
-     * @param auxParam the new secondary auxiliary data (parameter)
-     * @param success will be set to an error code if the auxiliary data cannot be set.
+     * @param auxData the new auxillary data
+     * @param success will be set to an error code if the auxillary data cannot be set.
      *
-     * @stable ICU 3.6 - mod for XeTeX
+     * @stable ICU 3.6
      */
-    void setAuxData(le_int32 glyphIndex, le_uint32 auxData, void *auxParam, LEErrorCode &success);
-    /**
-     * The common case when @param auxParam is <code>NULL</code>.
-     */
-    inline void setAuxData(le_int32 glyphIndex, le_uint32 auxData, LEErrorCode &success);
+    void setAuxData(le_int32 glyphIndex, le_uint32 auxData, LEErrorCode &success);
 
     /**
      * Delete the glyph array and replace it with the one
@@ -546,10 +540,6 @@ inline LEGlyphID &LEGlyphStorage::operator[](le_int32 glyphIndex) const
     return fGlyphs[glyphIndex];
 }
 
-inline void LEGlyphStorage::setAuxData(le_int32 glyphIndex, le_uint32 auxData, LEErrorCode &success)
-{
-    setAuxData(glyphIndex, auxData, NULL, success);
-}
 
 U_NAMESPACE_END
 #endif
