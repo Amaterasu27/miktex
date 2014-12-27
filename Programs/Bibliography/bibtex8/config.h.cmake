@@ -6,15 +6,6 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #cmakedefine HAVE_ASSERT_H
 
-/* Define to 1 if you have the `bcmp' function. */
-#cmakedefine HAVE_BCMP
-
-/* Define to 1 if you have the `bcopy' function. */
-#cmakedefine HAVE_BCOPY
-
-/* Define to 1 if you have the `bzero' function. */
-#cmakedefine HAVE_BZERO
-
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #cmakedefine HAVE_DIRENT_H
@@ -34,11 +25,11 @@
 /* Define to 1 if you have the `getwd' function. */
 #cmakedefine HAVE_GETWD
 
-/* Define to 1 if you have the `index' function. */
-#cmakedefine HAVE_INDEX
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <iostream> header file. */
+#cmakedefine HAVE_IOSTREAM
 
 /* Define to 1 if you have the <limits.h> header file. */
 #cmakedefine HAVE_LIMITS_H
@@ -61,18 +52,11 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #cmakedefine HAVE_NDIR_H
 
-/* Define to 1 if you are using GNU libc or otherwise have global variables
-   `program_invocation_name' and `program_invocation_short_name'. */
-#cmakedefine HAVE_PROGRAM_INVOCATION_NAME
-
 /* Define to 1 if you have the `putenv' function. */
 #cmakedefine HAVE_PUTENV
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #cmakedefine HAVE_PWD_H
-
-/* Define to 1 if you have the `rindex' function. */
-#cmakedefine HAVE_RINDEX
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H
@@ -149,6 +133,11 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS
 
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
 /* Number of bits in a file offset, on hosts where this is settable. */
 #cmakedefine _FILE_OFFSET_BITS
 
@@ -157,6 +146,11 @@
 
 /* Define for large files, on AIX-style hosts. */
 #cmakedefine _LARGE_FILES
+
+/* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#cmakedefine _UINT64_T
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const
@@ -167,8 +161,16 @@
 #cmakedefine inline
 #endif
 
+/* Define to the type of a signed integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#cmakedefine int64_t
+
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #cmakedefine size_t
+
+/* Define to the type of an unsigned integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint64_t
 
 #if defined(MIKTEX)
 #  define USE_MIKTEX_EXIT 1

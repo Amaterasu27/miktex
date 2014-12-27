@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,13 +18,14 @@
 ## USA.
 
 ## cannot compile as C++: too many implicit casts
-set(BIBTEX8_COMPILE_AS_CXX 0)
+set(BIBTEX8_COMPILE_AS_CXX 1)
 
 default_char_type_is_unsigned()
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
 )
 
 configure_file(
@@ -35,7 +36,6 @@ configure_file(
 add_definitions(
   -DHAVE_CONFIG_H
   -DKPATHSEA
-  -DSUPPORT_8BIT
   -D_UNICODE -DUNICODE
 )
 
@@ -54,7 +54,7 @@ if(BIBTEX8_COMPILE_AS_CXX)
   )
 endif(BIBTEX8_COMPILE_AS_CXX)
 
-set(bibtex8_sources
+set(common_sources
   ${wrapper_cpp}
   bibtex-1.c
   bibtex-2.c
@@ -72,11 +72,15 @@ set(bibtex8_sources
   version.h
 )
 
+set(bibtex8_sources ${common_sources})
+
 if(NATIVE_WINDOWS)
   set(bibtex8_sources ${bibtex8_sources} bibtex8.rc)
 endif(NATIVE_WINDOWS)
 
 add_executable(bibtex8 ${bibtex8_sources})
+
+set_target_properties(bibtex8 PROPERTIES COMPILE_DEFINITIONS "SUPPORT_8BIT")
 
 merge_trustinfo_manifest(bibtex8 asInvoker)
 
@@ -89,3 +93,27 @@ target_link_libraries(bibtex8
 )
 
 install(TARGETS bibtex8 DESTINATION ${bindir})
+
+set(bibtexu_sources ${common_sources})
+
+if(NATIVE_WINDOWS)
+  set(bibtexu_sources ${bibtexu_sources} bibtexu.rc)
+endif(NATIVE_WINDOWS)
+
+add_executable(bibtexu ${bibtexu_sources})
+
+set_target_properties(bibtexu PROPERTIES COMPILE_DEFINITIONS "UTF_8")
+
+merge_trustinfo_manifest(bibtexu asInvoker)
+
+target_link_libraries(bibtexu
+  ${app_dll_name}
+  ${core_dll_name}
+  ${getopt_dll_name}
+  ${icuin_dll_name}
+  ${icuuc_dll_name}
+  ${kpsemu_dll_name}
+  ${utf8wrap_dll_name}
+)
+
+install(TARGETS bibtexu DESTINATION ${bindir})

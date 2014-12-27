@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -139,6 +139,7 @@ set(mpm_tlb_name        "${miktex_dll_prefix}-packageManager")
 
 ## prebuilt libraries
 set(icudt_dll_name	"icudt")
+set(icuin_dll_name	"icuin")
 set(icule_dll_name	"icule")
 set(icuuc_dll_name	"icuuc")
 
