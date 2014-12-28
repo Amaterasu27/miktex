@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2013 Christian Schenk
+%% Copyright (C) 2007-2014 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -209,7 +209,7 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 % _____________________________________________________________________________
 
 @x
-    if (str_pool[j]=" ") then must_quote:=true
+    if str_pool[j]=" " then must_quote:=true
 @y
     if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
 @z
@@ -288,12 +288,12 @@ end
 % [29.554]
 % _____________________________________________________________________________
 
-@x
+ @x
 var temp_str: str_number;
-@y
+ @y
 var temp_str: str_number;
 k: integer;
-@z
+ @z
 
 @x
   if kpse_in_name_ok(stringcast(name_of_file+1))
@@ -392,12 +392,12 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 % [49.1308]
 % _____________________________________________________________________________
 
-@x
+ @x
 var c:0..1; {1 for \.{\\openin}, 0 for \.{\\closein}}
-@y
+ @y
 var c:0..1; {1 for \.{\\openin}, 0 for \.{\\closein}}
 k:integer;
-@z
+ @z
 
 @x
   if open_in_name_ok(stringcast(name_of_file+1))

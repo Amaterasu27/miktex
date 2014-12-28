@@ -75,6 +75,10 @@
  *  Level 2.
  */
 
+#if HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
+
 #if defined(MIKTEX)
 #  include <cstdlib>
 #  include <MiKTeX/KPSE/Emulation>

@@ -7357,7 +7357,7 @@ if cur_cmd>=outer_call then check_outer_validity;
 end
 
 @ Notice that a code like \.{\^\^8} becomes \.x if not followed by a hex digit.
- 
+
 @d is_hex(#)==(((#>="0")and(#<="9"))or((#>="a")and(#<="f")))
 @d hex_to_cur_chr==
   if c<="9" then cur_chr:=c-"0" @+else cur_chr:=c-"a"+10;
@@ -7367,7 +7367,7 @@ end
 @<If this |sup_mark| starts an expanded character...@>=
 begin if cur_chr=buffer[loc] then if loc<limit then
   begin c:=buffer[loc+1]; @+if c<@'200 then {yes we have an expanded char}
-    begin loc:=loc+2; 
+    begin loc:=loc+2;
     if is_hex(c) then if loc<=limit then
       begin cc:=buffer[loc]; @+if is_hex(cc) then
         begin incr(loc); hex_to_cur_chr; goto reswitch;
@@ -17766,7 +17766,7 @@ affect the translation of the beginning of the word.
 function reconstitute(@!j,@!n:small_number;@!bchar,@!hchar:halfword):
   small_number;
 label continue,done;
-var @!p:pointer; {temporary register for list manipulation} 
+var @!p:pointer; {temporary register for list manipulation}
 @!t:pointer; {a node being appended to}
 @!q:four_quarters; {character information or a lig/kern instruction}
 @!cur_rh:halfword; {hyphen character for ligature testing}
@@ -19914,7 +19914,7 @@ end
 in internal vertical mode, and \TeX\ will do the following:
 
 @<Resume the page builder after an output routine has come to an end@>=
-begin if (loc<>null) or 
+begin if (loc<>null) or
  ((token_type<>output_text)and(token_type<>backed_up)) then
   @<Recover from an unbalanced output routine@>;
 end_token_list; {conserve stack space in case more outputs are triggered}

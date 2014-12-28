@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2013 Christian Schenk
+## Copyright (C) 2008-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -205,6 +205,7 @@ set(${xetex_dll_name}_sources
   XeTeX_ext.c
   XeTeX_ext.h
   XeTeX_pic.c
+  XeTeX_web.h
   XeTeXswap.h
   c4p_pre.h
   etex_version.h

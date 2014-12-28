@@ -3,7 +3,7 @@
 % Version 1.1 fixed some for-loop indices for stricter Pascal (April 1990).
 % Version 1.2 fixed `nonexistent char 0' bug, and a bit more (September 1990).
 % Version 1.3 has more robust `out_scaled' (March 1991).
-% Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).   
+% Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).
 % Version 1.5 (August 1998) corrected vf_fix(0) (Wayne Sullivan).
 % Version 1.6 (January 2014) corrected possible end-of-line glitch (Ken Nakano),
 %  and get_fix now treats -- as + (Peter Breitenlohner).
@@ -46,7 +46,7 @@ of the given \.{VPL} file, so that the \.{VF} file should be acceptable to
 device drivers and the \.{TFM} file should be acceptable to \TeX.
 
 \indent\.{VPtoVF} is an extended version of the program \.{PLtoTF}, which
-is part of the standard \TeX ware library. 
+is part of the standard \TeX ware library.
 The idea of a virtual font was inspired by the work of David R. Fuchs
 @^Fuchs, David Raymond@>
 who designed a similar set of conventions in 1984 while developing a
