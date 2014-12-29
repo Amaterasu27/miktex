@@ -1,6 +1,6 @@
 /* path.cpp: path name utilities
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2014 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -278,7 +278,7 @@ NormalizePath (/*[in,out]*/ char *	lpszPath)
 	{
 	  lpszPath[l] = PathName::AltDirectoryDelimiter;
 	}
-      else
+      else if (lpszPath[l] >= 'A' && lpszPath[l] <= 'Z')
 	{
 	  lpszPath[l] = ToLower(lpszPath[l]);
 	}

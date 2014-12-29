@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -42,16 +42,17 @@ include_directories(BEFORE
 )
 
 add_definitions(
+  -DHAVE_C4P_PRE_H
+  -DHAVE_GETPDFMAJORVERSION
   -DMIKTEX_PDFTEX
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DPDF_PARSER_ONLY
-  -DUSE_GZIP
-  -DpdfTeX
-  -DSYNCTEX_ENGINE_H="synctex-pdftex.h"
-  -D__SyncTeX__
   -DPOPPLER_VERSION="${POPPLER_VERSION}"
-  -DHAVE_GETPDFMAJORVERSION
+  -DSYNCTEX_ENGINE_H="synctex-pdftex.h"
+  -DUSE_GZIP
+  -D__SyncTeX__
+  -DpdfTeX
 )
 
 add_definitions(
@@ -256,14 +257,27 @@ endif(LINK_EVERYTHING_STATICALLY)
 
 set(${pdftex_target_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-common.h
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-pdftex.h
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
   avl.c
+  avl.h
   avlstuff.c
+  avlstuff.h
+  c4p_pre.h
   epdf.c
+  image.h
   mapfile.c
+  pdftex-common.h
+  pdftex-miktex.h
+  pdftex-version.h
   pdftex.defaults.h
+  pdftex.h
   pdftoepdf.cc
   pkin.c
+  ptexlib.h
+  ptexmac.h
   subfont.c
   tounicode.c
   utils.c
@@ -277,6 +291,7 @@ set(${pdftex_target_name}_sources
   writet1.c
   writet3.c
   writettf.c
+  writettf.h
   writezip.c
 )
 

@@ -1,6 +1,6 @@
 /* c4p_pre.h:						-*- C++ -*-
    
-   Copyright (C) 2007-2014 Christian Schenk
+   Copyright (C) 2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -21,22 +21,3 @@
 
 #define MIKTEX_UTF8_WRAP_ALL 1
 #include <miktex/utf8wrap.h>
-
-#include <cstdio>
-
-/* _________________________________________________________________________
-
-   texmfmp.h stuff
-   _________________________________________________________________________ */
-
-#define XETEX_UNICODE_FILE_DEFINED	1
-typedef struct {
-  FILE *f;
-  long  savedChar;
-  short skipNextLF;
-  short encodingMode;
-  void *conversionData;
-} UFILE;
-typedef UFILE* unicodefile;
-
-typedef void* voidpointer;
