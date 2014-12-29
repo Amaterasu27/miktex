@@ -1,6 +1,6 @@
 /* miktex/utf8wrap.h: Unx emulation				-*- C++ -*-
 
-   Copyright (C) 2011 Christian Schenk
+   Copyright (C) 2014 Christian Schenk
 
    This file is part of the MiKTeX UTF8Wrap Library.
 
@@ -88,6 +88,9 @@ miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
 		   /*[in]*/ const char * lpszMode);
 
 MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFile);
+
+MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_rename (/*[in]*/ const char * lpszOld, /*[in]*/ const char * lpszNew);
 
 MIKTEXUTF8WRAPCEEAPI(int)
@@ -171,6 +174,9 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #  endif
 #  if ! defined(MIKTEX_UTF8_WRAP_POPEN)
 #    define MIKTEX_UTF8_WRAP_POPEN 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_PUTC)
+#    define MIKTEX_UTF8_WRAP_PUTC 1
 #  endif
 #  if ! defined(MIKTEX_UTF8_WRAP_RENAME)
 #    define MIKTEX_UTF8_WRAP_RENAME 1
@@ -260,6 +266,10 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 
 #if MIKTEX_UTF8_WRAP_POPEN
 #  define popen miktex_utf8_popen
+#endif
+
+#if MIKTEX_UTF8_WRAP_PUTC
+#  define putc miktex_utf8_putc
 #endif
 
 #if MIKTEX_UTF8_WRAP_RENAME

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011 Christian Schenk
+## Copyright (C) 2011-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,6 +20,10 @@
 use_static_crt()
 use_static_libraries()
 
+add_definitions(
+  -D_UNICODE -DUNICODE
+)
+
 include_directories(BEFORE
   ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}
 )
@@ -32,3 +36,13 @@ set(${utf8wrap_lib_name}_sources
 )
 
 add_library(${utf8wrap_lib_name} STATIC ${${utf8wrap_lib_name}_sources})
+
+add_executable(utf8wrap utf8wrap.cpp)
+
+merge_trustinfo_manifest(utf8wrap asInvoker)
+
+target_link_libraries(utf8wrap
+  ${utf8wrap_lib_name}
+)
+
+install(TARGETS utf8wrap DESTINATION ${bindir})
