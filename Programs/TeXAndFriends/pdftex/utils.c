@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2013 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -22,7 +22,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include <w2c/config.h>		/* for large file support */
-
 #include <sys/types.h>
 #include <regex.h>
 #include <kpathsea/config.h>
@@ -293,6 +292,8 @@ void garbagewarning(void)
     removepdffile();
 }
 
+#if defined(MIKTEX)
+// from texmfmp.c
 char *makecstring(integer s)
 {
     static char *cstrbuf = NULL;
@@ -319,6 +320,7 @@ char *makecstring(integer s)
     *p = 0;
     return cstrbuf;
 }
+#endif
 
 void setjobid(int year, int month, int day, int time)
 {
@@ -871,6 +873,8 @@ void printID(strnumber filename)
   Solaris 2.5).
 */
 
+#if defined(MIKTEX)
+// from texmfmp.c
 static time_t start_time = 0;
 #define TIME_STR_SIZE 30
 static char start_time_str[TIME_STR_SIZE];
@@ -932,6 +936,7 @@ void initstarttime(void)
         makepdftime(start_time, start_time_str);
     }
 }
+#endif
 
 void printcreationdate(void)
 {
@@ -945,6 +950,8 @@ void printmoddate(void)
     pdf_printf("/ModDate (%s)\n", start_time_str);
 }
 
+#if defined(MIKTEX)
+// from texmfmp.c
 void getcreationdate(void)
 {
     /* put creation date on top of string pool and update poolptr */
@@ -1024,6 +1031,7 @@ void getfilesize(strnumber s)
 
     xfree(file_name);
 }
+#endif
 
 #define DIGEST_SIZE 16
 #define FILE_BUF_SIZE 1024
@@ -1079,6 +1087,8 @@ void getmd5sum(strnumber s, boolean file)
     poolptr += len;
 }
 
+#if defined(MIKTEX)
+// from texmfmp.c
 void getfiledump(strnumber s, int offset, int length)
 {
     FILE *f;
@@ -1133,6 +1143,7 @@ void getfiledump(strnumber s, int offset, int length)
     }
     xfree(file_name);
 }
+#endif
 
 #define DEFAULT_SUB_MATCH_COUNT 10
 static int sub_match_count = DEFAULT_SUB_MATCH_COUNT;
@@ -1221,6 +1232,8 @@ void getmatch(int i)
 }
 
 
+#if defined(MIKTEX)
+// from texmfmp.c
 /* makecfilename
   input/ouput same as makecstring:
     input: string number
@@ -1242,6 +1255,7 @@ char *makecfilename(strnumber s)
     *q = '\0';
     return name;
 }
+#endif
 
 /* function strips trailing zeros in string with numbers; */
 /* leading zeros are not stripped (as in real life) */
