@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,7 +29,7 @@ set(rel_build_tools_etc_dir	"BuildUtilities/etc")
 set(rel_bzip2_dir	"Libraries/3rd/bzip2")
 set(rel_c4p_dir		"BuildUtilities/c4p")
 set(rel_cairo_dir	"Libraries/3rd/cairo")
-set(rel_cairo_include_dir	"${rel_cairo_dir}/src")
+set(rel_cairo_include_dir	"${rel_cairo_dir}/include")
 set(rel_cairo_source_dir	"${rel_cairo_dir}/src")
 set(rel_cfg_dir		"BuildUtilities/cfg")
 set(rel_cjkutils_dir	"Programs/FontUtilities/cjkutils")
