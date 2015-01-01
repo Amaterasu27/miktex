@@ -11,6 +11,7 @@
 #include <kpathsea/progname.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
+#include <kpathsea/variable.h>
 #include <kpathsea/version.h>
 #include <kpathsea/lib.h>
 #ifdef strdup
@@ -48,6 +49,13 @@ extern char *strtok(); /* some systems don't have this in strings.h */
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#endif
+
+#if ! defined(MIKTEX)
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#define fopen(file, fmode)  fsyscp_fopen(file, fmode)
+#endif
 #endif
 
 #ifndef DEFRES
@@ -551,6 +559,12 @@ newoutname(void) {
                seqptr = p + 1;
             else if (IS_DIR_SEP (*p))
                seqptr = 0;
+#if ! defined(MIKTEX)
+#ifdef WIN32
+            else if (IS_KANJI(p))
+               p++;
+#endif
+#endif
          if (seqptr == 0)
             seqptr = p;
          nextstring += 5; /* make room for the number, up to five digits */
@@ -614,6 +628,10 @@ main(int argc, char **argv)
    sectiontype *sects;
 
 #ifdef WIN32
+#if defined(KPATHSEA)
+   int ac;
+   char **av, *enc;
+#endif
    SET_BINARY(fileno(stdin));
    SET_BINARY(fileno(stdout));
 #endif
@@ -627,6 +645,15 @@ main(int argc, char **argv)
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
+#if ! defined(MIKTEX)
+#ifdef WIN32
+   enc = kpse_var_value("command_line_encoding");
+   if (get_command_line_args_utf8(enc, &ac, &av)) {
+      argc = ac;
+      argv = av;
+   }
+#endif
+#endif
 #endif
 
 #ifdef __THINK__
@@ -678,7 +705,7 @@ main(int argc, char **argv)
       } else if (strcmp (argv[1], "--version") == 0) {
         puts (BANNER);
         puts (kpathsea_version_string);
-        puts ("Copyright 2013 Radical Eye Software.\n\
+        puts ("Copyright 2014 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -1181,6 +1208,14 @@ default:
                      lastext = nextstring - iname;
                   else if (IS_DIR_SEP(*nextstring))
                      lastext = 0;
+#if ! defined(MIKTEX)
+#ifdef WIN32
+                  else if (IS_KANJI(p-1)) {
+                     nextstring++;
+                     *nextstring = *p++;
+                  }
+#endif
+#endif
                   nextstring++;
                }
                *nextstring++ = '.';
@@ -1337,6 +1372,12 @@ default:
          for (oname=p; *p && p[1]; p++)
             if (IS_DIR_SEP(*p))
                oname = p + 1;
+#if ! defined(MIKTEX)
+#ifdef WIN32
+            else if (IS_KANJI(p))
+               p++;
+#endif
+#endif
       }
    }
 #ifdef DEBUG

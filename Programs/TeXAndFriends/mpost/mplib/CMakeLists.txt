@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,8 +20,10 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_dir}
   ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
 )
 
 add_definitions(
@@ -39,6 +41,7 @@ add_definitions(
 set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mp.c
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.c
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmathdecimal.c
   ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.c
   ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.c
   ${CMAKE_CURRENT_BINARY_DIR}/pngout.c
@@ -50,6 +53,7 @@ set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
   ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmathdecimal.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmp.h
   ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
@@ -94,6 +98,22 @@ add_custom_command(
   DEPENDS
     ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpmath.w
+  VERBATIM
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmathdecimal.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mpmathdecimal.h
+  COMMAND
+    ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/mpmathdecimal
+  WORKING_DIRECTORY
+    ${CMAKE_CURRENT_BINARY_DIR}
+  MAIN_DEPENDENCY
+    mpmathdecimal.w
+  DEPENDS
+    ${ctangle_exe}
+    ${CMAKE_CURRENT_SOURCE_DIR}/mpmathdecimal.w
   VERBATIM
 )
 
@@ -199,6 +219,11 @@ set(mplib_sources
   ${mplib_cweb_sources}
   avl.c
   avl.h
+  decContext.c
+  decContext.h
+  decNumber.c
+  decNumber.h
+  decNumberLocal.h
 )
 
 add_library(${mp_lib_name} STATIC ${mplib_sources})
@@ -271,8 +296,10 @@ foreach(x ${executables})
     ${kpsemu_dll_name}
     ${mp_lib_name}
 	${png_dll_name}
+    ${pixman_lib_name}
     ${utf8wrap_dll_name}
     ${w2cemu_dll_name}
+    ${zlib_dll_name}
   )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION "${bindir}")

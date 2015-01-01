@@ -61,13 +61,31 @@ set(CAIRO_HAS_INTERPRETER TRUE)
 set(CAIRO_HAS_SYMBOL_LOOKUP FALSE)
 
 configure_file(
-  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}/cairo-features.h.cmake
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_source_dir}/cairo.h
+  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}/cairo.h
+  COPYONLY
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cairo-version.h
+  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}/cairo-version.h
+  COPYONLY
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_source_dir}/cairo-deprecated.h
+  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}/cairo-deprecated.h
+  COPYONLY
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_source_dir}/cairo-features.h.cmake
   ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}/cairo-features.h
 )
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_cairo_source_dir}
   ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
 )

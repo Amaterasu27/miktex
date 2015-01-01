@@ -350,6 +350,9 @@ getdefaults(const char *s)
 	       *q = DIR_SEP; p++; q++;
 	       while (*p && IS_DIR_SEP(*p)) p++;
 	     }
+	     else if (IS_KANJI(p)) {
+	       *q++ = *p++;
+	     }
 	     *q = *p;
 	   }
 	   *q = '\0';

@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2013 Christian Schenk
+%% Copyright (C) 2007-2014 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -22,10 +22,10 @@
 % _____________________________________________________________________________
 
 @x
-@d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @y
-@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.14159265' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
 @#
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k

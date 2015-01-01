@@ -50,12 +50,6 @@
 #ifndef _PNGIMAGE_H_
 #define _PNGIMAGE_H_
 
-#if HAVE_CONFIG_H
-#if ! defined(MIKTEX)
-#include <w2c/config.h>
-#endif
-#endif
-
 #include "mfileio.h"
 
 #if defined(MIKTEX)

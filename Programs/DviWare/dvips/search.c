@@ -20,6 +20,17 @@
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/variable.h>
 
+#if ! defined(MIKTEX)
+#ifdef WIN32
+#undef fopen
+#undef popen
+#undef pclose
+#define fopen(file, fmode)  fsyscp_fopen(file, fmode)
+#define popen(pcmd, pmode)  fsyscp_popen(pcmd, pmode)
+#define pclose(pstream) _pclose(pstream)
+#endif
+#endif
+
 #ifndef GUNZIP
 #define GUNZIP          "gzip -d"
 #endif

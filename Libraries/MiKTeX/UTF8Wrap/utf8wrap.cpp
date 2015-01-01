@@ -398,3 +398,75 @@ miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
 {
   return (_wpopen(UW_(lpszCommand), UW_(lpszMode)));
 }
+
+/* _________________________________________________________________________
+
+   miktex_utf8_fputs
+
+   FIXME: not thread-safe
+   _________________________________________________________________________ */
+
+MIKTEXSTATICFUNC(HANDLE) GetConsoleHandle(/*[in]*/ FILE * pFile)
+{
+  bool isStdout = fileno(pFile) == fileno(stdout);
+  bool isStderr = fileno(pFile) == fileno(stderr);
+  if (_isatty(fileno(pFile)) && (isStdout || isStderr))
+  {
+    return isStdout ? GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
+  }
+  else
+  {
+    return INVALID_HANDLE_VALUE;
+  }
+}
+
+MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFile)
+{
+  HANDLE hConsole = GetConsoleHandle(pFile);
+  if (hConsole == INVALID_HANDLE_VALUE || GetConsoleOutputCP() != CP_UTF8)
+  {
+    return putc(ch, pFile);
+  }
+  static int remaining = 0;
+  static char buf[5];
+  static int bufidx = 0;
+  if (bufidx > 4)
+  {
+    throw std::exception("invalid UTF-8 byte sequence");
+  }
+  buf[bufidx++] = ch;
+  if ((ch & 0x80) == 0)
+  {
+    remaining = 0;
+  }
+  else if ((ch & 0xc0) == 0x80)
+  {
+    if (remaining == 0)
+    {
+      throw std::exception("invalid UTF-8 byte sequence");
+    }
+    -- remaining;
+  }
+  else if ((ch & 0xe0) == 0xc0)
+  {
+    remaining = 1;
+  }
+  else if ((ch & 0xf0) == 0xe0)
+  {
+    remaining = 2;
+  }
+  else if ((ch & 0xf8) == 0xf0)
+  {
+    remaining = 3;
+  }
+  if (remaining == 0)
+  {
+    buf[bufidx] = 0;
+    bufidx = 0;
+    if (fputs(buf, pFile) < 0)
+    {
+      ch = EOF;
+    }
+  }
+  return ch;
+}

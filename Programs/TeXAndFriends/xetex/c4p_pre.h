@@ -1,6 +1,6 @@
 /* c4p_pre.h:						-*- C++ -*-
    
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2014 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -18,6 +18,9 @@
    USA. */
 
 #pragma once
+
+#define MIKTEX_UTF8_WRAP_ALL 1
+#include <miktex/utf8wrap.h>
 
 #include <cstdio>
 

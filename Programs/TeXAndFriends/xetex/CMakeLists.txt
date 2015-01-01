@@ -46,13 +46,13 @@ add_definitions(
   -DHAVE_C4P_PRE_H
   -DLE_USE_CMEMORY
   -DMIKTEX_XETEX
-  -D__SyncTeX__
+  -DPOPPLER_VERSION="${POPPLER_VERSION}"
   -DSYNCTEX_ENGINE_H="synctex-xetex.h"
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX
   -DXETEX_OTHER
   -DXeTeX
-  -DPOPPLER_VERSION="${POPPLER_VERSION}"
+  -D__SyncTeX__
 )
 
 set(xetex_ch_synctex
@@ -205,6 +205,7 @@ set(${xetex_dll_name}_sources
   XeTeX_ext.c
   XeTeX_ext.h
   XeTeX_pic.c
+  XeTeX_web.h
   XeTeXswap.h
   c4p_pre.h
   etex_version.h

@@ -33,7 +33,6 @@ authorization from the copyright holders.
 /*
 XeTeX_pic.c
    interface between xetex and graphics files
-   (not used on OS X -- we use ImageIO graphics importers instead)
    only needs to get image dimensions, not actually load/process the file
 */
 
@@ -115,7 +114,7 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 		}
 		goto done;
 	}
-	
+
 	if (check_for_bmp(fp)) {
 		struct bmp_info	info;
 		err = bmp_scan_file(&info, fp);
@@ -125,7 +124,7 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 		}
 		goto done;
 	}
-	
+
 	if (check_for_png(fp)) {
 #if defined(MIKTEX)
 		struct xetex_png_info	info;
@@ -138,10 +137,10 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 			bounds->ht = (info.height * 72.27) / info.ydpi;
 		}
 		goto done;
-	}	
+	}
 
 	/* could support other file types here (TIFF, WMF, etc?) */
-	
+
 done:
 	if (fp != NULL)
 		fclose(fp);
@@ -152,6 +151,6 @@ done:
 		if (pic_path != NULL)
 			free(pic_path);
 	}
-	
+
 	return err;
 }

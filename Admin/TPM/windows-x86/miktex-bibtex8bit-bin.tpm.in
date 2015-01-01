@@ -12,6 +12,7 @@
     </TPM:Description>
     <TPM:RunFiles>
 texmf/miktex/bin/bibtex8.exe
+texmf/miktex/bin/bibtexu.exe
     </TPM:RunFiles>
  </rdf:Description>
 </rdf:RDF>

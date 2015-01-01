@@ -16,7 +16,7 @@
 % Version 3.2 (December 1989) improved `shorten', increased max_letters.
 % Version 3.3 (September 1990) fixed `nonexistent char 0' (John Gourlay).
 % Version 3.4 (March 1991) has more robust `out_scaled' (Wayne Sullivan).
-% Version 3.5 (March 1995) initialized lk_step_ended (Armin K\"ollner).   
+% Version 3.5 (March 1995) initialized lk_step_ended (Armin K\"ollner).
 % Version 3.6 (January 2014) corrected possible end-of-line glitch (Ken Nakano),
 %  and get_fix now treats -- as + (Peter Breitenlohner).
 

@@ -1,5 +1,5 @@
 /*
-** $Id: lctype.h,v 1.12 2011/07/15 12:50:29 roberto Exp $
+** $Id: lctype.h,v 1.12.1.1 2013/04/12 18:48:47 roberto Exp $
 ** 'ctype' functions for Lua
 ** See Copyright Notice in lua.h
 */
@@ -7,6 +7,9 @@
 #ifndef lctype_h
 #define lctype_h
 
+#if defined(MIKTEX)
+#include <ctype.h>
+#endif
 #include "lua.h"
 
 
@@ -54,8 +57,13 @@
 /*
 ** 'lalpha' (Lua alphabetic) and 'lalnum' (Lua alphanumeric) both include '_'
 */
+#if defined(MIKTEX)
+#define lislalpha(c)	(isalpha(c) || (c) == '_' || (c) > 0x7f)
+#define lislalnum(c)	(isalnum(c) || (c) == '_' || (c) > 0x7f)
+#else
 #define lislalpha(c)	testprop(c, MASK(ALPHABIT))
 #define lislalnum(c)	testprop(c, (MASK(ALPHABIT) | MASK(DIGITBIT)))
+#endif
 #define lisdigit(c)	testprop(c, MASK(DIGITBIT))
 #define lisspace(c)	testprop(c, MASK(SPACEBIT))
 #define lisprint(c)	testprop(c, MASK(PRINTBIT))

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2007-2010 Christian Schenk
+## Copyright (C) 2007-2014 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -26,6 +26,11 @@ if(NATIVE_WINDOWS)
   configure_file(
     ${iculibdir_}/icudt.lib
     ${LIBRARY_OUTPUT_PATH}/icudt.lib
+    COPYONLY
+  )
+  configure_file(
+    ${iculibdir_}/icuin.lib
+    ${LIBRARY_OUTPUT_PATH}/icuin.lib
     COPYONLY
   )
   configure_file(
