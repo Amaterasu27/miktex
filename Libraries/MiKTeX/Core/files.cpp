@@ -1,6 +1,6 @@
 /* files.cpp: file system operations
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -819,11 +819,12 @@ SessionImpl::SetRecorderPath (/*[in]*/ const PathName & path)
     it != fileInfoRecords.end();
     ++ it)
   {
+    const char * lpszRel = Utils::GetRelativizedPath(it->fileName.c_str(), cwd.Get());
     fileNameRecorderStream.WriteFormattedLine ("%s %s",
       (it->access == FileAccess::Read
       ? "INPUT"
       : "OUTPUT"),
-      PathName(it->fileName).ToUnix().Get());
+      PathName(lpszRel == 0 ? it->fileName.c_str() : lpszRel).ToUnix().Get());
   }
   fileNameRecorderStream.Flush();
 
