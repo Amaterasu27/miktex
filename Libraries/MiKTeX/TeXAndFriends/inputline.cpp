@@ -379,6 +379,7 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 			   FileMode::Command,
 			   FileAccess::Read,
 			   false);
+      fqNameOfFile.Clear();
     }
   else
     {

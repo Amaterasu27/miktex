@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 

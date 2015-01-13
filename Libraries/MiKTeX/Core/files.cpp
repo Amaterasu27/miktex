@@ -235,11 +235,14 @@ SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
   fileInfoRecords.push_back (fir);
   if (fileNameRecorderStream.IsOpen())
   {
+    PathName cwd;
+    cwd.SetToCurrentDirectory();
+    const char * lpszRel = Utils::GetRelativizedPath(fir.fileName.c_str(), cwd.Get());
     fileNameRecorderStream.WriteFormattedLine ("%s %s",
       (fir.access == FileAccess::Read
       ? "INPUT"
       : "OUTPUT"),
-      PathName(fir.fileName).ToUnix().Get());
+      PathName(lpszRel == 0 ? fir.fileName.c_str() : lpszRel).ToUnix().Get());
     fileNameRecorderStream.Flush ();
   }
 }
@@ -827,7 +830,6 @@ SessionImpl::SetRecorderPath (/*[in]*/ const PathName & path)
       PathName(lpszRel == 0 ? it->fileName.c_str() : lpszRel).ToUnix().Get());
   }
   fileNameRecorderStream.Flush();
-
 }
 
 /* _________________________________________________________________________
