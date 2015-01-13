@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebAppInputLine.inl:			-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -83,7 +83,9 @@ miktexopeninputfile (/*[in]*/ FileType & f)
 {
   bool done = (THEAPP.OpenInputFile(*static_cast<C4P::FileRoot*>(&f),
 			       THEAPP.GetNameOfFile().Get()));
-#if 1 // bug #2419953
+#if 1
+  // bug #1733 bad \input implementation in TeX breaks SyncTeX Move Edit
+  // http://sourceforge.net/p/miktex/bugs/1733/
   if (done)
   {
     THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
