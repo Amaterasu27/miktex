@@ -1,6 +1,6 @@
 %% tex-miktex-misc.ch:
 %% 
-%% Copyright (C) 1991-2013 Christian Schenk
+%% Copyright (C) 1991-2015 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -1650,11 +1650,10 @@ if term_offset+length(name)>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
 print_char("("); incr(open_parens); slow_print(name); update_terminal;
 @y
-if term_offset+length(full_source_filename_stack[in_open])>max_print_line-2
-then print_ln
+if term_offset+length(name)>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
 print_char("("); incr(open_parens);
-print_file_name(0, full_source_filename_stack[in_open], 0); update_terminal;
+print_file_name(0, name, 0); update_terminal;
 @z
 
 @x
