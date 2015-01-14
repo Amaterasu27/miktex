@@ -88,7 +88,17 @@ miktexopeninputfile (/*[in]*/ FileType & f)
   // http://sourceforge.net/p/miktex/bugs/1733/
   if (done)
   {
-    THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
+    MiKTeX::Core::PathName cwd;
+    cwd.SetToCurrentDirectory ();
+    const char * lpszRel = MiKTeX::Core::Utils::GetRelativizedPath(THEAPP.GetFQNameOfFile(), cwd.Get());
+    if (lpszRel == 0)
+    {
+      THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
+    }
+    else
+    {
+      THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(lpszRel));
+    }
   }
 #endif
   return (done);
