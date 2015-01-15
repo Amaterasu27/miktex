@@ -1,6 +1,6 @@
 /* findfile.cpp: finding files
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -174,6 +174,14 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
       if (CheckCandidate(path, 0))
       {
 	found = true;
+#if FIND_FILE_PREFER_RELATIVE_PATH_NAMES
+	// 2015-01-15
+	if (idx == 0)
+	{
+	  MIKTEX_ASSERT(PathName::Compare(pathWD, PathName().SetToCurrentDirectory()));
+	  path = lpszFileName;
+	}
+#endif
 	result.push_back (path);
       }
     }

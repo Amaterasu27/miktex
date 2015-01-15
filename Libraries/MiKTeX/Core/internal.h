@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -47,6 +47,8 @@
 #else
 #  define NO_REGISTRY 0
 #endif
+
+#define FIND_FILE_PREFER_RELATIVE_PATH_NAMES 1
 
 using namespace MiKTeX::Core;
 

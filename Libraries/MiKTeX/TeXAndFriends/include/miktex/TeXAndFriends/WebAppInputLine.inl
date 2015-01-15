@@ -83,24 +83,10 @@ miktexopeninputfile (/*[in]*/ FileType & f)
 {
   bool done = (THEAPP.OpenInputFile(*static_cast<C4P::FileRoot*>(&f),
 			       THEAPP.GetNameOfFile().Get()));
-#if 1
-  // bug #1733 bad \input implementation in TeX breaks SyncTeX Move Edit
-  // http://sourceforge.net/p/miktex/bugs/1733/
   if (done)
   {
-    MiKTeX::Core::PathName cwd;
-    cwd.SetToCurrentDirectory ();
-    const char * lpszRel = MiKTeX::Core::Utils::GetRelativizedPath(THEAPP.GetFQNameOfFile(), cwd.Get());
-    if (lpszRel == 0)
-    {
-      THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
-    }
-    else
-    {
-      THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(lpszRel));
-    }
+    THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
   }
-#endif
   return (done);
 }
 

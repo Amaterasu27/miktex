@@ -389,7 +389,18 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 	{
 	  return (false);
 	}
-      
+
+#if 1 // 2015-01-15
+      PathName cwd;
+      cwd.SetToCurrentDirectory ();
+      const char * lpszRel = Utils::GetRelativizedPath(fqNameOfFile.Get(), cwd.Get());
+      if (lpszRel != 0)
+      {
+	PathName temp (lpszRel);
+	fqNameOfFile = temp;
+      }
+#endif
+
       try
 	{
 	  if (fqNameOfFile.HasExtension(".gz"))
