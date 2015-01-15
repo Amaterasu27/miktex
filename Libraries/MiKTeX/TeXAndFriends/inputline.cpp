@@ -391,13 +391,10 @@ WebAppInputLine::OpenInputFile (/*[out]*/ FILE * *		ppFile,
 	}
 
 #if 1 // 2015-01-15
-      PathName cwd;
-      cwd.SetToCurrentDirectory ();
-      const char * lpszRel = Utils::GetRelativizedPath(fqNameOfFile.Get(), cwd.Get());
-      if (lpszRel != 0)
+      if (fqNameOfFile[0] == '.' && PathName::IsDirectoryDelimiter(fqNameOfFile[1]))
       {
-	PathName temp (lpszRel);
-	fqNameOfFile = temp;
+        PathName temp (fqNameOfFile.Get() + 2);
+        fqNameOfFile = temp;
       }
 #endif
 

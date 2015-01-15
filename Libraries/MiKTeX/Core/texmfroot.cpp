@@ -1,6 +1,6 @@
 /* texmfroot.cpp: managing TEXMF root directories
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1223,7 +1223,11 @@ SessionImpl::TryDeriveTEXMFRoot (/*[in]*/ const PathName & path)
 {
   if (! Utils::IsAbsolutePath(path.Get()))
     {
+#if FIND_FILE_PREFER_RELATIVE_PATH_NAMES
+      return INVALID_ROOT_INDEX;
+#else
       INVALID_ARGUMENT ("SessionImpl::DeriveRootDirectory", path.Get());
+#endif
     }
       
   if (IsMpmFile(path.Get()))
