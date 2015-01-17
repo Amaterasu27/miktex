@@ -23,6 +23,12 @@
 
 #include "internal.h"
 
+BEGIN_INTERNAL_NAMESPACE;
+
+bool IsNameManglingEnabled = false;
+
+END_INTERNAL_NAMESPACE;
+
 /* _________________________________________________________________________
      
    WebAppInputLine::WebAppInputLine
@@ -124,36 +130,43 @@ WebAppInputLine::ProcessOption (/*[in]*/ int		opt,
 PathName
 WebAppInputLine::MangleNameOfFile (/*[in]*/ const char * lpszFrom)
 {
-  PathName ret;
-  char * lpszTo = ret.GetBuffer();
-  MIKTEX_ASSERT_STRING (lpszFrom);
-  size_t len = StrLen(lpszFrom);
-  if (len >= ret.GetCapacity())
+  if (! IsNameManglingEnabled)
+  {
+    return PathName(lpszFrom).ToUnix();
+  }
+  else
+  {
+    PathName ret;
+    char * lpszTo = ret.GetBuffer();
+    MIKTEX_ASSERT_STRING (lpszFrom);
+    size_t len = StrLen(lpszFrom);
+    if (len >= ret.GetCapacity())
     {
       INVALID_ARGUMENT ("WebAppInputLine::MangleNameOfFile", lpszFrom);
     }
-  size_t idx;
-  for (idx = 0; idx < len; ++ idx)
+    size_t idx;
+    for (idx = 0; idx < len; ++ idx)
     {
       if (lpszFrom[idx] == ' ')
-	{
-	  lpszTo[idx] = '*';
-	}
+      {
+        lpszTo[idx] = '*';
+      }
       else if (lpszFrom[idx] == '~')
-	{
-	  lpszTo[idx] = '?';
-	}
+      {
+        lpszTo[idx] = '?';
+      }
       else if (lpszFrom[idx] == '\\')
-	{
-	  lpszTo[idx] = '/';
-	}
+      {
+        lpszTo[idx] = '/';
+      }
       else
-	{
-	  lpszTo[idx] = lpszFrom[idx];
-	}
+      {
+        lpszTo[idx] = lpszFrom[idx];
+      }
     }
-  lpszTo[idx] = 0;
-  return (ret);
+    lpszTo[idx] = 0;
+    return (ret);
+  }
 }
 
 /* _________________________________________________________________________
@@ -166,32 +179,39 @@ static
 PathName
 UnmangleNameOfFile_ (/*[in]*/ const CharType * lpszFrom)
 {
-  PathName ret;
-  char * lpszTo = ret.GetBuffer();
-  MIKTEX_ASSERT_STRING (lpszFrom);
-  size_t len = StrLen(lpszFrom);
-  if (len >= ret.GetCapacity())
+  if (! IsNameManglingEnabled)
+  {
+    return PathName(lpszFrom);
+  }
+  else
+  {
+    PathName ret;
+    char * lpszTo = ret.GetBuffer();
+    MIKTEX_ASSERT_STRING (lpszFrom);
+    size_t len = StrLen(lpszFrom);
+    if (len >= ret.GetCapacity())
     {
       INVALID_ARGUMENT ("UnmangleNameOfFile_", 0/*lpszFrom*/);
     }
-  size_t idx;
-  for (idx = 0; idx < len; ++ idx)
+    size_t idx;
+    for (idx = 0; idx < len; ++ idx)
     {
       if (lpszFrom[idx] == '*')
-	{
-	  lpszTo[idx] = ' ';
-	}
+      {
+        lpszTo[idx] = ' ';
+      }
       else if (lpszFrom[idx] == '?')
-	{
-	  lpszTo[idx] = '~';
-	}
+      {
+        lpszTo[idx] = '~';
+      }
       else
-	{
-	  lpszTo[idx] = lpszFrom[idx];
-	}
+      {
+        lpszTo[idx] = lpszFrom[idx];
+      }
     }
-  lpszTo[idx] = 0;
-  return (ret);
+    lpszTo[idx] = 0;
+    return (ret);
+  }
 }
 
 /* _________________________________________________________________________

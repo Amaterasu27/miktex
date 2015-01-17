@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/TeXMFApp:				-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -929,7 +929,7 @@ public:
 	   0, 0,
 	   szName, MiKTeX::Core::BufferSizes::MaxPath,
 	   0, 0);
-	jobName = szName;
+	jobName = MiKTeX::Core::Quoter<char>(szName).Get();
       }
     // <fixme>conserve strpool space</fixme>
     return (MakeTeXString(jobName.c_str()));

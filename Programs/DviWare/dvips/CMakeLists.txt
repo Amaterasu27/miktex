@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -127,6 +127,7 @@ target_link_libraries(afm2tfm
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${utf8wrap_dll_name}
 )
 
 install(TARGETS afm2tfm DESTINATION ${bindir})

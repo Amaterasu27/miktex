@@ -1,6 +1,6 @@
 /* texapp.cpp:
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -63,6 +63,11 @@ TeXApp::Init (/*[in]*/ const char * lpszProgramInvocationName)
   param_hash_extra = -1;
 # define SYNCTEX_NO_OPTION INT_MAX
   synchronizationOptions = SYNCTEX_NO_OPTION;
+
+  if (AmI("omega"))
+  {
+    IsNameManglingEnabled = true;
+  }
 }
 
 /* _________________________________________________________________________

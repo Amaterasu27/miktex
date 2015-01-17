@@ -1,26 +1,9 @@
-%% tex-miktex-misc.ch:
-%% 
-%% Copyright (C) 1991-2013 Christian Schenk
-%% 
-%% This file is free software; you can redistribute it and/or modify it
-%% under the terms of the GNU General Public License as published by the
-%% Free Software Foundation; either version 2, or (at your option) any
-%% later version.
-%% 
-%% This file is distributed in the hope that it will be useful, but
-%% WITHOUT ANY WARRANTY; without even the implied warranty of
-%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%% General Public License for more details.
-%% 
-%% You should have received a copy of the GNU General Public License
-%% along with This file; if not, write to the Free Software Foundation,
-%% 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-%% ////////////////////////////////////////////////////////////////////////////
-%% //                                                                        //
-%% //                      INSPIRED BY WEB2C'S TEX.CH                        //
-%% //                                                                        //
-%% ////////////////////////////////////////////////////////////////////////////
+%%% tex-miktex-misc.ch: edited by Christian Schenk for MiKTeX
+%%%
+%%% Derived from:
+%%% tex.ch for C compilation with web2c, derived from various other
+%%% change files.  By Tim Morgan, UC Irvine ICS Department, and many
+%%% others.
 
 @x
 \def\PASCAL{Pascal}
@@ -31,7 +14,7 @@
 \def\MiKTeX{MiK\TeX}
 @z
 
-% WEAVE: print changes only.
+%% WEAVE: print changes only.
 
 @x
   \def\?##1]{\hbox to 1in{\hfil##1.\ }}
@@ -1181,7 +1164,7 @@ else  if c="""" then begin
 @x
   if (c=">")or(c=":") then
 @y
-  if (c="/") then
+  if (c="/")or(c="\") then
 @z
 
 @x
@@ -1326,7 +1309,7 @@ some operating systems put the file area last instead of first.)
 if #<>0 then begin
   j:=str_start[#];
   while (not must_quote) and (j<str_start[#+1]) do begin
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
+    must_quote:=str_pool[j]=" "; incr(j);
   end;
 end
 @#
@@ -1334,12 +1317,7 @@ end
 if #<>0 then
   for j:=str_start[#] to str_start[#+1]-1 do
     if so(str_pool[j])<>"""" then
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]))
+      print(so(str_pool[j]))
 @z
 
 @x
@@ -1489,23 +1467,16 @@ if not miktex_open_format_file(fmt_file) then
 % _____________________________________________________________________________
 
 @x
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
-  make_name_string:=make_string;
-  end;
 @y
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
 save_area_delimiter, save_ext_delimiter: pool_pointer;
 save_name_in_progress, save_stop_at_space: boolean;
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+@z
+
+@x
+  make_name_string:=make_string;
+@y
   make_name_string:=make_string;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
@@ -1521,7 +1492,6 @@ else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   end_name;
   name_in_progress:=save_name_in_progress;
   area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
-  end;
 @z
 
 % _____________________________________________________________________________

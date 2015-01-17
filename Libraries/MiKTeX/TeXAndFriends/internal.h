@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -47,6 +47,20 @@ using namespace MiKTeX::Core;
 using namespace std;
 
 #define FIRST_OPTION_VAL 256
+
+#define BEGIN_INTERNAL_NAMESPACE		\
+namespace MiKTeX {				\
+  namespace B3EB240141E54EF2BE3E8E2C742908B9 {
+
+#define END_INTERNAL_NAMESPACE			\
+  }						\
+}
+
+#define BEGIN_ANONYMOUS_NAMESPACE namespace {
+#define END_ANONYMOUS_NAMESPACE }
+
+BEGIN_INTERNAL_NAMESPACE;
+
 
 /* _________________________________________________________________________
 
@@ -174,6 +188,15 @@ using namespace std;
 
 /* _________________________________________________________________________
 
+   IsNameManglingEnabled
+   _________________________________________________________________________ */
+
+#if 1 // 2015-01-17
+extern bool IsNameManglingEnabled;
+#endif
+
+/* _________________________________________________________________________
+
    ParseFileName
    _________________________________________________________________________ */
 
@@ -265,3 +288,7 @@ private:
 private:
   VALTYPE * pVal;
 };
+
+END_INTERNAL_NAMESPACE
+
+using namespace MiKTeX::B3EB240141E54EF2BE3E8E2C742908B9;

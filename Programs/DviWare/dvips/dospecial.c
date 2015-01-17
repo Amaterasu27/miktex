@@ -655,6 +655,16 @@ case 'e':
 
       p += 8;
       sscanf(p, "%s", psfile);
+#if defined(MIKTEX_WINDOWS)
+      // fixes #2336 dvips chokes on graphic files with accents
+      // https://sourceforge.net/p/miktex/bugs/2336/
+      std::string utf8FileName;
+      if (! Utils::IsUTF8(psfile))
+      {
+        utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(psfile);
+        strcpy_s(psfile, utf8FileName.c_str());
+      }
+#endif
       p += strlen(psfile);
       fgetboundingbox(psfile, &llx, &lly, &urx, &ury);
       hvpos();
@@ -760,6 +770,16 @@ case 'p':
       float llx, lly, urx, ury;
       if (sscanf(p+13, "{%fpt}{%fpt}{%[^}]}", &w, &h, psfile) != 3)
          break;
+#if defined(MIKTEX_WINDOWS)
+      // fixes #2336 dvips chokes on graphic files with accents
+      // https://sourceforge.net/p/miktex/bugs/2336/
+      std::string utf8FileName;
+      if (! Utils::IsUTF8(psfile))
+      {
+        utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(psfile);
+        strcpy_s(psfile, utf8FileName.c_str());
+      }
+#endif
       fgetboundingbox(psfile, &llx, &lly, &urx, &ury);
       hvpos();
       cmdout("@beginspecial");
@@ -922,7 +942,20 @@ default:
  case -1: /* for compatability with old conventions, we allow a file name
            * to be given without the 'psfile=' keyword */
          if (!psfile[0] && maccess(KeyStr)==0) /* yes we can read it */
+#if defined(MIKTEX_WINDOWS)
+           // fixes #2336 dvips chokes on graphic files with accents
+           // https://sourceforge.net/p/miktex/bugs/2336/
+         {
+           std::string utf8FileName;
+           if (! Utils::IsUTF8(KeyStr))
+           {
+             utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(KeyStr);
+             strcpy_s(psfile, utf8FileName.c_str());
+           }
+         }
+#else
              strcpy(psfile,KeyStr);
+#endif
          else {
            if (strlen(KeyStr) < 40) {
               sprintf(errbuf,
@@ -942,7 +975,21 @@ default:
                     "psfile",  ValStr);
            specerror(errbuf);
          }
+#if defined(MIKTEX_WINDOWS)
+         else
+           // fixes #2336 dvips chokes on graphic files with accents
+           // https://sourceforge.net/p/miktex/bugs/2336/
+         {
+           std::string utf8FileName;
+           if (! Utils::IsUTF8(ValStr))
+           {
+             utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(ValStr);
+             strcpy_s(psfile, utf8FileName.c_str());
+           }
+         }
+#else
          else strcpy(psfile,ValStr);
+#endif
          task = tasks[j];
          break;
  default: /* most keywords are output as PostScript procedure calls */

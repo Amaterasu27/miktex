@@ -1,6 +1,6 @@
 %% xetex-miktex.ch:
 %% 
-%% Copyright (C) 2007-2014 Christian Schenk
+%% Copyright (C) 2007-2015 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -201,28 +201,6 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 @!input_file : ^unicode_file;
 @y
 @!input_file : array[1..sup_max_in_open] of unicode_file;
-@z
-
-% _____________________________________________________________________________
-%
-% [29.534]
-% _____________________________________________________________________________
-
-@x
-    if str_pool[j]=" " then must_quote:=true
-@y
-    if (str_pool[j]=" " or str_pool[j]="*") then must_quote:=true
-@z
-
-@x
-    print(str_pool[j]);
-@y
-    if str_pool[j]="*" then
-      print_char(" ")
-    else if str_pool[j]="?" then
-      print_char("~")
-    else
-      print(str_pool[j]);
 @z
 
 % _____________________________________________________________________________

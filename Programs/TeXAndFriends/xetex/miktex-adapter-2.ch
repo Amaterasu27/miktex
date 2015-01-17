@@ -1,6 +1,6 @@
 %% miktex-adapter-2.ch:
 %% 
-%% Copyright (C) 2007-2014 Christian Schenk
+%% Copyright (C) 2007-2015 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -198,28 +198,6 @@ k:=first; while k < last do begin print_buffer(k) end;
 @!input_file : array[1..sup_max_in_open] of alpha_file;
 @y
 @!input_file : ^alpha_file;
-@z
-
-% _____________________________________________________________________________
-%
-% [29.533]
-% _____________________________________________________________________________
-
-@x
-    must_quote:=str_pool[j]=" " or str_pool[j]="*"; incr(j);
-@y
-    must_quote:=str_pool[j]=" "; incr(j);
-@z
-
-@x
-      if str_pool[j]="*" then
-        print_char(" ")
-      else if str_pool[j]="?" then
-        print_char("~")
-      else
-        print(so(str_pool[j]))
-@y
-      print(so(str_pool[j]))
 @z
 
 % _____________________________________________________________________________

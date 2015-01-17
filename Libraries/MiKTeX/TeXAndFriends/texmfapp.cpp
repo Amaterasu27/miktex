@@ -1,6 +1,6 @@
 /* texmfapp.cpp:
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
  
    This file is part of the MiKTeX TeXMF Library.
 
@@ -580,7 +580,14 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_JOB_NAME:
-      jobName = MangleNameOfFile(lpszOptArg).Get();
+      if (IsNameManglingEnabled)
+      {
+        jobName = MangleNameOfFile(lpszOptArg).Get();
+      }
+      else
+      {
+        jobName = lpszOptArg;
+      }
       break;
 
     case OPT_JOB_TIME:
@@ -1056,8 +1063,14 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	}
       if (fileNameArgIdx >= 0)
 	{
-	  fileName =
-	    WebAppInputLine::MangleNameOfFile(c4pargv[fileNameArgIdx]);
+          if (! IsNameManglingEnabled)
+          {
+            fileName = Q_(c4pargv[fileNameArgIdx]);
+          }
+          else
+          {
+            fileName = WebAppInputLine::MangleNameOfFile(c4pargv[fileNameArgIdx]);
+          }
 	}
     }
 
