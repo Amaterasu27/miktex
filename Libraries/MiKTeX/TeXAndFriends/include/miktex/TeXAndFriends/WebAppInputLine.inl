@@ -1,6 +1,6 @@
 /* miktex/TeXAndFriends/WebAppInputLine.inl:			-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -83,12 +83,10 @@ miktexopeninputfile (/*[in]*/ FileType & f)
 {
   bool done = (THEAPP.OpenInputFile(*static_cast<C4P::FileRoot*>(&f),
 			       THEAPP.GetNameOfFile().Get()));
-#if 1 // bug #2419953
   if (done)
   {
     THEAPP.SetNameOfFile (THEAPP.MangleNameOfFile(THEAPP.GetFQNameOfFile()));
   }
-#endif
   return (done);
 }
 

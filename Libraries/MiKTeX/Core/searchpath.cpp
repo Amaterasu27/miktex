@@ -1,6 +1,6 @@
 /* searchpath.cpp: managing search paths
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -134,6 +134,17 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
       if (PathName::Compare((*it), CURRENT_DIRECTORY) != 0)
       {
 	pathFQ += (*it).Get();
+      }
+      else
+      {
+#if FIND_FILE_PREFER_RELATIVE_PATH_NAMES
+	// 2015-01-15
+	if (idx == 0)
+	{
+	  MIKTEX_ASSERT(PathName::Compare(pathFQ, PathName().SetToCurrentDirectory()));
+	  pathFQ = CURRENT_DIRECTORY;
+	}
+#endif
       }
       if (find(vec.begin(), vec.end(), pathFQ) == vec.end())
       {

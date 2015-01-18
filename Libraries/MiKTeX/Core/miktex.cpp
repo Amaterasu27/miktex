@@ -1,6 +1,6 @@
 /* miktex.cpp:
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -106,18 +106,16 @@ SessionImpl::GetMyLocation (/*[in]*/ bool canonicalized)
 MIKTEXINTERNALFUNC(PathName)
 GetHomeDirectory ()
 {
-  PathName ret;
 #if defined(MIKTEX_WINDOWS)
-  PathName homeDrive;
-  PathName homePath;
+  string homeDrive;
+  string homePath;
   if (Utils::GetEnvironmentString("HOMEDRIVE", homeDrive)
       && Utils::GetEnvironmentString("HOMEPATH", homePath))
     {
-      ret = homeDrive;
-      ret += homePath;
-      return (ret);
+      return homeDrive + homePath;
     }
 #endif
+  PathName ret;
   if (Utils::GetEnvironmentString("HOME", ret))
     {
       return (ret);

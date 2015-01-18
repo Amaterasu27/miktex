@@ -1,6 +1,6 @@
 /* utf8wrap.cpp:
 
-   Copyright (C) 2011 Christian Schenk
+   Copyright (C) 2011-2015 Christian Schenk
 
    This file is part of the MiKTeX UTF8Wrap Library.
 
@@ -401,9 +401,7 @@ miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
 
 /* _________________________________________________________________________
 
-   miktex_utf8_fputs
-
-   FIXME: not thread-safe
+   GetConsoleHandle
    _________________________________________________________________________ */
 
 MIKTEXSTATICFUNC(HANDLE) GetConsoleHandle(/*[in]*/ FILE * pFile)
@@ -420,12 +418,76 @@ MIKTEXSTATICFUNC(HANDLE) GetConsoleHandle(/*[in]*/ FILE * pFile)
   }
 }
 
-MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFile)
+/* _________________________________________________________________________
+
+   NonUtf8ConsoleWarning
+   _________________________________________________________________________ */
+
+#define MIKTEX_UTF8_CONSOLE_WARNING 0
+
+#if MIKTEX_UTF8_CONSOLE_WARNING
+class NonUtf8ConsoleWarning
+{
+public:
+  NonUtf8ConsoleWarning()
+    : pConsole(0)
+  {
+  }
+public:
+  ~NonUtf8ConsoleWarning()
+  {
+    const char * envvar = "MIKTEX_UTF8_SUPPRESS_CONSOLE_WARNING";
+    if (pConsole != 0 && getenv(envvar) == 0)
+    {
+      fprintf(pConsole, "\
+\n\n\
+*** Warning:\n\
+***\n\
+*** Some characters could not be printed because the console's active code\n\
+*** page is not UTF-8.\n\
+***\n\
+*** See http://miktex.org/howto/utf8-console for more information.\n\
+***\n\
+*** You can suppress this warning by setting the environment variable\n\
+*** %s\n",
+           "MIKTEX_UTF8_SUPPRESS_CONSOLE_WARNING");
+    }
+  }
+public:
+  void Emit(/*[in]*/ FILE * pConsole)
+  {
+    this->pConsole = pConsole;
+  }
+private:
+  FILE * pConsole;
+};
+#endif
+
+/* _________________________________________________________________________
+
+   miktex_utf8_fputc
+
+   FIXME: not thread-safe
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_fputc (/*[in]*/ int ch, /*[in]*/ FILE * pFile)
 {
   HANDLE hConsole = GetConsoleHandle(pFile);
-  if (hConsole == INVALID_HANDLE_VALUE || GetConsoleOutputCP() != CP_UTF8)
+  if (hConsole == INVALID_HANDLE_VALUE)
   {
-    return putc(ch, pFile);
+    return fputc(ch, pFile);
+  }
+  if (GetConsoleOutputCP() != CP_UTF8)
+  {
+#if MIKTEX_UTF8_CONSOLE_WARNING
+    static NonUtf8ConsoleWarning warning;
+    if ((ch & 0x80) != 0)
+    {
+      warning.Emit(pFile);
+      ch = '?';
+    }
+#endif
+    return fputc(ch, pFile);
   }
   static int remaining = 0;
   static char buf[5];
@@ -470,3 +532,59 @@ MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFi
   }
   return ch;
 }
+
+/* _________________________________________________________________________
+
+   miktex_utf8_putc
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFile)
+{
+  return miktex_utf8_fputc(ch, pFile);
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_putchar
+   _________________________________________________________________________ */
+
+MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_putchar (/*[in]*/ int ch)
+{
+  return miktex_utf8_fputc(ch, stdout);
+}
+
+/* _________________________________________________________________________
+
+   miktex_utf8_fprintf
+   _________________________________________________________________________ */
+
+#if MIKTEX_UTF8_CONSOLE_WARNING
+MIKTEXUTF8WRAPCEEAPI(int) miktex_utf8_fprintf (/*[in]*/ FILE * pFile, /*[in]*/ const char * lpszFormat, ...)
+{
+  HANDLE hConsole = GetConsoleHandle(pFile);
+  va_list ap;
+  va_start(ap, lpszFormat);
+  int ret;
+  if (hConsole == INVALID_HANDLE_VALUE || GetConsoleOutputCP() == CP_UTF8)
+  {
+    ret = vfprintf(pFile, lpszFormat, ap);
+  }
+  else
+  {
+    int n = _vscprintf(lpszFormat, ap);
+    if (n >= 0)
+    {
+      char * pBuffer = new char[n+1];
+      n = vsprintf_s(pBuffer, n + 1, lpszFormat, ap);
+      if (n >= 0)
+      {
+        // TODO: check buffer and warn if it contains UTF-8 bytes
+        n = fputs(pBuffer, pFile);
+      }
+      delete [] pBuffer;
+    }
+  }
+  va_end(ap);
+  return ret;
+}
+#endif

@@ -130,6 +130,17 @@ selfautoloc_prog (const char *prog)
 FILE *
 search(kpse_file_format_type format, const char *file, const char *mode)
 {
+#if defined(MIKTEX_WINDOWS)
+  // fixes #2336 dvips chokes on graphic files with accents
+  // https://sourceforge.net/p/miktex/bugs/2336/
+  std::string utf8FileName;
+  if (! Utils::IsUTF8(file))
+  {
+    utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(file);
+    file = utf8FileName.c_str();
+  }
+#endif
+
   FILE *ret;
   string found_name;
 

@@ -1,6 +1,6 @@
 /* miktex/utf8wrap.h: Unx emulation				-*- C++ -*-
 
-   Copyright (C) 2014 Christian Schenk
+   Copyright (C) 2011-2015 Christian Schenk
 
    This file is part of the MiKTeX UTF8Wrap Library.
 
@@ -74,6 +74,9 @@ miktex_utf8_chmod (/*[in]*/ const char * lpszFileName, /*[in]*/ int mode);
 MIKTEXUTF8WRAPCEEAPI(FILE *)
 miktex_utf8_fopen (/*[in]*/ const char * lpszFileName, /*[in]*/ const char * lpszMode);
 
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_fputc (/*[in]*/ int ch, /*[in]*/ FILE * pFile);
+
 MIKTEXUTF8WRAPCEEAPI(char *)
 miktex_utf8_getcwd (/*[out]*/ char * lpszDirectoryName, size_t maxSize);
 
@@ -88,7 +91,10 @@ miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
 		   /*[in]*/ const char * lpszMode);
 
 MIKTEXUTF8WRAPCEEAPI(int)
-miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE * pFile);
+miktex_utf8_putc (/*[in]*/ int ch, /*[in]*/ FILE *);
+
+MIKTEXUTF8WRAPCEEAPI(int)
+miktex_utf8_putchar (/*[in]*/ int ch);
 
 MIKTEXUTF8WRAPCEEAPI(int)
 miktex_utf8_rename (/*[in]*/ const char * lpszOld, /*[in]*/ const char * lpszNew);
@@ -154,6 +160,9 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #  if ! defined(MIKTEX_UTF8_WRAP_FOPEN)
 #    define MIKTEX_UTF8_WRAP_FOPEN 1
 #  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_FPUTC)
+#    define MIKTEX_UTF8_WRAP_FPUTC 1
+#  endif
 #  if ! defined(MIKTEX_UTF8_WRAP_GETCWD)
 #    define MIKTEX_UTF8_WRAP_GETCWD 1
 #  endif
@@ -177,6 +186,9 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #  endif
 #  if ! defined(MIKTEX_UTF8_WRAP_PUTC)
 #    define MIKTEX_UTF8_WRAP_PUTC 1
+#  endif
+#  if ! defined(MIKTEX_UTF8_WRAP_PUTCHAR)
+#    define MIKTEX_UTF8_WRAP_PUTCHAR 1
 #  endif
 #  if ! defined(MIKTEX_UTF8_WRAP_RENAME)
 #    define MIKTEX_UTF8_WRAP_RENAME 1
@@ -240,6 +252,10 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #  define fopen miktex_utf8_fopen
 #endif
 
+#if MIKTEX_UTF8_WRAP_FPUTC
+#  define fputc miktex_utf8_fputc
+#endif
+
 #if MIKTEX_UTF8_WRAP_GETCWD
 #  define getcwd miktex_utf8_getcwd
 #endif
@@ -269,7 +285,13 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #endif
 
 #if MIKTEX_UTF8_WRAP_PUTC
+#  undef putc
 #  define putc miktex_utf8_putc
+#endif
+
+#if MIKTEX_UTF8_WRAP_PUTCHAR
+#  undef putchar
+#  define putchar miktex_utf8_putchar
 #endif
 
 #if MIKTEX_UTF8_WRAP_RENAME
