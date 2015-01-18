@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 5490
+#define MIKTEX_COMP_J2000_VERSION 5496
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.2.7"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler"

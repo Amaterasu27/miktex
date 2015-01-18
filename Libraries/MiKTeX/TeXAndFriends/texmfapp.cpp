@@ -580,13 +580,13 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
       break;
 
     case OPT_JOB_NAME:
-      if (IsNameManglingEnabled)
+      if (! IsNameManglingEnabled)
       {
-        jobName = MangleNameOfFile(lpszOptArg).Get();
+        jobName = lpszOptArg;
       }
       else
       {
-        jobName = lpszOptArg;
+        jobName = MangleNameOfFile(lpszOptArg).Get();
       }
       break;
 
@@ -1065,7 +1065,7 @@ InitializeBuffer_ (/*[in,out]*/ CharType *	pBuffer,
 	{
           if (! IsNameManglingEnabled)
           {
-            fileName = Q_(c4pargv[fileNameArgIdx]);
+            fileName = Q_(PathName(c4pargv[fileNameArgIdx]).ToUnix());
           }
           else
           {
