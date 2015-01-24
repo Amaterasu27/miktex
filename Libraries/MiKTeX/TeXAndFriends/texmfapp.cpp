@@ -582,7 +582,14 @@ TeXMFApp::ProcessOption (/*[in]*/ int			opt,
     case OPT_JOB_NAME:
       if (! IsNameManglingEnabled)
       {
-        jobName = lpszOptArg;
+	if (!AmI("xetex"))
+	{
+	  jobName = Q_(lpszOptArg);
+	}
+	else
+	{
+	  jobName = lpszOptArg;
+	}
       }
       else
       {

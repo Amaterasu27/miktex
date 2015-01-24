@@ -1,6 +1,6 @@
 /* mcd.cpp: MiKTeX compiler driver
 
-   Copyright (C) 1998-2013 Christian Schenk
+   Copyright (C) 1998-2015 Christian Schenk
 
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,
    2002, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -421,6 +421,9 @@ public:
   vector<string> includeDirectories;
 
 public:
+  string jobName;
+
+public:
   vector<string> texinfoCommands;
 
 public:
@@ -644,6 +647,10 @@ public:
   McdApp ()
     : traceStream (TraceStream::Open(PROGRAM_NAME))
   {
+    forbiddenTexOptions.push_back("aux-directory");
+    forbiddenTexOptions.push_back("job-name");
+    forbiddenTexOptions.push_back("jobname");
+    forbiddenTexOptions.push_back("output-directory");
   };
 
 public:
@@ -670,6 +677,9 @@ private:
 
 public:
   Options options;
+
+private:
+  vector<string> forbiddenTexOptions;
 };
 
 /* _________________________________________________________________________
@@ -723,7 +733,7 @@ McdApp::Version ()
 							MIKTEX_COMP_J2000_VERSION,
 							0))
        << T_("\n\
-Copyright (C) 1998-2008 Christian Schenk\n\
+Copyright (C) 1998-2015 Christian Schenk\n\
 Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2001,\n\
               2002, 2003, 2004, 2005 Free Software Foundation, Inc.\n\
 This is free software; see the source for copying conditions.  There is NO\n\
@@ -858,9 +868,9 @@ private:
 private:
   PathName inputName;
 
-  // name of the input file, no extension
+  // job name (set output name)
 private:
-  PathName inputNameNoExt;
+  PathName jobName;
 
   // the scratch directory: it will be made the current directory if
   // we are in clean mode; contains the input file, if --expand was
@@ -961,7 +971,14 @@ Driver::Initialize (/*[in]*/ McdApp *		pApplication,
 
   pApplication->Trace (T_("input file: %s"), Q_(m_pathOriginalInputFile));
 
-  givenFileName.GetFileNameWithoutExtension (inputNameNoExt);
+  if (pOptions->jobName.empty())
+  {
+    givenFileName.GetFileNameWithoutExtension (jobName);
+  }
+  else
+  {
+    jobName = pOptions->jobName;
+  }
 
   inputName = givenFileName;
   inputName.RemoveDirectorySpec ();
@@ -1467,8 +1484,8 @@ Driver::RunBibTeX ()
       FatalError (T_("%s could not be found."), Q_(pOptions->bibtexProgram));
     }
 
-  PathName logName (0, inputNameNoExt, ".log");
-  PathName auxName (0, inputNameNoExt, ".aux");
+  PathName logName (0, jobName, ".log");
+  PathName auxName (0, jobName, ".aux");
 
   int exitCode;
 
@@ -1570,7 +1587,7 @@ Sub-directories not supported when --clean is in effect."));
 
   CommandLineBuilder commandLine;
 
-  commandLine.AppendArgument (inputNameNoExt);
+  commandLine.AppendArgument (jobName);
 
   pApplication->Verbose (T_("Running %s %s..."),
 			 Q_(pOptions->bibtexProgram),
@@ -1746,6 +1763,11 @@ Driver::RunTeX ()
   
   CommandLineBuilder commandLine;
 
+  if (! pOptions->jobName.empty())
+  {
+    commandLine.AppendOption("--job-name=", jobName);
+  }
+
 #if defined(SUPPORT_OPT_SRC_SPECIALS)
   if (pOptions->sourceSpecials)
     {
@@ -1785,7 +1807,7 @@ Driver::RunTeX ()
   Process::Run (pathExe, commandLine.Get(), 0, &exitCode, 0);
   if (exitCode != 0)
     {
-      PathName logName (0, inputNameNoExt, ".log");
+      PathName logName (0, jobName, ".log");
       if (pOptions->clean)
 	{
 	  try
@@ -1819,7 +1841,7 @@ Driver::RunTeX ()
 bool
 Driver::Ready ()
 {
-  PathName logName (0, inputNameNoExt, ".log");
+  PathName logName (0, jobName, ".log");
 
   if (Contains(logName, "Rerun to get"))
     {
@@ -1872,7 +1894,7 @@ Driver::InstallOutputFile ()
 			 lpszExt,
 			 Q_(scratchDirectory),
 			 Q_(pOptions->startDirectory));
-  PathName pathFileName (0, inputNameNoExt, lpszExt);
+  PathName pathFileName (0, jobName, lpszExt);
   PathName pathDest (pOptions->startDirectory, pathFileName);
   File::Copy (pathFileName, pathDest);
 }
@@ -1946,12 +1968,12 @@ Driver::GetAuxFiles (/*[out]*/ vector<string> &		auxFiles,
       pIdxFiles->clear ();
     }
 
-  GetAuxFiles (inputNameNoExt, ".?o?", auxFiles);
-  GetAuxFiles (inputNameNoExt, ".aux", auxFiles);
+  GetAuxFiles (jobName, ".?o?", auxFiles);
+  GetAuxFiles (jobName, ".aux", auxFiles);
 
   vector<string> files;
 
-  GetAuxFiles (inputNameNoExt, ".??", files);
+  GetAuxFiles (jobName, ".??", files);
 
   auxFiles.insert (auxFiles.end(), files.begin(), files.end());
 
@@ -1962,7 +1984,7 @@ Driver::GetAuxFiles (/*[out]*/ vector<string> &		auxFiles,
 
   files.clear ();
 
-  GetAuxFiles (inputNameNoExt, ".idx", files);
+  GetAuxFiles (jobName, ".idx", files);
 
   auxFiles.insert (auxFiles.end(), files.begin(), files.end());
 
@@ -1985,7 +2007,7 @@ Driver::RunViewer ()
   const char * lpszExt
     = (pOptions->outputType == OutputType::PDF ? ".pdf" : ".dvi");
 
-  PathName pathFileName (0, inputNameNoExt, lpszExt);
+  PathName pathFileName (0, jobName, lpszExt);
 
   PathName pathDest (pOptions->startDirectory, pathFileName);
 
@@ -2108,6 +2130,7 @@ enum CommandLineOptions {
   OPT_ENGINE,
   OPT_EXPAND,
   OPT_INCLUDE,
+  OPT_JOB_NAME,
   OPT_LANGUAGE,
   OPT_MAX_ITER,
   OPT_MKIDX_OPTION,
@@ -2186,6 +2209,14 @@ const struct poptOption optionTable[] = {
     OPT_INCLUDE,
     T_("Prepend DIR to the input search path."),
     T_("DIR"),
+  },
+
+  {
+    "job-name", 0,
+    POPT_ARG_STRING, 0,
+    OPT_JOB_NAME,
+    T_("Set the job name and hence the name(s) of the output file(s)."),
+    T_("JOBNAME"),
   },
 
   {
@@ -2373,6 +2404,9 @@ McdApp::Run (/*[in]*/ int		argc,
 	    options.includeDirectories.push_back (path.Get());
 	    break;
 	  }
+	case OPT_JOB_NAME:
+	  options.jobName = lpszOptArg;
+	  break;
 	case OPT_LANGUAGE:
 	  if (_stricmp(lpszOptArg, "latex") == 0)
 	    {
@@ -2420,6 +2454,13 @@ McdApp::Run (/*[in]*/ int		argc,
 	  options.makeindexOptions.Append (lpszOptArg);
 	  break;
 	case OPT_TEX_OPTION:
+	  for (vector<string>::const_iterator it = forbiddenTexOptions.begin(); it != forbiddenTexOptions.end(); ++ it)
+	  {
+	    if (string(lpszOptArg).find(*it) != string::npos)
+	    {
+	      FatalError (T_("TeX option \"--%s\" is not supported."), it->c_str());
+	    }
+	  }
 	  options.texOptions.Append (lpszOptArg);
 	  break;
 	case OPT_VIEWER_OPTION:
