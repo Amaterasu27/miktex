@@ -141,7 +141,7 @@ SessionImpl::PushBackPath (/*[in,out]*/ PathNameArray &	vec,
 	// 2015-01-15
 	if (idx == 0)
 	{
-	  MIKTEX_ASSERT(PathName::Compare(pathFQ, PathName().SetToCurrentDirectory()));
+	  MIKTEX_ASSERT(PathName::Compare(pathFQ, PathName().SetToCurrentDirectory()) == 0);
 	  pathFQ = CURRENT_DIRECTORY;
 	}
 #endif
