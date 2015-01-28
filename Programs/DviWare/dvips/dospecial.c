@@ -986,6 +986,10 @@ default:
              utf8FileName = MiKTeX::Core::Utils::AnsiToUTF8(ValStr);
              strcpy_s(psfile, utf8FileName.c_str());
            }
+	   else
+	   {
+	     strcpy_s(psfile, ValStr);
+	   }
          }
 #else
          else strcpy(psfile,ValStr);
