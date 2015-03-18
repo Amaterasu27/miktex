@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2013 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -972,6 +972,11 @@ add_subdirectory(${rel_zzip_dir})
 add_subdirectory(${rel_lua_dir}-static)
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_lua_dir})
+endif(NOT LINK_EVERYTHING_STATICALLY)
+
+#add_subdirectory(${rel_luajit_dir}-static)
+if(NOT LINK_EVERYTHING_STATICALLY)
+  add_subdirectory(${rel_luajit_dir})
 endif(NOT LINK_EVERYTHING_STATICALLY)
 
 if(NATIVE_WINDOWS)

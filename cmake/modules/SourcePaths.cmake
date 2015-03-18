@@ -1,6 +1,6 @@
 ## SourcePaths.cmake
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -73,6 +73,7 @@ set(rel_jpeg_dir	"Libraries/3rd/libjpeg")
 set(rel_kpsemu_dir	"Libraries/MiKTeX/KPathSeaEmulation")
 set(rel_kpsewhich_dir	"${rel_kpsemu_dir}/test/kpsewhich")
 set(rel_lua_dir		"Libraries/3rd/lua")
+set(rel_luajit_dir	"Libraries/3rd/luajit")
 set(rel_luatex_dir	"Programs/TexAndFriends/luatex")
 set(rel_lzmalib_dir	"${rel_7zip_dir}/CPP/7zip/Compress/LZMA")
 set(rel_makeindex_dir	"Programs/Indexing/makeindex")
