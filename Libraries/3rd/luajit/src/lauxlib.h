@@ -86,6 +86,32 @@ LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1, const char *msg,
 				int level);
 
 
+
+/*
+** {======================================================
+** File handles for IO library
+** =======================================================
+*/
+
+/*
+** A file handle is a userdata with metatable 'LUA_FILEHANDLE' and
+** initial structure 'luaL_Stream' (it may contain other fields
+** after that initial structure).
+*/
+
+#define LUA_FILEHANDLE          "FILE*"
+
+
+typedef struct luaL_Stream {
+  FILE *f;  /* stream (NULL for incompletely created streams) */
+  lua_CFunction closef;  /* to close stream (NULL for closed streams) */
+} luaL_Stream;
+
+/* }====================================================== */
+
+
+
+
 /*
 ** ===============================================================
 ** some useful macros

@@ -103,6 +103,9 @@ typedef LUA_NUMBER lua_Number;
 typedef LUA_INTEGER lua_Integer;
 
 
+/* communication with LuaJiTTeX */
+LUA_API int luajittex_choose_hash_function; 
+
 
 /*
 ** state manipulation
@@ -346,6 +349,16 @@ LUA_API void *lua_upvalueid (lua_State *L, int idx, int n);
 LUA_API void lua_upvaluejoin (lua_State *L, int idx1, int n1, int idx2, int n2);
 LUA_API int lua_loadx (lua_State *L, lua_Reader reader, void *dt,
 		       const char *chunkname, const char *mode);
+
+
+#define LUA_OPEQ 0
+#define LUA_OPLT 1
+#define LUA_OPLE 2
+#define LUA_OK  0
+
+/* see http://comments.gmane.org/gmane.comp.programming.swig/18673 */
+# define lua_rawlen lua_objlen 
+
 
 
 struct lua_Debug {

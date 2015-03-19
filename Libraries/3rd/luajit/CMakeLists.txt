@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DLUA_BUILD_AS_DLL)
+add_definitions(-DLUA_BUILD_AS_DLL -DLUAJIT_ENABLE_LUA52COMPAT)
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src/host)
 
@@ -89,17 +89,18 @@ merge_trustinfo_manifest(buildvm asInvoker)
 get_target_property(buildvm_exe buildvm LOCATION)
 
 set(all_lib
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lbitlib.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_base.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_math.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_bit.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_string.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_table.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_debug.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_ffi.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_io.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_jit.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_math.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_os.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_package.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_debug.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_jit.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_ffi.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_string.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_table.c
 )
 
 add_custom_command(
@@ -185,20 +186,10 @@ add_custom_command(
 )
 
 set(${luajit_dll_name}_sources
+  ${all_lib}
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lauxlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_aux.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_base.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_bit.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_debug.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_ffi.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_init.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_io.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_jit.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_math.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_os.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_package.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_string.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_table.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_alloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_alloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_api.c
@@ -371,3 +362,23 @@ merge_trustinfo_manifest(${miktex_prefix}luajit asInvoker)
 target_link_libraries(${miktex_prefix}luajit ${luajit_dll_name})
 
 install(TARGETS ${miktex_prefix}luajit DESTINATION ${bindir})
+
+set(includes
+  lauxlib.h
+  lj_arch.h
+  lj_def.h
+  lj_obj.h
+  lj_state.h
+  lua.h
+  luaconf.h
+  luajit.h
+  lualib.h
+)
+
+foreach(i ${includes})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/${i}
+    ${CMAKE_BINARY_DIR}/${rel_luajit_include_dir}/${i}
+    COPYONLY
+  )
+endforeach(i ${includes})
