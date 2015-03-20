@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,7 +20,6 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/lua52
   ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
@@ -49,71 +48,6 @@ endif(MSVC)
 if(WITH_CONTEXT_SUPPORT)
   add_definitions(-DWITH_CONTEXT_SUPPORT=1)
 endif(WITH_CONTEXT_SUPPORT)
-
-
-###############################################################################
-## luatex-lua52-static
-###############################################################################
-
-set(lua52_sources
-  lua52/lapi.c
-  lua52/lapi.h
-  lua52/lauxlib.c
-  lua52/lauxlib.h
-  lua52/lbaselib.c
-  lua52/lbitlib.c
-  lua52/lcode.c
-  lua52/lcode.h
-  lua52/lcorolib.c
-  lua52/lctype.c
-  lua52/lctype.h
-  lua52/ldblib.c
-  lua52/ldebug.c
-  lua52/ldebug.h
-  lua52/ldo.c
-  lua52/ldo.h
-  lua52/ldump.c
-  lua52/lfunc.c
-  lua52/lfunc.h
-  lua52/lgc.c
-  lua52/lgc.h
-  lua52/linit.c
-  lua52/llex.c
-  lua52/llex.h
-  lua52/llimits.h
-  lua52/lmathlib.c
-  lua52/lmem.c
-  lua52/lmem.h
-  lua52/loadlib.c
-  lua52/lobject.c
-  lua52/lobject.h
-  lua52/lopcodes.c
-  lua52/lopcodes.h
-  lua52/loslib.c
-  lua52/lparser.c
-  lua52/lparser.h
-  lua52/lstate.c
-  lua52/lstate.h
-  lua52/lstring.c
-  lua52/lstring.h
-  lua52/lstrlib.c
-  lua52/ltable.c
-  lua52/ltable.h
-  lua52/ltablib.c
-  lua52/ltm.c
-  lua52/ltm.h
-  lua52/lua.h
-  lua52/luaconf.h
-  lua52/lualib.h
-  lua52/lundump.c
-  lua52/lundump.h
-  lua52/lvm.c
-  lua52/lvm.h
-  lua52/lzio.c
-  lua52/lzio.h
-)
-
-add_library(luatex-lua52-static STATIC ${lua52_sources})
 
 ###############################################################################
 ## luatex-miktex-static
@@ -150,6 +84,7 @@ set(luasocket_sources
   luasocket/src/options.h
   luasocket/src/select.c
   luasocket/src/select.h
+  luasocket/src/serial.c
   luasocket/src/socket.c
   luasocket/src/socket.h
   luasocket/src/tcp.c
@@ -194,6 +129,32 @@ set(luamisc_sources
 )
 
 add_library(luatex-luamisc-static STATIC ${luamisc_sources})
+
+###############################################################################
+## luatex-unilib-static
+###############################################################################
+
+set(unilib_sources
+  unilib/ArabicForms.c
+  unilib/alphabet.c
+  unilib/char.c
+  unilib/chardata.h
+  unilib/charset.h
+  unilib/cjk.c
+  unilib/combiners.h
+  unilib/gwwiconv.c
+  unilib/gwwiconv.h
+  unilib/ucharmap.c
+  unilib/unialt.c
+  unilib/unibasics.h
+  unilib/usprintf.c
+  unilib/ustring.c
+  unilib/ustring.h
+  unilib/utype.c
+  unilib/utype.h
+)
+
+add_library(luatex-unilib-static STATIC ${unilib_sources})
 
 ###############################################################################
 ## luatex-luafontforge-static
@@ -262,10 +223,11 @@ target_link_libraries(${luatex_program_dll_name}
   ${w2cemu_dll_name}
   ${zlib_dll_name}
   
-  luatex-lua52-static
   luatex-luafontforge-static
   luatex-luamisc-static
   luatex-luasocket-static
+  luatex-unilib-static
+
   luatex-static
 
   luatex-miktex-static

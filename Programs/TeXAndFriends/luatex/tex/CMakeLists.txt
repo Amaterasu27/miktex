@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -326,3 +326,10 @@ set(luatexlib_sources
 )
 
 add_library(luatex-static STATIC ${luatexlib_sources})
+
+set_property(
+  TARGET luatex-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/${rel_lua_include_dir}
+)
