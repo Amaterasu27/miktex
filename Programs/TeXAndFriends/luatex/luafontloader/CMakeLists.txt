@@ -114,3 +114,10 @@ set(luafontforge_sources
 )
 
 add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
+
+set_property(
+  TARGET luatex-luafontforge-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)

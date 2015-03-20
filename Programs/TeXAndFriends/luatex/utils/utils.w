@@ -459,10 +459,12 @@ int do_zround(double r)
 @c
 #ifdef _MSC_VER
 
+#if ! defined(MIKTEX)
 #  include <math.h>
 double rint(double x)
 {
     return floor(x+0.5);
 }
+#endif
 
 #endif

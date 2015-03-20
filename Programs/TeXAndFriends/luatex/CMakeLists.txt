@@ -27,6 +27,7 @@ include_directories(
 
 add_definitions(
   -DAPPTAG=luatex
+  -DLUA_BUILD_AS_DLL
   -DLUA_COMPAT_ALL
   -DLUA_COMPAT_MODULE
   -DMIKTEX_LUATEX
@@ -98,6 +99,13 @@ set(luasocket_sources
 
 add_library(luatex-luasocket-static STATIC ${luasocket_sources})
 
+set_property(
+  TARGET luatex-luasocket-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
+
 ###############################################################################
 ## luatex-luamisc-static
 ###############################################################################
@@ -130,6 +138,13 @@ set(luamisc_sources
 
 add_library(luatex-luamisc-static STATIC ${luamisc_sources})
 
+set_property(
+  TARGET luatex-luamisc-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
+
 ###############################################################################
 ## luatex-unilib-static
 ###############################################################################
@@ -155,6 +170,13 @@ set(unilib_sources
 )
 
 add_library(luatex-unilib-static STATIC ${unilib_sources})
+
+set_property(
+  TARGET luatex-unilib-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_CURRENT_SOURCE_DIR}/unilib
+)
 
 ###############################################################################
 ## luatex-luafontforge-static
@@ -201,6 +223,13 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
+set_property(
+  TARGET ${luatex_program_dll_name}
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
+
 target_link_libraries(${luatex_program_dll_name}
   wsock32.lib
   ws2_32.lib
@@ -210,6 +239,7 @@ target_link_libraries(${luatex_program_dll_name}
   ${core_dll_name}
   ${jpeg_dll_name}
   ${kpsemu_dll_name}
+  ${lua_dll_name}
   ${md5_dll_name}
   ${mp_lib_name}
   ${obsdcompat_dll_name}

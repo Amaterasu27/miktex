@@ -331,5 +331,12 @@ set_property(
   TARGET luatex-static
   APPEND
   PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_SOURCE_DIR}/${rel_lua_include_dir}
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
+
+set_property(
+  TARGET luatex-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/fake
 )

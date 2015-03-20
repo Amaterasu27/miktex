@@ -167,7 +167,11 @@ static int global_create(lua_State *L) {
 #ifdef __MINGW32__
     t_socket sock = open(path, O_RDWR);
 #else
+#if defined(MIKTEX_WINDOWS)
+    t_socket sock = open(path, O_RDWR);
+#else
     t_socket sock = open(path, O_NOCTTY|O_RDWR);
+#endif
 #endif
 
     /*printf("open %s on %d\n", path, sock);*/
