@@ -1,6 +1,6 @@
 ## LibraryNames.cmake
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -75,9 +75,10 @@ set(graphite2_dll_name	"${miktex_dll_prefix}-graphite2")
 set(hunspell_dll_name	"${miktex_dll_prefix}-hunspell")
 set(jpeg_dll_name	"${miktex_dll_prefix}-jpeg")
 set(kpsemu_dll_name	"${miktex_dll_prefix}-kpathsea")
-set(lzma_dll_name	"${miktex_dll_prefix}-lzma")
 set(lua_dll_name	"${miktex_dll_prefix}-lua52")
+set(luajit_dll_name	"${miktex_dll_prefix}-luajit")
 set(luatex_program_dll_name "${miktex_dll_prefix}-luatex")
+set(lzma_dll_name	"${miktex_dll_prefix}-lzma")
 set(makex_dll_name	"${miktex_dll_prefix}-make")
 set(mcd_dll_name	"${miktex_dll_prefix}-compilerdriver")
 set(md5_dll_name	"${miktex_dll_prefix}-md5")
@@ -162,6 +163,7 @@ set(graphite2_lib_name	"graphite2-static")
 set(harfbuzz_lib_name	"harfbuzz-static")
 set(kpsemu_lib_name	"kpathsea-static")
 set(lua_lib_name	"lua52-static")
+set(luajit_lib_name	"luajit-static")
 set(lzma_lib_name	"lzma-static")
 set(makex_lib_name	"make-static")
 set(md5_lib_name	"md5-static")

@@ -122,6 +122,12 @@ typedef double real;
 
 #define ucharcast(x) ((unsigned char)(x))
 
+#if defined(MIKTEX_WINDOWS)
+#  define promptfilenamehelpmsg "(Press Enter to retry, or Control-Z to exit"
+#else
+#  define promptfilenamehelpmsg "(Press Enter to retry, or Control-D to exit"
+#endif
+
 /* _________________________________________________________________________
 
    Prototypes

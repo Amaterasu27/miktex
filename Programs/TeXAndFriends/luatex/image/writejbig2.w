@@ -1,8 +1,8 @@
 % writejbig2.w
 %
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
-% Copyright 2003-2012 Hartmut Henkel <hartmut@@luatex.org>
+% Copyright 2006-2013 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2003-2013 Hartmut Henkel <hartmut@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -81,18 +81,15 @@ object exists, reference it. Else create fresh one.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejbig2.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.76.0/source/texk/web2c/luatexdir/image/writejbig2.w $";
+    "$Id: writejbig2.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejbig2.w $";
 
 #undef DEBUG
 
-#ifdef HAVE_CONFIG_H
-#include <w2c/config.h>
-#endif
+#include "ptexlib.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "ptexlib.h"
 #include "image/image.h"
 
 @ @c
@@ -212,9 +209,9 @@ static int ygetc(FILE * stream)
     int c = getc(stream);
     if (c < 0) {
         if (c == EOF)
-            pdftex_fail("getc() failed; premature end of JBIG2 image file");
+            luatex_fail("getc() failed; premature end of JBIG2 image file");
         else
-            pdftex_fail("getc() failed (can't happen)");
+            luatex_fail("getc() failed (can't happen)");
     }
     return c;
 }
@@ -387,7 +384,7 @@ static void readfilehdr(FILEINFO * fip)
     xfseek(fip->file, 0, SEEK_SET, fip->filepath);
     for (i = 0; i < 8; i++)
         if (ygetc(fip->file) != jbig2_id[i])
-            pdftex_fail
+            luatex_fail
                 ("readfilehdr(): reading JBIG2 image file failed: ID string missing");
     /* Annex D.4.2 File header flags */
     fip->filehdrflags = (unsigned int) ygetc(fip->file);
@@ -444,7 +441,7 @@ static void checkseghdrflags(SEGINFO * sip)
     case M_Extension:
         break;
     default:
-        pdftex_fail
+        luatex_fail
             ("checkseghdrflags(): unknown segment type in JBIG2 image file");
         break;
     }
@@ -793,7 +790,7 @@ void read_jbig2_info(image_dict * idict)
     assert(idict != NULL);
     img_type(idict) = IMG_TYPE_JBIG2;
     if (img_pagenum(idict) < 1)
-        pdftex_fail
+        luatex_fail
             ("read_jbig2_info(): page %d not in JBIG2 image file; page must be > 0",
              (int) img_pagenum(idict));
     if (file_tree == NULL) {
@@ -819,7 +816,7 @@ void read_jbig2_info(image_dict * idict)
     }
     pip = find_pageinfo(&(fip->pages), (unsigned long) img_pagenum(idict));
     if (pip == NULL)
-        pdftex_fail("read_jbig2_info(): page %d not found in JBIG2 image file",
+        luatex_fail("read_jbig2_info(): page %d not found in JBIG2 image file",
                     (int) img_pagenum(idict));
     img_totalpages(idict) = (int) fip->numofpages;
     img_xsize(idict) = (int) pip->width;

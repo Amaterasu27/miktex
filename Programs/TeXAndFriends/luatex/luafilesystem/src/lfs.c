@@ -82,7 +82,7 @@
 #define getcwd_error	strerror(errno)
 #endif
 
-#define DIR_METATABLE "directory metatable"
+#define DIR_METATABLE "lfs.directory"
 #define MAX_DIR_LENGTH 1023
 typedef struct dir_data {
 	int  closed;
@@ -94,7 +94,7 @@ typedef struct dir_data {
 #endif
 } dir_data;
 
-#define LOCK_METATABLE "lock metatable"
+#define LOCK_METATABLE "lfs.lock"
 
 #ifdef _WIN32
  #ifdef __BORLANDC__
@@ -114,8 +114,12 @@ typedef struct dir_data {
 #define STAT_FUNC _stati64
 #endif
 #else
-#define _O_TEXT               0
-#define _O_BINARY             0
+#ifndef _O_TEXT
+ #define _O_TEXT               0
+#endif
+#ifndef _O_BINARY
+ #define _O_BINARY             0
+#endif
 #define lfs_setmode(L,file,m)   ((void)((void)file,m),  \
 		 luaL_error(L, LUA_QL("setmode") " not supported on this platform"), -1)
 #define STAT_STRUCT struct stat

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2014 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DLUA_BUILD_AS_DLL)
+add_definitions(-DLUA_BUILD_AS_DLL -DLUA_COMPAT_MODULE)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_lua_dir}
@@ -132,3 +132,39 @@ merge_trustinfo_manifest(${miktex_prefix}lua asInvoker)
 target_link_libraries(${miktex_prefix}lua ${lua_dll_name})
 
 install(TARGETS ${miktex_prefix}lua DESTINATION ${bindir})
+
+set(includes
+  lapi.h
+  lauxlib.h
+  lcode.h
+  lctype.h
+  ldebug.h
+  ldo.h
+  lfunc.h
+  lgc.h
+  llex.h
+  llimits.h
+  lmem.h
+  lobject.h
+  lopcodes.h
+  lparser.h
+  lstate.h
+  lstring.h
+  ltable.h
+  ltm.h
+  lua.h
+  lua.hpp
+  luaconf.h
+  lualib.h
+  lundump.h
+  lvm.h
+  lzio.h
+)
+
+foreach(i ${includes})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/${i}
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}/${i}
+    COPYONLY
+  )
+endforeach(i ${includes})

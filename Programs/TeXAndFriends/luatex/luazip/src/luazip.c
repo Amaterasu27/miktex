@@ -14,8 +14,8 @@
 #include "luazip.h"
 #include "lauxlib.h"
 
-#define ZIPFILEHANDLE    "lzipFile"
-#define ZIPINTERNALFILEHANDLE  "lzipInternalFile"
+#define ZIPFILEHANDLE    "lzip.File"
+#define ZIPINTERNALFILEHANDLE  "lzip.InternalFile"
 #define LUAZIP_MAX_EXTENSIONS 32
 
 static int pushresult (lua_State *L, int i, const char *filename) {
@@ -371,7 +371,7 @@ static int read_chars (lua_State *L, ZZIP_FILE *f, size_t n) {
     n -= nr;  /* still have to read `n' chars */
   } while (n > 0 && nr == rlen);  /* until end of count or eof */
   luaL_pushresult(&b);  /* close buffer */
-  return (n == 0 || lua_strlen(L, -1) > 0);
+  return (n == 0 || lua_rawlen(L, -1) > 0);
 }
 
 static int g_read (lua_State *L, ZZIP_FILE *f, int first) {

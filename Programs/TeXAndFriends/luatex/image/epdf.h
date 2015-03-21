@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: epdf.h 4559 2013-01-20 19:58:26Z hhenkel $ */
+/* $Id: epdf.h 4718 2014-01-02 15:35:31Z taco $ */
 
 // this is the common header file for C++ sources pdftoepdf.cc and lepdflib.cc
 
@@ -44,21 +44,22 @@ extern "C" {
 #  include <goo/GooString.h>
 #  include <goo/gmem.h>
 #  include <goo/gfile.h>
-#  include "Object.h"
-#  include "Stream.h"
-#  include "Gfx.h"
-#  include "Annot.h"
-#  include "Array.h"
-#  include "Dict.h"
-#  include "XRef.h"
-#  include "Catalog.h"
-#  include "Link.h"
-#  include "Page.h"
-#  include "GfxFont.h"
-#  include "PDFDoc.h"
-#  include "GlobalParams.h"
-#  include "Error.h"
-#  include "FileSpec.h"
+#  include <Object.h>
+#  include <Stream.h>
+#  include <Gfx.h>
+#  include <Annot.h>
+#  include <Array.h>
+#  include <Dict.h>
+#  include <XRef.h>
+#  include <Catalog.h>
+#  include <StructTreeRoot.h>
+#  include <Link.h>
+#  include <Page.h>
+#  include <GfxFont.h>
+#  include <PDFDoc.h>
+#  include <GlobalParams.h>
+#  include <Error.h>
+#  include <FileSpec.h>
 
 extern "C" {
 
@@ -89,8 +90,8 @@ extern "C" {
 #  include "utils/avlstuff.h"
 #  include "pdf/pdftypes.h"
 
-#  include "lua52/lua.h"
-#  include "lua52/lauxlib.h"
+#  include "lua.h"
+#  include "lauxlib.h"
 
     /* pdfgen.w */
     extern int ten_pow[10];

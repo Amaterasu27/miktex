@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,6 +22,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/fontforge/fontforge
   ${CMAKE_CURRENT_SOURCE_DIR}/fontforge/inc
+  ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/unilib
 )
 
 add_definitions(
@@ -42,19 +43,6 @@ configure_file(
 )
 
 set(luafontforge_sources
-  fontforge/Unicode/ArabicForms.c
-  fontforge/Unicode/alphabet.c
-  fontforge/Unicode/backtrns.c
-  fontforge/Unicode/char.c
-  fontforge/Unicode/cjk.c
-  fontforge/Unicode/combiners.h
-  fontforge/Unicode/gwwiconv.c
-  fontforge/Unicode/memory.c
-  fontforge/Unicode/ucharmap.c
-  fontforge/Unicode/unialt.c
-  fontforge/Unicode/usprintf.c
-  fontforge/Unicode/ustring.c
-  fontforge/Unicode/utype.c
   fontforge/fontforge/PfEd.h
   fontforge/fontforge/autohint.c
   fontforge/fontforge/baseviews.h
@@ -76,6 +64,7 @@ set(luafontforge_sources
   fontforge/fontforge/macbinary.c
   fontforge/fontforge/macenc.c
   fontforge/fontforge/mathconstants.c
+  fontforge/fontforge/memory.c
   fontforge/fontforge/mm.c
   fontforge/fontforge/mm.h
   fontforge/fontforge/namelist.c
@@ -84,7 +73,6 @@ set(luafontforge_sources
   fontforge/fontforge/parsepfa.c
   fontforge/fontforge/parsettf.c
   fontforge/fontforge/parsettfatt.c
-  fontforge/fontforge/parsettfvar.c
   fontforge/fontforge/pfaedit.h
   fontforge/fontforge/plugins.h
   fontforge/fontforge/psfont.h
@@ -111,35 +99,25 @@ set(luafontforge_sources
   fontforge/fontforge/stemdb.c
   fontforge/fontforge/stemdb.h
   fontforge/fontforge/tottf.c
-  fontforge/fontforge/tottfaat.c
   fontforge/fontforge/tottfgpos.c
   fontforge/fontforge/ttf.h
   fontforge/fontforge/ttfspecial.c
   fontforge/fontforge/uiinterface.h
   fontforge/fontforge/unicoderange.h
-  fontforge/fontforge/views.h
   fontforge/gutils/fsys.c
   fontforge/inc/basics.h
-  fontforge/inc/chardata.h
-  fontforge/inc/charset.h
-  fontforge/inc/dynamic.h
-  fontforge/inc/fileutil.h
-  fontforge/inc/gdraw.h
   fontforge/inc/gfile.h
-  fontforge/inc/ggadget.h
-  fontforge/inc/gicons.h
   fontforge/inc/gimage.h
-  fontforge/inc/gio.h
-  fontforge/inc/gkeysym.h
-  fontforge/inc/gprogress.h
-  fontforge/inc/gresource.h
-  fontforge/inc/gwidget.h
-  fontforge/inc/gwwiconv.h
   fontforge/inc/intl.h
-  fontforge/inc/ustring.h
-  fontforge/inc/utype.h
   src/ffdummies.c
   src/luafflib.c
 )
 
 add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
+
+set_property(
+  TARGET luatex-luafontforge-static
+  APPEND
+  PROPERTY INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)

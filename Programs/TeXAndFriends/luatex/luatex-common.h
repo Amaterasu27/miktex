@@ -29,10 +29,10 @@
 #if ! (defined(MIKTEX) && defined(_MSC_VER))
 __attribute__ ((format(printf, 1, 2)))
 #endif
-extern void pdftex_warn(const char *fmt, ...);
+extern void luatex_warn(const char *fmt, ...);
 #if ! (defined(MIKTEX) && defined(_MSC_VER))
 __attribute__ ((noreturn, format(printf, 1, 2)))
 #endif
-extern void pdftex_fail(const char *fmt, ...);
+extern void luatex_fail(const char *fmt, ...);
 
 #endif /* LUATEX_COMMON_H */
