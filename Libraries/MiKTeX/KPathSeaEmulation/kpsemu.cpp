@@ -1,7 +1,7 @@
 /* kpsemu.cpp: kpathsea emulation
 
    Copyright (C) 1994, 95 Karl Berry
-   Copyright (C) 2000-2010 Christian Schenk
+   Copyright (C) 2000-2015 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -911,6 +911,19 @@ miktex_kpathsea_set_program_name (/*in*/ kpathsea	kpse,
     SessionWrapper(true)->PushAppName (lpszProgramName);
   }
   Utils::SetEnvironmentString ("progname", lpszProgramName);
+}
+
+/* _________________________________________________________________________
+
+   miktex_kpathsea_program_basename
+   _________________________________________________________________________ */
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_program_basename (/*[in]*/ const char * lpszArgv0)
+{
+  PathName argv0 (lpszArgv0);
+  char szInvocationName[BufferSizes::MaxPath];
+  return (xstrdup(argv0.GetFileName(szInvocationName)));
 }
 
 /* _________________________________________________________________________

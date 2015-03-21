@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DLUA_BUILD_AS_DLL)
+add_definitions(-DLUA_BUILD_AS_DLL -DLUA_COMPAT_MODULE)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_lua_dir}

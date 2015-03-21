@@ -1,7 +1,7 @@
 /* miktex/KPSE/Emulation.h: kpathsea emulation			-*- C++ -*-
 
    Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry
-   Copyright (C) 2000-2013 Christian Schenk
+   Copyright (C) 2000-2015 Christian Schenk
 
    This file is part of the MiKTeX KPSEMU Library.
 
@@ -758,6 +758,8 @@ MIKTEX_END_EXTERN_C_BLOCK
 #define kpathsea_set_program_name(kpse, argv0, progname) \
   miktex_kpathsea_set_program_name(kpse, argv0, progname)
 
+#define kpse_program_basename(argv0) miktex_kpathsea_program_basename(argv0)
+
 #if defined(KPSE_COMPAT_API)
 
 #define kpse_set_program_name(argv0, progname) \
@@ -869,6 +871,9 @@ miktex_kpathsea_path_search (/*in*/ kpathsea			kpse,
 			     /*[in]*/ const char *		lpszPath,
 			     /*[in]*/ const char *		lpszName,
 			     /*[in]*/ boolean			mustExist);
+
+MIKTEXKPSCEEAPI(char *)
+miktex_kpathsea_program_basename (/*[in]*/ const char * lpszArgv0);
 
 MIKTEXKPSCEEAPI(char *)
 miktex_kpathsea_readable_file (/*in*/ kpathsea		kpse,

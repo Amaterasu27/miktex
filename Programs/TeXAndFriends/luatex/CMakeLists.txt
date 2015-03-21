@@ -27,7 +27,6 @@ include_directories(
 
 add_definitions(
   -DAPPTAG=luatex
-  -DLUA_BUILD_AS_DLL
   -DLUA_COMPAT_ALL
   -DLUA_COMPAT_MODULE
   -DMIKTEX_LUATEX
@@ -239,10 +238,11 @@ target_link_libraries(${luatex_program_dll_name}
   ${core_dll_name}
   ${jpeg_dll_name}
   ${kpsemu_dll_name}
-  ${lua_dll_name}
+  ${lua_lib_name}
   ${md5_dll_name}
   ${mp_lib_name}
   ${obsdcompat_dll_name}
+  ${pixman_lib_name}
   ${png_dll_name}
   ${poppler_lib_name}
   ${zzip_dll_name}
