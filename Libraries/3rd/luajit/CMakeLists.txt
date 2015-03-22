@@ -52,8 +52,6 @@ add_executable(minilua EXCLUDE_FROM_ALL
 
 merge_trustinfo_manifest(minilua asInvoker)
 
-get_target_property(minilua_exe minilua LOCATION)
-
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(dasmflags -D WIN -D JIT -D FFI -D P64)
 else(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -62,7 +60,7 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
-  COMMAND ${minilua_exe} ${CMAKE_CURRENT_SOURCE_DIR}/dynasm/dynasm.lua
+  COMMAND $<TARGET_FILE:minilua> ${CMAKE_CURRENT_SOURCE_DIR}/dynasm/dynasm.lua
 	-LN ${dasmflags}
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/vm_x86.dasc
@@ -86,8 +84,6 @@ add_executable(buildvm EXCLUDE_FROM_ALL ${buildvm_sources})
 
 merge_trustinfo_manifest(buildvm asInvoker)
 
-get_target_property(buildvm_exe buildvm LOCATION)
-
 set(all_lib
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lbitlib.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_base.c
@@ -105,7 +101,7 @@ set(all_lib
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
-  COMMAND ${buildvm_exe}
+  COMMAND $<TARGET_FILE:buildvm>
 	-m peobj
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
   DEPENDS
@@ -326,9 +322,9 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luajit_dll_name} SHARED ${${luajit_dll_name}_sources})
 
-target_link_libraries(${luajit_dll_name}
-  ${utf8wrap_dll_name}
-)
+#target_link_libraries(${luajit_dll_name}
+#  ${utf8wrap_dll_name}
+#)
 
 set_target_properties(${luajit_dll_name}
   PROPERTIES
