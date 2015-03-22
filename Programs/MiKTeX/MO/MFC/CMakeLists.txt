@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011-2013 Christian Schenk
+## Copyright (C) 2011-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -90,15 +90,13 @@ endif(NATIVE_WINDOWS)
 
 target_link_libraries(mo ${libs})
 
-get_target_property(mo_mfc_exe mo LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET mo
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
-	-updateresource:${mo_mfc_exe}\;1
+	-updateresource:$<TARGET_FILE:mo>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
@@ -115,15 +113,13 @@ endif(NATIVE_WINDOWS)
 
 target_link_libraries(mo${miktex_admin_suffix} ${libs})
 
-get_target_property(mo_mfc_admin_exe mo${miktex_admin_suffix} LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET mo${miktex_admin_suffix}
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/mo.manifest
-	-updateresource:${mo_mfc_admin_exe}\;1
+	-updateresource:$<TARGET_FILE:mo${miktex_admin_suffix}>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)

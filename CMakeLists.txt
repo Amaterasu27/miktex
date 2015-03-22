@@ -17,12 +17,18 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+cmake_minimum_required(VERSION 3.2.0 FATAL_ERROR)
+
 set(CMAKE_COLOR_MAKEFILE FALSE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 set(CMAKE_LINK_INTERFACE_LIBRARIES "")
 
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+option(
+  MIKTEX_SUPPORT_WINDOWS_XP
+  "Support Windows XP."
+  ${WIN32}
+)
 
 if(WIN32 AND NOT UNIX)
   set(NATIVE_WINDOWS 1)
@@ -34,6 +40,17 @@ if(NATIVE_WINDOWS)
   project(miktex)
   set(PRODUCT_NAME "MiKTeX")
   set(BUILDING_MIKTEX TRUE)
+  if(MIKTEX_SUPPORT_WINDOWS_XP)
+    if(CMAKE_CL_64)
+        message(STATUS "enabling Windows XP 64 support")
+        SET(CMAKE_CREATE_WIN32_EXE /SUBSYSTEM:WINDOWS,5.02)
+        SET(CMAKE_CREATE_CONSOLE_EXE /SUBSYSTEM:CONSOLE,5.02)
+    else()
+        message(STATUS "enabling Windows XP support")
+        SET(CMAKE_CREATE_WIN32_EXE /SUBSYSTEM:WINDOWS,5.01)
+        SET(CMAKE_CREATE_CONSOLE_EXE /SUBSYSTEM:CONSOLE,5.01)
+    endif()
+  endif()
 else(NATIVE_WINDOWS)
   project(miktex-tools)
   set(PRODUCT_NAME "MiKTeX Tools")
@@ -347,7 +364,12 @@ if(BUILDING_MIKTEX_TOOLS)
 endif(BUILDING_MIKTEX_TOOLS)
 
 find_package(ImageMagick REQUIRED)
-find_package(MFC)
+## MFC is mandatory
+if(WIN32)
+  #find_package(MFC)
+  message(STATUS "MFC is mandatory")
+  set(MFC_FOUND "YES")
+endif()
 set(QT_USE_QTXML TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTSCRIPTTOOLS TRUE)
@@ -425,8 +447,13 @@ check_function_exists(uname HAVE_UNAME_SYSCALL)
 check_function_exists(utime HAVE_UTIME)
 check_function_exists(vfork HAVE_VFORK)
 
-check_include_file_cxx(afxwin.h HAVE_AFXWIN_H "-D_AFXDLL")
-check_include_file_cxx(atlbase.h HAVE_ATLBASE_H)
+if(WIN32)
+  message(STATUS "afxwin.h/atlbase.h is mandatory")
+  #check_include_file_cxx(afxwin.h HAVE_AFXWIN_H)
+  #check_include_file_cxx(atlbase.h HAVE_ATLBASE_H)
+  set(HAVE_AFXWIN_H "YES")
+  set(HAVE_ATLBASE_H "YES")
+endif()
 
 check_include_file_cxx(hash_map HAVE_HASH_MAP)
 check_include_file_cxx(hash_set HAVE_HASH_SET)
@@ -469,6 +496,7 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
 
 # work around CMake bug
 if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
+  message(STATUS "MFC is disabled")
   set(MFC_FOUND "NO")
 endif(MFC_FOUND AND NOT HAVE_AFXWIN_H)
 
@@ -859,6 +887,7 @@ if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
     ${CMAKE_SOURCE_DIR}/miktexstartup.ini.debug.in
 	${CMAKE_BINARY_DIR}/miktexstartup.ini.debug)
 endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
+
 
 ###############################################################################
 ## add sub-directories

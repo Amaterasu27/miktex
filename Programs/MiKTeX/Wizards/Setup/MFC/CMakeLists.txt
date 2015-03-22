@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -166,15 +166,13 @@ if(NATIVE_WINDOWS)
   )
 endif(NATIVE_WINDOWS)
 
-get_target_property(setup_mfc_exe setup LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET setup
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Setup.manifest
-	-updateresource:${setup_mfc_exe}\;1
+	-updateresource:$<TARGET_FILE:setup>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)

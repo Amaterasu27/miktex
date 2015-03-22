@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -93,15 +93,13 @@ endif(NATIVE_WINDOWS)
 
 target_link_libraries(remove_mfc ${libs})
 
-get_target_property(remove_mfc_exe remove_mfc LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET remove_mfc
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
-	-updateresource:${remove_mfc_exe}\;1
+	-updateresource:$<TARGET_FILE:remove_mfc>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)
@@ -122,15 +120,13 @@ endif(NATIVE_WINDOWS)
 
 target_link_libraries(remove_mfc${miktex_admin_suffix} ${libs})
 
-get_target_property(remove_mfc_admin_exe remove_mfc${miktex_admin_suffix} LOCATION)
-
 if(NATIVE_WINDOWS)
   add_custom_command(
     TARGET remove_mfc${miktex_admin_suffix}
     POST_BUILD
     COMMAND ${MT_EXE} -nologo
 	-manifest ${CMAKE_CURRENT_BINARY_DIR}/res/Remove.manifest
-	-updateresource:${remove_mfc_admin_exe}\;1
+	-updateresource:$<TARGET_FILE:remove_mfc${miktex_admin_suffix}>\;1
     VERBATIM
   )
 endif(NATIVE_WINDOWS)

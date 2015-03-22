@@ -4,30 +4,20 @@ briefly describes the build process on Windows systems.
 Minumum OS REQUIREMENTS
 -----------------------
 
-	* Microsoft Windows XP Service Pack 2
+	* Microsoft Windows XP Service Pack 3
 
 C++ COMPILER
 ------------
 
-	* Microsoft Visual C++ 2008
+	* Visual Studio Community 2013
 	  http://en.wikipedia.org/wiki/Visual_C_Plus_Plus
-	  You can use the Express Edition (currently gratis) to compile
-          the command-line applications. The Professional Edition is only
-          required, if you want to build the GUI applications.
-
-WINDOWS SDK
------------
-
-	* Microsoft Windows SDK
-	  http://en.wikipedia.org/wiki/Microsoft_Windows_SDK
-	  Hint: Don't install the C++ compiler included in the SDK.
 
 BUILD SYSTEM
 ------------
 
 	* CMake
 	  http://en.wikipedia.org/wiki/Cmake
-	  The minimum required version is 2.4.6.
+	  The minimum required version is 3.2.
 
 BUILD UTILITIES
 ---------------
