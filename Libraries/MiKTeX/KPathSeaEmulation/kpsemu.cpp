@@ -923,7 +923,7 @@ miktex_kpathsea_program_basename (/*[in]*/ const char * lpszArgv0)
 {
   PathName argv0 (lpszArgv0);
   char szInvocationName[BufferSizes::MaxPath];
-  return (xstrdup(argv0.GetFileName(szInvocationName)));
+  return (xstrdup(argv0.GetFileNameWithoutExtension(szInvocationName)));
 }
 
 /* _________________________________________________________________________
