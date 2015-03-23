@@ -28,7 +28,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/host)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/host)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dynasm)
 
-set_source_files_properties(
+set(generated_headers
   ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_bcdef.h
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_ffdef.h
@@ -36,6 +36,10 @@ set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_recdef.h
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vmdef.h
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_folddef.h
+)
+
+set_source_files_properties(
+  ${generated_headers}
   PROPERTIES GENERATED TRUE
 )
 
@@ -186,6 +190,7 @@ add_custom_command(
 )
 
 set(${luajit_dll_name}_sources
+  ${generated_headers}
   ${all_lib}
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lauxlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_aux.c
@@ -302,14 +307,6 @@ set(${luajit_dll_name}_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luaconf.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lualib.h
-
-  ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_bcdef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_ffdef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_libdef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_recdef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vmdef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lj_folddef.h
 
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
 )
