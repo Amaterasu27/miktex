@@ -185,9 +185,7 @@ add_custom_command(
   VERBATIM
 )
 
-set(${luajit_dll_name}_sources
-  ${generated_headers}
-  ${all_lib}
+set(lib_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lauxlib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_aux.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_init.c
@@ -303,7 +301,12 @@ set(${luajit_dll_name}_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luaconf.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lualib.h
+)
 
+set(${luajit_dll_name}_sources
+  ${generated_headers}
+  ${all_lib}
+  ${lib_sources}
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
 )
 
@@ -319,6 +322,11 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luajit_dll_name} SHARED ${${luajit_dll_name}_sources})
 
+set_source_files_properties(
+  ${lib_sources} ${all_lib}
+  PROPERTIES OBJECT_DEPENDS ${generated_headers}
+)
+  
 #target_link_libraries(${luajit_dll_name}
 #  ${utf8wrap_dll_name}
 #)
