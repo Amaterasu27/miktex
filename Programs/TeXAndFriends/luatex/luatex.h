@@ -29,6 +29,10 @@
 
 #  include "cpascal.h"
 
+#  if defined(MIKTEX) && defined(round)
+#    undef round
+#  endif
+
 #  include <kpathsea/c-pathch.h>        /* for IS_DIR_SEP, used in the change files */
 #  include <kpathsea/tex-make.h>        /* for kpse_make_tex_discard_errors */
 

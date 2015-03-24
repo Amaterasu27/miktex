@@ -184,21 +184,21 @@ target_link_libraries(txt2zlib
 
 merge_trustinfo_manifest(txt2zlib asInvoker)
 
-make_directory(${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts)
 
 add_custom_command(
   OUTPUT
     ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
   COMMAND
-    $<TARGET_FILE:txt2zlib>
+    txt2zlib
       ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
-      pdflua.c
-  WORKING_DIRECTORY
-    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts
+      ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+#  WORKING_DIRECTORY
+#    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts
   MAIN_DEPENDENCY
     ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
   DEPENDS
-    ${txt2zlib_exe}
+    txt2zlib
     ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
   VERBATIM
 )
@@ -208,6 +208,7 @@ set_source_files_properties(
   PROPERTIES
     GENERATED TRUE
 )
+
 set(luatexlib_sources
   ${luatexlib_cweb_sources}
   ${CMAKE_SOURCE_DIR}/${rel_mp_dir}/lmplib.c

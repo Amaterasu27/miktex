@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -97,15 +97,15 @@ merge_trustinfo_manifest(mkversion asInvoker)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
-  COMMAND $<TARGET_FILE:mkversion>
+  COMMAND mkversion
 	-r ${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
-	-v ${CMAKE_CURRENT_SOURCE_DIR}/version
+	-v ${CMAKE_CURRENT_SOURCE_DIR}/VERSION
 	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
-  MAIN_DEPENDENCY version
+  MAIN_DEPENDENCY VERSION
   DEPENDS
 	mkversion
 	${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
-	${CMAKE_CURRENT_SOURCE_DIR}/version
+	${CMAKE_CURRENT_SOURCE_DIR}/VERSION
   VERBATIM
 )
 
@@ -122,7 +122,7 @@ target_link_libraries(mkg3states
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
-  COMMAND $<TARGET_FILE:mkg3states> -c const ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
+  COMMAND mkg3states -c const ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
   DEPENDS mkg3states
   VERBATIM
 )

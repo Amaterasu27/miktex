@@ -149,15 +149,18 @@ miktex_strncasecmp (/*[in]*/ const char * lpsz1,
    math.h
    _________________________________________________________________________ */
 
-#define rint(x) ( (double) ((int)((x) + 0.5)) )
+#if defined(_MSC_VER) && _MSC_VER < 1700
+#  define rint(x) ( (double) ((int)((x) + 0.5)) )
+
+#  if ! defined(isnan)
+#    define isnan _isnan
+#  endif
+#  endif
 
 #if ! defined(finite)
 #  define finite _finite
 #endif
 
-#if ! defined(isnan)
-#  define isnan _isnan
-#endif
 
 /* _________________________________________________________________________
 

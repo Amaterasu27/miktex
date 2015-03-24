@@ -44,6 +44,9 @@
 
 #include <string.h>
 #include <math.h>
+#if defined(MIKTEX)
+#  include <algorithm>
+#endif
 #include "goo/gfile.h"
 #include "GlobalParams.h"
 #include "Error.h"
