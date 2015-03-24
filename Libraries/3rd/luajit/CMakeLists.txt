@@ -64,7 +64,7 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
-  COMMAND $<TARGET_FILE:minilua> ${CMAKE_CURRENT_SOURCE_DIR}/dynasm/dynasm.lua
+  COMMAND minilua ${CMAKE_CURRENT_SOURCE_DIR}/dynasm/dynasm.lua
 	-LN ${dasmflags}
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/host/buildvm_arch.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/vm_x86.dasc
@@ -88,7 +88,7 @@ add_executable(buildvm EXCLUDE_FROM_ALL ${buildvm_sources})
 
 merge_trustinfo_manifest(buildvm asInvoker)
 
-set(all_lib
+set(ljlib_c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lbitlib.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_base.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_bit.c
@@ -105,7 +105,7 @@ set(all_lib
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
-  COMMAND $<TARGET_FILE:buildvm>
+  COMMAND buildvm
 	-m peobj
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
   DEPENDS
@@ -115,67 +115,67 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_bcdef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m bcdef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_bcdef.h
-	${all_lib}
+	${ljlib_c}
   DEPENDS
 	buildvm
-	${all_lib}
+	${ljlib_c}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_ffdef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m ffdef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_ffdef.h
-	${all_lib}
+	${ljlib_c}
   DEPENDS
 	buildvm
-	${all_lib}
+	${ljlib_c}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_libdef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m libdef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_libdef.h
-	${all_lib}
+	${ljlib_c}
   DEPENDS
 	buildvm
-	${all_lib}
+	${ljlib_c}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_recdef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m recdef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_recdef.h
-	${all_lib}
+	${ljlib_c}
   DEPENDS
 	buildvm
-	${all_lib}
+	${ljlib_c}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vmdef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m vmdef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vmdef.h
-	${all_lib}
+	${ljlib_c}
   DEPENDS
 	buildvm
-	${all_lib}
+	${ljlib_c}
   VERBATIM
 )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/src/lj_folddef.h
-  COMMAND ${buildvm_exe}
+  COMMAND buildvm
 	-m folddef
 	-o ${CMAKE_CURRENT_BINARY_DIR}/src/lj_folddef.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c
@@ -185,83 +185,39 @@ add_custom_command(
   VERBATIM
 )
 
-set(lib_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lauxlib.h
+set(ljcore_c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_aux.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_init.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_alloc.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_alloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_api.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_arch.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_arm.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_mips.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_ppc.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_x86.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bc.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bc.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcdump.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcread.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcwrite.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_carith.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_carith.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccall.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccall.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccallback.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccallback.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cconv.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cconv.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cdata.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cdata.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_char.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_char.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_clib.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_clib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cparse.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cparse.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_crecord.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_crecord.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ctype.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ctype.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_debug.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_debug.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_def.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_dispatch.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_dispatch.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_arm.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_mips.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_ppc.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_x86.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_err.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_err.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_errmsg.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ff.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ffrecord.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ffrecord.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_frame.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_func.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_func.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gc.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gdbjit.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gdbjit.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ir.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ir.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ircall.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_iropt.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_jit.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lex.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lex.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lib.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lib.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_load.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_mcode.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_mcode.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_meta.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_meta.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_obj.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_obj.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_dce.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_fold.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_loop.c
@@ -270,33 +226,80 @@ set(lib_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_sink.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_opt_split.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_parse.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_parse.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_record.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_record.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_snap.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_snap.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_state.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_state.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_str.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_str.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_strscan.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_strscan.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_tab.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_trace.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_udata.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vmevent.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vmmath.c
+)
+
+set(headers
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lauxlib.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_alloc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_arch.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_arm.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_mips.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_ppc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_asm_x86.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_bcdump.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_carith.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccall.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ccallback.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cconv.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cdata.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_char.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_clib.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_cparse.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_crecord.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ctype.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_debug.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_def.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_dispatch.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_arm.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_mips.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_ppc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_emit_x86.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_err.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_errmsg.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ff.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ffrecord.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_frame.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_func.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_gdbjit.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ir.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_ircall.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_iropt.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_jit.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lex.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_lib.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_mcode.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_meta.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_obj.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_parse.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_record.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_snap.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_state.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_str.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_strscan.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_tab.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_target.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_target_arm.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_target_mips.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_target_ppc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_target_x86.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_trace.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_trace.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_traceerr.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_udata.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_udata.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vm.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vmevent.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vmevent.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lj_vmmath.c
   ${CMAKE_CURRENT_SOURCE_DIR}/src/lua.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luaconf.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/luajit.h
@@ -305,8 +308,9 @@ set(lib_sources
 
 set(${luajit_dll_name}_sources
   ${generated_headers}
-  ${all_lib}
-  ${lib_sources}
+  ${headers}
+  ${ljlib_c}
+  ${ljcore_c}
   ${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj
 )
 
@@ -322,11 +326,6 @@ endif(NATIVE_WINDOWS)
 
 add_library(${luajit_dll_name} SHARED ${${luajit_dll_name}_sources})
 
-set_source_files_properties(
-  ${lib_sources} ${all_lib}
-  PROPERTIES OBJECT_DEPENDS ${generated_headers}
-)
-  
 #target_link_libraries(${luajit_dll_name}
 #  ${utf8wrap_dll_name}
 #)
