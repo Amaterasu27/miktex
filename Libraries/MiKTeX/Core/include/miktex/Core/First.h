@@ -1,6 +1,6 @@
-/* miktex/Core/First.h:						-*- C++ -*-
+/* miktex/Core/First.h:					-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -20,14 +20,14 @@
    02111-1307, USA. */
 
 #if defined(_MSC_VER)
-#  pragma once
+#pragma once
 #endif
 
-#if ! defined(E2D546821BA244C1A028468F9A733B20)
-#define E2D546821BA244C1A028468F9A733B20
+#if !defined(MIKTEX_CORE_FIRST_H)
+#define MIKTEX_CORE_FIRST_H
 
 #if defined(_MSC_VER)
-#  include <crtdbg.h>
+#include <crtdbg.h>
 #endif
 
 #if defined(_MSC_VER) && defined(__cplusplus)
@@ -45,23 +45,22 @@ namespace MiKTeX {
 #else
     __declspec(dllimport)
 #endif
-    __cdecl
-    OnThrowStdException ();
+    __cdecl OnThrowStdException ();
   }
 }
 
 #include <exception>
 
-#if ! defined(_THROW)
-#  error _THROW macro is not defined in <exception>
+#if !defined(_THROW)
+#error _THROW macro is not defined in <exception>
 #endif
 
 #undef _THROW
 
 #define _THROW(x, y)				\
   (						\
-    MiKTeX::Debug::OnThrowStdException (),	\
-    throw x (y),				\
+    MiKTeX::Debug::OnThrowStdException(),	\
+    throw x(y),					\
     0						\
   )
 

@@ -1,6 +1,6 @@
 /* miktex/Core/Paths.h: hard-coded path names			-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -44,7 +44,7 @@
 
 #define MIKTEX_ADMIN_SUFFIX "@miktex_admin_suffix@"
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
 #  define MIKTEX_TEXMF "@MIKTEX_TEXMF@"
 #endif
 

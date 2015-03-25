@@ -1,6 +1,6 @@
-/* miktex/Core/Definitions.h: MiKTeX core API			-*- C++ -*-
+/* miktex/Core/Definitions.h: basic definitions		-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -20,50 +20,50 @@
    02111-1307, USA. */
 
 #if defined(_MSC_VER)
-#  pragma once
+#pragma once
 #endif
 
-#if ! defined(A7BDA959B7AC45ACA4517ED3DFBECC1A)
-#define A7BDA959B7AC45ACA4517ED3DFBECC1A
+#if !defined(MIKTEX_CORE_DEFINITIONS_H)
+#define MIKTEX_CORE_DEFINITIONS_H
 
-#if ! defined(MIKTEX)
-#  define MIKTEX 1
+#if !defined(MIKTEX)
+#define MIKTEX 1
 #endif
 
 #if defined(_WIN64)
-#  define MIKTEX_WINDOWS 1
-#  define MIKTEX_WINDOWS_64 1
+#define MIKTEX_WINDOWS 1
+#define MIKTEX_WINDOWS_64 1
 #elif defined(_WIN32)
-#  define MIKTEX_WINDOWS 1
-#  define MIKTEX_WINDOWS_32 1
+#define MIKTEX_WINDOWS 1
+#define MIKTEX_WINDOWS_32 1
 #else
-#  define MIKTEX_UNIX 1
+#define MIKTEX_UNIX 1
 #endif
 
 #if defined(_MSC_VER)
-#  define MIKTEXCALLBACK __cdecl
-#  define MIKTEXCEECALL __cdecl
-#  define MIKTEXDEPRECATED __declspec(deprecated)
-#  define MIKTEXINLINE __forceinline
-#  define MIKTEXNORETURN __declspec(noreturn)
-#  define MIKTEXNOVTABLE __declspec(novtable)
-#  define MIKTEXTHISCALL __thiscall
+#define MIKTEXCALLBACK __cdecl
+#define MIKTEXCEECALL __cdecl
+#define MIKTEXDEPRECATED __declspec(deprecated)
+#define MIKTEXINLINE __forceinline
+#define MIKTEXNORETURN __declspec(noreturn)
+#define MIKTEXNOVTABLE __declspec(novtable)
+#define MIKTEXTHISCALL __thiscall
 #else
-#  define MIKTEXCALLBACK
-#  define MIKTEXCEECALL
-#  define MIKTEXDEPRECATED
-#  define MIKTEXINLINE inline
-#  define MIKTEXNORETURN
-#  define MIKTEXNOVTABLE
-#  define MIKTEXTHISCALL
+#define MIKTEXCALLBACK
+#define MIKTEXCEECALL
+#define MIKTEXDEPRECATED
+#define MIKTEXINLINE inline
+#define MIKTEXNORETURN
+#define MIKTEXNOVTABLE
+#define MIKTEXTHISCALL
 #endif
 
 #if defined(__cplusplus)
-#  define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
-#  define MIKTEX_END_EXTERN_C_BLOCK }
+#define MIKTEX_BEGIN_EXTERN_C_BLOCK extern "C" {
+#define MIKTEX_END_EXTERN_C_BLOCK }
 #else
-#  define MIKTEX_BEGIN_EXTERN_C_BLOCK
-#  define MIKTEX_END_EXTERN_C_BLOCK
+#define MIKTEX_BEGIN_EXTERN_C_BLOCK
+#define MIKTEX_END_EXTERN_C_BLOCK
 #endif
 
 #endif

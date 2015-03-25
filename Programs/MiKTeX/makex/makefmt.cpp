@@ -1,6 +1,6 @@
 /* makefmt.cpp: make TeX format files
 
-   Copyright (C) 1998-2010 Christian Schenk
+   Copyright (C) 1998-2015 Christian Schenk
 
    This file is part of the MiKTeX Maker Library.
 
@@ -563,7 +563,7 @@ MakeFmt::Run (/*[in]*/ int			argc,
     {
       arguments.AppendOption ("--enable-etex");
     }
-#if MIKTEX_STANDALONE
+#if defined(MIKTEX_STANDALONE)
   if (IsPdf())
     {
       InstallPdftexConfigTex ();

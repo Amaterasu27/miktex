@@ -1,34 +1,36 @@
-/* miktex/Core/Version.h: MiKTeX version information		-*- C++ -*-
+/* miktex/Core/Version.h: MiKTeX version information	-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
-   This file is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 2, or (at your
-   option) any later version.
+   This file is part of the MiKTeX Core Library.
+
+   The MiKTeX Core Library is free software; you can redistribute it
+   and/or modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2, or
+   (at your option) any later version.
    
-   This file is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   The MiKTeX Core Library is distributed in the hope that it will be
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
    
    You should have received a copy of the GNU General Public License
-   along with this file; if not, write to the Free Software
-   Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
-   USA. */
+   along with the MiKTeX Core Library; if not, write to the Free
+   Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA. */
 
 #if defined(_MSC_VER)
-#  pragma once
+#pragma once
 #endif
 
-#if ! defined(F511789F2C69425D8D911A40E33E9A82)
-#define F511789F2C69425D8D911A40E33E9A82
+#if !defined(MIKTEX_CORE_VERSION_H)
+#define MIKTEX_CORE_VERSION_H
 
 #include <miktex/Core/First>
 #include <miktex/Core/Definitions>
 
 #if defined(MIKTEX_WINDOWS)
-#  define MIKTEX_STANDALONE 1
+#define MIKTEX_STANDALONE 1
 #endif
 
 #define MIKTEX_MAJOR_VERSION @MIKTEX_MAJOR_VERSION@
@@ -63,42 +65,41 @@
 #define MIKTEX_BANNER_STR MIKTEX_PRODUCTNAME_STR " " MIKTEX_VERSION_STR
 #endif
 
-
-#if ! defined(MIKTEX_COMP_COPYRIGHT_STR)
-#  define MIKTEX_COMP_COPYRIGHT_STR "(C) @MIKTEX_YEAR_VERSION@ Christian Schenk"
-#  define MIKTEX_COMP_COPYRIGHT_STR_1252 "© @MIKTEX_YEAR_VERSION@ Christian Schenk"
+#if !defined(MIKTEX_COMP_COPYRIGHT_STR)
+#define MIKTEX_COMP_COPYRIGHT_STR "(C) @MIKTEX_YEAR_VERSION@ Christian Schenk"
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 "© @MIKTEX_YEAR_VERSION@ Christian Schenk"
 #endif
 
-#if ! defined(MIKTEX_COMP_COPYRIGHT_STR_1252)
-#  define MIKTEX_COMP_COPYRIGHT_STR_1252 MIKTEX_COMP_COPYRIGHT_STR
+#if !defined(MIKTEX_COMP_COPYRIGHT_STR_1252)
+#define MIKTEX_COMP_COPYRIGHT_STR_1252 MIKTEX_COMP_COPYRIGHT_STR
 #endif
 
-#if ! defined(MIKTEX_COMP_TM_STR)
-#  define MIKTEX_COMP_TM_STR ""
-#  define MIKTEX_COMP_TM_STR_1252 ""
+#if !defined(MIKTEX_COMP_TM_STR)
+#define MIKTEX_COMP_TM_STR ""
+#define MIKTEX_COMP_TM_STR_1252 ""
 #endif
 
-#if ! defined(MIKTEX_COMP_TM_STR_1252)
-#  define MIKTEX_COMP_TM_STR_1252 MIKTEX_COMP_TM_STR
+#if !defined(MIKTEX_COMP_TM_STR_1252)
+#define MIKTEX_COMP_TM_STR_1252 MIKTEX_COMP_TM_STR
 #endif
 
-#if ! defined(MIKTEX_BUILD_COMMENT_STR)
-#  define MIKTEX_BUILD_COMMENT_STR ""
+#if !defined(MIKTEX_BUILD_COMMENT_STR)
+#define MIKTEX_BUILD_COMMENT_STR ""
 #endif
 
-#if ! defined(MIKTEX_BUILD_SPECIAL_STR)
-#  define MIKTEX_BUILD_SPECIAL_STR ""
+#if !defined(MIKTEX_BUILD_SPECIAL_STR)
+#define MIKTEX_BUILD_SPECIAL_STR ""
 #endif
 
 #define MAKE_CURVER_ID(prefix) prefix ## @MIKTEX_SERIES_ID_STR@
 
-#if ! defined(stringify_)
-#  define stringify__(x) #x
-#  define stringify_(x) stringify__(x)
+#if !defined(stringify_)
+#define stringify__(x) #x
+#define stringify_(x) stringify__(x)
 #endif
 
 #if defined(MIKTEX_COMP_J2000_VERSION)
-#  if ! defined(MIKTEX_COMPONENT_VERSION_STR)
+#  if !defined(MIKTEX_COMPONENT_VERSION_STR)
 #    if defined(MIKTEX_COMP_ORIG_VERSION_STR)
 #      define MIKTEX_COMPONENT_VERSION_STR				\
 	 MIKTEX_SERIES_STR "." stringify_(MIKTEX_COMP_J2000_VERSION)	\

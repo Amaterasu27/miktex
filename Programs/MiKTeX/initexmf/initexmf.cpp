@@ -1,6 +1,6 @@
 /* initexmf.cpp: MiKTeX configuration utility
 
-   Copyright (C) 1996-2014 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of IniTeXMF.
 
@@ -494,7 +494,7 @@ private:
   void
   WriteReport ();
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
 private:
   void
   Configure ();
@@ -701,7 +701,7 @@ const struct poptOption IniTeXMFApp::aoption_user[] = {
     0
   },
   
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
   {
     "configure", 0,
     POPT_ARG_NONE, 0,
@@ -954,7 +954,7 @@ Show the specified configuration value."),
     T_("ROOT")
   },
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
   {
     "user-install", 0,
     POPT_ARG_STRING, 0,
@@ -3282,7 +3282,7 @@ IniTeXMFApp::OnProgress (/*[in]*/ Notification		nf)
    IniTeXMFApp::Configure
    _________________________________________________________________________ */
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
 void
 IniTeXMFApp::Configure ()
 {
@@ -3484,7 +3484,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
   string logFile;
   string portableRoot;
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
   bool optConfigure = false;
 #endif
 
@@ -3528,7 +3528,7 @@ IniTeXMFApp::Run (/*[in]*/ int			argc,
 	  addFiles.push_back (lpszOptArg);
 	  break;
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
 	case OPT_CONFIGURE:
 	  optConfigure = true;
 	  break;
@@ -3826,7 +3826,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
     || ! startupConfig.commonConfigRoot.Empty()
     || ! startupConfig.commonInstallRoot.Empty())
   {
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
     optConfigure = true;
 #else
 #if defined(MIKTEX_WINDOWS)
@@ -4032,7 +4032,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"))
       ListMetafontModes ();
     }
 
-#if ! MIKTEX_STANDALONE
+#if !defined(MIKTEX_STANDALONE)
   if (optConfigure)
     {
       Configure ();
