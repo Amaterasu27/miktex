@@ -212,7 +212,10 @@
 
 /* MS has defined snprintf as deprecated */
 #ifdef _MSC_VER
+#if defined(MIKTEX) && _MSC_VER >= 1700
+#else
 #define snprintf _snprintf
+#endif
 #endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */

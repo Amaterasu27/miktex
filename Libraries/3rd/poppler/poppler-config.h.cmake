@@ -170,8 +170,10 @@ char * strtok_r (char *s, const char *delim, char **save_ptr);
 
 #if defined(_MSC_VER)
 #if defined(MIKTEX)
+#if _MSC_VER < 1700
 #define fmax(a, b) std::max(a, b)
 #define fmin(a, b) std::min(a, b)
+#endif
 #else
 #define fmax(a, b) max(a, b)
 #define fmin(a, b) min(a, b)

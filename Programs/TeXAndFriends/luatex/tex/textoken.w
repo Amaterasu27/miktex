@@ -1748,6 +1748,9 @@ void conv_toks(void)
     int save_scanner_status;    /* |scanner_status| upon entry */
     halfword save_def_ref;      /* |def_ref| upon entry, important if inside `\.{\\message}' */
     halfword save_warning_index;
+#if defined(MIKTEX)
+#  define bool temp_boolean
+#endif
     boolean bool;               /* temp boolean */
     str_number s;               /* first temp string */
     int sn;                     /* lua chunk name */
@@ -2039,6 +2042,9 @@ void conv_toks(void)
     (void) str_toks(str_lstring(str));
     flush_str(str);
     ins_list(token_link(temp_token_head));
+#if defined(MIKTEX)
+#  undef bool
+#endif
 }
 
 @ This boolean is keeping track of the lua string escape state

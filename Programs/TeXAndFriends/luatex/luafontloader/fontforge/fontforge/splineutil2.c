@@ -2049,6 +2049,9 @@ SplineSet *SplineSetReverse(SplineSet *spl) {
     Spline *spline, *first, *next;
     BasePoint tp;
     SplinePoint *temp;
+#if defined(MIKTEX)
+#  define bool variable_of_type_bool
+#endif
     int bool;
     /* reverse the splineset so that what was the start point becomes the end */
     /*  and vice versa. This entails reversing every individual spline, and */
@@ -2102,6 +2105,9 @@ return( spl );			/* Only one point, reversal is meaningless */
     }
 
 return( spl );
+#if defined(MIKTEX)
+#  undef bool
+#endif
 }
 
 static void SplineSetsUntick(SplineSet *spl) {

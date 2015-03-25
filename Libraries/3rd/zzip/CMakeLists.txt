@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2014 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -40,16 +40,29 @@ set(${zzip_dll_name}_sources
 
   zzip/__debug.h
   zzip/__dirent.h
+  zzip/__fnmatch.h
   zzip/__hints.h
   zzip/__mmap.h
   zzip/_config.h
+  zzip/_msvc.h
+  zzip/autoconf.h
   zzip/conf.h
+  zzip/fetch.h
   zzip/file.h
   zzip/format.h
+  zzip/fseeko.h
+  zzip/info.h
   zzip/lib.h
+  zzip/memdisk.h
+  zzip/mmapped.h
   zzip/plugin.h
   zzip/stdint.h
+  zzip/types.h
+  zzip/write.h
   zzip/zzip.h
+  zzip/zzip32.h
+
+  zzip-version.h
 )
 
 foreach(hdr _msvc.h conf.h fetch.h file.h format.h fseeko.h
@@ -61,6 +74,7 @@ foreach(hdr _msvc.h conf.h fetch.h file.h format.h fseeko.h
      COPYONLY
   )
 endforeach(hdr)
+
 if(NATIVE_WINDOWS)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/zzip.rc.in

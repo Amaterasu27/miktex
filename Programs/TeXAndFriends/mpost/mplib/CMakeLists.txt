@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2010-2014 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -30,7 +30,6 @@ add_definitions(
   -DAPPTAG=mpost
   -DUSE_MIKTEX_EXIT
   -DHAVE_SNPRINTF=1
-  -Dsnprintf=_snprintf
   -DHAVE_SYS_STAT_H=1
 )
 

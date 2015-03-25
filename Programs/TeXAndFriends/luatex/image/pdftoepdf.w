@@ -78,8 +78,15 @@ static char *get_file_checksum(char *a, file_error_mode fe)
         if (ck == NULL)
             luatex_fail("PDF inclusion: out of memory while processing '%s'",
                         a);
+#if defined(MIKTEX)
+        snprintf(ck, PDF_CHECKSUM_SIZE, "%"
+		         PRIu64 "_%"
+				 PRIu64, (uint64_t) size,
+                 (uint64_t) mtime);
+#else
         snprintf(ck, PDF_CHECKSUM_SIZE, "%" PRIu64 "_%" PRIu64, (uint64_t) size,
                  (uint64_t) mtime);
+#endif
    } else {
         switch (fe) {
         case FE_FAIL:

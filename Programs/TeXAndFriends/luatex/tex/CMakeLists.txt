@@ -184,27 +184,24 @@ target_link_libraries(txt2zlib
 
 merge_trustinfo_manifest(txt2zlib asInvoker)
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts)
+set(pdflua_c ${CMAKE_CURRENT_BINARY_DIR}/pdflua.c)
 
 add_custom_command(
   OUTPUT
-    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+    ${pdflua_c}
   COMMAND
     txt2zlib
       ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
-      ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
-#  WORKING_DIRECTORY
-#    ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts
+      pdflua.c
   MAIN_DEPENDENCY
-    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
+    ../luascripts/pdflua.lua
   DEPENDS
     txt2zlib
-    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/luascripts/pdflua.lua
   VERBATIM
 )
 
 set_source_files_properties(
-  ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+  ${pdflua_c}
   PROPERTIES
     GENERATED TRUE
 )
@@ -216,7 +213,7 @@ set(luatexlib_sources
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-luatex.h
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.c
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex.h
-  ${CMAKE_BINARY_DIR}/${rel_luatex_dir}/luascripts/pdflua.c
+  ${pdflua_c}
   ../dvi/dvigen.h
   ../font/luatexfont.h
   ../font/mapfile.h
