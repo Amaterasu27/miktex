@@ -123,7 +123,11 @@ char *luatex_find_read_file(const char *s, int n, int callback_index)
         /* use kpathsea here */
         ftemp = find_in_output_directory(s);
         if (!ftemp)
+#if MIKTEX
+            ftemp = kpse_find_file(s, kpse_tex_format, n == 0);
+#else
             ftemp = kpse_find_file(s, kpse_tex_format, 1);
+#endif
     }
     if (ftemp) {
         if (fullnameoffile)

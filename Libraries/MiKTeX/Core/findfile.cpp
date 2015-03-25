@@ -178,7 +178,7 @@ SessionImpl::FindFileInternal (/*[in]*/ const char *		lpszFileName,
 	// 2015-01-15
 	if (idx == 0)
 	{
-	  MIKTEX_ASSERT(PathName::Compare(pathWD, PathName().SetToCurrentDirectory()));
+          MIKTEX_ASSERT(PathName::Compare(pathWD, PathName().SetToCurrentDirectory()) == 0);
 	  path = lpszFileName;
 	}
 #endif
