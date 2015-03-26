@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2014 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -18,11 +18,13 @@
 ## USA.
 
 if(NATIVE_WINDOWS)
-  if(CMAKE_CL_64)
-    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/vc100/x64)
-  else(CMAKE_CL_64)
-    set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/vc100/x86)
-  endif(CMAKE_CL_64)
+  if(NOT DEFINED vc_runtime)
+    message(FATAL_ERROR "Only Visual C/C++ is supported under Windows.")
+  endif()
+  if(NOT DEFINED system_cpu)
+    message(FATAL_ERROR "system_cpu is not set.")
+  endif()
+  set(iculibdir_ ${CMAKE_CURRENT_SOURCE_DIR}/lib/vc${vc_runtime}/${system_cpu})
   configure_file(
     ${iculibdir_}/icudt.lib
     ${LIBRARY_OUTPUT_PATH}/icudt.lib
@@ -43,4 +45,4 @@ if(NATIVE_WINDOWS)
     ${LIBRARY_OUTPUT_PATH}/icuuc.lib
     COPYONLY
   )
-endif(NATIVE_WINDOWS)
+endif()

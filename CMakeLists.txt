@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt: top-level CMake file				 -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -32,9 +32,9 @@ option(
 
 if(WIN32 AND NOT UNIX)
   set(NATIVE_WINDOWS 1)
-else(WIN32 AND NOT UNIX)
+else()
   set(UNIX_ALIKE 1)
-endif(WIN32 AND NOT UNIX)
+endif()
 
 if(NATIVE_WINDOWS)
   project(miktex)
@@ -50,11 +50,11 @@ if(NATIVE_WINDOWS)
         SET(CMAKE_CREATE_CONSOLE_EXE /SUBSYSTEM:CONSOLE,5.01)
     endif()
   endif()
-else(NATIVE_WINDOWS)
+else()
   project(miktex-tools)
   set(PRODUCT_NAME "MiKTeX Tools")
   set(BUILDING_MIKTEX_TOOLS TRUE)
-endif(NATIVE_WINDOWS)
+endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "BSD/OS")
   set(system_name "openbsd")
@@ -68,25 +68,25 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "UNIX_SV")
   set(system_name "unixsv")
 elseif(CMAKE_SYSTEM_NAME MATCHES "CYGWIN_NT-5.1")
   set(system_name "cygwin")
-else(CMAKE_SYSTEM_NAME MATCHES "BSD/OS")
+else()
   string(TOLOWER "${CMAKE_SYSTEM_NAME}" system_name)
-endif(CMAKE_SYSTEM_NAME MATCHES "BSD/OS")
+endif()
 
 if(NATIVE_WINDOWS)
   if(CMAKE_CL_64)
     set(system_cpu "x64")
     set(manifest_processor_architecture "amd64")
-  else(CMAKE_CL_64)
+  else()
     set(system_cpu "x86")
     set(manifest_processor_architecture "x86")
-  endif(CMAKE_CL_64)
-else(NATIVE_WINDOWS)
+  endif()
+else()
   if(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
     set(system_cpu "x86")
-  else(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
+  else()
     string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" system_cpu)
-  endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i.86")
-endif(NATIVE_WINDOWS)
+  endif()
+endif()
 
 #set(target_system_tag "${system_cpu}-${system_name}")
 set(target_system_tag "${system_name}-${system_cpu}")
@@ -217,71 +217,71 @@ if(MIKTEX_RELEASE_STATE EQUAL 0)
   set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR}"
       CACHE STRING
-      "The MikTeX version string."
+      "The MiKTeX version string."
       FORCE)
   set(MIKTEX_FULL_VERSION_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
       CACHE STRING
-      "The full MikTeX version tag string."
+      "The full MiKTeX version tag string."
       FORCE)
   set(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}"
       CACHE STRING
-      "The MikTeX version tag string."
+      "The MiKTeX version tag string."
       FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
   set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR} RC ${MIKTEX_RELEASE_NUM}"
       CACHE STRING
-      "The MikTeX version string."
+      "The MiKTeX version string."
       FORCE)
   set(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}-rc-${MIKTEX_RELEASE_NUM}"
       CACHE STRING
-      "The MikTeX version tag string."
+      "The MiKTeX version tag string."
       FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
   set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR} Beta ${MIKTEX_RELEASE_NUM}"
       CACHE STRING
-      "The MikTeX version string."
+      "The MiKTeX version string."
       FORCE)
   set(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}-beta-${MIKTEX_RELEASE_NUM}"
       CACHE STRING
-      "The MikTeX version tag string."
+      "The MiKTeX version tag string."
       FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 3)
-  SET(MIKTEX_VERSION_STR
+  set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} snapshot"
       CACHE STRING
-      "The MikTeX version string."
+      "The MiKTeX version string."
       FORCE)
-  SET(MIKTEX_VERSION_TAG_STR
+  set(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}-snapshot"
       CACHE STRING
-      "The MikTeX version tag string."
+      "The MiKTeX version tag string."
       FORCE)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
-  SET(MIKTEX_VERSION_STR
+  set(MIKTEX_VERSION_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION} debug"
       CACHE STRING
-      "The MikTeX version string."
+      "The MiKTeX version string."
       FORCE)
-  SET(MIKTEX_VERSION_TAG_STR
+  set(MIKTEX_VERSION_TAG_STR
       "${MIKTEX_SERIES_STR}.${MIKTEX_J2000_VERSION}-debug"
       CACHE STRING
-      "The MikTeX version tag string."
+      "The MiKTeX version tag string."
       FORCE)
-endif(MIKTEX_RELEASE_STATE EQUAL 0)
+endif()
 
 if(NOT MIKTEX_FULL_VERSION_STR)
   set(MIKTEX_FULL_VERSION_STR
       "${MIKTEX_VERSION_STR}"
       CACHE STRING
-      "The full MikTeX version string."
+      "The full MiKTeX version string."
       FORCE)
-endif(NOT MIKTEX_FULL_VERSION_STR)
+endif()
 
 include(Admin/COM/guids.cmake)
 
@@ -310,16 +310,16 @@ include(UseStaticLibraries)
 
 if(NATIVE_WINDOWS)
   set(dev_null "nul")
-else(NATIVE_WINDOWS)
+else()
   set(dev_null "/dev/null")
-endif(NATIVE_WINDOWS)
+endif()
 
 ###############################################################################
-## find stuff
+## find/check stuff
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
   set(HAVE_MPM_QT_SOURCES 1)
-endif(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
+endif()
 
 set(required_programs
   bison
@@ -347,27 +347,29 @@ if(BUILDING_MIKTEX)
       midl
       mt
     )
-  endif(NATIVE_WINDOWS)
-endif(BUILDING_MIKTEX)
+  endif()
+endif()
 
 foreach(p ${required_programs})
   string(TOUPPER "${p}" p_u)
   find_program(${p_u}_EXE NAMES ${p})
   if(NOT ${p_u}_EXE)
     message(FATAL_ERROR "The program ${p} could not be found.")
-  endif(NOT ${p_u}_EXE)
-endforeach(p)
+  endif()
+endforeach()
 
 if(BUILDING_MIKTEX_TOOLS)
   set(MIKTEX_TEXMF "${texmfdir}")
-endif(BUILDING_MIKTEX_TOOLS)
+endif()
 
 find_package(ImageMagick REQUIRED)
-## MFC is mandatory
+
 if(WIN32)
+  ## MFC is mandatory
   #find_package(MFC)
   set(MFC_FOUND "YES")
 endif()
+
 set(QT_USE_QTXML TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTSCRIPTTOOLS TRUE)
@@ -375,48 +377,48 @@ set(QT_USE_QTUITOOLS TRUE)
 find_package(Qt4)
 if(QT4_FOUND)
   include(${QT_USE_FILE})
-endif(QT4_FOUND)
+endif()
+
 find_package(Threads REQUIRED)
 
 if(USE_SYSTEM_CURL)
   find_package(CURL REQUIRED)
-endif(USE_SYSTEM_CURL)
+endif()
 
 if(USE_SYSTEM_BZIP2)
   find_package(BZip2 REQUIRED)
-endif(USE_SYSTEM_BZIP2)
+endif()
 
 if(USE_SYSTEM_EXPAT)
   find_package(EXPAT REQUIRED)
-endif(USE_SYSTEM_EXPAT)
+endif()
 
 if(USE_SYSTEM_PNG)
   find_package(PNG REQUIRED)
-endif(USE_SYSTEM_PNG)
+endif()
 
 if(USE_SYSTEM_URIPARSER)
   find_package(URIPARSER REQUIRED)
-endif(USE_SYSTEM_URIPARSER)
+endif()
 
 if(USE_SYSTEM_ZLIB)
   find_package(ZLIB REQUIRED)
-endif(USE_SYSTEM_ZLIB)
+endif()
 
 if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
-endif(UNIX_ALIKE)
+endif()
 
 if(NOT MSVC)
   check_c_compiler_flag(-fvisibility=hidden HAVE_C_VISIBILITY_OPTION)
   check_cxx_compiler_flag(-fvisibility=hidden HAVE_CXX_VISIBILITY_OPTION)
-endif(NOT MSVC)
+endif()
 
 if(MSVC)
   set(HAVE_PRAGMA_ONCE TRUE)
-endif(MSVC)
+endif()
 
 test_big_endian(MIKTEX_WORDS_BIGENDIAN)
-
 
 check_function_exists(canonicalize_file_name HAVE_CANONICALIZE_FILE_NAME)
 check_function_exists(chown HAVE_CHOWN)
@@ -446,6 +448,7 @@ check_function_exists(utime HAVE_UTIME)
 check_function_exists(vfork HAVE_VFORK)
 
 if(WIN32)
+  ## ATL is mandatory
   #check_include_file_cxx(afxwin.h HAVE_AFXWIN_H)
   #check_include_file_cxx(atlbase.h HAVE_ATLBASE_H)
   set(HAVE_AFXWIN_H "YES")
@@ -484,20 +487,20 @@ check_variable_exists(timezone HAVE_TIMEZONE)
 
 if(HAVE_LIMITS_H)
   set(STDC_HEADERS)
-endif(HAVE_LIMITS_H)
+endif()
 
 try_compile(HAVE_STRUCT_DIRENT_D_TYPE
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
 )
 
-# work around CMake bug
+## work around CMake bug
 if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
   message(STATUS "MFC is disabled")
   set(MFC_FOUND "NO")
-endif(MFC_FOUND AND NOT HAVE_AFXWIN_H)
+endif()
 
-# MiKTeX components
+## MiKTeX components
 set(HAVE_FT2BUILD_H 1)
 set(HAVE_LIBFONTCONFIG 1)
 set(HAVE_LIBFREETYPE 1)
@@ -512,7 +515,19 @@ if(NOT NO_GUI AND NOT MFC_FOUND AND NOT QT4_FOUND)
   message(FATAL_ERROR
     "Qt4 is required unless you enable the NO_GUI option."
   )
-endif(NOT NO_GUI AND NOT MFC_FOUND AND NOT QT4_FOUND)
+endif()
+
+if(MSVC)
+  if(MSVC14)
+    set(vc_runtime 140)
+  elseif(MSVC12)
+    set(vc_runtime 120)
+  elseif(MSVC11)
+    set(vc_runtime 110)
+  elseif(MSVC10)
+    set(vc_runtime 100)
+  endif()
+endif()
 
 ###############################################################################
 ## change default install prefix
@@ -522,7 +537,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
     "C:/MiKTeX-Builds/${MIKTEX_SERIES_STR}"
     CACHE PATH "MiKTeX install prefix." FORCE
   )
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND NATIVE_WINDOWS)
+endif()
 
 ###############################################################################
 ## set date/time info
@@ -542,33 +557,33 @@ execute_process(
 if(MIKTEX_RELEASE_STATE EQUAL 0)
   if(NATIVE_WINDOWS)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
-  else(NATIVE_WINDOWS)
+  else()
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
-  endif(NATIVE_WINDOWS)
+  endif()
 elseif(MIKTEX_RELEASE_STATE EQUAL 1)
   if(NATIVE_WINDOWS)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
-  else(NATIVE_WINDOWS)
+  else()
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
-  endif(NATIVE_WINDOWS)
+  endif()
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
   if(NATIVE_WINDOWS)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
     add_definitions(-DMIKTEX_DEBUG)
-  else(NATIVE_WINDOWS)
+  else()
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
-  endif(NATIVE_WINDOWS)
+  endif()
 elseif(MIKTEX_RELEASE_STATE EQUAL 3)
   if(NATIVE_WINDOWS)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "The build type." FORCE)
     add_definitions(-DMIKTEX_DEBUG)
-  else(NATIVE_WINDOWS)
+  else()
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The build type." FORCE)
-  endif(NATIVE_WINDOWS)
+  endif()
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "The build type." FORCE)
   add_definitions(-DMIKTEX_DEBUG)
-endif(MIKTEX_RELEASE_STATE EQUAL 0)
+endif()
 
 mark_as_advanced(CMAKE_BUILD_TYPE)
 
@@ -583,14 +598,14 @@ if(QT4_FOUND)
   add_definitions(
     -DMIKTEX_QT
   )
-endif(QT4_FOUND)
+endif()
 
 if(NATIVE_WINDOWS)
   add_definitions(
     -DMIKTEX_WINDOWS
   )
-  # better bind to latest CRT/MFC DLLs if redistributing as private
-  # assemblies
+  ## better bind to latest CRT/MFC DLLs if redistributing as private
+  ## assemblies
   add_definitions(
     -D_BIND_TO_CURRENT_ATL_VERSION=1
     -D_BIND_TO_CURRENT_CRT_VERSION=1
@@ -602,41 +617,41 @@ if(NATIVE_WINDOWS)
     )
     set(CMAKE_RC_FLAGS
       "${CMAKE_RC_FLAGS} -DMIKTEX_ATLMFC")
-  endif(MFC_FOUND AND HAVE_ATLBASE_H)
-  # DLL export enablers
+  endif()
+  ## DLL export enablers
   add_definitions(
     -DZLIB_DLL
   )
-  # use overloads for unsecure functions
+  ## use overloads for unsecure functions
   #add_definitions(
   #  -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1
   #)
-else(NATIVE_WINDOWS)
+else()
   add_definitions(-DMIKTEX_UNIX)
-endif(NATIVE_WINDOWS)
+endif()
 
 ###############################################################################
 ## 
 
 if(USE_SYSTEM_BZIP2)
   set(bzip2_lib_name ${BZIP2_LIBRARIES})
-endif(USE_SYSTEM_BZIP2)
+endif()
 
 if(USE_SYSTEM_EXPAT)
   set(expat_lib_name ${EXPAT_LIBRARIES})
-endif(USE_SYSTEM_EXPAT)
+endif()
 
 if(USE_SYSTEM_PNG)
   set(png_lib_name ${PNG_LIBRARIES})
-endif(USE_SYSTEM_PNG)
+endif()
 
 if(USE_SYSTEM_URIPARSER)
   set(uriparser_lib_name ${URIPARSER_LIBRARIES})
-endif(USE_SYSTEM_URIPARSER)
+endif()
 
 if(USE_SYSTEM_ZLIB)
   set(zlib_lib_name ${ZLIB_LIBRARIES})
-endif(USE_SYSTEM_ZLIB)
+endif()
 
 set(MIKTEX_STATIC_LINK_LIBRARIES
   ${texmf_lib_name}
@@ -662,7 +677,7 @@ if(QT4_FOUND)
     ${MIKTEX_STATIC_LINK_LIBRARIES}
     ${ui_qt_lib_name}
   )
-endif(QT4_FOUND)
+endif()
 
 ###############################################################################
 ## add global include directories
@@ -713,33 +728,33 @@ include_directories(
 
 if(USE_SYSTEM_BZIP2)
   include_directories(${BZIP2_INCLUDE_DIR})
-else(USE_SYSTEM_BZIP2)
+else()
   include_directories(${CMAKE_SOURCE_DIR}/${rel_bzip2_dir})
-endif(USE_SYSTEM_BZIP2)
+endif()
 
 if(USE_SYSTEM_EXPAT)
   include_directories(${EXPAT_INCLUDE_DIRS})
-else(USE_SYSTEM_EXPAT)
+else()
   include_directories(${CMAKE_SOURCE_DIR}/${rel_expat_dir})
-endif(USE_SYSTEM_EXPAT)
+endif()
 
 if(USE_SYSTEM_PNG)
   include_directories(${PNG_INCLUDE_DIRS})
-else(USE_SYSTEM_PNG)
+else()
   include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
-endif(USE_SYSTEM_PNG)
+endif()
 
 if(USE_SYSTEM_URIPARSER)
   include_directories(${URIPARSER_INCLUDE_DIR})
-else(USE_SYSTEM_EXPAT)
+else()
   include_directories(${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include)
-endif(USE_SYSTEM_URIPARSER)
+endif()
 
 if(USE_SYSTEM_ZLIB)
   include_directories(${ZLIB_INCLUDE_DIR})
-else(USE_SYSTEM_ZLIB)
+else()
   include_directories(${CMAKE_SOURCE_DIR}/${rel_zlib_dir})
-endif(USE_SYSTEM_ZLIB)
+endif()
 
 include_directories(${CMAKE_BINARY_DIR}/${rel_zzip_dir}/include)
 
@@ -747,53 +762,53 @@ if(MSVC)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_msinttypes_dir}/include
   )
-endif(MSVC)
+endif()
 
 if(NOT HAVE_GETOPT_H)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
   )
-endif(NOT HAVE_GETOPT_H)
+endif()
 
 if(NOT HAVE_REGEX_H)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
   )
-endif(NOT HAVE_REGEX_H)
+endif()
 
 if(USE_SYSTEM_CURL)
   include_directories(
     ${CURL_INCLUDE_DIRS}
   )
-else(USE_SYSTEM_CURL)
+else()
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
   )
-endif(USE_SYSTEM_CURL)
+endif()
 
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(QT4_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
   )
-endif(QT4_FOUND)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
   )
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/Resources/Graphics
@@ -860,11 +875,11 @@ foreach(tpm ${tpms})
     ${tpm}
     "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${fn}-${MIKTEX_SERIES_STR}.tpm"
   )
-endforeach(tpm)
+endforeach()
 
 if(NOT WITH_CONTEXT_SUPPORT)
   file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/miktex-context-config-${MIKTEX_SERIES_STR}.tpm")
-endif(NOT WITH_CONTEXT_SUPPORT)
+endif()
 
 file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/${target_system_tag}/*.tpm.in")
 foreach(tpm ${tpms})
@@ -873,17 +888,17 @@ foreach(tpm ${tpms})
     ${tpm}
     "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/${fn}-${MIKTEX_SERIES_STR}.tpm"
   )
-endforeach(tpm)
+endforeach()
 
 if(NOT WITH_CONTEXT_SUPPORT)
   file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/miktex-context-bin-${MIKTEX_SERIES_STR}.tpm")
-endif(NOT WITH_CONTEXT_SUPPORT)
+endif()
 
 if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
   configure_file(
     ${CMAKE_SOURCE_DIR}/miktexstartup.ini.debug.in
 	${CMAKE_BINARY_DIR}/miktexstartup.ini.debug)
-endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
+endif()
 
 
 ###############################################################################
@@ -892,7 +907,7 @@ endif(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_utf8wrap_dir})
   add_subdirectory(${rel_utf8wrap_dir}-static)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_subdirectory(${rel_build_tools_etc_dir})
 
@@ -900,114 +915,114 @@ if(NOT USE_SYSTEM_URIPARSER)
   add_subdirectory(${rel_uriparser_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_uriparser_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_URIPARSER)
+  endif()
+endif()
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_icu_dir})
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_lzmalib_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_lzmalib_dir}-static)
 
 if(NOT USE_SYSTEM_BZIP2)
   add_subdirectory(${rel_bzip2_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_bzip2_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_BZIP2)
+  endif()
+endif()
 
 if(NOT USE_SYSTEM_CURL)
   add_subdirectory(${rel_curl_dir})
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_curl_dir}-static)
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_CURL)
+  endif()
+endif()
 
 if(NOT USE_SYSTEM_EXPAT)
   add_subdirectory(${rel_expat_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_expat_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_EXPAT)
+  endif()
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_botan_dir}-static)
-endif(BUILDING_MIKTEX)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_botan_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype2_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_graphite2_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_harfbuzz_dir}-static)
-endif(BUILDING_MIKTEX)
+endif()
 
 if(NOT HAVE_GETOPT_H)
   add_subdirectory(${rel_getopt_dir})
   add_subdirectory(${rel_getopt_dir}-static)
-endif(NOT HAVE_GETOPT_H)
+endif()
 
 if(NOT HAVE_REGEX_H)
   add_subdirectory(${rel_regex_dir})
-endif(NOT HAVE_REGEX_H)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_jpeg_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_mspack_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_mspack_dir}-static)
 
 add_subdirectory(${rel_obsdcompat_dir})
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_popt_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_popt_dir}-static)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tiff_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_netpbm_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(NOT USE_SYSTEM_ZLIB)
   add_subdirectory(${rel_zlib_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_zlib_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_ZLIB)
+  endif()
+endif()
 
 add_subdirectory(${rel_zzip_dir})
 
 add_subdirectory(${rel_lua_dir}-static)
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_lua_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 #add_subdirectory(${rel_luajit_dir}-static)
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_luajit_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_teckit_dir})
-endif(NATIVE_WINDOWS)
+endif()
 
 add_subdirectory(${rel_pixman_dir}-static)
 add_subdirectory(${rel_cairo_dir})
@@ -1016,21 +1031,21 @@ if(NOT USE_SYSTEM_PNG)
   add_subdirectory(${rel_png_dir}-static)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_png_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
-endif(NOT USE_SYSTEM_PNG)
+  endif()
+endif()
 
 if(BUILDING_MIKTEX)
   set(POPPLER_VERSION "0.22.2")
   add_subdirectory(${rel_poppler_dir}-static)
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX AND QT4_FOUND)
   add_subdirectory(${rel_poppler_dir}/qt4/src)
-endif(BUILDING_MIKTEX AND QT4_FOUND)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_hunspell_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 add_subdirectory(${rel_c4p_dir})
 
@@ -1038,7 +1053,7 @@ add_subdirectory(${rel_inipool_dir})
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_md5_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_md5_dir}-static)
 
 add_subdirectory(${rel_core_dir})
@@ -1048,11 +1063,11 @@ add_subdirectory(${rel_cfg_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_touch_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_extractor_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_extractor_dir}-static)
 
 add_subdirectory(${rel_mpmlib_dir})
@@ -1064,17 +1079,17 @@ add_subdirectory(${rel_setuplib_dir}-static)
 if(QT4_FOUND)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_ui_qt_dir})
-  endif(NOT LINK_EVERYTHING_STATICALLY)
+  endif()
   add_subdirectory(${rel_ui_qt_dir}-static)
-endif(QT4_FOUND)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_ui_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(${rel_app_dir})
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 add_subdirectory(${rel_app_dir}-static)
 
 add_subdirectory(${rel_texmf_dir})
@@ -1082,11 +1097,11 @@ add_subdirectory(${rel_texmf_dir}-static)
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dib_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvi_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 add_subdirectory(${rel_kpsemu_dir})
 add_subdirectory(${rel_kpsemu_dir}-static)
@@ -1095,7 +1110,7 @@ add_subdirectory(${rel_w2cemu_dir})
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_unxemu_dir})
-endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+endif()
 
 add_subdirectory(${rel_cweb_dir})
 
@@ -1103,25 +1118,25 @@ add_subdirectory(${rel_tie_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_fontconfig_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_gd_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bmeps_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 add_subdirectory(${rel_web_dir})
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 if(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
   add_subdirectory(${rel_mpm_qt_dir})
-endif(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
+endif()
 
 add_subdirectory(${rel_mpm_dir})
 
@@ -1135,171 +1150,171 @@ add_subdirectory(${rel_config_dir})
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_findtexmf_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_kpsewhich_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mkfntmap_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mo_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_programs_etc_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_copystart_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex_etc_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_texware_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(WITH_PDFTEX)
   add_subdirectory(${rel_pdftex_dir})
-endif(WITH_PDFTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_xetex_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_omegaware_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_otps_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_omega_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mfware_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mf_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mp_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_luatex_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_makeindex_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bibtex_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_bibtex8_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_texify_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_texinfo_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_tex4ht_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_musixflx_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mtprint_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_epstopdf_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_psutils_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_cjkutils_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_freetype_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_gsf2pk_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_ps2pk_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvicopy_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvipdft_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvipdfmx_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_xdvipdfmx_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvipng_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_dvips_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_arctrl_win_dir})
-endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+endif()
 
 if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_taskbar_icon_win_dir})
-endif(BUILDING_MIKTEX AND NATIVE_WINDOWS)
+endif()
 
 if(BUILDING_MIKTEX AND QT4_FOUND)
   add_subdirectory(${rel_texworks_dir})
-endif(BUILDING_MIKTEX AND QT4_FOUND)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 add_subdirectory(${rel_md5walk_dir})
 
@@ -1307,27 +1322,27 @@ add_subdirectory(${rel_mthelp_dir})
 
 if(WITH_MPC)
   add_subdirectory(${rel_mpc_dir})
-endif(WITH_MPC)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_padout_dir})
-endif(BUILDING_MIKTEX)
+endif()
 
 if(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
   #add_subdirectory(${rel_migrate_dir})
-endif(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_setup_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_update_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_remove_mfc_dir})
-endif(BUILDING_MIKTEX AND MFC_FOUND)
+endif()
 
 add_subdirectory(${rel_doc_dir})
 
@@ -1381,7 +1396,7 @@ if(INSTALL_PACKAGE_DATABASE)
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/texmf/tpm/packages/
     DESTINATION ${texmfdir}/tpm/packages
   )
-endif(INSTALL_PACKAGE_DATABASE)
+endif()
 
 ###############################################################################
 ## packaging
@@ -1392,7 +1407,7 @@ set(CPACK_GENERATOR "DEB;TGZ")
 
 if(RPMBUILD_EXE)
   set(CPACK_GENERATOR "${CPACK_GENERATOR};RPM")
-endif(RPMBUILD_EXE)
+endif()
 
 set(miktex_tools_slogan "experimental TeX additions")
 
@@ -1408,7 +1423,7 @@ string(REPLACE "-" "_" CPACK_PACKAGE_VERSION "${MIKTEX_VERSION_TAG_STR}")
 
 set(CPACK_PACKAGE_FILE_NAME
   "miktex-tools-${CPACK_PACKAGE_VERSION}-${MIKTEX_PACKAGE_REVISION}-${target_system_tag}"
-)
+  )
 
 set(
   CPACK_DEBIAN_PACKAGE_VERSION

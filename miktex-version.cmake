@@ -28,6 +28,7 @@ set(MIKTEX_J2000_VERSION	5560)
 ## the version of the binary package
 set(MIKTEX_PACKAGE_REVISION	1)
 
+## the current year
 set(MIKTEX_YEAR_VERSION         2015)
 
 ## the release number; only meaningful for rc/beta builds
@@ -51,7 +52,7 @@ elseif(MIKTEX_RELEASE_STATE EQUAL 1)
 elseif(MIKTEX_RELEASE_STATE EQUAL 2)
 elseif(MIKTEX_RELEASE_STATE EQUAL 3)
 elseif(MIKTEX_RELEASE_STATE EQUAL 4)
-else(MIKTEX_RELEASE_STATE EQUAL 4)
+else()
   message("${MIKTEX_RELEASE_STATE} is an unknown release state.")
   message("Falling back to release state 4 (debug).")
   set(MIKTEX_RELEASE_STATE
@@ -59,4 +60,4 @@ else(MIKTEX_RELEASE_STATE EQUAL 4)
       CACHE STRING
       "MiKTeX release state; one of 0 (general availability release), 1 (release candidate), 2 (beta release), 3 (snapshot), 4 (debug)."
       FORCE)
-endif(MIKTEX_RELEASE_STATE EQUAL 0)
+endif()

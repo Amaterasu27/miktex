@@ -34,7 +34,7 @@ BUILD UTILITIES
         * Microsoft HTML Help Workshop
 	  http://en.wikipedia.org/wiki/Microsoft_Compiled_HTML_Help
 
-	* MiKTeX 2.7
+	* MiKTeX 2.9
 	  http://miktex.org
 	  Hint: Install all packages or turn on the auto-install feature.
 
@@ -63,5 +63,5 @@ Specify the 'install' target, if you want to install the binaries:
 
     nmake install
 
-This will install the targets in C:\MiKTeX-Builds\2.7. The path can be
+This will install the targets in C:\MiKTeX-Builds\2.9. The path can be
 changed by setting the CMake variable CMAKE_INSTALL_PREFIX.

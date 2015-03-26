@@ -1,6 +1,6 @@
-/* config.h (created from config.h.cmake)			-*- C++ -*-
+/* config.h (created from config.h.cmake)		-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
