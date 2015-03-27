@@ -9101,7 +9101,7 @@ for( i = (INTEGER) get_unt(1)
 if( flags & 
 0x0200
 
- ){ (INTEGER) get_unt(4); }
+ ){ (void) get_unt(4); }
 if( flags & 
 0x0800
 
