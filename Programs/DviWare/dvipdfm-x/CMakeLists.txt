@@ -26,6 +26,10 @@ add_definitions(-DHAVE_CONFIG_H)
 
 add_definitions(-DUNICODE -D_UNICODE)
 
+add_definitions(
+  -DHAVE_BASENAME
+)
+
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -274,3 +278,27 @@ delay_load(xdvipdfmx
 )
 
 install(TARGETS xdvipdfmx DESTINATION ${bindir})
+
+set(dvipdft_sources
+  dvipdft.cpp
+  dvipdft-version.h
+)
+
+if(NATIVE_WINDOWS)
+  set(dvipdft_sources ${dvipdft_sources}
+    dvipdft.rc
+  )
+endif(NATIVE_WINDOWS)
+
+add_executable(dvipdft ${dvipdft_sources})
+
+merge_trustinfo_manifest(dvipdft asInvoker)
+
+target_link_libraries(dvipdft
+  ${app_dll_name}
+  ${core_dll_name}
+  ${kpsemu_dll_name}
+  ${texmf_dll_name}
+)
+
+install(TARGETS dvipdft DESTINATION ${bindir})
