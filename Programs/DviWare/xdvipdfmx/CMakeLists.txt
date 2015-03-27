@@ -30,6 +30,7 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(libutil_sources
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
   agl.c
   agl.h
   bmpimage.c
@@ -248,7 +249,7 @@ add_executable(xdvipdfmx ${xdvipdfmx_sources})
 set_property(
   TARGET xdvipdfmx
   APPEND
-  PROPERTY COMPILE_DEFINITIONS "-DXETEX")
+  PROPERTY COMPILE_DEFINITIONS "XETEX")
 
 merge_trustinfo_manifest(xdvipdfmx asInvoker)
 

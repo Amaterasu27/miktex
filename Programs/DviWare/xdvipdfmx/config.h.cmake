@@ -161,13 +161,13 @@
 #cmakedefine LT_OBJDIR
 
 /* Name of package */
-#cmakedefine PACKAGE "dvipdfm-x"
+#define PACKAGE "dvipdfm-x"
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
-#cmakedefine PACKAGE_NAME
+#define PACKAGE_NAME "dvipdfm-x"
 
 /* Define to the full name and version of this package. */
 #cmakedefine PACKAGE_STRING

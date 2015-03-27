@@ -158,7 +158,11 @@ show_version (void)
                    my_name,
                    is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
                             : "the DVIPDFMx project team");
+#if defined(MIKTEX)
+  printf("modified for TeX Live and MiKTeX,\n");
+#else
   printf ("modified for TeX Live,\n");
+#endif
   if (is_xetex)
     printf ("an extended version of DVIPDFMx, which in turn was\n");
   printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
