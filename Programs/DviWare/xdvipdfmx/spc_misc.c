@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <string.h>
@@ -48,29 +46,6 @@
 
 #include "spc_util.h"
 #include "spc_misc.h"
-
-int
-spc_misc_at_begin_page (void)
-{
-  return 0;
-}
-
-int spc_misc_at_end_page (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_begin_document (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_end_document (void)
-{
-  return 0;
-}
 
 static int
 spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)

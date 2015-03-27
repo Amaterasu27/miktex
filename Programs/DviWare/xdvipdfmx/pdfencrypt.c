@@ -1,8 +1,6 @@
-/*  
- 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -20,8 +18,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <stdio.h>
@@ -44,11 +42,13 @@
 
 #include "pdfencrypt.h"
 
+#include "dvipdfmx.h"
+
 #define MAX_KEY_LEN 16
 #define MAX_STR_LEN 32
 
 static unsigned char algorithm, revision, key_size;
-static unsigned long permission;
+static long permission;
 
 static unsigned char key_data[MAX_KEY_LEN], id_string[MAX_KEY_LEN];
 static unsigned char opwd_string[MAX_STR_LEN], upwd_string[MAX_STR_LEN];
@@ -78,7 +78,7 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
-#define PRODUCER "%s-%s, Copyright \251 2002-2010 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
+#define PRODUCER "%s-%s, Copyright 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
 void pdf_enc_compute_id_string (char *dviname, char *pdfname)
 {
   char *date_string, *producer;
@@ -96,8 +96,8 @@ void pdf_enc_compute_id_string (char *dviname, char *pdfname)
   MD5_write(&md5_ctx, (unsigned char *)date_string, strlen(date_string));
   RELEASE (date_string);
 
-  producer = NEW (strlen(PRODUCER)+strlen(PACKAGE)+strlen(VERSION), char);
-  sprintf(producer, PRODUCER, PACKAGE, VERSION);
+  producer = NEW (strlen(PRODUCER)+strlen(my_name)+strlen(VERSION), char);
+  sprintf(producer, PRODUCER, my_name, VERSION);
   MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
   RELEASE (producer);
 
@@ -398,10 +398,10 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, const char *owner_pw, con
 
   key_size = (unsigned char)(bits / 8);
   algorithm = (key_size == 5 ? 1 : 2);
-  permission = (unsigned long)perm | 0x000000C0;
-  revision = ((algorithm == 1 && permission < 0x100) ? 2 : 3);
+  permission = (long) (perm | 0xC0U);
+  revision = ((algorithm == 1 && permission < 0x100L) ? 2 : 3);
   if (revision == 3)
-    permission |= 0xFFFFF000;
+    permission |= ~0xFFFL;
 
   compute_owner_password();
   compute_user_password();
@@ -509,7 +509,7 @@ pdf_obj *pdf_encrypt_obj (void)
 		pdf_new_name ("U"),
 		pdf_new_string (upwd_string, 32));
   /* KEY  : P
-   * TYPE : integer
+   * TYPE : (signed 32 bit) integer
    * VALUE: (Required) A set of flags specifying which operations are
    *        permitted when the document is opened with user access.
    */

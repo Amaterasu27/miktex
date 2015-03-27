@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -46,30 +44,6 @@
  * other operations that can change current color
  * implicitely.
  */
-
-int
-spc_color_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_end_page (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_begin_document (void)
-{
-  return  0;
-}
-
-int
-spc_color_at_end_document (void)
-{
-  return  0;
-}
 
 static int
 spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
@@ -104,9 +78,8 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
 
   error = spc_util_read_colorspec(spe, &colorspec, args, 1);
   if (!error) {
-    pdf_color_set_default(&colorspec);
-    pdf_color_clear_stack(); /* the default color is saved on color_stack */
-    pdf_color_push(&colorspec, &colorspec);
+    pdf_color_clear_stack();
+    pdf_color_set(&colorspec, &colorspec);
   }
 
   return  error;
@@ -145,8 +118,8 @@ int
 spc_color_check_special (const char *buf, long len)
 {
   int   r = 0;
-  char *q;
   const char *p, *endptr;
+  char *q;
 
   p      = buf;
   endptr = p + len;

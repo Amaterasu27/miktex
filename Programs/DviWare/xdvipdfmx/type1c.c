@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2008-2012 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -34,8 +32,8 @@
  *
  */ 
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <string.h>
@@ -70,6 +68,9 @@ int
 pdf_font_open_type1c (pdf_font *font)
 {
   char     *fontname;
+#ifndef XETEX
+  char     *ident;
+#endif
   FILE     *fp = NULL;
   sfnt     *sfont;
   cff_font *cffont;
@@ -79,6 +80,9 @@ pdf_font_open_type1c (pdf_font *font)
 
   ASSERT(font);
 
+#ifndef XETEX
+  ident       =
+#endif
                 pdf_font_get_ident   (font);
   encoding_id = pdf_font_get_encoding(font);
 
@@ -104,7 +108,11 @@ pdf_font_open_type1c (pdf_font *font)
     ERROR("No \"CFF \" table found. Not a CFF/OpenType font?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(sfont->stream, offset, 0);
+#endif
   if (!cffont) {
     ERROR("Could not read CFF font data");
   }
@@ -304,7 +312,11 @@ pdf_font_load_type1c (pdf_font *font)
     ERROR("Not a CFF/OpenType font ?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(fp, offset, 0);
+#endif
   if (!cffont) {
     ERROR("Could not open CFF font.");
   }
@@ -394,7 +406,7 @@ pdf_font_load_type1c (pdf_font *font)
   cs_idx = cff_get_index_header(cffont);
 
   /* Offset is now absolute offset ... fixme */
-  offset   = cffont->sfont->loc;
+  offset   = cff_tell(cffont);
   cs_count = cs_idx->count;
   if (cs_count < 2) {
     ERROR("No valid charstring data found.");
@@ -447,8 +459,8 @@ pdf_font_load_type1c (pdf_font *font)
     ERROR("Charstring too long: gid=%u, %ld bytes", 0, size);
   }
   charstrings->offset[0] = charstring_len + 1;
-  sfnt_seek_set(cffont->sfont, offset + cs_idx->offset[0] - 1);
-  sfnt_read(data, size, cffont->sfont);
+  cff_seek(cffont, offset + cs_idx->offset[0] - 1);
+  cff_read_data(data, size, cffont);
   charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 				       max_len - charstring_len,
 				       data, size,
@@ -523,8 +535,8 @@ pdf_font_load_type1c (pdf_font *font)
       charstrings->data = RENEW(charstrings->data, max_len, card8);
     }
     charstrings->offset[num_glyphs] = charstring_len + 1;
-    sfnt_seek_set(cffont->sfont, offset + cs_idx->offset[gid] - 1);
-    sfnt_read(data, size, cffont->sfont);
+    cff_seek(cffont, offset + cs_idx->offset[gid] - 1);
+    cff_read_data(data, size, cffont);
     charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 					 max_len - charstring_len,
 					 data, size,

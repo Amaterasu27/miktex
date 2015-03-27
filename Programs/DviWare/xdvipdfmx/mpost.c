@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <ctype.h>
@@ -52,6 +50,13 @@
 #include "pdfximage.h"
 
 #include "mpost.h"
+
+/*
+ * Define the origin as (llx, lly) in order to
+ * match the new xetex.def and dvipdfmx.def
+ */
+
+static double Xorigin, Yorigin;
 
 /*
  * In PDF, current path is not a part of graphics state parameter.
@@ -236,10 +241,14 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
       if (i < 4) {
 	return -1;
       } else {
-	bbox->llx = values[0];
-	bbox->lly = values[1];
-	bbox->urx = values[2];
-	bbox->ury = values[3];
+	/* The new xetex.def and dvipdfmx.def require bbox->llx = bbox->lly = 0.  */
+	bbox->llx = 0;
+	bbox->lly = 0;
+	bbox->urx = values[2] - values[0];
+	bbox->ury = values[3] - values[1];
+
+	Xorigin = (double)values[0];
+	Yorigin = (double)values[1];
 
 	return 0;
       }
@@ -1213,7 +1222,8 @@ do_operator (const char *token, double x_user, double y_user)
       pdf_color_cmykcolor(&color,
 			  values[0], values[1],
 			  values[2], values[3]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
   case SETGRAY:
@@ -1221,7 +1231,8 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 1);
     if (!error) {
       pdf_color_graycolor(&color, values[0]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
   case SETRGBCOLOR:
@@ -1229,7 +1240,8 @@ do_operator (const char *token, double x_user, double y_user)
     if (!error) {
       pdf_color_rgbcolor(&color,
 			 values[0], values[1], values[2]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
 
@@ -1556,7 +1568,7 @@ mps_include_page (const char *ident, FILE *fp)
   pdf_dev_set_param(PDF_DEV_PARAM_AUTOROTATE, 0);
   //pdf_color_push();
 
-  form_id  = pdf_doc_begin_grabbing(ident, 0.0, 0.0, &(info.bbox));
+  form_id  = pdf_doc_begin_grabbing(ident, Xorigin, Yorigin, &(info.bbox));
 
   mp_cmode = MP_CMODE_MPOST;
   gs_depth = pdf_dev_current_depth();
@@ -1619,7 +1631,7 @@ mps_do_page (FILE *image_file)
 
   mp_cmode = MP_CMODE_MPOST;
 
-  pdf_doc_begin_page  (1.0, 0.0, 0.0); /* scale, xorig, yorig */
+  pdf_doc_begin_page  (1.0, -Xorigin, -Yorigin); /* scale, xorig, yorig */
   pdf_doc_set_mediabox(pdf_doc_current_page_number(), &bbox);
 
   dir_mode = pdf_dev_get_dirmode();

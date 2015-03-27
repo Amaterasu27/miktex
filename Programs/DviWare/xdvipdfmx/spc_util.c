@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -169,7 +167,7 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
   return  error;
 }
 
-/* Argumaent for this is PDF_Number or PDF_Array.
+/* Argument for this is PDF_Number or PDF_Array.
  * But we ignore that since we don't want to add
  * dependency to pdfxxx and @foo can not be
  * allowed for color specification. "pdf" here
@@ -210,12 +208,12 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
     }
     error = pdf_color_namedcolor(colorspec, q);
     if (error)
-      spc_warn(spe, "Unrecognized color name: %s", q);
+      spc_warn(spe, "Unrecognized color name: %s, keep the current color", q);
     RELEASE(q);
     break;
   }
 
-  if (!error && isarry) {
+  if (isarry) {
     skip_blank(&ap->curptr, ap->endptr);
     if (ap->curptr >= ap->endptr || ap->curptr[0] != ']') {
       spc_warn(spe, "Unbalanced '[' and ']' in color specification.");
@@ -228,13 +226,10 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
   return  error;
 }
 
-
 /* This is for reading *single* color specification. */
 int
 spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, int syntax)
 {
-  int  error = 0;
-
   ASSERT(colorspec && spe && ap);
 
   skip_blank(&ap->curptr, ap->endptr);
@@ -243,20 +238,34 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   }
 
   if (syntax)
-    error = spc_read_color_color(spe, colorspec, ap);
+    return spc_read_color_color(spe, colorspec, ap);
   else
-    error = spc_read_color_pdf(spe, colorspec, ap);
-
-  skip_blank(&ap->curptr, ap->endptr);
-
-  return  error;
+    return spc_read_color_pdf(spe, colorspec, ap);
 }
 
+int
+spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, pdf_color *defaultcolor)
+{
+  int error = 0;
+
+  ASSERT(colorspec && spe && ap);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  if (ap->curptr >= ap->endptr) {
+    return -1;
+  }
+  error = spc_read_color_pdf(spe, colorspec, ap);
+  if (error < 0 && defaultcolor) {
+    pdf_color_copycolor(colorspec, defaultcolor);
+    error = 0;
+  }
+  return error;
+}
 
 /* This need to allow 'true' prefix for unit and
  * length value must be divided by current magnification.
  */
-int
+static int
 spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg *ap)
 {
   char   *q;
@@ -286,12 +295,14 @@ spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg
         !memcmp(q, "true", strlen("true"))) {
       u /= spe->mag != 0.0 ? spe->mag : 1.0; /* inverse magnify */
       q += strlen("true");
+
+      if (!*q) {
+        RELEASE(qq);
+        skip_white(&ap->curptr, ap->endptr);
+        qq = q = parse_c_ident(&ap->curptr, ap->endptr);
+      }
     }
-    if (strlen(q) == 0) {
-      RELEASE(qq);
-      skip_white(&ap->curptr, ap->endptr);
-      qq = q = parse_c_ident(&ap->curptr, ap->endptr);
-    }
+
     if (q) {
       for (k = 0; ukeys[k] && strcmp(ukeys[k], q); k++);
       switch (k) {
@@ -308,8 +319,8 @@ spc_util_read_length (struct spc_env *spe, double *vp /* ret. */, struct spc_arg
       RELEASE(qq);
     }
     else {
-        spc_warn(spe, "Missing unit of measure after \"true\"");
-        error = -1;
+      spc_warn(spe, "Missing unit of measure after \"true\"");
+      error = -1;
     }
   }
 
@@ -496,7 +507,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 #define  K_TRN__XSCALE 4
 #define  K_TRN__YSCALE 5
 #define  K_TRN__ROTATE 6
-    "scale", "xscale", "yscale", "rotate",
+    "scale", "xscale", "yscale", "rotate", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__BBOX   7
     "bbox", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__MATRIX 8

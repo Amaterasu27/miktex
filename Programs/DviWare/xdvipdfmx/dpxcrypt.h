@@ -1,8 +1,6 @@
-/*  
- 
-    This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
+/* This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2003-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2003-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -24,10 +22,16 @@
 #define _DPXCRYPT_H_
 
 #include <stdio.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
 /* libgcrypt md5 */
 typedef struct {
-  unsigned long A,B,C,D; /* chaining variables */
+  uint32_t A,B,C,D; /* chaining variables */
   unsigned long nblocks;
   unsigned char buf[64];
   int count;

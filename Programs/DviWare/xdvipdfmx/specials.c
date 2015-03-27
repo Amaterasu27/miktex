@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <stdarg.h>
@@ -284,31 +282,12 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  int  error = 0;
+  ASSERT(named_objects);
 
   if (!key || !value)
     return;
 
-  if (PDF_OBJ_INDIRECTTYPE(value)) {
-    pdf_names_add_reference(named_objects,
-                            key, strlen(key), value);
-  } else {
-    error = pdf_names_add_object(named_objects,
-                                 key, strlen(key), value);
-    if (!error) {
-      /* _FIXME_:
-       * Objects created by pdf:obj must always
-       * be written to output regardless of if
-       * they are actually used in document.
-       */
-      pdf_obj *obj_ref = pdf_names_lookup_reference(named_objects,
-                                                    key, strlen(key));
-      if (obj_ref)
-        pdf_release_obj(obj_ref);
-    }
-  }
-
-  return;
+  pdf_names_add_object(named_objects, key, strlen(key), value);
 }
 
 void
@@ -379,10 +358,10 @@ check_garbage (struct spc_arg *args)
 
 static struct {
   const char  *key;
-  int (*bodhk_func) ();
-  int (*eodhk_func) ();
-  int (*bophk_func) ();
-  int (*eophk_func) ();
+  int (*bodhk_func) (void);
+  int (*eodhk_func) (void);
+  int (*bophk_func) (void);
+  int (*eophk_func) (void);
   int (*check_func) (const char *, long);
   int (*setup_func) (struct spc_handler *, struct spc_env *, struct spc_arg *);
 } known_specials[] = {
@@ -390,17 +369,17 @@ static struct {
   {"pdf:",
    spc_pdfm_at_begin_document,
    spc_pdfm_at_end_document,
-   spc_pdfm_at_begin_page,
-   spc_pdfm_at_end_page,
+   NULL,
+   NULL,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
 
   {"x:",
-   spc_xtx_at_begin_document,
-   spc_xtx_at_end_document,
-   spc_xtx_at_begin_page,
-   spc_xtx_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_xtx_check_special,
    spc_xtx_setup_handler
   },
@@ -415,10 +394,10 @@ static struct {
   },
 
   {"color",
-   spc_color_at_begin_document,
-   spc_color_at_end_document,
-   spc_color_at_begin_page,
-   spc_color_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_color_check_special,
    spc_color_setup_handler
   },
@@ -442,10 +421,10 @@ static struct {
   },
 
   {"unknown",
-   spc_misc_at_begin_document,
-   spc_misc_at_end_document,
-   spc_misc_at_begin_page,
-   spc_misc_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_misc_check_special,
    spc_misc_setup_handler
   },

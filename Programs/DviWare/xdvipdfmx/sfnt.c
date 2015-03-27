@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -23,8 +21,8 @@
 /* Based on dvipdfmx-0.13.2c */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H_ */
+#include <config.h>
+#endif
 
 #include <string.h>
 
@@ -97,7 +95,7 @@ ft_unsigned_quad(sfnt* f)
 }
 
 unsigned long
-ft_read(unsigned char* buf, unsigned long len, sfnt* f)
+ft_read(void* buf, unsigned long len, sfnt* f)
 {
   unsigned long length = len;
   if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
@@ -107,7 +105,6 @@ ft_read(unsigned char* buf, unsigned long len, sfnt* f)
   return length;
 }
 #endif
-
 
 /*
  * type:
@@ -177,7 +174,7 @@ sfnt_open (FILE *fp)
 
   type = sfnt_get_ulong(sfont);
 
-  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
+  if (type == SFNT_TRUETYPE) {
     sfont->type = SFNT_TYPE_TRUETYPE;
   } else if (type == SFNT_OPENTYPE) {
     sfont->type = SFNT_TYPE_OPENTYPE;
@@ -476,6 +473,7 @@ sfnt_read_table_directory (sfnt *sfont, ULONG offset)
 
   if (sfont->directory)
     release_directory(sfont->directory);    
+
   sfont->directory = td = NEW (1, struct sfnt_table_directory);
 
 #ifdef XETEX

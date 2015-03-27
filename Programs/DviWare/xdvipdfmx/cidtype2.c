@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -25,8 +23,8 @@
  * GhostScript can't handle CIDToGIDMap correctly.
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -568,9 +566,10 @@ CIDFont_type2_dofont (CIDFont *font)
       ERROR("Invalid TTC index in %s.", font->ident);
     break;
   case SFNT_TYPE_TRUETYPE:
-#ifndef XETEX
+#ifdef XETEX
 	/* disable the check here becuase sfnt_open() does not distinguish dfont
 	 * from regular trutype */
+#else
     if (font->options->index > 0)
       ERROR("Found TrueType font file while expecting TTC file (%s).", font->ident);
 #endif
@@ -976,15 +975,11 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 #ifdef XETEX
 	/* disable the check here becuase sfnt_open() does not distinguish dfont
 	 * from regular trutype */
-    offset = 0;
 #else
-	assert (opt->index == 0);
-    if (opt->index > 0) {
+    if (opt->index > 0)
       ERROR("Invalid TTC index (not TTC font): %s", name);
-    } else {
-      offset = 0;
-    }
 #endif
+    offset = 0;
     break;
   case SFNT_TYPE_DFONT:
     offset = sfont->offset;

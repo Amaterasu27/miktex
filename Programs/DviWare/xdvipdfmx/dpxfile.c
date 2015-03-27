@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #ifdef _MSC_VER
@@ -52,6 +50,7 @@
 #ifdef WIN32
 #include <io.h>
 #include <process.h>
+#include <wchar.h>
 #else
 #if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -118,7 +117,7 @@ miktex_find_app_input_file (const char *progname, const char *filename, char *bu
 
   kpse_reset_program_name(progname);
   fqpn = kpse_find_file  (filename, kpse_program_text_format, false);
-  kpse_reset_program_name(PACKAGE);
+  kpse_reset_program_name("dvipdfmx");
 
   if (!fqpn)
     return  0;
@@ -169,6 +168,9 @@ static int exec_spawn (char *cmd)
   char *p, *pp;
   char buf[1024];
   int  i, ret = -1;
+#ifdef WIN32
+  wchar_t **cmdvw, **qvw;
+#endif
 
   if (!cmd)
     return -1;
@@ -237,7 +239,28 @@ static int exec_spawn (char *cmd)
     qv++;
   }
 #ifdef WIN32
-  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+#if defined(MIKTEX)
+  ret = spawnvp(_P_WAIT, *cmdv, (const char* const*)cmdv); 
+#else
+  cmdvw = xcalloc (i + 2, sizeof (wchar_t *));
+  qv = cmdv;
+  qvw = cmdvw;
+  while (*qv) {
+    *qvw = get_wstring_from_fsyscp(*qv, *qvw=NULL);
+    qv++;
+    qvw++;
+  }
+  *qvw = NULL;
+  ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
+  if (cmdvw) {
+    qvw = cmdvw;
+    while (*qvw) {
+      free (*qvw);
+      qvw++;
+    }
+    free (cmdvw);
+  }
+#endif
 #else
   i = fork ();
   if (i < 0)
@@ -288,9 +311,9 @@ dpx_find__app__xyz (const char *filename,
   char  *q;
 
   q = ensuresuffix(filename, suffix);
-  r = miktex_find_app_input_file(PACKAGE, q, _tmpbuf);
+  r = miktex_find_app_input_file("dvipdfmx", q, _tmpbuf);
   if (!r && strcmp(q, filename))
-    r = miktex_find_app_input_file(PACKAGE, filename, _tmpbuf);
+    r = miktex_find_app_input_file("dvipdfmx", filename, _tmpbuf);
   if (r) {
     fqpn = NEW(strlen(_tmpbuf) + 1, char);
     strcpy(fqpn, _tmpbuf);
@@ -380,7 +403,7 @@ dpx_foolsearch (const char  *foolname,
                               kpse_program_text_format :
                               kpse_program_binary_format),
                           false);
-  kpse_reset_program_name(PACKAGE);
+  kpse_reset_program_name("dvipdfmx");
 
   return  fqpn;
 }
@@ -402,6 +425,8 @@ dpx_open_file (const char *filename, int type)
   switch (type) {
   case DPX_RES_TYPE_FONTMAP:
     fqpn = dpx_find_fontmap_file(filename);
+    if (verbose) 
+      MESG(fqpn);
     break;
   case DPX_RES_TYPE_T1FONT:
     fqpn = dpx_find_type1_file(filename);
@@ -484,7 +509,7 @@ dpx_find_fontmap_file (const char *filename)
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".map", 1);
     if (fqpn)
-      insistupdate(q, fqpn, PACKAGE,
+      insistupdate(q, fqpn, "dvipdfmx",
                    kpse_program_text_format, kpse_fontmap_format); 
   }
 #endif /* MIKETEX */
@@ -508,7 +533,7 @@ dpx_find_agl_file (const char *filename)
   if (!fqpn) {
     fqpn = dpx_find__app__xyz(q, ".txt", 1);
     if (fqpn)
-      insistupdate(q, fqpn, PACKAGE,
+      insistupdate(q, fqpn, "dvipdfmx",
                    kpse_program_text_format, kpse_fontmap_format); 
   }
 #endif /* MIKETEX */
@@ -716,10 +741,10 @@ dpx_find_opentype_file (const char *filename)
     fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
 #endif
-    fqpn = dpx_foolsearch(PACKAGE, q, 0);
+    fqpn = dpx_foolsearch("dvipdfmx", q, 0);
 #ifndef  MIKTEX_NO_KPATHSEA
     if (fqpn)
-      insistupdate(filename, fqpn, PACKAGE,
+      insistupdate(filename, fqpn, "dvipdfmx",
                    kpse_program_binary_format, kpse_opentype_format); 
   }
 #endif
@@ -733,7 +758,6 @@ dpx_find_opentype_file (const char *filename)
 
   return  fqpn;
 }
-
 
 
 char *
@@ -759,14 +783,14 @@ dpx_find_dfont_file (const char *filename)
 static const char *
 dpx_get_tmpdir (void)
 {
-#  ifdef WIN32
+#ifdef WIN32
 #  define __TMPDIR     "."
-#  else /* WIN32 */
+#else /* WIN32 */
 #  define __TMPDIR     "/tmp"
 #endif /* WIN32 */
     const char *_tmpd;
 
-#  ifdef  HAVE_GETENV
+#ifdef  HAVE_GETENV
     _tmpd = getenv("TMPDIR");
 #  ifdef WIN32
     if (!_tmpd)
@@ -776,9 +800,9 @@ dpx_get_tmpdir (void)
 #  endif /* WIN32 */
     if (!_tmpd)
       _tmpd = __TMPDIR;
-#  else /* HAVE_GETENV */
+#else /* HAVE_GETENV */
     _tmpd = __TMPDIR;
-#  endif /* HAVE_GETENV */
+#endif /* HAVE_GETENV */
     return _tmpd;
 }
 
@@ -786,13 +810,12 @@ dpx_get_tmpdir (void)
 #  include <stdlib.h>
 #endif
 
-#ifdef XETEX
 char *
 dpx_create_temp_file (void)
 {
   char  *tmp = NULL;
 
-#if   defined(MIKTEX)
+#if defined(MIKTEX)
   {
     tmp = NEW(_MAX_PATH + 1, char);
     miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
@@ -810,7 +833,7 @@ dpx_create_temp_file (void)
 #endif
   }
 #elif defined(HAVE_MKSTEMP)
-#  define TEMPLATE     "/dvipdfmx.XXXXXXXX"
+#  define TEMPLATE     "/dvipdfmx.XXXXXX"
   {
     const char *_tmpd;
     int   _fd = -1;
@@ -820,11 +843,11 @@ dpx_create_temp_file (void)
     strcat(tmp, TEMPLATE);
     _fd  = mkstemp(tmp);
     if (_fd != -1)
-#ifdef WIN32
+#  ifdef WIN32
       _close(_fd);
-#else
+#  else
       close(_fd);
-#endif /* WIN32 */
+#  endif /* WIN32 */
     else {
       RELEASE(tmp);
       tmp = NULL;
@@ -854,12 +877,11 @@ dpx_create_temp_file (void)
 
   return  tmp;
 }
-#endif /* XETEX */
 
 char *
 dpx_create_fix_temp_file (const char *filename)
 {
-#define PREFIX "xdvipdfmx."
+#define PREFIX "dvipdfm-x."
   static const char *dir = NULL;
   static char *cwd = NULL;
   char *ret, *s;
@@ -1013,6 +1035,7 @@ if ((l) + (n) >= (m)) { \
         } else {
           strcpy(cmd + n, input); n += strlen(input);
         }
+        break;
       case  'v': /* Version number, e.g. 1.4 */ {
        char buf[6];
        sprintf(buf, "1.%hu", (unsigned short) version);

@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -21,8 +19,8 @@
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H */
+#include <config.h>
+#endif
 
 #include "system.h"
 #include "mem.h"
@@ -159,7 +157,8 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
   head = tt_read_head_table(sfont);
   post = tt_read_post_table(sfont);
   if (!post) {
-    RELEASE(os2);
+    if (os2)
+      RELEASE(os2);
     RELEASE(head);
     return NULL;
   }
@@ -189,15 +188,17 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
       *embed = 1;
     } else if (os2->fsType & 0x0004) {
       if (verbose > 0)
-        MESG("** NOTICE: Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
+        WARN("Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
       *embed = 1;
     } else {
       if (always_embed) {
-        MESG("** NOTICE: Font \"%s\" may be subject to embedding restrictions **\n", fontname);
+        if (verbose > 0)
+          WARN("Font \"%s\" may be subject to embedding restrictions **\n", fontname);
         *embed = 1;
       }
       else {
-        WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
+        if (verbose > 0)
+          WARN("Embedding of font \"%s\" disabled due to license restrictions", fontname);
         *embed = 0;
       }
     }
@@ -205,40 +206,37 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
 
   if (os2) {
     pdf_add_dict (descriptor,
-		pdf_new_name ("Ascent"),
-		pdf_new_number (PDFUNIT(os2->sTypoAscender)));
+		  pdf_new_name ("Ascent"),
+		  pdf_new_number (PDFUNIT(os2->sTypoAscender)));
     pdf_add_dict (descriptor,
-		pdf_new_name ("Descent"),
-		pdf_new_number (PDFUNIT(os2->sTypoDescender)));
+		  pdf_new_name ("Descent"),
+		  pdf_new_number (PDFUNIT(os2->sTypoDescender)));
     if (stemv < 0) /* if not given by the option '-v' */
       stemv = (os2->usWeightClass/65.)*(os2->usWeightClass/65.)+50;
     pdf_add_dict (descriptor,
-		pdf_new_name ("StemV"),
-		pdf_new_number (stemv));
+		  pdf_new_name ("StemV"),
+		  pdf_new_number (stemv));
     if (os2->version == 0x0002) {
       pdf_add_dict (descriptor,
-		  pdf_new_name("CapHeight"),
-		  pdf_new_number(PDFUNIT(os2->sCapHeight))
-		  );
+		    pdf_new_name("CapHeight"),
+		    pdf_new_number(PDFUNIT(os2->sCapHeight)));
       /* optional */
       pdf_add_dict (descriptor,
-		  pdf_new_name("XHeight"),
-		  pdf_new_number(PDFUNIT(os2->sxHeight))
-		  );
+		    pdf_new_name("XHeight"),
+		    pdf_new_number(PDFUNIT(os2->sxHeight)));
     } else { /* arbitrary */
       pdf_add_dict (descriptor,
-		  pdf_new_name("CapHeight"),
-		  pdf_new_number(PDFUNIT(os2->sTypoAscender))
-		  );
+		    pdf_new_name("CapHeight"),
+		    pdf_new_number(PDFUNIT(os2->sTypoAscender)));
     }
     /* optional */
     if (os2->xAvgCharWidth != 0) {
       pdf_add_dict (descriptor,
-		  pdf_new_name ("AvgWidth"),
-		  pdf_new_number (PDFUNIT(os2->xAvgCharWidth)));
+		    pdf_new_name ("AvgWidth"),
+		    pdf_new_number (PDFUNIT(os2->xAvgCharWidth)));
     }
   }
-  
+
   /* BoundingBox (array) */
   bbox = pdf_new_array ();
   pdf_add_array (bbox, pdf_new_number (PDFUNIT(head->xMin)));
@@ -265,6 +263,7 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
     if (post->isFixedPitch)
       flag |= FIXEDWIDTH;
   }
+
   pdf_add_dict (descriptor,
 		pdf_new_name ("Flags"),
 		pdf_new_number (flag));

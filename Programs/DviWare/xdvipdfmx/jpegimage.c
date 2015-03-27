@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,9 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 /*
@@ -61,6 +58,8 @@
 
 #include "mfileio.h"
 #include "numbers.h"
+
+#include "dvipdfmx.h"
 
 #include "pdfobj.h"
 
@@ -199,6 +198,8 @@ static int      JPEG_copy_stream (struct JPEG_info *j_info,
 static void     JPEG_info_init   (struct JPEG_info *j_info);
 static void     JPEG_info_clear  (struct JPEG_info *j_info);
 static pdf_obj *JPEG_get_iccp    (struct JPEG_info *j_info);
+static void     jpeg_get_density (struct JPEG_info *j_info,
+				  double *xdensity, double *ydensity);
 
 int
 check_for_jpeg (FILE *fp)
@@ -336,41 +337,49 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
   info.bits_per_component = j_info.bits_per_component;
   info.num_components     = j_info.num_components;
 
-#define IS_Exif(j) ((j).flags & HAVE_APPn_Exif)
-#define IS_JFIF(j) ((j).flags & HAVE_APPn_JFIF)
+  jpeg_get_density(&j_info, &info.xdensity, &info.ydensity);
 
-  if (IS_Exif(j_info)) { /* resolution data from EXIF is handled here,
-			    takes precedence over JFIF */
-    info.xdensity = 72.0 / j_info.xdpi;
-    info.ydensity = 72.0 / j_info.ydpi;
+  pdf_ximage_set_image(ximage, &info, stream);
+  JPEG_info_clear(&j_info);
+
+  return 0;
+}
+
+static void
+jpeg_get_density (struct JPEG_info *j_info,
+		  double *xdensity, double *ydensity)
+{
+  if (compat_mode) {
+    *xdensity = *ydensity = 72.0 / 100.0;
+    return;
   }
-  else if (IS_JFIF(j_info)) {
+
+  *xdensity = *ydensity = 1.0;
+
+  if (j_info->flags & HAVE_APPn_JFIF) {
+    struct JPEG_APPn_JFIF *app_data;
     int i;
-    for (i = 0; i < j_info.num_appn; i++) {
-      if (j_info.appn[i].marker == JM_APP0 && j_info.appn[i].app_sig == JS_APPn_JFIF)
+    for (i = 0; i < j_info->num_appn; i++) {
+      if (j_info->appn[i].marker  == JM_APP0 &&
+	  j_info->appn[i].app_sig == JS_APPn_JFIF)
         break;
     }
-    if (i < j_info.num_appn) {
-      struct JPEG_APPn_JFIF *app_data = (struct JPEG_APPn_JFIF *)j_info.appn[i].app_data;
+    if (i < j_info->num_appn) {
+      app_data = (struct JPEG_APPn_JFIF *)j_info->appn[i].app_data;
       switch (app_data->units) {
       case 1: /* pixels per inch */
-        info.xdensity = 72.0 / app_data->Xdensity;
-        info.ydensity = 72.0 / app_data->Ydensity;
+        *xdensity = 72.0 / app_data->Xdensity;
+        *ydensity = 72.0 / app_data->Ydensity;
         break;
       case 2: /* pixels per centimeter */
-        info.xdensity = 72.0 / 2.54 / app_data->Xdensity;
-        info.ydensity = 72.0 / 2.54 / app_data->Ydensity;
+        *xdensity = 72.0 / 2.54 / app_data->Xdensity;
+        *ydensity = 72.0 / 2.54 / app_data->Ydensity;
         break;
       default:
         break;
       }
     }
   }
-
-  pdf_ximage_set_image(ximage, &info, stream);
-  JPEG_info_clear(&j_info);
-
-  return 0;
 }
 
 static void
@@ -381,8 +390,8 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->bits_per_component = 0;
   j_info->num_components = 0;
 
-  j_info->xdpi = 0;
-  j_info->ydpi = 0;
+  j_info->xdpi = 0.0;
+  j_info->ydpi = 0.0;
 
   j_info->flags    = 0;
   j_info->num_appn = 0;
@@ -913,4 +922,28 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   }
 
   return (found_SOFn ? 0 : -1);
+}
+
+int
+jpeg_get_bbox (FILE *fp, long *width, long *height,
+	       double *xdensity, double *ydensity)
+{
+  struct JPEG_info j_info;
+
+  JPEG_info_init(&j_info);
+
+  if (JPEG_scan_file(&j_info, fp) < 0) {
+    WARN("%s: Not a JPEG file?", JPEG_DEBUG_STR);
+    JPEG_info_clear(&j_info);
+    return -1;
+  }
+
+  *width  = j_info.width;
+  *height = j_info.height;
+
+  jpeg_get_density(&j_info, xdensity, ydensity);
+
+  JPEG_info_clear(&j_info);
+
+  return 0;
 }

@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -26,7 +24,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -40,12 +38,22 @@
 
 #include "pdfcolor.h"
 
-
 static int verbose = 0;
 void
 pdf_color_set_verbose (void)
 {
   verbose++;
+}
+
+/* This function returns PDF_COLORSPACE_TYPE_GRAY,
+ * PDF_COLORSPACE_TYPE_RGB or PDF_COLORSPACE_TYPE_CMYK.
+ */
+int
+pdf_color_type (const pdf_color *color)
+{
+  ASSERT(color);
+
+  return -color->num_components;
 }
 
 int
@@ -133,39 +141,64 @@ pdf_color_copycolor (pdf_color *color1, const pdf_color *color2)
   memcpy(color1, color2, sizeof(pdf_color));
 }
 
-int
-pdf_color_is_white (pdf_color *color)
+/* Brighten up a color. f == 0 means no change, f == 1 means white. */
+void
+pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
 {
-  int  is_white = 0;
+  ASSERT(dst && src);
+
+  if (f == 1.0) {
+    pdf_color_white(dst);
+  } else {
+    double f0, f1;
+    int n;
+
+    n = dst->num_components = src->num_components;
+    f1 = n == 4 ? 0.0 : f;  /* n == 4 is CMYK, others are RGB and Gray */
+    f0 = 1.0-f;
+
+    while (n--)
+      dst->values[n] = f0 * src->values[n] + f1;
+  }
+}
+
+int
+pdf_color_is_white (const pdf_color *color)
+{
+  int n;
+  double f;
 
   ASSERT(color);
 
-  switch (color->num_components) {
-  case 1:
-    if (color->values[0] == 1.0)
-      is_white = 1;
+  n = color->num_components;
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+    f = 1.0;
     break;
-  case 4:
-    if (color->values[0] == 0.0 &&
-	color->values[1] == 0.0 &&
-	color->values[2] == 0.0 &&
-	color->values[3] == 0.0) {
-      is_white = 1;
-    }
-    break;
-  case 3:
-    if (color->values[0] == 1.0 &&
-	color->values[1] == 1.0 &&
-	color->values[2] == 1.0) {
-      is_white = 1;
-    }
+  case 4:  /* CMYK */
+    f = 0.0;
     break;
   default:
-    is_white = 0;
-    break;
+    return 0;
   }
 
-  return is_white;
+  while (n--)
+    if (color->values[n] != f)
+      return 0;
+
+  return 1;
+}
+
+int
+pdf_color_to_string (const pdf_color *color, char *buffer)
+{
+  int i, len = 0;
+
+  for (i = 0; i < color->num_components; i++) {
+    len += sprintf(buffer+len, " %g", ROUND(color->values[i], 0.001));
+  }
+  return len;
 }
 
 pdf_color current_fill   = {
@@ -178,59 +211,55 @@ pdf_color current_stroke = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
-#if  0
 /*
  * This routine is not a real color matching.
  */
-static int
-compare_color (const pdf_color *color1, const pdf_color *color2)
+int
+pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
 {
-  if (color1->num_components != color2->num_components)
-    return -1;
+  int n;
 
-  switch (color1->num_components) {
-  case  4:
-    if (color1->values[0] == color2->values[0] &&
-	color1->values[1] == color2->values[1] &&
-	color1->values[2] == color2->values[2] &&
-	color1->values[3] == color2->values[3])
-      return 0;
+  n = color1->num_components;
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+  case 4:  /* CMYK */
     break;
-  case  3:
-    if (color1->values[0] == color2->values[0] &&
-	color1->values[1] == color2->values[1] &&
-	color1->values[2] == color2->values[2])
-      return 0;
-    break;
-  case  1:
-    if (color1->values[0] == color2->values[0])
-      return 0;
-    break;
+  default:
+    return -1;
   }
 
-  return  -1;
+  if (n != color2->num_components)
+    return -1;
+
+  while (n--)
+    if (color1->values[n] != color2->values[n])
+      return -1;
+
+  return 0;
 }
-#endif
 
 int
-pdf_color_is_valid (pdf_color *color)
+pdf_color_is_valid (const pdf_color *color)
 {
-  int  i, num_components;
+  int  n;
 
-  num_components = color->num_components;
-  if (num_components != 1 &&
-      num_components != 3 &&
-      num_components != 4) {
-    ERROR("Only RGB/CMYK/Gray currently supported.");
+  n = color->num_components;
+  switch (n) {
+  case 1:  /* Gray */
+  case 3:  /* RGB */
+  case 4:  /* CMYK */
+    break;
+  default:
     return 0;
   }
 
-  for (i = 0; i < num_components; i++) {
-    if (color->values[i] < 0.0 || color->values[i] > 1.0) {
-      WARN("Invalid color value: %g", color->values[i]);
+  while (n--)
+    if (color->values[n] < 0.0 || color->values[n] > 1.0) {
+      WARN("Invalid color value: %g", color->values[n]);
       return 0;
     }
-  }
+
   return 1;
 }
 
@@ -263,9 +292,17 @@ pdf_color_clear_stack (void)
     WARN("You've mistakenly made a global color change within nested colors.");
   }
   color_stack.current = 0;
-  pdf_color_copycolor(&color_stack.stroke[color_stack.current], &default_color);
-  pdf_color_copycolor(&color_stack.fill[color_stack.current], &default_color);
+  pdf_color_black(color_stack.stroke);
+  pdf_color_black(color_stack.fill);
   return;
+}
+
+void
+pdf_color_set (pdf_color *sc, pdf_color *fc)
+{
+  pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
+  pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
+  pdf_dev_reset_color(0);
 }
 
 void
@@ -275,9 +312,7 @@ pdf_color_push (pdf_color *sc, pdf_color *fc)
     WARN("Color stack overflow. Just ignore.");
   } else {
     color_stack.current++;
-    pdf_color_copycolor(&color_stack.stroke[color_stack.current], sc);
-    pdf_color_copycolor(&color_stack.fill[color_stack.current], fc);
-    pdf_dev_reset_color();
+    pdf_color_set(sc, fc);
   }
   return;
 }
@@ -289,7 +324,7 @@ pdf_color_pop (void)
     WARN("Color stack underflow. Just ignore.");
   } else {
     color_stack.current--;
-    pdf_dev_reset_color();
+    pdf_dev_reset_color(0);
   }
   return;
 }
@@ -302,6 +337,7 @@ pdf_color_get_current (pdf_color **sc, pdf_color **fc)
   return;
 }
 
+#if 0
 /* BUG (20060330): color change does not effect on the next page.
  *   The problem is due to the part of grestore because it restores
  *   the color values in the state of gsave which are not correct
@@ -315,6 +351,7 @@ pdf_dev_preserve_color (void)
     current_fill   = color_stack.fill[color_stack.current];
   }
 }
+#endif
 
 /***************************** COLOR SPACE *****************************/
 
@@ -1121,6 +1158,7 @@ iccp_load_profile (const char *ident,
   return cspc_id;
 }
 
+#if 0
 #define WBUF_SIZE 4096
 static unsigned char wbuf[WBUF_SIZE];
 
@@ -1289,6 +1327,7 @@ pdf_colorspace_load_ICCBased (const char *ident, const char *filename)
 
   return cspc_id;
 }
+#endif
 
 typedef struct {
   char    *ident;
@@ -1497,7 +1536,7 @@ pdf_get_colorspace_subtype (int cspc_id)
 
   return colorspace->subtype;
 }
-#endif /* 0 */
+#endif
 
 void
 pdf_init_colors (void)

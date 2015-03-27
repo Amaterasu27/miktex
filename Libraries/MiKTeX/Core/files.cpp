@@ -220,7 +220,6 @@ SessionImpl::RecordFileInfo (/*[in]*/ const char *	lpszPath,
 	      AutoFndbRelease autoRelease (pFndb);
 	      PathNameArray paths;
 	      vector<string> packageNames;
-	      char szPackageName[BufferSizes::MaxPackageName];
 	      if (pFndb->Search(pathRelPath.Get(),
 				MPM_ROOT_PATH,
 				true,

@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -26,10 +24,6 @@
 #ifndef _PNGIMAGE_H_
 #define _PNGIMAGE_H_
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef HAVE_LIBPNG
 
 #include "mfileio.h"
@@ -37,6 +31,8 @@
 
 extern int png_include_image (pdf_ximage *ximage, FILE *file);
 extern int check_for_png     (FILE *file);
+extern int png_get_bbox (FILE *fp, long *width, long *height,
+			 double *xdensity, double *ydensity);
 
 #endif
 

@@ -1,6 +1,6 @@
 /* config.cpp: MiKTeX configuration settings
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -1487,7 +1487,7 @@ SessionImpl::ConfigureFile (/*[in]*/ const PathName & pathIn,
   bool readingName = false;
   string name;
   const size_t UTF8BOM_LEN = 3;
-  char const utf8bom[UTF8BOM_LEN] = { 0xef, 0xbb, 0xbf };
+  char const utf8bom[UTF8BOM_LEN] = { (char)0xef, (char)0xbb, (char)0xbf };
   bool isUtf8 = true;
   for (int count = 0; streamIn.Read(&chr, 1) == 1; ++ count)
     {

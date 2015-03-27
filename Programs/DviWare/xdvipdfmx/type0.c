@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -28,8 +26,8 @@
  *  Composite font (multiple descendants) - not supported in PDF
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <string.h>
@@ -201,14 +199,18 @@ add_ToUnicode (Type0Font *font)
       /* PLEASE FIX THIS */
       tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
 					      CIDFont_get_opt_index(cidfont),
+#ifdef XETEX
 					      CIDFont_get_ft_face(cidfont),
+#endif
 					      Type0Font_get_usedchars(font));
       break;
     default:
       if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1C)) { /* FIXME */
 	tounicode = otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
 						CIDFont_get_opt_index(cidfont),
+#ifdef XETEX
 						CIDFont_get_ft_face(cidfont),
+#endif
 						Type0Font_get_usedchars(font));
       } else if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1)) { /* FIXME */
 	/* Font loader will create ToUnicode and set. */
@@ -298,7 +300,7 @@ Type0Font_get_encoding (Type0Font *font)
 
   return font->encoding;
 }
-#endif /* 0 */
+#endif
 
 char *
 Type0Font_get_usedchars (Type0Font *font)

@@ -406,9 +406,9 @@ miktex_utf8_popen (/*[in]*/ const char * lpszCommand,
 
 MIKTEXSTATICFUNC(HANDLE) GetConsoleHandle(/*[in]*/ FILE * pFile)
 {
-  bool isStdout = fileno(pFile) == fileno(stdout);
-  bool isStderr = fileno(pFile) == fileno(stderr);
-  if (_isatty(fileno(pFile)) && (isStdout || isStderr))
+  bool isStdout = _fileno(pFile) == fileno(stdout);
+  bool isStderr = _fileno(pFile) == fileno(stderr);
+  if (_isatty(_fileno(pFile)) && (isStdout || isStderr))
   {
     return isStdout ? GetStdHandle(STD_OUTPUT_HANDLE) : GetStdHandle(STD_ERROR_HANDLE);
   }

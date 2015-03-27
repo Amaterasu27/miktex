@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -70,7 +68,9 @@ extern void     tt_cmap_release (tt_cmap *cmap);
 /* Indirect reference */
 extern pdf_obj *otf_create_ToUnicode_stream (const char *map_name,
 					     int ttc_index,
+#ifdef XETEX
 					     FT_Face face,
+#endif
 					     const char *used_glyphs);
 /* CMap ID */
 extern int      otf_load_Unicode_CMap       (const char *map_name,

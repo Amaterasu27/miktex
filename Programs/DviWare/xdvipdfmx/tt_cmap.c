@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -25,7 +23,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -516,7 +514,7 @@ tt_cmap_read (sfnt *sfont, USHORT platform, USHORT encoding)
     cmap->map = read_cmap6(sfont, length);
     break;
   case 12:
-    /*WARN("UCS-4 TrueType cmap table...");*/
+    /* WARN("UCS-4 TrueType cmap table..."); */
     cmap->map = read_cmap12(sfont, length);
     break;
   default:
@@ -730,7 +728,11 @@ handle_CIDFont (sfnt *sfont,
   if (num_glyphs < 1)
     ERROR("No glyph contained in this font...");
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, 0);
+#else
+  cffont = cff_open(sfont->stream, offset, 0);
+#endif
   if (!cffont)
     ERROR("Could not open CFF font...");
 
@@ -835,6 +837,14 @@ handle_CIDFont (sfnt *sfont,
   return 1;
 }
 
+#ifdef XETEX
+static int is_PUA_or_presentation (unsigned int uni)
+{
+  return  ((uni >= 0xE000 && uni <= 0xF8FF) || (uni >= 0xFB00 && uni <= 0xFB4F) ||
+           (uni >= 0xF0000 && uni <= 0xFFFFD) || (uni >= 0x100000 && uni <= 0x10FFFD));
+}
+#endif
+
 /*
  * Substituted glyphs:
  *
@@ -851,7 +861,7 @@ handle_subst_glyphs (CMap *cmap,
 {
   USHORT count;
   USHORT i, gid;
-  
+
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
     long  len, inbytesleft, outbytesleft;
@@ -868,7 +878,7 @@ handle_subst_glyphs (CMap *cmap,
 	continue;
 
       if (!cmap_add) {
-#if XETEX
+#ifdef XETEX
         if (FT_HAS_GLYPH_NAMES(sfont->ft_face)) {
           /* JK: try to look up Unicode values from the glyph name... */
 #define MAX_UNICODES	16
@@ -985,11 +995,19 @@ create_ToUnicode_cmap4 (struct cmap4 *map,
 
 	CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, 2);
 
-	/* Avoid duplicate entry
-	 * There are problem when two Unicode code is mapped to
-	 * single glyph...
-	 */
-	used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+#ifdef XETEX
+        /* Skip PUA characters and alphabetic presentation forms, allowing
+         * handle_subst_glyphs() as it might find better mapping. Fixes the
+         * mapping of ligatures encoded in PUA in fonts like Linux Libertine
+         * and old Adobe fonts.
+         */
+	if (!is_PUA_or_presentation(ch))
+#endif
+	  /* Avoid duplicate entry
+	   * There are problem when two Unicode code is mapped to
+	   * single glyph...
+	   */
+	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
 	count++;
       }
     }
@@ -1044,8 +1062,22 @@ create_ToUnicode_cmap12 (struct cmap12 *map,
         wbuf[1] = (gid & 0xff);
         len = UC_sput_UTF16BE((long)ch, &p, wbuf+WBUF_SIZE);
 
-        used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
         CMap_add_bfchar(cmap, wbuf, 2, wbuf+2, len);
+
+#ifdef XETEX
+        /* Skip PUA characters and alphabetic presentation forms, allowing
+         * handle_subst_glyphs() as it might find better mapping. Fixes the
+         * mapping of ligatures encoded in PUA in fonts like Linux Libertine
+         * and old Adobe fonts.
+         */
+	if (!is_PUA_or_presentation(ch))
+#endif
+	  /* Avoid duplicate entry
+	   * There are problem when two Unicode code is mapped to
+	   * single glyph...
+	   */
+	  used_glyphs_copy[gid/8] &= ~(1 << (7 - (gid % 8)));
+        count++;
       }
     }
   }
@@ -1078,7 +1110,9 @@ static cmap_plat_enc_rec cmap_plat_encs[] = {
 pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
 			     int ttc_index, /* 0 for non-TTC */
+#ifdef XETEX
 			     FT_Face face,
+#endif
 			     const char *used_glyphs)
 {
   pdf_obj    *cmap_ref = NULL;
@@ -1686,8 +1720,8 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     return -1; /* Sorry for this... */
   }
 
-fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
 #ifdef XETEX
+  fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
   sfont = NULL; /* FIXME */
 #else
   fp = DPXFOPEN(map_name, DPX_RES_TYPE_TTFONT);

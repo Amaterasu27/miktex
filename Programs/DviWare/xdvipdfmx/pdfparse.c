@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <ctype.h>
@@ -506,10 +504,18 @@ parse_pdf_literal_string (const char **pp, const char *endptr)
 
   p++;
 
-  /*
-   * Accroding to the PDF spec., an end-of-line marker, not preceded
-   * by a backslash, must be converted to single \n.
-   */
+  /* The carriage return (CR, 0x0d) and line feed (LF, 0x0a) characters,
+   * also called newline characters, are treated as end-of-line (EOL)
+   * markers. The combination of a carriage return followed immediately
+   * by a line feed is treated as one EOL marker.
+   * [PDF Reference, 6th ed., version 1.7, p. 50] */
+
+  /* If an end-of-line marker appears within a literal string
+   * without a preceding backslash, the result is equivalent to
+   * \n (regardless of whether the end-of-line marker was
+   * a carriage return, a line feed, or both).
+   * [PDF Reference, 6th ed., version 1.7, p. 55] */
+
   while (p < endptr) {
 
     ch = p[0];
@@ -669,7 +675,7 @@ parse_pdf_tainted_dict (const char **pp, const char *endptr)
 }
 #else /* PDF_PARSE_STRICT */
 pdf_obj *
-parse_pdf_tainted_dict (const char **pp, const char *endptr, int level)
+parse_pdf_tainted_dict (const char **pp, const char *endptr)
 {
   return parse_pdf_dict(pp, endptr, NULL);
 }
@@ -791,26 +797,19 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
   }
   p += 6;
 
-  /* Carrige return alone is not allowed after keyword "stream".
-   * See, PDF Reference, 4th ed., version 1.5, p. 36.
-   */
+  /* The keyword stream that follows the stream dictionary
+   * should be followed by an end-of-line marker consisting of
+   * either a carriage return (0x0D;\r) and a line feed (0x0A;\n)
+   * or just a line feed, and not by a carriage return alone.
+   * [PDF Reference, 6th ed., version 1.7, pp. 60-61] */
+
+  /* Notice that TeX translates an end-of-line marker to a single space. */
   if (p < endptr && p[0] == '\n') {
     p++;
   } else if (p + 1 < endptr &&
              (p[0] == '\r' && p[1] == '\n')) {
     p += 2;
   }
-#ifndef PDF_PARSE_STRICT
-  else {
-    /* TeX translate end-of-line marker to a single space. */
-    if (parser_state.tainted) {
-      if (p < endptr && p[0] == ' ') {
-        p++;
-      }
-    }
-  }
-  /* The end-of-line marker not mandatory? */
-#endif /* !PDF_PARSE_STRICT */
 
   /* Stream length */
   {
@@ -827,31 +826,6 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
       }
       pdf_release_obj(tmp2);
     }
-#ifndef PDF_PARSE_STRICT
-    else if (p + 9 <= endptr)
-    {
-      /*
-       * This was added to allow TeX users to write PDF stream object
-       * directly in their TeX source. This violates PDF spec.
-       */
-      const char *q;
-
-      stream_length = -1;
-      for (q = endptr - 1; q >= p + 8; q--) {
-        if (q[0] != 'm')
-          continue;
-        else {
-          if (!memcmp(q - 8, "endstrea", 8)) {
-           /* The end-of-line marker is not skipped here. There are
-            * no way to decide if it is a part of the stream or not.
-            */
-            stream_length = ((long) (q - p)) - 8;
-            break;
-          }
-        }
-      }
-    }
-#endif /* !PDF_PARSE_STRICT */
     else {
       return NULL;
     }
@@ -885,24 +859,14 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *
 
   /* Check "endsteam" */
   {
-    /*
-     * It is an error if the stream contained too much data except there
-     * may be an extra end-of-line marker before the keyword "endstream".
-     */
-#ifdef PDF_PARSE_STRICT
+    /* It is recommended that there be an end-of-line marker
+     * after the data and before endstream; this marker is not included
+     * in the stream length. 
+     * [PDF Reference, 6th ed., version 1.7, pp. 61] */
     if (p < endptr && p[0] == '\r')
       p++;
     if (p < endptr && p[0] == '\n')
       p++;
-#else  /* !PDF_PARSE_STRICT */
-    /*
-     * This may skip data starting with '%' and terminated by a
-     * '\r' or '\n' or '\r\n'. The PDF syntax rule should not be
-     * applied to the content of the stream data.
-     * TeX may have converted end-of-line to single white space.
-     */
-    skip_white(&p, endptr);
-#endif /* !PDF_PARSE_STRICT */
 
     if (p + 9 > endptr ||
         memcmp(p, "endstream", 9)) {

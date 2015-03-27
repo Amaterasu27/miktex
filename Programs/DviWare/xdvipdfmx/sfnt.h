@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -22,10 +20,6 @@
 
 #ifndef _SFNT_H_
 #define _SFNT_H_
-
-#if  HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H_ */
 
 #include "mfileio.h"
 #include "numbers.h"
@@ -107,7 +101,7 @@ SIGNED_BYTE    ft_signed_byte(sfnt* f);
 UNSIGNED_PAIR  ft_unsigned_pair(sfnt* f);
 SIGNED_PAIR    ft_signed_pair(sfnt* f);
 UNSIGNED_QUAD  ft_unsigned_quad(sfnt* f);
-unsigned long  ft_read(unsigned char* buf, unsigned long len, sfnt* f);
+unsigned long  ft_read(void* buf, unsigned long len, sfnt* f);
 
 #define sfnt_get_byte(s)   ((BYTE)   ft_unsigned_byte(s))
 #define sfnt_get_char(s)   ((CHAR)   ft_signed_byte  (s))

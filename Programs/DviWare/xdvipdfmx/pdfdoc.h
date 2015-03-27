@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -35,7 +33,8 @@ extern void     pdf_doc_set_verbose (void);
 extern void     pdf_open_document  (const char *filename,
 				    int do_encryption,
 				    double media_width, double media_height,
-				    double annot_grow_amount, int bookmark_open_depth);
+				    double annot_grow_amount, int bookmark_open_depth,
+				    int check_gotos);
 extern void     pdf_close_document (void);
 
 
@@ -54,6 +53,9 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_docinfo()   pdf_doc_get_dictionary("Info")
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
+
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
+				  pdf_rect *bbox, pdf_obj **resources_p);
 
 extern long     pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
@@ -110,7 +112,9 @@ extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 /* Annotation */
 extern void     pdf_doc_add_annot   (unsigned page_no,
-				     const pdf_rect *rect, pdf_obj *annot_dict);
+				     const pdf_rect *rect,
+				     pdf_obj *annot_dict,
+				     int new_annot);
 
 /* Annotation with auto- clip and line (or page) break */
 extern void     pdf_doc_begin_annot (pdf_obj *dict);

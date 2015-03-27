@@ -1,9 +1,10 @@
-/*  
-    This is xdvipdfmx, an extended version of dvipdfmx,
+/*  This is xdvipdfmx, an extended version of dvipdfmx,
     an eXtended version of dvipdfm by Mark A. Wicks.
 
+    Copyright (C) 2013-2014 by the dvipdfmx project team.
+
     Copyright (c) 2006 SIL International
-    Written by Jonathan Kew
+    Originally written by Jonathan Kew
 
     Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
@@ -29,11 +30,6 @@
 #define _SPC_XTX_H_
 
 #include "specials.h"
-
-extern int  spc_xtx_at_begin_page     (void);
-extern int  spc_xtx_at_end_page       (void);
-extern int  spc_xtx_at_begin_document (void);
-extern int  spc_xtx_at_end_document   (void);
 
 extern int  spc_xtx_check_special (const char *buffer, long size);
 extern int  spc_xtx_setup_handler (struct spc_handler *handle,

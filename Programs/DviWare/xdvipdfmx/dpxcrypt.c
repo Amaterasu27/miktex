@@ -1,8 +1,6 @@
-/*  
- 
-    This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
+/* This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2003-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2003-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -20,20 +18,14 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
 #include <string.h>
-#ifdef HAVE_INTTYPES_H
-# include <inttypes.h>
-#endif
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
 
 #include "dpxcrypt.h"
 
@@ -289,7 +281,7 @@ void MD5_final (unsigned char *outbuf, MD5_CONTEXT *hd)
 #define X(a) do { *p++ = hd->a; *p++ = hd->a >> 8; \
 	          *p++ = hd->a >> 16; *p++ = hd->a >> 24; } while (0)
 #else /* little endian */
-#define X(a) do { *(unsigned long *)p = (*hd).a ; p += 4; } while (0)
+#define X(a) do { *(uint32_t *)p = (*hd).a ; p += sizeof(uint32_t); } while (0)
 #endif
   X(A);
   X(B);

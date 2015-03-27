@@ -1,6 +1,6 @@
 /* filetypes.cpp: MiKTeX file type registry
 
-   Copyright (C) 1996-2014 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -44,6 +44,7 @@
 #define P7_(a, b, c, d, e, f, g) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g
 #define P8_(a, b, c, d, e, f, g, h) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g DELIM h
 #define P9_(a, b, c, d, e, f, g, h, i) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g DELIM h DELIM i
+#define P10_(a, b, c, d, e, f, g, h, i, j) a DELIM b DELIM c DELIM d DELIM e DELIM f DELIM g DELIM h DELIM i DELIM j
 
 #define P_ ListBuilder
 
@@ -782,7 +783,7 @@ SessionImpl::RegisterFileType (/*[in]*/ FileType fileType)
 	"PostScript header",
 	0,
 	P2_(".pro", ".enc"),
-	P9_(CURRENT_DIRECTORY,
+	P10_(CURRENT_DIRECTORY,
 	    R_(MIKTEX_PATH_MIKTEX_CONFIG_DIR),
 	    R_(MIKTEX_PATH_DVIPS_DIR),
 	    R_(MIKTEX_PATH_PDFTEX_DIR),

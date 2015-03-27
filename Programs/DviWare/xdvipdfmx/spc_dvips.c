@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,11 +20,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#include <string.h>
-
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
+
+#include <string.h>
 
 #include "system.h"
 #include "mem.h"
@@ -50,11 +48,10 @@
 
 #include "specials.h"
 #include "spc_util.h"
-#include "mfileio.h"
-
 #include "spc_dvips.h"
-#include "spc_xtx.h"
 
+#include "mfileio.h"
+#include "spc_xtx.h"
 #include "epdf.h"
 
 static int    block_pending = 0;
@@ -857,7 +854,7 @@ spc_handler_ps_default (struct spc_env *spe, struct spc_arg *args)
 }
 
 static struct spc_handler dvips_handlers[] = {
-  {"header",      spc_handler_ps_header},
+  {"header",        spc_handler_ps_header},
   {"PSfile",        spc_handler_ps_file},
   {"psfile",        spc_handler_ps_file},
   {"ps: plotfile ", spc_handler_ps_plotfile},
@@ -868,6 +865,40 @@ static struct spc_handler dvips_handlers[] = {
   {"pst:",          spc_handler_ps_tricksobj},
   {"\" ",           spc_handler_ps_default}
 };
+
+int
+spc_dvips_at_begin_document (void)
+{
+  FILE* fp;
+
+  /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
+  global_defs = dpx_create_temp_file();
+  if (!global_defs) {
+    WARN("Failed to create temporary input file for PSTricks image conversion.");
+    return  -1;
+  }
+
+  fp = fopen(global_defs, "wb");
+  fprintf(fp, "tx@Dict begin /STV {} def end\n");
+  fclose(fp);
+
+  return  0;
+}
+
+int
+spc_dvips_at_end_document (void)
+{
+  if (ps_headers) {
+    while (num_ps_headers > 0)
+      RELEASE(ps_headers[--num_ps_headers]);
+    free(ps_headers);
+    ps_headers = NULL;
+  }
+  dpx_delete_temp_file(global_defs, true);
+  dpx_delete_temp_file(page_defs, true);
+
+  return  0;
+}
 
 int
 spc_dvips_at_begin_page (void)
@@ -890,38 +921,6 @@ spc_dvips_at_end_page (void)
     dpx_delete_temp_file(temporary_defs, true);
     temporary_defs = 0;
   }
-  return  0;
-}
-
-int
-spc_dvips_at_begin_document (void)
-{
-  FILE* fp;
-
-  /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
-  global_defs = dpx_create_temp_file();
-  if (!global_defs) {
-    WARN("Failed to create temporary input file for PSTricks image conversion.");
-    return  -1;
-  }
-
-  fp = fopen(global_defs, "wb");
-  fprintf(fp, "tx@Dict begin /STV {} def end\n");
-  fclose(fp);
-  return  0;
-}
-
-int
-spc_dvips_at_end_document (void)
-{
-  if (ps_headers) {
-    while (num_ps_headers > 0)
-      RELEASE(ps_headers[--num_ps_headers]);
-    free(ps_headers);
-    ps_headers = NULL;
-  }
-  dpx_delete_temp_file(global_defs, true);
-  dpx_delete_temp_file(page_defs, true);
   return  0;
 }
 
@@ -988,8 +987,8 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
   for (i = 0;
        i < sizeof(dvips_handlers) / sizeof(struct spc_handler); i++) {
-    if (keylen <= strlen(dvips_handlers[i].key) && 
-	!strncmp(key, dvips_handlers[i].key, strlen(dvips_handlers[i].key))) {
+    if (keylen == strlen(dvips_handlers[i].key) &&
+	!strncmp(key, dvips_handlers[i].key, keylen)) {
 
       skip_white(&args->curptr, args->endptr);
 

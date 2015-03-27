@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -35,7 +33,7 @@ extern void       Type0Font_set_verbose (void);
 extern int        Type0Font_get_wmode     (Type0Font *font);
 #if 0
 extern char      *Type0Font_get_encoding  (Type0Font *font);
-#endif /* 0 */
+#endif
 extern char      *Type0Font_get_usedchars (Type0Font *font);
 
 extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);

@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -98,6 +96,6 @@ extern void  dvi_compute_boxes (int flag);
 extern void  dvi_do_special    (const void *buffer, UNSIGNED_QUAD size);
 
 /* allow other modules (pdfdev) to ask whether we're collecting box areas */
-int dvi_is_tracking_boxes(void);
+extern int dvi_is_tracking_boxes(void);
 
 #endif /* _DVI_H_ */

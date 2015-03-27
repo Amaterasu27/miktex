@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -25,6 +23,10 @@
  *
  *  Adobe Technical Note #5176 "The Compact Font Format Specification"
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <math.h>
 #include <stdlib.h>
@@ -327,7 +329,8 @@ static void add_dict (cff_dict *dict,
   } else {
     /* just ignore operator if there were no operands provided;
        don't treat this as underflow (e.g. StemSnapV in TemporaLGCUni-Italic.otf) */
-    if (stack_top > 0) {
+    if (stack_top > 0)
+    {
       (dict->entries)[dict->count].count  = stack_top;
       (dict->entries)[dict->count].values = NEW(stack_top, double);
       while (stack_top > 0) {

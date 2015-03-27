@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -27,8 +25,8 @@
  *
  */ 
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include "system.h"
@@ -529,7 +527,11 @@ CIDFont_type0_dofont (CIDFont *font)
   if (offset == 0)
     ERROR("Not a CFF/OpenType font ?");
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, font->options->index);
+#else
+  cffont = cff_open(fp, offset, font->options->index);
+#endif
   if (!cffont)
     ERROR("Could not open CFF font.");
   if (!(cffont->flag & FONTTYPE_CIDFONT))
@@ -596,7 +598,7 @@ CIDFont_type0_dofont (CIDFont *font)
   cff_seek_set(cffont, offset);
   idx = cff_get_index_header(cffont);
   /* offset is now absolute offset ... bad */
-  offset = cffont->sfont->loc;
+  offset = cff_tell(cffont);
   
   if ((cs_count = idx->count) < 2) {
     ERROR("No valid charstring data found.");
@@ -640,8 +642,8 @@ CIDFont_type0_dofont (CIDFont *font)
       charstrings->data = RENEW(charstrings->data, max_len, card8);
     }
     (charstrings->offset)[gid] = charstring_len + 1;
-    sfnt_seek_set(cffont->sfont, offset + (idx->offset)[gid_org] - 1);
-    sfnt_read(data, size, cffont->sfont);
+    cff_seek(cffont, offset + (idx->offset)[gid_org] - 1);
+    cff_read_data(data, size, cffont);
     fd = cff_fdselect_lookup(cffont, gid_org);
     charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 					 max_len - charstring_len,
@@ -752,7 +754,11 @@ CIDFont_type0_open (CIDFont *font, const char *name,
     ERROR("Not a CFF/OpenType font?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, opt->index);
+#else
+  cffont = cff_open(sfont->stream, offset, opt->index);
+#endif
   if (!cffont) {
     ERROR("Cannot read CFF font data");
   }
@@ -925,7 +931,11 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   if (offset == 0)
     ERROR("Not a CFF/OpenType font ?");
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, font->options->index);
+#else
+  cffont = cff_open(fp, offset, font->options->index);
+#endif
   if (!cffont)
     ERROR("Could not open CFF font.");
   if (cffont->flag & FONTTYPE_CIDFONT)
@@ -1025,7 +1035,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   cff_seek_set(cffont, offset);
   idx = cff_get_index_header(cffont);
   /* offset is now absolute offset ... bad */
-  offset = cffont->sfont->loc;
+  offset = cff_tell(cffont);
 
   if (idx->count < 2)
     ERROR("No valid charstring data found.");
@@ -1050,8 +1060,8 @@ CIDFont_type0_t1cdofont (CIDFont *font)
       charstrings->data = RENEW(charstrings->data, max_len, card8);
     }
     (charstrings->offset)[gid] = charstring_len + 1;
-    sfnt_seek_set(cffont->sfont, offset + (idx->offset)[cid] - 1);
-    sfnt_read(data, size, cffont->sfont);
+    cff_seek(cffont, offset + (idx->offset)[cid] - 1);
+    cff_read_data(data, size, cffont);
     charstring_len += cs_copy_charstring(charstrings->data + charstring_len,
 					 max_len - charstring_len,
 					 data, size,
@@ -1178,7 +1188,11 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
     ERROR("Not a CFF/OpenType font?");
   }
 
+#ifdef XETEX
   cffont = cff_open(sfont, offset, opt->index);
+#else
+  cffont = cff_open(fp, offset, opt->index);
+#endif
   if (!cffont) {
     ERROR("Cannot read CFF font data");
   }
@@ -2069,7 +2083,8 @@ void
 CIDFont_type0_release(CIDFont *font)
 {
 #ifdef XETEX
-  if (font->ft_to_gid) RELEASE(font->ft_to_gid);
+  if (font->ft_to_gid)
+    RELEASE(font->ft_to_gid);
 #endif
   return;
 }

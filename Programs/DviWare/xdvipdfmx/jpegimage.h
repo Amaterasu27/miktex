@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -30,6 +28,8 @@
 
 extern int check_for_jpeg     (FILE *fp);
 extern int jpeg_include_image (pdf_ximage *ximage, FILE *fp);
+extern int jpeg_get_bbox (FILE *fp, long *width, long *height,
+			  double *xdensity, double *ydensity);
 
 #endif /* _JPEGIMAGE_H_ */
 

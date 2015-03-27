@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -19,6 +17,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "system.h"
 #include "error.h"
@@ -80,7 +82,7 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
       len = sfnt_get_byte(sfont);
       if (len > 0) {
 	post->names[i] = NEW(len + 1, char);
-	sfnt_read((unsigned char*)(post->names[i]), len, sfont);
+	sfnt_read(post->names[i], len, sfont);
 	post->names[i][len] = 0;
       } else {
 	post->names[i] = NULL;
@@ -134,34 +136,19 @@ tt_read_post_table (sfnt *sfont)
   if (post->Version == 0x00010000UL) {
     post->numberOfGlyphs  = 258; /* wrong */
     post->glyphNamePtr    = macglyphorder;
-    post->count           = 0;
-    post->names           = NULL;
-  } else if (post->Version == 0x00025000UL) {
+  } else if (post->Version == 0x00028000UL) {
     WARN("TrueType 'post' version 2.5 found (deprecated)");
-    post->numberOfGlyphs  = 0; /* wrong */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
   } else if (post->Version == 0x00020000UL) {
     if (read_v2_post_names(post, sfont) < 0) {
       WARN("Invalid version 2.0 'post' table");
       tt_release_post_table(post);
       post = NULL;
     }
-  } else if (post->Version == 0x00030000UL) { /* no glyph names provided */
-    post->numberOfGlyphs  = 0; /* wrong */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
-  } else if (post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
-    post->numberOfGlyphs  = 0; /* don't bother constructing char names, not sure if they'll ever be needed */
-    post->glyphNamePtr    = NULL;
-    post->count           = 0;
-    post->names           = NULL;
-  } else {
-    WARN("Unknown 'post' version: %08X", post->Version);
-    tt_release_post_table(post);
-    post = NULL;
+  } else if (post->Version == 0x00030000UL || /* no glyph names provided */
+             post->Version == 0x00040000UL) { /* Apple format for printer-based fonts */
+    /* don't bother constructing char names, not sure if they'll ever be needed */
+  } else { /* some broken font files have 0x00000000UL and perhaps other values */
+    WARN("Unknown 'post' version: %08X, assuming version 3.0", post->Version);
   }
 
   return post;

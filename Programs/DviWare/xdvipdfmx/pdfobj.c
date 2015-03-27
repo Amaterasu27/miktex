@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2007-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -22,8 +20,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <ctype.h>
@@ -117,6 +115,7 @@ struct pdf_stream
 struct pdf_indirect
 {
   pdf_file      *pf;
+  pdf_obj       *obj;             /* used when PF == NULL */
   unsigned long label;
   unsigned short generation;
 };
@@ -161,6 +160,7 @@ struct pdf_file
   FILE       *file;
   pdf_obj    *trailer;
   xref_entry *xref_table;
+  pdf_obj    *catalog;
   long        num_obj;
   long        file_size;
   int         version;
@@ -179,6 +179,8 @@ static pdf_obj *xref_stream;
 
 /* Internal static routines */
 
+static int check_for_pdf_version (FILE *file);
+
 static void pdf_flush_obj (pdf_obj *object, FILE *file);
 static void pdf_label_obj (pdf_obj *object);
 static void pdf_write_obj (pdf_obj *object, FILE *file);
@@ -190,6 +192,7 @@ static void  release_objstm  (pdf_obj *objstm);
 static void pdf_out_char (FILE *file, char c);
 static void pdf_out      (FILE *file, const void *buffer, long length);
 
+static pdf_obj *pdf_new_ref  (pdf_obj *object);
 static void release_indirect (pdf_indirect *data);
 static void write_indirect   (pdf_indirect *indirect, FILE *file);
 
@@ -314,18 +317,17 @@ pdf_out_init (const char *filename, int do_encryption)
 
   if (filename == NULL) { /* no filename: writing to stdout */
 #ifdef WIN32
-	setmode(fileno(stdout), _O_BINARY);
+    setmode(fileno(stdout), _O_BINARY);
 #endif
     pdf_output_file = stdout;
-  }
-  else
+  } else {
     pdf_output_file = MFOPEN(filename, FOPEN_WBIN_MODE);
-
-  if (!pdf_output_file) {
-    if (strlen(filename) < 128)
-      ERROR("Unable to open \"%s\".", filename);
-    else
-      ERROR("Unable to open file.");
+    if (!pdf_output_file) {
+      if (strlen(filename) < 128)
+        ERROR("Unable to open \"%s\".", filename);
+      else
+        ERROR("Unable to open file.");
+    }
   }
   pdf_out(pdf_output_file, "%PDF-1.", strlen("%PDF-1."));
   v = '0' + pdf_version;
@@ -510,14 +512,20 @@ pdf_set_info (pdf_obj *object)
 }
 
 void
-pdf_set_encrypt (pdf_obj *encrypt, pdf_obj *id)
+pdf_set_id (pdf_obj *id)
+{
+  if (pdf_add_dict(trailer_dict, pdf_new_name("ID"), id)) {
+    ERROR ("ID already set!");
+  }
+}
+
+void
+pdf_set_encrypt (pdf_obj *encrypt)
 {
   if (pdf_add_dict(trailer_dict, pdf_new_name("Encrypt"), pdf_ref_obj(encrypt))) {
     ERROR("Encrypt object already set!");
   }
   encrypt->flags |= OBJ_NO_ENCRYPT;
-
-  pdf_add_dict(trailer_dict, pdf_new_name("ID"), id);
 }
 
 static
@@ -588,14 +596,14 @@ void pdf_out_white (FILE *file)
   ERROR("typecheck: Invalid object type: %d %d (line %d)", (o) ? (o)->type : -1, (t), __LINE__);\
 }
 
-#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_INDIRECT)
+#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_UNDEFINED)
 
-pdf_obj *
+static pdf_obj *
 pdf_new_obj(int type)
 {
   pdf_obj *result;
 
-  if (type > PDF_INDIRECT || type < PDF_UNDEFINED)
+  if (type > PDF_UNDEFINED || type < 0)
     ERROR("Invalid object type: %d", type);
 
   result = NEW(1, pdf_obj);
@@ -634,7 +642,22 @@ pdf_label_obj (pdf_obj *object)
 }
 
 /*
- * This doesn't really copy the object, but allows  it to be used without
+ * Transfer the label assigned to the object src to the object dst.
+ * The object dst must not yet have been labeled.
+ */
+void
+pdf_transfer_label (pdf_obj *dst, pdf_obj *src)
+{
+  ASSERT(dst && !dst->label && src);
+
+  dst->label      = src->label;
+  dst->generation = src->generation;
+  src->label      = 0;
+  src->generation = 0;
+}
+
+/*
+ * This doesn't really copy the object, but allows it to be used without
  * fear that somebody else will free it.
  */
 pdf_obj *
@@ -664,10 +687,7 @@ pdf_ref_obj (pdf_obj *object)
   if (PDF_OBJ_INDIRECTTYPE(object)) {
     return pdf_link_obj(object);
   } else {
-    if (object->label == 0) {
-      pdf_label_obj(object);
-    }
-    return pdf_new_indirect(NULL, object->label, object->generation);
+    return pdf_new_ref(object);
   }
 }
 
@@ -686,6 +706,20 @@ write_indirect (pdf_indirect *indirect, FILE *file)
 
   length = sprintf(format_buffer, "%lu %hu R", indirect->label, indirect->generation);
   pdf_out(file, format_buffer, length);
+}
+
+/* The undefined object is used as a placeholder in pdfnames.c
+ * for objects which are referenced before they are defined.
+ */
+pdf_obj *
+pdf_new_undefined (void)
+{
+  pdf_obj *result;
+
+  result = pdf_new_obj(PDF_UNDEFINED);
+  result->data = NULL;
+
+  return result;
 }
 
 pdf_obj *
@@ -739,17 +773,6 @@ write_boolean (pdf_boolean *data, FILE *file)
   } else {
     pdf_out(file, "false", 5);
   }
-}
-
-void
-pdf_set_boolean (pdf_obj *object, char value)
-{
-  pdf_boolean *data;
-
-  TYPECHECK(object, PDF_BOOLEAN);
-
-  data = object->data;
-  data->value = value;
 }
 
 char
@@ -824,19 +847,20 @@ pdf_new_string (const void *str, unsigned length)
   pdf_obj    *result;
   pdf_string *data;
 
+  ASSERT(str);
+
   result = pdf_new_obj(PDF_STRING);
   data   = NEW(1, pdf_string);
   result->data = data;
-  if (length != 0) {
-    data->length = length;
+  data->length = length;
+
+  if (length) {
     data->string = NEW(length+1, unsigned char);
     memcpy(data->string, str, length);
     /* Shouldn't assume NULL terminated. */
     data->string[length] = '\0';
-  } else {
-    data->length = 0;
+  } else
     data->string = NULL;
-  }
 
   return result;
 }
@@ -1070,28 +1094,6 @@ release_name (pdf_name *data)
   RELEASE(data);
 }
 
-void
-pdf_set_name (pdf_obj *object, const char *name)
-{
-  pdf_name *data;
-  unsigned length;
-
-  TYPECHECK(object, PDF_NAME);
-
-  length = strlen(name);
-  data   = object->data;
-  if (data->name != NULL) {
-    RELEASE(data->name);
-  }
-  if (length != 0) {
-    data->name = NEW(length+1, char);
-    memcpy(data->name, name, length);
-    data->name[length] = 0;
-  } else {
-    data->name = NULL;
-  }
-}
-
 char *
 pdf_name_value (pdf_obj *object)
 {
@@ -1268,14 +1270,13 @@ pdf_shift_array (pdf_obj *array)
 
   return result;
 }
-#endif /* 0 */
+#endif
 
 /* Prepend an object to an array */
-void
+static void
 pdf_unshift_array (pdf_obj *array, pdf_obj *object)
 {
   pdf_array *data;
-  int        i;
 
   TYPECHECK(array, PDF_ARRAY);
 
@@ -1284,8 +1285,7 @@ pdf_unshift_array (pdf_obj *array, pdf_obj *object)
     data->max   += ARRAY_ALLOC_SIZE;
     data->values = RENEW(data->values, data->max, pdf_obj *);
   }
-  for (i = 0; i < data->size; i++)
-    data->values[i+1] = data->values[i];
+  memmove(&data->values[1], data->values, data->size * sizeof(pdf_obj *));
   data->values[0] = object;
   data->size++;
 }
@@ -1309,22 +1309,28 @@ pdf_pop_array (pdf_obj *array)
 
   return result;
 }
-#endif /* 0 */
+#endif
 
 static void
 write_dict (pdf_dict *dict, FILE *file)
 {
+#if 0
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
+#else
+  pdf_out (file, "<<", 2);
+#endif
   while (dict->key != NULL) {
     pdf_write_obj(dict->key, file);
     if (pdf_need_white(PDF_NAME, (dict->value)->type)) {
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
+#if 0
     pdf_out_char (file, '\n'); /* removing this saves few kb. */
+#endif
     dict = dict->next;
   }
-  pdf_out(file, ">>", 2);
+  pdf_out (file, ">>", 2);
 }
 
 pdf_obj *
@@ -1442,7 +1448,7 @@ pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
     data->value = value;
   }
 }
-#endif /* 0 */
+#endif
 
 /* pdf_merge_dict makes a link for each item in dict2 before stealing it */
 void
@@ -1776,7 +1782,7 @@ pdf_add_stream_flate (pdf_obj *dst, const void *data, long len)
 
   z.zalloc = Z_NULL; z.zfree = Z_NULL; z.opaque = Z_NULL;
 
-  z.next_in  = (Bytef *) data; z.avail_in  = len;
+  z.next_in  = (z_const Bytef *) data; z.avail_in  = len;
   z.next_out = (Bytef *) wbuf; z.avail_out = WBUF_SIZE;
 
   if (inflateInit(&z) != Z_OK) {
@@ -1826,7 +1832,7 @@ pdf_concat_stream (pdf_obj *dst, pdf_obj *src)
   stream_dict   = pdf_stream_dict   (src);
 
   if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
-    WARN("Streams with DecodeParams not supported.");
+    WARN("Streams with DecodeParms not supported.");
     return -1;
   }
 
@@ -1902,7 +1908,7 @@ pdf_stream_get_flags (pdf_obj *stream)
 
   return data->_flags;
 }
-#endif /* 0 */
+#endif
 
 static void
 pdf_write_obj (pdf_obj *object, FILE *file)
@@ -1912,7 +1918,7 @@ pdf_write_obj (pdf_obj *object, FILE *file)
     return;
   }
 
-  if (INVALIDOBJ(object))
+  if (INVALIDOBJ(object) || PDF_OBJ_UNDEFINED(object))
     ERROR("pdf_write_obj: Invalid object, type = %d\n", object->type);
 
   if (file == stderr)
@@ -2102,102 +2108,6 @@ pdf_release_obj (pdf_obj *object)
   }
 }
 
-/* Copy object data without changing object label. */
-void
-pdf_copy_object (pdf_obj *dst, pdf_obj *src)
-{
-  if (!dst || !src)
-    return;
-
-  switch (dst->type) {
-  case PDF_BOOLEAN:  release_boolean(dst->data);  break;
-  case PDF_NULL:     release_null(dst->data);     break;
-  case PDF_NUMBER:   release_number(dst->data);   break;
-  case PDF_STRING:   release_string(dst->data);   break;
-  case PDF_NAME:     release_name(dst->data);     break;
-  case PDF_ARRAY:    release_array(dst->data);    break;
-  case PDF_DICT:     release_dict(dst->data);     break;
-  case PDF_STREAM:   release_stream(dst->data);   break;
-  case PDF_INDIRECT: release_indirect(dst->data); break;
-  }
-
-  dst->type = src->type;
-  switch (src->type) {
-  case PDF_BOOLEAN:
-    dst->data = NEW(1, pdf_boolean);
-    pdf_set_boolean(dst, pdf_boolean_value(src));
-    break;
-  case PDF_NULL:
-    dst->data = NULL;
-    break;
-  case PDF_NUMBER:
-    dst->data = NEW(1, pdf_number);
-    pdf_set_number(dst, pdf_number_value(src));
-    break;
-  case PDF_STRING:
-    dst->data = NEW(1, pdf_string);
-    pdf_set_string(dst,
-		   pdf_string_value(src),
-		   pdf_string_length(src));
-    break;
-  case PDF_NAME:
-    dst->data = NEW(1, pdf_name);
-    pdf_set_name(dst, pdf_name_value(src));
-    break;
-  case PDF_ARRAY:
-    {
-      pdf_array *data;
-      unsigned long i;
-
-      dst->data = data = NEW(1, pdf_array);
-      data->size = 0;
-      data->max  = 0;
-      data->values = NULL;
-      for (i = 0; i < pdf_array_length(src); i++) {
-	pdf_add_array(dst, pdf_link_obj(pdf_get_array(src, i)));
-      }
-    }
-    break;
-  case PDF_DICT:
-    {
-      pdf_dict *data;
-
-      dst->data = data = NEW(1, pdf_dict);
-      data->key   = NULL;
-      data->value = NULL;
-      data->next  = NULL;
-      pdf_merge_dict(dst, src);
-    }
-    break;
-  case PDF_STREAM:
-    {
-      pdf_stream *data;
-
-      dst->data = data = NEW(1, pdf_stream);
-      data->dict = pdf_new_dict();
-      data->_flags = ((pdf_stream *)src->data)->_flags;
-      data->stream_length = 0;
-      data->max_length    = 0;
-
-      pdf_add_stream(dst, pdf_stream_dataptr(src), pdf_stream_length(src));
-      pdf_merge_dict(data->dict, pdf_stream_dict(src));
-    }
-    break;
-  case PDF_INDIRECT:
-    {
-      pdf_indirect *data;
-
-      dst->data = data = NEW(1, pdf_indirect);
-      data->pf     = ((pdf_indirect *) (src->data))->pf;
-      data->label  = ((pdf_indirect *) (src->data))->label;
-      data->generation = ((pdf_indirect *) (src->data))->generation;
-    }
-    break;
-  }
-
-  return;
-}
-
 static int
 backup_line (FILE *pdf_input_file)
 {
@@ -2328,6 +2238,7 @@ pdf_new_indirect (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 
   indirect = NEW(1, pdf_indirect);
   indirect->pf         = pf;
+  indirect->obj        = NULL;
   indirect->label      = obj_num;
   indirect->generation = obj_gen;
 
@@ -2562,26 +2473,52 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 }
 
 #define OBJ_FILE(o) (((pdf_indirect *)((o)->data))->pf)
+#define OBJ_OBJ(o)  (((pdf_indirect *)((o)->data))->obj)
 #define OBJ_NUM(o)  (((pdf_indirect *)((o)->data))->label)
 #define OBJ_GEN(o)  (((pdf_indirect *)((o)->data))->generation)
+
+static pdf_obj *
+pdf_new_ref (pdf_obj *object)
+{
+  pdf_obj *result;
+
+  if (object->label == 0) {
+    pdf_label_obj(object);
+  }
+  result = pdf_new_indirect(NULL, object->label, object->generation);
+  OBJ_OBJ(result) = object;
+  return result;
+}
 
 /* pdf_deref_obj always returns a link instead of the original   */
 /* It never return the null object, but the NULL pointer instead */
 pdf_obj *
 pdf_deref_obj (pdf_obj *obj)
 {
+  int count = PDF_OBJ_MAX_DEPTH;
+
   if (obj)
     obj = pdf_link_obj(obj);
 
-  while (PDF_OBJ_INDIRECTTYPE(obj)) {
+  while (PDF_OBJ_INDIRECTTYPE(obj) && --count) {
     pdf_file *pf = OBJ_FILE(obj);
-    unsigned long  obj_num = OBJ_NUM(obj);
-    unsigned short obj_gen = OBJ_GEN(obj);
-    if (!pf)
-      ERROR("Tried to deref a non-file object");
-    pdf_release_obj(obj);
-    obj = pdf_get_object(pf, obj_num, obj_gen);    
+    if (pf) {
+      unsigned long  obj_num = OBJ_NUM(obj);
+      unsigned short obj_gen = OBJ_GEN(obj);
+      pdf_release_obj(obj);
+      obj = pdf_get_object(pf, obj_num, obj_gen);
+    } else {
+      pdf_obj *next_obj = OBJ_OBJ(obj);
+      if (!next_obj) {
+        ERROR("Undefined object reference"); 
+      }
+      pdf_release_obj(obj);
+      obj = pdf_link_obj(next_obj);
+    }
   }
+
+  if (!count)
+    ERROR("Loop in object hierarchy detected. Broken PDF file?");
 
   if (PDF_OBJ_NULLTYPE(obj)) {
     pdf_release_obj(obj);
@@ -2740,7 +2677,7 @@ parse_xrefstm_subsec (pdf_file *pf,
 static int
 parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 {
-  pdf_obj *xrefstm, *size_obj, *W_obj, *index;
+  pdf_obj *xrefstm, *size_obj, *W_obj, *index_obj;
   unsigned long size;
   long length;
   int W[3], i, wsum = 0;
@@ -2780,17 +2717,17 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
 
   p = pdf_stream_dataptr(xrefstm);
 
-  index = pdf_lookup_dict(*trailer, "Index");
-  if (index) {
+  index_obj = pdf_lookup_dict(*trailer, "Index");
+  if (index_obj) {
     unsigned int index_len;
-    if (!PDF_OBJ_ARRAYTYPE(index) ||
-	((index_len = pdf_array_length(index)) % 2 ))
+    if (!PDF_OBJ_ARRAYTYPE(index_obj) ||
+	((index_len = pdf_array_length(index_obj)) % 2 ))
       goto error;
 
     i = 0;
     while (i < index_len) {
-      pdf_obj *first = pdf_get_array(index, i++);
-      size_obj  = pdf_get_array(index, i++);
+      pdf_obj *first = pdf_get_array(index_obj, i++);
+      size_obj  = pdf_get_array(index_obj, i++);
       if (!PDF_OBJ_NUMBERTYPE(first) ||
 	  !PDF_OBJ_NUMBERTYPE(size_obj) ||
 	  parse_xrefstm_subsec(pf, &p, &length, W, wsum,
@@ -2904,6 +2841,7 @@ pdf_file_new (FILE *file)
   pf->file    = file;
   pf->trailer = NULL;
   pf->xref_table = NULL;
+  pf->catalog = NULL;
   pf->num_obj = 0;
   pf->version = 0;
 
@@ -2929,8 +2867,11 @@ pdf_file_free (pdf_file *pf)
       pdf_release_obj(pf->xref_table[i].indirect);
   }
 
-  RELEASE(pf->xref_table);  
-  pdf_release_obj(pf->trailer);
+  RELEASE(pf->xref_table);
+  if (pf->trailer)
+    pdf_release_obj(pf->trailer);
+  if (pf->catalog)
+    pdf_release_obj(pf->catalog);
 
   RELEASE(pf);  
 }
@@ -2942,6 +2883,13 @@ pdf_files_init (void)
   ht_init_table(pdf_files, (void (*)(void *)) pdf_file_free);
 }
 
+int
+pdf_file_get_version (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->version;
+}
+
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {
@@ -2949,8 +2897,15 @@ pdf_file_get_trailer (pdf_file *pf)
   return pdf_link_obj(pf->trailer);
 }
 
+pdf_obj *
+pdf_file_get_catalog (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->catalog;
+}
+
 pdf_file *
-pdf_open (char *ident, FILE *file)
+pdf_open (const char *ident, FILE *file)
 {
   pdf_file *pf = NULL;
 
@@ -2962,18 +2917,46 @@ pdf_open (char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
-    int version = check_for_pdf(file);
-    if (!version) {
-      WARN("pdf_open: Not a PDF 1.[1-5] file.");
+    pdf_obj *new_version;
+    int version = check_for_pdf_version(file);
+
+    if (version < 1 || version > pdf_version) {
+      WARN("pdf_open: Not a PDF 1.[1-%u] file.", pdf_version);
       return NULL;
     }
 
     pf = pdf_file_new(file);
     pf->version = version;
 
-    if (!(pf->trailer = read_xref(pf))) {
-      pdf_file_free(pf);
-      return NULL;
+    if (!(pf->trailer = read_xref(pf)))
+      goto error;
+
+    if (pdf_lookup_dict(pf->trailer, "Encrypt")) {
+      WARN("PDF document is encrypted.");
+      goto error;
+    }
+
+    pf->catalog = pdf_deref_obj(pdf_lookup_dict(pf->trailer, "Root"));
+    if (!PDF_OBJ_DICTTYPE(pf->catalog)) {
+      WARN("Cannot read PDF document catalog. Broken PDF file?");
+      goto error;
+    }
+
+    new_version = pdf_deref_obj(pdf_lookup_dict(pf->catalog, "Version"));
+    if (new_version) {
+      unsigned int minor;
+
+      if (!PDF_OBJ_NAMETYPE(new_version) ||
+	  sscanf(pdf_name_value(new_version), "1.%u", &minor) != 1) {
+	pdf_release_obj(new_version);
+	WARN("Illegal Version entry in document catalog. Broken PDF file?");
+	goto error;
+      }
+
+      if (pf->version < minor)
+	pf->version = minor;
+
+      pdf_release_obj(new_version);
     }
 
     if (ident)
@@ -2981,6 +2964,10 @@ pdf_open (char *ident, FILE *file)
   }
 
   return pf;
+
+ error:
+  pdf_file_free(pf);
+  return NULL;
 }
 
 void
@@ -2998,24 +2985,31 @@ pdf_files_close (void)
   RELEASE(pdf_files);
 }
 
+static int
+check_for_pdf_version (FILE *file) 
+{
+  unsigned int minor;
+
+  rewind(file);
+
+  return (ungetc(fgetc(file), file) == '%' &&
+	  fscanf(file, "%%PDF-1.%u", &minor) == 1) ? minor : -1;
+}
+
 int
 check_for_pdf (FILE *file) 
 {
-  int result = 0;
+  int version = check_for_pdf_version(file);
 
-  rewind(file);
-  if (fread(work_buffer, sizeof(char), strlen("%PDF-1.x"), file) ==
-      strlen("%PDF-1.x") &&
-      !strncmp(work_buffer, "%PDF-1.", strlen("%PDF-1."))) {
-    if (work_buffer[7] >= '0' && work_buffer[7] <= '0' + pdf_version)
-      result = 1;
-    else {
-      WARN("Version of PDF file (1.%c) is newer than version limit specification.",
-	   work_buffer[7]);
-    }
-  }
+  if (version < 0)  /* not a PDF file */
+    return 0;
 
-  return result;
+  if (version <= pdf_version)
+    return 1;
+
+  WARN("Version of PDF file (1.%d) is newer than version limit specification.",
+       pdf_version);
+  return 0;
 }
 
 static int CDECL
@@ -3035,6 +3029,8 @@ import_dict (pdf_obj *key, pdf_obj *value, void *pdata)
   return 0;
 }
 
+static pdf_obj loop_marker = { PDF_OBJ_INVALID, 0, 0, 0, 0, NULL };
+
 static pdf_obj *
 pdf_import_indirect (pdf_obj *object)
 {
@@ -3052,6 +3048,8 @@ pdf_import_indirect (pdf_obj *object)
   }
 
   if ((ref = pf->xref_table[obj_num].indirect)) {
+    if (ref == &loop_marker)
+      ERROR("Loop in object hierarchy detected. Broken PDF file?");
     return  pdf_link_obj(ref);
   } else {
     pdf_obj *obj, *tmp;
@@ -3061,6 +3059,9 @@ pdf_import_indirect (pdf_obj *object)
       WARN("Could not read object: %lu %u", obj_num, obj_gen);
       return NULL;
     }
+
+    /* We mark the reference to be able to detect loops */
+    pf->xref_table[obj_num].indirect = &loop_marker;
 
     tmp = pdf_import_object(obj);
     
@@ -3146,25 +3147,17 @@ pdf_import_object (pdf_obj *object)
 }
 
 
+/* returns 0 if indirect references point to the same object */
 int
 pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2)
 {
   pdf_indirect *data1, *data2;
 
-  if (!PDF_OBJ_INDIRECTTYPE(ref1) ||
-      !PDF_OBJ_INDIRECTTYPE(ref2)) {
-    ERROR("Not indirect reference...");
-  }
+  ASSERT(PDF_OBJ_INDIRECTTYPE(ref1) && PDF_OBJ_INDIRECTTYPE(ref2));
 
   data1 = (pdf_indirect *) ref1->data;
   data2 = (pdf_indirect *) ref2->data;
 
-  if (data1->pf != data2->pf)
-    return (int) (data1->pf - data2->pf);
-  if (data1->label != data2->label)
-    return (int) (data1->label - data2->label);
-  if (data1->generation != data2->generation)
-    return (int) (data1->generation - data2->generation);
-
-  return 0;
+  return data1->pf != data2->pf || data1->label != data2->label
+    || data1->generation != data2->generation;
 }

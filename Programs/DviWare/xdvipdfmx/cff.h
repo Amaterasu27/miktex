@@ -1,8 +1,6 @@
-/*  
-    
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +24,9 @@
 #include "mfileio.h"
 #include "cff_types.h"
 
+#ifdef XETEX
 #include "sfnt.h"
+#endif
 
 /* Flag */
 #define FONTTYPE_CIDFONT  (1 << 0)
@@ -77,19 +77,32 @@ typedef struct
 
 #ifdef XETEX
   unsigned short *ft_to_gid;
+  sfnt         *sfont;
+#else
+  FILE         *stream;
 #endif
 
-  sfnt         *sfont;
   int           filter;   /* not used, ASCII Hex filter if needed */
 
   int           index;    /* CFF fontset index */
   int           flag;     /* Flag: see above */
 } cff_font;
 
+#ifdef XETEX
 extern cff_font *cff_open  (sfnt *sfont, long offset, int idx);
-extern void      cff_close (cff_font *cff);
-
 #define cff_seek_set(c, p) sfnt_seek_set (((c)->sfont), ((c)->offset) + (p));
+#define cff_read_data(d, l, c)   sfnt_read(d, l, (c)->sfont)
+#define cff_tell(c) (c)->sfont->loc
+#define cff_seek(c, p) sfnt_seek_set((c)->sfont, p)
+#else
+extern cff_font *cff_open  (FILE *file, long offset, int idx);
+#define cff_seek_set(c, p) seek_absolute (((c)->stream), ((c)->offset) + (p));
+#define cff_read_data(d, l, c)   fread(d, 1, l, (c)->stream)
+#define cff_tell(c) ftell((c)->stream)
+#define cff_seek(c, p) seek_absolute((c)->stream, p)
+#endif
+
+extern void      cff_close (cff_font *cff);
 
 /* CFF Header */
 extern long cff_put_header (cff_font *cff, card8 *dest, long destlen);

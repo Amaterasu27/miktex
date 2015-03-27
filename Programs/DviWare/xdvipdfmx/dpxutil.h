@@ -1,8 +1,6 @@
-/*  
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-
-    Copyright (C) 2002-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -77,6 +75,7 @@ struct ht_table {
 extern void  ht_init_table   (struct ht_table *ht,
                               hval_free_func hval_free_fn);
 extern void  ht_clear_table  (struct ht_table *ht);
+extern long  ht_table_size   (struct ht_table *ht);
 extern void *ht_lookup_table (struct ht_table *ht,
                               const void *key, int keylen);
 extern void  ht_append_table (struct ht_table *ht,

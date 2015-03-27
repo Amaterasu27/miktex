@@ -1,117 +1,167 @@
-/* Define if you have Mac OS X ApplicationServices */
-#cmakedefine HAVE_APP_SERVICES
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#cmakedefine AC_APPLE_UNIVERSAL_BUILD
+
+/* Define to 1 if the `closedir' function returns void instead of `int'. */
+#cmakedefine CLOSEDIR_VOID 1
+
+/* Define to 1 if you have the <assert.h> header file. */
+#cmakedefine HAVE_ASSERT_H 1
 
 /* Define to 1 if you have the `basename' function. */
-#cmakedefine HAVE_BASENAME
+#cmakedefine HAVE_BASENAME 1
 
 /* Define to 1 if you have the `close' function. */
-#cmakedefine HAVE_CLOSE
+#cmakedefine HAVE_CLOSE 1
 
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
-#cmakedefine HAVE_DECL_TZNAME
+#cmakedefine HAVE_DECL_TZNAME 1
+
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
+#cmakedefine HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#cmakedefine HAVE_DLFCN_H
+#cmakedefine HAVE_DLFCN_H 1
 
-/* Define if you have freetype2 and its headers */
-#cmakedefine HAVE_FREETYPE2
+/* Define to 1 if you have the <float.h> header file. */
+#cmakedefine HAVE_FLOAT_H 1
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-#cmakedefine HAVE_FSEEKO
+#cmakedefine HAVE_FSEEKO 1
 
-/* Define to 1 if you have the <ft2build.h> header file. */
-#cmakedefine HAVE_FT2BUILD_H
+/* Define to 1 if you have the `getcwd' function. */
+#cmakedefine HAVE_GETCWD 1
 
 /* Define to 1 if you have the `getenv' function. */
-#cmakedefine HAVE_GETENV
+#cmakedefine HAVE_GETENV 1
+
+/* Define to 1 if you have the `getwd' function. */
+#cmakedefine HAVE_GETWD 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#cmakedefine HAVE_INTTYPES_H
+#cmakedefine HAVE_INTTYPES_H 1
 
-/* Define if you have libfontconfig */
-#cmakedefine HAVE_LIBFONTCONFIG
+/* Define if you have libpaper. */
+#cmakedefine HAVE_LIBPAPER 1
 
-/* Define to 1 if you have the `freetype' library (-lfreetype). */
-#cmakedefine HAVE_LIBFREETYPE
-
-/* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
-#cmakedefine HAVE_LIBKPATHSEA
-
-/* Define if you have libpaper */
-#cmakedefine HAVE_LIBPAPER
-
-/* Define if you have libpng */
+/* Define if you have libpng and its headers. */
 #cmakedefine HAVE_LIBPNG 1
 
-/* Define to 1 if you have the `z' library (-lz). */
-#cmakedefine HAVE_LIBZ
+/* Define to 1 if you have the <limits.h> header file. */
+#cmakedefine HAVE_LIMITS_H 1
+
+/* Define to 1 if you have the `memcmp' function. */
+#cmakedefine HAVE_MEMCMP 1
+
+/* Define to 1 if you have the `memcpy' function. */
+#cmakedefine HAVE_MEMCPY 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H
+#cmakedefine HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `mkstemp' function. */
-#cmakedefine HAVE_MKSTEMP
+#cmakedefine HAVE_MKSTEMP 1
+
+/* Define to 1 if you have the `mktemp' function. */
+#cmakedefine HAVE_MKTEMP 1
+
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+#cmakedefine HAVE_NDIR_H 1
 
 /* Define to 1 if you have the `open' function. */
-#cmakedefine HAVE_OPEN
+#cmakedefine HAVE_OPEN 1
+
+/* Define to 1 if you have the `putenv' function. */
+#cmakedefine HAVE_PUTENV 1
+
+/* Define to 1 if you have the <pwd.h> header file. */
+#cmakedefine HAVE_PWD_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDINT_H
+#cmakedefine HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine HAVE_STDLIB_H
+#cmakedefine HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the `strcasecmp' function. */
+#cmakedefine HAVE_STRCASECMP 1
+
+/* Define to 1 if you have the `strchr' function. */
+#cmakedefine HAVE_STRCHR 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H
+#cmakedefine HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H
+#cmakedefine HAVE_STRING_H 1
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
-#cmakedefine HAVE_STRUCT_TM_TM_ZONE
+/* Define to 1 if you have the `strrchr' function. */
+#cmakedefine HAVE_STRRCHR 1
 
-/* Define to 1 if you have the `system' function. */
-#cmakedefine HAVE_SYSTEM
+/* Define to 1 if you have the `strstr' function. */
+#cmakedefine HAVE_STRSTR 1
+
+/* Define to 1 if you have the `strtol' function. */
+#cmakedefine HAVE_STRTOL 1
+
+/* Define to 1 if `st_mtim' is a member of `struct stat'. */
+#cmakedefine HAVE_STRUCT_STAT_ST_MTIM 1
+
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
+#cmakedefine HAVE_STRUCT_TM_TM_ZONE 1
+
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
+#cmakedefine HAVE_SYS_DIR_H 1
+
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
+#cmakedefine HAVE_SYS_NDIR_H 1
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
-#cmakedefine HAVE_SYS_STAT_H
+#cmakedefine HAVE_SYS_STAT_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#cmakedefine HAVE_SYS_TYPES_H
+#cmakedefine HAVE_SYS_TYPES_H 1
 
-/* external timezone variable */
-#cmakedefine HAVE_TIMEZONE
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#cmakedefine HAVE_SYS_WAIT_H 1
 
+/* Define if <time.h> has timezone as an external variable. */
+#cmakedefine HAVE_TIMEZONE 1
 
-/* struct tz has tm_gmtoff */
-#cmakedefine HAVE_TM_GMTOFF
+/* Define if struct tm has tm_gmtoff as a member. */
+#cmakedefine HAVE_TM_GMTOFF 1
 
 /* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
    `HAVE_STRUCT_TM_TM_ZONE' instead. */
-#cmakedefine HAVE_TM_ZONE
+#cmakedefine HAVE_TM_ZONE 1
 
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */
-#cmakedefine HAVE_TZNAME
+#cmakedefine HAVE_TZNAME 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_UNISTD_H 1
 
-/* Define if you have zlib and its headers */
+/* Define if you have zlib and its headers. */
 #cmakedefine HAVE_ZLIB 1
 
-/* Define if your zlib has the compress2 function */
-#cmakedefine HAVE_ZLIB_COMPRESS2
+/* Define if your zlib has the compress2 function. */
+#cmakedefine HAVE_ZLIB_COMPRESS2 1
 
-/* Define to 1 if you have the <zlib.h> header file. */
-#cmakedefine HAVE_ZLIB_H
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#cmakedefine NO_MINUS_C_MINUS_O
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#cmakedefine LT_OBJDIR
 
 /* Name of package */
-#define PACKAGE "xdvipdfmx"
+#cmakedefine PACKAGE "dvipdfm-x"
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT
@@ -124,6 +174,9 @@
 
 /* Define to the one symbol short name of this package. */
 #cmakedefine PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#cmakedefine PACKAGE_URL
 
 /* Define to the version of this package. */
 #cmakedefine PACKAGE_VERSION
@@ -147,18 +200,28 @@
 #cmakedefine TM_IN_SYS_TIME
 
 /* Version number of package */
-#include "xdvipdfmx-version.h"
+#include "dvipdfmx-version.h"
 #define VERSION MIKTEX_COMP_ORIG_VERSION_STR
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
 #cmakedefine WORDS_BIGENDIAN
+# endif
+#endif
 
-/* Define if part of a teTeX/TeX live build. */
-#define XETEX 1
+/* Define to 1 if <zlib.h> declares 'z_const'. */
+#cmakedefine ZLIB_CONST
 
-/* Define if part of a teTeX/TeX live build for Mac OS X. */
-#cmakedefine XETEX_MAC
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE
+#endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 #cmakedefine _FILE_OFFSET_BITS
@@ -169,8 +232,15 @@
 /* Define for large files, on AIX-style hosts. */
 #cmakedefine _LARGE_FILES
 
-/* Define if your libkpathsea supports enc formats */
-#define __TDS_VERSION__ 0x200406
+/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#cmakedefine _UINT32_T
+
+/* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#cmakedefine _UINT64_T
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const
@@ -181,9 +251,24 @@
 #cmakedefine inline
 #endif
 
+/* Define to the type of a signed integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#cmakedefine int64_t
+
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #cmakedefine size_t
 
+/* Define to the type of an unsigned integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#cmakedefine uint32_t
+
+/* Define to the type of an unsigned integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#cmakedefine uint64_t
+
+/* Define as empty if not declared in <zlib.h>. */
+#cmakedefine z_const
+
 #if defined(MIKTEX)
-#  define USE_MIKTEX_EXIT 1
+#  define USE_MIKTEX_EXIT
 #endif

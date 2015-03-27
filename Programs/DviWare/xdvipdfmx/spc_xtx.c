@@ -1,15 +1,15 @@
-/*  
-    This is xdvipdfmx, an extended version of dvipdfmx,
+/*  This is xdvipdfmx, an extended version of dvipdfmx,
     an eXtended version of dvipdfm by Mark A. Wicks.
 
+    Copyright (C) 2013-2014 by the dvipdfmx project team.
+
     Copyright (c) 2006 SIL International
-    Written by Jonathan Kew
+    Originally written by Jonathan Kew
 
     This file based on spc_pdfm.c, part of the dvipdfmx project:
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team.
-    
+    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata.    
+
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#if HAVE_CONFIG_H
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 #include <ctype.h>
@@ -58,31 +58,6 @@
 #include "spc_util.h"
 #include "spc_xtx.h"
 
-
-int
-spc_xtx_at_begin_document (void)
-{
-  return 0;
-}
-
-int
-spc_xtx_at_end_document (void)
-{
-  return 0;
-}
-
-int
-spc_xtx_at_begin_page (void)
-{
-  /*pdf_dev_set_fixed_point(0, 0);*/
-  return  0;
-}
-
-int
-spc_xtx_at_end_page (void)
-{
-  return  0;
-}
 
 int
 spc_handler_xtx_do_transform (double x_user, double y_user, double a, double b, double c, double d, double e, double f)
@@ -189,7 +164,7 @@ spc_handler_xtx_grestore (struct spc_env *spe, struct spc_arg *args)
    * starting a new page.
    */
   pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 
   return  0;
 }
@@ -226,6 +201,9 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   fontmap_rec *mrec;
   char        *map_name, opchr;
   int          error = 0;
+  static char  buffer[1024];
+  const char  *p;
+  char        *q;
 
   skip_white(&ap->curptr, ap->endptr);
   if (ap->curptr >= ap->endptr) {
@@ -250,29 +228,21 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
       error = -1;
     }
     break;
-  case  '+':
-    mrec  = NEW(1, fontmap_rec);
-    pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
-                                  is_pdfm_mapline(ap->curptr));
-    if (error)
-      spc_warn(spe, "Invalid fontmap line.");
-    else {
-      pdf_append_fontmap_record(mrec->map_name, mrec);
-    }
-    pdf_clear_fontmap_record(mrec);
-    RELEASE(mrec);
-    break;
   default:
+    p = ap->curptr;
+    q = buffer;
+    while (p < ap->endptr)
+      *q++ = *p++;
+    *q = '\0';
     mrec = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
-    error = pdf_read_fontmap_line(mrec, ap->curptr, (long) (ap->endptr - ap->curptr),
-                                  is_pdfm_mapline(ap->curptr));
+    error = pdf_read_fontmap_line(mrec, buffer, (long) (ap->endptr - ap->curptr), is_pdfm_mapline(buffer));
     if (error)
       spc_warn(spe, "Invalid fontmap line.");
-    else {
+    else if (opchr == '+')
+      pdf_append_fontmap_record(mrec->map_name, mrec);
+    else
       pdf_insert_fontmap_record(mrec->map_name, mrec);
-    }
     pdf_clear_fontmap_record(mrec);
     RELEASE(mrec);
     break;
@@ -280,7 +250,7 @@ spc_handler_xtx_fontmapline (struct spc_env *spe, struct spc_arg *ap)
   if (!error)
     ap->curptr = ap->endptr;
 
-  return  0;
+  return 0;
 }
 
 static int
