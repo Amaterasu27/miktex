@@ -1229,7 +1229,7 @@ if(BUILDING_MIKTEX)
 endif()
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_bibtex8_dir})
+  add_subdirectory(${rel_bibtexx_dir})
 endif()
 
 if(BUILDING_MIKTEX)
