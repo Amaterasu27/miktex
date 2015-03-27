@@ -2,7 +2,7 @@
 
     DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the DVIPDFMx project team.
     
     Copyright (c) 2006 SIL. (xdvipdfmx extensions for XeTeX support)
@@ -67,11 +67,11 @@
 #include <miktex/unxemu.h>
 #endif
 
+int is_xdv = 0;
+
 #ifdef XETEX
-int is_xetex = 1;
 const char *my_name = "xdvipdfmx";
 #else
-int is_xetex = 0;
 const char *my_name = "dvipdfmx";
 #endif
 
@@ -139,7 +139,7 @@ set_default_pdf_filename(void)
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
              (FILESTRCASEEQ(".dvi", dvi_base+strlen(dvi_base)-4) ||
-              (is_xetex && FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4)))) {
+              FILESTRCASEEQ(".xdv", dvi_base+strlen(dvi_base)-4))) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -154,21 +154,19 @@ set_default_pdf_filename(void)
 static void
 show_version (void)
 {
-  printf ("This is %s Version " VERSION " by %s,\n",
-                   my_name,
-                   is_xetex ? "Jonathan Kew and Jin-Hwan Cho"
-                            : "the DVIPDFMx project team");
+  printf ("This is %s Version " VERSION " by the DVIPDFMx project team,\n",
+                   my_name);
 #if defined(MIKTEX)
   printf("modified for TeX Live and MiKTeX,\n");
 #else
   printf ("modified for TeX Live,\n");
 #endif
-  if (is_xetex)
-    printf ("an extended version of DVIPDFMx, which in turn was\n");
+#ifdef XETEX
+  printf ("an extended version of DVIPDFMx, which in turn was\n");
+#endif
   printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  printf ("\nCopyright (C) 2002-2014 the DVIPDFMx project team\n");
-  if (is_xetex)
-    printf ("Copyright (C) 2006-2014 SIL International and Jin-Hwan Cho.\n");
+  printf ("\nCopyright (C) 2002-2015 the DVIPDFMx project team\n");
+  printf ("Copyright (C) 2006 SIL International.\n");
   printf ("\nThis is free software; you can redistribute it and/or modify\n");
   printf ("it under the terms of the GNU General Public License as published by\n");
   printf ("the Free Software Foundation; either version 2 of the License, or\n");
@@ -178,29 +176,31 @@ show_version (void)
 static void
 show_usage (void)
 {
-  printf ("\nUsage: %s [options] [dvifile[.dvi%s]]\n", my_name, is_xetex ? "|.xdv" : "");
-  printf ("       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
-  printf ("       %s --help|--version\n", my_name);
+  printf ("\nUsage: %s [OPTION]... [DVIFILE[.dvi|.xdv]]\n", my_name);
+  printf ("       %s --extractbb|--xbb|--ebb [OPTION]...\tBe \"extractbb\"\n",
+          my_name);
+  printf ("       %s --help|--showpaper|--version\n", my_name);
+  printf ("Convert DVI or XDV input to PDF; defaults given below.\n");
   printf ("\nOptions:\n"); 
   printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
-  if (!is_xetex)
-    printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
+  printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
   printf ("  -d number\tSet PDF decimal digits (0-5) [2]\n");
   printf ("  -f filename\tSet font map file name [pdftex.map]\n");
   printf ("  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
   printf ("  -h | --help \tShow this help message and exit\n");
   printf ("  -l \t\tLandscape mode\n");
   printf ("  -m number\tSet additional magnification [1.0]\n");
-  printf ("  -o filename\tSet output file name, \"-\" for stdout [dvifile.pdf]\n");
+  printf ("  -o filename\tSet output file name, \"-\" for stdout [DVIFILE.pdf]\n");
   printf ("  -p papersize\tSet papersize [a4]\n");
   printf ("  -q \t\tBe quiet\n");
   printf ("  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
-  printf ("  -s pages\tSelect page ranges (-)\n");
-  printf ("  -t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
+  printf ("  -s pages\tSelect page ranges [all pages]\n");
+  printf ("  --showpaper\tShow available paper formats and exit\n");
+  printf ("  -t \t\tEmbed thumbnail images of PNG format [DVIFILE.1] \n");
   printf ("  --version\tOutput version information and exit\n");
   printf ("  -v \t\tBe verbose\n");
   printf ("  -vv\t\tBe more verbose\n");
-  printf ("  --kpathsea-debug number\tSet kpathsearch debugging flags [0]\n");
+  printf ("  --kpathsea-debug number\tSet kpathsea debugging flags [0]\n");
   printf ("  -x dimension\tSet horizontal offset [1.0in]\n");
   printf ("  -y dimension\tSet vertical offset [1.0in]\n");
   printf ("  -z number  \tSet zlib compression level (0-9) [9]\n");
@@ -208,7 +208,7 @@ show_usage (void)
   printf ("  -C number\tSpecify miscellaneous option flags [0]:\n");
   printf ("\t\t  0x0001 reserved\n");
   printf ("\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  printf ("\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
+  printf ("\t\t\t instead of opaque gray color; requires PDF 1.4.\n");
   printf ("\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   printf ("\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
   printf ("\t\t  0x0010 Do not optimize PDF destinations.\n");
@@ -225,7 +225,7 @@ show_usage (void)
   printf ("  -O number\tSet maximum depth of open bookmark items [0]\n");
   printf ("  -P number\tSet permission flags for PDF encryption [0x003C]\n");
   printf ("  -S \t\tEnable PDF encryption\n");
-  printf ("  -V number\tSet PDF minor version [4]\n");
+  printf ("  -V number\tSet PDF minor version [%d]\n", PDF_VERSION_DEFAULT);
   printf ("\nAll dimensions entered on the command line are \"true\" TeX dimensions.\n");
   printf ("Argument of \"-s\" lists physical page ranges separated by commas,\n");
   printf ("\te.g., \"-s 1-3,5-6\".\n");
@@ -355,17 +355,17 @@ select_pages (const char *pagespec)
     page_ranges[num_page_ranges].first = 0;
     page_ranges[num_page_ranges].last  = 0;
 
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
     q = parse_unsigned(&p, p + strlen(p)); /* Can't be signed. */
     if (q) { /* '-' is allowed here */
       page_ranges[num_page_ranges].first = atoi(q) - 1;
       page_ranges[num_page_ranges].last  = page_ranges[num_page_ranges].first;
       RELEASE(q);
     }
-    for ( ; *p && isspace(*p); p++);
+    for ( ; *p && isspace((unsigned char)*p); p++);
 
     if (*p == '-') {
-      for (++p; *p && isspace(*p); p++);
+      for (++p; *p && isspace((unsigned char)*p); p++);
       page_ranges[num_page_ranges].last = -1;
       if (*p) {
         q = parse_unsigned(&p, p + strlen(p));
@@ -373,7 +373,7 @@ select_pages (const char *pagespec)
           page_ranges[num_page_ranges].last = atoi(q) - 1;
           RELEASE(q);
         }
-        for ( ; *p && isspace(*p); p++);
+        for ( ; *p && isspace((unsigned char)*p); p++);
       }
     } else {
       page_ranges[num_page_ranges].last = page_ranges[num_page_ranges].first;
@@ -384,7 +384,7 @@ select_pages (const char *pagespec)
     if (*p == ',')
       p++;
     else  {
-      for ( ; *p && isspace(*p); p++);
+      for ( ; *p && isspace((unsigned char)*p); p++);
       if (*p)
         ERROR("Bad page range specification: %s", p);
     }
@@ -452,14 +452,16 @@ do_args (int argc, char *argv[])
           } else if (!strcmp(flag, "version")) {
             show_version();
             exit(0);
-          } else if (!is_xetex && !strcmp(flag, "dvipdfm")) {
+          } else if (!strcmp(flag, "dvipdfm")) {
             compat_mode = 1;
             goto Out_of_For_Loop;
           } else if (!strcmp(flag, "kpathsea-debug")) {
+            int value;
             CHECK_ARG(1, "kpathsearch debugging flags");
-            kpathsea_debug = atoi(argv[1]);
-            if (kpathsea_debug < 0)
+            value = atoi(argv[1]);
+            if (value < 0)
               ERROR("Invalid kpathsearch debugging flags specified: %s", argv[1]);
+            kpathsea_debug = value;
             POP_ARG();
             goto Out_of_For_Loop;
           }
@@ -547,7 +549,7 @@ do_args (int argc, char *argv[])
       {
         int ver_minor;
 
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           ver_minor = atoi(flag);
         } else {
@@ -571,7 +573,7 @@ do_args (int argc, char *argv[])
       {
         int level;
 
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           level = atoi(flag);
         } else {
@@ -583,7 +585,7 @@ do_args (int argc, char *argv[])
       }
       break;
       case 'd':
-        if (isdigit(*(flag+1))) {
+        if (isdigit((unsigned char)*(flag+1))) {
           flag++;
           pdfdecimaldigits = atoi(flag);
         } else {
@@ -756,7 +758,7 @@ error_cleanup (void)
 static void
 do_dvi_pages (void)
 {
-  long     page_no, page_count, i, step;
+  int      page_no, page_count, i, step;
   double   page_width, page_height;
   double   init_paper_width, init_paper_height;
   pdf_rect mediabox;
@@ -821,8 +823,7 @@ do_dvi_pages (void)
           mediabox.ury = page_height;
           pdf_doc_set_mediabox(page_count+1, &mediabox);
         }
-        dvi_do_page(page_no,
-                    page_width, page_height, x_offset, y_offset);
+        dvi_do_page(page_height, x_offset, y_offset);
         page_count++;
         MESG("]");
       }
@@ -894,7 +895,19 @@ do_mps_pages (void)
   }
 }
 
-/* TODO: MetaPost mode */
+#if defined(XETEX)
+/* At present no DLL for xdvipdfmx */
+#undef DLLPROC
+#else
+/* Support to make DLL in W32TeX */
+#define DLLPROC dlldvipdfmxmain
+#endif
+#if defined(WIN32) && !defined(__MINGW32__) && !defined(MIKTEX) && defined(DLLPROC)
+extern __declspec(dllexport) int DLLPROC (int argc, char *argv[]);
+#else
+#undef DLLPROC
+#endif
+
 #if defined(MIKTEX)
 #  define main Main
 #  if !defined(XETEX)
@@ -902,8 +915,13 @@ do_mps_pages (void)
 #    define CDECL __declspec(dllexport)
 #  endif
 #endif
-int CDECL
-main (int argc, char *argv[]) 
+
+int
+#if defined(DLLPROC)
+DLLPROC (int argc, char *argv[])
+#else
+CDECL main (int argc, char *argv[])
+#endif
 {
   double dvi2pts;
   char *base;
@@ -933,7 +951,8 @@ main (int argc, char *argv[])
 
   if (argc > 1 &&
                (STREQ (argv[1], "--xbb") ||
-                (!is_xetex && STREQ (argv[1], "--dvipdfm")) ||
+                STREQ (argv[1], "--extractbb") ||
+                STREQ (argv[1], "--dvipdfm") ||
                 STREQ (argv[1], "--ebb"))) {
     argc--;
     base = argv++[1]+2;
@@ -950,17 +969,20 @@ main (int argc, char *argv[])
     return extractbb (argc, argv);
   }
 
-  /* Special-case single option --help or --version, to avoid possible
-     diagnostics about config files, etc.  */
+  /* Special-case single option --help, --showpaper, or --version, to avoid
+     possible diagnostics about config files, etc.  */
   if (argc == 2 && STREQ (argv[1], "--help")) {
     show_usage();
     exit(0);
   } else if (argc == 2 && STREQ (argv[1], "--version")) {
     show_version();
     exit(0);
+  } else if (argc == 2 && STREQ (argv[1], "--showpaper")) {
+    dumppaperinfo();
+    exit(0);
   }
 
-  if (!is_xetex && FILESTRCASEEQ (base, "dvipdfm"))
+  if (FILESTRCASEEQ (base, "dvipdfm"))
     compat_mode = 1;
   else
     free (base);

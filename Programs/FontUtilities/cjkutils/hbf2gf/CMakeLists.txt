@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,18 +29,13 @@ add_definitions(
 
 if(NATIVE_WINDOWS)
   add_definitions(-D_WIN32_WINNT=0x0500)
-endif(NATIVE_WINDOWS)
-
-set(hbf2gf_sources
-  ${CMAKE_CURRENT_BINARY_DIR}/hbf2gf.c
-  hbf2gf-version.h
-)
+endif()
 
 if(NATIVE_WINDOWS)
   set(hbf2gf_sources ${hbf2gf_sources}
     hbf2gf.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hbf2gf.c
@@ -59,13 +54,14 @@ set(hbf2gf_sources
   ${CMAKE_CURRENT_BINARY_DIR}/hbf2gf.c
   ${wrapper_cpp}
   hbf.c
+  hbf2gf-version.h
 )
 
 if(NATIVE_WINDOWS)
   set(hbf2gf_sources ${hbf2gf_sources}
     hbf2gf.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(hbf2gf ${hbf2gf_sources})
 

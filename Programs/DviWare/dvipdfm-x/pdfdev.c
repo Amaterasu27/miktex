@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -51,6 +51,8 @@
 #include "dvi.h"
 
 #include "pdfdev.h"
+
+#include "cff.h"
 
 static int verbose = 0;
 
@@ -138,51 +140,56 @@ p_itoa (long value, char *buf)
   return  (sign ? ndigits + 1 : ndigits);
 }
 
-/* ... */
+/* NOTE: Acrobat 5 and prior uses 16.16 fixed point representation for
+ * real numbers.
+ */
 static int
 p_dtoa (double value, int prec, char *buf)
 {
   const long p[10] = { 1, 10, 100, 1000, 10000,
-		       100000, 1000000, 10000000, 100000000, 1000000000 };
-  long i, f;
-  char *c = buf;
-  int n;
+		                   100000, 1000000, 10000000,
+                       100000000, 1000000000 };
+  double i, f;
+  long   g;
+  char  *c = buf;
+  int    n;
 
   if (value < 0) {
     value = -value;
     *c++ = '-';
     n = 1;
-  } else
+  } else {
     n = 0;
+  }
 
-  i = (long) value;
-  f = (long) ((value-i)*p[prec] + 0.5);
+  f = modf(value, &i);
+  g = (long) (f * p[prec] + 0.5);
 
-  if (f == p[prec]) {
-    f = 0;
-    i++;
+  if (g == p[prec]) {
+    g  = 0;
+    i += 1;
   }
 
   if (i) {
-    int m = p_itoa(i, c);
+    int m = sprintf(c, "%.0f", i);
     c += m;
     n += m;
-  } else if (!f) {
+  } else if (g == 0) {
     *(c = buf) = '0';
     n = 1;
   }
 
-  if (f) {
+  if (g) {
     int j = prec;
 
     *c++ = '.';
 
     while (j--) {
-      c[j] = (f % 10) + '0';
-      f /= 10;
+      c[j] = (g % 10) + '0';
+      g /= 10;
     }
-    c += prec-1;
-    n += 1+prec;
+    c += prec - 1;
+    n += 1 + prec;
 
     while (*c == '0') {
       c--;
@@ -455,9 +462,6 @@ struct dev_font {
    */
   int      font_id;
   int      enc_id;
-#ifdef XETEX
-  unsigned short *ft_to_gid;
-#endif
 
   /* if >= 0, index of a dev_font that really has the resource and used_chars */
   int      real_font_index;
@@ -496,6 +500,8 @@ struct dev_font {
   int      ucs_plane;
 
   int      is_unicode;
+
+  cff_charsets *cff_charsets;
 };
 static struct dev_font *dev_fonts = NULL;
 
@@ -957,28 +963,26 @@ handle_multibyte_string (struct dev_font *font,
   p      = *str_ptr;
   length = *str_len;
 
-#ifdef XETEX
-  if (ctype == -1) { /* freetype glyph indexes */
-    if (font->ft_to_gid) {
-      /* convert freetype glyph indexes to physical GID */
-      const unsigned char *inbuf = p;
-      unsigned char *outbuf = sbuf0;
-      for (i = 0; i < length; i += 2) {
-        unsigned int gid;
-        gid = *inbuf++ << 8;
-        gid += *inbuf++;
-        gid = font->ft_to_gid[gid];
-        *outbuf++ = gid >> 8;
-        *outbuf++ = gid & 0xff;
-      }
-      p = sbuf0;
-      length = outbuf - sbuf0;
+  if (ctype == -1 && font->cff_charsets) { /* freetype glyph indexes */
+    /* Convert freetype glyph indexes to CID. */
+    const unsigned char *inbuf = p;
+    unsigned char *outbuf = sbuf0;
+    for (i = 0; i < length; i += 2) {
+      unsigned int gid;
+      gid = *inbuf++ << 8;
+      gid += *inbuf++;
+
+      gid = cff_charsets_lookup_cid(font->cff_charsets, gid);
+
+      *outbuf++ = gid >> 8;
+      *outbuf++ = gid & 0xff;
     }
+
+    p = sbuf0;
+    length = outbuf - sbuf0;
   }
-  else
-#endif
   /* _FIXME_ */
-  if (font->is_unicode) { /* UCS-4 */
+  else if (font->is_unicode) { /* UCS-4 */
     if (ctype == 1) {
       if (length * 4 >= FORMAT_BUF_SIZE) {
         WARN("Too long string...");
@@ -1161,9 +1165,10 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
       return;
     }
     if (real_font->used_chars != NULL) {
-      for (i = 0; i < length; i += 2)
-        add_to_used_chars2(real_font->used_chars,
-                           (unsigned short) (str_ptr[i] << 8)|str_ptr[i+1]);
+      for (i = 0; i < length; i += 2) {
+        unsigned short cid = (str_ptr[i] << 8) | str_ptr[i + 1];
+        add_to_used_chars2(real_font->used_chars, cid);
+      }
     }
   } else {
     if (real_font->used_chars != NULL) {
@@ -1316,6 +1321,7 @@ pdf_close_device (void)
         pdf_release_obj(dev_fonts[i].resource);
       dev_fonts[i].tex_name = NULL;
       dev_fonts[i].resource = NULL;
+      dev_fonts[i].cff_charsets = NULL;
     }
     RELEASE(dev_fonts);
   }
@@ -1329,7 +1335,7 @@ pdf_close_device (void)
  * as the font stuff.
  */
 void
-pdf_dev_reset_fonts (void)
+pdf_dev_reset_fonts (int newpage)
 {
   int  i;
 
@@ -1343,7 +1349,8 @@ pdf_dev_reset_fonts (void)
   text_state.matrix.extend = 1.0;
   text_state.matrix.rotate = TEXT_WMODE_HH;
 
-  text_state.bold_param    = 0.0;
+  if (newpage)
+    text_state.bold_param  = 0.0;
 
   text_state.is_mb         = 0;
 }
@@ -1385,7 +1392,7 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_gsave();
   pdf_dev_concat(M);
 
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(0);
 }
 
@@ -1497,6 +1504,9 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   if (font->font_id < 0)
     return  -1;
 
+  if (mrec)
+    font->cff_charsets = mrec->opt.cff_charsets;
+
   /* We found device font here. */
   if (i < num_dev_fonts) {
     font->real_font_index = i;
@@ -1529,9 +1539,6 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
 
   font->wmode      = pdf_get_font_wmode   (font->font_id);
   font->enc_id     = pdf_get_font_encoding(font->font_id);
-#ifdef XETEX
-  font->ft_to_gid  = pdf_get_font_ft_to_gid(font->font_id);
-#endif
 
   font->resource   = NULL; /* Don't ref obj until font is actually used. */  
   font->used_chars = NULL;

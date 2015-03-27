@@ -86,9 +86,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#cmakedefine HAVE_STRCASECMP 1
-
 /* Define to 1 if you have the `strchr' function. */
 #cmakedefine HAVE_STRCHR 1
 
@@ -100,12 +97,6 @@
 
 /* Define to 1 if you have the `strrchr' function. */
 #cmakedefine HAVE_STRRCHR 1
-
-/* Define to 1 if you have the `strstr' function. */
-#cmakedefine HAVE_STRSTR 1
-
-/* Define to 1 if you have the `strtol' function. */
-#cmakedefine HAVE_STRTOL 1
 
 /* Define to 1 if `st_mtim' is a member of `struct stat'. */
 #cmakedefine HAVE_STRUCT_STAT_ST_MTIM 1
@@ -156,8 +147,7 @@
 /* Define if your zlib has the compress2 function. */
 #cmakedefine HAVE_ZLIB_COMPRESS2 1
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #cmakedefine LT_OBJDIR
 
 /* Name of package */
@@ -200,23 +190,23 @@
 #cmakedefine TM_IN_SYS_TIME
 
 /* Version number of package */
-#include "dvipdfmx-version.h"
+#include "dvipdfm-x-version.h"
 #define VERSION MIKTEX_COMP_ORIG_VERSION_STR
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
 #if defined AC_APPLE_UNIVERSAL_BUILD
 # if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN
+#  define WORDS_BIGENDIAN 1
 # endif
 #else
 # ifndef WORDS_BIGENDIAN
-#cmakedefine WORDS_BIGENDIAN
+#cmakedefine WORDS_BIGENDIAN 1
 # endif
 #endif
 
 /* Define to 1 if <zlib.h> declares 'z_const'. */
-#cmakedefine ZLIB_CONST
+#cmakedefine ZLIB_CONST 1
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE
@@ -227,7 +217,7 @@
 #cmakedefine _FILE_OFFSET_BITS
 
 /* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
-#cmakedefine _LARGEFILE_SOURCE
+#cmakedefine _LARGEFILE_SOURCE 1
 
 /* Define for large files, on AIX-style hosts. */
 #cmakedefine _LARGE_FILES
@@ -250,6 +240,10 @@
 #ifndef __cplusplus
 #cmakedefine inline
 #endif
+
+/* Define to the type of a signed integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#cmakedefine int32_t
 
 /* Define to the type of a signed integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */

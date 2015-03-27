@@ -1,6 +1,6 @@
 /* This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2003-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2003-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -265,14 +265,14 @@ void MD5_final (unsigned char *outbuf, MD5_CONTEXT *hd)
     memset(hd->buf, 0, 56); /* fill next block with zeroes */
   }
   /* append the 64 bit count */
-  hd->buf[56] = lsb;
-  hd->buf[57] = lsb >> 8;
-  hd->buf[58] = lsb >> 16;
-  hd->buf[59] = lsb >> 24;
-  hd->buf[60] = msb;
-  hd->buf[61] = msb >> 8;
-  hd->buf[62] = msb >> 16;
-  hd->buf[63] = msb >> 24;
+  hd->buf[56] = lsb & 0xff;
+  hd->buf[57] = (lsb >> 8) & 0xff;
+  hd->buf[58] = (lsb >> 16) & 0xff;
+  hd->buf[59] = (lsb >> 24) & 0xff;
+  hd->buf[60] = msb & 0xff;
+  hd->buf[61] = (msb >> 8) & 0xff;
+  hd->buf[62] = (msb >> 16) & 0xff;
+  hd->buf[63] = (msb >> 24) & 0xff;
   transform(hd, hd->buf);
   _gcry_burn_stack(80+6*sizeof(void*));
 

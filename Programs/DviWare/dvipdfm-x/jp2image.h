@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Matthias Franz,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -20,20 +20,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-	
-#ifndef _PNGIMAGE_H_
-#define _PNGIMAGE_H_
-
-#ifdef HAVE_LIBPNG
+#ifndef _JP2IMAGE_H_
+#define _JP2IMAGE_H_
 
 #include "mfileio.h"
 #include "pdfximage.h"
 
-extern int png_include_image (pdf_ximage *ximage, FILE *file);
-extern int check_for_png     (FILE *file);
-extern int png_get_bbox (FILE *fp, uint32_t *width, uint32_t *height,
-			 double *xdensity, double *ydensity);
+extern int check_for_jp2     (FILE *fp);
+extern int jp2_include_image (pdf_ximage *ximage, FILE *fp);
+extern int jp2_get_bbox (FILE *fp, int *width, int *height,
+			double *xdensity, double *ydensity);
 
-#endif
+#endif /* _JP2IMAGE_H_ */
 
-#endif /* _PNGIMAGE_H_ */
+

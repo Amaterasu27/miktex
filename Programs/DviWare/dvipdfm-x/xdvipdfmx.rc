@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#include "dvipdfmx-version.h"
+#include "dvipdfm-x-version.h"
 
 #define VER_FILEDESCRIPTION_STR "DVI-to-PDF Converter"
 #define VER_INTERNALNAME_STR "xdvipdfmx"

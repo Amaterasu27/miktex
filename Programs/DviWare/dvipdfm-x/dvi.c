@@ -2,6 +2,8 @@
 
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
+
+    Copyright (C) 2012-2015 by Khaled Hosny <khaledhosny@eglug.org>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
@@ -63,8 +65,10 @@
 #include "dvipdfmx.h"
 
 #ifdef XETEX
+#include "dpxfile.h"
 #include "pdfximage.h"
-#include FT_ADVANCES_H
+#include "tt_aux.h"
+#include "tt_table.h"
 #endif
 
 #define DVI_STACK_DEPTH_MAX  256u
@@ -79,18 +83,18 @@
 static FILE          *dvi_file  = NULL;
 static char           linear = 0; /* set to 1 for strict linear processing of the input */
 
-static unsigned long *page_loc  = NULL;
-static unsigned long  num_pages = 0;
+static int32_t *page_loc  = NULL;
+static unsigned int num_pages = 0;
 
-static unsigned long  dvi_file_size = 0;
+static uint32_t dvi_file_size = 0;
 
 static struct dvi_header
 {
-  UNSIGNED_QUAD unit_num;
-  UNSIGNED_QUAD unit_den;
-  UNSIGNED_QUAD mag;
-  UNSIGNED_QUAD media_width, media_height;
-  UNSIGNED_PAIR stackdepth;
+  uint32_t unit_num;
+  uint32_t unit_den;
+  uint32_t mag;
+  uint32_t media_width, media_height;
+  unsigned int stackdepth;
   char  comment[257];  
 } dvi_info = {
   25400000 , /* num */
@@ -107,6 +111,23 @@ double get_origin (int x)
 {
   return x ? dev_origin_x : dev_origin_y;
 }
+
+#define LTYPESETTING	0 /* typesetting from left to right */
+#define RTYPESETTING	1 /* typesetting from right to left */
+#define SKIMMING	2 /* skimming through reflected segment measuring its width */
+#define REVERSE(MODE)	(LTYPESETTING + RTYPESETTING - MODE)
+
+struct dvi_lr
+{
+  int state, font;
+  unsigned int buf_index;
+};
+
+static struct dvi_lr lr_state;                            /* state at start of current skimming  */
+static int           lr_mode;                             /* current direction or skimming depth */
+static uint32_t      lr_width;                            /* total width of reflected segment    */
+static uint32_t      lr_width_stack[DVI_STACK_DEPTH_MAX];
+static unsigned      lr_width_stack_depth = 0;
 
 #define PHYSICAL 1
 #define VIRTUAL  2
@@ -126,8 +147,12 @@ static struct loaded_font
   spt_t size;
   int   source;     /* Source is either DVI or VF */
 #ifdef XETEX
-  unsigned long rgba_color;
-  FT_Face ft_face;
+  uint32_t rgba_color;
+  struct tt_longMetrics *hvmt;
+  int   ascent;
+  int   descent;
+  unsigned unitsPerEm;
+  unsigned numGlyphs;
   int   layout_dir;
   float extend;
   float slant;
@@ -147,7 +172,7 @@ need_more_fonts (unsigned n)
 
 static struct font_def
 {
-  long   tex_id;
+  int32_t tex_id;
   spt_t  point_size;
   spt_t  design_size;
   char  *font_name;
@@ -155,7 +180,8 @@ static struct font_def
   int    used;
 #ifdef XETEX
   int    native; /* boolean */
-  unsigned long rgba_color;   /* only used for native fonts in XeTeX */
+  uint32_t rgba_color;   /* only used for native fonts in XeTeX */
+  uint32_t face_index;
   int    layout_dir; /* 1 = vertical, 0 = horizontal */
   int    extend;
   int    slant;
@@ -167,7 +193,6 @@ static struct font_def
 #define XDV_FLAG_VERTICAL       0x0100
 #define XDV_FLAG_COLORED        0x0200
 #define XDV_FLAG_FEATURES       0x0400
-#define XDV_FLAG_VARIATIONS     0x0800
 #define XDV_FLAG_EXTEND		0x1000
 #define XDV_FLAG_SLANT		0x2000
 #define XDV_FLAG_EMBOLDEN	0x4000
@@ -177,14 +202,14 @@ static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
 static int verbose       = 0;
 
-#define DVI_PAGE_BUF_CHUNK		0x10000UL	/* 64K should be plenty for most pages */
+#define DVI_PAGE_BUF_CHUNK		0x10000U	/* 64K should be plenty for most pages */
 
 static unsigned char* dvi_page_buffer;
-static unsigned long  dvi_page_buf_size;
-static unsigned long  dvi_page_buf_index;
+static unsigned int   dvi_page_buf_size;
+static unsigned int   dvi_page_buf_index;
 
 /* functions to read numbers from the dvi file and store them in dvi_page_buffer */
-static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
+static int get_and_buffer_unsigned_byte (FILE *file)
 {
   int ch;
   if ((ch = fgetc (file)) < 0)
@@ -194,93 +219,17 @@ static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
     dvi_page_buffer = RENEW(dvi_page_buffer, dvi_page_buf_size, unsigned char);
   }
   dvi_page_buffer[dvi_page_buf_index++] = ch;
-  return (UNSIGNED_BYTE) ch;
+  return ch;
 }
 
-#if 0
-/* Not used */
-static SIGNED_BYTE get_and_buffer_signed_byte (FILE *file)
+#ifdef XETEX
+static unsigned int get_and_buffer_unsigned_pair (FILE *file)
 {
-  int byte;
-  byte = get_and_buffer_unsigned_byte(file);
-  if (byte >= 0x80) 
-    byte -= 0x100;
-  return (SIGNED_BYTE) byte;
-}
-#endif
-
-static UNSIGNED_PAIR get_and_buffer_unsigned_pair (FILE *file)
-{
-  int i;
-  UNSIGNED_BYTE byte;
-  UNSIGNED_PAIR pair = 0;
-  for (i=0; i<2; i++) {
-    byte = get_and_buffer_unsigned_byte(file);
-    pair = pair*0x100u + byte;
-  }
+  unsigned int pair = get_and_buffer_unsigned_byte(file);
+  pair = (pair << 8) | get_and_buffer_unsigned_byte(file);
   return pair;
 }
-
-static SIGNED_PAIR get_and_buffer_signed_pair (FILE *file)
-{
-  int i;
-  long pair = 0;
-  for (i=0; i<2; i++) {
-    pair = pair*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  if (pair >= 0x8000) {
-    pair -= 0x10000l;
-  }
-  return (SIGNED_PAIR) pair;
-}
-
-static UNSIGNED_TRIPLE get_and_buffer_unsigned_triple(FILE *file)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100u + get_and_buffer_unsigned_byte(file);
-  }
-  return (UNSIGNED_TRIPLE) triple;
-}
-
-static SIGNED_TRIPLE get_and_buffer_signed_triple(FILE *file)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  if (triple >= 0x800000l) 
-    triple -= 0x1000000l;
-  return (SIGNED_TRIPLE) triple;
-}
-
-static SIGNED_QUAD get_and_buffer_signed_quad(FILE *file)
-{
-  int byte, i;
-  long quad = 0;
-
-  /* Check sign on first byte before reading others */
-  byte = get_and_buffer_unsigned_byte(file);
-  quad = byte;
-  if (quad >= 0x80) 
-    quad = byte - 0x100;
-  for (i=0; i<3; i++) {
-    quad = quad*0x100 + get_and_buffer_unsigned_byte(file);
-  }
-  return (SIGNED_QUAD) quad;
-}
-
-static UNSIGNED_QUAD get_and_buffer_unsigned_quad(FILE *file)
-{
-  int i;
-  unsigned long quad = 0;
-  for (i=0; i<4; i++) {
-    quad = quad*0x100u + get_and_buffer_unsigned_byte(file);
-  }
-  return (UNSIGNED_QUAD) quad;
-}
+#endif
 
 static void get_and_buffer_bytes(FILE *file, unsigned int count)
 {
@@ -295,92 +244,62 @@ static void get_and_buffer_bytes(FILE *file, unsigned int count)
 
 /* functions to fetch values from dvi_page_buffer */
 
-static UNSIGNED_BYTE get_buffered_unsigned_byte (void)
+static int get_buffered_unsigned_byte (void)
 {
   return dvi_page_buffer[dvi_page_buf_index++];
 }
 
-static SIGNED_BYTE get_buffered_signed_byte (void)
+#ifdef XETEX
+static unsigned int get_buffered_unsigned_pair (void)
 {
-  int byte;
-  byte = dvi_page_buffer[dvi_page_buf_index++];
-  if (byte >= 0x80) 
-    byte -= 0x100;
-  return (SIGNED_BYTE) byte;
-}
-
-static UNSIGNED_PAIR get_buffered_unsigned_pair (void)
-{
-  int i;
-  UNSIGNED_BYTE byte;
-  UNSIGNED_PAIR pair = 0;
-  for (i=0; i<2; i++) {
-    byte = dvi_page_buffer[dvi_page_buf_index++];
-    pair = pair*0x100u + byte;
-  }
+  unsigned int pair = dvi_page_buffer[dvi_page_buf_index++];
+  pair = (pair << 8) | dvi_page_buffer[dvi_page_buf_index++];
   return pair;
 }
+#endif
 
-static SIGNED_PAIR get_buffered_signed_pair (void)
+static int32_t get_buffered_signed_quad(void)
 {
   int i;
-  long pair = 0;
-  for (i=0; i<2; i++) {
-    pair = pair*0x100 + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  if (pair >= 0x8000) {
-    pair -= 0x10000l;
-  }
-  return (SIGNED_PAIR) pair;
-}
-
-static UNSIGNED_TRIPLE get_buffered_unsigned_triple(void)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100u + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  return (UNSIGNED_TRIPLE) triple;
-}
-
-static SIGNED_TRIPLE get_buffered_signed_triple(void)
-{
-  int i;
-  long triple = 0;
-  for (i=0; i<3; i++) {
-    triple = triple*0x100 + dvi_page_buffer[dvi_page_buf_index++];
-  }
-  if (triple >= 0x800000l) 
-    triple -= 0x1000000l;
-  return (SIGNED_TRIPLE) triple;
-}
-
-static SIGNED_QUAD get_buffered_signed_quad(void)
-{
-  int byte, i;
-  long quad = 0;
-
+  int32_t quad = dvi_page_buffer[dvi_page_buf_index++];
   /* Check sign on first byte before reading others */
-  byte = dvi_page_buffer[dvi_page_buf_index++];
-  quad = byte;
   if (quad >= 0x80) 
-    quad = byte - 0x100;
+    quad -= 0x100;
   for (i=0; i<3; i++) {
-    quad = quad*0x100 + dvi_page_buffer[dvi_page_buf_index++];
+    quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
   }
-  return (SIGNED_QUAD) quad;
+  return quad;
 }
 
-static UNSIGNED_QUAD get_buffered_unsigned_quad(void)
+static int32_t get_buffered_signed_num(unsigned char num)
 {
-  int i;
-  unsigned long quad = 0;
-  for (i=0; i<4; i++) {
-    quad = quad*0x100u + dvi_page_buffer[dvi_page_buf_index++];
+  int32_t quad = dvi_page_buffer[dvi_page_buf_index++];
+  if (quad > 0x7f)
+    quad -= 0x100;
+  switch (num) {
+  case 3: quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  case 2: quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  case 1: quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  default: break;
   }
-  return (UNSIGNED_QUAD) quad;
+  return quad;
 }
+
+static int32_t get_buffered_unsigned_num(unsigned char num)
+{
+  int32_t quad = dvi_page_buffer[dvi_page_buf_index++];
+  switch (num) {
+  case 3: if (quad > 0x7f)
+            quad -= 0x100;
+          quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  case 2: quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  case 1: quad = (quad << 8) | dvi_page_buffer[dvi_page_buf_index++];
+  default: break;
+  }
+  return quad;
+}
+
+#define skip_bufferd_bytes(n) dvi_page_buf_index += n
 
 void
 dvi_set_verbose (void)
@@ -392,7 +311,7 @@ dvi_set_verbose (void)
   spc_set_verbose();
 }
 
-unsigned
+unsigned int
 dvi_npages (void)
 {
   return num_pages;
@@ -406,40 +325,45 @@ static const char invalid_signature[] =
    ERROR(invalid_signature); \
  }
 
-static long
+static int32_t
 find_post (void)
 {
-  long  current;
+  off_t dvi_size;
+  int32_t  current;
   int   ch;
 
-  /* First find end of file */  
-  dvi_file_size = file_size(dvi_file);
-  current       = dvi_file_size;
+  /* First find end of file */
+  dvi_size = xfile_size (dvi_file, "DVI");
+  if (dvi_size > 0x7fffffff)
+    ERROR("DVI file size exceeds 31-bit");
+  dvi_file_size = dvi_size;
+  current       = dvi_size;
  
   /* Scan backwards through PADDING */  
   do {
-    current--;
-    seek_absolute(dvi_file, current);
+    xseek_absolute (dvi_file, --current, "DVI");
   } while ((ch = fgetc(dvi_file)) == PADDING &&
 	   current > 0);
 
   /* file_position now points to last non padding character or
    * beginning of file */
   if (dvi_file_size - current < 4 || current == 0 ||
-      !(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDV_ID))) {
+      !(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   } 
 
+  is_xdv = ch == XDV_ID;
+
   /* Make sure post_post is really there */
   current = current - 5;
-  seek_absolute(dvi_file, current);
+  xseek_absolute (dvi_file, current, "DVI");
   if ((ch = fgetc(dvi_file)) != POST_POST) {
     MESG("Found %d where post_post opcode should be\n", ch);
     ERROR(invalid_signature);
   }
   current = get_signed_quad(dvi_file);
-  seek_absolute(dvi_file, current);
+  xseek_absolute (dvi_file, current, "DVI");
   if ((ch = fgetc(dvi_file)) != POST) {
     MESG("Found %d where post_post opcode should be\n", ch);
     ERROR(invalid_signature);
@@ -449,11 +373,11 @@ find_post (void)
 }
 
 static void
-get_page_info (long post_location)
+get_page_info (int32_t post_location)
 {
   int  i;
 
-  seek_absolute(dvi_file, post_location + 27);
+  xseek_absolute (dvi_file, post_location + 27, "DVI");
   num_pages = get_unsigned_pair(dvi_file);
   if (num_pages == 0) {
     ERROR("Page count is 0!");
@@ -462,13 +386,13 @@ get_page_info (long post_location)
     MESG("Page count:\t %4d\n", num_pages);
   }
 
-  page_loc = NEW(num_pages, unsigned long);
+  page_loc = NEW(num_pages, int32_t);
 
-  seek_absolute(dvi_file, post_location + 1);
+  xseek_absolute (dvi_file, post_location + 1, "DVI");
   page_loc[num_pages-1] = get_unsigned_quad(dvi_file);
   range_check_loc(page_loc[num_pages-1] + 41);
   for (i = num_pages - 2; i >= 0; i--) {
-    seek_absolute(dvi_file, page_loc[i+1] + 41);
+    xseek_absolute (dvi_file, page_loc[i+1] + 41, "DVI");
     page_loc[i] = get_unsigned_quad(dvi_file);
     range_check_loc(page_loc[num_pages-1] + 41);
   }
@@ -492,9 +416,9 @@ do_scales (double mag)
 }
 
 static void
-get_dvi_info (long post_location)
+get_dvi_info (int32_t post_location)
 {
-  seek_absolute(dvi_file, post_location + 5);
+  xseek_absolute (dvi_file, post_location + 5, "DVI");
 
   dvi_info.unit_num = get_unsigned_quad(dvi_file);
   dvi_info.unit_den = get_unsigned_quad(dvi_file);
@@ -524,7 +448,7 @@ get_dvi_info (long post_location)
 static void
 get_preamble_dvi_info (void)
 {
-  UNSIGNED_BYTE ch;
+  int ch;
 
   ch = get_unsigned_byte(dvi_file);
   if (ch != PRE) {
@@ -533,14 +457,16 @@ get_preamble_dvi_info (void)
   }
   
   ch = get_unsigned_byte(dvi_file);
-  if (!(ch == DVI_ID || ch == DVIV_ID || (is_xetex && ch == XDV_ID))) {
+  if (!(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   }
+
+  is_xdv = ch == XDV_ID;
   
-  dvi_info.unit_num = get_unsigned_quad(dvi_file);
-  dvi_info.unit_den = get_unsigned_quad(dvi_file);
-  dvi_info.mag      = get_unsigned_quad(dvi_file);
+  dvi_info.unit_num = get_positive_quad(dvi_file, "DVI", "unit_num");
+  dvi_info.unit_den = get_positive_quad(dvi_file, "DVI", "unit_den");
+  dvi_info.mag      = get_positive_quad(dvi_file, "DVI", "mag");
 
   ch = get_unsigned_byte(dvi_file);
   if (fread(dvi_info.comment,
@@ -559,7 +485,7 @@ get_preamble_dvi_info (void)
     MESG("DVI Comment: %s\n", dvi_info.comment);
   }
 
-  num_pages = 0x7FFFFFFUL; /* for linear processing: we just keep going! */
+  num_pages = 0x7FFFFFFU; /* for linear processing: we just keep going! */
 }
 
 const char *
@@ -569,19 +495,19 @@ dvi_comment (void)
 }
 
 static void
-read_font_record (SIGNED_QUAD tex_id)
+read_font_record (int32_t tex_id)
 {
-  UNSIGNED_BYTE dir_length, name_length;
-  UNSIGNED_QUAD point_size, design_size;
-  char         *directory, *font_name;
+  int       dir_length, name_length;
+  uint32_t  point_size, design_size;
+  char     *directory, *font_name;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
     def_fonts = RENEW (def_fonts, max_def_fonts, struct font_def);
   }
                 get_unsigned_quad(dvi_file);
-  point_size  = get_unsigned_quad(dvi_file);
-  design_size = get_unsigned_quad(dvi_file);
+  point_size  = get_positive_quad(dvi_file, "DVI", "point_size");
+  design_size = get_positive_quad(dvi_file, "DVI", "design_size");
   dir_length  = get_unsigned_byte(dvi_file);
   name_length = get_unsigned_byte(dvi_file);
 
@@ -605,6 +531,7 @@ read_font_record (SIGNED_QUAD tex_id)
 #ifdef XETEX
   def_fonts[num_def_fonts].native      = 0;
   def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
+  def_fonts[num_def_fonts].face_index  = 0;
   def_fonts[num_def_fonts].layout_dir  = 0;
   def_fonts[num_def_fonts].extend      = 0x00010000; /* 1.0 */
   def_fonts[num_def_fonts].slant       = 0;
@@ -617,35 +544,33 @@ read_font_record (SIGNED_QUAD tex_id)
 
 #ifdef XETEX
 static void
-read_native_font_record (SIGNED_QUAD tex_id)
+read_native_font_record (int32_t tex_id)
 {
-  UNSIGNED_PAIR flags;
-  UNSIGNED_QUAD point_size;
+  unsigned int  flags;
+  uint32_t      point_size;
   char         *font_name;
-  int           plen, flen, slen, i;
+  int           len;
+  uint32_t      index;
 
   if (num_def_fonts >= max_def_fonts) {
     max_def_fonts += TEX_FONTS_ALLOC_SIZE;
     def_fonts = RENEW (def_fonts, max_def_fonts, struct font_def);
   }
-  point_size  = get_unsigned_quad(dvi_file);
+  point_size  = get_positive_quad(dvi_file, "DVI", "point_size");
   flags       = get_unsigned_pair(dvi_file);
 
-  plen = (int) get_unsigned_byte(dvi_file); /* PS name length */
-  flen = (int) get_unsigned_byte(dvi_file); /* family name length */
-  slen = (int) get_unsigned_byte(dvi_file); /* style  name length */
-  font_name = NEW(plen + 1, char);
-  if (fread(font_name, 1, plen, dvi_file) != plen) {
+  len = (int) get_unsigned_byte(dvi_file); /* font name length */
+  font_name = NEW(len + 1, char);
+  if (fread(font_name, 1, len, dvi_file) != len) {
     ERROR(invalid_signature);
   }
-  font_name[plen] = '\0';
+  font_name[len] = '\0';
 
-  /* ignore family and style names */
-  for (i = 0; i < flen + slen; ++i)
-     get_unsigned_byte(dvi_file);
+  index = get_positive_quad(dvi_file, "DVI", "index");
 
   def_fonts[num_def_fonts].tex_id      = tex_id;
   def_fonts[num_def_fonts].font_name   = font_name;
+  def_fonts[num_def_fonts].face_index  = index;
   def_fonts[num_def_fonts].point_size  = point_size;
   def_fonts[num_def_fonts].design_size = 655360; /* hard-code as 10pt for now, not used anyway */
   def_fonts[num_def_fonts].used        = 0;
@@ -672,13 +597,6 @@ read_native_font_record (SIGNED_QUAD tex_id)
   if (flags & XDV_FLAG_EMBOLDEN)
     def_fonts[num_def_fonts].embolden = get_signed_quad(dvi_file);
 
-  if (flags & XDV_FLAG_VARIATIONS) {
-    int v, nvars = get_unsigned_pair(dvi_file);
-    for (v = 0; v < nvars * 2; ++v)
-      (void)get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
-    WARN("Variation axes are not supported; ignoring variation settings for font %s.\n", font_name);
-  }
-
   num_def_fonts++;
 
   return;
@@ -686,39 +604,25 @@ read_native_font_record (SIGNED_QUAD tex_id)
 #endif
 
 static void
-get_dvi_fonts (long post_location)
+get_dvi_fonts (int32_t post_location)
 {
-  UNSIGNED_BYTE  code;
-  SIGNED_QUAD    tex_id = 0;
+  int      code;
 
-  seek_absolute(dvi_file, post_location + 29);
+  xseek_absolute (dvi_file, post_location + 29, "DVI");
   while ((code = get_unsigned_byte(dvi_file)) != POST_POST) {
     switch (code) {
-    case FNT_DEF1:
-      tex_id = get_unsigned_byte(dvi_file);
+    case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
+      read_font_record(get_unsigned_num(dvi_file, code-FNT_DEF1));
       break;
-    case FNT_DEF2:
-      tex_id = get_unsigned_pair(dvi_file);
-      break;
-    case FNT_DEF3:
-      tex_id = get_unsigned_triple(dvi_file);
-      break;
-    case FNT_DEF4:
 #ifdef XETEX
     case XDV_NATIVE_FONT_DEF:
-#endif
-      tex_id = get_signed_quad(dvi_file);
+      read_native_font_record(get_signed_quad(dvi_file));
       break;
+#endif
     default:
       MESG("Unexpected op code: %3d\n", code);
       ERROR(invalid_signature);
     }
-#ifdef XETEX
-    if (code == XDV_NATIVE_FONT_DEF)
-      read_native_font_record(tex_id);
-    else
-#endif
-    read_font_record(tex_id);
   }
   if (verbose > 2) {
     unsigned  i;
@@ -726,7 +630,7 @@ get_dvi_fonts (long post_location)
     MESG("\n");
     MESG("DVI file font info\n");
     for (i = 0; i < num_def_fonts; i++) {
-      MESG("TeX Font: %10s loaded at ID=%5ld, ",
+      MESG("TeX Font: %10s loaded at ID=%5d, ",
 	   def_fonts[i].font_name, def_fonts[i].tex_id);
       MESG("size=%5.2fpt (scaled %4.1f%%)",
 	   def_fonts[i].point_size * dvi2pts,
@@ -738,9 +642,9 @@ get_dvi_fonts (long post_location)
 
 static void get_comment (void)
 {
-  UNSIGNED_BYTE length;
+  int length;
 
-  seek_absolute(dvi_file, 14);
+  xseek_absolute (dvi_file, 14, "DVI");
   length = get_unsigned_byte(dvi_file);
   if (fread(dvi_info.comment,
 	    1, length, dvi_file) != length) {
@@ -761,7 +665,8 @@ static void get_comment (void)
 
 struct dvi_registers
 {
-  SIGNED_QUAD h, v, w, x, y, z, d;
+  int32_t h, v, w, x, y, z;
+  unsigned int d;
 };
 
 static struct   dvi_registers dvi_state;
@@ -845,15 +750,10 @@ dvi_is_tracking_boxes(void)
 }
 
 void
-dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
+dvi_do_special (const void *buffer, int32_t size)
 {
   double x_user, y_user, mag;
   const char *p;
-
-  if (size > 0x7fffffffUL) {
-    WARN("Special more than %ul bytes???", size);
-    return;
-  }
 
   graphics_mode();
 
@@ -863,7 +763,7 @@ dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
   y_user = -dvi_state.v * dvi2pts;
   mag    =  dvi_tell_mag();
 
-  if (spc_exec_special(p, (long) size, x_user, y_user, mag) < 0) {
+  if (spc_exec_special(p, size, x_user, y_user, mag) < 0) {
     if (verbose) {
       dump(p, p + size);
     }
@@ -902,6 +802,8 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
   if (mrec && mrec->charmap.sfd_name && mrec->charmap.subfont_id) {
     subfont_id = sfd_load_record(mrec->charmap.sfd_name, mrec->charmap.subfont_id);
   }
+
+  memset(&loaded_fonts[cur_id], 0, sizeof (struct loaded_font));
 
   /* TFM must exist here. */
   loaded_fonts[cur_id].tfm_id     = tfm_open(tfm_name, 1);
@@ -1018,36 +920,79 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 
 #ifdef XETEX
 static int
-dvi_locate_native_font (const char *ps_name,
+dvi_locate_native_font (const char *filename, uint32_t index,
                         spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
 {
   int           cur_id = -1;
   fontmap_rec  *mrec;
-  char         *fontmap_key = malloc(strlen(ps_name) + 40); // CHECK this is enough
+  char         *fontmap_key;
+  FILE         *fp;
+  char         *path;
+  sfnt         *sfont;
+  unsigned      offset = 0;
+  struct tt_head_table *head;
+  struct tt_maxp_table *maxp;
+  struct tt_hhea_table *hhea;
 
   if (verbose)
-    MESG("<%s@%.2fpt", ps_name, ptsize * dvi2pts);
+    MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
+  if ((fp = fopen(filename, "rb")) != NULL)
+    path = strdup(filename);
+  else if (((path = dpx_find_opentype_file(filename)) == NULL
+         && (path = dpx_find_truetype_file(filename)) == NULL
+         && (path = dpx_find_type1_file(filename)) == NULL
+         && (path = dpx_find_dfont_file(filename)) == NULL)
+         || (fp = fopen(path, "rb")) == NULL) {
+    ERROR("Cannot proceed without the font: %s", filename);
+  }
   need_more_fonts(1);
 
   cur_id = num_loaded_fonts++;
 
-  sprintf(fontmap_key, "%s/%c/%d/%d/%d", ps_name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+  fontmap_key = malloc(strlen(path) + 40); // CHECK this is enough
+  sprintf(fontmap_key, "%s/%u/%c/%d/%d/%d", path, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(ps_name, layout_dir, extend, slant, embolden) == -1) {
-      ERROR("Cannot proceed without the \"native\" font: %s", ps_name);
+    if ((mrec = pdf_insert_native_fontmap_record(path, index, layout_dir, extend, slant, embolden)) == NULL) {
+      ERROR("Failed to insert font record for font: %s", filename);
     }
-    mrec = pdf_lookup_fontmap_record(fontmap_key);
-    /* FIXME: would be more efficient if pdf_load_native_font returned the mrec ptr (or NULL for error)
-              so we could avoid doing a second lookup for the item we just inserted */
   }
+
+  memset(&loaded_fonts[cur_id], 0, sizeof (struct loaded_font));
+
   loaded_fonts[cur_id].font_id = pdf_dev_locate_font(fontmap_key, ptsize);
   loaded_fonts[cur_id].size    = ptsize;
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  loaded_fonts[cur_id].ft_face = mrec->opt.ft_face;
+  sfont = sfnt_open(fp);
+  if (sfont->type == SFNT_TYPE_TTC)
+    offset = ttc_read_offset(sfont, index);
+  sfnt_read_table_directory(sfont, offset);
+  head = tt_read_head_table(sfont);
+  maxp = tt_read_maxp_table(sfont);
+  hhea = tt_read_hhea_table(sfont);
+  loaded_fonts[cur_id].ascent = hhea->ascent;
+  loaded_fonts[cur_id].descent = hhea->descent;
+  loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
+  loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
+  if (layout_dir == 1 && sfnt_find_table_pos(sfont, "vmtx") > 0) {
+    struct tt_vhea_table *vhea = tt_read_vhea_table(sfont);
+    sfnt_locate_table(sfont, "vmtx");
+    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
+    RELEASE(vhea);
+  } else {
+    sfnt_locate_table(sfont, "hmtx");
+    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+  }
+  RELEASE(hhea);
+  RELEASE(maxp);
+  RELEASE(head);
+  sfnt_close(sfont);
+  free(path);
+  fclose(fp);
+
   loaded_fonts[cur_id].layout_dir = layout_dir;
   loaded_fonts[cur_id].extend = mrec->opt.extend;
   loaded_fonts[cur_id].slant = mrec->opt.slant;
@@ -1072,14 +1017,23 @@ dvi_dev_ypos (void)
   return -(dvi_state.v * dvi2pts);
 }
 
-static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
+static void do_moveto (int32_t x, int32_t y)
 {
   dvi_state.h = x;
   dvi_state.v = y;
 }
 
-void dvi_right (SIGNED_QUAD x)
+/* FIXME: dvi_forward() might be a better name */
+void dvi_right (int32_t x)
 {
+  if (lr_mode >= SKIMMING) {
+    lr_width += x;
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    x = -x;
+
   switch (dvi_state.d) {
   case 0:
     dvi_state.h += x; break;
@@ -1090,76 +1044,17 @@ void dvi_right (SIGNED_QUAD x)
   }
 }
 
-void dvi_down (SIGNED_QUAD y)
+void dvi_down (int32_t y)
 {
-  switch (dvi_state.d) {
-  case 0:
-    dvi_state.v += y; break;
-  case 1:
-    dvi_state.h -= y; break;
-  case 3:
-    dvi_state.h += y; break;
-  }
-}
-
-/* Please remove this.
- * Optimization for 8-bit encodings.
- */
-static void
-do_string (unsigned char *s, int len)
-{
-  struct loaded_font *font;
-  spt_t  width, height, depth;
-  int    i;
-
-  if (current_font < 0)
-    ERROR("No font selected!");
-
-  font  = &loaded_fonts[current_font];
-
-  width = tfm_string_width(font->tfm_id, s, len);
-  width = sqxfw(font->size, width);
-
-  switch (font->type) {
-  case PHYSICAL:
-    if (font->subfont_id < 0) {
-      pdf_dev_set_string(dvi_state.h, -dvi_state.v, s, len,
-                         width, font->font_id, 1);
-      if (compute_boxes && link_annot &&
-          marked_depth >= tagged_depth) {
-        pdf_rect rect;
-
-        height = tfm_string_height(font->tfm_id, s, len);
-        depth  = tfm_string_depth (font->tfm_id, s, len);
-        height = sqxfw(font->size, height);
-        depth  = sqxfw(font->size, depth);
-
-        pdf_dev_set_rect  (&rect, dvi_state.h, -dvi_state.v,
-                            width, height, depth);
-        pdf_doc_expand_box(&rect);
-      }
-    } else { /* Subfonts */
-      dvi_push();
-      for (i = 0; i < len; i++) {
-        dvi_set(s[i]);
-      }
-      dvi_pop();
+  if (lr_mode < SKIMMING) {
+    switch (dvi_state.d) {
+    case 0:
+      dvi_state.v += y; break;
+    case 1:
+      dvi_state.h -= y; break;
+    case 3:
+      dvi_state.h += y; break;
     }
-    break;
-  case VIRTUAL:
-    dvi_push();
-    for (i = 0; i < len; i++) {
-      dvi_set(s[i]);
-    }
-    dvi_pop();
-  }
-  switch (dvi_state.d) {
-  case 0:
-    dvi_state.h += width; break;
-  case 1:
-    dvi_state.v += width; break;
-  case 3:
-    dvi_state.v -= width; break;
   }
 }
 
@@ -1169,7 +1064,7 @@ do_string (unsigned char *s, int len)
  * is not clear.
  */
 void
-dvi_set (SIGNED_QUAD ch)
+dvi_set (int32_t ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
@@ -1190,9 +1085,17 @@ dvi_set (SIGNED_QUAD ch)
   width = tfm_get_fw_width(font->tfm_id, ch);
   width = sqxfw(font->size, width);
 
+  if (lr_mode >= SKIMMING) {
+    lr_width += width;
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    dvi_right(width); /* Will actually move left */
+
   switch (font->type) {
   case  PHYSICAL:
-    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
       wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
       wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -1215,8 +1118,7 @@ dvi_set (SIGNED_QUAD ch)
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
 			 width, font->font_id, 1);
     }
-    if (compute_boxes && link_annot &&
-	marked_depth >= tagged_depth) {
+    if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
       height = tfm_get_fw_height(font->tfm_id, ch);
@@ -1238,18 +1140,14 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-  switch (dvi_state.d) {
-  case 0:
-    dvi_state.h += width; break;
-  case 1:
-    dvi_state.v += width; break;
-  case 3:
-    dvi_state.v -= width; break;
-  }
+
+  if (lr_mode == LTYPESETTING)
+    dvi_right(width);
+
 }
 
 void
-dvi_put (SIGNED_QUAD ch)
+dvi_put (int32_t ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
@@ -1269,7 +1167,7 @@ dvi_put (SIGNED_QUAD ch)
     /* Treat a single character as a one byte string and use the
      * string routine.
      */
-    if (!is_xetex && ch > 65535) { /* _FIXME_ */
+    if (ch > 65535) { /* _FIXME_ */
       wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
       wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -1294,8 +1192,7 @@ dvi_put (SIGNED_QUAD ch)
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
 			 width, font->font_id, 1);
     }
-    if (compute_boxes && link_annot &&
-	marked_depth >= tagged_depth) {
+    if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
       height = tfm_get_fw_height(font->tfm_id, ch);
@@ -1323,25 +1220,27 @@ dvi_put (SIGNED_QUAD ch)
 
 
 void
-dvi_rule (SIGNED_QUAD width, SIGNED_QUAD height)
+dvi_rule (int32_t width, int32_t height)
 {
-  do_moveto(dvi_state.h, dvi_state.v);
+  if (width > 0 && height > 0) {
+    do_moveto(dvi_state.h, dvi_state.v);
 
-  switch (dvi_state.d) {
-  case 0:
-    pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
-    break;
-  case 1:
-    pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
-    break;
-  case 3: 
-    pdf_dev_set_rule(dvi_state.h - height, -dvi_state.v , height, width);
-    break;
+    switch (dvi_state.d) {
+    case 0:
+      pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
+      break;
+    case 1:
+      pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+      break;
+    case 3: 
+      pdf_dev_set_rule(dvi_state.h - height, -dvi_state.v , height, width);
+      break;
+    }
   }
 }
 
 void
-dvi_dir (UNSIGNED_BYTE dir)
+dvi_dir (unsigned char dir)
 {
   if (verbose)
     fprintf(stderr, "  > dvi_dir %d\n", dir);
@@ -1350,64 +1249,46 @@ dvi_dir (UNSIGNED_BYTE dir)
 }
 
 static void
-do_set1 (void)
-{
-  dvi_set(get_buffered_unsigned_byte());
-}
-
-static void
-do_set2 (void)
-{
-  dvi_set(get_buffered_unsigned_pair());
-}
-
-static void
-do_set3 (void)
-{
-  dvi_set(get_buffered_unsigned_triple());
-}
-
-static void
 do_setrule (void)
 {
-  SIGNED_QUAD  width, height;
+  int32_t width, height;
 
   height = get_buffered_signed_quad();
   width  = get_buffered_signed_quad();
-  if (width > 0 && height > 0) {
+  switch (lr_mode) {
+  case LTYPESETTING:
     dvi_rule(width, height);
+    dvi_right(width);
+    break;
+  case RTYPESETTING:
+    dvi_right(width);
+    dvi_rule(width, height);
+    break;
+  default:
+    lr_width += width;
+    break;
   }
-  dvi_right(width);
 }
 
 static void
 do_putrule (void)
 {
-  SIGNED_QUAD width, height;
+  int32_t width, height;
 
   height = get_buffered_signed_quad ();
   width  = get_buffered_signed_quad ();
-  if (width > 0 && height > 0) {
+  switch (lr_mode) {
+  case LTYPESETTING:
     dvi_rule(width, height);
+    break;
+  case RTYPESETTING:
+    dvi_right(width);
+    dvi_rule(width, height);
+    dvi_right(-width);
+    break;
+  default:
+    break;
   }
-}
-
-static void
-do_put1 (void)
-{
-  dvi_put(get_buffered_unsigned_byte());
-}
-
-static void
-do_put2 (void)
-{
-  dvi_put(get_buffered_unsigned_pair());
-}
-
-static void
-do_put3 (void)
-{
-  dvi_put(get_buffered_unsigned_triple());
 }
 
 void
@@ -1431,32 +1312,8 @@ dvi_pop (void)
 }
 
 
-static void
-do_right1 (void)
-{
-  dvi_right(get_buffered_signed_byte());
-}
-
-static void
-do_right2 (void)
-{
-  dvi_right(get_buffered_signed_pair());
-}
-
-static void
-do_right3 (void)
-{
-  dvi_right(get_buffered_signed_triple());
-}
-
-static void
-do_right4 (void)
-{
-  dvi_right(get_buffered_signed_quad());
-}
-
 void
-dvi_w (SIGNED_QUAD ch)
+dvi_w (int32_t ch)
 {
   dvi_state.w = ch;
   dvi_right(ch);
@@ -1468,32 +1325,8 @@ dvi_w0 (void)
   dvi_right(dvi_state.w);
 }
 
-static void
-do_w1 (void)
-{
-  dvi_w(get_buffered_signed_byte());
-}
-
-static void
-do_w2 (void)
-{
-  dvi_w(get_buffered_signed_pair());
-}
-
-static void
-do_w3 (void)
-{
-  dvi_w(get_buffered_signed_triple());
-}
-
-static void
-do_w4 (void)
-{
-  dvi_w(get_buffered_signed_quad());
-}
-
 void
-dvi_x (SIGNED_QUAD ch)
+dvi_x (int32_t ch)
 {
   dvi_state.x = ch;
   dvi_right(ch);
@@ -1505,56 +1338,8 @@ dvi_x0 (void)
   dvi_right(dvi_state.x);
 }
 
-static void
-do_x1 (void)
-{
-  dvi_x(get_buffered_signed_byte());
-}
-
-static void
-do_x2 (void)
-{
-  dvi_x(get_buffered_signed_pair());
-}
-
-static void
-do_x3 (void)
-{
-  dvi_x(get_buffered_signed_triple());
-}
-
-static void
-do_x4 (void)
-{
-  dvi_x(get_buffered_signed_quad());
-}
-
-static void
-do_down1 (void)
-{
-  dvi_down(get_buffered_signed_byte());
-}
-
-static void
-do_down2 (void)
-{
-  dvi_down(get_buffered_signed_pair());
-}
-
-static void
-do_down3 (void)
-{
-  dvi_down(get_buffered_signed_triple());
-}
-
-static void
-do_down4 (void)
-{
-  dvi_down(get_buffered_signed_quad());
-}
-
 void
-dvi_y (SIGNED_QUAD ch)
+dvi_y (int32_t ch)
 {
   dvi_state.y = ch;
   dvi_down(ch);
@@ -1566,32 +1351,8 @@ dvi_y0 (void)
   dvi_down(dvi_state.y);
 }
 
-static
-void do_y1 (void)
-{
-  dvi_y(get_buffered_signed_byte());
-}
-
-static
-void do_y2 (void)
-{
-  dvi_y(get_buffered_signed_pair());
-}
-
-static
-void do_y3 (void)
-{
-  dvi_y(get_buffered_signed_triple());
-}
-
-static
-void do_y4 (void)
-{
-  dvi_y(get_buffered_signed_quad());
-}
-
 void
-dvi_z (SIGNED_QUAD ch)
+dvi_z (int32_t ch)
 {
   dvi_state.z = ch;
   dvi_down(ch);
@@ -1604,78 +1365,26 @@ dvi_z0 (void)
 }
 
 static void
-do_z1 (void)
-{
-  dvi_z(get_buffered_signed_byte());
-}
-
-static void
-do_z2 (void)
-{
-  dvi_z(get_buffered_signed_pair());
-}
-
-static void
-do_z3 (void)
-{
-  dvi_z(get_buffered_signed_triple());
-}
-
-static void
-do_z4 (void)
-{
-  dvi_z(get_buffered_signed_quad());
-}
-
-static void
 skip_fntdef (void)
 {
-  int area_len, name_len, i;
+  int area_len, name_len;
 
-  get_signed_quad(dvi_file);
-  get_signed_quad(dvi_file);
-  get_signed_quad(dvi_file);
+  skip_bytes(12, dvi_file);
   area_len = get_unsigned_byte(dvi_file);
   name_len = get_unsigned_byte(dvi_file);
-  for (i = 0; i < area_len + name_len; i++) {
-    get_unsigned_byte(dvi_file);
-  }
+  skip_bytes(area_len + name_len, dvi_file);
 }
 
 /* when pre-scanning the page, we process fntdef
    and remove the fntdef opcode from the buffer */
-#define DO_FNTDEF(f) \
-  if (scanning) { \
-    SIGNED_QUAD tex_id = f(dvi_file); \
-    if (linear) { \
-      read_font_record(tex_id); \
-    } else \
-      skip_fntdef(); \
-    --dvi_page_buf_index; \
-  }
-
 static void
-do_fntdef1 (int scanning)
+do_fntdef (int32_t tex_id)
 {
-  DO_FNTDEF(get_unsigned_byte)
-}
-
-static void
-do_fntdef2 (int scanning)
-{
-  DO_FNTDEF(get_unsigned_pair)
-}
-
-static void
-do_fntdef3 (int scanning)
-{
-  DO_FNTDEF(get_unsigned_triple)
-}
-
-static void
-do_fntdef4 (int scanning)
-{
-  DO_FNTDEF(get_unsigned_quad)
+  if (linear)
+    read_font_record(tex_id);
+  else
+    skip_fntdef();
+  --dvi_page_buf_index;
 }
 
 void
@@ -1685,7 +1394,7 @@ dvi_set_font (int font_id)
 }
 
 static void
-do_fnt (SIGNED_QUAD tex_id)
+do_fnt (int32_t tex_id)
 {
   int  i;
 
@@ -1695,7 +1404,7 @@ do_fnt (SIGNED_QUAD tex_id)
   }
 
   if (i == num_def_fonts) {
-    ERROR("Tried to select a font that hasn't been defined: id=%ld", tex_id);
+    ERROR("Tried to select a font that hasn't been defined: id=%d", tex_id);
   }
 
   if (!def_fonts[i].used) {
@@ -1704,6 +1413,7 @@ do_fnt (SIGNED_QUAD tex_id)
 #ifdef XETEX
     if (def_fonts[i].native) {
       font_id = dvi_locate_native_font(def_fonts[i].font_name,
+                                       def_fonts[i].face_index,
                                        def_fonts[i].point_size,
                                        def_fonts[i].layout_dir,
                                        def_fonts[i].extend,
@@ -1725,82 +1435,11 @@ do_fnt (SIGNED_QUAD tex_id)
 }
 
 static void
-do_fnt1 (void)
+do_xxx (int32_t size) 
 {
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_byte();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt2 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_pair();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt3 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_unsigned_triple();
-  do_fnt(tex_id);
-}
-
-static void
-do_fnt4 (void)
-{
-  SIGNED_QUAD tex_id;
-
-  tex_id = get_buffered_signed_quad();
-  do_fnt(tex_id);
-}
-
-static void
-do_xxx (UNSIGNED_QUAD size) 
-{
-  dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
+  if (lr_mode < SKIMMING)
+    dvi_do_special(dvi_page_buffer + dvi_page_buf_index, size);
   dvi_page_buf_index += size;
-}
-
-static void
-do_xxx1 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_byte();
-  do_xxx(size);
-}
-
-static void
-do_xxx2 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_pair();
-  do_xxx(size);
-}
-
-static void
-do_xxx3 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_triple();
-  do_xxx(size);
-}
-
-static void
-do_xxx4 (void)
-{
-  SIGNED_QUAD size;
-
-  size = get_buffered_unsigned_quad();
-  do_xxx(size);
 }
 
 static void
@@ -1813,12 +1452,12 @@ do_bop (void)
 
   /* For now, ignore TeX's count registers */
   for (i = 0; i < 10; i++) {
-    get_buffered_signed_quad();
+    skip_bufferd_bytes(4);
   }
   /* Ignore previous page pointer since we have already
    * saved this information
    */
-  get_buffered_signed_quad();
+  skip_bufferd_bytes(4);
   clear_state();
   processing_page = 1;
 
@@ -1850,40 +1489,97 @@ do_dir (void)
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */
 }
 
-#ifdef XETEX
 static void
-do_native_font_def (int scanning)
+lr_width_push (void)
 {
-  if (scanning) {
-    SIGNED_QUAD tex_id = get_signed_quad(dvi_file);
-    if (linear) {
-      read_native_font_record(tex_id);
-    } else {
-      UNSIGNED_PAIR flags;
-      int name_length, nvars, i;
+  if (lr_width_stack_depth >= DVI_STACK_DEPTH_MAX)
+    ERROR("Segment width stack exceeded limit.");
 
-      get_unsigned_quad(dvi_file); /* skip point size */
-      flags = get_unsigned_pair(dvi_file);
-      name_length = (int) get_unsigned_byte(dvi_file);
-      name_length += (int) get_unsigned_byte(dvi_file);
-      name_length += (int) get_unsigned_byte(dvi_file);
-      for (i = 0; i < name_length; ++i)
-        get_unsigned_byte(dvi_file);
-      if (flags & XDV_FLAG_COLORED) {
-        get_unsigned_quad(dvi_file);
-      }
-      if (flags & XDV_FLAG_VARIATIONS) {
-        nvars = get_unsigned_pair(dvi_file);
-        for (i = 0; i < nvars * 2; ++i)
-          get_unsigned_quad(dvi_file); /* skip axis and value for each variation setting */
-      }
-    }
-    --dvi_page_buf_index; /* don't buffer the opcode */
+  lr_width_stack[lr_width_stack_depth++] = lr_width;
+}
+
+static void
+lr_width_pop (void)
+{
+  if (lr_width_stack_depth <= 0)
+    ERROR("Tried to pop an empty segment width stack.");
+
+  lr_width = lr_width_stack[--lr_width_stack_depth];
+}
+
+static void
+dvi_begin_reflect (void)
+{
+  if (lr_mode >= SKIMMING) {
+    ++lr_mode;
+  } else {
+    lr_state.buf_index = dvi_page_buf_index;
+    lr_state.font = current_font;
+    lr_state.state = lr_mode;
+    lr_mode = SKIMMING;
+    lr_width = 0;
   }
 }
 
 static void
-do_glyph_array (int yLocsPresent)
+dvi_end_reflect (void)
+{
+  switch (lr_mode) {
+  case SKIMMING:
+    current_font = lr_state.font;
+    dvi_page_buf_index = lr_state.buf_index;
+    lr_mode = REVERSE(lr_state.state); /* must precede dvi_right */
+    dvi_right(-(int32_t)lr_width);
+    lr_width_push();
+    break;
+  case LTYPESETTING:
+  case RTYPESETTING:
+    lr_width_pop();
+    dvi_right(-(int32_t)lr_width);
+    lr_mode = REVERSE(lr_mode);
+    break;
+  default:                     /* lr_mode > SKIMMING */
+    lr_mode--;
+  }
+}
+
+#ifdef XETEX
+static void
+do_native_font_def (int32_t tex_id)
+{
+  if (linear) {
+    read_native_font_record(tex_id);
+  } else {
+    unsigned int flags;
+    int name_length, i;
+
+    get_unsigned_quad(dvi_file); /* skip point size */
+    flags = get_unsigned_pair(dvi_file);
+    name_length = (int) get_unsigned_byte(dvi_file);
+    for (i = 0; i < name_length; ++i)
+      get_unsigned_byte(dvi_file);
+    get_unsigned_quad(dvi_file);
+    if (flags & XDV_FLAG_COLORED) {
+      get_unsigned_quad(dvi_file);
+    }
+  }
+  --dvi_page_buf_index; /* don't buffer the opcode */
+}
+
+static void
+skip_glyphs (void)
+{
+  unsigned int i, slen = 0;
+  slen = (unsigned int) get_buffered_unsigned_pair();
+  for (i = 0; i < slen; i++) {
+    skip_bufferd_bytes(4);
+    skip_bufferd_bytes(4);
+    skip_bufferd_bytes(2);
+  }
+}
+
+static void
+do_glyphs (void)
 {
   struct loaded_font *font;
   spt_t  width, height, depth, *xloc, *yloc, glyph_width = 0;
@@ -1897,12 +1593,21 @@ do_glyph_array (int yLocsPresent)
 
   width = get_buffered_signed_quad();
 
+  if (lr_mode >= SKIMMING) {
+    lr_width += width;
+    skip_glyphs();
+    return;
+  }
+
+  if (lr_mode == RTYPESETTING)
+    dvi_right(width); /* Will actually move left */
+
   slen = (unsigned int) get_buffered_unsigned_pair();
   xloc = NEW(slen, spt_t);
   yloc = NEW(slen, spt_t);
   for (i = 0; i < slen; i++) {
     xloc[i] = get_buffered_signed_quad();
-    yloc[i] = yLocsPresent ? get_buffered_signed_quad() : 0;
+    yloc[i] = get_buffered_signed_quad();
   }
 
   if (font->rgba_color != 0xffffffff) {
@@ -1916,24 +1621,15 @@ do_glyph_array (int yLocsPresent)
 
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
-    if (glyph_id < font->ft_face->num_glyphs) {
-      FT_Error error;
-      FT_Fixed advance;
-      int flags = FT_LOAD_NO_SCALE;
+    if (glyph_id < font->numGlyphs) {
+      unsigned advance = (font->hvmt)[glyph_id].advance;
+      glyph_width    = (double)font->size * (double)advance / (double)font->unitsPerEm;
+      glyph_width    = glyph_width * font->extend;
 
-      if (font->layout_dir == 1)
-        flags |= FT_LOAD_VERTICAL_LAYOUT;
-
-      error = FT_Get_Advance(font->ft_face, glyph_id, flags, &advance);
-      if (error)
-        advance = 0;
-
-      glyph_width = (double)font->size * (double)advance / (double)font->ft_face->units_per_EM;
-      glyph_width = glyph_width * font->extend;
-      if (compute_boxes && link_annot && marked_depth >= tagged_depth) {
+      if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
-        height = (double)font->size * (double)font->ft_face->ascender / (double)font->ft_face->units_per_EM;
-        depth  = (double)font->size * -(double)font->ft_face->descender / (double)font->ft_face->units_per_EM;
+        height = (double)font->size * (double)font->ascent / (double)font->unitsPerEm;
+        depth  = (double)font->size * -(double)font->descent / (double)font->unitsPerEm;
         pdf_dev_set_rect(&rect, dvi_state.h + xloc[i], -dvi_state.v - yloc[i], glyph_width, height, depth);
         pdf_doc_expand_box(&rect);
       }
@@ -1951,64 +1647,10 @@ do_glyph_array (int yLocsPresent)
   RELEASE(xloc);
   RELEASE(yloc);
 
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
-  }
+  if (lr_mode == LTYPESETTING)
+    dvi_right(width);
 
   return;
-}
-
-static void
-do_pic_file(void)
-  /* parameters for XDV_PIC_FILE opcode: pdf_box[1] t[4][6] p[2] len[2] path[l] */
-{
-  int            page_no;
-  UNSIGNED_PAIR  len;
-  char          *path;
-  int            i;
-  int            xobj_id;
-  transform_info ti;
-
-  transform_info_clear(&ti);
-
-  /* pdf_box = */ get_buffered_unsigned_byte();
-
-  ti.matrix.a = get_buffered_signed_quad() / 65536.0; /* convert 16.16 Fixed to floating-point */
-  ti.matrix.b = get_buffered_signed_quad() / 65536.0;
-  ti.matrix.c = get_buffered_signed_quad() / 65536.0;
-  ti.matrix.d = get_buffered_signed_quad() / 65536.0;
-  ti.matrix.e = get_buffered_signed_quad() / 65536.0;
-  ti.matrix.f = get_buffered_signed_quad() / 65536.0;
-
-  page_no = get_buffered_signed_pair();
-  len = get_buffered_unsigned_pair();
-  path = NEW(len + 1, char);
-  for (i = 0; i < len; ++i)
-    path[i] = get_buffered_unsigned_byte();
-  path[len] = 0;
-  
-  /*
-    now we need to place page /page_no/ of the graphic file from /path/, applying /transform/
-      if pdf_box=0 the file is a raster image (.jpg, .png, .tif, etc; need to determine format
-                                             by examining the file)
-      else it is a PDF document, pdf_box tells which PDF box (media, trim, crop, etc) to use
-    page_no is currently only used with PDF documents, though in theory could be used
-      with multi-page TIFFs, etc
-    transform is a 3x2 affine transform matrix expressed in fixed-point values
-  */
-  
-  xobj_id = pdf_ximage_findresource(path, page_no, NULL);
-  if (xobj_id >= 0) {
-      /* FIXME: this seems to work for 72dpi JPEGs, but isn't right for others;
-         need to take the actual image resolution into account in pdf_dev_put_image,
-         not just assume the "original" size is 100dpi
-      */
-    pdf_dev_put_image(xobj_id, &ti, dvi_dev_xpos(), dvi_dev_ypos());
-  }
-  
-  RELEASE(path);
 }
 #endif
 
@@ -2024,13 +1666,9 @@ do_pic_file(void)
  * the dvi file is here.
  */
 void
-dvi_do_page (long n,
-             double paper_width, double paper_height,
-             double hmargin,     double vmargin)
+dvi_do_page (double page_paper_height, double hmargin, double vmargin)
 {
   unsigned char opcode;
-  unsigned char sbuf[SBUF_SIZE];
-  unsigned int  slen = 0;
 
   /* before this is called, we have scanned the page for papersize specials
      and the complete DVI data is now in dvi_page_buffer */
@@ -2038,50 +1676,40 @@ dvi_do_page (long n,
 
   /* DVI coordinate */
   dev_origin_x = hmargin;
-  dev_origin_y = paper_height - vmargin;
+  dev_origin_y = page_paper_height - vmargin;
 
   dvi_stack_depth = 0;
   for (;;) {
-    /* The most likely opcodes are individual setchars.
-     * These are buffered for speed. */
-    slen  = 0;
-    while ((opcode = get_buffered_unsigned_byte()) <= SET_CHAR_127 &&
-            slen < SBUF_SIZE) {
-      sbuf[slen++] = opcode;
-    }
-    if (slen > 0) {
-      do_string(sbuf, slen);
-    }
-    if (slen == SBUF_SIZE)
+    opcode = get_buffered_unsigned_byte();
+
+    if (opcode <= SET_CHAR_127) {
+      dvi_set(opcode);
       continue;
+    }
 
     /* If we are here, we have an opcode that is something
      * other than SET_CHAR.
      */
     if (opcode >= FNT_NUM_0 && opcode <= FNT_NUM_63) {
-      do_fnt(opcode - FNT_NUM_0);
+      do_fnt(opcode-FNT_NUM_0);
       continue;
     }
 
     switch (opcode) {
-    case SET1: do_set1(); break;
-    case SET2: do_set2(); break;
-    case SET3: if (!is_xetex) { do_set3(); break; }
+    case SET1: case SET2: case SET3:
+      dvi_set(get_buffered_unsigned_num(opcode-SET1)); break;
     case SET4:
-      ERROR("Multibyte (>%d bits) character not supported!",
-            is_xetex ? 16 : 24);
+      ERROR("Multibyte (>24 bits) character not supported!");
       break;
 
     case SET_RULE:
       do_setrule();
       break;
 
-    case PUT1: do_put1(); break;
-    case PUT2: do_put2(); break;
-    case PUT3: if (!is_xetex) { do_put3(); break; }
+    case PUT1: case PUT2: case PUT3:
+      dvi_put(get_buffered_unsigned_num(opcode-PUT1)); break;
     case PUT4:
-      ERROR("Multibyte (>%d bits) character not supported!",
-            is_xetex ? 16 : 24);
+      ERROR("Multibyte (>24 bits) character not supported!");
       break;
 
     case PUT_RULE:
@@ -2100,6 +1728,8 @@ dvi_do_page (long n,
 
     case PUSH:
       dvi_push();
+      if (lr_mode >= SKIMMING)
+        lr_width_push();
       /* The following line needs to go here instead of in
        * dvi_push() since logical structure of document is
        * oblivous to virtual fonts. For example the last line on a
@@ -2112,61 +1742,51 @@ dvi_do_page (long n,
       break;
     case POP:
       dvi_pop();
+      if (lr_mode >= SKIMMING)
+        lr_width_pop();
       /* Above explanation holds for following line too */
       dvi_mark_depth();
       break;
 
-    case RIGHT1: do_right1(); break;
-    case RIGHT2: do_right2(); break;
-    case RIGHT3: do_right3(); break;
-    case RIGHT4: do_right4(); break;
+    case RIGHT1: case RIGHT2: case RIGHT3: case RIGHT4:
+      dvi_right(get_buffered_signed_num(opcode-RIGHT1)); break;
 
     case W0: dvi_w0(); break;
-    case W1: do_w1 (); break;
-    case W2: do_w2 (); break;
-    case W3: do_w3 (); break;
-    case W4: do_w4 (); break;
+    case W1: case W2: case W3: case W4:
+      dvi_w(get_buffered_signed_num(opcode-W1)); break;
 
     case X0: dvi_x0(); break;
-    case X1: do_x1 (); break;
-    case X2: do_x2 (); break;
-    case X3: do_x3 (); break;
-    case X4: do_x4 (); break;
+    case X1: case X2: case X3: case X4:
+      dvi_x(get_buffered_signed_num(opcode-X1)); break;
 
-    case DOWN1: do_down1(); break;
-    case DOWN2: do_down2(); break;
-    case DOWN3: do_down3(); break;
-    case DOWN4: do_down4(); break;
+    case DOWN1: case DOWN2: case DOWN3: case DOWN4:
+      dvi_down(get_buffered_signed_num(opcode-DOWN1)); break;
 
     case Y0: dvi_y0(); break;
-    case Y1: do_y1 (); break;
-    case Y2: do_y2 (); break;
-    case Y3: do_y3 (); break;
-    case Y4: do_y4 (); break;
+    case Y1: case Y2: case Y3: case Y4:
+      dvi_y(get_buffered_signed_num(opcode-Y1)); break;
 
     case Z0: dvi_z0(); break;
-    case Z1: do_z1 (); break;
-    case Z2: do_z2 (); break;
-    case Z3: do_z3 (); break;
-    case Z4: do_z4 (); break;
+    case Z1: case Z2: case Z3: case Z4:
+      dvi_z(get_buffered_signed_num(opcode-Z1)); break;
 
-    case FNT1: do_fnt1(); break;
-    case FNT2: do_fnt2(); break;
-    case FNT3: do_fnt3(); break;
-    case FNT4: do_fnt4(); break;
+    case FNT1: case FNT2: case FNT3: case FNT4:
+      do_fnt(get_buffered_unsigned_num(opcode-FNT1)); break;
 
       /* Specials */
-    case XXX1: do_xxx1(); break;
-    case XXX2: do_xxx2(); break;
-    case XXX3: do_xxx3(); break;
-    case XXX4: do_xxx4(); break;
+    case XXX1: case XXX2: case XXX3: case XXX4:
+      {
+        int32_t size = get_buffered_unsigned_num(opcode-XXX1);
+        if (size < 0)
+          WARN("DVI: Special with %d bytes???", size);
+        else
+          do_xxx(size);
+        break;
+      }
 
-      /* Font definition - skipped except in linear mode. */
-      /* actually, these should not occur! */
-    case FNT_DEF1: do_fntdef1(0); break;
-    case FNT_DEF2: do_fntdef2(0); break;
-    case FNT_DEF3: do_fntdef3(0); break;
-    case FNT_DEF4: do_fntdef4(0); break;
+      /* These should not occur - processed during pre-scanning */
+    case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
+      break;
 
       /* pTeX extension */
     case PTEXDIR:
@@ -2175,19 +1795,19 @@ dvi_do_page (long n,
 
 #ifdef XETEX
     /* XeTeX extension */
-    case XDV_GLYPH_STRING:
-      do_glyph_array(0);
+    case XDV_GLYPHS:
+      do_glyphs();
       break;
-    case XDV_GLYPH_ARRAY:
-      do_glyph_array(1);
-      break;
+    /* should not occur - processed during pre-scanning */
     case XDV_NATIVE_FONT_DEF:
-      do_native_font_def(0); /* should not occur - processed during pre-scanning */
-      break;
-    case XDV_PIC_FILE:
-      do_pic_file();
       break;
 #endif
+    case BEGIN_REFLECT:
+      dvi_begin_reflect();
+      break;
+    case END_REFLECT:
+      dvi_end_reflect();
+      break;
 
     case POST:
       if (linear && !processing_page) {
@@ -2208,7 +1828,7 @@ dvi_do_page (long n,
 double
 dvi_init (char *dvi_filename, double mag)
 {
-  long  post_location;
+  int32_t post_location;
 
   if (!dvi_filename) { /* no filename: reading from stdin, probably a pipe */
 #ifdef WIN32
@@ -2225,23 +1845,19 @@ dvi_init (char *dvi_filename, double mag)
       char *p;
       p = strrchr(dvi_filename, '.');
       if (p == NULL || (!FILESTRCASEEQ(p, ".dvi") &&
-                        !(is_xetex && FILESTRCASEEQ(p, ".xdv")))) {
-#ifdef XETEX
+                        !FILESTRCASEEQ(p, ".xdv"))) {
         strcat(dvi_filename, ".xdv");
         dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
         if (!dvi_file) {
           dvi_filename[strlen(dvi_filename) - 4] = '\0';
-#endif
           strcat(dvi_filename, ".dvi");
           dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
-#ifdef XETEX
         }
-#endif
       }
     }
     if (!dvi_file) {
-      ERROR("Could not open specified DVI%s file: %s",
-            is_xetex ? " (or XDV)" : "", dvi_filename);
+      ERROR("Could not open specified DVI (or XDV) file: %s",
+            dvi_filename);
       return 0.0;
     }
 
@@ -2297,6 +1913,16 @@ dvi_close (void)
     RELEASE(page_loc);
   page_loc  = NULL;
   num_pages = 0;
+
+#ifdef XETEX
+  for (i = 0; i < num_loaded_fonts; i++)
+  {
+    if (loaded_fonts[i].hvmt != NULL)
+      RELEASE(loaded_fonts[i].hvmt);
+
+    loaded_fonts[i].hvmt = NULL;
+  }
+#endif
 
   if (loaded_fonts)
     RELEASE(loaded_fonts);
@@ -2428,7 +2054,7 @@ static int
 scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 	      unsigned *minorversion,
 	      int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
-	      const char *buf, UNSIGNED_QUAD size)
+	      const char *buf, uint32_t size)
 {
   char  *q;
   const char *p = buf, *endptr;
@@ -2586,16 +2212,19 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 
 
 void
-dvi_scan_specials (long page_no,
+dvi_scan_specials (int page_no,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, char *landscape,
                    unsigned *minorversion,
 		   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
 {
   FILE          *fp = dvi_file;
-  long           offset;
+  int32_t        offset;
   unsigned char  opcode;
-  static long    buffered_page = -1;
+  static int     buffered_page = -1;
+#if XETEX
+  unsigned int len;
+#endif
 
   if (page_no == buffered_page)
     return; /* because dvipdfmx wants to scan first page twice! */
@@ -2608,7 +2237,7 @@ dvi_scan_specials (long page_no,
       ERROR("Invalid page number: %u", page_no);
     offset = page_loc[page_no];
 
-    seek_absolute(fp, offset);
+    xseek_absolute (fp, offset, "DVI");
   }
   
   while ((opcode = get_and_buffer_unsigned_byte(fp)) != EOP) {
@@ -2617,12 +2246,14 @@ dvi_scan_specials (long page_no,
       continue;
     else if (opcode == XXX1 || opcode == XXX2 ||
              opcode == XXX3 || opcode == XXX4) {
-      UNSIGNED_QUAD size;
+      uint32_t size = get_and_buffer_unsigned_byte(fp);
       switch (opcode) {
-      case XXX1: size = get_and_buffer_unsigned_byte(fp);   break;
-      case XXX2: size = get_and_buffer_unsigned_pair(fp);   break;
-      case XXX3: size = get_and_buffer_unsigned_triple(fp); break;
-      case XXX4: size = get_and_buffer_unsigned_quad(fp);   break;
+      case XXX4: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+        if (size > 0x7fff)
+          WARN("Unsigned number starting with %x exceeds 0x7fffffff", size);
+      case XXX3: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+      case XXX2: size = size * 0x100u + get_and_buffer_unsigned_byte(fp);
+      default: break;
       }
       if (dvi_page_buf_index + size >= dvi_page_buf_size) {
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
@@ -2650,66 +2281,47 @@ dvi_scan_specials (long page_no,
       break;
     case SET1: case PUT1: case RIGHT1:  case DOWN1:
     case W1: case X1: case Y1: case Z1: case FNT1:
-      get_and_buffer_unsigned_byte(fp);
+      get_and_buffer_bytes(fp, 1);
       break;
 
     case SET2: case PUT2: case RIGHT2: case DOWN2:
     case W2: case X2: case Y2: case Z2: case FNT2:
-      get_and_buffer_signed_pair(fp);
+      get_and_buffer_bytes(fp, 2);
       break;
 
     case SET3: case PUT3: case RIGHT3: case DOWN3:
     case W3: case X3: case Y3: case Z3: case FNT3:
-      get_and_buffer_signed_triple(fp);
+      get_and_buffer_bytes(fp, 3);
       break;
 
     case SET4: case PUT4: case RIGHT4: case DOWN4:
     case W4: case X4: case Y4: case Z4: case FNT4:
-      get_and_buffer_signed_quad(fp);
+      get_and_buffer_bytes(fp, 4);
       break;
 
     case SET_RULE: case PUT_RULE:
       get_and_buffer_bytes(fp, 8);
       break;
 
-    case FNT_DEF1: do_fntdef1(1); break;
-    case FNT_DEF2: do_fntdef2(1); break;
-    case FNT_DEF3: do_fntdef3(1); break;
-    case FNT_DEF4: do_fntdef4(1); break;
-
-#ifdef XETEX
-    case XDV_GLYPH_STRING:
-    {
-      UNSIGNED_PAIR count;
-      get_and_buffer_unsigned_quad(fp);         /* width */
-      count = get_and_buffer_unsigned_pair(fp); /* glyph count */
-      get_and_buffer_bytes(fp, count * 6);  /* 2 bytes ID + 4 bytes x-location per glyph */
-    }
+    case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
+      do_fntdef(get_unsigned_num(fp, opcode-FNT_DEF1));
       break;
-    case XDV_GLYPH_ARRAY:
-    {
-      UNSIGNED_PAIR count;
-      get_and_buffer_unsigned_quad(fp);         /* width */
-      count = get_and_buffer_unsigned_pair(fp); /* glyph count */
-      get_and_buffer_bytes(fp, count * 10); /* 2 bytes ID + 8 bytes x,y-location per glyph */
-    }
+#ifdef XETEX
+    case XDV_GLYPHS:
+      get_and_buffer_bytes(fp, 4);            /* width */
+      len = get_and_buffer_unsigned_pair(fp); /* glyph count */
+      get_and_buffer_bytes(fp, len * 10);     /* 2 bytes ID + 8 bytes x,y-location per glyph */
       break;
     case XDV_NATIVE_FONT_DEF:
-      do_native_font_def(1);
-      break;
-    case XDV_PIC_FILE:
-      /* params: flags[1] t[4][6] p[2] len[2] path[l] */
-    {
-      UNSIGNED_PAIR len;
-      get_and_buffer_bytes(fp, 1 + 4 * 6 + 2);
-      len = get_and_buffer_unsigned_pair(fp); /* length of pathname */
-      get_and_buffer_bytes(fp, len);
-    }
+      do_native_font_def(get_signed_quad(dvi_file));
       break;
 #endif
+    case BEGIN_REFLECT:
+    case END_REFLECT:
+      break;
 
     case PTEXDIR:
-      get_and_buffer_unsigned_byte(fp);
+      get_and_buffer_bytes(fp, 1);
       break;
 
     case POST:

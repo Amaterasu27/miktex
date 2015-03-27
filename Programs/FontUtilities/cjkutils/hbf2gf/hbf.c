@@ -393,7 +393,7 @@ match(reg const char *lp, reg const char *sp)
 		lp++;
 		sp++;
 	}
-	return (*lp == '\0' || isspace(*lp)) && *sp == '\0';
+	return (*lp == '\0' || isspace((unsigned char)*lp)) && *sp == '\0';
 }
 
 #ifdef NO_STRDUP
@@ -422,12 +422,12 @@ reg	char	*tp;
 	prop = NEW(PROPERTY);
 
 	tp = tmp;
-	while (*lp != '\0' && ! isspace(*lp))
+	while (*lp != '\0' && ! isspace((unsigned char)*lp))
 		*tp++ = *lp++;
 	*tp = '\0';
 	prop->prop_name = strdup(tmp);
 
-	while (*lp != '\0' && isspace(*lp))
+	while (*lp != '\0' && isspace((unsigned char)*lp))
 		lp++;
 
 	tp = tmp;
@@ -438,9 +438,9 @@ reg	char	*tp;
 	}
 	else
 		for (;;) {
-			while (*lp != '\0' && ! isspace(*lp))
+			while (*lp != '\0' && ! isspace((unsigned char)*lp))
 				*tp++ = *lp++;
-			while (*lp != '\0' && isspace(*lp))
+			while (*lp != '\0' && isspace((unsigned char)*lp))
 				lp++;
 			if (*lp == '\0')
 				break;
@@ -826,9 +826,9 @@ static const char *
 skip_word(int n, const char *s)
 {
 	for ( ; n > 0; n--) {
-		while (*s != '\0' && ! isspace(*s))
+		while (*s != '\0' && ! isspace((unsigned char)*s))
 			s++;
-		while (*s != '\0' && isspace(*s))
+		while (*s != '\0' && isspace((unsigned char)*s))
 			s++;
 	}
 	return s;
@@ -930,7 +930,7 @@ get_line(char *buf, int len, FILE *f)
 		}
 		if (c == '\n' || c == '\r') {
 			/* trim trailing space */
-			while (bp > buf && isspace(*(bp-1)))
+			while (bp > buf && isspace((unsigned char)*(bp-1)))
 				bp--;
 			*bp = '\0';
 			return TRUE;

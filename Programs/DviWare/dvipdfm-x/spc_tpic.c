@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -381,6 +381,16 @@ tpic__arc (struct spc_tpic_ *tp,
 
     set_styles(tp, c, f_fs, f_vp, pn, da);
 
+    /* The arcx operator here draws an excess straight line from current
+     * point to the starting point of the arc if they are different, as in
+     * PostScript language. It may cuase an unexpected behavior when DVIPS
+     * transformation command is inserted before TPIC ar command: it invokes
+     * moveto and sets currentpoint which may be different from the starting
+     * point of arc to be drawn. We use newpath here to avoid drawing an
+     * excess line. I'm not sure if it is proper TPIC implementation but this
+     * seems to be DVIPS compatible behavior.
+     */
+    pdf_dev_newpath();
     pdf_dev_arcx(v[0], v[1], v[2], v[3], v[4], v[5], +1, 0.0);
 
     showpath(f_vp, f_fs);
@@ -738,8 +748,7 @@ spc_handler_tpic_tx (struct spc_env *spe,
 
 
 static int
-spc_handler_tpic__init (struct spc_env *spe,
-                        struct spc_arg *ap, void *dp)
+spc_handler_tpic__init (struct spc_env *spe, void *dp)
 {
   struct spc_tpic_ *tp = dp;
 
@@ -763,8 +772,7 @@ spc_handler_tpic__init (struct spc_env *spe,
 }
 
 static int
-spc_handler_tpic__bophook (struct spc_env *spe,
-                           struct spc_arg *ap, void *dp)
+spc_handler_tpic__bophook (void *dp)
 {
   struct spc_tpic_ *tp = dp;
 
@@ -776,8 +784,7 @@ spc_handler_tpic__bophook (struct spc_env *spe,
 }
 
 static int
-spc_handler_tpic__eophook (struct spc_env *spe,
-                           struct spc_arg *ap, void *dp)
+spc_handler_tpic__eophook (struct spc_env *spe, void *dp)
 {
   struct spc_tpic_ *tp = dp;
 
@@ -791,8 +798,7 @@ spc_handler_tpic__eophook (struct spc_env *spe,
 }
 
 static int
-spc_handler_tpic__clean (struct spc_env *spe,
-                         struct spc_arg *ap, void *dp)
+spc_handler_tpic__clean (struct spc_env *spe, void *dp)
 {
   struct spc_tpic_ *tp = dp;
 
@@ -821,14 +827,14 @@ int
 spc_tpic_at_begin_page (void)
 {
   struct spc_tpic_ *tp = &_tpic_state;
-  return  spc_handler_tpic__bophook(NULL, NULL, tp);
+  return  spc_handler_tpic__bophook(tp);
 }
 
 int
 spc_tpic_at_end_page (void)
 {
   struct spc_tpic_ *tp = &_tpic_state;
-  return  spc_handler_tpic__eophook(NULL, NULL, tp);
+  return  spc_handler_tpic__eophook(NULL, tp);
 }
 
 
@@ -836,14 +842,14 @@ int
 spc_tpic_at_begin_document (void)
 {
   struct spc_tpic_ *tp = &_tpic_state;
-  return  spc_handler_tpic__init(NULL, NULL, tp);
+  return  spc_handler_tpic__init(NULL, tp);
 }
 
 int
 spc_tpic_at_end_document (void)
 {
   struct spc_tpic_ *tp = &_tpic_state;
-  return  spc_handler_tpic__clean(NULL, NULL, tp);
+  return  spc_handler_tpic__clean(NULL, tp);
 }
 
 
@@ -851,7 +857,7 @@ spc_tpic_at_end_document (void)
 #include "pdfparse.h" /* parse_val_ident :( */
 
 static pdf_obj *
-spc_parse_kvpairs (struct spc_env *spe, struct spc_arg *ap)
+spc_parse_kvpairs (struct spc_arg *ap)
 {
   pdf_obj *dict;
   char    *kp, *vp;
@@ -939,13 +945,13 @@ tpic_filter_getopts (pdf_obj *kp, pdf_obj *vp, void *dp)
 
 static int
 spc_handler_tpic__setopts (struct spc_env *spe,
-                           struct spc_arg *ap ) /* , void *dp) */
+                           struct spc_arg *ap)
 {
   struct spc_tpic_ *tp = &_tpic_state;
   pdf_obj  *dict;
   int       error = 0;
 
-  dict  = spc_parse_kvpairs(spe, ap);
+  dict  = spc_parse_kvpairs(ap);
   if (!dict)
     return  -1;
   error = pdf_foreach_dict(dict, tpic_filter_getopts, tp);

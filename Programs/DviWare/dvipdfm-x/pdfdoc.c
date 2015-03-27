@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2015 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -519,7 +519,6 @@ pdf_doc_close_docinfo (pdf_doc *p)
     NULL
   };
   pdf_obj *value;
-  char    *banner;
   int      i;
 
   for (i = 0; keys[i] != NULL; i++) {
@@ -536,17 +535,21 @@ pdf_doc_close_docinfo (pdf_doc *p)
     }
   }
 
+  if (!pdf_lookup_dict(docinfo, "Producer")) {
+    char *banner;
+
 #if defined(MIKTEX)
-  banner = NEW(strlen(my_name)+strlen(VERSION)+40, char);
-  sprintf(banner, "MiKTeX-%s (%s)", my_name, VERSION);
+    banner = NEW(strlen(my_name)+strlen(VERSION)+40, char);
+    sprintf(banner, "MiKTeX-%s (%s)", my_name, VERSION);
 #else
-  banner = NEW(strlen(my_name)+strlen(VERSION)+4, char);
-  sprintf(banner, "%s (%s)", my_name, VERSION);
+    banner = NEW(strlen(my_name)+strlen(VERSION)+4, char);
+    sprintf(banner, "%s (%s)", my_name, VERSION);
 #endif
-  pdf_add_dict(docinfo,
-               pdf_new_name("Producer"),
-               pdf_new_string(banner, strlen(banner)));
-  RELEASE(banner);
+    pdf_add_dict(docinfo,
+                 pdf_new_name("Producer"),
+                 pdf_new_string(banner, strlen(banner)));
+    RELEASE(banner);
+  }
   
   if (!pdf_lookup_dict(docinfo, "CreationDate")) {
     char now[32];
@@ -2286,7 +2289,7 @@ pdf_doc_finish_page (pdf_doc *p)
   return;
 }
 
-static pdf_color bgcolor = { 1, { 1.0 } };
+static pdf_color bgcolor = { 1, NULL, { 1.0 } };
 
 void
 pdf_doc_set_bgcolor (const pdf_color *color)
@@ -2603,7 +2606,7 @@ pdf_doc_begin_grabbing (const char *ident,
    * Make sure the object is self-contained by adding the
    * current font and color to the object stream.
    */
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(1);  /* force color operators to be added to stream */
 
   return xobj_id;
@@ -2649,7 +2652,7 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 
   pdf_dev_pop_gstate();
 
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(0);
 
   RELEASE(fnode);

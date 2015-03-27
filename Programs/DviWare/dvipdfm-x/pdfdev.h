@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -205,7 +205,7 @@ extern void   pdf_dev_set_param (int param_type, int value);
 /* Force reselecting font and color:
  * XFrom (content grabbing) and Metapost support want them.
  */
-extern void   pdf_dev_reset_fonts (void);
+extern void   pdf_dev_reset_fonts (int newpage);
 extern void   pdf_dev_reset_color (int force);
 
 /* Initialization of transformation matrix with M and others.

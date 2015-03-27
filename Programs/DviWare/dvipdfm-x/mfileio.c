@@ -116,8 +116,17 @@ long file_size (FILE *file)
   return (size);
 }
 
+off_t xfile_size (FILE *file, const char *name)
+{
+  off_t size;
+  xseek_end (file, name);
+  size = xtell_position (file, name);
+  rewind (file);
+  return size;
+}
+
 /* Unlike fgets, mfgets works with \r, \n, or \r\n end of lines. */
-char *mfgets (char *buffer, unsigned long length, FILE *file) 
+char *mfgets (char *buffer, int length, FILE *file) 
 {
   int ch = 0, i = 0;
   while (i < length-1 && (ch = fgetc (file)) >= 0 && ch != '\n' && ch != '\r')

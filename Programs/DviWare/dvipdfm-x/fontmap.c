@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -34,11 +34,6 @@
 #include "subfont.h"
 
 #include "fontmap.h"
-
-#ifdef XETEX
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#endif
 
 /* CIDFont */
 static char *strip_options (const char *map_name, fontmap_opt *opt);
@@ -82,9 +77,7 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
   mrec->opt.style     = FONTMAP_STYLE_NONE;
   mrec->opt.stemv     = -1; /* not given explicitly by an option */
 
-#ifdef XETEX
-  mrec->opt.ft_face   = NULL;
-#endif
+  mrec->opt.cff_charsets = NULL;
 }
 
 void
@@ -151,9 +144,7 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
   dst->opt.style     = src->opt.style;
   dst->opt.stemv     = src->opt.stemv;
 
-#ifdef XETEX
-  dst->opt.ft_face   = src->opt.ft_face;
-#endif
+  dst->opt.cff_charsets = src->opt.cff_charsets;
 }
 
 
@@ -254,7 +245,7 @@ parse_string_value (const char **pp, const char *endptr)
   if (*p == '"')
     q = parse_c_string(&p, endptr);
   else {
-    for (n = 0; p < endptr && !isspace(*p); p++, n++);
+    for (n = 0; p < endptr && !isspace((unsigned char)*p); p++, n++);
     if (n == 0)
       return  NULL;
     q = NEW(n + 1, char);
@@ -515,7 +506,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
         if (!q) {
           WARN("Invalid value for option 'm'.");
           return  -1;
-        } else if (p < endptr && !isspace(*p)) {
+        } else if (p < endptr && !isspace((unsigned char)*p)) {
           WARN("Invalid value for option 'm': %s", q);
           RELEASE(q);
           return  -1;
@@ -553,7 +544,6 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
     default:
       WARN("Unrecognized font map option: '%c'", mopt);
       return  -1;
-      break;
     }
     skip_blank(&p, endptr);
   }
@@ -597,7 +587,9 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
   while (p < endptr && *p != '\r' && *p != '\n' && (*p == '<' || *p == '"')) {
     switch (*p) {
     case '<': /* encoding or fontfile field */
-      if (++p < endptr && *p == '[') p++; /*skip */
+      /* If we see <[ or <<, just ignore the second char instead
+         of doing as directed (define encoding file, fully embed); sorry.  */
+      if (++p < endptr && (*p == '[' || *p == '<')) p++; /*skip */
       skip_blank(&p, endptr);
       if ((q = parse_string_value(&p, endptr))) {
         int n = strlen(q);
@@ -638,7 +630,6 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
     default:
       WARN("Found an invalid entry: %s", p);
       return -1;
-      break;
     }
     skip_blank(&p, endptr);
   }
@@ -825,7 +816,7 @@ pdf_remove_fontmap_record (const char *kp)
   return  0;
 }
 
-int
+fontmap_rec *
 pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 {
   fontmap_rec *mrec;
@@ -833,7 +824,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 
   if (!kp || fontmap_invalid(vp)) {
     WARN("Invalid fontmap record...");
-    return -1;
+    return NULL;
   }
 
   if (verbose > 3)
@@ -848,7 +839,8 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     if (!subfont_ids) {
       RELEASE(fnt_name);
       RELEASE(sfd_name);
-      return  -1;
+      WARN("Could not open SFD file: %s", sfd_name);
+      return NULL;
     }
     if (verbose > 3)
       MESG("\nfontmap>> Expand @%s@:", sfd_name);
@@ -881,7 +873,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
   if (verbose > 3)
     MESG("\n");
 
-  return  0;
+  return mrec;
 }
 
 
@@ -1043,19 +1035,18 @@ pdf_load_fontmap_file (const char *filename, int mode)
   return  error;
 }
 
-#ifdef XETEX
-static int
-pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face,
+fontmap_rec *
+pdf_insert_native_fontmap_record (const char *path, uint32_t index,
                                   int layout_dir, int extend, int slant, int embolden)
 {
   char        *fontmap_key;
   fontmap_rec *mrec;
+  fontmap_rec *ret;
 
-  ASSERT(name);
-  ASSERT(path || face);
+  ASSERT(path);
 
-  fontmap_key = malloc(strlen(name) + 40);	// CHECK
-  sprintf(fontmap_key, "%s/%c/%d/%d/%d", name, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+  fontmap_key = malloc(strlen(path) + 40);	// CHECK
+  sprintf(fontmap_key, "%s/%d/%c/%d/%d/%d", path, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
 
   if (verbose)
     MESG("<NATIVE-FONTMAP:%s", fontmap_key);
@@ -1065,9 +1056,8 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
 
   mrec->map_name  = fontmap_key;
   mrec->enc_name  = mstrdup(layout_dir == 0 ? "Identity-H" : "Identity-V");
-  mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
+  mrec->font_name = mstrdup(path);
   mrec->opt.index = index;
-  mrec->opt.ft_face = face;
   if (layout_dir != 0)
     mrec->opt.flags |= FONTMAP_OPT_VERT;
 
@@ -1077,81 +1067,15 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
   mrec->opt.slant  = slant    / 65536.0;
   mrec->opt.bold   = embolden / 65536.0;
   
-  pdf_insert_fontmap_record(mrec->map_name, mrec);
+  ret = pdf_insert_fontmap_record(mrec->map_name, mrec);
   pdf_clear_fontmap_record(mrec);
   RELEASE(mrec);
 
   if (verbose)
     MESG(">");
 
-  return 0;
+  return ret;
 }
-
-static FT_Library ftLib;
-
-int
-pdf_load_native_font (const char *ps_name,
-                      int layout_dir, int extend, int slant, int embolden)
-{
-  const char *p;
-  char *filename = NEW(strlen(ps_name), char);
-  char *q = filename;
-  int  index = 0;
-  FT_Face face = NULL;
-  int  error = -1;
-
-  if (ps_name[0] != '[') {
-    ERROR("Loading fonts by font name is not supported: %s", ps_name);
-    return error;
-  }
-
-  if (FT_Init_FreeType(&ftLib) != 0) {
-    ERROR("FreeType initialization failed.");
-    return error;
-  }
-
-#ifdef WIN32
-  for (p = ps_name + 1; *p && *p != ']'; ++p) {
-    if (*p == ':') {
-      if (p == ps_name+2 && isalpha(*(p-1)) && (*(p+1) == '/' || *(p+1) == '\\'))
-        *q++ = *p;
-      else
-        break;
-    }
-    else
-      *q++ = *p;
-  }
-#else
-  for (p = ps_name + 1; *p && *p != ':' && *p != ']'; ++p)
-    *q++ = *p;
-#endif
-  *q = 0;
-  if (*p == ':') {
-    ++p;
-    while (*p && *p != ']')
-      index = index * 10 + *p++ - '0';
-  }
-  
-  /* try loading the filename directly */
-  error = FT_New_Face(ftLib, filename, index, &face);
-
-  /* if failed, try locating the file in the TEXMF tree */
-  if ( error &&
-       ( (q = dpx_find_opentype_file(filename)) != NULL
-      || (q = dpx_find_truetype_file(filename)) != NULL
-      || (q = dpx_find_type1_file(filename)) != NULL
-      || (q = dpx_find_dfont_file(filename)) != NULL) ) {
-    error = FT_New_Face(ftLib, q, index, &face);
-    RELEASE(q);
-  }
-
-  if (error == 0)
-    error = pdf_insert_native_fontmap_record(ps_name, filename, index, face,
-                                           layout_dir, extend, slant, embolden);
-  RELEASE(filename);
-  return error;
-}
-#endif /* XETEX */
 
 #if 0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"
@@ -1294,7 +1218,7 @@ strip_options (const char *map_name, fontmap_opt *opt)
   opt->style     = FONTMAP_STYLE_NONE;
   opt->flags     = 0;
 
-  if (*p == ':' && isdigit(*(p+1))) {
+  if (*p == ':' && isdigit((unsigned char)*(p+1))) {
     opt->index = (int) strtoul(p+1, &next, 10);
     if (*next == ':')
       p = next + 1;

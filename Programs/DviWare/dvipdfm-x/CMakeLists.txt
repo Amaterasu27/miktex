@@ -68,6 +68,8 @@ set(libutil_sources
   epdf.h
   error.c
   error.h
+  jp2image.c
+  jp2image.h
   jpegimage.c
   jpegimage.h
   mem.c
@@ -188,7 +190,7 @@ set(common_program_sources
   type1.c
 )
 
-set(dvipdfmx_dll_sources ${libutil_sources} ${common_program_sources} dvipdfmx-version.h)
+set(dvipdfmx_dll_sources ${libutil_sources} ${common_program_sources} dvipdfm-x-version.h)
 
 if(NATIVE_WINDOWS)
   set(dvipdfmx_dll_sources ${dvipdfmx_dll_sources}
@@ -238,9 +240,9 @@ foreach(x ${dvipdfmx_exes})
   )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION ${bindir})
-endforeach(x)
+endforeach()
 
-set(xdvipdfmx_sources ${libutil_sources} ${common_program_sources} dvipdfmx-version.h ${wrapper_cpp})
+set(xdvipdfmx_sources ${libutil_sources} ${common_program_sources} dvipdfm-x-version.h ${wrapper_cpp})
 
 if(NATIVE_WINDOWS)
   set(xdvipdfmx_sources ${xdvipdfmx_sources}
@@ -288,7 +290,7 @@ if(NATIVE_WINDOWS)
   set(dvipdft_sources ${dvipdft_sources}
     dvipdft.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(dvipdft ${dvipdft_sources})
 

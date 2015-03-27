@@ -486,7 +486,7 @@ no terminating NULL byte.
 @d GF_ID 131
 @d PRE   247@#
 
-@d header " hbf2gf output "
+@d headertstring " hbf2gf output "
 
 @<Prototypes@>=
 static void write_pre(void);
@@ -502,7 +502,7 @@ static void write_pre(void)
     struct tm *time_now;
 
 
-    strcpy(out_s, header);@#
+    strcpy(out_s, headertstring);@#
 
     secs_now = time(NULL); /* system date and time */
     time_now = localtime(&secs_now);
@@ -2330,7 +2330,7 @@ static int fsearch(const char *search_string)
 
     do
        {Q = search_string;
-        p = tolower(*Q);
+        p = tolower((unsigned char)*Q);
         Ch = fgetc(config);
         ch = tolower(Ch);
         while(!(ch == p && old_ch == '\n') && Ch != EOF)
@@ -2347,7 +2347,7 @@ static int fsearch(const char *search_string)
                    /* there must be a space or a tab stop after the keyword */
                     goto success;
             Ch = fgetc(config);
-            if(tolower(Ch) != tolower(*Q))
+            if(tolower(Ch) != tolower((unsigned char)*Q))
                 break;
            }
        }
@@ -2410,14 +2410,14 @@ directories for the \.{pk\_directory} and the \.{tfm\_directory} keywords.
                    }
                 while(*P == '{') @q } @>
                     P++;
-                if(!(isalpha(*P) || *P == '_'))
+                if(!(isalpha((unsigned char)*P) || *P == '_'))
                    {fprintf(stderr,@/
                 "Invalid environment variable name in configuration file\n");
                     exit(1);
                    }
                 *(env_p++) = *(P++);
                 while(*P)
-                   {if(isalnum(*P) || *P == '_')
+                   {if(isalnum((unsigned char)*P) || *P == '_')
                         *(env_p++) = *(P++);
                     else
                        {@q { @> while(*P == '}')
