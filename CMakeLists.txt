@@ -1281,11 +1281,7 @@ if(BUILDING_MIKTEX)
 endif()
 
 if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_dvipdft_dir})
-endif()
-
-if(BUILDING_MIKTEX)
-  add_subdirectory(${rel_xdvipdfmx_dir})
+  add_subdirectory(${rel_dvipdfmx_dir})
 endif()
 
 if(BUILDING_MIKTEX)
