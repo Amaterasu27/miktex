@@ -127,7 +127,7 @@ typedef	int	bool;
 				strchr(fn, '\\') == NULL && \
 				strchr(fn, '/') == NULL)
 #define	READ_BINARY	"rb"
-#endif /* MiKTeX */
+#endif
 
 #ifndef	RelativeFileName
 #define	RelativeFileName(fn)	FALSE
@@ -549,7 +549,7 @@ concat(const char *dir,		/* not necessarily null-terminated */
 	(void)sprintf(fullname, "%.*s\\%s", dirlen, dir, stem);
 #else
 	fullname = strdup(stem);
-#endif /* MiKTeX */
+#endif
 #endif /* vms */
 #endif /* msdos */
 #endif /* unix */
@@ -571,7 +571,7 @@ expand_filename(const char *name, const char *hbf_name)
   if (! miktex_find_hbf_file(name, buf))
     return (0);
   return (strdup(buf));
-#else /* not MiKTeX */
+#else
 #ifdef unix
 reg	char	*s;
 reg	int	size;
@@ -634,7 +634,7 @@ reg	int	size;
 #endif /* vms */
 #endif /* msdos */
 #endif /* unix */
-#endif /* not MiKTeX */
+#endif
 }
 
 #if defined(MIKTEX)
@@ -1102,12 +1102,10 @@ path_open(const char *path, const char *filename, char **fullp)
 {
 	if (LocalFileName(filename) && path != NULL) {
 #ifdef PATH_DELIMITER
-		int	len;
 		char	*fullname;
 		FILE	*f;
 		const	char	*p_next;
 
-		len = strlen(filename);
 		for (;;) {
 			p_next = strchr(path, PATH_DELIMITER);
 			if (p_next == NULL)
