@@ -157,7 +157,7 @@ makefont(char *name, int dpi, int bdpi)
 						    1024);
        Process::Run (pathMakePk.Get(), szArguments);
      }
-#else /* not MiKTeX */
+#else
    register char *p, *q;
    register int m, n;
    int modegiven = 0;
@@ -321,5 +321,5 @@ default:    *q++ = *p;
          fflush(fontlog);
       }
    }
-#endif /* not MiKTeX */
+#endif
 }

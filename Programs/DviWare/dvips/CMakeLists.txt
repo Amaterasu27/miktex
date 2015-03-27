@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -68,6 +68,16 @@ set(dvips_c_sources
 set(dvips_sources
   ${dvips_c_sources}
   ${wrapper_cpp}
+  c-auto.h
+  config.h
+  debug.h
+  dvips-version.h
+  dvips.h
+  paths.h
+  protos.h
+  protos_add.h
+  ptexmac.h
+  t1part.h
 )
 
 set_source_files_properties(${wrapper_cpp}
@@ -80,11 +90,11 @@ set_source_files_properties(${dvips_c_sources}
     LANGUAGE CXX
 )
 
-if(NATIVE_WINDOWS)
+if()
   set(dvips_sources ${dvips_sources}
     dvips.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(dvips ${dvips_sources})
 
@@ -104,8 +114,11 @@ delay_load(dvips ${bmeps_dll_name})
 install(TARGETS dvips DESTINATION ${bindir})
 
 set(afm2tfm_sources
-  afm2tfm.c
   ${wrapper_cpp}
+  afm2tfm-version.h
+  afm2tfm.c
+  config.h
+  dvips.h
 )
 
 set_source_files_properties(afm2tfm.c
@@ -117,7 +130,7 @@ if(NATIVE_WINDOWS)
   set(afm2tfm_sources ${afm2tfm_sources}
     afm2tfm.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(afm2tfm ${afm2tfm_sources})
 

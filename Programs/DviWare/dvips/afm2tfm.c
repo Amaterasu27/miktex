@@ -1,4 +1,4 @@
-/*   $Id: afm2tfm.c 29676 2013-04-05 21:26:54Z karl $  */
+/*   $Id: afm2tfm.c 36523 2015-03-15 22:47:12Z kakuto $  */
 
 /*   Public domain, originally written by Tom Rokicki.
  *   This program converts AFM files to TeX TFM files, and optionally
@@ -826,7 +826,7 @@ upmap(void) { /* Compute uppercase mapping, when making a small caps font */
    Looks like we should use isupper to me --karl.  */
    for (Ai=adobechars; Ai; Ai=Ai->next) {
       p = Ai->adobename;
-      if (isupper (*p)) {
+      if (isupper ((unsigned char)*p)) {
          q = lwr;
          for (; *p; p++)
             *q++ = TOLOWER (*p);
@@ -1505,9 +1505,9 @@ writevpl(void)
 static void
 version(FILE *f)
 {
-  fputs ("afm2tfm(k) (dvips(k) 5.993) 8.3\n", f);
+  fputs ("afm2tfm(k) (dvips(k) 5.995) 8.3\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
-  fputs ("Copyright 2013 Radical Eye Software.\n\
+  fputs ("Copyright 2015 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\

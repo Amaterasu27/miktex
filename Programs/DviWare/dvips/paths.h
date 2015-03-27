@@ -23,7 +23,7 @@
 #define DVIPSRC ".dvipsrc"
 #else
 #define DVIPSRC "$HOME/.dvipsrc"
-#endif	/* not MiKTeX */
+#endif
 #endif  
 #endif  /* IBM: VM/CMS */
 #endif

@@ -677,7 +677,7 @@ figcopyfile(char *s, int systemtype)
       s += 11;
       systemtype = 0;
     }
-#endif /* MiKTeX */
+#endif
    infigure = systemtype ? 2 : 1;
    copyfile(s);
    infigure = 0;
@@ -830,7 +830,7 @@ figcopyfile(char *s, int systemtype)
 	    }
 	  }
 	}
-#endif	/* MiKTeX */
+#endif
 
 /*
  *   This next routine writes out a `special' character.  In this case,
