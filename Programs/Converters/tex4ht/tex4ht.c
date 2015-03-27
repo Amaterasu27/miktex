@@ -154,7 +154,9 @@
 #  include <miktex/utf8wrap.h>
 #  include <miktex/unxemu.h>
 #endif
-
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#endif
 #include <stdio.h>   
 #include <stdlib.h>  
 
@@ -206,7 +208,6 @@
 
 
 #ifdef KPATHSEA
-#include <kpathsea/config.h>
 #include <kpathsea/c-errno.h>
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/c-fopen.h>
@@ -4148,7 +4149,7 @@ static FILE* search_file_ext
     ) n++;
   str[n-1] = '\0';
 #ifndef NOSUBDIR
-#if ! defined(MIKTEX) && defined(WIN32)
+#if !defined(MIKTEX) && defined(WIN32)
   
 {
     WIN32_FIND_DATA find_file_data;
