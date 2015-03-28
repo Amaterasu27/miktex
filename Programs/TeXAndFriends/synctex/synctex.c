@@ -177,7 +177,7 @@
 #       define SYNCTEX_VALUE eqtb[synctexoffset - 1].c4p_P2.c4p_int
 #else
 #       define SYNCTEX_VALUE zeqtb[synctexoffset].cint
-#endif /* MIKTEX */
+#endif
 #   endif
 /*  if there were a mean to share the value of synctex_code between *tex.web
  *  and this file, it would be great.  */
@@ -209,7 +209,7 @@ mem[NODE+TYPE##_node_size-synchronization_field_size].c4p_P2.c4p_int
 #     else
 #       define SYNCTEX_TAG_MODEL(NODE,TYPE)\
 mem[NODE+TYPE##_node_size-synchronization_field_size].cint
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(SYNCTEX_LINE_MODEL)
 #     if defined(MIKTEX)
@@ -218,7 +218,7 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].c4p_P2.c4p_int
 #     else
 #       define SYNCTEX_LINE_MODEL(NODE,TYPE)\
 mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
-#     endif /* MIKTEX */
+#     endif
 #   endif
 /*  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL are used to define
  *  SYNCTEX_TAG and SYNCTEX_LINE in a model independant way
@@ -273,35 +273,35 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 #       define SYNCTEX_TYPE(NODE) mem[NODE].c4p_P2.hh.c4p_P1.c4p_P0.b0
 #     else
 #       define SYNCTEX_TYPE(NODE) mem[NODE].hh.b0
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(SYNCTEX_SUBTYPE)
 #     if defined(MIKTEX)
 #       define SYNCTEX_SUBTYPE(NODE) mem[NODE].c4p_P2.hh.c4p_P1.c4p_P0.b1
 #     else
 #       define SYNCTEX_SUBTYPE(NODE) mem[NODE].hh.b1
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(SYNCTEX_WIDTH)
 #     if defined(MIKTEX)
 #       define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].c4p_P2.c4p_int
 #     else
 #       define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].cint
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(SYNCTEX_DEPTH)
 #     if defined(MIKTEX)
 #       define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].c4p_P2.c4p_int
 #     else
 #       define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].cint
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(SYNCTEX_HEIGHT)
 #     if defined(MIKTEX)
 #       define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].c4p_P2.c4p_int
 #     else
 #       define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].cint
-#     endif /* MIKTEX */
+#     endif
 #   endif
 #   if !defined(rule_node)
 #       define rule_node 2
@@ -324,6 +324,14 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 #   if !defined(SYNCTEX_OFFSET_IS_PDF)
 #       define SYNCTEX_OFFSET_IS_PDF 0
 #   endif
+
+#if defined(_WIN32) && (defined(upTeX) || defined(eupTeX))
+#define W32UPTEXSYNCTEX 1
+#include <wchar.h>
+static char *chgto_oem(char *src);
+static int fsyscp_remove(char *name);
+#define remove fsyscp_remove
+#endif
 
 /*  This macro layer was added to take luatex into account as suggested by T. Hoekwater. */
 #   if !defined(SYNCTEX_GET_JOB_NAME)
@@ -382,7 +390,7 @@ inline char * SYNCTEX_GET_LOG_NAME ()
 
 #   include "synctex.h"
 
-#   define SYNCTEX_YES (-1)
+#   define SYNCTEX_YES (1)
 #   define SYNCTEX_NO  (0)
 #   define SYNCTEX_NO_ERROR  (0)
 
@@ -531,6 +539,67 @@ static const char *synctex_suffix_busy = "(busy)";
 /*  for kpse_absolute_p */
 #   include <kpathsea/absolute.h>
 
+#ifdef W32UPTEXSYNCTEX
+static char *chgto_oem(char *src)
+{
+  wchar_t *sw = NULL;
+  char    *dst = NULL;
+  static int f_codepage = 0;
+
+  if(f_codepage == 0) {
+    f_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  }
+
+  if(f_codepage == file_system_codepage) {
+    dst = xstrdup(src);
+    return dst;
+  }
+
+  sw = get_wstring_from_mbstring(file_system_codepage, src, sw);
+  dst = get_mbstring_from_wstring(f_codepage, sw, dst);
+  if(sw) free(sw);
+  return dst;
+}
+
+static gzFile fsyscp_gzopen(const char *path, const char *mode)
+{
+  gzFile  gzf;
+  wchar_t *pathw = NULL;
+  pathw = get_wstring_from_fsyscp(path, pathw);
+  gzf = gzopen_w(pathw, mode);
+  free(pathw);
+  return gzf;
+}
+
+static int fsyscp_remove(char *s)
+{
+  wchar_t *sw = NULL;
+  int ret;
+  sw = get_wstring_from_fsyscp(s, sw);
+  ret = _wremove(sw);
+  if(sw) free(sw);
+  return ret;
+}
+
+static int fsyscp_rename(char *s1, char *s2)
+{
+  wchar_t *sw1 = NULL, *sw2 = NULL;
+  int ret;
+
+  sw1 = get_wstring_from_fsyscp(s1, sw1);
+  sw2 = get_wstring_from_fsyscp(s2, sw2);
+  ret = _wrename(sw1, sw2);
+  if(sw1) free(sw1);
+  if(sw2) free(sw2);
+  return ret;
+}
+
+#undef fopen
+#define fopen fsyscp_fopen
+#define gzopen fsyscp_gzopen
+#define rename fsyscp_rename
+#endif
+
 /*  synctex_dot_open ensures that the foo.synctex file is open.
  *  In case of problem, it definitely disables synchronization.
  *  Now all the output synchronization info is gathered in only one file.
@@ -591,7 +660,7 @@ static void *synctex_dot_open(void)
                                            + strlen(synctex_suffix_busy)
                                            + 1
                                            + (output_directory?strlen(output_directory) + strlen(DIR_SEP_STRING):0)));
-#endif /* MIKTEX */
+#endif
             if (!the_busy_name) {
                 SYNCTEX_FREE(tmp);
                 tmp = NULL;
@@ -739,14 +808,20 @@ void synctexstartinput(void)
          *  do not know yet if synchronization will ever be enabled so we have
          *  to store the file name, because we will need it later.
          *  This is necessary because \jobname can be different */
+#ifdef W32UPTEXSYNCTEX
+        char *tmpa = SYNCTEX_GET_CURRENT_NAME();
+        synctex_ctxt.root_name = chgto_oem(tmpa);
+        free(tmpa);
+#else
         synctex_ctxt.root_name = SYNCTEX_GET_CURRENT_NAME();
+#endif
         if (!strlen(synctex_ctxt.root_name)) {
 #if defined(MIKTEX)
 	    /* C++: typecast needed */
             synctex_ctxt.root_name = (char*)xrealloc(synctex_ctxt.root_name, strlen("texput") + 1);
 #else
             synctex_ctxt.root_name = xrealloc(synctex_ctxt.root_name, strlen("texput") + 1);
-#endif /* MIKTEX */
+#endif
             strcpy(synctex_ctxt.root_name, "texput");
         }
 #   if SYNCTEX_DEBUG
@@ -756,7 +831,13 @@ void synctexstartinput(void)
     }
     if (SYNCTEX_FILE
         || (SYNCTEX_NO_ERROR != synctex_dot_open())) {
+#ifdef W32UPTEXSYNCTEX
+        char *tmpb = SYNCTEX_GET_CURRENT_NAME();
+        char *tmp = chgto_oem(tmpb);
+        free(tmpb);
+#else
         char *tmp = SYNCTEX_GET_CURRENT_NAME();
+#endif
         /* Always record the input, even if SYNCTEX_VALUE is 0 */
         synctex_record_input(SYNCTEX_CURRENT_TAG,tmp);
         SYNCTEX_FREE(tmp);
@@ -813,7 +894,7 @@ void synctexterminate(boolean log_opened)
         the_real_syncname = xmalloc((unsigned)
                                     (strlen(tmp) + strlen(synctex_suffix) +
                                      strlen(synctex_suffix_gz) + 1));
-#endif /* MIKTEX */
+#endif
         if (!the_real_syncname) {
             SYNCTEX_FREE(tmp);
             synctexabort(0);
@@ -869,7 +950,7 @@ void synctexterminate(boolean log_opened)
 		}
 #endif
 #  endif
-#endif /* MIKTEX */
+#endif
                 /*  renaming the working synctex file */
                 if (0 == rename(synctex_ctxt.busy_name, the_real_syncname)) {
                     if (log_opened) {
@@ -879,8 +960,17 @@ void synctexterminate(boolean log_opened)
                             tmp += strlen(output_directory) + strlen(DIR_SEP_STRING);
                         }
 #                       endif
+#ifdef W32UPTEXSYNCTEX
+                        {
+                        char *stmp = chgto_oem(tmp);
+                        printf((synctex_ctxt.flags.quoted ? "\nSyncTeX written on \"%s\"" : "\nSyncTeX written on %s."),
+                               stmp);
+                        free(stmp);
+                        }
+#else
                         printf((synctex_ctxt.flags.quoted ? "\nSyncTeX written on \"%s\"" : "\nSyncTeX written on %s."),
                                tmp);
+#endif
                         tmp = NULL;
                     }
                 } else {

@@ -212,7 +212,7 @@
 
 /* MS has defined snprintf as deprecated */
 #ifdef _MSC_VER
-#if defined(MIKTEX) && _MSC_VER >= 1700
+#if defined(MIKTEX) && _MSC_VER >= 1900
 #else
 #define snprintf _snprintf
 #endif

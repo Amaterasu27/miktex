@@ -762,7 +762,9 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
             "PDF inclusion: found PDF version <%d.%d>, but at most version <1.%d> allowed";
         if (pdf_inclusion_errorlevel > 0) {
             pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
-        } else {
+        } else if (pdf_inclusion_errorlevel < 0) {
+            ; /* do nothing */
+        } else { /* = 0, give warning */
             pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
         }
     }
@@ -774,7 +776,9 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
             "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
         if (pdf_inclusion_errorlevel > 0) {
             pdftex_fail(msg, pdf_version_found, pdf_version_wanted);
-        } else {
+        } else if (pdf_inclusion_errorlevel < 0) {
+            ; /* do nothing */
+        } else { /* = 0, give warning */
             pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
         }
     }
@@ -1068,6 +1072,7 @@ void write_epdf(void)
     if (writeSepGroup) {
         pdfbeginobj(pdfpagegroupval, 2);
         copyObject(&groupDict);
+        pdf_puts("\n");
         pdfendobj();
         pdfpagegroupval = 0;    // only the 1st included pdf on a page gets its
                                 // Group included in the Page dict
