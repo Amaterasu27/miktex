@@ -1,6 +1,6 @@
 %% miktex-adapter-0.ch:
 %% 
-%% Copyright (C) 2013 Christian Schenk
+%% Copyright (C) 2013-2015 Christian Schenk
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU General Public License as published by the
@@ -50,7 +50,7 @@ for i:=0 to @'176 do xord[xchr[i]]:=i;
 % _____________________________________________________________________________
 
 @x
-@d shorthand_def=97 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d shorthand_def=98 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @y
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @z

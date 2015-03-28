@@ -3,7 +3,7 @@
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009, 2011 by Jonathan Kew
  Copyright (c) 2012, 2013 by Jiang Jiang
- Copyright (c) 2012, 2013 by Khaled Hosny
+ Copyright (c) 2012-2015 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -46,7 +46,7 @@ authorization from the copyright holders.
 typedef C4P::C4P_integer integer;
 #define exit(exitCode) throw(exitCode)
 #define uexit(exitCode) throw(exitCode)
-#endif /* MIKTEX */
+#endif
 
 #ifndef XETEX_UNICODE_FILE_DEFINED
 typedef struct UFILE* unicodefile;
@@ -91,13 +91,6 @@ typedef struct {
 
 #define XeTeX_count_glyphs  1
 
-#define XeTeX_count_variations  2
-#define XeTeX_variation 3
-#define XeTeX_find_variation_by_name    4
-#define XeTeX_variation_min 5
-#define XeTeX_variation_max 6
-#define XeTeX_variation_default 7
-
 #define XeTeX_count_features    8
 #define XeTeX_feature_code  9
 #define XeTeX_find_feature_by_name  10
@@ -116,7 +109,6 @@ typedef struct {
 
 #define XeTeX_map_char_to_glyph_code    22
 
-#define XeTeX_variation_name    7   /* must match xetex.web */
 #define XeTeX_feature_name  8
 #define XeTeX_selector_name 9
 
@@ -148,9 +140,6 @@ typedef struct {
 #define native_glyph_info_size      10  /* info for each glyph is location (FixedPoint) + glyph ID (uint16_t) */
 
 #define native_glyph(p)     native_length(p)    /* glyph ID field in a glyph_node */
-
-#define XDV_GLYPH_STRING    254
-#define XDV_GLYPH_ARRAY     253
 
 /* OT-related constants we need */
 #define kGSUB   HB_TAG('G','S','U','B')
@@ -344,7 +333,7 @@ typedef void* CFDictionaryRef; /* dummy declaration just so the stubs can compil
     CFDictionaryRef findDictionaryInArrayWithIdentifier(CFArrayRef array, const void* identifierKey, int identifier);
     CFNumberRef findSelectorByName(CFDictionaryRef feature, const char* name, int nameLength);
     char* getNameFromCTFont(CTFontRef ctFontRef, CFStringRef nameKey);
-    char* getFileNameFromCTFont(CTFontRef ctFontRef, int* index);
+    char* getFileNameFromCTFont(CTFontRef ctFontRef, uint32_t* index);
     int GetFontCharRange_AAT(CFDictionaryRef fontAttrs, int reqFirst);
     CTFontRef fontFromAttributes(CFDictionaryRef fontAttrs);
     CTFontRef fontFromInteger(integer font);

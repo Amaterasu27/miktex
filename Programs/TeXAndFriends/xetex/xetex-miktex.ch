@@ -161,9 +161,9 @@ if (max_font_max<min_quarterword)or(max_font_max>max_quarterword) then bad:=15;
 % _____________________________________________________________________________
 
 @x
-    native_glyph_info_ptr(dest) := xmalloc_array(char, glyph_count * native_glyph_info_size);
+    native_glyph_info_ptr(dest):=xmalloc_array(char, glyph_count * native_glyph_info_size);
 @y
-    native_glyph_info_ptr(dest) := xmalloc_char_array(glyph_count * native_glyph_info_size);
+    native_glyph_info_ptr(dest):=xmalloc_char_array(glyph_count * native_glyph_info_size);
 @z
 
 % _____________________________________________________________________________
@@ -332,15 +332,15 @@ if miktex_open_tfm_file(tfm_file,name_of_file) then begin
 % _____________________________________________________________________________
 
 @x
-    l := native_node_size + (n * sizeof(UTF16_code) + sizeof(memory_word) - 1) div sizeof(memory_word);
+  l:=native_node_size + (n * sizeof(UTF16_code) + sizeof(memory_word) - 1) div sizeof(memory_word);
 @y
-    l := native_node_size + (n * sizeof(name_of_file16[0]) + sizeof(mem[0]) - 1) div sizeof(mem[0]);
+  l:=native_node_size + (n * sizeof(name_of_file16[0]) + sizeof(mem[0]) - 1) div sizeof(mem[0]);
 @z
 
 @x
-    font_engine := find_native_font(name_of_file + 1, s);
+  font_engine:=find_native_font(name_of_file + 1, s);
 @y
-    font_engine := find_native_font(name_of_file, s);
+  font_engine:=find_native_font(name_of_file, s);
 @z
 
 % _____________________________________________________________________________
@@ -511,9 +511,9 @@ procedure flush_str(s: str_number); {flush a string if possible}
 % _____________________________________________________________________________
 
 @x
-        new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(memory_word) - 1) div sizeof(memory_word));
+    new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(memory_word) - 1) div sizeof(memory_word));
 @y
-        new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(mem[0]) - 1) div sizeof(mem[0]));
+    new_whatsit(pic_node, pic_node_size + (strlen(pic_path) + sizeof(mem[0]) - 1) div sizeof(mem[0]));
 @z
 
 % _____________________________________________________________________________

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2008-2014 Christian Schenk
+## Copyright (C) 2008-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -58,10 +58,9 @@ add_definitions(
 set(xetex_ch_synctex
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-def.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-mem.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch0
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-mem.ch1
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-rec.ch0
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-e-rec.ch0
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}/synctex-xe-rec.ch0
 )
 
 set(xetex_post_ch_synctex

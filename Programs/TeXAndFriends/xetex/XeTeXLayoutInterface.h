@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009 by Jonathan Kew
- Copyright (c) 2012, 2013 by Khaled Hosny
+ Copyright (c) 2012-2015 by Khaled Hosny
 
  SIL Author(s): Jonathan Kew
 
@@ -80,9 +80,8 @@ char getReqEngine();
 void setReqEngine(char reqEngine);
 const char* getFullName(PlatformFontRef fontRef);
 
-const char* getFontFilename(XeTeXLayoutEngine engine);
+const char* getFontFilename(XeTeXLayoutEngine engine, uint32_t* index);
 
-void getNames(PlatformFontRef fontRef, const char** psName, const char** famName, const char** styName);
 double getDesignSize(XeTeXFont font);
 
 void deleteFont(XeTeXFont font);
