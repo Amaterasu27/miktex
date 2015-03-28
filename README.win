@@ -6,11 +6,17 @@ Minumum OS REQUIREMENTS
 
 	* Microsoft Windows XP Service Pack 3
 
-C++ COMPILER
-------------
+C/C++
+-----
 
 	* Visual Studio Community 2013
 	  http://en.wikipedia.org/wiki/Visual_C_Plus_Plus
+
+3rd PARTY LIBS
+--------------
+
+	* Qt 5.4.1 for VS 2013
+	  http://en.wikipedia.org/wiki/Qt_(software)
 
 BUILD SYSTEM
 ------------
@@ -27,27 +33,36 @@ BUILD UTILITIES
 
 	* Cygwin
 	  http://en.wikipedia.org/wiki/Cygwin
-
-	* ImageMagick
-	  http://en.wikipedia.org/wiki/Imagemagick
-
+	  Hint: install all packages, or be prepared to install missing
+	  packages later, when CMake fails to find them.
+	  
         * Microsoft HTML Help Workshop
 	  http://en.wikipedia.org/wiki/Microsoft_Compiled_HTML_Help
+	  Hint: add the bin directory to PATH
 
 	* MiKTeX 2.9
 	  http://miktex.org
+	  This is needed to build the documentation.
 	  Hint: Install all packages or turn on the auto-install feature.
 
-	* xsltproc (part of libxml2)
-	  http://en.wikipedia.org/wiki/Libxml
+	* ImageMagick
+	  http://en.wikipedia.org/wiki/Imagemagick
+	  This is needed to build the documentation.
+
 
 BUILDING MIKTEX
 ---------------
 
-Change into the MiKTeX source directory and run CMake to produce the
-NMake makefiles customized for your system:
+Create a build directory (say C:\miktex-build) and open a command window here.
 
-    cmake -G "NMake Makefiles"
+Set the Visual C/C++ environment variables (e.g., run vcvars32.bat).
+
+Run CMake to produce the NMake makefiles customized for your system:
+
+    cmake -G "NMake Makefiles" C:\miktex-source-dir
+
+Replace C:\miktex-source-dir with the actual path to the MiKTeX source
+directory.
 
 Run the nmake utility to compile MiKTeX:
 
