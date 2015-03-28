@@ -200,6 +200,7 @@ set(top_srcdir "${CMAKE_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 include(miktex-version.cmake)
+include(miktex-local-version.cmake OPTIONAL)
 
 set(MIKTEX_SERIES_STR
     "${MIKTEX_MAJOR_VERSION}.${MIKTEX_MINOR_VERSION}")
