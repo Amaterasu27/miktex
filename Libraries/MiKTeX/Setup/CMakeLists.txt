@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2013-2014 Christian Schenk
+## Copyright (C) 2013-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -40,7 +40,7 @@ if(NATIVE_WINDOWS)
   set(${setup_dll_name}_sources ${${setup_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/win/setup.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_library(${setup_dll_name} SHARED ${${setup_dll_name}_sources})
@@ -54,6 +54,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${setup_dll_name}
     PRIVATE 
       ${core_dll_name}
+      ${extractor_dll_name}
       ${mpm_dll_name}
   )
 
@@ -71,4 +72,4 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
