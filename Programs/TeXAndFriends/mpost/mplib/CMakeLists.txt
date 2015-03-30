@@ -29,7 +29,6 @@ include_directories(
 add_definitions(
   -DAPPTAG=mpost
   -DUSE_MIKTEX_EXIT
-  -DHAVE_SNPRINTF=1
   -DHAVE_SYS_STAT_H=1
 )
 

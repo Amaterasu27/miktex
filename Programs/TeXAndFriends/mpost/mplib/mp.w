@@ -2826,7 +2826,11 @@ void *mp_xmalloc (MP mp, size_t nmem, size_t size) {
 }
 
 @ @<Internal library declarations@>=
+#if defined(MIKTEX) && defined(_MSC_VER)
+#  define mp_snprintf (void)_snprintf
+#else
 #  define mp_snprintf (void)snprintf
+#endif
 
 @* Dynamic memory allocation.
 

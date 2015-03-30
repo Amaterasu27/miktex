@@ -495,7 +495,11 @@ char * mp_double_number_tostring (MP mp, mp_number n) {
    static char set[64];
    int l = 0;
    char *ret = mp_xmalloc(mp, 64, 1);
+#if defined(MIKTEX)
+   mp_snprintf(set, 64, "%.17g", n.data.dval);
+#else
    snprintf(set, 64, "%.17g", n.data.dval);
+#endif
    while (set[l] == ' ') l++;
    strcpy(ret, set+l);
    return ret;

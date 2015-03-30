@@ -194,7 +194,11 @@ static int decNumberGreater(decNumber *a, decNumber *b) {
 static void decNumberFromDouble(decNumber *A, double B) {
   char buf[1000];
   char *c;
+#if defined(MIKTEX)
+  mp_snprintf(buf,1000,"%-650.325lf",B);
+#else
   snprintf(buf,1000,"%-650.325lf",B);
+#endif
   c = buf;
   while (*c++) {
     if (*c == ' ') {
