@@ -31,11 +31,6 @@ BUILD UTILITIES
 	* ActivePerl
 	  http://en.wikipedia.org/wiki/ActiveState
 
-	* Cygwin
-	  http://en.wikipedia.org/wiki/Cygwin
-	  Hint: install all packages, or be prepared to install missing
-	  packages later, when CMake fails to find them.
-	  
         * Microsoft HTML Help Workshop
 	  http://en.wikipedia.org/wiki/Microsoft_Compiled_HTML_Help
 	  Hint: add the bin directory to PATH
@@ -45,10 +40,21 @@ BUILD UTILITIES
 	  This is needed to build the documentation.
 	  Hint: Install all packages or turn on the auto-install feature.
 
+	* libxslt
+	  http://en.wikipedia.org/wiki/Libxslt
+	  xsltproc (part of libxslt) is needed to build the documentation.
+	  Hint: You must install a native Win32 version. The Cygwin port
+	  will not work.
+
 	* ImageMagick
 	  http://en.wikipedia.org/wiki/Imagemagick
 	  This is needed to build the documentation.
 
+	* Cygwin
+	  http://en.wikipedia.org/wiki/Cygwin
+	  Hint: install all packages, or be prepared to install missing
+	  packages later, when CMake fails to find them.
+	  
 
 BUILDING MIKTEX
 ---------------
