@@ -48,17 +48,17 @@ set(mplib_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tfmin.c
 
   ${CMAKE_CURRENT_BINARY_DIR}/mplib.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mpmp.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmath.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmathdecimal.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpmathdouble.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mpmp.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpstrings.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mppngout.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mplibpng.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
   ${CMAKE_CURRENT_BINARY_DIR}/mpsvgout.h
-  ${CMAKE_CURRENT_BINARY_DIR}/mptfmin.h
-  ${CMAKE_CURRENT_BINARY_DIR}/pngout.h
+  ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
 )
 
 set_source_files_properties(
@@ -150,7 +150,8 @@ add_custom_command(
 add_custom_command(
   OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/pngout.c
-    ${CMAKE_CURRENT_BINARY_DIR}/pngout.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mppngout.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mplibpng.h
   COMMAND
     ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/pngout
   WORKING_DIRECTORY
@@ -165,9 +166,9 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
-    ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
     ${CMAKE_CURRENT_BINARY_DIR}/psout.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mppsout.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mplibps.h
   COMMAND
     ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/psout
   WORKING_DIRECTORY
@@ -182,9 +183,9 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
-    ${CMAKE_CURRENT_BINARY_DIR}/mpsvgout.h
     ${CMAKE_CURRENT_BINARY_DIR}/svgout.c
+    ${CMAKE_CURRENT_BINARY_DIR}/mpsvgout.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mplibsvg.h
   COMMAND
     ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/svgout
   WORKING_DIRECTORY
@@ -199,7 +200,6 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/mptfmin.h
     ${CMAKE_CURRENT_BINARY_DIR}/tfmin.c
   COMMAND
     ${ctangle_exe} ${CMAKE_CURRENT_SOURCE_DIR}/tfmin
@@ -247,7 +247,7 @@ add_custom_command(
   MAIN_DEPENDENCY
     mpost.w
   DEPENDS
-    ${ctangle_exe}
+#    ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpost.w
   VERBATIM
 )
@@ -263,7 +263,7 @@ add_custom_command(
   MAIN_DEPENDENCY
     mpxout.w
   DEPENDS
-    ${ctangle_exe}
+#    ${ctangle_exe}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpxout.w
   VERBATIM
 )
