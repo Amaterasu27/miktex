@@ -1,6 +1,6 @@
 /* SiteWizSheet.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -28,7 +28,7 @@
 
 #include <miktex/PackageManager/PackageManager>
 
-#include <QtGui>
+#include <QtWidgets>
 
 /* _________________________________________________________________________
 

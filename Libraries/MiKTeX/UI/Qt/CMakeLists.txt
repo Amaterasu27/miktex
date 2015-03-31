@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2008-2014 Christian Schenk
+## Copyright (C) 2008-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -64,7 +64,7 @@ if(NATIVE_WINDOWS)
   set(${ui_qt_dll_name}_sources ${${ui_qt_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/mikuiqt.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 set(${ui_qt_dll_name}_moc_sources
   ConnectionSettingsDialog.h
@@ -96,13 +96,13 @@ set(${ui_qt_dll_name}_rcs_files
   mikuiqt.qrc
 )
 
-qt4_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})
+qt5_wrap_cpp(${ui_qt_dll_name}_mocs ${${ui_qt_dll_name}_moc_sources})
 
-qt4_wrap_ui(${ui_qt_dll_name}_ui_headers ${${ui_qt_dll_name}_ui_files})
+qt5_wrap_ui(${ui_qt_dll_name}_ui_headers ${${ui_qt_dll_name}_ui_files})
 
-qt4_wrap_cpp(${ui_qt_dll_name}_ui_mocs ${${ui_qt_dll_name}_ui_headers})
+qt5_wrap_cpp(${ui_qt_dll_name}_ui_mocs ${${ui_qt_dll_name}_ui_headers})
 
-qt4_add_resources(${ui_qt_dll_name}_rcc_sources ${${ui_qt_dll_name}_rcs_files})
+qt5_add_resources(${ui_qt_dll_name}_rcc_sources ${${ui_qt_dll_name}_rcs_files})
 
 add_library(${ui_qt_dll_name} SHARED
   ${${ui_qt_dll_name}_sources}
@@ -121,7 +121,9 @@ target_link_libraries(${ui_qt_dll_name}
   PRIVATE
     ${core_dll_name}
     ${mpm_dll_name}
-    ${QT_LIBRARIES}
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::WinExtras
 )
 
 if(NATIVE_WINDOWS)
@@ -130,7 +132,7 @@ if(NATIVE_WINDOWS)
       comctl32
       Secur32
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 rebase(${ui_qt_dll_name})
 

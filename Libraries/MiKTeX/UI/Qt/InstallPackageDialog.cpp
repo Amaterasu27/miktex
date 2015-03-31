@@ -1,6 +1,6 @@
 /* InstallPackageDialog.cpp:
 
-   Copyright (C) 2008-2009 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -185,7 +185,7 @@ InstallPackageDialog::on_cbInstallationDirectory_currentIndexChanged (int idx)
 	ICONINFO iconInfo;
 	if (GetIconInfo(hiconShield, &iconInfo))
 	{
-	  QPixmap pixmapShield = QPixmap::fromWinHBITMAP(iconInfo.hbmColor, QPixmap::Alpha);
+          QPixmap pixmapShield = QtWin::fromHBITMAP(iconInfo.hbmColor, QtWin::HBitmapAlpha);
 	  DeleteObject (iconInfo.hbmColor);
 	  DeleteObject (iconInfo.hbmMask);
 	  pOKButton->setIcon (QIcon(pixmapShield));

@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -37,7 +37,7 @@ if(NATIVE_WINDOWS)
   set(${app_dll_name}_sources ${${app_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/app.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${app_dll_name} SHARED ${${app_dll_name}_sources})
 
@@ -53,19 +53,19 @@ target_link_libraries(${app_dll_name}
     ${mpm_dll_name}
 )
 
-if(QT4_FOUND)
+if(Qt5Widgets_FOUND)
   target_link_libraries(${app_dll_name}
     PRIVATE
       ${ui_qt_dll_name}
   )
-endif(QT4_FOUND)
+endif()
 
 if(MFC_FOUND)
   target_link_libraries(${app_dll_name}
     PRIVATE
       ${ui_mfc_dll_name}
   )
-endif(MFC_FOUND)
+endif()
 
 delay_load(${app_dll_name}
   ${mpm_dll_name}

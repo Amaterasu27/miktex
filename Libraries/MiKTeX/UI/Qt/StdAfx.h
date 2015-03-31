@@ -1,6 +1,6 @@
 /* StdAfx.h: pre-compiled header stuff
 
-   Copyright (C) 2008-2009 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is part of the MiKTeX UI Library.
 
@@ -19,9 +19,10 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#include <QtGui>
+#include <QtWidgets>
 
 #if defined(MIKTEX_WINDOWS)
+#  include <QtWinExtras/qwinfunctions.h>
 #  include <Windows.h>
 #  include <Commctrl.h>
 #  include <shellapi.h>

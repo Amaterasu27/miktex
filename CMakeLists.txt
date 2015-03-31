@@ -371,14 +371,8 @@ if(WIN32)
   set(MFC_FOUND "YES")
 endif()
 
-set(QT_USE_QTXML TRUE)
-set(QT_USE_QTSCRIPT TRUE)
-set(QT_USE_QTSCRIPTTOOLS TRUE)
-set(QT_USE_QTUITOOLS TRUE)
-find_package(Qt4)
-if(QT4_FOUND)
-  include(${QT_USE_FILE})
-endif()
+find_package(Qt5Widgets)
+find_package(Qt5WinExtras)
 
 find_package(Threads REQUIRED)
 
@@ -512,9 +506,9 @@ set(HAVE_ZLIB 1)
 set(HAVE_ZLIB_H 1)
 set(HAVE_ZLIB_COMPRESS2 1)
 
-if(NOT NO_GUI AND NOT MFC_FOUND AND NOT QT4_FOUND)
+if(NOT NO_GUI AND NOT MFC_FOUND AND NOT Qt5Widgets_FOUND)
   message(FATAL_ERROR
-    "Qt4 is required unless you enable the NO_GUI option."
+    "Qt5 is required unless you enable the NO_GUI option."
   )
 endif()
 
@@ -595,7 +589,7 @@ add_definitions(-DHAVE_CONFIG_H)
 
 add_definitions(-DMIKTEX)
 
-if(QT4_FOUND)
+if(Qt5Widgets_FOUND)
   add_definitions(
     -DMIKTEX_QT
   )
@@ -673,7 +667,7 @@ set(MIKTEX_STATIC_LINK_LIBRARIES
   ${utf8wrap_lib_name}
 )
 
-if(QT4_FOUND)
+if(Qt5Widgets_FOUND)
   set(MIKTEX_STATIC_LINK_LIBRARIES
     ${MIKTEX_STATIC_LINK_LIBRARIES}
     ${ui_qt_lib_name}
@@ -799,7 +793,7 @@ if(NATIVE_WINDOWS)
   )
 endif()
 
-if(QT4_FOUND)
+if(Qt5Widgets_FOUND)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
   )
@@ -1040,9 +1034,10 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_poppler_dir}-static)
 endif()
 
-if(BUILDING_MIKTEX AND QT4_FOUND)
-  add_subdirectory(${rel_poppler_dir}/qt4/src)
-endif()
+## TODO
+#if(BUILDING_MIKTEX AND Qt5Widgets_FOUND)
+#  add_subdirectory(${rel_poppler_dir}/qt4/src)
+#endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_hunspell_dir})
@@ -1077,11 +1072,12 @@ add_subdirectory(${rel_mpmlib_dir}-static)
 add_subdirectory(${rel_setuplib_dir})
 add_subdirectory(${rel_setuplib_dir}-static)
 
-if(QT4_FOUND)
+if(Qt5Widgets_FOUND)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_ui_qt_dir})
   endif()
-  add_subdirectory(${rel_ui_qt_dir}-static)
+## TODO
+#  add_subdirectory(${rel_ui_qt_dir}-static)
 endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
@@ -1135,9 +1131,10 @@ if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_mpm_mfc_dir})
 endif()
 
-if(HAVE_MPM_QT_SOURCES AND QT4_FOUND)
-  add_subdirectory(${rel_mpm_qt_dir})
-endif()
+## TODO
+#if(HAVE_MPM_QT_SOURCES AND Qt5Widgets_FOUND)
+#  add_subdirectory(${rel_mpm_qt_dir})
+#endif()
 
 add_subdirectory(${rel_mpm_dir})
 
@@ -1301,9 +1298,10 @@ if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_taskbar_icon_win_dir})
 endif()
 
-if(BUILDING_MIKTEX AND QT4_FOUND)
-  add_subdirectory(${rel_texworks_dir})
-endif()
+## TODO
+#if(BUILDING_MIKTEX AND Qt5Widgets_FOUND)
+#  add_subdirectory(${rel_texworks_dir})
+#endif()
 
 if(BUILDING_MIKTEX AND MFC_FOUND)
   add_subdirectory(${rel_yap_mfc_dir})
