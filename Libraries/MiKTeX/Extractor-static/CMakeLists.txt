@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -45,6 +45,13 @@ if(NATIVE_WINDOWS)
     ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/win/winCabExtractor.cpp
     ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/win/winCabExtractor.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${extractor_lib_name} STATIC ${${extractor_lib_name}_sources})
+
+target_link_libraries(${extractor_lib_name}
+  PUBLIC
+    ${core_lib_name}
+    ${bzip2_lib_name}
+    ${mspack_lib_name}
+)

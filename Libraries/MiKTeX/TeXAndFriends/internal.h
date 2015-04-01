@@ -1,4 +1,4 @@
-/* internal.h: internal definitions				-*- C++ -*-
+/* internal.h: internal definitions			-*- C++ -*-
 
    Copyright (C) 1996-2015 Christian Schenk
 
@@ -23,10 +23,10 @@
 #  pragma once
 #endif
 
-#if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#if defined(MIKTEX_TEXMF_SHARED) && defined(_MSC_VER)
 #  define C4PEXPORT __declspec(dllexport)
 #  define MIKTEXMFEXPORT __declspec(dllexport)
-#elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#elif defined(MIKTEX_TEXMF_SHARED) && __GNUC__ >=4
 #  define C4PEXPORT __attribute__((visibility("default")))
 #  define MIKTEXMFEXPORT __attribute__((visibility("default")))
 #else

@@ -1,6 +1,6 @@
-/* miktex/C4P/C4P.h: Pascalish run-time support			-*- C++ -*-
+/* miktex/C4P/C4P.h: Pascalish run-time support		-*- C++ -*-
 
-   Copyright (C) 1996-2010 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -41,9 +41,9 @@
 
 // DLL import/export switch
 #if ! defined(C1F0C63F01D5114A90DDF8FC10FF410B)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_TEXMF_SHARED) && defined(_MSC_VER)
 #    define C4PEXPORT __declspec(dllimport)
-#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >= 4
+#  elif defined(MIKTEX_TEXMF_SHARED) && __GNUC__ >= 4
 #    define C4PEXPORT __attribute__((visibility("default")))
 #  else
 #    define C4PEXPORT

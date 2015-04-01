@@ -1,6 +1,6 @@
-/* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
+/* StdAfx.h: pre-compiled header stuff			-*- C++ -*-
 
-   Copyright (C) 2001-2010 Christian Schenk
+   Copyright (C) 2001-2015 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -92,8 +92,6 @@ using namespace ATL;
 #include <limits.h>
 
 #include <cstdarg>
-
-#include <bzlib.h>
 
 #include <miktex/Core/Core>
 #include <miktex/Core/Debug>

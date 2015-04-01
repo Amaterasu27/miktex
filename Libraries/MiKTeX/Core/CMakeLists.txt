@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -308,9 +308,10 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       ${botan_dll_name}
       ${bzip2_dll_name}
       ${lzma_dll_name}
-      ${md5_dll_name}
       ${uriparser_dll_name}
       ${zlib_dll_name}
+    PUBLIC
+      ${md5_dll_name}
   )
   
   if(NATIVE_WINDOWS)
@@ -320,7 +321,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
 	shlwapi.lib
 	htmlhelp.lib
     )
-  endif(NATIVE_WINDOWS)
+  endif()
   
   delay_load(${core_dll_name}
     ${bzip2_dll_name}

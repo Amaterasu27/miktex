@@ -77,7 +77,7 @@ extern "C"
 
 #if defined(MIKTEX)
 #  if ! defined(MIKTEXMD5API)
-#    if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#    if defined(MIKTEX_MD5_SHARED) && defined(_MSC_VER)
 #      define MIKTEXMD5API(type) __declspec(dllimport) type __cdecl
 #    elif defined(_MSC_VER)
 #      define MIKTEXMD5API(type) type __cdecl

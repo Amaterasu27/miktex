@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,9 +17,12 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_definitions(-DHAVE_LIBCURL)
+include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}
+)
 
-include_directories(${CMAKE_BINARY_DIR}/${rel_mpmlib_dir})
+add_definitions(-DHAVE_LIBCURL)
 
 if(HAVE_ATLBASE_H)
   add_definitions(-DUSE_LOCAL_SERVER)
@@ -27,11 +30,6 @@ endif(HAVE_ATLBASE_H)
 
 use_static_crt()
 use_static_libraries()
-
-include_directories(BEFORE
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}
-)
 
 set(${mpm_lib_name}_sources
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/StdAfx.h
@@ -70,3 +68,38 @@ if(NATIVE_WINDOWS)
 endif(NATIVE_WINDOWS)
 
 add_library(${mpm_lib_name} STATIC ${${mpm_lib_name}_sources})
+
+target_compile_definitions(${mpm_lib_name}
+  PUBLIC
+    -DMIKTEX_MPM_STATIC
+)
+
+target_include_directories(${mpm_lib_name}
+    PRIVATE
+      ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}
+    PUBLIC
+      ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
+      ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
+)
+
+target_link_libraries(${mpm_lib_name}
+  PUBLIC
+    ${core_lib_name}
+    ${expat_lib_name}
+    ${extractor_lib_name}
+    ${md5_lib_name}
+  )
+
+if(NATIVE_WINDOWS)
+  target_link_libraries(${mpm_lib_name}
+    PUBLIC
+      ${curl_lib_name}
+      Ws2_32
+      wininet
+  )
+else()
+  target_link_libraries(${mpm_lib_name}
+    PUBLIC
+    ${CURL_LIBRARIES}
+  )
+endif()

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 set(${md5_dll_name}_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/include/md5.h
   md5-version.h
@@ -36,7 +31,7 @@ if(NATIVE_WINDOWS)
   set(${md5_dll_name}_sources ${${md5_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/md5.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${md5_dll_name} SHARED ${${md5_dll_name}_sources})
 
@@ -46,6 +41,18 @@ set_target_properties(${md5_dll_name}
     SOVERSION "1"
 )
 
+target_compile_definitions(${md5_dll_name}
+  PUBLIC
+    -DMIKTEX_MD5_SHARED
+)
+
+target_include_directories(${md5_dll_name}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/${rel_md5_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
+)
+    
 rebase(${md5_dll_name})
 
 install(TARGETS ${md5_dll_name}

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,6 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
+include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}
+)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
@@ -28,12 +33,6 @@ configure_file(
 )  
 
 add_definitions(-DHAVE_LIBCURL)
-
-include_directories(BEFORE
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}
-)
 
 set(${mpm_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/StdAfx.h
@@ -155,8 +154,8 @@ if(NATIVE_WINDOWS)
 	uuid
     )
     install(TARGETS ${mpm_ps_dll_name} DESTINATION "${bindir}")
-  endif(HAVE_ATLBASE_H)
-endif(NATIVE_WINDOWS)
+  endif()
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_library(${mpm_dll_name} SHARED ${${mpm_dll_name}_sources})
@@ -167,8 +166,21 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       SOVERSION "1"
   )
 
+  target_compile_definitions(${mpm_dll_name}
+    PUBLIC
+      -DMIKTEX_MPM_SHARED
+  )
+  
+  target_include_directories(${mpm_dll_name}
+    PRIVATE
+      ${CMAKE_SOURCE_DIR}/${rel_gsoap_dir}
+    PUBLIC
+      ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
+      ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
+  )
+  
   target_link_libraries(${mpm_dll_name}
-    PRIVATE  
+    PRIVATE
       ${core_dll_name}
       ${expat_dll_name}
       ${extractor_dll_name}
@@ -182,12 +194,12 @@ if(NOT LINK_EVERYTHING_STATICALLY)
 	Ws2_32
 	wininet
     )
-  else(NATIVE_WINDOWS)
+  else()
     target_link_libraries(${mpm_dll_name}
       PRIVATE
         ${CURL_LIBRARIES}
     )
-  endif(NATIVE_WINDOWS)
+  endif()
 
   delay_load(${mpm_dll_name}
     ${curl_dll_name}
@@ -203,7 +215,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(INSTALL_MIKTEX_HEADERS)
   install(
@@ -213,4 +225,4 @@ if(INSTALL_MIKTEX_HEADERS)
     DESTINATION
       ${incdir}/miktex/PackageManager
   )
-endif(INSTALL_MIKTEX_HEADERS)
+endif()

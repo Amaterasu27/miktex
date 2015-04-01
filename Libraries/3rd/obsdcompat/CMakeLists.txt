@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2010 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 set(HAVE_INTXX_T 1)
 set(HAVE_UINTXX_T 1)
@@ -27,12 +29,15 @@ set(HAVE_SIZE_T 1)
 set(HAVE_STDINT_T 1)
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/obsdcompat/config.h.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/obsdcompat/config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/obsdcompat/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/obsdcompat/config.h
 )
 
 set(${obsdcompat_dll_name}_sources
   bsd-asprintf.c
+  defines.h
+  includes.h
+  obsdcompat-version.h
 )
 
 if(NATIVE_WINDOWS)
@@ -53,6 +58,18 @@ set_target_properties(${obsdcompat_dll_name}
     SOVERSION "1"
 )
 
+target_compile_definitions(${obsdcompat_dll_name}
+  PUBLIC
+    -DMIKTEX_OBSDCOMPAT_SHARED
+)
+  
+target_include_directories(${obsdcompat_dll_name}
+  PRIVATE
+    ${CMAKE_BINARY_DIR}/${rel_obsdcompat_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_obsdcompat_dir}
+)
+    
 rebase(${obsdcompat_dll_name})
 
 install(TARGETS ${obsdcompat_dll_name}

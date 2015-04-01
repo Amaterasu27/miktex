@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -64,6 +64,24 @@ set_source_files_properties(
 )
 
 add_library(${texmf_lib_name} STATIC ${${texmf_lib_name}_sources})
+
+target_compile_definitions(${texmf_lib_name}
+  PUBLIC
+    -DMIKTEX_TEXMF_STATIC
+)
+
+target_include_directories(${texmf_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
+    ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
+)
+  
+target_link_libraries(${texmf_lib_name}
+  PUBLIC
+    ${app_dll_name}
+    ${core_dll_name}
+    ${popt_dll_name}
+)
 
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${texmf_lib_name}

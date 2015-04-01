@@ -652,10 +652,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 
-  ${CMAKE_BINARY_DIR}/${rel_md5_dir}/include
-  ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
-  ${CMAKE_BINARY_DIR}/${rel_obsdcompat_dir}
-  ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
   ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}
@@ -672,18 +668,14 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
   ${CMAKE_SOURCE_DIR}/${rel_w2cemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_lzmalib_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pbm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
   ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
-  ${CMAKE_SOURCE_DIR}/${rel_obsdcompat_dir}
   ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
   ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
-  ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include

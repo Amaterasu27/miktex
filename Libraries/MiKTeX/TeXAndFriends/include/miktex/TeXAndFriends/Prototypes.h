@@ -1,6 +1,6 @@
-/* miktex/TeXAndFriends/Prototypes.h:				-*- C++ -*-
+/* miktex/TeXAndFriends/Prototypes.h:			-*- C++ -*-
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX TeXMF Library.
 
@@ -32,9 +32,9 @@
 
 // DLL import/export switch
 #if ! defined(B8C7815676699B4EA2DE96F0BD727276)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_TEXMF_SHARED) && defined(_MSC_VER)
 #    define MIKTEXMFEXPORT __declspec(dllimport)
-#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#  elif defined(MIKTEX_TEXMF_SHARED) && __GNUC__ >=4
 #    define MIKTEXMFEXPORT __attribute__((visibility("default")))
 #  else
 #    define MIKTEXMFEXPORT

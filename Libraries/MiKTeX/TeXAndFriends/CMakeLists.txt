@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -71,7 +71,7 @@ if(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
   set(${texmf_dll_name}_sources ${${texmf_dll_name}_sources}
     mfmpi386asm.cpp
   )
-endif(NATIVE_WINDOWS AND NOT CMAKE_CL_64)
+endif()
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/include/miktex/mfapp.defaults.h
@@ -141,7 +141,7 @@ if(NATIVE_WINDOWS)
   set(${texmf_dll_name}_sources ${${texmf_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/texmf.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_library(${texmf_dll_name} SHARED ${${texmf_dll_name}_sources})
@@ -152,6 +152,17 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       SOVERSION "1"
   )
 
+  target_compile_definitions(${texmf_dll_name}
+    PUBLIC
+      -DMIKTEX_TEXMF_SHARED
+  )
+
+  target_include_directories(${texmf_dll_name}
+    PUBLIC
+      ${CMAKE_BINARY_DIR}/${rel_texmf_dir}/include
+      ${CMAKE_SOURCE_DIR}/${rel_texmf_dir}/include
+  )
+  
   target_link_libraries(${texmf_dll_name}
     PRIVATE
       ${app_dll_name}
@@ -166,7 +177,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(INSTALL_MIKTEX_HEADERS)
   install(
@@ -194,7 +205,7 @@ if(INSTALL_MIKTEX_HEADERS)
     DESTINATION
       ${incdir}/miktex/TeXAndFriends
   )
-endif(INSTALL_MIKTEX_HEADERS)
+endif()
 
 add_custom_target(all-defaults ALL
   DEPENDS

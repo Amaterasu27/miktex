@@ -1,6 +1,6 @@
-/* internal.h: internal definitions				-*- C++ -*-
+/* internal.h: internal definitions			-*- C++ -*-
 
-   Copyright (C) 2001-2011 Christian Schenk
+   Copyright (C) 2001-2015 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -19,7 +19,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if defined(_MSC_VER) && defined(MIKTEX_MPM_SHARED)
 #  define MIKTEXMPMEXPORT __declspec(dllexport)
 #else
 #  define MIKTEXMPMEXPORT

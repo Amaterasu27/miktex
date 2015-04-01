@@ -1,4 +1,4 @@
-/* texmf-version.h: version number				-*- C++ -*-
+/* texmf-version.h: version number			-*- C++ -*-
 
    Copyright (C) 1996-2015 Christian Schenk
 
@@ -17,6 +17,6 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 5497
+#define MIKTEX_COMP_J2000_VERSION 5569
 
 #include <miktex/Core/Version>

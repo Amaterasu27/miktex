@@ -40,7 +40,7 @@
 #define OBSDLIB_VERNUM 0x4310
 
 #if defined(MIKTEX) && ! defined(MIKTEXOBSDCOMPATAPI)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_OBSDCOMPAT_SHARED) && defined(_MSC_VER)
 #    define MIKTEXOBSDCOMPATAPI(type) __declspec(dllimport) type __cdecl
 #  elif defined(_MSC_VER)
 #    define MIKTEXOBSDCOMPATAPI(type) type __cdecl

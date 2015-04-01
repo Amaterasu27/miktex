@@ -1,6 +1,6 @@
 /* miktex/PackageManager/PackageManager.h: package manager API	-*- C++ -*-
 
-   Copyright (C) 2001-2013 Christian Schenk
+   Copyright (C) 2001-2015 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -38,7 +38,7 @@
 
 // DLL import/export switch
 #if ! defined(F927BA187CB94546AB9CA9099D989E81)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_MPM_SHARED) && defined(_MSC_VER)
 #    define MIKTEXMPMEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXMPMEXPORT
