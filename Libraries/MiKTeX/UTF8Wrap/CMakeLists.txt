@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011 Christian Schenk
+## Copyright (C) 2011-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 set(${utf8wrap_dll_name}_sources
   include/miktex/utf8wrap.h
   internal.h
@@ -37,7 +32,7 @@ if(NATIVE_WINDOWS)
   set(${utf8wrap_dll_name}_sources ${${utf8wrap_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/utf8wrap.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${utf8wrap_dll_name} SHARED ${${utf8wrap_dll_name}_sources})
 
@@ -45,6 +40,14 @@ set_target_properties(${utf8wrap_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${utf8wrap_dll_name}
+  PRIVATE
+    ${CMAKE_BINARY_DIR}/${rel_utf8wrap_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
 )
 
 rebase(${utf8wrap_dll_name})

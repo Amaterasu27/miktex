@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,45 +19,40 @@
 
 disable_runtime_checks()
 
-add_definitions(
-  -DHAVE_SYS_TYPES_H
-  -DHAVE_STDINT_H
-  -DHAVE_STDDEF_H
-  -D_LARGEFILE64_SOURCE=1
-)
-
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+  add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
 endif()
 
 hide_symbols()
 
 set(${zlib_dll_name}_sources
-    adler32.c
-    compress.c
-    crc32.c
-    crc32.h
-    deflate.c
-    deflate.h
-    gzclose.c
-    gzguts.h
-    gzlib.c
-    gzread.c
-    gzwrite.c
-    infback.c
-    inffast.c
-    inffast.h
-    inffixed.h
-    inflate.c
-    inflate.h
-    inftrees.c
-    inftrees.h
-    trees.c
-    trees.h
-    uncompr.c
-    zutil.c
-    zutil.h
+  adler32.c
+  compress.c
+  crc32.c
+  crc32.h
+  deflate.c
+  deflate.h
+  gzclose.c
+  gzguts.h
+  gzlib.c
+  gzread.c
+  gzwrite.c
+  infback.c
+  inffast.c
+  inffast.h
+  inffixed.h
+  inflate.c
+  inflate.h
+  inftrees.c
+  inftrees.h
+  trees.c
+  trees.h
+  uncompr.c
+  zutil.c
+  zutil.h
+  
+  zlib-version.h
 )
 
 if(NATIVE_WINDOWS)
@@ -69,19 +64,37 @@ if(NATIVE_WINDOWS)
     zlib.def
     ${CMAKE_CURRENT_BINARY_DIR}/zlib.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${zlib_dll_name} SHARED ${${zlib_dll_name}_sources})
-
-target_link_libraries(${zlib_dll_name}
-  PRIVATE
-    ${utf8wrap_dll_name}
-)
 
 set_target_properties(${zlib_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${zlib_dll_name}
+  PRIVATE
+    -DHAVE_SYS_TYPES_H
+    -DHAVE_STDINT_H
+    -DHAVE_STDDEF_H
+    -D_LARGEFILE64_SOURCE=1
+  PUBLIC
+    -DZLIB_DLL
+)
+
+target_include_directories(${zlib_dll_name}
+  PRIVATE
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}/include
+)
+
+target_link_libraries(${zlib_dll_name}
+  PRIVATE
+    ${utf8wrap_dll_name}
 )
 
 rebase(${zlib_dll_name})
@@ -91,3 +104,16 @@ install(TARGETS ${zlib_dll_name}
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
 )
+
+set(public_headers
+  zlib.h
+  zconf.h
+)
+
+foreach(h ${public_headers})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${h}
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}/include/${h}
+    COPYONLY
+  )
+endforeach()

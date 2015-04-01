@@ -265,8 +265,8 @@ MIKTEX_DEFINE_WEBAPP(MiKTeX_${_name_u},
 
   if(LINK_EVERYTHING_STATICALLY)
     target_link_libraries(${_invocation_name}
+	  ${core_lib_name}
       ${_target_name}
-      ${MIKTEX_STATIC_LINK_LIBRARIES}
     )
   else(LINK_EVERYTHING_STATICALLY)
     target_link_libraries(${_invocation_name}

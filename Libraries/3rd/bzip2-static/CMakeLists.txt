@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,8 +29,19 @@ set(${bzip2_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/crctable.c
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/decompress.c
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/huffman.c
-  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/libbz2-version.h
   ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/randtable.c
+
+  ${CMAKE_SOURCE_DIR}/${rel_bzip2_dir}/libbz2-version.h
 )
 
 add_library(${bzip2_lib_name} STATIC ${${bzip2_lib_name}_sources})
+
+target_include_directories(${bzip2_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_bzip2_dir}/include
+)
+
+target_link_libraries(${bzip2_lib_name}
+  PUBLIC
+    ${utf8wrap_lib_name}
+)

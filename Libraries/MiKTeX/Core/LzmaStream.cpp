@@ -1,6 +1,6 @@
 /* FileStreamStream.cpp:
 
-   Copyright (C) 1996-2009 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -24,7 +24,7 @@
 #include "internal.h"
 
 #include <CPP/Common/MyWindows.h>
-#if defined(MIKTEX_STATIC)
+#if defined(MIKTEX_CORE_STATIC)
 #include <CPP/Common/MyGuidDef.h>
 #else
 #include <CPP/Common/MyInitGuid.h>

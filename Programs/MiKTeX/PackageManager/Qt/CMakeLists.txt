@@ -63,9 +63,6 @@ qt4_wrap_cpp(mpm_qt_ui_mocs ${mpm_qt_ui_headers})
 
 qt4_add_resources(mpm_qt_rcc_sources ${mpm_qt_rcs_files})
 
-if(LINK_EVERYTHING_STATICALLY)
-  set(libs ${MIKTEX_STATIC_LINK_LIBRARIES})
-else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${core_dll_name}
     ${mpm_dll_name}
@@ -73,7 +70,6 @@ else(LINK_EVERYTHING_STATICALLY)
     ${ui_qt_dll_name}
     ${QT_LIBRARIES}
   )
-endif(LINK_EVERYTHING_STATICALLY)
 
 add_executable(mpm_qt
   ${mpm_qt_sources}

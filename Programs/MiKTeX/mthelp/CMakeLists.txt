@@ -74,9 +74,6 @@ endif(NATIVE_WINDOWS)
 
 foreach(t ${exes})
   create_dll_wrapper(${t} ${mthelp_target_name} mthelp)
-  if(LINK_EVERYTHING_STATICALLY)
-    target_link_libraries(${t} ${MIKTEX_STATIC_LINK_LIBRARIES})
-  endif(LINK_EVERYTHING_STATICALLY)
 endforeach(t)
 
 install(TARGETS ${exes}

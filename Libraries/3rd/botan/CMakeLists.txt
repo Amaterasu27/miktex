@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011 Christian Schenk
+## Copyright (C) 2011-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,14 +16,6 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-
-add_definitions(
-  -DBOTAN_DLL=__declspec\(dllexport\)
-)
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/${rel_botan_dir}
-)
 
 set(${botan_dll_name}_sources
   src/algo_factory/algo_cache.h
@@ -483,7 +475,7 @@ set(${botan_dll_name}_sources
   src/utils/version.cpp
   src/utils/version.h
   src/utils/xor_buf.h
-  ${headers}
+
   botan-version.h
 )
 
@@ -495,7 +487,7 @@ if(NATIVE_WINDOWS)
   set(${botan_dll_name}_sources ${${botan_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/botan.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${botan_dll_name} SHARED ${${botan_dll_name}_sources})
 
@@ -505,6 +497,19 @@ set_target_properties(${botan_dll_name}
     SOVERSION "1"
 )
 
+target_compile_definitions(${botan_dll_name}
+  PRIVATE
+    -DBOTAN_DLL=__declspec\(dllexport\)
+  INTERFACE
+    -DBOTAN_DLL=__declspec\(dllimport\)
+)
+
+target_include_directories(${botan_dll_name}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/${rel_botan_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/include
+)
 rebase(${botan_dll_name})
 
 install(TARGETS ${botan_dll_name}

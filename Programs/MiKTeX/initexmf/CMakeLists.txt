@@ -37,15 +37,11 @@ add_executable(initexmf ${initexmf_sources})
 
 install(TARGETS initexmf DESTINATION ${bindir})
 
-if(LINK_EVERYTHING_STATICALLY)
-  target_link_libraries(initexmf ${MIKTEX_STATIC_LINK_LIBRARIES})
-else(LINK_EVERYTHING_STATICALLY)
   target_link_libraries(initexmf
     ${core_dll_name}
     ${mpm_dll_name}
     ${popt_dll_name}
   )
-endif(LINK_EVERYTHING_STATICALLY)
 
 if(BUILDING_MIKTEX)
   target_link_libraries(initexmf

@@ -19,9 +19,9 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#if defined(MIKTEX_CORE_SHARED) && defined(_MSC_VER)
 #  define MIKTEXCOREEXPORT __declspec(dllexport)
-#elif ! defined(MIKTEX_STATIC) && __GNUC__ >=4
+#elif defined(MIKTEX_CORE_SHARED) && __GNUC__ >=4
 #  define MIKTEXCOREEXPORT __attribute__((visibility("default")))
 #else
 #  define MIKTEXCOREEXPORT
@@ -1625,7 +1625,7 @@ public:
   PathName
   GetMyProgramFile (/*[in]*/ bool canonicalized);
 
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
 public:
   PathName
   GetDllPathName (/*[in]*/ bool canonicalized);
@@ -1746,12 +1746,12 @@ public:
     ClearSearchVectors ();
   }
 
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
 public:
   static HINSTANCE hinstDLL;
 #endif
 
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
 public:
   static TriState dynamicLoad;
 #endif
@@ -1799,7 +1799,7 @@ public:
   PathName
   GetRelativeFilenameDatabasePathName (/*[in]*/  unsigned r);
 
-#if defined(HAVE_ATLBASE_H) && ! defined(MIKTEX_STATIC)
+#if defined(HAVE_ATLBASE_H) && defined(MIKTEX_CORE_SHARED)
 public:
   static
   BOOL

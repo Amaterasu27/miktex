@@ -1,4 +1,4 @@
-/* kpsemu-version.h: version number				-*- C++ -*-
+/* kpsemu-version.h: version number			-*- C++ -*-
 
    Copyright (C) 2000-2015 Christian Schenk
 
@@ -17,4 +17,4 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 5559
+#define MIKTEX_COMP_J2000_VERSION 5569

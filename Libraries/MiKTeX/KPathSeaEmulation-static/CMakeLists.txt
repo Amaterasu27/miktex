@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,9 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir})
-
 use_static_crt()
 use_static_libraries()
 
@@ -33,6 +30,15 @@ set(${kpsemu_lib_name}_sources
 )
 
 add_library(${kpsemu_lib_name} STATIC ${${kpsemu_lib_name}_sources})
+
+target_include_directories(${kpsemu_lib_name}
+  PRIVATE
+    ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
+    ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
+)
 
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${kpsemu_lib_name}

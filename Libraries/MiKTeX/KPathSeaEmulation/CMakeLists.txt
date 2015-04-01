@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,11 +20,6 @@
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/config.h
-)
-
-include_directories(BEFORE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set(kpathsea_includes
@@ -76,7 +71,7 @@ foreach(inc ${kpathsea_includes})
     ${CMAKE_CURRENT_SOURCE_DIR}/include/kpathsea/kpathsea.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/include/kpathsea/${inc}
   )
-endforeach(inc ${kpathsea_includes})
+endforeach()
 
 set(${kpsemu_dll_name}_sources
   StdAfx.cpp
@@ -106,6 +101,15 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       SOVERSION "1"
   )
 
+  target_include_directories(${kpsemu_dll_name}
+    PRIVATE
+      ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}
+      ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}
+    PUBLIC
+      ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
+      ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
+  )
+
   target_link_libraries(${kpsemu_dll_name}
     PRIVATE 
       ${core_dll_name}
@@ -119,7 +123,8 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+
+endif()
 
 if(INSTALL_MIKTEX_HEADERS)
   install(

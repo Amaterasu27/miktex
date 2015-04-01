@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011-2014 Christian Schenk
+## Copyright (C) 2011-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,14 +20,6 @@
 use_static_crt()
 use_static_libraries()
 
-add_definitions(
-  -D_UNICODE -DUNICODE
-)
-
-include_directories(BEFORE
-  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}
-)
-
 set(${utf8wrap_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include/miktex/utf8wrap.h
   ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/internal.h
@@ -37,7 +29,18 @@ set(${utf8wrap_lib_name}_sources
 
 add_library(${utf8wrap_lib_name} STATIC ${${utf8wrap_lib_name}_sources})
 
-add_executable(utf8wrap utf8wrap.cpp)
+target_include_directories(${utf8wrap_lib_name}
+  PRIVATE
+    ${CMAKE_BINARY_DIR}/${rel_utf8wrap_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
+)
+
+add_executable(utf8wrap
+  ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include/miktex/utf8wrap.h
+  utf8wrap.cpp
+)
 
 merge_trustinfo_manifest(utf8wrap asInvoker)
 

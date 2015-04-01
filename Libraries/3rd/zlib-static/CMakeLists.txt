@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,13 +21,6 @@ disable_runtime_checks()
 
 use_static_crt()
 use_static_libraries()
-
-add_definitions(
-  -DHAVE_SYS_TYPES_H
-  -DHAVE_STDINT_H
-  -DHAVE_STDDEF_H
-  -D_LARGEFILE64_SOURCE=1
-)
 
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
@@ -59,6 +52,26 @@ set(${zlib_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/uncompr.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.h
+
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zlib-version.h
 )
 
 add_library(${zlib_lib_name} STATIC ${${zlib_lib_name}_sources})
+
+target_compile_definitions(${zlib_lib_name}
+  PRIVATE
+    -DHAVE_SYS_TYPES_H
+    -DHAVE_STDINT_H
+    -DHAVE_STDDEF_H
+    -D_LARGEFILE64_SOURCE=1
+)
+
+target_include_directories(${zlib_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}/include
+)
+
+target_link_libraries(${zlib_lib_name}
+  PUBLIC
+    ${utf8wrap_dll_name}
+)

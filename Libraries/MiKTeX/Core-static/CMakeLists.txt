@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,13 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE ${CMAKE_BINARY_DIR}/${rel_core_dir})
-include_directories(BEFORE ${CMAKE_SOURCE_DIR}/${rel_core_dir})
-
 use_static_crt()
 use_static_libraries()
+
+include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}
+)
 
 set(${core_lib_name}_sources
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/StdAfx.h
@@ -96,7 +98,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.cpp
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/win/winThread.h
 )
-else(NATIVE_WINDOWS)
+else()
   set(${core_lib_name}_sources ${${core_lib_name}_sources}
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unx.cpp
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxDirectoryLister.cpp
@@ -109,6 +111,29 @@ else(NATIVE_WINDOWS)
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxThread.cpp
     ${CMAKE_SOURCE_DIR}/${rel_core_dir}/unx/unxThread.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${core_lib_name} STATIC ${${core_lib_name}_sources})
+
+target_compile_definitions(${core_lib_name}
+  PUBLIC
+    -DMIKTEX_CORE_STATIC
+)
+
+## see top-level CMakeLists.txt:
+#target_include_directories(${core_lib_name}
+#  INTERFACE
+#    ${CMAKE_BINARY_DIR}/${rel_core_dir}/include/miktex/Core
+#    ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include/miktex/Core
+#)
+
+target_link_libraries(${core_lib_name}
+  PUBLIC
+    ${botan_lib_name}
+    ${bzip2_lib_name}
+    ${lzma_lib_name}
+    ${md5_lib_name}
+    ${uriparser_lib_name}
+    ${zlib_lib_name}
+)
+

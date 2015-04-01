@@ -17,12 +17,10 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-cmake_minimum_required(VERSION 3.2.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2.1 FATAL_ERROR)
 
 set(CMAKE_COLOR_MAKEFILE FALSE)
 set(CMAKE_VERBOSE_MAKEFILE TRUE)
-
-set(CMAKE_LINK_INTERFACE_LIBRARIES "")
 
 option(
   MIKTEX_SUPPORT_WINDOWS_XP
@@ -371,8 +369,8 @@ if(WIN32)
   set(MFC_FOUND "YES")
 endif()
 
-find_package(Qt5Widgets)
-find_package(Qt5WinExtras)
+find_package(Qt5Widgets QUIET)
+find_package(Qt5WinExtras QUIET)
 
 find_package(Threads REQUIRED)
 
@@ -613,10 +611,6 @@ if(NATIVE_WINDOWS)
     set(CMAKE_RC_FLAGS
       "${CMAKE_RC_FLAGS} -DMIKTEX_ATLMFC")
   endif()
-  ## DLL export enablers
-  add_definitions(
-    -DZLIB_DLL
-  )
   ## use overloads for unsecure functions
   #add_definitions(
   #  -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1
@@ -648,39 +642,16 @@ if(USE_SYSTEM_ZLIB)
   set(zlib_lib_name ${ZLIB_LIBRARIES})
 endif()
 
-set(MIKTEX_STATIC_LINK_LIBRARIES
-  ${texmf_lib_name}
-  ${app_lib_name}
-  ${QT_LIBRARIES}
-  ${mpm_lib_name}
-  ${extractor_lib_name}
-  ${core_lib_name}
-  ${mspack_lib_name}
-  ${lzma_lib_name}
-  ${expat_lib_name}
-  ${uriparser_lib_name}
-  ${md5_lib_name}
-  ${CURL_LIBRARIES}
-  ${botan_lib_name}
-  ${bzip2_lib_name}
-  ${popt_lib_name}
-  ${utf8wrap_lib_name}
-)
-
-if(Qt5Widgets_FOUND)
-  set(MIKTEX_STATIC_LINK_LIBRARIES
-    ${MIKTEX_STATIC_LINK_LIBRARIES}
-    ${ui_qt_lib_name}
-  )
-endif()
-
 ###############################################################################
 ## add global include directories
 
 include_directories(
   ${CMAKE_BINARY_DIR}
+
+  # version number, general definitions
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
-  ${CMAKE_BINARY_DIR}/${rel_kpsemu_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+
   ${CMAKE_BINARY_DIR}/${rel_md5_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
   ${CMAKE_BINARY_DIR}/${rel_obsdcompat_dir}
@@ -689,7 +660,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}
   ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
@@ -700,7 +670,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_w2cemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_lzmalib_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_md5_dir}/include
@@ -718,13 +687,10 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
   ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/include
 )
 
 if(USE_SYSTEM_BZIP2)
   include_directories(${BZIP2_INCLUDE_DIR})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/${rel_bzip2_dir})
 endif()
 
 if(USE_SYSTEM_EXPAT)
@@ -747,8 +713,6 @@ endif()
 
 if(USE_SYSTEM_ZLIB)
   include_directories(${ZLIB_INCLUDE_DIR})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/${rel_zlib_dir})
 endif()
 
 include_directories(${CMAKE_BINARY_DIR}/${rel_zzip_dir}/include)
@@ -784,12 +748,6 @@ endif()
 if(NATIVE_WINDOWS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
-  )
-endif()
-
-if(NATIVE_WINDOWS)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_utf8wrap_dir}/include
   )
 endif()
 

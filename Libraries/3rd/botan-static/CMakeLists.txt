@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2011 Christian Schenk
+## Copyright (C) 2011-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,14 +19,6 @@
 
 use_static_crt()
 use_static_libraries()
-
-add_definitions(
-  -DBOTAN_DLL=
-)
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/${rel_botan_dir}
-)
 
 set(${botan_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/src/algo_factory/algo_cache.h
@@ -486,11 +478,23 @@ set(${botan_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/src/utils/version.cpp
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/src/utils/version.h
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/src/utils/xor_buf.h
+
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/botan-version.h
 )
 
 add_library(${botan_lib_name} STATIC ${${botan_lib_name}_sources})
 
+target_compile_definitions(${botan_lib_name}
+  PUBLIC
+    -DBOTAN_DLL=
+)
+
+target_include_directories(${botan_lib_name}
+  PRIVATE
+    ${CMAKE_SOURCE_DIR}/${rel_botan_dir}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/include
+)
 
 set(botan_check_sources
   ${CMAKE_SOURCE_DIR}/${rel_botan_dir}/checks/algos.cpp

@@ -93,12 +93,6 @@ endif(NOT LINK_EVERYTHING_STATICALLY OR INSTALL_STATIC_LIBRARIES)
 
 foreach(t ${exes})
   create_dll_wrapper(${miktex_prefix}${t} ${makex_target_name} ${t})
-  if(LINK_EVERYTHING_STATICALLY)
-    target_link_libraries(
-      ${makex_target_name}
-      ${MIKTEX_STATIC_LINK_LIBRARIES}
-    )
-  endif(LINK_EVERYTHING_STATICALLY)
   install(TARGETS ${miktex_prefix}${t}
     RUNTIME DESTINATION "${bindir}"
     LIBRARY DESTINATION "${libdir}"

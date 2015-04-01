@@ -185,9 +185,6 @@ qt4_wrap_cpp(texworks_ui_mocs ${texworks_ui_headers})
 
 qt4_add_resources(texworks_rcc_sources ${texworks_rcs_files})
 
-if(LINK_EVERYTHING_STATICALLY)
-  set(libs ${MIKTEX_STATIC_LINK_LIBRARIES})
-else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${core_dll_name}
     ${hunspell_dll_name}
@@ -197,7 +194,6 @@ else(LINK_EVERYTHING_STATICALLY)
     ${QT_QTMAIN_LIBRARY}
     ${QT_LIBRARIES}
   )
-endif(LINK_EVERYTHING_STATICALLY)
 
 add_executable(texworks WIN32
   ${texworks_sources}

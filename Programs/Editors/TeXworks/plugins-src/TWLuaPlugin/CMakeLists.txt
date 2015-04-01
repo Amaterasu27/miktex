@@ -65,14 +65,10 @@ set(twluaplugin_moc_sources
 
 qt4_wrap_cpp(twluaplugin_mocs ${twluaplugin_moc_sources})
 
-if(LINK_EVERYTHING_STATICALLY)
-  set(libs ${MIKTEX_STATIC_LINK_LIBRARIES})
-else(LINK_EVERYTHING_STATICALLY)
   set(libs
     ${lua_dll_name}
     ${QT_LIBRARIES}
   )
-endif(LINK_EVERYTHING_STATICALLY)
 
 add_library(${twluaplugin_dll_name} MODULE
   ${twluaplugin_sources}

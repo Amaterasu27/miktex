@@ -1,6 +1,6 @@
 /* StdAfx.h:							-*- C++ -*-
 
-   Copyright (C) 1996-2011 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -167,9 +167,6 @@ using namespace std;
 
 #include <md5.h>
 
-#if defined(MIKTEX_STATIC)
-#  define BOTAN_DLL
-#endif
 #include <botan/botan.h>
 #include <botan/look_pk.h>
 #include <botan/pk_keys.h>

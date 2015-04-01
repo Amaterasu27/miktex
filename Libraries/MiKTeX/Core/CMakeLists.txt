@@ -1,6 +1,6 @@
 ## CMakeLists.txt						-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -16,6 +16,11 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
+
+include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_core_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_core_dir}
+)
 
 set(ADMIN_CONTROLS_USER_CONFIG TRUE)
 
@@ -50,11 +55,6 @@ configure_file(
 )  
 
 hide_symbols()
-
-add_definitions(-DHAVE_CONFIG_H)
-
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(${core_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/miktex.der.h
@@ -178,9 +178,9 @@ if(NATIVE_WINDOWS)
     )
     if(CMAKE_CL_64)
       set(env "amd64")
-    else(CMAKE_CL_64)
+    else()
       set(env "win32")
-    endif(CMAKE_CL_64)
+    endif()
     add_custom_command(
       OUTPUT
 		${CMAKE_CURRENT_BINARY_DIR}/include/miktexidl.h
@@ -248,7 +248,7 @@ if(NATIVE_WINDOWS)
       RUNTIME DESTINATION "${bindir}"
       LIBRARY DESTINATION "${libdir}"
       ARCHIVE DESTINATION "${libdir}")
-  endif(HAVE_ATLBASE_H)
+  endif()
   set_source_files_properties(
     ${CMAKE_CURRENT_BINARY_DIR}/MiKTeXEvents.h
     PROPERTIES GENERATED TRUE
@@ -264,7 +264,7 @@ if(NATIVE_WINDOWS)
     DEPENDS MiKTeXEvents.mc
     VERBATIM
   )
-else(NATIVE_WINDOWS)
+else()
   set(${core_dll_name}_sources ${${core_dll_name}_sources}
     unx/unx.cpp
     unx/unxDirectoryLister.cpp
@@ -277,7 +277,7 @@ else(NATIVE_WINDOWS)
     unx/unxThread.cpp
     unx/unxThread.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_library(${core_dll_name} SHARED ${${core_dll_name}_sources})
@@ -288,6 +288,20 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     SOVERSION "1"
     )
   
+  target_compile_definitions(${core_dll_name}
+    PRIVATE
+      -DHAVE_CONFIG_H
+    PUBLIC
+      -DMIKTEX_CORE_SHARED
+  )
+
+## see top-level CMakeLists.txt:
+#  target_include_directories(${core_dll_name}
+#    INTERFACE
+#      ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
+#      ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
+#  )
+
   target_link_libraries(${core_dll_name}
     PRIVATE
       ${CMAKE_THREAD_LIBS_INIT}
@@ -322,7 +336,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(INSTALL_MIKTEX_HEADERS)
   install(
@@ -368,9 +382,9 @@ if(INSTALL_MIKTEX_HEADERS)
       DESTINATION
         ${incdir}/miktex/Core/win
     )
-  endif(NATIVE_WINDOWS)
-endif(INSTALL_MIKTEX_HEADERS)
+  endif()
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_subdirectory(test)
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()

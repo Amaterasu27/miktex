@@ -1,6 +1,6 @@
-/* miktex/Core/core.h: MiKTeX core API				-*- C++ -*-
+/* miktex/Core/core.h: MiKTeX core API			-*- C++ -*-
 
-   Copyright (C) 1996-2013 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -74,7 +74,7 @@
 #  include <pthread.h>
 #endif
 
-#if defined(_MSC_VER) && defined(MIKTEX_STATIC)
+#if defined(_MSC_VER) && defined(MIKTEX_CORE_STATIC)
 #  pragma comment (lib, "htmlhelp")
 #  pragma comment (lib, "shfolder")
 #  pragma comment (lib, "shell32")
@@ -82,9 +82,9 @@
 
 // DLL import/export switch
 #if ! defined(EAD86981C92C904D808A5E6CEC64B90E)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_CORE_SHARED) && defined(_MSC_VER)
 #    define MIKTEXCOREEXPORT __declspec(dllimport)
-#  elif ! defined(MIKTEX_STATIC) && __GNUC__ >= 4
+#  elif defined(MIKTEX_CORE_SHARED) && __GNUC__ >= 4
 #    define MIKTEXCOREEXPORT __attribute__((visibility("default")))
 #  else
 #    define MIKTEXCOREEXPORT
