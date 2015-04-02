@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,7 +19,7 @@
 
 set(CMAKE_MFC_FLAG 2)
 
-include_directories(
+include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -93,6 +93,16 @@ set_target_properties(${ui_mfc_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${ui_mfc_dll_name}
+  PUBLIC
+    -DMIKTEX_UI_MFC
+)
+
+target_include_directories(${ui_mfc_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
 )
 
 target_link_libraries(${ui_mfc_dll_name}

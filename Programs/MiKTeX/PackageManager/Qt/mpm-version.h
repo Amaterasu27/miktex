@@ -1,6 +1,6 @@
-/* mpm-version.h: MPM version information			-*- C++ -*-
+/* mpm-version.h: MPM version information		-*- C++ -*-
 
-   Copyright (C) 2008-2009 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,6 +17,6 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#define MIKTEX_COMP_J2000_VERSION 3478
+#define MIKTEX_COMP_J2000_VERSION 5570
 
 #include <miktex/Core/Version>

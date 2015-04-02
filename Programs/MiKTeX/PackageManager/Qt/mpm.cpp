@@ -1,6 +1,6 @@
 /* mpm.cpp:
 
-   Copyright (C) 2008-2009 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -20,7 +20,7 @@
    02111-1307, USA. */
 
 #include <QApplication>
-#include <QtGui>
+#include <QtWidgets>
 #include <miktex/Core/Core>
 
 #include "MainWindow.h"

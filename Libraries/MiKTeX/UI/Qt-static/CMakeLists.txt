@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -85,16 +85,26 @@ set(${ui_qt_lib_name}_ui_files
   ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/UpdateDialog.ui
 )
 
-qt4_wrap_cpp(${ui_qt_lib_name}_mocs ${${ui_qt_lib_name}_moc_sources})
+qt5_wrap_cpp(${ui_qt_lib_name}_mocs ${${ui_qt_lib_name}_moc_sources})
 
-qt4_wrap_ui(${ui_qt_lib_name}_ui_headers ${${ui_qt_lib_name}_ui_files})
+qt5_wrap_ui(${ui_qt_lib_name}_ui_headers ${${ui_qt_lib_name}_ui_files})
 
-qt4_wrap_cpp(${ui_qt_lib_name}_ui_mocs ${${ui_qt_lib_name}_ui_headers})
+qt5_wrap_cpp(${ui_qt_lib_name}_ui_mocs ${${ui_qt_lib_name}_ui_headers})
 
 add_library(${ui_qt_lib_name} STATIC
   ${${ui_qt_lib_name}_sources}
   ${${ui_qt_lib_name}_mocs}
   ${${ui_qt_lib_name}_ui_mocs}
+)
+
+target_compile_definitions(${ui_qt_lib_name}
+  PUBLIC
+    -DMIKTEX_UI_QT
+)
+
+target_include_directories(${ui_qt_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
 )
 
 if(INSTALL_STATIC_LIBRARIES)
@@ -103,4 +113,4 @@ if(INSTALL_STATIC_LIBRARIES)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(INSTALL_STATIC_LIBRARIES)
+endif()

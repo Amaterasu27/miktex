@@ -63,14 +63,14 @@ target_link_libraries(${app_dll_name}
     ${mpm_dll_name}
 )
 
-if(Qt5Widgets_FOUND)
+if(WITH_UI_QT)
   target_link_libraries(${app_dll_name}
     PRIVATE
       ${ui_qt_dll_name}
   )
 endif()
 
-if(MFC_FOUND)
+if(WITH_UI_MFC)
   target_link_libraries(${app_dll_name}
     PRIVATE
       ${ui_mfc_dll_name}

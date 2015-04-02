@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2008-2009 Christian Schenk
+## Copyright (C) 2008-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,9 +20,9 @@
 if(LINK_EVERYTHING_STATICALLY)
   use_static_crt()
   use_static_libraries()
-endif(LINK_EVERYTHING_STATICALLY)
+endif()
 
-include_directories(
+include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -40,7 +40,7 @@ if(NATIVE_WINDOWS)
   set(mpm_qt_sources ${mpm_qt_sources}
     ${CMAKE_CURRENT_SOURCE_DIR}/mpm.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 set(mpm_qt_moc_sources
   MainWindow.h
@@ -55,19 +55,15 @@ set(mpm_qt_rcs_files
   mpm.qrc
 )
 
-qt4_wrap_cpp(mpm_qt_mocs ${mpm_qt_moc_sources})
+qt5_wrap_cpp(mpm_qt_mocs ${mpm_qt_moc_sources})
 
-qt4_wrap_ui(mpm_qt_ui_headers ${mpm_qt_ui_files})
+qt5_wrap_ui(mpm_qt_ui_headers ${mpm_qt_ui_files})
 
-qt4_wrap_cpp(mpm_qt_ui_mocs ${mpm_qt_ui_headers})
+qt5_wrap_cpp(mpm_qt_ui_mocs ${mpm_qt_ui_headers})
 
-qt4_add_resources(mpm_qt_rcc_sources ${mpm_qt_rcs_files})
+qt5_add_resources(mpm_qt_rcc_sources ${mpm_qt_rcs_files})
 
   set(libs
-    ${core_dll_name}
-    ${mpm_dll_name}
-    ${popt_dll_name}
-    ${ui_qt_dll_name}
     ${QT_LIBRARIES}
   )
 
@@ -78,7 +74,15 @@ add_executable(mpm_qt
   ${mpm_qt_rcc_sources}
 )
 
-target_link_libraries(mpm_qt ${libs})
+set(libs
+  ${core_dll_name}
+  ${mpm_dll_name}
+  ${popt_dll_name}
+  ${ui_qt_dll_name}
+  Qt5::Widgets
+)
+
+target_link_libraries(mpm_qt ${libs})  
 
 merge_trustinfo_manifest(mpm_qt asInvoker)
 

@@ -1,6 +1,6 @@
-/* miktex/UI/UI.h:						-*- C++ -*-
+/* miktex/UI/UI.h:					-*- C++ -*-
 
-   Copyright (C) 2000-2009 Christian Schenk
+   Copyright (C) 2000-2015 Christian Schenk
 
    This file is part of MiKTeX UI Library.
 
@@ -26,11 +26,11 @@
 #if ! defined(DD977A74EEC1466EAF194BE92B20C9C4)
 #define DD977A74EEC1466EAF194BE92B20C9C4
 
-#if defined(MIKTEX_ATLMFC)
+#if defined(MIKTEX_UI_MFC)
 #  include <miktex/UI/MFC/Prototypes>
 #endif
 
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
 #  include <miktex/UI/Qt/Prototypes>
 #endif
 
@@ -59,12 +59,8 @@ class FrameworkEnum
 public:
   enum EnumType {
     None,
-#if defined(MIKTEX_ATLMFC)
     MFC,
-#endif
-#if defined(MIKTEX_QT)
     Qt,
-#endif
   };
 };
 
@@ -78,9 +74,9 @@ defaultFramework ()
   if (cached < 0)
     {
       int defaultGUIFramework = Framework::None;
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
       defaultGUIFramework = Framework::Qt;
-#elif defined(MIKTEX_ATLMFC)
+#elif defined(MIKTEX_UI_MFC)
       defaultGUIFramework = Framework::MFC;
 #endif
       cached =
@@ -101,13 +97,13 @@ inline
 void
 InitializeFramework ()
 {
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
   if (defaultFramework() == Framework::Qt)
     {
       Qt::InitializeFramework ();
     }
 #endif
-#if defined(MIKTEX_ATLMFC)
+#if defined(MIKTEX_UI)MFC)
   if (defaultFramework() == Framework::MFC)
     {
       MFC::InitializeFramework ();
@@ -119,13 +115,13 @@ inline
 void
 FinalizeFramework ()
 {
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
   if (defaultFramework() == Framework::Qt)
     {
       Qt::FinalizeFramework ();
     }
 #endif
-#if defined(MIKTEX_ATLMFC)
+#if defined(MIKTEX_UI_MFC)
   if (defaultFramework() == Framework::MFC)
     {
       //
@@ -141,7 +137,7 @@ InstallPackageMessageBox
  /*[in]*/ const char *				lpszTrigger)
 {
   unsigned ret = NO | DONTASKAGAIN;
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
   if (defaultFramework() == Framework::Qt)
     {
       ret =
@@ -150,7 +146,7 @@ InstallPackageMessageBox
 				     lpszTrigger);
 }
 #endif
-#if defined(MIKTEX_ATLMFC)
+#if defined(MIKTEX_UI_MFC)
   if (defaultFramework() == Framework::MFC)
     {
       ret =
@@ -167,13 +163,13 @@ bool
 ProxyAuthenticationDialog ()
 {
   bool ret = false;
-#if defined(MIKTEX_QT)
+#if defined(MIKTEX_UI_QT)
   if (defaultFramework() == Framework::Qt)
     {
       ret = Qt::ProxyAuthenticationDialog();
     }
 #endif
-#if defined(MIKTEX_ATLMFC)
+#if defined(MIKTEX_UI_MFC)
   if (defaultFramework() == Framework::MFC)
     {
       ret = MFC::ProxyAuthenticationDialog();

@@ -1,6 +1,6 @@
 /* PackageTableModel.cpp:
 
-   Copyright (C) 2008 Christian Schenk
+   Copyright (C) 2008-2015 Christian Schenk
 
    This file is part of MiKTeX Package Manager.
 
@@ -158,7 +158,7 @@ PackageTableModel::headerData (/*[in]*/ int		section,
 void
 PackageTableModel::Reload ()
 {
-  reset ();
+  beginResetModel();
   packages.clear ();
   pManager->UnloadDatabase ();
   auto_ptr<PackageIterator> pIter (pManager->CreateIterator());
@@ -173,4 +173,5 @@ PackageTableModel::Reload ()
 	}
     }
   pIter->Dispose ();
+  endResetModel();
 }

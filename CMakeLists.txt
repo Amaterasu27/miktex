@@ -137,9 +137,15 @@ option(
 )
 
 option(
-  NO_GUI
-  "Build without GUI components."
-  FALSE
+  WITH_UI_QT
+  "Build Qt components."
+  TRUE
+)
+
+option(
+  WITH_UI_MFC
+  "Build MFC components."
+  ${WIN32}
 )
 
 option(
@@ -316,10 +322,6 @@ endif()
 ###############################################################################
 ## find/check stuff
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/${rel_mpm_qt_dir}/)
-  set(HAVE_MPM_QT_SOURCES 1)
-endif()
-
 set(required_programs
   bison
   cat
@@ -363,14 +365,10 @@ endif()
 
 find_package(ImageMagick REQUIRED)
 
-if(WIN32)
-  ## MFC is mandatory
-  #find_package(MFC)
-  set(MFC_FOUND "YES")
+if(WITH_UI_QT)
+  find_package(Qt5Widgets REQUIRED)
+  find_package(Qt5WinExtras REQUIRED)
 endif()
-
-find_package(Qt5Widgets QUIET)
-find_package(Qt5WinExtras QUIET)
 
 find_package(Threads REQUIRED)
 
@@ -487,12 +485,6 @@ try_compile(HAVE_STRUCT_DIRENT_D_TYPE
   ${CMAKE_SOURCE_DIR}/cmake/modules/HAVE_STRUCT_DIRENT_D_TYPE.c
 )
 
-## work around CMake bug
-if(MFC_FOUND AND NOT HAVE_AFXWIN_H)
-  message(STATUS "MFC is disabled")
-  set(MFC_FOUND "NO")
-endif()
-
 ## MiKTeX components
 set(HAVE_FT2BUILD_H 1)
 set(HAVE_LIBFONTCONFIG 1)
@@ -503,12 +495,6 @@ set(HAVE_LIBZ 1)
 set(HAVE_ZLIB 1)
 set(HAVE_ZLIB_H 1)
 set(HAVE_ZLIB_COMPRESS2 1)
-
-if(NOT NO_GUI AND NOT MFC_FOUND AND NOT Qt5Widgets_FOUND)
-  message(FATAL_ERROR
-    "Qt5 is required unless you enable the NO_GUI option."
-  )
-endif()
 
 if(MSVC)
   if(MSVC14)
@@ -587,7 +573,7 @@ add_definitions(-DHAVE_CONFIG_H)
 
 add_definitions(-DMIKTEX)
 
-if(Qt5Widgets_FOUND)
+if(WITH_UI_QT)
   add_definitions(
     -DMIKTEX_QT
   )
@@ -604,7 +590,7 @@ if(NATIVE_WINDOWS)
     -D_BIND_TO_CURRENT_CRT_VERSION=1
     -D_BIND_TO_CURRENT_MFC_VERSION=1
   )
-  if(MFC_FOUND AND HAVE_ATLBASE_H)
+  if(WITH_UI_MFC)
     add_definitions(
       -DMIKTEX_ATLMFC
     )
@@ -652,6 +638,12 @@ include_directories(
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
 )
+
+if(WITH_UI_MFC OR WITH_UI_QT)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
+  )
+endif()
 
 if(MSVC)
   include_directories(
@@ -908,7 +900,7 @@ if(BUILDING_MIKTEX)
 endif()
 
 ## TODO
-#if(BUILDING_MIKTEX AND Qt5Widgets_FOUND)
+#if(BUILDING_MIKTEX AND WITH_UI_QT)
 #  add_subdirectory(${rel_poppler_dir}/qt4/src)
 #endif()
 
@@ -945,7 +937,7 @@ add_subdirectory(${rel_mpmlib_dir}-static)
 add_subdirectory(${rel_setuplib_dir})
 add_subdirectory(${rel_setuplib_dir}-static)
 
-if(Qt5Widgets_FOUND)
+if(WITH_UI_QT)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_ui_qt_dir})
   endif()
@@ -953,7 +945,7 @@ if(Qt5Widgets_FOUND)
 #  add_subdirectory(${rel_ui_qt_dir}-static)
 endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_ui_mfc_dir})
 endif()
 
@@ -1000,14 +992,13 @@ endif()
 
 add_subdirectory(${rel_web_dir})
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_mpm_mfc_dir})
 endif()
 
-## TODO
-#if(HAVE_MPM_QT_SOURCES AND Qt5Widgets_FOUND)
-#  add_subdirectory(${rel_mpm_qt_dir})
-#endif()
+if(WITH_UI_QT)
+  add_subdirectory(${rel_mpm_qt_dir})
+endif()
 
 add_subdirectory(${rel_mpm_dir})
 
@@ -1031,7 +1022,7 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_mkfntmap_dir})
 endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_mo_mfc_dir})
 endif()
 
@@ -1172,11 +1163,11 @@ if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
 endif()
 
 ## TODO
-#if(BUILDING_MIKTEX AND Qt5Widgets_FOUND)
+#if(BUILDING_MIKTEX AND WITH_UI_QT)
 #  add_subdirectory(${rel_texworks_dir})
 #endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_yap_mfc_dir})
 endif()
 
@@ -1196,15 +1187,15 @@ if(BUILDING_MIKTEX AND HAVE_ATLBASE_H)
   #add_subdirectory(${rel_migrate_dir})
 endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_setup_mfc_dir})
 endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_update_mfc_dir})
 endif()
 
-if(BUILDING_MIKTEX AND MFC_FOUND)
+if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_remove_mfc_dir})
 endif()
 

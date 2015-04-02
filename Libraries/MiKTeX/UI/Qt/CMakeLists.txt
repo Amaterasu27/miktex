@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2008-2015 Christian Schenk
 ## 
@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
+include_directories(BEFOR
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -115,6 +115,16 @@ set_target_properties(${ui_qt_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${ui_qt_dll_name}
+  PUBLIC
+    -DMIKTEX_UI_QT
+)
+
+target_include_directories(${ui_qt_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
 )
 
 target_link_libraries(${ui_qt_dll_name}
