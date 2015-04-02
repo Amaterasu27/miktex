@@ -1,6 +1,6 @@
 /* libtiff-version.h: version number			-*- C++ -*-
 
-   Copyright (C) 1996-2008 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 4535
+#define MIKTEX_COMP_J2000_VERSION 5570
 #define MIKTEX_COMP_ORIG_VERSION_STR "3.6.1"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 1988-1996 Sam Leffler; Copyright (c) 1991-1997 Silicon Graphics, Inc."

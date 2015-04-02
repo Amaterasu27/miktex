@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -50,6 +50,16 @@ set(${png_lib_name}_sources
 )
 
 add_library(${png_lib_name} STATIC ${${png_lib_name}_sources})
+
+target_include_directories(${png_lib_name}
+  PUBLIC
+    include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
+)
+
+target_link_libraries(${png_lib_name}
+  PUBLIC
+    ${zlib_lib_name}
+)
 
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${png_lib_name}

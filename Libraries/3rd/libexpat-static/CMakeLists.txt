@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -28,7 +28,7 @@ add_definitions(-DHAVE_EXPAT_CONFIG_H)
 
 if(NATIVE_WINDOWS)
   add_definitions(-DCOMPILED_FROM_DSP)
-endif(NATIVE_WINDOWS)
+endif()
 
 use_static_crt()
 use_static_libraries()
@@ -59,3 +59,8 @@ set_source_files_properties(
 )
 
 add_library(${expat_lib_name} STATIC ${${expat_lib_name}_sources})
+
+target_include_directories(${expat_lib_name}
+  PUBLIC
+    include_directories(${CMAKE_SOURCE_DIR}/${rel_expat_dir})
+)

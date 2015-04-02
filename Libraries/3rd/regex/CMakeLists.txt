@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -31,7 +31,7 @@ if(NATIVE_WINDOWS)
   set(${regex_dll_name}_sources ${${regex_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/regex.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${regex_dll_name} SHARED ${${regex_dll_name}_sources})
 
@@ -39,6 +39,16 @@ set_target_properties(${regex_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${regex_dll_name}
+  PUBLIC
+    -DMIKTEX_REGEX_SHARED
+)
+
+target_include_directories(${regex_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
 )
 
 rebase(${regex_dll_name})

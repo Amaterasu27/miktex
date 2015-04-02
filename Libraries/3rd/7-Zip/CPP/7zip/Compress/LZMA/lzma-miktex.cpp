@@ -24,7 +24,7 @@
 
 #include "LZMADecoder.h"
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_LZMA_SHARED) && defined(_MSC_VER)
 #  define LZMAEXPORT __declspec(dllexport)
 #else
 #  define LZMAEXPORT

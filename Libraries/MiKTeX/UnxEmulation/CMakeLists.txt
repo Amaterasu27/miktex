@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,7 +17,7 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(
+include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -32,7 +32,7 @@ foreach(inc ${unx_includes})
     ${CMAKE_CURRENT_SOURCE_DIR}/include/unx.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/include/${inc}
   )
-endforeach(inc ${unx_includes})
+endforeach()
 
 set(${unxemu_dll_name}_sources
   internal.h
@@ -48,7 +48,7 @@ if(NATIVE_WINDOWS)
   set(${unxemu_dll_name}_sources ${${unxemu_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/unxemu.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${unxemu_dll_name} SHARED ${${unxemu_dll_name}_sources})
 
@@ -56,6 +56,17 @@ set_target_properties(${unxemu_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${unxemu_dll_name}
+  PUBLIC
+    -DMIKTEX_UNXEMU_SHARED
+)
+
+target_include_directories(${unxemu_dll_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
+    ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
 )
 
 target_link_libraries(${unxemu_dll_name}

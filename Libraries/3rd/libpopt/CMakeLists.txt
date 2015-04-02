@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,7 +24,7 @@ if(NOT NATIVE_WINDOWS)
   )
   add_definitions(-DHAVE_CONFIG_H)
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-endif(NOT NATIVE_WINDOWS)
+endif()
 
 set(${popt_dll_name}_sources
   findme.c
@@ -48,13 +48,23 @@ if(NATIVE_WINDOWS)
   set(${popt_dll_name}_sources ${${popt_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/popt.rc
   )
-else(NATIVE_WINDOWS)
+else()
   set(${popt_dll_name}_sources ${${popt_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/config.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${popt_dll_name} SHARED ${${popt_dll_name}_sources})
+
+target_compile_definitions(${popt_dll_name}
+  PUBLIC
+    -DMIKTEX_POPT_SHARED
+)
+
+target_include_directories(${popt_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
+)
 
 set_target_properties(${popt_dll_name}
   PROPERTIES

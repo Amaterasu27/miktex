@@ -49,6 +49,16 @@ endif()
 
 add_library(${extractor_lib_name} STATIC ${${extractor_lib_name}_sources})
 
+target_compile_definitions(${extractor_lib_name}
+  PUBLIC
+    -DMIKTEX_EXTRACTOR_STATIC
+)
+
+target_include_directories(${extractor_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
+)
+
 target_link_libraries(${extractor_lib_name}
   PUBLIC
     ${core_lib_name}

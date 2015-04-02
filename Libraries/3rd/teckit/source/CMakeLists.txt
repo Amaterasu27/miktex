@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,11 +17,17 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set(${teckit_dll_name}_sources
   Engine.cpp
+  Engine.h
+  Public-headers/TECkit_Common.h
+  Public-headers/TECkit_Engine.h
+  TECkit_Format.h
   teckit-version.h
 )
 
@@ -34,7 +40,7 @@ if(NATIVE_WINDOWS)
     teckit.def
     ${CMAKE_CURRENT_BINARY_DIR}/teckit.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${teckit_dll_name} SHARED ${${teckit_dll_name}_sources})
 
@@ -42,6 +48,11 @@ set_target_properties(${teckit_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${teckit_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
 )
 
 target_link_libraries(${teckit_dll_name}

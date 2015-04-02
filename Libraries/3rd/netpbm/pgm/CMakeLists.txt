@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -55,7 +55,7 @@ if(NATIVE_WINDOWS)
   set(${pgm_dll_name}_sources ${${pgm_dll_name}_sources}
     libpgm.def
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${pgm_dll_name} SHARED ${${pgm_dll_name}_sources})
 
@@ -65,8 +65,13 @@ set_target_properties(${pgm_dll_name}
     SOVERSION "1"
 )
 
+target_include_directories(${pgm_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
+)
+
 target_link_libraries(${pgm_dll_name}
-  PRIVATE
+  PUBLIC
     ${pbm_dll_name}
 )
 
@@ -80,7 +85,7 @@ foreach(e ${exes})
     ${pbm_dll_name}
     ${pgm_dll_name}
   )
-endforeach(e ${exes})
+endforeach()
 
 install(TARGETS ${exes} ${pgm_dll_name}
   RUNTIME DESTINATION "${bindir}"

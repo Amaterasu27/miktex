@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -76,7 +76,7 @@ if(NATIVE_WINDOWS)
   set(${pnm_dll_name}_sources ${${pnm_dll_name}_sources}
     libpnm.def
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${pnm_dll_name} SHARED ${${pnm_dll_name}_sources})
 
@@ -86,12 +86,18 @@ set_target_properties(${pnm_dll_name}
     SOVERSION "1"
 )
 
+target_include_directories(${pnm_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
+)
+
 target_link_libraries(${pnm_dll_name}
   PRIVATE
+    ${tiff_dll_name}
+  PUBLIC
     ${pbm_dll_name}
     ${pgm_dll_name}
     ${ppm_dll_name}
-    ${tiff_dll_name}
 )
 
 rebase(${pnm_dll_name})
@@ -106,7 +112,7 @@ foreach(e ${exes})
     ${ppm_dll_name}
     ${pnm_dll_name}
   )
-endforeach(e ${exes})
+endforeach()
 
 target_link_libraries(pnmtotiff
   ${tiff_dll_name}

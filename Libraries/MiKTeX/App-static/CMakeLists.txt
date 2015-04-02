@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -33,6 +33,22 @@ set(${app_lib_name}_sources
 )
 
 add_library(${app_lib_name} STATIC ${${app_lib_name}_sources})
+
+target_compile_definitions(${app_lib_name}
+  PUBLIC
+    -DMIKTEX_APP_STATIC
+)
+
+target_include_directories(${app_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
+)
+
+target_link_libraries(${app_lib_name}
+  PUBLIC
+    ${core_lib_name}
+    ${mpm_lib_name}
+)
 
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${app_lib_name}

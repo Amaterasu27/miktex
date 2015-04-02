@@ -166,8 +166,10 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   target_link_libraries(${texmf_dll_name}
     PRIVATE
       ${app_dll_name}
+      ${bzip2_dll_name}
       ${core_dll_name}
       ${popt_dll_name}
+      ${zlib_dll_name}
   )
 
   rebase(${texmf_dll_name})

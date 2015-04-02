@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2010-2013 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -44,7 +44,7 @@ if(NATIVE_WINDOWS)
   set(${w2cemu_dll_name}_sources ${${w2cemu_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/w2cemu.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   add_library(${w2cemu_dll_name} SHARED ${${w2cemu_dll_name}_sources})
@@ -55,11 +55,15 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       SOVERSION "1"
   )
 
+  target_include_directories(${w2cemu_dll_name}
+    PUBLIC
+      ${CMAKE_SOURCE_DIR}/${rel_w2cemu_dir}/include
+  )
+
   target_link_libraries(${w2cemu_dll_name}
     PRIVATE
       ${core_dll_name}
       ${kpsemu_dll_name}
-      # ${texmf_dll_name}
   )
 
   rebase(${w2cemu_dll_name})
@@ -69,7 +73,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(INSTALL_MIKTEX_HEADERS)
   install(
@@ -79,4 +83,4 @@ if(INSTALL_MIKTEX_HEADERS)
     DESTINATION
       ${incdir}/miktex/W2C
   )
-endif(INSTALL_MIKTEX_HEADERS)
+endif()

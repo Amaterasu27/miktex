@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2014 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -97,7 +97,11 @@ set_target_properties(${fontconfig_dll_name}
     SOVERSION "1"
 )
 
-rebase(${fontconfig_dll_name})
+target_include_directories(${fontconfig_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/fontconfig
+    ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}
+)
 
 target_link_libraries(${fontconfig_dll_name}
   PRIVATE
@@ -108,10 +112,12 @@ target_link_libraries(${fontconfig_dll_name}
     ${utf8wrap_dll_name}
 )
 
+rebase(${fontconfig_dll_name})
+
 add_dependencies(${fontconfig_dll_name}
-	fccase_h
-	fcglyphname_h
-	fclang_h
+  fccase_h
+  fcglyphname_h
+  fclang_h
 )
 
 add_custom_command(

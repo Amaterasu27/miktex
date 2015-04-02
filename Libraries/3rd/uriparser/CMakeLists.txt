@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -54,7 +54,7 @@ if(NATIVE_WINDOWS)
     uriparser.def
     ${CMAKE_CURRENT_BINARY_DIR}/uriparser.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${uriparser_dll_name} SHARED ${${uriparser_dll_name}_sources})
 
@@ -62,6 +62,11 @@ set_target_properties(${uriparser_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${uriparser_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include
 )
 
 rebase(${uriparser_dll_name})

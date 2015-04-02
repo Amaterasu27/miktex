@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -27,7 +27,10 @@ add_definitions(
   -DA_STRERROR
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 add_subdirectory(pbm)
 add_subdirectory(pgm)

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2008 Christian Schenk
+## Copyright (C) 2008-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -44,3 +44,9 @@ set(${uriparser_lib_name}_sources
 )
 
 add_library(${uriparser_lib_name} STATIC ${${uriparser_lib_name}_sources})
+
+target_include_directories(${uriparser_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include
+)
+

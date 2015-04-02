@@ -1,6 +1,6 @@
-/* internal.h: internal definitions				-*- C++ -*-
+/* internal.h: internal definitions			-*- C++ -*-
 
-   Copyright (C) 2005-2007 Christian Schenk
+   Copyright (C) 2005-2015 Christian Schenk
 
    This file is part of the MiKTeX App Library.
 
@@ -23,7 +23,7 @@
 #  pragma once
 #endif
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_APP_SHARED) && defined(_MSC_VER)
 #  define MIKTEXAPPEXPORT __declspec(dllexport)
 #else
 #  define MIKTEXAPPEXPORT

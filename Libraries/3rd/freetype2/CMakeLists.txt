@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2014 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -21,18 +21,14 @@ add_definitions(
   -DFT2_BUILD_LIBRARY
 )
 
-remove_definitions(
-  -DZLIB_DLL
-)
-
 include_directories(BEFORE
   ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/src/gzip
-  ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
 )
 
 include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
 set(ft_modules
   src/base/ftbbox.c
   src/base/ftbdf.c
@@ -88,9 +84,14 @@ if(NATIVE_WINDOWS)
   set(${freetype2_dll_name}_sources ${${freetype2_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/freetype2.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${freetype2_dll_name} SHARED ${${freetype2_dll_name}_sources})
+
+target_include_directories(${freetype2_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include   
+)
 
 target_link_libraries(${freetype2_dll_name}
   PRIVATE
@@ -108,4 +109,5 @@ rebase(${freetype2_dll_name})
 install(TARGETS ${freetype2_dll_name}
   RUNTIME DESTINATION "${bindir}"
   LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}")
+  ARCHIVE DESTINATION "${libdir}"
+)

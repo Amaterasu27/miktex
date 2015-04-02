@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2010 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,7 +19,7 @@
 
 if(NATIVE_WINDOWS)
   add_definitions(-DIN_JPEG_DLL)
-endif(NATIVE_WINDOWS)
+endif()
 
 set(${jpeg_dll_name}_sources
   #COMOBJECTS
@@ -82,7 +82,7 @@ if(NATIVE_WINDOWS)
   set(${jpeg_dll_name}_sources ${${jpeg_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/libjpeg.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${jpeg_dll_name} SHARED ${${jpeg_dll_name}_sources})
 
@@ -90,6 +90,11 @@ set_target_properties(${jpeg_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${jpeg_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
 )
 
 rebase(${jpeg_dll_name})

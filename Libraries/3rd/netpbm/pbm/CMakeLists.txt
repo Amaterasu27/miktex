@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -86,9 +86,15 @@ if(NATIVE_WINDOWS)
   set(${pbm_dll_name}_sources ${${pbm_dll_name}_sources}
     libpbm.def
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${pbm_dll_name} SHARED ${${pbm_dll_name}_sources})
+
+target_include_directories(${pbm_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pbm
+)
 
 set_target_properties(${pbm_dll_name}
   PROPERTIES
@@ -103,7 +109,7 @@ foreach(e ${exes})
   merge_trustinfo_manifest(${e} asInvoker)
   add_dependencies(${e} ${pbm_dll_name})
   target_link_libraries(${e} ${pbm_dll_name})
-endforeach(e ${exes})
+endforeach()
 
 install(TARGETS ${exes} ${pbm_dll_name}
   RUNTIME DESTINATION "${bindir}"

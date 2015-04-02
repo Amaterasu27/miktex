@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2011 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,6 +24,7 @@ add_definitions(
 
 set(fc-match_sources
   ${wrapper_cpp}
+  fc-match-version.h
   fc-match.c
 )
 
@@ -31,7 +32,7 @@ if(NATIVE_WINDOWS)
   set(fc-match_sources ${fc-match_sources}
     fc-match.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(fc-match ${fc-match_sources})
 
@@ -42,6 +43,7 @@ target_link_libraries(fc-match
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2014 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -47,7 +47,7 @@ if(NATIVE_WINDOWS)
     win/winCabExtractor.h
     ${CMAKE_CURRENT_BINARY_DIR}/extractor.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${extractor_dll_name} SHARED ${${extractor_dll_name}_sources})
 
@@ -55,6 +55,16 @@ set_target_properties(${extractor_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_compile_definitions(${extractor_dll_name}
+  PUBLIC
+    -DMIKTEX_EXTRACTOR_SHARED
+)
+
+target_include_directories(${extractor_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
 )
 
 target_link_libraries(${extractor_dll_name}

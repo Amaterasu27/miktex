@@ -1,6 +1,6 @@
-/* miktex/Extractor/Extractor.h:				-*- C++ -*-
+/* miktex/Extractor/Extractor.h:			-*- C++ -*-
 
-   Copyright (C) 2001-2008 Christian Schenk
+   Copyright (C) 2001-2015 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -28,7 +28,7 @@
 
 // DLL import/export switch
 #if ! defined(DAA6476494C144C8BED9A9E8810BAABA)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_EXTRACTOR_SHARED) && defined(_MSC_VER)
 #    define MIKTEXEXTRACTOREXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXEXTRACTOREXPORT

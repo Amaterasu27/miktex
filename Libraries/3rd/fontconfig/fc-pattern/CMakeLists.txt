@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2012 Christian Schenk
+## Copyright (C) 2012-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,6 +24,7 @@ add_definitions(
 
 set(fc-pattern_sources
   ${wrapper_cpp}
+  fc-pattern-version.h
   fc-pattern.c
 )
 
@@ -42,6 +43,7 @@ target_link_libraries(fc-pattern
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

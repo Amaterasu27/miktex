@@ -25,7 +25,7 @@
 #include <sys/types.h>
 
 #if defined(MIKTEX) && ! defined(MIKTEXREGEXAPI)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER) 
+#  if defined(MIKTEX_REGEX_SHARED) && defined(_MSC_VER) 
 #    define MIKTEXREGEXAPI(type) __declspec(dllimport) type __cdecl
 #  else
 #    define MIKTEXREGEXAPI(type) type

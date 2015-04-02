@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2011 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,6 +29,7 @@ include_directories(BEFORE
 set(fc-cat_sources
   ${CMAKE_CURRENT_BINARY_DIR}/../fc-arch/fcarch.h
   ${wrapper_cpp}
+  fc-cat-version.h
   fc-cat.c
 )
 
@@ -41,7 +42,7 @@ if(NATIVE_WINDOWS)
   set(fc-cat_sources ${fc-cat_sources}
     fc-cat.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(fc-cat ${fc-cat_sources})
 
@@ -52,6 +53,7 @@ target_link_libraries(fc-cat
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

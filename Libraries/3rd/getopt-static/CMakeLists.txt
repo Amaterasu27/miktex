@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -26,3 +26,13 @@ set(${getopt_lib_name}_sources
 )
 
 add_library(${getopt_lib_name} STATIC ${${getopt_lib_name}_sources})
+
+target_compile_definitions(${getopt_lib_name}
+  PUBLIC
+    -DMIKTEX_GETOPT_STATIC
+)
+
+target_include_directories(${getopt_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
+)

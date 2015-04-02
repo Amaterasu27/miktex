@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -47,8 +47,18 @@ set_target_properties(${app_dll_name}
     SOVERSION "1"
 )
 
+target_compile_definitions(${app_dll_name}
+  PUBLIC
+    -DMIKTEX_APP_SHARED
+)
+
+target_include_directories(${app_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
+)
+
 target_link_libraries(${app_dll_name}
-  PRIVATE
+  PUBLIC
     ${core_dll_name}
     ${mpm_dll_name}
 )

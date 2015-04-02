@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -73,7 +73,7 @@ foreach(hdr _msvc.h conf.h fetch.h file.h format.h fseeko.h
      ${CMAKE_CURRENT_BINARY_DIR}/include/zzip/${hdr}
      COPYONLY
   )
-endforeach(hdr)
+endforeach()
 
 if(NATIVE_WINDOWS)
   configure_file(
@@ -84,7 +84,7 @@ if(NATIVE_WINDOWS)
     zzip/_msvc.h
     ${CMAKE_CURRENT_BINARY_DIR}/zzip.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${zzip_dll_name} SHARED ${${zzip_dll_name}_sources})
 
@@ -92,6 +92,11 @@ set_target_properties(${zzip_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${zzip_dll_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_zzip_dir}/include
 )
 
 target_link_libraries(${zzip_dll_name}

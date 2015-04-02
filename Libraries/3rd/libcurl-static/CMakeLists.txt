@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2012 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,7 +24,7 @@ add_definitions(-DBUILDING_LIBCURL)
 if(NATIVE_WINDOWS)
   add_definitions(-D_WIN32_WINNT=0x0501)
   remove_definitions(-DHAVE_CONFIG_H)
-endif(NATIVE_WINDOWS)
+endif()
 
 use_static_crt()
 use_static_libraries()
@@ -220,6 +220,11 @@ if(NATIVE_WINDOWS)
   set(${curl_lib_name}_sources ${${curl_lib_name}_sources}
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/config-win32.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${curl_lib_name} STATIC ${${curl_lib_name}_sources})
+
+target_include_directories(${curl_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+)

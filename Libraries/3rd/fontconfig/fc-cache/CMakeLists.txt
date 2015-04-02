@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2007-2011 Christian Schenk
+## Copyright (C) 2007-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -29,6 +29,7 @@ include_directories(BEFORE
 set(fc-cache_sources
   ${CMAKE_BINARY_DIR}/${rel_fontconfig_dir}/fc-arch/fcarch.h
   ${wrapper_cpp}
+  fc-cache-version.h
   fc-cache.c
 )
 
@@ -41,7 +42,7 @@ if(NATIVE_WINDOWS)
   set(fc-cache_sources ${fc-cache_sources}
     fc-cache.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(fc-cache ${fc-cache_sources})
 
@@ -52,6 +53,7 @@ target_link_libraries(fc-cache
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

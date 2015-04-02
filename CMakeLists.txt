@@ -651,63 +651,7 @@ include_directories(
   # version number, general definitions
   ${CMAKE_BINARY_DIR}/${rel_core_dir}/include
   ${CMAKE_SOURCE_DIR}/${rel_core_dir}/include
-
-  ${CMAKE_BINARY_DIR}/${rel_tiff_dir}
-  ${CMAKE_BINARY_DIR}/${rel_unxemu_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_7zip_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_app_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_dib_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_extractor_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}/fontconfig
-  ${CMAKE_SOURCE_DIR}/${rel_fontconfig_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_freetype2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_gd_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_jpeg_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_w2cemu_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_lzmalib_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pbm
-  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pgm
-  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/pnm
-  ${CMAKE_SOURCE_DIR}/${rel_netpbm_dir}/ppm
-  ${CMAKE_SOURCE_DIR}/${rel_popt_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_teckit_dir}/source/Public-headers
-  ${CMAKE_SOURCE_DIR}/${rel_tiff_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_ui_dir}/include
 )
-
-if(USE_SYSTEM_BZIP2)
-  include_directories(${BZIP2_INCLUDE_DIR})
-endif()
-
-if(USE_SYSTEM_EXPAT)
-  include_directories(${EXPAT_INCLUDE_DIRS})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/${rel_expat_dir})
-endif()
-
-if(USE_SYSTEM_PNG)
-  include_directories(${PNG_INCLUDE_DIRS})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
-endif()
-
-if(USE_SYSTEM_URIPARSER)
-  include_directories(${URIPARSER_INCLUDE_DIR})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/${rel_uriparser_dir}/include)
-endif()
-
-if(USE_SYSTEM_ZLIB)
-  include_directories(${ZLIB_INCLUDE_DIR})
-endif()
-
-include_directories(${CMAKE_BINARY_DIR}/${rel_zzip_dir}/include)
 
 if(MSVC)
   include_directories(
@@ -715,50 +659,29 @@ if(MSVC)
   )
 endif()
 
-if(NOT HAVE_GETOPT_H)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_getopt_dir}/include
-  )
+if(USE_SYSTEM_BZIP2)
+  include_directories(${BZIP2_INCLUDE_DIR})
 endif()
 
-if(NOT HAVE_REGEX_H)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_regex_dir}/include
-  )
+if(USE_SYSTEM_EXPAT)
+  include_directories(${EXPAT_INCLUDE_DIRS})
+endif()
+
+if(USE_SYSTEM_PNG)
+  include_directories(${PNG_INCLUDE_DIRS})
+endif()
+
+if(USE_SYSTEM_URIPARSER)
+  include_directories(${URIPARSER_INCLUDE_DIR})
+endif()
+
+if(USE_SYSTEM_ZLIB)
+  include_directories(${ZLIB_INCLUDE_DIR})
 endif()
 
 if(USE_SYSTEM_CURL)
-  include_directories(
-    ${CURL_INCLUDE_DIRS}
-  )
-else()
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
-  )
+  include_directories(${CURL_INCLUDE_DIRS})
 endif()
-
-if(NATIVE_WINDOWS)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_unxemu_dir}/include
-  )
-endif()
-
-if(Qt5Widgets_FOUND)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_ui_qt_dir}/include
-  )
-endif()
-
-if(BUILDING_MIKTEX AND MFC_FOUND)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/${rel_ui_mfc_dir}/include
-  )
-endif()
-
-include_directories(
-  ${CMAKE_SOURCE_DIR}/Resources/Graphics
-  ${CMAKE_SOURCE_DIR}/Resources/Videos
-)
 
 ###############################################################################
 ## add global link direcories

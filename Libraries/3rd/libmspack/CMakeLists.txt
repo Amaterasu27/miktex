@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2007 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,7 +24,9 @@ if(NOT NATIVE_WINDOWS)
   )
   add_definitions(-DHAVE_CONFIG_H)
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-endif(NOT NATIVE_WINDOWS)
+endif()
+
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(${mspack_dll_name}_sources
   cab.h
@@ -72,11 +74,11 @@ if(NATIVE_WINDOWS)
     mspack.def
     ${CMAKE_CURRENT_BINARY_DIR}/mspack.rc
   )
-else(NATIVE_WINDOWS)
+else()
   set(${mspack_dll_name}_sources ${${mspack_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/config.h
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${mspack_dll_name} SHARED ${${mspack_dll_name}_sources})
 
@@ -84,6 +86,11 @@ set_target_properties(${mspack_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${mspack_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
 )
 
 rebase(${mspack_dll_name})

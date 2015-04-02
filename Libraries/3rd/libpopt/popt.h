@@ -10,7 +10,7 @@
 #define H_POPT
 
 #if defined(MIKTEX) && ! defined(MIKTEXPOPTAPI)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_POPT_SHARED) && defined(_MSC_VER)
 #    define MIKTEXPOPTAPI(type) __declspec(dllimport) type __cdecl
 #    define MIKTEXPOPTCALLBACK __cdecl
 #    if defined(__cplusplus)
@@ -29,7 +29,7 @@
 #  else
 #    define MIKTEXPOPTAPI(type) type
 #    define MIKTEXPOPTCALLBACK
-#    if ! defined(MIKTEX_STATIC) && defined(__CYGWIN__)
+#    if defined(MIKTEX_POPT_SHARED) && defined(__CYGWIN__)
 #      define MIKTEXPOPTDATA(type) __declspec(dllimport) type
 #    else
 #      if defined(__cplusplus)

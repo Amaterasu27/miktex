@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -82,7 +82,7 @@ if(NATIVE_WINDOWS)
   set(${dvi_dll_name}_sources ${${dvi_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/dvi.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/bitcounts.h
@@ -105,10 +105,16 @@ set_target_properties(${dvi_dll_name}
     SOVERSION "1"
 )
 
+target_include_directories(${dvi_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_dvi_dir}/include
+)
+
 target_link_libraries(${dvi_dll_name}
   PRIVATE
     ${bmeps_dll_name}
     ${core_dll_name}
+  PUBLIC
     ${dib_dll_name}
 )
 

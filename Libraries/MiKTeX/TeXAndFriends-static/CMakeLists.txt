@@ -78,9 +78,11 @@ target_include_directories(${texmf_lib_name}
   
 target_link_libraries(${texmf_lib_name}
   PUBLIC
-    ${app_dll_name}
-    ${core_dll_name}
-    ${popt_dll_name}
+    ${app_lib_name}
+    ${bzip2_lib_name}
+    ${core_lib_name}
+    ${popt_lib_name}
+    ${zlib_lib_name}
 )
 
 if(INSTALL_STATIC_LIBRARIES)

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2010-2011 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -24,6 +24,7 @@ add_definitions(
 
 set(fc-query_sources
   ${wrapper_cpp}
+  fc-query-version.h
   fc-query.c
 )
 
@@ -31,7 +32,7 @@ if(NATIVE_WINDOWS)
   set(fc-query_sources ${fc-query_sources}
     fc-query.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(fc-query ${fc-query_sources})
 
@@ -42,6 +43,7 @@ target_link_libraries(fc-query
   ${core_dll_name}
   ${fontconfig_dll_name}
   ${getopt_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

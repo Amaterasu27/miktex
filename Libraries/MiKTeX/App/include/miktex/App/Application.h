@@ -1,6 +1,6 @@
-/* miktex/App/Application.h:					-*- C++ -*-
+/* miktex/App/Application.h:				-*- C++ -*-
 
-   Copyright (C) 2005-2010 Christian Schenk
+   Copyright (C) 2005-2015 Christian Schenk
  
    This file is part of the MiKTeX App Library.
 
@@ -36,7 +36,7 @@
 
 // DLL import/export switch
 #if ! defined(BDF6E2537F116547846406B5B2B65949)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_APP_SHARED) && defined(_MSC_VER)
 #    define MIKTEXAPPEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXAPPEXPORT

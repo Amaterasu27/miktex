@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -25,7 +25,7 @@ if(NATIVE_WINDOWS)
   add_definitions(-D_WIN32_WINNT=0x0501)
   add_definitions(-DENABLE_IPV6)
   remove_definitions(-DHAVE_CONFIG_H)
-endif(NATIVE_WINDOWS)
+endif()
 
 set(${curl_dll_name}_sources
   asyn-ares.c
@@ -223,9 +223,14 @@ if(NATIVE_WINDOWS)
     config-win32.h
     ${CMAKE_CURRENT_BINARY_DIR}/curl.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${curl_dll_name} SHARED ${${curl_dll_name}_sources})
+
+target_include_directories(${curl_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include
+)
 
 set_target_properties(${curl_dll_name}
   PROPERTIES
@@ -241,7 +246,7 @@ if(NATIVE_WINDOWS)
       ws2_32
       Wldap32
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 rebase(${curl_dll_name})
 

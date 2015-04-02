@@ -75,8 +75,6 @@ using namespace ATL;
 #  include <curl/curl.h>
 #endif
 
-#include <mspack.h>
-
 #include <expat.h>
 
 #if defined(_MSC_VER)

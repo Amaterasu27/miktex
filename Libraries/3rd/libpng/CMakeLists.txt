@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,11 +19,10 @@
 
 add_definitions(-DPNG_CONFIGURE_LIBPNG)
 add_definitions(-DPNG_NO_CONSOLE_IO)
-add_definitions(-DZLIB_DLL)
 
 if(MSVC)
   add_definitions(-DPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
-endif(MSVC)
+endif()
 
 set(${png_dll_name}_sources
   libpng-version.h
@@ -55,7 +54,7 @@ if(NATIVE_WINDOWS)
   set(${png_dll_name}_sources ${${png_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/libpng.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${png_dll_name} SHARED ${${png_dll_name}_sources})
 
@@ -70,6 +69,16 @@ if(WIN32)
   PROPERTIES
     DEFINE_SYMBOL PNG_BUILD_DLL)
 endif()
+
+target_compile_definitions(${png_dll_name}
+  INTERFACE
+    -DPNG_USE_DLL
+)
+
+target_include_directories(${png_dll_name}
+  PUBLIC
+    include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
+)
 
 target_link_libraries(${png_dll_name}
   PRIVATE

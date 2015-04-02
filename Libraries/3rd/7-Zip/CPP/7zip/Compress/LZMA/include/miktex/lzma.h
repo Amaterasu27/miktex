@@ -1,7 +1,7 @@
-/* lzma.h:							-*- C++ -*-
+/* lzma.h:						-*- C++ -*-
 
    Copyright (C) 1999-2007 Igor Pavlov
-   Copyright (C) 2007 Christian Schenk
+   Copyright (C) 2007-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -27,7 +27,7 @@
 #define ONCE_E12B043C_9DFC_43ED_82FE_4367D658F8CC_
 
 #if ! defined(CA7C1BB6_EF7C_4F72_ADDD_8975CD8C84EB_)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_LZMA_SHARED) && defined(_MSC_VER)
 #    define LZMAEXPORT __declspec(dllimport)
 #  else
 #    define LZMAEXPORT

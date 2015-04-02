@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -19,7 +19,10 @@
 
 disable_runtime_checks()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(BEFORE
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 set(${tiff_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
@@ -81,7 +84,7 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/libtiff.rc
     tif_win32.c
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
@@ -101,7 +104,8 @@ add_custom_command(
 	-r ${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
 	-v ${CMAKE_CURRENT_SOURCE_DIR}/VERSION
 	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
-  MAIN_DEPENDENCY VERSION
+  MAIN_DEPENDENCY
+	VERSION
   DEPENDS
 	mkversion
 	${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
@@ -135,6 +139,11 @@ set_target_properties(${tiff_dll_name}
     SOVERSION "1"
 )
 
+target_include_directories(${tiff_dll_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_tiff_dir}/include
+)
+
 rebase(${tiff_dll_name})
 
 install(TARGETS ${tiff_dll_name}
@@ -142,3 +151,15 @@ install(TARGETS ${tiff_dll_name}
   LIBRARY DESTINATION "${libdir}"
   ARCHIVE DESTINATION "${libdir}"
 )
+
+set(public_headers
+  tiff.h
+)
+
+foreach(h ${public_headers})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${h}
+    ${CMAKE_BINARY_DIR}/${rel_tiff_dir}/include/${h}
+    COPYONLY
+  )
+endforeach()
