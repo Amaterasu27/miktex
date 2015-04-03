@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2009, 2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2009, 2010, 2012, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Ilmari Heikkinen <ilmari.heikkinen@gmail.com>
 // Copyright (C) 2009 Shen Liang <shenzhuxi@gmail.com>
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
@@ -19,7 +19,7 @@
 // Copyright (C) 2010 Harry Roberts <harry.roberts@midnight-labs.org>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2010 William Bader <williambader@hotmail.com>
-// Copyright (C) 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Anthony Wesley <awesley@smartnetworks.com.au>
 //
 // To see a description of the changes please see the Changelog file that
@@ -280,7 +280,7 @@ SplashError SplashBitmap::writeAlphaPGMFile(char *fileName) {
 void SplashBitmap::getPixel(int x, int y, SplashColorPtr pixel) {
   SplashColorPtr p;
 
-  if (y < 0 || y >= height || x < 0 || x >= width) {
+  if (y < 0 || y >= height || x < 0 || x >= width || !data) {
     return;
   }
   switch (mode) {
@@ -578,7 +578,7 @@ void SplashBitmap::getCMYKLine(int yl, SplashColorPtr line) {
 #endif
 
 SplashError SplashBitmap::writeImgFile(ImgWriter *writer, FILE *f, int hDPI, int vDPI) {
-  if (mode != splashModeRGB8 && mode != splashModeMono8 && mode != splashModeMono1 && mode != splashModeXBGR8
+  if (mode != splashModeRGB8 && mode != splashModeMono8 && mode != splashModeMono1 && mode != splashModeXBGR8 && mode != splashModeBGR8
 #if SPLASH_CMYK
       && mode != splashModeCMYK8 && mode != splashModeDeviceN8
 #endif
@@ -659,6 +659,26 @@ SplashError SplashBitmap::writeImgFile(ImgWriter *writer, FILE *f, int hDPI, int
         return splashErrGeneric;
       }
       delete[] row_pointers;
+    }
+    break;
+    
+    case splashModeBGR8:
+    {
+      unsigned char *row = new unsigned char[3 * width];
+      for (int y = 0; y < height; y++) {
+        // Convert into a PNG row
+        for (int x = 0; x < width; x++) {
+          row[3*x] = data[y * rowSize + x * 3 + 2];
+          row[3*x+1] = data[y * rowSize + x * 3 + 1];
+          row[3*x+2] = data[y * rowSize + x * 3];
+        }
+
+        if (!writer->writeRow(&row)) {
+          delete[] row;
+          return splashErrGeneric;
+        }
+      }
+      delete[] row;
     }
     break;
     

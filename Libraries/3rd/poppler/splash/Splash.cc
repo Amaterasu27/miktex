@@ -11,11 +11,11 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005-2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
-// Copyright (C) 2010-2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2010-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
-// Copyright (C) 2011, 2012 William Bader <williambader@hotmail.com>
+// Copyright (C) 2011-2013, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2012 Markus Trippelsdorf <markus@trippelsdorf.de>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Matthias Kramm <kramm@quiss.org>
@@ -182,7 +182,7 @@ SplashPipeResultColorCtrl Splash::pipeResultColorAlphaNoBlend[] = {
   splashPipeResultColorAlphaNoBlendMono,
   splashPipeResultColorAlphaNoBlendMono,
   splashPipeResultColorAlphaNoBlendRGB,
-  splashPipeResultColorNoAlphaBlendRGB,
+  splashPipeResultColorAlphaNoBlendRGB,
   splashPipeResultColorAlphaNoBlendRGB
 #if SPLASH_CMYK
   ,
@@ -195,7 +195,7 @@ SplashPipeResultColorCtrl Splash::pipeResultColorAlphaBlend[] = {
   splashPipeResultColorAlphaBlendMono,
   splashPipeResultColorAlphaBlendMono,
   splashPipeResultColorAlphaBlendRGB,
-  splashPipeResultColorNoAlphaBlendRGB,
+  splashPipeResultColorAlphaBlendRGB,
   splashPipeResultColorAlphaBlendRGB
 #if SPLASH_CMYK
   ,
@@ -271,6 +271,7 @@ inline void Splash::pipeInit(SplashPipe *pipe, int x, int y,
   // source alpha
   pipe->aInput = aInput;
   pipe->usesShape = usesShape;
+  pipe->shape = 0;
 
   // knockout
   pipe->knockout = knockout;
@@ -361,9 +362,29 @@ void Splash::pipeRun(SplashPipe *pipe) {
   // dynamic pattern
   if (pipe->pattern) {
     if (!pipe->pattern->getColor(pipe->x, pipe->y, pipe->cSrcVal)) {
-		pipeIncX(pipe);
-		return;
+      pipeIncX(pipe);
+      return;
     }
+#if SPLASH_CMYK
+    if (bitmap->mode == splashModeCMYK8 || bitmap->mode == splashModeDeviceN8) {
+      if (state->fillOverprint && state->overprintMode && pipe->pattern->isCMYK()) {
+        Guint mask = 15;
+        if (pipe->cSrcVal[0] == 0) {
+          mask &= ~1;
+        }
+        if (pipe->cSrcVal[1] == 0) {
+          mask &= ~2;
+        }
+        if (pipe->cSrcVal[2] == 0) {
+          mask &= ~4;
+        }
+        if (pipe->cSrcVal[3] == 0) {
+          mask &= ~8;
+        }
+        state->overprintMask = mask;
+      }
+    }
+#endif
   }
 
   if (pipe->noTransparency && !state->blendFunc) {
@@ -446,39 +467,68 @@ void Splash::pipeRun(SplashPipe *pipe) {
 
     //----- read destination pixel
 
+    Guchar *destColorPtr;
+    if (pipe->shape && state->blendFunc && pipe->knockout && alpha0Bitmap != NULL) {
+      destColorPtr = alpha0Bitmap->data + (alpha0Y+pipe->y)*alpha0Bitmap->rowSize;
+      switch (bitmap->mode) {
+        case splashModeMono1:
+          destColorPtr += (alpha0X+pipe->x) / 8;
+          break;
+        case splashModeMono8:
+          destColorPtr += (alpha0X+pipe->x);
+          break;
+        case splashModeRGB8:
+        case splashModeBGR8:
+          destColorPtr += (alpha0X+pipe->x) * 3;
+          break;
+        case splashModeXBGR8:
+#if SPLASH_CMYK
+        case splashModeCMYK8:
+#endif
+          destColorPtr += (alpha0X+pipe->x) * 4;
+          break;
+#if SPLASH_CMYK
+        case splashModeDeviceN8:
+          destColorPtr += (alpha0X+pipe->x) * (SPOT_NCOMPS + 4);
+          break;
+#endif
+      }
+    } else {
+      destColorPtr = pipe->destColorPtr;
+    }
     switch (bitmap->mode) {
     case splashModeMono1:
-      cDest[0] = (*pipe->destColorPtr & pipe->destColorMask) ? 0xff : 0x00;
+      cDest[0] = (*destColorPtr & pipe->destColorMask) ? 0xff : 0x00;
       break;
     case splashModeMono8:
-      cDest[0] = *pipe->destColorPtr;
+      cDest[0] = *destColorPtr;
       break;
     case splashModeRGB8:
-      cDest[0] = pipe->destColorPtr[0];
-      cDest[1] = pipe->destColorPtr[1];
-      cDest[2] = pipe->destColorPtr[2];
+      cDest[0] = destColorPtr[0];
+      cDest[1] = destColorPtr[1];
+      cDest[2] = destColorPtr[2];
       break;
     case splashModeXBGR8:
-      cDest[0] = pipe->destColorPtr[2];
-      cDest[1] = pipe->destColorPtr[1];
-      cDest[2] = pipe->destColorPtr[0];
+      cDest[0] = destColorPtr[2];
+      cDest[1] = destColorPtr[1];
+      cDest[2] = destColorPtr[0];
       cDest[3] = 255;
       break;
     case splashModeBGR8:
-      cDest[0] = pipe->destColorPtr[2];
-      cDest[1] = pipe->destColorPtr[1];
-      cDest[2] = pipe->destColorPtr[0];
+      cDest[0] = destColorPtr[2];
+      cDest[1] = destColorPtr[1];
+      cDest[2] = destColorPtr[0];
       break;
 #if SPLASH_CMYK
     case splashModeCMYK8:
-      cDest[0] = pipe->destColorPtr[0];
-      cDest[1] = pipe->destColorPtr[1];
-      cDest[2] = pipe->destColorPtr[2];
-      cDest[3] = pipe->destColorPtr[3];
+      cDest[0] = destColorPtr[0];
+      cDest[1] = destColorPtr[1];
+      cDest[2] = destColorPtr[2];
+      cDest[3] = destColorPtr[3];
       break;
     case splashModeDeviceN8:
       for (cp = 0; cp < SPOT_NCOMPS + 4; cp++)
-        cDest[cp] = pipe->destColorPtr[cp];
+        cDest[cp] = destColorPtr[cp];
       break;
 #endif
     }
@@ -518,12 +568,15 @@ void Splash::pipeRun(SplashPipe *pipe) {
 	switch (bitmap->mode) {
 #if SPLASH_CMYK
 	case splashModeDeviceN8:
-	  for (cp = 4; cp < SPOT_NCOMPS + 4; cp++)
+	  for (cp = 0; cp < SPOT_NCOMPS + 4; cp++)
 	    cSrcNonIso[cp] = clip255(pipe->cSrc[cp] +
 				  ((pipe->cSrc[cp] - cDest[cp]) * t) / 255);
+	  break;
 	case splashModeCMYK8:
-	  cSrcNonIso[3] = clip255(pipe->cSrc[3] +
-				  ((pipe->cSrc[3] - cDest[3]) * t) / 255);
+	  for (cp = 0; cp < 4; cp++)
+	    cSrcNonIso[cp] = clip255(pipe->cSrc[cp] +
+				  ((pipe->cSrc[cp] - cDest[cp]) * t) / 255);
+	  break;
 #endif
 	case splashModeXBGR8:
 	  cSrcNonIso[3] = 255;
@@ -552,6 +605,13 @@ void Splash::pipeRun(SplashPipe *pipe) {
     //----- blend function
 
     if (state->blendFunc) {
+#ifdef SPLASH_CMYK
+      if (bitmap->mode == splashModeDeviceN8) {
+        for (int k = 4; k < 4 + SPOT_NCOMPS; k++) {
+          cBlend[k] = 0;
+        }
+      }
+#endif
       (*state->blendFunc)(cSrc, cDest, cBlend, bitmap->mode);
     }
 
@@ -1451,7 +1511,7 @@ inline void Splash::drawSpan(SplashPipe *pipe, int x0, int x1, int y,
   }
 }
 
-inline void Splash::drawAALine(SplashPipe *pipe, int x0, int x1, int y) {
+inline void Splash::drawAALine(SplashPipe *pipe, int x0, int x1, int y, GBool adjustLine, Guchar lineOpacity) {
 #if splashAASize == 4
   static int bitCount4[16] = { 0, 1, 1, 2, 1, 2, 2, 3,
 			       1, 2, 2, 3, 2, 3, 3, 4 };
@@ -1494,7 +1554,7 @@ inline void Splash::drawAALine(SplashPipe *pipe, int x0, int x1, int y) {
 #endif
 
     if (t != 0) {
-      pipe->shape = (double)aaGamma[t];
+      pipe->shape = (adjustLine) ? div255((int) lineOpacity * (double)aaGamma[t]) : (double)aaGamma[t];
       (this->*pipe->run)(pipe);
       updateModX(x);
       updateModY(y);
@@ -1543,8 +1603,10 @@ Splash::Splash(SplashBitmap *bitmapA, GBool vectorAntialiasA,
     aaBuf = NULL;
   }
   minLineWidth = 0;
+  thinLineMode = splashThinLineDefault;
   clearModRegion();
   debugMode = gFalse;
+  alpha0Bitmap = NULL;
 }
 
 Splash::Splash(SplashBitmap *bitmapA, GBool vectorAntialiasA,
@@ -1569,8 +1631,10 @@ Splash::Splash(SplashBitmap *bitmapA, GBool vectorAntialiasA,
     aaBuf = NULL;
   }
   minLineWidth = 0;
+  thinLineMode = splashThinLineDefault;
   clearModRegion();
   debugMode = gFalse;
+  alpha0Bitmap = NULL;
 }
 
 Splash::~Splash() {
@@ -2358,6 +2422,31 @@ SplashError Splash::fill(SplashPath *path, GBool eo) {
   return fillWithPattern(path, eo, state->fillPattern, state->fillAlpha);
 }
 
+inline void Splash::getBBoxFP(SplashPath *path, SplashCoord *xMinA, SplashCoord *yMinA,
+				   SplashCoord *xMaxA, SplashCoord *yMaxA) {
+  SplashCoord xMinFP, yMinFP, xMaxFP, yMaxFP, tx, ty;
+
+  // make compiler happy:
+  xMinFP = xMaxFP = yMinFP = yMaxFP = 0;
+  for (int i = 0; i < path->length; ++i) {
+    transform(state->matrix, path->pts[i].x, path->pts[i].y, &tx, &ty);
+    if (i == 0) {
+      xMinFP = xMaxFP = tx;
+      yMinFP = yMaxFP = ty;
+    } else {
+      if (tx < xMinFP) xMinFP = tx;
+      if (tx > xMaxFP) xMaxFP = tx;
+      if (ty < yMinFP) yMinFP = ty;
+      if (ty > yMaxFP) yMaxFP = ty;
+    }
+  }
+
+  *xMinA = xMinFP;
+  *yMinA = yMinFP;
+  *xMaxA = xMaxFP;
+  *yMaxA = yMaxFP;
+}
+
 SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
 				    SplashPattern *pattern,
 				    SplashCoord alpha) {
@@ -2366,6 +2455,8 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
   SplashXPathScanner *scanner;
   int xMinI, yMinI, xMaxI, yMaxI, x0, x1, y;
   SplashClipResult clipRes, clipRes2;
+  GBool adjustLine = gFalse; 
+  int linePosI = 0;
 
   if (path->length == 0) {
     return splashErrEmptyPath;
@@ -2398,7 +2489,24 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
     }
   }
 
-  xPath = new SplashXPath(path, state->matrix, state->flatness, gTrue);
+  if (thinLineMode != splashThinLineDefault) {
+    if (state->clip->getXMinI() == state->clip->getXMaxI()) {
+      linePosI = state->clip->getXMinI();
+      adjustLine = gTrue;
+    } else if (state->clip->getXMinI() == state->clip->getXMaxI() - 1) {
+      adjustLine = gTrue;
+      linePosI = splashFloor(state->clip->getXMin() + state->lineWidth);
+    } else if (state->clip->getYMinI() == state->clip->getYMaxI()) {
+      linePosI = state->clip->getYMinI();
+      adjustLine = gTrue;
+    } else if (state->clip->getYMinI() == state->clip->getYMaxI() - 1) {
+      adjustLine = gTrue;
+      linePosI = splashFloor(state->clip->getYMin() + state->lineWidth);
+    }
+  }
+
+  xPath = new SplashXPath(path, state->matrix, state->flatness, gTrue, 
+    adjustLine, linePosI);
   if (vectorAntialias && !inShading) {
     xPath->aaScale();
   }
@@ -2418,6 +2526,18 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
     scanner->getBBox(&xMinI, &yMinI, &xMaxI, &yMaxI);
   }
 
+  if (eo && (yMinI == yMaxI || xMinI == xMaxI) && thinLineMode != splashThinLineDefault) {
+    SplashCoord delta, xMinFP, yMinFP, xMaxFP, yMaxFP;
+    getBBoxFP(path, &xMinFP, &yMinFP, &xMaxFP, &yMaxFP);
+    delta = (yMinI == yMaxI) ? yMaxFP - yMinFP : xMaxFP - xMinFP;
+    if (delta < 0.2) {
+      opClipRes = splashClipAllOutside;
+      delete scanner;
+      delete xPath;
+      return splashOk;
+    }
+  }
+
   // check clipping
   if ((clipRes = state->clip->testRect(xMinI, yMinI, xMaxI, yMaxI))
       != splashClipAllOutside) {
@@ -2431,11 +2551,21 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
     // draw the spans
     if (vectorAntialias && !inShading) {
       for (y = yMinI; y <= yMaxI; ++y) {
-	scanner->renderAALine(aaBuf, &x0, &x1, y);
+	scanner->renderAALine(aaBuf, &x0, &x1, y, thinLineMode != splashThinLineDefault && xMinI == xMaxI);
 	if (clipRes != splashClipAllInside) {
-	  state->clip->clipAALine(aaBuf, &x0, &x1, y);
+	  state->clip->clipAALine(aaBuf, &x0, &x1, y, thinLineMode != splashThinLineDefault && xMinI == xMaxI);
 	}
-	drawAALine(&pipe, x0, x1, y);
+	Guchar lineShape = 255;
+	GBool adjustLine = gFalse;
+	if (thinLineMode == splashThinLineShape && (xMinI == xMaxI || yMinI == yMaxI)) {
+	  // compute line shape for thin lines:
+	  SplashCoord mx, my, delta;
+	  transform(state->matrix, 0, 0, &mx, &my);
+	  transform(state->matrix, state->lineWidth, 0, &delta, &my);
+	  adjustLine = gTrue;
+	  lineShape = clip255((delta - mx) * 255);
+	}
+	drawAALine(&pipe, x0, x1, y, adjustLine, lineShape);
       }
     } else {
       for (y = yMinI; y <= yMaxI; ++y) {
@@ -3616,7 +3746,7 @@ SplashError Splash::drawImage(SplashImageSource src, void *srcData,
         return splashErrBadArg;
       }
       scaledImg = scaleImage(src, srcData, srcMode, nComps, srcAlpha, w, h,
-			     scaledWidth, scaledHeight, interpolate);
+			     scaledWidth, scaledHeight, interpolate, tilingPattern);
       if (scaledImg == NULL) {
         return splashErrBadArg;
       }
@@ -3654,7 +3784,7 @@ SplashError Splash::drawImage(SplashImageSource src, void *srcData,
         return splashErrBadArg;
       }
       scaledImg = scaleImage(src, srcData, srcMode, nComps, srcAlpha, w, h,
-			     scaledWidth, scaledHeight, interpolate);
+			     scaledWidth, scaledHeight, interpolate, tilingPattern);
       if (scaledImg == NULL) {
         return splashErrBadArg;
       }
@@ -3719,7 +3849,7 @@ SplashError Splash::arbitraryTransformImage(SplashImageSource src, void *srcData
       yMax = t1;
     }
   }
-  clipRes = state->clip->testRect(xMin, yMin, xMax - 1, yMax - 1);
+  clipRes = state->clip->testRect(xMin, yMin, xMax, yMax);
   opClipRes = clipRes;
   if (clipRes == splashClipAllOutside) {
     return splashOk;
@@ -3733,7 +3863,7 @@ SplashError Splash::arbitraryTransformImage(SplashImageSource src, void *srcData
     scaledWidth = yMax - yMin;
     scaledHeight = xMax - xMin;
   }
-  if (scaledHeight <= 1 || scaledHeight <= 1 || tilingPattern) {
+  if (scaledHeight <= 1 || scaledWidth <= 1 || tilingPattern) {
     if (mat[0] >= 0) {
       t0 = imgCoordMungeUpper(mat[0] + mat[4]) - imgCoordMungeLower(mat[4]);
     } else {
@@ -3997,7 +4127,7 @@ static GBool isImageInterpolationRequired(int srcWidth, int srcHeight,
 SplashBitmap *Splash::scaleImage(SplashImageSource src, void *srcData,
 				 SplashColorMode srcMode, int nComps,
 				 GBool srcAlpha, int srcWidth, int srcHeight,
-				 int scaledWidth, int scaledHeight, GBool interpolate) {
+				 int scaledWidth, int scaledHeight, GBool interpolate, GBool tilingPattern) {
   SplashBitmap *dest;
 
   dest = new SplashBitmap(scaledWidth, scaledHeight, 1, srcMode, srcAlpha, gTrue, bitmap->getSeparationList());
@@ -4015,7 +4145,7 @@ SplashBitmap *Splash::scaleImage(SplashImageSource src, void *srcData,
 	scaleImageYuXd(src, srcData, srcMode, nComps, srcAlpha,
 		      srcWidth, srcHeight, scaledWidth, scaledHeight, dest);
       } else {
-	if (isImageInterpolationRequired(srcWidth, srcHeight, scaledWidth, scaledHeight, interpolate)) {
+	if (!tilingPattern && isImageInterpolationRequired(srcWidth, srcHeight, scaledWidth, scaledHeight, interpolate)) {
 	  scaleImageYuXuBilinear(src, srcData, srcMode, nComps, srcAlpha,
 				srcWidth, srcHeight, scaledWidth, scaledHeight, dest);
 	} else {
@@ -4438,7 +4568,9 @@ void Splash::scaleImageYuXd(SplashImageSource src, void *srcData,
   xq = srcWidth % scaledWidth;
 
   // allocate buffers
-  lineBuf = (Guchar *)gmallocn(srcWidth, nComps);
+  lineBuf = (Guchar *)gmallocn_checkoverflow(srcWidth, nComps);
+  if (unlikely(!lineBuf))
+    return;
   if (srcAlpha) {
     alphaLineBuf = (Guchar *)gmalloc(srcWidth);
   } else {
@@ -4766,6 +4898,9 @@ void Splash::scaleImageYuXuBilinear(SplashImageSource src, void *srcData,
   Guchar *destPtr0, *destPtr, *destAlphaPtr0, *destAlphaPtr;
   int i;
 
+  if (srcWidth < 1 || srcHeight < 1)
+    return;
+
   // allocate buffers
   srcBuf = (Guchar *)gmallocn(srcWidth+1, nComps); // + 1 pixel of padding
   lineBuf1 = (Guchar *)gmallocn(scaledWidth, nComps);
@@ -4903,6 +5038,13 @@ void Splash::vertFlipImage(SplashBitmap *img, int width, int height,
     }
   }
   gfree(lineBuf);
+}
+
+void Splash::blitImage(SplashBitmap *src, GBool srcAlpha, int xDest, int yDest) {
+  SplashClipResult clipRes = state->clip->testRect(xDest, yDest, xDest + src->getWidth() - 1, yDest + src->getHeight() - 1);
+  if (clipRes != splashClipAllOutside) {
+    blitImage(src, srcAlpha, xDest, yDest, clipRes);
+  }
 }
 
 void Splash::blitImage(SplashBitmap *src, GBool srcAlpha, int xDest, int yDest,
@@ -5071,6 +5213,10 @@ SplashError Splash::composite(SplashBitmap *src, int xSrc, int ySrc,
 
   if (src->mode != bitmap->mode) {
     return splashErrModeMismatch;
+  }
+
+  if (unlikely(!bitmap->data)) {
+    return splashErrZeroImage;
   }
 
   if(src->getSeparationList()->getLength() > bitmap->getSeparationList()->getLength()) {
@@ -5345,6 +5491,7 @@ GBool Splash::gouraudTriangleShadedFill(SplashGouraudColor *shading)
   SplashClip* clip = getClip();
   SplashBitmap *blitTarget = bitmap;
   SplashColorPtr bitmapData = bitmap->getDataPtr();
+  int bitmapOffLimit = bitmap->getHeight() * bitmap->getRowSize();
   SplashColorPtr bitmapAlpha = bitmap->getAlphaPtr();
   SplashColorPtr cur = NULL;
   SplashCoord* userToCanvasMatrix = getMatrix();
@@ -5577,7 +5724,7 @@ GBool Splash::gouraudTriangleShadedFill(SplashGouraudColor *shading)
         colorinterp = scanColorMap[0] * scanLimitL + scanColorMap[1];
 
         bitmapOff = scanLineOff + scanLimitL * colorComps;
-        for (int X = scanLimitL; X <= scanLimitR; ++X, colorinterp += scanColorMap[0], bitmapOff += colorComps) {
+        for (int X = scanLimitL; X <= scanLimitR && bitmapOff + colorComps <= bitmapOffLimit; ++X, colorinterp += scanColorMap[0], bitmapOff += colorComps) {
           // FIXME : standard rectangular clipping can be done for a
           // complete scanline which is faster
           // --> see SplashClip and its methods
@@ -5639,6 +5786,10 @@ SplashError Splash::blitTransparent(SplashBitmap *src, int xSrc, int ySrc,
 
   if (src->mode != bitmap->mode) {
     return splashErrModeMismatch;
+  }
+
+  if (unlikely(!bitmap->data)) {
+    return splashErrZeroImage;
   }
 
   switch (bitmap->mode) {
