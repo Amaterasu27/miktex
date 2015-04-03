@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -20,8 +20,6 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
   ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
 )
 
@@ -43,11 +41,11 @@ add_definitions(
 
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-endif(MSVC)
+endif()
 
 if(WITH_CONTEXT_SUPPORT)
   add_definitions(-DWITH_CONTEXT_SUPPORT=1)
-endif(WITH_CONTEXT_SUPPORT)
+endif()
 
 ###############################################################################
 ## luatex-miktex-static
@@ -59,6 +57,11 @@ set(miktex_sources
 )
 
 add_library(luatex-miktex-static STATIC ${miktex_sources})
+
+target_link_libraries(luatex-miktex-static
+  PUBLIC
+    ${core_dll_name}
+)
 
 ###############################################################################
 ## luatex-luasocket-static
@@ -98,11 +101,9 @@ set(luasocket_sources
 
 add_library(luatex-luasocket-static STATIC ${luasocket_sources})
 
-set_property(
-  TARGET luatex-luasocket-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+target_link_libraries(luatex-luasocket-static
+  PUBLIC
+    ${lua_lib_name}
 )
 
 ###############################################################################
@@ -137,11 +138,13 @@ set(luamisc_sources
 
 add_library(luatex-luamisc-static STATIC ${luamisc_sources})
 
-set_property(
-  TARGET luatex-luamisc-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+target_link_libraries(luatex-luamisc-static
+  PUBLIC
+    ${core_dll_name}
+    ${lua_lib_name}
+    ${unxemu_dll_name}
+    ${zlib_dll_name}
+    ${zzip_dll_name}
 )
 
 ###############################################################################
@@ -170,13 +173,18 @@ set(unilib_sources
 
 add_library(luatex-unilib-static STATIC ${unilib_sources})
 
-set_property(
-  TARGET luatex-unilib-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
+target_include_directories(luatex-unilib-static
+  PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/unilib
 )
 
+target_link_libraries(luatex-unilib-static
+  PUBLIC
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${w2cemu_dll_name}
+)
+  
 ###############################################################################
 ## luatex-luafontforge-static
 ###############################################################################
@@ -218,7 +226,7 @@ if(NATIVE_WINDOWS)
   set(${luatex_program_sources}_sources
     ${${luatex_program_sources}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/luatex.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${luatex_program_dll_name} SHARED ${luatex_program_sources})
 
@@ -230,38 +238,35 @@ set_property(
 )
 
 target_link_libraries(${luatex_program_dll_name}
-  PRIVATE
     wsock32.lib
     ws2_32.lib
-
-  ${app_dll_name}
-  ${cairo_dll_name}
-  ${core_dll_name}
-  ${jpeg_dll_name}
-  ${kpsemu_dll_name}
-  ${lua_lib_name}
-  ${md5_dll_name}
-  ${mp_lib_name}
-  ${obsdcompat_dll_name}
-  ${pixman_lib_name}
-  ${png_dll_name}
-  ${poppler_lib_name}
-  ${zzip_dll_name}
-
-  ${unxemu_dll_name}
-  ${utf8wrap_dll_name}
-  ${getopt_dll_name}
-  ${w2cemu_dll_name}
-  ${zlib_dll_name}
+    ${app_dll_name}
+    ${cairo_dll_name}
+    ${core_dll_name}
+    ${jpeg_dll_name}
+    ${kpsemu_dll_name}
+    ${lua_lib_name}
+    ${md5_dll_name}
+    ${mp_lib_name}
+    ${obsdcompat_dll_name}
+    ${pixman_lib_name}
+    ${png_dll_name}
+    ${poppler_lib_name}
+    ${zzip_dll_name}
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
+    ${getopt_dll_name}
+    ${w2cemu_dll_name}
+    ${zlib_dll_name}
   
-  luatex-luafontforge-static
-  luatex-luamisc-static
-  luatex-luasocket-static
-  luatex-unilib-static
+    luatex-luafontforge-static
+    luatex-luamisc-static
+    luatex-luasocket-static
+    luatex-unilib-static
 
-  luatex-static
-
-  luatex-miktex-static
+    luatex-static
+    
+    luatex-miktex-static
 )
 
 rebase(${luatex_program_dll_name})
@@ -290,7 +295,7 @@ foreach(x ${executables})
   )
   merge_trustinfo_manifest(${x} asInvoker)
   install(TARGETS ${x} DESTINATION "${bindir}")
-endforeach(x)
+endforeach()
 
 ###############################################################################
 ## runtexlua
@@ -324,4 +329,4 @@ if(WITH_CONTEXT_SUPPORT)
   merge_trustinfo_manifest(runmtxrun asInvoker)
 
   install(TARGETS runmtxrun DESTINATION "${miktex_internal_bindir}")
-endif(WITH_CONTEXT_SUPPORT)
+endif()

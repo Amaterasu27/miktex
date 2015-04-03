@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009-2013 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,16 +17,16 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-##use_static_crt()
-##use_static_libraries()
+set(POPPLER_MAJOR_VERSION "0")
+set(POPPLER_MINOR_VERSION "32")
+set(POPPLER_MICRO_VERSION "0")
+set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
 include_directories(BEFORE
   ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
 )
 
 set(ENABLE_LIBCURL TRUE)
@@ -37,7 +37,7 @@ set(ENABLE_ZLIB TRUE)
 set(WITH_FONTCONFIGURATION_WIN32 TRUE)
 set(WITH_FONTCONFIGURATION_FONTCONFIG FALSE)
 
-set(MULTITHREAD TRUE)
+set(MULTITHREADED TRUE)
 set(OPI_SUPPORT TRUE)
 set(TEXTOUT_WORD_LIST TRUE)
 
@@ -60,7 +60,6 @@ configure_file(
 set(CMAKE_CXX_FLAGS "/Zc:wchar_t- ${CMAKE_CXX_FLAGS}")
 
 set(${poppler_lib_name}_sources
-
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gfile.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmempp.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/GooHash.cc
@@ -69,12 +68,13 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/GooString.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gmem.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/FixedPoint.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/NetPBMWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/PNGWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/TiffWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/JpegWriter.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/ImgWriter.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/grandom.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gstrtod.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/grandom.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiBase.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiEncodings.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiTrueType.cc
@@ -109,6 +109,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Link.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Linearization.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/LocalPDFDocBuilder.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/MarkedContentOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/NameToCharCode.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Object.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/OptionalContent.cc
@@ -125,9 +126,12 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PreScanOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PSTokenizer.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StructTreeRoot.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StructElement.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/strtok_r.cpp
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeMap.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UnicodeTypeTable.cc
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XRef.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PSOutputDev.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/TextOutputDev.cc
@@ -140,35 +144,50 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/XpdfPluginAPI.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.cc
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Rendition.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF.cc
+)
 
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashBitmap.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashClip.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFont.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFont.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFileID.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPath.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPattern.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashScreen.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashState.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1Font.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontEngine.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontFile.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPath.cc
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPathScanner.cc
+if(ENABLE_SPLASH)
+  set(${poppler_lib_name}_sources ${${poppler_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/SplashOutputDev.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/Splash.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashBitmap.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashClip.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFont.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontEngine.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFTFontFile.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFont.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontEngine.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFile.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashFontFileID.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPath.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashPattern.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashScreen.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashState.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1Font.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontEngine.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashT1FontFile.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPath.cc
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPathScanner.cc
+  )
+endif()
 
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/DCTStream.cc
+if(ENABLE_LIBJPEG)
+  set(${poppler_lib_name}_sources ${${poppler_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/DCTStream.cc
+  )
+endif()
 
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/FlateStream.cc
+if(ENABLE_ZLIB)
+  set(${poppler_lib_name}_sources ${${poppler_lib_name}_sources}
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/FlateStream.cc
+  )
+endif()
 
+set(${poppler_lib_name}_sources ${${poppler_lib_name}_sources}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/JPXStream.cc
+)
 
+set(${poppler_lib_name}_sources ${${poppler_lib_name}_sources}
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiBase.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiEncodings.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/fofi/FoFiIdentifier.h
@@ -184,6 +203,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/GooTimer.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/ImgWriter.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/JpegWriter.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/NetPBMWriter.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/PNGWriter.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/TiffWriter.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gfile.h
@@ -194,7 +214,6 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/goo/gtypes_p.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Annot.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Array.h
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/ArthurOutputDev.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/BuiltinFont.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/BuiltinFontTables.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/CMap.h
@@ -234,6 +253,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Linearization.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Link.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/LocalPDFDocBuilder.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/MarkedContentOutputDev.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Movie.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/NameToCharCode.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/NameToUnicodeTable.h
@@ -249,6 +269,7 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PSTokenizer.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Page.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PageLabelInfo.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PageLabelInfo_p.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PageTransition.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Parser.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/PopplerCache.h
@@ -262,6 +283,8 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StdinPDFDocBuilder.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream-CCITT.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/Stream.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StructElement.h
+  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/StructTreeRoot.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/TextOutputDev.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler/UTF8.h
@@ -297,6 +320,53 @@ set(${poppler_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashTypes.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPath.h
   ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/splash/SplashXPathScanner.h
+
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/config.h
+  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler/poppler-config.h
 )
 
 add_library(${poppler_lib_name} STATIC ${${poppler_lib_name}_sources})
+
+target_compile_definitions(${poppler_lib_name}
+  INTERFACE
+    -DPOPPLER_VERSION="${POPPLER_VERSION}"
+)
+
+target_include_directories(${poppler_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/
+)
+
+target_link_libraries(${poppler_lib_name}
+  PUBLIC
+    ${core_dll_name}
+    ${freetype2_dll_name}
+    ${png_dll_name}
+    ${tiff_dll_name}
+    ${unxemu_dll_name}
+    ${utf8wrap_dll_name}
+    ${zlib_dll_name}
+)
+
+if(ENABLE_LIBJPEG)
+  target_link_libraries(${poppler_lib_name}
+    PUBLIC
+      ${jpeg_dll_name}
+  )
+endif()
+
+if(ENABLE_ZLIB)
+  target_link_libraries(${poppler_lib_name}
+    PUBLIC
+      ${zlib_dll_name}
+  )
+endif()
+
+if(WITH_FONTCONFIGURATION_FONTCONFIG)
+  target_link_libraries(${poppler_lib_name}
+    PUBLIC
+      ${fontconfig_dll_name}
+  )
+endif()

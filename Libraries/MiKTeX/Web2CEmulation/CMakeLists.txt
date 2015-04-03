@@ -64,6 +64,8 @@ if(NOT LINK_EVERYTHING_STATICALLY)
     PRIVATE
       ${core_dll_name}
       ${kpsemu_dll_name}
+    INTERFACE
+      ${unxemu_dll_name}
   )
 
   rebase(${w2cemu_dll_name})

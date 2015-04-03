@@ -32,7 +32,7 @@
 
 // DLL import/export switch
 #if ! defined(C09CDC45E4B649EDA745DAF436D18309)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_SETUP_SHARED) && defined(_MSC_VER)
 #    define MIKTEXSETUPEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXSETUPEXPORT

@@ -111,9 +111,11 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${kpsemu_dll_name}
-    PRIVATE 
+    PRIVATE
       ${core_dll_name}
       ${texmf_dll_name}
+    INTERFACE
+      ${getopt_dll_name}
   )
 
   rebase(${kpsemu_dll_name})

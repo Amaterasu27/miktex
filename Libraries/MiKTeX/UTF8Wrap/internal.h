@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2011 Christian Schenk
+   Copyright (C) 2011-2015 Christian Schenk
 
    This file is part of the MiKTeX UTF8Wrap Library.
 
@@ -19,7 +19,7 @@
    Software Foundation, 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA. */
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if defined(_MSC_VER) && defined(MIKTEX_UTF8WRAP_SHARED)
 #  define MIKTEXUTF8WRAPEXPORT __declspec(dllexport)
 #else
 #  define MIKTEXUTF8WRAPEXPORT

@@ -1,6 +1,6 @@
 /* internal.h: internal definitions				-*- C++ -*-
 
-   Copyright (C) 2001-2007 Christian Schenk
+   Copyright (C) 2001-2015 Christian Schenk
 
    This file is part of MiKTeX Extractor.
 
@@ -19,7 +19,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA. */
 
-#if defined(_MSC_VER) && ! defined(MIKTEX_STATIC)
+#if defined(_MSC_VER) && defined(MIKTEX_EXTRACTOR_SHARED)
 #  define MIKTEXEXTRACTOREXPORT __declspec(dllexport)
 #else
 #  define MIKTEXEXTRACTOREXPORT

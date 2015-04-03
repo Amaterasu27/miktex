@@ -77,7 +77,7 @@ target_compile_definitions(${png_dll_name}
 
 target_include_directories(${png_dll_name}
   PUBLIC
-    include_directories(${CMAKE_SOURCE_DIR}/${rel_png_dir})
+    ${CMAKE_SOURCE_DIR}/${rel_png_dir}
 )
 
 target_link_libraries(${png_dll_name}

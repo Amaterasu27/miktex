@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -115,9 +115,10 @@ set(luafontforge_sources
 
 add_library(luatex-luafontforge-static STATIC ${luafontforge_sources})
 
-set_property(
-  TARGET luatex-luafontforge-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+target_link_libraries(luatex-luafontforge-static
+  PUBLIC
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${lua_lib_name}
+    ${w2cemu_dll_name}
 )

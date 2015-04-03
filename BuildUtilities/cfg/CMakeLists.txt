@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -27,7 +27,7 @@ set(cfg_sources
 
 if(NATIVE_WINDOWS)
   set(cfg_sources ${cfg_sources} cfg.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(cfg ${cfg_sources})
 
@@ -35,18 +35,5 @@ merge_trustinfo_manifest(cfg asInvoker)
 
 target_link_libraries(cfg
   ${core_lib_name}
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${botan_lib_name}
-    ${bzip2_lib_name}
-    ${md5_lib_name}
-	${utf8wrap_lib_name}
-    ${zlib_lib_name}
   ${popt_lib_name}
-  
 )
-
-if(NATIVE_WINDOWS)
-  target_link_libraries(cfg
-    shlwapi.lib
-  )
-endif(NATIVE_WINDOWS)

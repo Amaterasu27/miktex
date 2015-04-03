@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -16,14 +16,6 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-
-include_directories(
-  ${CMAKE_BINARY_DIR}/${rel_mp_dir}
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
-)
 
 set(luatexlib_cwebs
   ../dvi/dvigen.w
@@ -147,7 +139,7 @@ foreach(cweb ${luatexlib_cwebs})
   set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/${fn}.c
   )
-endforeach(cweb)
+endforeach()
 
 foreach(ccweb ${luatexlib_ccwebs})
   get_filename_component(fn ${ccweb} NAME_WE)
@@ -168,7 +160,7 @@ foreach(ccweb ${luatexlib_ccwebs})
   set(luatexlib_cweb_sources ${luatexlib_cweb_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/${fn}.cc
   )
-endforeach(ccweb)
+endforeach()
 
 set_source_files_properties(
   ${luatexlib_cweb_sources}
@@ -323,16 +315,14 @@ set(luatexlib_sources
 
 add_library(luatex-static STATIC ${luatexlib_sources})
 
-set_property(
-  TARGET luatex-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
-)
-
-set_property(
-  TARGET luatex-static
-  APPEND
-  PROPERTY INCLUDE_DIRECTORIES
-    ${CMAKE_SOURCE_DIR}/${rel_luatex_dir}/fake
+target_link_libraries(luatex-static
+  PUBLIC
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${lua_lib_name}
+    ${mp_lib_name}
+    ${png_dll_name}
+    ${poppler_lib_name}
+    ${w2cemu_dll_name}
+    ${zlib_dll_name}
 )

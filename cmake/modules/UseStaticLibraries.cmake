@@ -1,6 +1,6 @@
 ## UseStaticLibraries.cmake
 ##
-## Copyright (C) 2006-2008 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -22,20 +22,4 @@
 ###############################################################################
 
 macro(use_static_libraries)
-  add_definitions(
-    -DMIKTEX_STATIC
-  )
-  if(NOT USE_SYSTEM_CURL)
-    add_definitions(
-      -DCURL_STATICLIB
-    )
-  endif(NOT USE_SYSTEM_CURL)
-  if(NOT USE_SYSTEM_EXPAT)
-    add_definitions(
-      -DXML_STATIC
-    )
-  endif(NOT USE_SYSTEM_EXPAT)
-  remove_definitions(
-    -DZLIB_DLL
-  )
-endmacro(use_static_libraries)
+endmacro()

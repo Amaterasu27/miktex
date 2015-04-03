@@ -32,21 +32,14 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_icu_include_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_include_dir}
 )
 
 add_definitions(
   -DHAVE_C4P_PRE_H
   -DLE_USE_CMEMORY
   -DMIKTEX_XETEX
-  -DPOPPLER_VERSION="${POPPLER_VERSION}"
   -DSYNCTEX_ENGINE_H="synctex-xetex.h"
   -DXETEXAPP=g_XETEXApp
   -DXETEXCLASS=XETEX

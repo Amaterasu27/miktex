@@ -52,6 +52,7 @@ set(${zlib_dll_name}_sources
   zutil.c
   zutil.h
   
+  zconf.h
   zlib-version.h
 )
 

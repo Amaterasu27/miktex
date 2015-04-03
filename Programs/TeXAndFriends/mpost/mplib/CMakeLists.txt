@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -20,10 +20,6 @@
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_cairo_dir}
-  ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
 )
 
 add_definitions(
@@ -225,6 +221,20 @@ set(mplib_sources
 )
 
 add_library(${mp_lib_name} STATIC ${mplib_sources})
+
+target_include_directories(${mp_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_mp_dir}
+)
+
+target_link_libraries(${mp_lib_name}
+  PUBLIC
+    ${cairo_dll_name}
+    ${core_dll_name}
+    ${kpsemu_dll_name}
+    ${pixman_lib_name}
+    ${w2cemu_dll_name}
+)
 
 set(mpost_cweb_sources
   ${CMAKE_CURRENT_BINARY_DIR}/mpost.c

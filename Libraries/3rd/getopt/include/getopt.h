@@ -47,7 +47,7 @@
 #endif
 
 #if defined(MIKTEX) && ! defined(MIKTEXGETOPTAPI)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_GETOPT_SHARED) && defined(_MSC_VER)
 #    define MIKTEXGETOPTAPI(type) __declspec(dllimport) type __cdecl
 #  elif defined(_MSC_VER)
 #    define MIKTEXGETOPTAPI(type) type __cdecl

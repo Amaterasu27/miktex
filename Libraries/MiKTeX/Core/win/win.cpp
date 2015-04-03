@@ -1,6 +1,6 @@
 /* win.cpp:
 
-   Copyright (C) 1996-2012 Christian Schenk
+   Copyright (C) 1996-2015 Christian Schenk
 
    This file is part of the MiKTeX Core Library.
 
@@ -138,7 +138,7 @@ SessionImpl::GetMyProgramFile (/*[in]*/ bool canonicalized)
    SessionImpl::GetDllPathName
    _________________________________________________________________________ */
 
-#if ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_CORE_SHARED)
 PathName
 SessionImpl::GetDllPathName (/*[in]*/ bool canonicalized)
 {
@@ -1880,7 +1880,7 @@ Source: %s:%d"),
 #define EVTLOGAPP \
   "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application"
 
-#if ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_CORE_SHARED)
 MIKTEXSTATICFUNC(bool)
 AddEventSource ()
 {
@@ -1983,7 +1983,7 @@ AddEventSource ()
 
 #if REPORT_EVENTS
 
-#if ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_CORE_SHARED)
 MIKTEXSTATICFUNC(bool)
 RemoveEventSource ()
 {

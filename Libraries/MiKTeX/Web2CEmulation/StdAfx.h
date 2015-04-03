@@ -1,6 +1,6 @@
-/* StdAfx.h: pre-compiled header stuff				-*- C++ -*-
+/* StdAfx.h: pre-compiled header stuff			-*- C++ -*-
 
-   Copyright (C) 2010 Christian Schenk
+   Copyright (C) 2010-2015 Christian Schenk
 
    This file is part of the MiKTeX W2CEMU Library.
 
@@ -27,13 +27,9 @@
 #include <sys/time.h>
 #endif
 
-#include <miktex/TeXAndFriends/Prototypes>
 #include <miktex/Core/Core>
 #include <miktex/Core/Version>
 
-#include <miktex/C4P/C4P>
-
 #include <string>
 
-using namespace MiKTeX::TeXAndFriends;
 using namespace MiKTeX::Core;

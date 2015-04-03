@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2013-2014 Christian Schenk
+## Copyright (C) 2013-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -87,7 +87,6 @@ include_directories(BEFORE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_cairo_source_dir}
   ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
 )
 
 include(features.cmake)
@@ -107,7 +106,7 @@ if(NATIVE_WINDOWS)
   set(${cairo_dll_name}_sources ${${cairo_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/cairo.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${cairo_dll_name} SHARED ${${cairo_dll_name}_sources})
 
@@ -117,11 +116,18 @@ set_target_properties(${cairo_dll_name}
     SOVERSION "1"
 )
 
+target_include_directories(${cairo_dll_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_cairo_include_dir}
+    ${CMAKE_SOURCE_DIR}/${rel_cairo_include_dir}
+)
+
 target_link_libraries(${cairo_dll_name}
   PRIVATE
     gdi32.lib
     msimg32.lib
     user32.lib
+  PUBLIC
     ${pixman_lib_name}
     ${png_dll_name}
     ${zlib_dll_name}

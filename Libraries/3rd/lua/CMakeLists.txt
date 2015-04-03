@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -91,9 +91,14 @@ if(NATIVE_WINDOWS)
   set(${lua_dll_name}_sources ${${lua_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/liblua.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${lua_dll_name} SHARED ${${lua_dll_name}_sources})
+
+target_include_directories(${lua_dll_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
 
 target_link_libraries(${lua_dll_name}
   PRIVATE
@@ -123,7 +128,7 @@ if(NATIVE_WINDOWS)
   set(lua_sources ${lua_sources}
     lua.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(${miktex_prefix}lua ${lua_sources})
 
@@ -133,7 +138,7 @@ target_link_libraries(${miktex_prefix}lua ${lua_dll_name})
 
 install(TARGETS ${miktex_prefix}lua DESTINATION ${bindir})
 
-set(includes
+set(public_headers
   lapi.h
   lauxlib.h
   lcode.h
@@ -161,10 +166,10 @@ set(includes
   lzio.h
 )
 
-foreach(i ${includes})
+foreach(hdr ${public_headers})
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/${i}
-    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}/${i}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/${hdr}
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}/${hdr}
     COPYONLY
   )
-endforeach(i ${includes})
+endforeach()

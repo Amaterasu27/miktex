@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2010-2015 Christian Schenk
 ## 
@@ -16,9 +16,6 @@
 ## along with this file; if not, write to the Free Software
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
-
-use_static_crt()
-use_static_libraries()
 
 add_definitions(-DLUA_COMPAT_MODULE)
 
@@ -88,13 +85,23 @@ set(${lua_lib_name}_sources
 
 add_library(${lua_lib_name} STATIC ${${lua_lib_name}_sources})
 
+target_include_directories(${lua_lib_name}
+  PUBLIC
+    ${CMAKE_BINARY_DIR}/${rel_lua_include_dir}
+)
+
+target_link_libraries(${lua_lib_name}
+  PUBLIC
+    ${utf8wrap_dll_name}
+)
+
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${lua_lib_name}
     RUNTIME DESTINATION "${bindir}"
     LIBRARY DESTINATION "${libdir}"
     ARCHIVE DESTINATION "${libdir}"
   )
-endif(INSTALL_STATIC_LIBRARIES)
+endif()
 
 set(luac_sources
   ${CMAKE_SOURCE_DIR}/${rel_lua_dir}/src/luac.c
@@ -105,12 +112,12 @@ if(NATIVE_WINDOWS)
   set(luac_sources ${luac_sources}
     ${CMAKE_SOURCE_DIR}/${rel_lua_dir}/luac.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(${miktex_prefix}luac ${luac_sources})
 
 merge_trustinfo_manifest(${miktex_prefix}luac asInvoker)
 
-target_link_libraries(${miktex_prefix}luac ${lua_lib_name} ${utf8wrap_lib_name})
+target_link_libraries(${miktex_prefix}luac ${lua_lib_name})
 
 install(TARGETS ${miktex_prefix}luac DESTINATION ${bindir})

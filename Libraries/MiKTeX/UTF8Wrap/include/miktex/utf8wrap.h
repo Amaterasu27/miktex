@@ -48,7 +48,7 @@
 
 // DLL import/export switch
 #if ! defined(BF56453E041E4B58A0EA455A65DD28B1)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_UTF8WRAP_SHARED) && defined(_MSC_VER)
 #    define MIKTEXUTF8WRAPEXPORT __declspec(dllimport)
 #  else
 #    define MIKTEXUTF8WRAPEXPORT
@@ -273,7 +273,14 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #endif
 
 #if MIKTEX_UTF8_WRAP_OPEN
-#  define open miktex_utf8_open
+#if defined(__cplusplus)
+inline int open(const char * lpszFileName, int flags)
+{
+  return miktex_utf8_open(lpszFileName, flags);
+}
+#else
+#define open miktex_utf8_open
+#endif
 #endif
 
 #if MIKTEX_UTF8_WRAP__POPEN
@@ -299,7 +306,14 @@ miktex_utf8_utime (/*[in]*/ const char * lpszFileName, /*[in]*/ const struct uti
 #endif
 
 #if MIKTEX_UTF8_WRAP_REMOVE
-#  define remove miktex_utf8_remove
+#if defined(__cplusplus)
+inline int remove(const char * lpszFileName)
+{
+  return miktex_utf8_remove(lpszFileName);
+}
+#else
+#define remove miktex_utf8_remove
+#endif
 #endif
 
 #if MIKTEX_UTF8_WRAP_RMDIR

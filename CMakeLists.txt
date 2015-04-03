@@ -366,8 +366,11 @@ endif()
 find_package(ImageMagick REQUIRED)
 
 if(WITH_UI_QT)
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Gui REQUIRED)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5WinExtras REQUIRED)
+#  find_package(Qt5Xml REQUIRED)
 endif()
 
 find_package(Threads REQUIRED)
@@ -895,7 +898,6 @@ if(NOT USE_SYSTEM_PNG)
 endif()
 
 if(BUILDING_MIKTEX)
-  set(POPPLER_VERSION "0.22.2")
   add_subdirectory(${rel_poppler_dir}-static)
 endif()
 

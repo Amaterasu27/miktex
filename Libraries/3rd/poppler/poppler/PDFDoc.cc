@@ -77,9 +77,14 @@
 #include "PDFDoc.h"
 #include "Hints.h"
 
+#if MULTITHREADED
+#  define pdfdocLocker()   MutexLocker locker(&mutex)
+#else
+#  define pdfdocLocker()
+#endif
+
 #if defined(MIKTEX)
 #  define MIKTEX_UTF8_WRAP_ALL 1
-#  define MIKTEX_UTF8_WRAP_REMOVE 0
 #  include <miktex/utf8wrap.h>
 #endif
 

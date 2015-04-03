@@ -1,6 +1,6 @@
 /* cairo-version.h:					-*- C++ -*-
 
-   Copyright (C) 2013 Christian Schenk
+   Copyright (C) 2013-2015 Christian Schenk
 
    This file is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -19,7 +19,7 @@
 
 #include "cairo-version.h"
 
-#define MIKTEX_COMP_J2000_VERSION 4896
+#define MIKTEX_COMP_J2000_VERSION 5571
 #define MIKTEX_COMP_ORIG_VERSION_STR "1.12.14"
 
 #define MIKTEX_COMP_COPYRIGHT_STR ""

@@ -40,6 +40,14 @@ target_include_directories(${kpsemu_lib_name}
     ${CMAKE_SOURCE_DIR}/${rel_kpsemu_dir}/include
 )
 
+target_link_libraries(${kpsemu_lib_name}
+  PUBLIC
+    ${core_lib_name}
+    ${texmf_lib_name}
+  INTERFACE
+    ${getopt_lib_name}
+)
+
 if(INSTALL_STATIC_LIBRARIES)
   install(TARGETS ${kpsemu_lib_name}
     RUNTIME DESTINATION "${bindir}"

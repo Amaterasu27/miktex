@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2013 Christian Schenk
+## Copyright (C) 2013-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,9 +17,6 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-##use_static_crt()
-##use_static_libraries()
-
 set(HAVE_GRAPHITE2 1)
 set(HAVE_ICU 1)
 set(HAVE_OT 1)
@@ -34,8 +31,7 @@ configure_file(
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_graphite2_dir}/include
-  ${CMAKE_SOURCE_DIR}/${rel_icu_dir}/include
+  ${CMAKE_SOURCE_DIR}/${rel_icu_include_dir}
 )
 
 set(${harfbuzz_lib_name}_sources
@@ -113,3 +109,13 @@ set(${harfbuzz_lib_name}_sources
 )
 
 add_library(${harfbuzz_lib_name} STATIC ${${harfbuzz_lib_name}_sources})
+
+target_include_directories(${harfbuzz_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
+)
+
+target_link_libraries(${harfbuzz_lib_name}
+  PUBLIC
+    ${graphite2_dll_name}
+)

@@ -91,7 +91,7 @@ Utils::GetExeName ()
 PathName
 SessionImpl::GetMyLocation (/*[in]*/ bool canonicalized)
 {
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
   return (GetDllPathName(canonicalized).RemoveFileSpec());
 #else
   return (GetMyProgramFile(canonicalized).RemoveFileSpec());
@@ -1298,7 +1298,7 @@ SessionImpl::Initialize (/*[in]*/ const Session::InitInfo & initInfo)
      T_("initializing MiKTeX core library version %s"),
      MIKTEX_COMPONENT_VERSION_STR);
 
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
   if (dynamicLoad.Get() == TriState::True)
     {
       trace_core->WriteFormattedLine ("core", T_("dynamic load"));
@@ -1619,7 +1619,7 @@ miktex_get_miktex_version_string_ex (/*[out]*/ char *	lpszVersion,
    DllMain
    _________________________________________________________________________ */
 
-#if defined(MIKTEX_WINDOWS) && ! defined(MIKTEX_STATIC)
+#if defined(MIKTEX_WINDOWS) && defined(MIKTEX_CORE_SHARED)
 
 #if defined(_MANAGED)
 #  pragma managed(push, off)
@@ -1663,7 +1663,7 @@ DllMain (/*[in]*/ HINSTANCE	hInstance,
       break;
     }
 
-#if defined(HAVE_ATLBASE_H) && ! defined(MIKTEX_STATIC)
+#if defined(HAVE_ATLBASE_H) && defined(MIKTEX_CORE_SHARED)
   if (retCode)
     {
       retCode = SessionImpl::AtlDllMain(reason, lpReserved);

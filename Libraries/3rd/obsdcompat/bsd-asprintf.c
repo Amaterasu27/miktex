@@ -40,7 +40,7 @@
 #define INIT_SZ	128
 
 #if defined(MIKTEX)
-#  if ! defined(MIKTEX_STATIC) && defined(_MSC_VER)
+#  if defined(MIKTEX_OBSDCOMPAT_SHARED) && defined(_MSC_VER)
 #    define MIKTEXOBSDCOMPATAPI(type) __declspec(dllexport) type __cdecl
 #  elif defined(_MSC_VER)
 #    define MIKTEXOBSDCOMPATAPI(type) type __cdecl

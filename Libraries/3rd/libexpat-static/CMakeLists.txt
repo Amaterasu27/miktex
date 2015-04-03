@@ -20,7 +20,7 @@
 configure_file(
   ${CMAKE_SOURCE_DIR}/${rel_expat_dir}/expat_config.h.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h
-  )
+)
 
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -59,6 +59,11 @@ set_source_files_properties(
 )
 
 add_library(${expat_lib_name} STATIC ${${expat_lib_name}_sources})
+
+target_compile_definitions(${expat_lib_name}
+  PUBLIC
+    -DXML_STATIC
+)
 
 target_include_directories(${expat_lib_name}
   PUBLIC

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2013 Christian Schenk
+## Copyright (C) 2013-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,18 +17,11 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-##use_static_crt()
-##use_static_libraries()
-
 add_definitions(-DUSE_SSE2 -DPACKAGE=pixman-1 -DPACKAGE_VERSION="" -DPACKAGE_BUGREPORT="")
 
 if(NOT CMAKE_CL_64)
   add_definitions(-DUSE_X86_MMX)
-endif(NOT CMAKE_CL_64)
-
-include_directories(BEFORE
-  ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
-)
+endif()
 
 set(${pixman_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_pixman_source_dir}/pixman.c
@@ -75,3 +68,8 @@ set(${pixman_lib_name}_sources
 )
 
 add_library(${pixman_lib_name} STATIC ${${pixman_lib_name}_sources})
+
+target_include_directories(${pixman_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_pixman_include_dir}
+)

@@ -53,6 +53,7 @@ set(${zlib_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.c
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zutil.h
 
+  ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zconf.h
   ${CMAKE_SOURCE_DIR}/${rel_zlib_dir}/zlib-version.h
 )
 
@@ -73,5 +74,5 @@ target_include_directories(${zlib_lib_name}
 
 target_link_libraries(${zlib_lib_name}
   PUBLIC
-    ${utf8wrap_dll_name}
+    ${utf8wrap_lib_name}
 )

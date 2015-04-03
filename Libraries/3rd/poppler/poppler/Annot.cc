@@ -45,6 +45,10 @@
 #pragma implementation
 #endif
 
+#if defined(MIKTEX)
+#  include <algorithm>
+#endif
+
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>

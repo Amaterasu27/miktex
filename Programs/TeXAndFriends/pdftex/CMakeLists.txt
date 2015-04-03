@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2014 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,7 +20,7 @@
 if(LINK_EVERYTHING_STATICALLY)
   use_static_crt()
   use_static_libraries()
-endif(LINK_EVERYTHING_STATICALLY)
+endif()
 
 default_char_type_is_unsigned()
 
@@ -34,11 +34,7 @@ set(C4P_FLAGS
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/${rel_synctex_dir}
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_synctex_include_dir}
 )
 
 add_definitions(
@@ -48,7 +44,6 @@ add_definitions(
   -DPDFTEXAPP=g_PDFTEXApp
   -DPDFTEXCLASS=PDFTEX
   -DPDF_PARSER_ONLY
-  -DPOPPLER_VERSION="${POPPLER_VERSION}"
   -DSYNCTEX_ENGINE_H="synctex-pdftex.h"
   -DUSE_GZIP
   -D__SyncTeX__
@@ -80,7 +75,7 @@ if(NATIVE_WINDOWS)
   set(pdftosrc_sources ${pdftosrc_sources}
     pdftosrc.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(BUILDING_MIKTEX)
   add_executable(pdftosrc ${pdftosrc_sources})
@@ -98,9 +93,9 @@ if(BUILDING_MIKTEX)
     target_link_libraries(pdftosrc
       ${getopt_dll_name}
     )
-  endif(NATIVE_WINDOWS)
+  endif()
   install(TARGETS pdftosrc DESTINATION ${bindir})
-endif(BUILDING_MIKTEX)
+endif()
 
 set(ttf2afm_sources
   ${wrapper_cpp}
@@ -122,7 +117,7 @@ if(NATIVE_WINDOWS)
   set(ttf2afm_sources ${ttf2afm_sources}
     ttf2afm.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(BUILDING_MIKTEX)
   add_executable(ttf2afm ${ttf2afm_sources})
@@ -132,15 +127,15 @@ if(BUILDING_MIKTEX)
     ${core_dll_name}
     ${kpsemu_dll_name}
     ${texmf_dll_name}
-	${utf8wrap_dll_name}
+    ${utf8wrap_dll_name}
   )
   if(NATIVE_WINDOWS)
     target_link_libraries(ttf2afm
       ${getopt_dll_name}
     )
-  endif(NATIVE_WINDOWS)
+  endif()
   install(TARGETS ttf2afm DESTINATION ${bindir})
-endif(BUILDING_MIKTEX)
+endif()
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pdftex.defaults.h
@@ -251,9 +246,9 @@ set_source_files_properties(
 
 if(LINK_EVERYTHING_STATICALLY)
   set(pdftex_target_name ${pdftex_lib_name})
-else(LINK_EVERYTHING_STATICALLY)
+else()
   set(pdftex_target_name ${pdftex_dll_name})
-endif(LINK_EVERYTHING_STATICALLY)
+endif()
 
 set(${pdftex_target_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/pdftex_pool.cpp
@@ -317,7 +312,7 @@ if(LINK_EVERYTHING_STATICALLY)
     ${unxemu_dll_name}
     ${w2cemu_lib_name}
   )
-else(LINK_EVERYTHING_STATICALLY)
+else()
   target_link_libraries(${pdftex_dll_name}
     PRIVATE
       ${jpeg_dll_name}
@@ -329,7 +324,7 @@ else(LINK_EVERYTHING_STATICALLY)
       ${utf8wrap_dll_name}
       ${w2cemu_dll_name}
   )
-endif(LINK_EVERYTHING_STATICALLY)
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   if(NATIVE_WINDOWS)
@@ -343,15 +338,15 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       PRIVATE
         ${zlib_lib_name}
     )
-  endif(NATIVE_WINDOWS)
-endif(NOT LINK_EVERYTHING_STATICALLY)
+  endif()
+endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
   delay_load(${pdftex_target_name}
     ${png_dll_name}
     ${regex_dll_name}
   )
-endif(NOT LINK_EVERYTHING_STATICALLY)
+endif()
 
 ## dev targets
 

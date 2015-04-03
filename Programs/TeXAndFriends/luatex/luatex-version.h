@@ -1,4 +1,4 @@
-/* luatex-version.h: version number				-*- C++ -*-
+/* luatex-version.h: version number			-*- C++ -*-
 
    Copyright (C) 2010-2015 Christian Schenk
 
@@ -17,7 +17,7 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 5562
+#define MIKTEX_COMP_J2000_VERSION 5571
 #define MIKTEX_COMP_ORIG_VERSION_STR "0.79.1"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "(C) 2015 Taco Hoekwater, the LuaTeX Team"

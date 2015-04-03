@@ -42,6 +42,11 @@ set_target_properties(${utf8wrap_dll_name}
     SOVERSION "1"
 )
 
+target_compile_definitions(${utf8wrap_dll_name}
+  PUBLIC
+    -DMIKTEX_UTF8WRAP_SHARED
+)
+
 target_include_directories(${utf8wrap_dll_name}
   PRIVATE
     ${CMAKE_BINARY_DIR}/${rel_utf8wrap_dir}

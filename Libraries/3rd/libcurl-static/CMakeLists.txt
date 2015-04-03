@@ -224,6 +224,11 @@ endif()
 
 add_library(${curl_lib_name} STATIC ${${curl_lib_name}_sources})
 
+target_compile_definitions(${curl_lib_name}
+  PUBLIC
+    -DCURL_STATICLIB
+)
+
 target_include_directories(${curl_lib_name}
   PUBLIC
     ${CMAKE_SOURCE_DIR}/${rel_curl_dir}/include

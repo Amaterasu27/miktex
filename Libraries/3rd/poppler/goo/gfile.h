@@ -108,7 +108,7 @@ extern time_t getModTime(char *fileName);
 // should be "w" or "wb".  Returns true on success.
 extern GBool openTempFile(GooString **name, FILE **f, const char *mode);
 
-#if ! defined(MIKTEX)
+#if !defined(MIKTEX)
 #ifdef WIN32
 // Convert a file name from Latin-1 to UTF-8.
 extern GooString *fileNameToUTF8(char *path);
@@ -199,7 +199,7 @@ private:
 
   GooString *path;		// directory path
   GBool doStat;			// call stat() for each entry?
-#if defined(_WIN32) && ! defined(MIKTEX)
+#if defined(_WIN32) && !defined(MIKTEX)
   WIN32_FIND_DATA ffd;
   HANDLE hnd;
 #elif defined(ACORN)
