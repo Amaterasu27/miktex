@@ -366,11 +366,7 @@ endif()
 find_package(ImageMagick REQUIRED)
 
 if(WITH_UI_QT)
-  find_package(Qt5Core REQUIRED)
-  find_package(Qt5Gui REQUIRED)
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5WinExtras REQUIRED)
-#  find_package(Qt5Xml REQUIRED)
+  find_package(Qt5 REQUIRED Core Gui Widgets WinExtras Xml)
 endif()
 
 find_package(Threads REQUIRED)
@@ -901,10 +897,9 @@ if(BUILDING_MIKTEX)
   add_subdirectory(${rel_poppler_dir}-static)
 endif()
 
-## TODO
-#if(BUILDING_MIKTEX AND WITH_UI_QT)
-#  add_subdirectory(${rel_poppler_dir}/qt4/src)
-#endif()
+if(BUILDING_MIKTEX AND WITH_UI_QT)
+  add_subdirectory(${rel_poppler_dir}/qt5/src)
+endif()
 
 if(BUILDING_MIKTEX)
   add_subdirectory(${rel_hunspell_dir})
