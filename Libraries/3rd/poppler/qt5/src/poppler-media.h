@@ -37,7 +37,7 @@ namespace Poppler
 
     \since 0.20
    */
-  class POPPLER_QT4_EXPORT MediaRendition {
+  class POPPLER_QT5_EXPORT MediaRendition {
    public:
     /**
       Constructs a MediaRendition. Takes ownership of the passed rendition

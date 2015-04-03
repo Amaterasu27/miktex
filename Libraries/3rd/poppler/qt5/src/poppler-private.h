@@ -2,10 +2,13 @@
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2005, 2008, Brad Hards <bradh@frogmouth.net>
  * Copyright (C) 2006-2009, 2011, 2012 by Albert Astals Cid <aacid@kde.org>
- * Copyright (C) 2007-2009, 2011 by Pino Toscano <pino@kde.org>
+ * Copyright (C) 2007-2009, 2011, 2014 by Pino Toscano <pino@kde.org>
  * Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
  * Copyright (C) 2011 Hib Eris <hib@hiberis.nl>
- * Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2012, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2013 Anthony Granger <grangeranthony@gmail.com>
+ * Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
+ * Copyright (C) 2014 Aki Koskinen <freedesktop@akikoskinen.info>
  * Inspired on code by
  * Copyright (C) 2004 by Albert Astals Cid <tsdgeos@terra.es>
  * Copyright (C) 2004 by Enrico Ros <eros.kde@email.it>
@@ -43,7 +46,7 @@
 #include <SplashOutputDev.h>
 #endif
 
-#include "poppler-qt4.h"
+#include "poppler-qt5.h"
 #include "poppler-embeddedfile-private.h"
 
 class LinkDest;
@@ -60,7 +63,7 @@ namespace Poppler {
 
     GooString *QStringToGooString(const QString &s);
 
-    void qt4ErrorFunction(int pos, char *msg, va_list args);
+    void qt5ErrorFunction(int pos, char *msg, va_list args);
 
     class LinkDestinationData
     {
@@ -83,15 +86,8 @@ namespace Poppler {
 		init();
 		m_filePath = filePath;	
 
-#if defined(_WIN32)
-#if defined(MIKTEX)
-		wchar_t *fileName = new wchar_t[filePath.length()];
-#else
-		wchar_t *fileName = new WCHAR[filePath.length()];
-#endif
-		int length = filePath.toWCharArray(fileName); 
-		doc = new PDFDoc(fileName, length, ownerPassword, userPassword);
-		delete fileName;
+#ifdef _WIN32
+		doc = new PDFDoc((wchar_t *)filePath.utf16(), filePath.length(), ownerPassword, userPassword);
 #else
 		GooString *fileName = new GooString(QFile::encodeName(filePath));
 		doc = new PDFDoc(fileName, ownerPassword, userPassword);
@@ -117,87 +113,15 @@ namespace Poppler {
 	
 	~DocumentData();
 	
-	OutputDev *getOutputDev()
-	{
-		if (!m_outputDev)
-		{
-			switch (m_backend)
-			{
-			case Document::ArthurBackend:
-			// create a splash backend even in case of the Arthur Backend
-			case Document::SplashBackend:
-			{
-#if defined(HAVE_SPLASH)
-			SplashColor bgColor;
-			GBool overprint = m_hints & Document::OverprintPreview ? gTrue : gFalse;
-			globalParams->setOverprintPreview(overprint);
-#if defined(SPLASH_CMYK)
-			if (overprint)
-			{
-				Guchar c, m, y, k;
-
-				c = 255 - paperColor.blue();
-				m = 255 - paperColor.red();
-				y = 255 - paperColor.green();
-				k = c;
-				if (m < k) {
-					k = m;
-				}
-				if (y < k) {
-					k = y;
-				}
-				bgColor[0] = c - k;
-				bgColor[1] = m - k;
-				bgColor[2] = y - k;
-				bgColor[3] = k;
-				for (int i = 4; i < SPOT_NCOMPS + 4; i++) {
-					bgColor[i] = 0;
-				}
-			}
-			else
-#endif
-			{
-				bgColor[0] = paperColor.blue();
-				bgColor[1] = paperColor.green();
-				bgColor[2] = paperColor.red();
-			}
-			GBool AA = m_hints & Document::TextAntialiasing ? gTrue : gFalse;
-			SplashOutputDev * splashOutputDev = new SplashOutputDev(
-#if defined(SPLASH_CMYK)
-				(overprint) ? splashModeDeviceN8 : splashModeXBGR8,
-#else
-				splashModeXBGR8,
-#endif 
-				4, gFalse, bgColor, gTrue, AA);
-			splashOutputDev->setVectorAntialias(m_hints & Document::Antialiasing ? gTrue : gFalse);
-			splashOutputDev->setFreeTypeHinting(m_hints & Document::TextHinting ? gTrue : gFalse, m_hints & Document::TextSlightHinting ? gTrue : gFalse);
-			splashOutputDev->startDoc(doc);
-			m_outputDev = splashOutputDev;
-#endif
-			break;
-			}
-			}
-		}
-		return m_outputDev;
-	}
-	
 	void addTocChildren( QDomDocument * docSyn, QDomNode * parent, GooList * items );
 	
 	void setPaperColor(const QColor &color)
 	{
-		if (color == paperColor)
-			return;
-
 		paperColor = color;
-		
-		// Make sure the new paper color will be picked up for the next rendering
-		delete m_outputDev;
-		m_outputDev = NULL;
 	}
 	
 	void fillMembers()
 	{
-		m_fontInfoIterator = new FontIterator(0, this);
 		int numEmb = doc->getCatalog()->numEmbeddedFiles();
 		if (!(0 == numEmb)) {
 			// we have some embedded documents, build the list
@@ -214,9 +138,7 @@ namespace Poppler {
 	QString m_filePath;
 	QByteArray fileContents;
 	bool locked;
-	FontIterator *m_fontInfoIterator;
 	Document::RenderBackend m_backend;
-	OutputDev *m_outputDev;
 	QList<EmbeddedFile*> m_embeddedFiles;
 	QPointer<OptContentModel> m_optContentModel;
 	QColor paperColor;

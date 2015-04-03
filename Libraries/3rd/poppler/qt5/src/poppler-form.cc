@@ -1,4 +1,4 @@
-/* poppler-form.h: qt4 interface to poppler
+/* poppler-form.h: qt interface to poppler
  * Copyright (C) 2007-2008, 2011, Pino Toscano <pino@kde.org>
  * Copyright (C) 2008, 2011, 2012 Albert Astals Cid <aacid@kde.org>
  * Copyright (C) 2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "poppler-qt4.h"
+#include "poppler-qt5.h"
 
 #include <QtCore/QSizeF>
 

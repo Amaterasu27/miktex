@@ -2,6 +2,7 @@
  *
  * Copyright (C) 2007, Brad Hards <bradh@kde.org>
  * Copyright (C) 2008, Pino Toscano <pino@kde.org>
+ * Copyright (C) 2013, Anthony Granger <grangeranthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ namespace Poppler
    *
    * \since 0.8
    */
-  class POPPLER_QT4_EXPORT OptContentModel : public QAbstractItemModel
+  class POPPLER_QT5_EXPORT OptContentModel : public QAbstractItemModel
   {
     friend class Document;
 

@@ -25,7 +25,7 @@
 #include <Page.h>
 #include <Annot.h>
 
-#include "poppler-qt4.h"
+#include "poppler-qt5.h"
 #include "poppler-page-private.h"
 
 namespace Poppler

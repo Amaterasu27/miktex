@@ -41,7 +41,7 @@ class PageTransitionData;
 */
 
 
-class POPPLER_QT4_EXPORT PageTransition {
+class POPPLER_QT5_EXPORT PageTransition {
  public:
 
   /** \brief transition effect that shall be used

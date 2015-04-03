@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2008, 2010, Pino Toscano <pino@kde.org>
  * Copyright (C) 2010, 2012, Guillermo Amaral <gamaral@kdab.com>
  * Copyright (C) 2012, Tobias Koenig <tokoe@kdab.com>
+ * Copyright (C) 2013, Anthony Granger <grangeranthony@gmail.com>
  * Adapting code from
  *   Copyright (C) 2004 by Enrico Ros <eros.kde@email.it>
  *
@@ -57,7 +58,7 @@ class SoundObject;
  *
  * Coordinates are in 0..1 range
  */
-class POPPLER_QT4_EXPORT LinkDestination
+class POPPLER_QT5_EXPORT LinkDestination
 {
 	public:
 		/**
@@ -168,7 +169,7 @@ class POPPLER_QT4_EXPORT LinkDestination
  * kind of links to reimplement the linkType() method and return the type of
  * the link described by the reimplemented class.
  */
-class POPPLER_QT4_EXPORT Link
+class POPPLER_QT5_EXPORT Link
 {
 	public:
 		/// \cond PRIVATE
@@ -231,7 +232,7 @@ class POPPLER_QT4_EXPORT Link
  * then the destination refers to that document (and not to the document the
  * current LinkGoto belongs to).
  */
-class POPPLER_QT4_EXPORT LinkGoto : public Link
+class POPPLER_QT5_EXPORT LinkGoto : public Link
 {
 	public:
 		/**
@@ -277,7 +278,7 @@ class POPPLER_QT4_EXPORT LinkGoto : public Link
  * - if it is a document, then it is requested to be open
  * - otherwise, it represents an executable to be run with the specified parameters
  */
-class POPPLER_QT4_EXPORT LinkExecute : public Link
+class POPPLER_QT5_EXPORT LinkExecute : public Link
 {
 	public:
 		/**
@@ -316,7 +317,7 @@ class POPPLER_QT4_EXPORT LinkExecute : public Link
  *
  * The format of the URL is specified by RFC 2396 (http://www.ietf.org/rfc/rfc2396.txt)
  */
-class POPPLER_QT4_EXPORT LinkBrowse : public Link
+class POPPLER_QT5_EXPORT LinkBrowse : public Link
 {
 	public:
 		/**
@@ -348,7 +349,7 @@ class POPPLER_QT4_EXPORT LinkBrowse : public Link
  * The LinkAction class represents a link that request a "standard" action
  * to be performed by the viewer on the displayed document.
  */
-class POPPLER_QT4_EXPORT LinkAction : public Link
+class POPPLER_QT5_EXPORT LinkAction : public Link
 {
 	public:
 		/**
@@ -398,7 +399,7 @@ class POPPLER_QT4_EXPORT LinkAction : public Link
  *
  * \since 0.6
  */
-class POPPLER_QT4_EXPORT LinkSound : public Link
+class POPPLER_QT5_EXPORT LinkSound : public Link
 {
 	public:
 		// create a Link_Sound
@@ -451,7 +452,7 @@ class POPPLER_QT4_EXPORT LinkSound : public Link
  *
  * \since 0.20
  */
-class POPPLER_QT4_EXPORT LinkRendition : public Link
+class POPPLER_QT5_EXPORT LinkRendition : public Link
 {
 	public:
 		/**
@@ -466,16 +467,6 @@ class POPPLER_QT4_EXPORT LinkRendition : public Link
 			PauseRendition,
 			ResumeRendition
 		};
-
-		/**
-		 * Create a new rendition link.
-		 *
-		 * \param linkArea the active area of the link
-		 * \param rendition the media rendition object. Ownership is taken
-		 *
-		 * \deprecated Use the constructor that takes all parameter instead
-		 */
-		Q_DECL_DEPRECATED LinkRendition( const QRectF &linkArea, ::MediaRendition *rendition );
 
 		/**
 		 * Create a new rendition link.
@@ -532,7 +523,7 @@ class POPPLER_QT4_EXPORT LinkRendition : public Link
  *
  * \since 0.10
  */
-class POPPLER_QT4_EXPORT LinkJavaScript : public Link
+class POPPLER_QT5_EXPORT LinkJavaScript : public Link
 {
 	public:
 		/**
@@ -564,7 +555,7 @@ class POPPLER_QT4_EXPORT LinkJavaScript : public Link
  *
  * \since 0.20
  */
-class POPPLER_QT4_EXPORT LinkMovie : public Link
+class POPPLER_QT5_EXPORT LinkMovie : public Link
 {
 	public:
 		/**

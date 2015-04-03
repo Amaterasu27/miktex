@@ -1,5 +1,5 @@
 /* poppler-link.cc: qt interface to poppler
- * Copyright (C) 2006-2007, Albert Astals Cid
+ * Copyright (C) 2006-2007, 2013, Albert Astals Cid
  * Copyright (C) 2007-2008, Pino Toscano <pino@kde.org>
  * Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
  * Copyright (C) 2012, Tobias Koenig <tokoe@kdab.com>
@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <poppler-qt4.h>
+#include <poppler-qt5.h>
 #include <poppler-private.h>
 #include <poppler-media.h>
 
@@ -602,11 +602,6 @@ class LinkMoviePrivate : public LinkPrivate
 	}
 
 	// LinkRendition
-	LinkRendition::LinkRendition( const QRectF &linkArea, ::MediaRendition *rendition )
-		: Link( *new LinkRenditionPrivate( linkArea, rendition, ::LinkRendition::NoRendition, QString(), Ref() ) )
-	{
-	}
-	
 	LinkRendition::LinkRendition( const QRectF &linkArea, ::MediaRendition *rendition, int operation, const QString &script, const Ref &annotationReference )
 		: Link( *new LinkRenditionPrivate( linkArea, rendition, static_cast<enum ::LinkRendition::RenditionOperation>(operation), script, annotationReference ) )
 	{

@@ -1,4 +1,4 @@
-/* poppler-pdf-converter.cc: qt4 interface to poppler
+/* poppler-pdf-converter.cc: qt interface to poppler
  * Copyright (C) 2008, Pino Toscano <pino@kde.org>
  * Copyright (C) 2008, 2009, Albert Astals Cid <aacid@kde.org>
  *
@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "poppler-qt4.h"
+#include "poppler-qt5.h"
 
 #include "poppler-private.h"
 #include "poppler-converter-private.h"

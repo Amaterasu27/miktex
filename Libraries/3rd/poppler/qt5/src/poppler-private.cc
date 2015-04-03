@@ -1,7 +1,9 @@
 /* poppler-private.cc: qt interface to poppler
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2006, 2011 by Albert Astals Cid <aacid@kde.org>
- * Copyright (C) 2008, 2010, 2011 by Pino Toscano <pino@kde.org>
+ * Copyright (C) 2008, 2010, 2011, 2014 by Pino Toscano <pino@kde.org>
+ * Copyright (C) 2013 by Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
  * Inspired on code by
  * Copyright (C) 2004 by Albert Astals Cid <tsdgeos@terra.es>
  * Copyright (C) 2004 by Enrico Ros <eros.kde@email.it>
@@ -53,7 +55,7 @@ namespace Debug {
         Debug::debugClosure = closure;
     }
 
-    void qt4ErrorFunction(void * /*data*/, ErrorCategory /*category*/, int pos, char *msg)
+    void qt5ErrorFunction(void * /*data*/, ErrorCategory /*category*/, Goffset pos, char *msg)
     {
         QString emsg;
 
@@ -65,7 +67,7 @@ namespace Debug {
         {
             emsg = QString::fromLatin1("Error: ");
         }
-        emsg += QString::fromAscii(msg);
+        emsg += QString::fromLatin1(msg);
         (*Debug::debugFunction)(emsg, Debug::debugClosure);
     }
 
@@ -226,8 +228,6 @@ namespace Debug {
         qDeleteAll(m_embeddedFiles);
         delete (OptContentModel *)m_optContentModel;
         delete doc;
-        delete m_outputDev;
-        delete m_fontInfoIterator;
     
         count --;
         if ( count == 0 )
@@ -249,9 +249,7 @@ namespace Debug {
     
     void DocumentData::init()
     {
-        m_fontInfoIterator = 0;
         m_backend = Document::SplashBackend;
-        m_outputDev = 0;
         paperColor = Qt::white;
         m_hints = 0;
         m_optContentModel = 0;
@@ -269,7 +267,7 @@ namespace Debug {
             utf8Map = 0;
             globalParams = new GlobalParams();
 #endif
-            setErrorCallback(qt4ErrorFunction, NULL);
+            setErrorCallback(qt5ErrorFunction, NULL);
         }
         count ++;
     }

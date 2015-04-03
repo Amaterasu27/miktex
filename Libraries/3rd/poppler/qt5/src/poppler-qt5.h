@@ -1,7 +1,7 @@
 /* poppler-qt.h: qt interface to poppler
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2005, 2007, Brad Hards <bradh@frogmouth.net>
- * Copyright (C) 2005-2012, Albert Astals Cid <aacid@kde.org>
+ * Copyright (C) 2005-2014, Albert Astals Cid <aacid@kde.org>
  * Copyright (C) 2005, Stefan Kebekus <stefan.kebekus@math.uni-koeln.de>
  * Copyright (C) 2006-2011, Pino Toscano <pino@kde.org>
  * Copyright (C) 2009 Shawn Rutledge <shawn.t.rutledge@gmail.com>
@@ -12,8 +12,9 @@
  * Copyright (C) 2012, Guillermo A. Amaral B. <gamaral@kde.org>
  * Copyright (C) 2012, Fabio D'Urso <fabiodurso@hotmail.it>
  * Copyright (C) 2012, Tobias Koenig <tobias.koenig@kdab.com>
- * Copyright (C) 2012 Adam Reichold <adamreichold@myopera.com>
- * Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2012, 2014, 2015 Adam Reichold <adamreichold@myopera.com>
+ * Copyright (C) 2012, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2013 Anthony Granger <grangeranthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ class Sound;
 class AnnotMovie;
 
 /**
-   The %Poppler Qt4 binding.
+   The %Poppler Qt5 binding.
 */
 namespace Poppler {
 
@@ -87,7 +88,7 @@ namespace Poppler {
 
 	\since 0.16
     */
-    POPPLER_QT4_EXPORT void setDebugErrorFunction(PopplerDebugFunc debugFunction, const QVariant &closure);
+    POPPLER_QT5_EXPORT void setDebugErrorFunction(PopplerDebugFunc debugFunction, const QVariant &closure);
 
     /**
         Describes the physical location of text on a document page
@@ -98,12 +99,12 @@ namespace Poppler {
 	- a QRectF that gives a box that describes where on the page
 	the text is found.
     */
-    class POPPLER_QT4_EXPORT TextBox {
+    class POPPLER_QT5_EXPORT TextBox {
     friend class Page;
     public:
       /**
 	 The default constructor sets the \p text and the rectangle that
-	 contains the text. Coordinated for the \p bBox are in points =
+	 contains the text. Coordinates for the \p bBox are in points =
 	 1/72 of an inch.
       */
       TextBox(const QString& text, const QRectF &bBox);
@@ -154,7 +155,7 @@ namespace Poppler {
        Container class for information about a font within a PDF
        document
     */
-    class POPPLER_QT4_EXPORT FontInfo {
+    class POPPLER_QT5_EXPORT FontInfo {
     friend class Document;
     public:
 	/**
@@ -272,7 +273,7 @@ delete it;
 
        \since 0.12
     */
-    class POPPLER_QT4_EXPORT FontIterator {
+    class POPPLER_QT5_EXPORT FontIterator {
     friend class Document;
     friend class DocumentData;
     public:
@@ -310,7 +311,7 @@ delete it;
     /**
        Container class for an embedded file with a PDF document
     */
-    class POPPLER_QT4_EXPORT EmbeddedFile {
+    class POPPLER_QT5_EXPORT EmbeddedFile {
 	friend class DocumentData;
 	friend class AnnotationPrivate;
     public:
@@ -399,7 +400,7 @@ delete it;
        You cannot construct a Page directly, but you have to use the Document
        functions that return a new Page out of an index or a label.
     */
-    class POPPLER_QT4_EXPORT Page {
+    class POPPLER_QT5_EXPORT Page {
 	friend class Document;
     public:
 	/**
@@ -579,18 +580,16 @@ delete it;
 	enum SearchMode { CaseSensitive,   ///< Case differences cause no match in searching
 			  CaseInsensitive  ///< Case differences are ignored in matching
 	};
-	
-	/**
-	   Returns true if the specified text was found.
 
-	   \param text the text the search
-	   \param rect in all directions is used to return where the text was found, for NextResult and PreviousResult
-	               indicates where to continue searching for
-	   \param direction in which direction do the search
-	   \param caseSensitive be case sensitive?
-	   \param rotate the rotation to apply for the search order
-	**/
-	Q_DECL_DEPRECATED bool search(const QString &text, QRectF &rect, SearchDirection direction, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
+        /**
+           Flags to modify the search behaviour \since 0.31
+        */
+        enum SearchFlag
+        {
+            IgnoreCase = 0x00000001,    ///< Case differences are ignored
+            WholeWords = 0x00000002    ///< Only whole words are matched
+        };
+        Q_DECLARE_FLAGS( SearchFlags, SearchFlag )
 	
 	/**
 	   Returns true if the specified text was found.
@@ -603,8 +602,22 @@ delete it;
 	   \param rotate the rotation to apply for the search order
 	   \since 0.14
 	**/
-	bool search(const QString &text, double &rectLeft, double &rectTop, double &rectRight, double &rectBottom, SearchDirection direction, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
-	
+        Q_DECL_DEPRECATED bool search(const QString &text, double &rectLeft, double &rectTop, double &rectRight, double &rectBottom, SearchDirection direction, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
+
+        /**
+           Returns true if the specified text was found.
+
+           \param text the text the search
+           \param rectXXX in all directions is used to return where the text was found, for NextResult and PreviousResult
+                       indicates where to continue searching for
+           \param direction in which direction do the search
+           \param flags the flags to consider during matching
+           \param rotate the rotation to apply for the search order
+
+           \since 0.31
+        **/
+        bool search(const QString &text, double &rectLeft, double &rectTop, double &rectRight, double &rectBottom, SearchDirection direction, SearchFlags flags = 0, Rotation rotate = Rotate0) const;
+
 	/**
 	   Returns a list of all occurrences of the specified text on the page.
 	   
@@ -616,7 +629,20 @@ delete it;
 	   
 	   \since 0.22
 	**/
-	QList<QRectF> search(const QString &text, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
+        Q_DECL_DEPRECATED QList<QRectF> search(const QString &text, SearchMode caseSensitive, Rotation rotate = Rotate0) const;
+
+        /**
+           Returns a list of all occurrences of the specified text on the page.
+
+           \param text the text to search
+           \param flags the flags to consider during matching
+           \param rotate the rotation to apply for the search order
+
+           \warning Do not use the returned QRectF as arguments of another search call because of truncation issues if qreal is defined as float.
+
+           \since 0.31
+        **/
+        QList<QRectF> search(const QString &text, SearchFlags flags = 0, Rotation rotate = Rotate0) const;
 
 	/**
 	   Returns a list of text of the page
@@ -699,6 +725,21 @@ delete it;
 	       when no longer required.
 	*/
 	QList<Annotation*> annotations() const;
+
+
+	/**
+		Returns the annotations of the page
+
+		\param subtypes the subtypes of annotations you are interested in
+
+		\note If you call this method twice, you get different objects
+		      pointing to the same annotations (see Annotation).
+		      The caller owns the returned objects and they should be deleted
+		      when no longer required.
+
+		\since 0.28
+	*/
+	QList<Annotation*> annotations(const QSet<Annotation::SubType> &subtypes) const;
 
 	/**
 	 Adds an annotation to the page
@@ -798,7 +839,7 @@ delete it;
    avilable, all the color management-related functions will either do nothing
    or return null.
 */
-    class POPPLER_QT4_EXPORT Document {
+    class POPPLER_QT5_EXPORT Document {
 	friend class Page;
 	friend class DocumentData;
   
@@ -835,7 +876,7 @@ delete it;
 	*/
 	enum RenderBackend {
 	    SplashBackend,   ///< Splash backend
-	    ArthurBackend   ///< Arthur (Qt4) backend
+	    ArthurBackend   ///< Arthur (Qt) backend
 	};
 
 	/**
@@ -848,7 +889,9 @@ delete it;
 	    TextAntialiasing = 0x00000002,  ///< Antialiasing for text
 	    TextHinting = 0x00000004,       ///< Hinting for text \since 0.12.1
 	    TextSlightHinting = 0x00000008, ///< Lighter hinting for text when combined with TextHinting \since 0.18
-	    OverprintPreview = 0x00000010   ///< Overprint preview \since 0.22
+	    OverprintPreview = 0x00000010,  ///< Overprint preview \since 0.22
+	    ThinLineSolid = 0x00000020,     ///< Enhance thin lines solid \since 0.24
+	    ThinLineShape = 0x00000040      ///< Enhance thin lines shape. Wins over ThinLineSolid \since 0.24
 	};
 	Q_DECLARE_FLAGS( RenderHints, RenderHint )
 
@@ -988,6 +1031,14 @@ delete it;
 	PageLayout pageLayout() const;
 
 	/**
+	   The predominant reading order for text as supplied by
+	   the document's viewer preferences.
+
+	   \since 0.26
+	*/
+	Qt::LayoutDirection textDirection() const;
+
+	/**
 	   Provide the passwords required to unlock the document
 
 	   \param ownerPassword the Latin1-encoded owner password to use in
@@ -1125,15 +1176,6 @@ QString subject = m_doc->info("Subject");
 	   The version of the PDF specification that the document
 	   conforms to
 
-	   \deprecated use getPdfVersion and avoid float point
-	   comparisons/handling
-	*/
-	Q_DECL_DEPRECATED double pdfVersion() const;
-
-	/**
-	   The version of the PDF specification that the document
-	   conforms to
-
 	   \param major an optional pointer to a variable where store the
 	   "major" number of the version
 	   \param minor an optional pointer to a variable where store the
@@ -1155,26 +1197,6 @@ QString subject = m_doc->info("Subject");
 	   \see newFontIterator()
 	*/
 	QList<FontInfo> fonts() const;
-
-	/**
-	   Scans for fonts within the PDF document.
-
-	   \param numPages the number of pages to scan
-	   \param fontList pointer to the list where the font information
-	   should be placed
-
-	   \note with this method you can scan for fonts only \em once for each
-	   document; once the end is reached, no more scanning with this method
-	   can be done
-
-	   \return false if the end of the document has been reached
-
-	   \deprecated this function is quite limited in its job (see note),
-	   better use fonts() or newFontIterator()
-
-	   \see fonts(), newFontIterator()
-	*/
-	Q_DECL_DEPRECATED bool scanForFonts( int numPages, QList<FontInfo> *fontList ) const;
 
 	/**
 	   Creates a new FontIterator object for font scanning.
@@ -1404,7 +1426,7 @@ QString subject = m_doc->info("Subject");
 
        \since 0.8
     */
-    class POPPLER_QT4_EXPORT BaseConverter
+    class POPPLER_QT5_EXPORT BaseConverter
     {
         friend class Document;
         public:
@@ -1471,7 +1493,7 @@ height = dummy.height();
 
        \since 0.6
     */
-    class POPPLER_QT4_EXPORT PSConverter : public BaseConverter
+    class POPPLER_QT5_EXPORT PSConverter : public BaseConverter
     {
         friend class Document;
         public:
@@ -1598,7 +1620,7 @@ height = dummy.height();
 
        \since 0.8
     */
-    class POPPLER_QT4_EXPORT PDFConverter : public BaseConverter
+    class POPPLER_QT5_EXPORT PDFConverter : public BaseConverter
     {
         friend class Document;
         public:
@@ -1636,21 +1658,21 @@ height = dummy.height();
     /**
        Conversion from PDF date string format to QDateTime
     */
-    POPPLER_QT4_EXPORT QDateTime convertDate( char *dateString );
+    POPPLER_QT5_EXPORT QDateTime convertDate( char *dateString );
 
     /**
        Whether the color management functions are available.
 
        \since 0.12
     */
-    POPPLER_QT4_EXPORT bool isCmsAvailable();
+    POPPLER_QT5_EXPORT bool isCmsAvailable();
     
     /**
        Whether the overprint preview functionality is available.
 
        \since 0.22
     */
-    POPPLER_QT4_EXPORT bool isOverprintPreviewAvailable();
+    POPPLER_QT5_EXPORT bool isOverprintPreviewAvailable();
 
     class SoundData;
     /**
@@ -1662,7 +1684,7 @@ height = dummy.height();
 
        \since 0.6
     */
-    class POPPLER_QT4_EXPORT SoundObject {
+    class POPPLER_QT5_EXPORT SoundObject {
     public:
 	/**
 	   The type of sound
@@ -1735,7 +1757,7 @@ height = dummy.height();
 
        \since 0.10
     */
-    class POPPLER_QT4_EXPORT MovieObject {
+    class POPPLER_QT5_EXPORT MovieObject {
     friend class AnnotationPrivate;
     public:
 	/**
@@ -1802,6 +1824,7 @@ height = dummy.height();
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Poppler::Page::PainterFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Poppler::Page::SearchFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Poppler::Document::RenderHints)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Poppler::PDFConverter::PDFOptions)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Poppler::PSConverter::PSOptions)

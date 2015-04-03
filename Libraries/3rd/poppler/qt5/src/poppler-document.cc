@@ -1,12 +1,13 @@
 /* poppler-document.cc: qt interface to poppler
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2005, 2008, Brad Hards <bradh@frogmouth.net>
- * Copyright (C) 2005-2010, 2012, Albert Astals Cid <aacid@kde.org>
+ * Copyright (C) 2005-2010, 2012, 2013, Albert Astals Cid <aacid@kde.org>
  * Copyright (C) 2006-2010, Pino Toscano <pino@kde.org>
  * Copyright (C) 2010, 2011 Hib Eris <hib@hiberis.nl>
  * Copyright (C) 2012 Koji Otani <sho@bbr.jp>
- * Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+ * Copyright (C) 2012, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
  * Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
+ * Copyright (C) 2014 Adam Reichold <adamreichold@myopera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "poppler-qt4.h"
+#include "poppler-qt5.h"
 
 #include <config.h>
 #include <ErrorCodes.h>
@@ -32,6 +33,7 @@
 #include <PDFDoc.h>
 #include <Stream.h>
 #include <Catalog.h>
+#include <ViewerPreferences.h>
 #include <DateInfo.h>
 #include <GfxState.h>
 
@@ -196,6 +198,21 @@ namespace Poppler {
 	}
     }
 
+    Qt::LayoutDirection Document::textDirection() const
+    {
+        if (!m_doc->doc->getCatalog()->getViewerPreferences())
+            return Qt::LayoutDirectionAuto;
+
+        switch (m_doc->doc->getCatalog()->getViewerPreferences()->getDirection()) {
+        case ViewerPreferences::directionL2R:
+            return Qt::LeftToRight;
+        case ViewerPreferences::directionR2L:
+            return Qt::RightToLeft;
+        default:
+            return Qt::LayoutDirectionAuto;
+        }
+    }
+
     int Document::numPages() const
     {
 	return m_doc->doc->getNumPages();
@@ -217,20 +234,6 @@ namespace Poppler {
 	return m_doc->m_embeddedFiles;
     }
 
-    bool Document::scanForFonts( int numPages, QList<FontInfo> *fontList ) const
-    {
-	if ( !m_doc->m_fontInfoIterator )
-		return false;
-	if ( !m_doc->m_fontInfoIterator->hasNext() )
-		return false;
-	while ( m_doc->m_fontInfoIterator->hasNext() && numPages )
-	{
-		(*fontList) += m_doc->m_fontInfoIterator->next();
-		--numPages;
-	}
-	return true;
-    }
-
     FontIterator* Document::newFontIterator( int startPage ) const
     {
 	return new FontIterator( startPage, m_doc );
@@ -242,8 +245,10 @@ namespace Poppler {
 	if (fi.isEmbedded())
 	{
 		Object refObj, strObj;
+		XRef *xref = m_doc->doc->getXRef()->copy();
+
 		refObj.initRef(fi.m_data->embRef.num, fi.m_data->embRef.gen);
-		refObj.fetch(m_doc->doc->getXRef(), &strObj);
+		refObj.fetch(xref, &strObj);
 		refObj.free();
 		if (strObj.isStream())
 		{
@@ -256,6 +261,7 @@ namespace Poppler {
 			strObj.streamClose();
 		}
 		strObj.free();
+		delete xref;
 	}
 	return result;
     }
@@ -268,7 +274,10 @@ namespace Poppler {
 	if ( m_doc->locked )
 	    return QString();
 
-	m_doc->doc->getDocInfo( &info );
+	QScopedPointer<XRef> xref(m_doc->doc->getXRef()->copy());
+	if (!xref)
+		return QString();
+	xref->getDocInfo(&info);
 	if ( !info.isDict() )
 	    return QString();
 
@@ -298,14 +307,17 @@ namespace Poppler {
 	if ( m_doc->locked )
 	    return QStringList();
 
-	m_doc->doc->getDocInfo( &info );
+	QScopedPointer<XRef> xref(m_doc->doc->getXRef()->copy());
+	if (!xref)
+		return QStringList();
+	xref->getDocInfo(&info);
 	if ( !info.isDict() )
 	    return QStringList();
 
 	Dict *infoDict = info.getDict();
 	// somehow iterate over keys in infoDict
 	for( int i=0; i < infoDict->getLength(); ++i ) {
-	    keys.append( QString::fromAscii(infoDict->getKey(i)) );
+	    keys.append( QString::fromLatin1(infoDict->getKey(i)) );
 	}
 
 	info.free();
@@ -320,7 +332,10 @@ namespace Poppler {
 	    return QDateTime();
 
 	Object info;
-	m_doc->doc->getDocInfo( &info );
+	QScopedPointer<XRef> xref(m_doc->doc->getXRef()->copy());
+	if (!xref)
+		return QDateTime();
+	xref->getDocInfo(&info);
 	if ( !info.isDict() ) {
 	    info.free();
 	    return QDateTime();
@@ -395,11 +410,6 @@ namespace Poppler {
 	return m_doc->doc->okToAssemble();
     }
 
-    double Document::pdfVersion() const
-    {
-	return m_doc->doc->getPDFMajorVersion () + m_doc->doc->getPDFMinorVersion() / 10.0;
-    }
-
     void Document::getPdfVersion(int *major, int *minor) const
     {
 	if (major)
@@ -410,7 +420,7 @@ namespace Poppler {
 
     Page *Document::page(const QString &label) const
     {
-	GooString label_g(label.toAscii().data());
+	GooString label_g(label.toLatin1().data());
 	int index;
 
 	if (!m_doc->doc->getCatalog()->labelToIndex (&label_g, &index))
@@ -524,7 +534,6 @@ namespace Poppler {
 
     void Document::setRenderHint( Document::RenderHint hint, bool on )
     {
-        const bool touchesAntialias = hint & ( Document::Antialiasing | Document::TextAntialiasing | Document::TextHinting );
         const bool touchesOverprinting = hint & Document::OverprintPreview;
         
         int hintForOperation = hint;
@@ -536,12 +545,6 @@ namespace Poppler {
         else
             m_doc->m_hints &= ~hintForOperation;
 
-        // the only way to set antialiasing for Splash is on creation
-        if ( m_doc->m_backend == Document::SplashBackend && (touchesAntialias || touchesOverprinting) )
-        {
-            delete m_doc->m_outputDev;
-            m_doc->m_outputDev = NULL;
-        }
     }
 
     Document::RenderHints Document::renderHints() const
@@ -680,3 +683,4 @@ namespace Poppler {
    }
 
 }
+

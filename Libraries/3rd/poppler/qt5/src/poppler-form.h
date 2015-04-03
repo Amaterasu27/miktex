@@ -1,4 +1,4 @@
-/* poppler-form.h: qt4 interface to poppler
+/* poppler-form.h: qt interface to poppler
  * Copyright (C) 2007-2008, Pino Toscano <pino@kde.org>
  * Copyright (C) 2008, 2011, Albert Astals Cid <aacid@kde.org>
  * Copyright (C) 2012, Adam Reichold <adamreichold@myopera.com>
@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef _POPPLER_QT4_FORM_H_
-#define _POPPLER_QT4_FORM_H_
+#ifndef _POPPLER_QT5_FORM_H_
+#define _POPPLER_QT5_FORM_H_
 
 #include <QtCore/QRectF>
 #include <QtCore/QStringList>
@@ -42,7 +42,7 @@ namespace Poppler {
 
       \since 0.6
      */
-    class POPPLER_QT4_EXPORT FormField {
+    class POPPLER_QT5_EXPORT FormField {
     public:
 
 	/**
@@ -123,7 +123,7 @@ namespace Poppler {
 
       \since 0.8
      */
-    class POPPLER_QT4_EXPORT FormFieldButton : public FormField {
+    class POPPLER_QT5_EXPORT FormFieldButton : public FormField {
     public:
 
 	/**
@@ -180,7 +180,7 @@ namespace Poppler {
 
       \since 0.6
      */
-    class POPPLER_QT4_EXPORT FormFieldText : public FormField {
+    class POPPLER_QT5_EXPORT FormFieldText : public FormField {
     public:
 
 	/**
@@ -253,7 +253,7 @@ namespace Poppler {
 
       \since 0.6
      */
-    class POPPLER_QT4_EXPORT FormFieldChoice : public FormField {
+    class POPPLER_QT5_EXPORT FormFieldChoice : public FormField {
     public:
 
 	/**
