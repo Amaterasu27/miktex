@@ -366,7 +366,17 @@ endif()
 find_package(ImageMagick REQUIRED)
 
 if(WITH_UI_QT)
-  find_package(Qt5 REQUIRED Core Gui Widgets WinExtras Xml)
+  find_package(Qt5 REQUIRED
+    Core
+    Gui
+    PrintSupport
+    Script
+    ScriptTools
+    UiTools
+    Widgets
+    WinExtras
+    Xml
+  )
 endif()
 
 find_package(Threads REQUIRED)
@@ -1159,10 +1169,9 @@ if(BUILDING_MIKTEX AND NATIVE_WINDOWS)
   add_subdirectory(${rel_taskbar_icon_win_dir})
 endif()
 
-## TODO
-#if(BUILDING_MIKTEX AND WITH_UI_QT)
-#  add_subdirectory(${rel_texworks_dir})
-#endif()
+if(BUILDING_MIKTEX AND WITH_UI_QT)
+  add_subdirectory(${rel_texworks_dir})
+endif()
 
 if(BUILDING_MIKTEX AND WITH_UI_MFC)
   add_subdirectory(${rel_yap_mfc_dir})

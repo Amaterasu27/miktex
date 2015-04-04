@@ -106,6 +106,7 @@ target_link_libraries(dvips
     ${bmeps_dll_name}
     ${core_dll_name}
     ${kpsemu_dll_name}
+    ${unxemu_dll_name}
     ${utf8wrap_dll_name}
 )
 

@@ -26,7 +26,7 @@ include_directories(BEFORE
 
 set(${tiff_dll_name}_sources
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
-  ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/tiffvers.h
   libtiff-version.h
   t4.h
   tif_aux.c
@@ -88,7 +88,7 @@ endif()
 
 set_source_files_properties(
   ${CMAKE_CURRENT_BINARY_DIR}/tif_fax3sm.c
-  ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/tiffvers.h
   PROPERTIES GENERATED TRUE
 )
 
@@ -98,12 +98,14 @@ add_executable(mkversion EXCLUDE_FROM_ALL
 
 merge_trustinfo_manifest(mkversion asInvoker)
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/tiffvers.h
   COMMAND mkversion
 	-r ${CMAKE_CURRENT_SOURCE_DIR}/RELEASE-DATE
 	-v ${CMAKE_CURRENT_SOURCE_DIR}/VERSION
-	${CMAKE_CURRENT_BINARY_DIR}/tiffvers.h
+	${CMAKE_CURRENT_BINARY_DIR}/include/tiffvers.h
   MAIN_DEPENDENCY
 	VERSION
   DEPENDS
@@ -154,6 +156,7 @@ install(TARGETS ${tiff_dll_name}
 
 set(public_headers
   tiff.h
+  tiffio.h
 )
 
 foreach(h ${public_headers})

@@ -144,7 +144,7 @@ namespace Poppler {
 	QColor paperColor;
 	int m_hints;
 	static int count;
-#if defined(MIKTEX_TEXWORKS_PATCHES)
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
 	static GBool ownGlobalParams;
 #endif
     };

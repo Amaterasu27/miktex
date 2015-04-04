@@ -232,7 +232,7 @@ namespace Debug {
         count --;
         if ( count == 0 )
         {
-#if defined(MIKTEX_TEXWORKS_PATCHES)
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
             if ( ownGlobalParams )
             {
                 utf8Map = 0;
@@ -256,7 +256,7 @@ namespace Debug {
       
         if ( count == 0 )
         {
-#if defined(MIKTEX_TEXWORKS_PATCHES)
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
             if ( !globalParams )
             {
                 utf8Map = 0;

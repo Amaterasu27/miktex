@@ -81,7 +81,7 @@ set_target_properties(${poppler_qt_dll_name}
 
 target_include_directories(${poppler_qt_dll_name}
   PUBLIC
-    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/qt4/src
+    ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/qt5/src
 )
 
 target_link_libraries(${poppler_qt_dll_name}

@@ -55,7 +55,7 @@
 namespace Poppler {
 
   int DocumentData::count = 0;
-#if defined(MIKTEX_TEXWORKS_PATCHES)
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
   GBool DocumentData::ownGlobalParams = gFalse;
 #endif
 

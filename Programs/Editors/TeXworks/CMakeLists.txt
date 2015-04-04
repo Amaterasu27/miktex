@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009-2013 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,18 +17,35 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-add_subdirectory(plugins-src/TWLuaPlugin)
+
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/src/TWVersion.h TeXworks_VER_MAJOR REGEX "VER_MAJOR")
+string(REGEX MATCH "([0-9]+)" TeXworks_VER_MAJOR ${TeXworks_VER_MAJOR})
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/src/TWVersion.h TeXworks_VER_MINOR REGEX "VER_MINOR")
+string(REGEX MATCH "([0-9]+)" TeXworks_VER_MINOR ${TeXworks_VER_MINOR})
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/src/TWVersion.h TeXworks_VER_PATCH REGEX "VER_BUGFIX")
+string(REGEX MATCH "([0-9]+)" TeXworks_VER_PATCH ${TeXworks_VER_PATCH})
+set(TeXworks_VERSION ${TeXworks_VER_MAJOR}.${TeXworks_VER_MINOR}.${TeXworks_VER_PATCH})
+
+configure_file(
+  GitArchiveInfo.txt
+  ${CMAKE_CURRENT_BINARY_DIR}/src/GitRev.h
+  COPYONLY
+)
+
+file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/src/GitRev.h TeXworks_GIT_INFO)
+list(GET TeXworks_GIT_INFO 1 TeXworks_GIT_COMMIT)
+string(REGEX REPLACE "#define GIT_COMMIT_HASH \"([a-f0-9]+)\"" "\\1" TeXworks_GIT_HASH "${TeXworks_GIT_COMMIT}")
+list(GET TeXworks_GIT_INFO 2 TeXworks_GIT_COMMIT)
+string(REGEX REPLACE "#define GIT_COMMIT_DATE \"([-:0-9 Z]+)\"" "\\1" TeXworks_GIT_DATE "${TeXworks_GIT_COMMIT}")
+
+
+set(CMAKE_AUTOMOC TRUE)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_BINARY_DIR}/src
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/poppler
-  ${CMAKE_BINARY_DIR}/${rel_poppler_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_poppler_dir}/qt4/src
   ${CMAKE_SOURCE_DIR}/${rel_hunspell_dir}/src/hunspell
 )
 
@@ -36,7 +53,11 @@ add_definitions(
   -DHAVE_POPPLER_XPDF_HEADERS
 )
 
+add_subdirectory(plugins-src/TWLuaPlugin)
+#add_subdirectory(plugins-src/TWPythonPlugin)
+
 set(texworks_sources
+  src/ClickableLabel.cpp
   src/ClickableLabel.h
   src/ClosableTabWidget.cpp
   src/ClosableTabWidget.h
@@ -44,6 +65,7 @@ set(texworks_sources
   src/CommandlineParser.h
   src/CompletingEdit.cpp
   src/CompletingEdit.h
+  src/ConfigurableApp.cpp
   src/ConfigurableApp.h
   src/ConfirmDelete.cpp
   src/ConfirmDelete.h
@@ -63,7 +85,6 @@ set(texworks_sources
   src/ResourcesDialog.h
   src/ScriptManager.cpp
   src/ScriptManager.h
-  src/SvnRev.h
   src/TWApp.cpp
   src/TWApp.h
   src/TWScript.cpp
@@ -72,6 +93,9 @@ set(texworks_sources
   src/TWScriptAPI.h
   src/TWScriptable.cpp
   src/TWScriptable.h
+  src/TWSynchronizer.cpp
+  src/TWSynchronizer.h
+  src/TWSystemCmd.cpp
   src/TWSystemCmd.h
   src/TWTextCodecs.cpp
   src/TWTextCodecs.h
@@ -91,69 +115,16 @@ set(texworks_sources
   src/synctex_parser.h
   src/synctex_parser_utils.c
   src/synctex_parser_utils.h
+
+  texworks-version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/src/GitRev.h
 )
 
 if(NATIVE_WINDOWS)
   set(texworks_sources ${texworks_sources}
     ${CMAKE_CURRENT_SOURCE_DIR}/texworks.rc
   )
-#  add_custom_command(
-#    OUTPUT
-#      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-#    COMMAND
-#      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
-#        -verbose
-#        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
-#	${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-#    DEPENDS
-#      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/appicon.png
-#    VERBATIM
-#  )
-#  add_custom_command(
-#    OUTPUT
-#      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-#    COMMAND
-#      ${IMAGEMAGICK_CONVERT_EXECUTABLE}
-#        -verbose
-#        ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
-#	${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-#    DEPENDS
-#      ${CMAKE_CURRENT_SOURCE_DIR}/res/images/texdoc.png
-#    VERBATIM
-#  )
-#  add_custom_target(
-#    texworks_icons
-#    ALL
-#    DEPENDS
-#      ${CMAKE_CURRENT_BINARY_DIR}/appicon.ico
-#      ${CMAKE_CURRENT_BINARY_DIR}/texdoc.ico
-#  )
-endif(NATIVE_WINDOWS)
-
-set(texworks_moc_sources
-  src/ClickableLabel.h
-  src/ClosableTabWidget.h
-  src/CompletingEdit.h
-  src/ConfigurableApp.h
-  src/ConfirmDelete.h
-  src/FindDialog.h
-  src/HardWrapDialog.h
-  src/PDFDocks.h
-  src/PDFDocument.h
-  src/PrefsDialog.h
-  src/ResourcesDialog.h
-  src/ScriptManager.h
-  src/TWApp.h
-  src/TWScript.h
-  src/TWScriptAPI.h
-  src/TWScriptable.h
-  src/TWSystemCmd.h
-  src/TWUtils.h
-  src/TeXDocks.h
-  src/TeXDocument.h
-  src/TeXHighlighter.h
-  src/TemplateDialog.h
-)
+endif()
 
 set(texworks_ui_files
   src/ConfirmDelete.ui
@@ -172,33 +143,36 @@ set(texworks_ui_files
 )
 
 set(texworks_rcs_files
-  res/resources.qrc
-  res/resfiles.qrc
   res/miktex.qrc
+  res/resfiles.qrc
+  res/resources.qrc
 )
 
-qt4_wrap_cpp(texworks_mocs ${texworks_moc_sources})
+qt5_wrap_ui(texworks_ui_headers ${texworks_ui_files})
 
-qt4_wrap_ui(texworks_ui_headers ${texworks_ui_files})
+qt5_add_resources(texworks_rcc_sources ${texworks_rcs_files})
 
-qt4_wrap_cpp(texworks_ui_mocs ${texworks_ui_headers})
-
-qt4_add_resources(texworks_rcc_sources ${texworks_rcs_files})
-
-  set(libs
-    ${core_dll_name}
-    ${hunspell_dll_name}
-    ${poppler_qt4_dll_name}
-    ${utf8wrap_dll_name}
-    ${zlib_dll_name}
-    ${QT_QTMAIN_LIBRARY}
-    ${QT_LIBRARIES}
-  )
+set(libs
+  twluaplugin-static
+  #twpythonplugin-static
+  ${core_dll_name}
+  ${hunspell_dll_name}
+  ${poppler_qt_dll_name}
+  ${utf8wrap_dll_name}
+  ${zlib_dll_name}
+  Qt5::Core
+  Qt5::Gui
+  Qt5::PrintSupport
+  Qt5::UiTools
+  Qt5::Widgets
+  Qt5::Script
+  Qt5::ScriptTools
+  Qt5::Xml
+)
 
 add_executable(texworks WIN32
   ${texworks_sources}
-  ${texworks_mocs}
-  ${texworks_ui_mocs}
+  ${texworks_ui_headers}
   ${texworks_rcc_sources}
 )
 
@@ -210,8 +184,7 @@ install(TARGETS texworks DESTINATION ${bindir})
 
 add_executable(${miktex_prefix}texworks WIN32
   ${texworks_sources}
-  ${texworks_mocs}
-  ${texworks_ui_mocs}
+  ${texworks_ui_headers}
   ${texworks_rcc_sources}
 )
 
@@ -220,8 +193,3 @@ target_link_libraries(${miktex_prefix}texworks ${libs})
 merge_trustinfo_manifest(${miktex_prefix}texworks asInvoker)
 
 install(TARGETS ${miktex_prefix}texworks DESTINATION ${bindir})
-
-#if(NATIVE_WINDOWS)
-#  add_dependencies(texworks texworks_icons)
-#  add_dependencies(${miktex_prefix}texworks texworks_icons)
-#endif(NATIVE_WINDOWS)

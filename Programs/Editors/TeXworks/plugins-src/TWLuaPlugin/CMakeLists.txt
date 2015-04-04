@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2010-2012 Christian Schenk
+## Copyright (C) 2010-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -17,14 +17,9 @@
 ## Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 ## USA.
 
-#add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
-#add_definitions(-DQT_NO_DEBUG)
-#add_definitions(-DQT_SHARED)
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/${rel_lua_dir}/etc
-  ${CMAKE_SOURCE_DIR}/${rel_lua_dir}/src
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../..
@@ -42,45 +37,18 @@ set(twluaplugin_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWSystemCmd.h
   TWLuaPlugin.cpp
   TWLuaPlugin.h
-  twluaplugin-version.h
 )
 
-if(NATIVE_WINDOWS)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/twluaplugin.rc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/twluaplugin.rc
-  )
-  set(twluaplugin_sources ${twluaplugin_sources}
-    ${CMAKE_CURRENT_BINARY_DIR}/twluaplugin.rc
-  )
-endif(NATIVE_WINDOWS)
-
-set(twluaplugin_moc_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/ConfigurableApp.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScript.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWScriptAPI.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/TWSystemCmd.h
-  TWLuaPlugin.h
-)
-
-qt4_wrap_cpp(twluaplugin_mocs ${twluaplugin_moc_sources})
-
-  set(libs
-    ${lua_dll_name}
-    ${QT_LIBRARIES}
-  )
-
-add_library(${twluaplugin_dll_name} MODULE
+add_library(twluaplugin-static STATIC
   ${twluaplugin_sources}
-  ${twluaplugin_mocs}
 )
 
-target_link_libraries(${twluaplugin_dll_name} ${libs})
-
-rebase(${twluaplugin_dll_name})
-
-install(TARGETS ${twluaplugin_dll_name}
-  RUNTIME DESTINATION "${miktex_texworks_plugins_dir}"
-  LIBRARY DESTINATION "${libdir}"
-  ARCHIVE DESTINATION "${libdir}"
+target_link_libraries(twluaplugin-static
+  PUBLIC
+    ${core_dll_name}
+    ${lua_dll_name}
+    Qt5::Core
+    Qt5::Gui
+    Qt5::UiTools
+    Qt5::Widgets
 )

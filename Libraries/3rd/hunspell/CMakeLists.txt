@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2009-2014 Christian Schenk
+## Copyright (C) 2009-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -26,7 +26,7 @@ if(NATIVE_WINDOWS)
   include_directories(BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/win_api
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_definitions(-DBUILDING_LIBHUNSPELL)
 
@@ -70,19 +70,24 @@ if(NATIVE_WINDOWS)
   set(${hunspell_dll_name}_sources ${${hunspell_dll_name}_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/hunspell.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 add_library(${hunspell_dll_name} SHARED ${${hunspell_dll_name}_sources})
-
-target_link_libraries(${hunspell_dll_name}
-  PRIVATE
-    ${utf8wrap_dll_name}
-)
 
 set_target_properties(${hunspell_dll_name}
   PROPERTIES
     VERSION "${MIKTEX_SERIES_STR}"
     SOVERSION "1"
+)
+
+target_include_directories(${hunspell_dll_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_hunspell_dir}/src/hunspell
+)
+
+target_link_libraries(${hunspell_dll_name}
+  PRIVATE
+    ${utf8wrap_dll_name}
 )
 
 rebase(${hunspell_dll_name})

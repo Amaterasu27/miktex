@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 #include "ConfigurableApp.h"
 #include "TWScriptAPI.h"
 
-#ifdef Q_WS_WIN
+#if defined(Q_WS_WIN) || defined(Q_OS_WIN)
 #define PATH_LIST_SEP   ';'
 #define EXE             ".exe"
 #else
@@ -51,9 +51,9 @@
 #if defined(MIKTEX)
 #undef TW_BUILD_ID
 #define TW_BUILD_ID_STR MIKTEX_BANNER_STR
-#else // MIKTEX
+#else
 #define TW_BUILD_ID_STR STRINGIFY(TW_BUILD_ID)
-#endif // MIKTEX
+#endif
 #define DEFAULT_ENGINE_NAME "pdfLaTeX"
 
 class QString;
@@ -64,8 +64,10 @@ class QMenuBar;
 const int kStatusMessageDuration = 3000;
 const int kNewWindowOffset = 32;
 
-#ifdef Q_WS_WIN // for communication with the original instance
-#define _WIN32_WINNT			0x0500	// for HWND_MESSAGE
+#if defined(Q_WS_WIN) || defined(Q_OS_WIN) // for communication with the original instance
+#if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0500
+	#define _WIN32_WINNT			0x0500	// for HWND_MESSAGE
+#endif
 #include <windows.h>
 #define TW_HIDDEN_WINDOW_CLASS	TEXWORKS_NAME ":MessageTarget"
 #define TW_OPEN_FILE_MSG		(('T' << 8) + 'W')	// just a small sanity check for the receiver
@@ -120,14 +122,12 @@ public:
 	
 	void notifyDictionaryListChanged() const { emit dictionaryListChanged(); }
 
-#ifdef Q_WS_WIN
+#if defined(Q_WS_WIN) || defined(Q_OS_WIN)
 	void createMessageTarget(QWidget* aWindow);
 	static QString GetWindowsVersionString();
 	static unsigned int GetWindowsVersion();
 #endif
-#ifdef Q_WS_X11
 	void bringToFront();
-#endif
 
 	QObject* openFile(const QString& fileName, const int pos = -1);
 	Q_INVOKABLE
@@ -156,7 +156,7 @@ public:
 	Q_INVOKABLE bool hasGlobal(const QString& key) const { return m_globals.contains(key); }
 	Q_INVOKABLE QVariant getGlobal(const QString& key) const { return m_globals[key]; }
 	
-#ifdef Q_WS_MAC
+#if defined(Q_WS_MAC) || defined(Q_OS_MAC)
 private:
 	// on the Mac only, we have a top-level app menu bar, including its own copy of the recent files menu
 	QMenuBar *menuBar;
@@ -233,7 +233,7 @@ signals:
 	// windows can connect to it to rebuild, e.g., a spellchecking menu
 	void dictionaryListChanged() const;
 	
-	void syncPdf(const QString& sourceFile, int lineNo, bool activatePreview);
+	void syncPdf(const QString& sourceFile, int lineNo, int col, bool activatePreview);
 
 	void hideFloatersExcept(QWidget* theWindow);
 
@@ -275,7 +275,7 @@ private:
 	QHash<QString, QVariant> m_globals;
 	QList<QTextCodec*> customTextCodecs;
 	
-#ifdef Q_WS_WIN
+#if defined(Q_WS_WIN) || defined(Q_OS_WIN)
 	HWND messageTargetWindow;
 #endif
 
@@ -286,6 +286,18 @@ inline TWApp *TWApp::instance()
 {
 	return theAppInstance;
 }
+
+
+class TWDocumentOpenEvent : public QEvent
+{
+public:
+	static const QEvent::Type type;
+	TWDocumentOpenEvent(const QString & filename, const int pos = 0) : QEvent(type), filename(filename), pos(pos) { }
+	
+	QString filename;
+	int pos;
+};
+
 
 #ifdef QT_DBUS_LIB
 #include <QtDBus>

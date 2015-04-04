@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -19,6 +19,13 @@
 
 use_static_crt()
 use_static_libraries()
+
+add_definitions(-DHAVE_CONFIG_H)
+
+include_directories(BEFORE
+  ${CMAKE_BINARY_DIR}/${rel_mspack_dir}
+  ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
+)
 
 set(${mspack_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}/cab.h

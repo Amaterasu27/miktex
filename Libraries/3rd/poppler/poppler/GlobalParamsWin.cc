@@ -95,12 +95,11 @@ static struct {
     {"Times-BoldItalic",      "n021024l.pfb", "timesbi.ttf", gTrue},
     {"Times-Italic",          "n021023l.pfb", "timesi.ttf", gTrue},
     {"Times-Roman",           "n021003l.pfb", "times.ttf", gTrue},
-    // TODO: not sure if "wingding.ttf" is right
-#ifndef MIKTEX_TEXWORKS_PATCHES
-    {"ZapfDingbats",          "d050000l.pfb", "wingding.ttf", gTrue},
-#else
-	// no, the symbol sets are quite different
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
     {"ZapfDingbats",          "d050000l.pfb", NULL, gTrue},
+#else
+    // TODO: not sure if "wingding.ttf" is right
+    {"ZapfDingbats",          "d050000l.pfb", "wingding.ttf", gTrue},
 #endif
 
     // those seem to be frequently accessed by PDF files and I kind of guess
@@ -181,8 +180,7 @@ static struct {
 
 #define FONTS_SUBDIR "\\fonts"
 
-#ifdef MIKTEX_TEXWORKS_PATCHES
-/* mingw32 lacks this symbol, so add it here if necessary */
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
 #ifndef SHGFP_TYPE_CURRENT
 #define SHGFP_TYPE_CURRENT 0
 #endif
@@ -435,10 +433,10 @@ void GlobalParams::setupBaseFonts(char * dir)
         if (fontFiles->lookup(fontName))
             continue;
 
-#ifndef MIKTEX_TEXWORKS_PATCHES
-        if (dir) {
-#else
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
         if (dir && displayFontTab[i].t1FileName) {
+#else
+        if (dir) {
 #endif
             GooString *fontPath = appendToPath(new GooString(dir), displayFontTab[i].t1FileName);
             if (FileExists(fontPath->getCString()) ||
@@ -570,9 +568,19 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
   SysFontInfo *fi;
   GooString *path = NULL;
   GooString *fontName = font->getName();
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
+  char appDir[MAX_PATH];
+#endif
   if (!fontName) return NULL;
   lockGlobalParams;
+#if defined(MIKTEX) && defined(MIKTEX_TEXWORKS_PATCHES)
+  if (::GetModuleFileName(0, appDir, MAX_PATH) > 0)
+      setupBaseFonts(appendToPath(grabPath(appDir), "fonts")->getCString());
+  else
+      setupBaseFonts(NULL);
+#else
   setupBaseFonts(NULL);
+#endif
 
   // TODO: base14Name should be changed?
   // In the system using FontConfig, findSystemFontFile() uses

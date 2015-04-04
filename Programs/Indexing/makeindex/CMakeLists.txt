@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -36,9 +36,9 @@ if(NATIVE_WINDOWS)
     -DIBM_PC_MICROSOFT
     -DOS_WIN32
   )
-endif(NATIVE_WINDOWS)
+endif()
 
-set (makeindex_c_sources
+set(makeindex_c_sources
   genind.c
   mkind.c
   qsort.c
@@ -69,32 +69,34 @@ set_source_files_properties(${makeindex_c_sources}
 
 if(NATIVE_WINDOWS)
   set(makeindex_sources ${makeindex_sources} makeindex.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(${miktex_prefix}makeindex ${makeindex_sources})
-
-merge_trustinfo_manifest(${miktex_prefix}makeindex asInvoker)
 
 target_link_libraries(${miktex_prefix}makeindex
   ${app_dll_name}
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
+
+merge_trustinfo_manifest(${miktex_prefix}makeindex asInvoker)
 
 install(TARGETS ${miktex_prefix}makeindex DESTINATION ${bindir})
 
 add_executable(makeindex ${makeindex_sources})
-
-merge_trustinfo_manifest(makeindex asInvoker)
 
 target_link_libraries(makeindex
   ${app_dll_name}
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
+
+merge_trustinfo_manifest(makeindex asInvoker)
 
 install(TARGETS makeindex DESTINATION ${bindir})

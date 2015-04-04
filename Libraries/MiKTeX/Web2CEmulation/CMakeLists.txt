@@ -61,7 +61,7 @@ if(NOT LINK_EVERYTHING_STATICALLY)
   )
 
   target_link_libraries(${w2cemu_dll_name}
-    PRIVATE
+    PUBLIC
       ${core_dll_name}
       ${kpsemu_dll_name}
     INTERFACE
