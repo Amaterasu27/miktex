@@ -70,6 +70,7 @@ target_link_libraries(${bmeps_dll_name}
     ${pbm_dll_name}
     ${png_dll_name}
     ${pnm_dll_name}
+  PUBLIC
     ${zlib_dll_name}
 )
 

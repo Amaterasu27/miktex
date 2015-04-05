@@ -1,4 +1,4 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
 ## Copyright (C) 2006-2015 Christian Schenk
 ## 
@@ -34,16 +34,17 @@ add_definitions(
 
 if(NATIVE_WINDOWS)
   set(mpm_sources ${mpm_sources} mpm.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(mpm ${mpm_sources})
 
 merge_trustinfo_manifest(mpm asInvoker)
 
-  target_link_libraries(mpm
-	 ${core_lib_name}
-     ${mpm_lib_name}
-  )
+target_link_libraries(mpm
+  ${core_lib_name}
+  ${mpm_lib_name}
+  ${popt_lib_name}
+)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(mpm
@@ -53,6 +54,6 @@ if(NATIVE_WINDOWS)
     winmm
     ws2_32
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 install(TARGETS mpm DESTINATION ${bindir})

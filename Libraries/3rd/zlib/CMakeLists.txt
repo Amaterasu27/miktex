@@ -62,7 +62,6 @@ if(NATIVE_WINDOWS)
     ${CMAKE_CURRENT_BINARY_DIR}/zlib.rc
   )
   set(${zlib_dll_name}_sources ${${zlib_dll_name}_sources}
-    zlib.def
     ${CMAKE_CURRENT_BINARY_DIR}/zlib.rc
   )
 endif()
@@ -111,10 +110,10 @@ set(public_headers
   zconf.h
 )
 
-foreach(h ${public_headers})
+foreach(hdr ${public_headers})
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${h}
-    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}/include/${h}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${hdr}
+    ${CMAKE_BINARY_DIR}/${rel_zlib_dir}/include/${hdr}
     COPYONLY
   )
 endforeach()

@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2014 Christian Schenk
+## Copyright (C) 2014-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -20,10 +20,6 @@
 use_static_crt()
 use_static_libraries()
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/include
-)
-
 set(miktexsetup_sources
   StdAfx.cpp
   StdAfx.h
@@ -38,16 +34,15 @@ add_definitions(
 
 if(NATIVE_WINDOWS)
   set(miktexsetup_sources ${miktexsetup_sources} miktexsetup.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(miktexsetup ${miktexsetup_sources})
 
-merge_trustinfo_manifest(miktexsetup asInvoker)
-
-  target_link_libraries(miktexsetup
-    ${core_lib_name}
-    ${setup_lib_name}
-  )
+target_link_libraries(miktexsetup
+  ${core_lib_name}
+  ${popt_lib_name}
+  ${setup_lib_name}
+)
 
 if(NATIVE_WINDOWS)
   target_link_libraries(miktexsetup
@@ -58,6 +53,8 @@ if(NATIVE_WINDOWS)
     winmm
     ws2_32
   )
-endif(NATIVE_WINDOWS)
+endif()
+
+merge_trustinfo_manifest(miktexsetup asInvoker)
 
 install(TARGETS miktexsetup DESTINATION ${bindir})

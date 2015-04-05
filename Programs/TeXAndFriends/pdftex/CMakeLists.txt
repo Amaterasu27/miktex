@@ -87,6 +87,7 @@ if(BUILDING_MIKTEX)
     ${poppler_lib_name}
     ${unxemu_dll_name}
     ${utf8wrap_dll_name}
+    ${w2cemu_dll_name}
     ${zlib_dll_name}
   )
   if(NATIVE_WINDOWS)

@@ -107,9 +107,10 @@ target_link_libraries(${fontconfig_dll_name}
   PRIVATE
     ${core_dll_name}
     ${expat_dll_name}
-    ${freetype2_dll_name}
     ${unxemu_dll_name}
     ${utf8wrap_dll_name}
+  PUBLIC
+    ${freetype2_dll_name}
 )
 
 rebase(${fontconfig_dll_name})
@@ -145,6 +146,12 @@ add_custom_command(
 )
 
 add_executable(fcarch fcarch.c)
+
+target_link_libraries(fcarch
+  ${core_dll_name}
+  ${unxemu_dll_name}
+  ${utf8wrap_dll_name}
+)
 
 install(TARGETS ${fontconfig_dll_name}
   RUNTIME DESTINATION "${bindir}"

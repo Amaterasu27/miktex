@@ -142,6 +142,7 @@ target_link_libraries(afm2tfm
   ${core_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

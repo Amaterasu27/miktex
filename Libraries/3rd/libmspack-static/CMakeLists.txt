@@ -65,3 +65,8 @@ set(${mspack_lib_name}_sources
 )
 
 add_library(${mspack_lib_name} STATIC ${${mspack_lib_name}_sources})
+
+target_include_directories(${mspack_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_mspack_dir}
+)

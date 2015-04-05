@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -59,7 +59,7 @@ if(NATIVE_WINDOWS)
   set(dvipng_sources ${dvipng_sources}
     dvipng.rc
   )
-endif(NATIVE_WINDOWS)
+endif()
 
 if(DVIPNG_COMPILE_AS_CXX)
   set_source_files_properties(${dvipng_c_sources}
@@ -75,7 +75,7 @@ else(DVIPNG_COMPILE_AS_CXX)
     PROPERTIES
       COMPILE_FLAGS "-DBEQUIET"
   )
-endif(DVIPNG_COMPILE_AS_CXX)
+endif()
 
 add_executable(dvipng ${dvipng_sources})
 
@@ -89,6 +89,7 @@ target_link_libraries(dvipng
   ${getopt_dll_name}
   ${kpsemu_dll_name}
   ${texmf_dll_name}
+  ${unxemu_dll_name}
   ${utf8wrap_dll_name}
 )
 

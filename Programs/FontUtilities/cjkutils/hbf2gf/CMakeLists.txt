@@ -71,6 +71,7 @@ target_link_libraries(hbf2gf
   ${app_dll_name}
   ${core_dll_name}
   ${texmf_dll_name}
+  ${w2cemu_dll_name}
 )
 
 install(TARGETS hbf2gf DESTINATION ${bindir})

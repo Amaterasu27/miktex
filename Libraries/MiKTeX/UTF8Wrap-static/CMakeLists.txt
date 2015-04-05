@@ -29,7 +29,7 @@ set(${utf8wrap_lib_name}_sources
 
 add_library(${utf8wrap_lib_name} STATIC ${${utf8wrap_lib_name}_sources})
 
-target_compile_definitions(${utf8wrap_dll_name}
+target_compile_definitions(${utf8wrap_lib_name}
   PUBLIC
     -DMIKTEX_UTF8WRAP_STATIC
 )

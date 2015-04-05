@@ -27,11 +27,11 @@ set(md5walk_sources
 
 if(NATIVE_WINDOWS)
   set(md5walk_sources ${md5walk_sources} md5walk.rc)
-endif(NATIVE_WINDOWS)
+endif()
 
 add_executable(md5walk ${md5walk_sources})
 
-target_link_libraries(md5walk ${core_lib_name})
+target_link_libraries(md5walk ${core_lib_name} ${popt_lib_name})
 
 merge_trustinfo_manifest(md5walk asInvoker)
 

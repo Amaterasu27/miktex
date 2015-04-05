@@ -146,6 +146,11 @@ if(NATIVE_WINDOWS)
       PROPERTIES COMPILE_FLAGS
       "-DREGISTER_PROXY_DLL"
     )
+    target_include_directories(${mpm_ps_dll_name}
+      PRIVATE
+        ${CMAKE_BINARY_DIR}/${rel_mpmlib_dir}/include
+        ${CMAKE_SOURCE_DIR}/${rel_mpmlib_dir}/include
+    )
     target_link_libraries(${mpm_ps_dll_name}
       PRIVATE
         oleaut32

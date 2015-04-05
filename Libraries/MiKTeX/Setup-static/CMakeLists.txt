@@ -1,6 +1,6 @@
-## CMakeLists.txt						-*- CMake -*-
+## CMakeLists.txt					-*- CMake -*-
 ##
-## Copyright (C) 1013 Christian Schenk
+## Copyright (C) 2013-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -35,9 +35,16 @@ set(${setup_lib_name}_sources
   ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/win/winSetupService.h
 )
 
-if(NATIVE_WINDOWS)
-  set(${setup_lib_name}_sources ${${setup_lib_name}_sources}
-  )
-endif(NATIVE_WINDOWS)
-
 add_library(${setup_lib_name} STATIC ${${setup_lib_name}_sources})
+
+target_include_directories(${setup_lib_name}
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/include
+)
+
+target_link_libraries(${setup_lib_name}
+  PUBLIC 
+  ${core_lib_name}
+  ${extractor_lib_name}
+  ${mpm_lib_name}
+)

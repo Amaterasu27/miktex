@@ -51,8 +51,13 @@ if(NOT LINK_EVERYTHING_STATICALLY)
       SOVERSION "1"
   )
 
+  target_include_directories(${setup_dll_name}
+    PUBLIC
+      ${CMAKE_SOURCE_DIR}/${rel_setuplib_dir}/include
+  )
+
   target_link_libraries(${setup_dll_name}
-    PRIVATE 
+    PRIVATE
       ${core_dll_name}
       ${extractor_dll_name}
       ${mpm_dll_name}
