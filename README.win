@@ -17,6 +17,13 @@ C/C++
 
 	* Qt 5.4.1 for VS 2013
 	  http://en.wikipedia.org/wiki/Qt_(software)
+	  Hint: CMAKE_PREFIX_PATH must include the Qt directory. See
+	  http://doc.qt.io/qt-5/cmake-manual.html for more info.
+
+	* ICU
+	  http://site.icu-project.org/
+	  Hint: Set LIB and INCLUDE so that the libraries and headers can be
+	  found.
 
 BUILD SYSTEM
 ------------

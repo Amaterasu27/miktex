@@ -405,6 +405,8 @@ if(USE_SYSTEM_ZLIB)
   find_package(ZLIB REQUIRED)
 endif()
 
+#find_package(ICU REQUIRED)
+
 if(UNIX_ALIKE)
   set(CMAKE_REQUIRED_LIBRARIES "m")
 endif()
@@ -785,10 +787,6 @@ if(NOT USE_SYSTEM_URIPARSER)
   if(NOT LINK_EVERYTHING_STATICALLY)
     add_subdirectory(${rel_uriparser_dir})
   endif()
-endif()
-
-if(NATIVE_WINDOWS)
-  add_subdirectory(${rel_icu_dir})
 endif()
 
 if(NOT LINK_EVERYTHING_STATICALLY)
