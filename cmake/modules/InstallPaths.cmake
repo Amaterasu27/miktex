@@ -1,6 +1,6 @@
 ## InstallPaths.cmake
 ##
-## Copyright (C) 2006-2011 Christian Schenk
+## Copyright (C) 2006-2015 Christian Schenk
 ## 
 ## This file is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published
@@ -71,3 +71,7 @@ set(docdir "${texmfdir}/${rel_miktex_doc_dir}")
 set(rel_miktex_config_dir "miktex/config")
 
 set(configdir "${texmfdir}/${rel_miktex_config_dir}")
+
+set(rel_miktex_tpm_dir "tpm/packages")
+
+set(tpmdir "${texmfdir}/${rel_miktex_tpm_dir}")

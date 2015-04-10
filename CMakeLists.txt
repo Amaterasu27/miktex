@@ -739,32 +739,6 @@ configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findfile/findfile.cpp.in
 configure_file(${CMAKE_SOURCE_DIR}/SDK/samples/c++/findpk/findpk.cpp.in
 	       ${CMAKE_BINARY_DIR}/SDK/samples/c++/findpk/findpk.cpp)
 
-file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/*.tpm.in")
-foreach(tpm ${tpms})
-  get_filename_component(fn ${tpm} NAME_WE)
-  configure_file(
-    ${tpm}
-    "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${fn}-${MIKTEX_SERIES_STR}.tpm"
-  )
-endforeach()
-
-if(NOT WITH_CONTEXT_SUPPORT)
-  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/miktex-context-config-${MIKTEX_SERIES_STR}.tpm")
-endif()
-
-file(GLOB tpms "${CMAKE_SOURCE_DIR}/${rel_tpm_dir}/${target_system_tag}/*.tpm.in")
-foreach(tpm ${tpms})
-  get_filename_component(fn ${tpm} NAME_WE)
-  configure_file(
-    ${tpm}
-    "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/${fn}-${MIKTEX_SERIES_STR}.tpm"
-  )
-endforeach()
-
-if(NOT WITH_CONTEXT_SUPPORT)
-  file(REMOVE "${CMAKE_BINARY_DIR}/${rel_tpm_dir}/${target_system_tag}/miktex-context-bin-${MIKTEX_SERIES_STR}.tpm")
-endif()
-
 if(NATIVE_WINDOWS AND MIKTEX_RELEASE_STATE EQUAL 4)
   configure_file(
     ${CMAKE_SOURCE_DIR}/miktexstartup.ini.debug.in
@@ -774,6 +748,8 @@ endif()
 
 ###############################################################################
 ## add sub-directories
+
+add_subdirectory(${rel_tpm_dir})
 
 if(NATIVE_WINDOWS)
   add_subdirectory(${rel_utf8wrap_dir})
