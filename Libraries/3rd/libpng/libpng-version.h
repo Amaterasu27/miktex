@@ -17,8 +17,8 @@
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
 
-#define MIKTEX_COMP_J2000_VERSION 5570
-#define MIKTEX_COMP_ORIG_VERSION_STR "1.6.2"
+#define MIKTEX_COMP_J2000_VERSION 5576
+#define MIKTEX_COMP_ORIG_VERSION_STR "1.6.16"
 
 #define MIKTEX_COMP_COPYRIGHT_STR "Copyright (c) 1998-2012 Glenn Randers-Pehrson"
 #define MIKTEX_COMP_COPYRIGHT_STR_1252 "Copyright © 1998-2012 Glenn Randers-Pehrson"
