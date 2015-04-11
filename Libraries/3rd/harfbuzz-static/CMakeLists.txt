@@ -31,7 +31,6 @@ configure_file(
 include_directories(BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/${rel_harfbuzz_include_dir}
-  ${CMAKE_SOURCE_DIR}/${rel_icu_include_dir}
 )
 
 set(${harfbuzz_lib_name}_sources
